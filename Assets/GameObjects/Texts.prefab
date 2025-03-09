@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4780526866617608972
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3914848422505020505}
+  - component: {fileID: 8718153109725766216}
+  m_Layer: 0
+  m_Name: Texts
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3914848422505020505
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4780526866617608972}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 173.55544, y: 43.388885, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8718153109725766216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4780526866617608972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ad39b59758788046ad9bed28dae3a53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gandalf: "Starts with:<br>- Hobbiton <sprite name=\"village\"/><br>- Bilbo <sprite
+    name=\"character\"/>( <sprite name=\"diplomat\"/>) <br>- Spells <sprite name=\"mage\"/>and
+    Artifacts <sprite name=\"artifact\"/><br>- An unidentified <sprite name=\"ring\"/><br><br>Shrouded
+    in robes the color of storm clouds, Gandalf the Grey wanders the realms of Middle-earth
+    with ancient staff in hand and wisdom etched upon his weathered face.<br><br>Sent
+    by the Valar in an age when darkness threatens to consume the land, this mysterious
+    wizard seeks not to confront evil with raw power, but to unite the free peoples
+    through counsel and courage.<br><br>From the grand halls of dwarven kingdoms
+    to the humble hearths of halfling homes, he moves like mist between worlds, known
+    to many as merely a creator of magnificent fireworks, while concealing his true
+    purpose \u2013 to guide the most unlikely of heroes against a shadow that would
+    devour all light and hope from the world."
+  radagast: "Starts with:<br>- Rhosgobel <sprite name=\"hidden\"/> <sprite name=\"camp\"/><br>-
+    Spells <sprite name=\"mage\"/> <br><br>Disheveled and nature-bound, Radagast
+    the Brown wanders Middle-earth's forests as a guardian of wildlife rather than
+    kingdoms.<br><br>With animals following his gentle footsteps and herbs stuffed
+    in his pockets, this wizard abandoned the grand politics of his order to heal
+    wounded creatures and commune with forest spirits, his apparent distraction from
+    the growing darkness masking a deeper wisdom\u2014that preserving Middle-earth's
+    very essence might be as crucial to defeating evil as any council of war."
+  sauron: "Starts with:<br>- Barad-dur <sprite name=\"camp\"/> <sprite name=\"tower\"/><br>-
+    Mouth of Sauron <sprite name=\"character\"/>( <sprite name=\"diplomat\"/>)<br>-
+    A low-quality average <sprite name=\"dark\"/>army<br>- Spells <sprite name=\"mage\"/>and
+    Artifacts <sprite name=\"artifact\"/><br><br>Sauron the Deceiver once stood as
+    the greatest of Morgoth's lieutenants before rising to claim his master's mantle
+    of darkness.<br><br>From the shadowed depths of Mordor, this fallen Maia extends
+    his will across Middle-earth like a creeping poison, his fair form long abandoned
+    for one of nightmare and dread.<br><br>Though diminished after the loss of the
+    One Ring, Sauron's essence remains\u2014a lidless eye wreathed in flame, ever-searching,
+    patient and cunning beyond mortal comprehension.<br><br>Through whispered promises
+    of power and subtle corruption of noble intentions, he works to bind all lands
+    to his dominion, not out of mere cruelty, but from a twisted desire to reshape
+    creation according to his own perfect and merciless vision of order."
+  saruman: "Starts with:<br>- Orthanc <sprite name=\"camp\"/> <sprite name=\"tower\"/><br>-
+    Grima <sprite name=\"character\"/>( <sprite name=\"diplomat\"/>)<br>- A low-quality
+    small <sprite name=\"neutral\"/> army<br>- Spells <sprite name=\"mage\"/>and
+    Artifacts <sprite name=\"artifact\"/><br><br>Saruman the White commands respect
+    as the head of the Istari order, his voice as smooth as silk yet powerful as
+    thunder.<br><br>From the gleaming tower of Orthanc, this most learned of wizards
+    studies ancient lore and the craft of many devices, believing that to defeat
+    the enemy, one must understand his methods and tools.<br><br>Though sent as a
+    guardian against darkness, Saruman's brilliant mind increasingly turned away
+    \u2014 his white robes concealing a heart slowly being consumed by pride and
+    ambition as he gazes into forbidden knowledge, convincing himself that Middle-earth
+    requires not a servant of the light but a new master to bring order to a chaotic
+    world."

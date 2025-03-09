@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &332273855888272463
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 590727950917628885}
+  - component: {fileID: 7991538246231412982}
+  m_Layer: 0
+  m_Name: Illustrations
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &590727950917628885
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 332273855888272463}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0009420607, y: -0.1340637, z: 0.018087799}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7991538246231412982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 332273855888272463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 083d573c9d8b07042a1f03e5d5a72b6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gandalf: {fileID: 21300000, guid: fe8a21db49549e240be82a1a3e750362, type: 3}
+  radagast: {fileID: 21300000, guid: 983cd1eef013d8f4a93986a161deb960, type: 3}
+  beoraborn: {fileID: 21300000, guid: c2540388288d3bc4da082d7f93855e83, type: 3}
+  aragorn: {fileID: 21300000, guid: 3d70eafeab7a4d94cae6e8173922fe62, type: 3}
+  ecthelion: {fileID: 21300000, guid: e28febf982b218c47a732222d37afe9d, type: 3}
+  imrahil: {fileID: 21300000, guid: f2348051806d01f4481a3d5fbb7a0c65, type: 3}
+  elrond: {fileID: 21300000, guid: 3b752d747cb21294790a45376dbb2967, type: 3}
+  galadriel: {fileID: 21300000, guid: d166f70ac56a260458a94e6b932a70b2, type: 3}
+  bain: {fileID: 21300000, guid: 543825c75dddb4345bd2de0d6d1b91a1, type: 3}
+  murazor: {fileID: 21300000, guid: 88891d105f1a1654a9967d8d96c68bcb, type: 3}
+  sauron: {fileID: 21300000, guid: 21aaa1a1535ecf24883ea60d226968a2, type: 3}
+  khamul: {fileID: 21300000, guid: bc62cd0ae72958c49937fbe4365fcf94, type: 3}
+  ren: {fileID: 21300000, guid: 3b9c559d8088408458446a80af8b5760, type: 3}
+  hoarmurath: {fileID: 21300000, guid: cd932a32b3a146849a51c4f4760852f4, type: 3}
+  dwar: {fileID: 21300000, guid: 56cde3a119fc4884d8ec3362ad290548, type: 3}
+  indur: {fileID: 21300000, guid: 73776764d8dfdc84787ec93b30038a4d, type: 3}
+  akhorahil: {fileID: 21300000, guid: d5cab54162eed984fae4a7619a47e745, type: 3}
+  adunaphel: {fileID: 21300000, guid: abb9f9a9e65af4841bc21e55beb77505, type: 3}
+  ovatha: {fileID: 21300000, guid: d2e92321be161f24ba38e0e39519a3e9, type: 3}
+  sangarunya: {fileID: 21300000, guid: 659ca86bb30a7694b8660a6c831ef0d3, type: 3}
+  haruth: {fileID: 21300000, guid: e2b24365ee29ae647a0e3fef179815c5, type: 3}
+  huz: {fileID: 21300000, guid: c7110303d0327224fb4edc6a1b84105c, type: 3}
+  uvatha: {fileID: 21300000, guid: d4d0d799b08bcf94197d1344bc25777c, type: 3}
+  waulfa: {fileID: 21300000, guid: 3f925412575095a4a989f1f57d47b17e, type: 3}
+  saruman: {fileID: 21300000, guid: 7db639e5f4896dd41bd9689da5ac4277, type: 3}
+  camp: {fileID: 21300000, guid: 6393a924b9d4c374c8e974b87e596686, type: 3}
+  village: {fileID: 21300000, guid: 9974aace594b8d543979d8fc48ebae4c, type: 3}
+  town: {fileID: 21300000, guid: c96b0c3903c41c547b5946714fac55dd, type: 3}
+  majorTown: {fileID: 21300000, guid: ccdc93210214c2c4d8210671f11b6ca8, type: 3}
+  city: {fileID: 21300000, guid: fd3afa27fdec6064c9a0bb0a8723a1e3, type: 3}
+  tower: {fileID: 21300000, guid: e55e096923e61c04b87005b31a9046fe, type: 3}
+  fort: {fileID: 21300000, guid: 8dc48af1dfba08a4788a9e5402710458, type: 3}
+  keep: {fileID: 21300000, guid: 9adb702b3eb30bc4f9cfd351753afe7d, type: 3}
+  fortress: {fileID: 21300000, guid: 789c90a4f5680334f8efc32e74982e79, type: 3}
+  citadel: {fileID: 21300000, guid: 5345d580437f1d743b42a7e3f19a26fd, type: 3}
