@@ -1,0 +1,24 @@
+public enum LeadersEnum
+{
+    beoraborn,
+    dain,
+    aragorn,
+    ecthelion,
+    galadriel,
+    elrond,
+    theoden,
+    bain,
+    thranduil,
+    murazor,
+    khamul,
+    ren,
+    hoarmurath,
+    dendra,
+    akhorahil,
+    indur,
+    adunaphel,
+    sangarunya,
+    ovatha,
+    enion,
+    saruman
+}

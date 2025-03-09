@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6317790578596487917
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5301498520721150828}
+  - component: {fileID: 6174213287798533335}
+  m_Layer: 0
+  m_Name: IllustrationsSmall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5301498520721150828
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6317790578596487917}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0009420607, y: -0.1340637, z: 0.018087799}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6174213287798533335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6317790578596487917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c084c7b3b6e5db4b880fb128c3dba9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gandalf: {fileID: 21300000, guid: b063a4d4a35736e45b2dc50b77748ed2, type: 3}
+  radagast: {fileID: 21300000, guid: 0a3dc7250544b84498b2d0b68a3a5bb3, type: 3}
+  beoraborn: {fileID: 21300000, guid: 073c4476fa9455644a980f3513167437, type: 3}
+  aragorn: {fileID: 21300000, guid: 1f3ed90f6500f7441a553a51bb4a182e, type: 3}
+  ecthelion: {fileID: 21300000, guid: 001883419e66fac49adaebf29fe624f7, type: 3}
+  imrahil: {fileID: 21300000, guid: 92aadf85a1cced5408b76ecf80266245, type: 3}
+  elrond: {fileID: 21300000, guid: d5ccd26126b651441b3277cb85f2d4d7, type: 3}
+  galadriel: {fileID: 21300000, guid: 234c3bebbef177a41b8a662135fbcafa, type: 3}
+  bain: {fileID: 21300000, guid: 725ac2035cb212f46a1149e0ddc7d9c4, type: 3}
+  murazor: {fileID: 21300000, guid: 5d28320f55652274f9cda21c054382e3, type: 3}
+  sauron: {fileID: 21300000, guid: 5ccc42345b1400c498b46282999cbd2d, type: 3}
+  khamul: {fileID: 21300000, guid: 215d9ab830b8e4945bb57b30484aac17, type: 3}
+  ren: {fileID: 21300000, guid: 4c365b668f642474e964dfc0d1db39fb, type: 3}
+  hoarmurath: {fileID: 21300000, guid: 8dd459468e056f74e8c263489643c4fc, type: 3}
+  dwar: {fileID: 21300000, guid: bf3e6a36284bc5f4e8ae7bb44cc748eb, type: 3}
+  indur: {fileID: 21300000, guid: 30911b4e22100134498db3eb1feaf444, type: 3}
+  akhorahil: {fileID: 21300000, guid: 581b6fa79c42349478e4c318a6d1cd45, type: 3}
+  adunaphel: {fileID: 21300000, guid: ef782d3f03e48434493b930cf5a8bd93, type: 3}
+  ovatha: {fileID: 21300000, guid: 5e799fa687f1d1d48b88e6353ca992f4, type: 3}
+  sangarunya: {fileID: 21300000, guid: 5505dbcb592ca6745b2984c447f003da, type: 3}
+  haruth: {fileID: 21300000, guid: 0c8a69fde0f401b47aadf9f7f9333bf3, type: 3}
+  huz: {fileID: 21300000, guid: fed1addaac2157f4fbb281032f205617, type: 3}
+  uvatha: {fileID: 21300000, guid: ad3cce6882dc55e4aac46b96ba9153f5, type: 3}
+  waulfa: {fileID: 21300000, guid: a18400c95467b8c4ca63618b8d084c34, type: 3}
+  saruman: {fileID: 21300000, guid: e0e6f34ba0b544546a69201acb34201e, type: 3}
