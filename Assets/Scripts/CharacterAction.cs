@@ -114,7 +114,9 @@ public class CharacterAction : MonoBehaviour
             character.GetOwner().ironAmount -= ironCost;
             character.GetOwner().mithrilAmount -= mithrilCost;
             character.GetOwner().goldAmount -= goldCost;
+
             FindFirstObjectByType<StoresManager>().RefreshStores();
+            FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
 
         }
         else

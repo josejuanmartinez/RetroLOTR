@@ -3,6 +3,9 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
 
 public class Hex : MonoBehaviour
 {
@@ -118,9 +121,10 @@ public class Hex : MonoBehaviour
 
     public void RedrawCharacters()
     {
-        characterIcon.SetActive(characters.Count > 0);
+        characterIcon.SetActive(characters.Find(x => x.army == null) != null);
         RefreshHoverText();
     }
+
     public void RedrawPC(bool isVisibleToCurrentPlayer)
     {
         if (isVisibleToCurrentPlayer)
@@ -146,11 +150,24 @@ public class Hex : MonoBehaviour
     {
         hoverHex.text = $"[{v2.x},{v2.y}]<br>";
 
-        hoverCharacterIcon.SetActive(characters.Count > 0);
+        hoverCharacterIcon.SetActive(characters.Find(x => x.army == null) != null);
 
-        if (hoverCharacterIcon.activeSelf) charactersAtHexText.text =
-                string.Join(", ", characters.Select(x => char.ToUpper(x.characterName[0]) + x.characterName[1..]));
-
+        if (hoverCharacterIcon.activeSelf)
+        {
+            List<string> characterNames = new();
+            foreach(Character character in characters)
+            {
+                string characterName = char.ToUpper(character.characterName[0]) + character.characterName[1..];
+                if (character.army == null)
+                {
+                    characterNames.Add(characterName);
+                } else
+                {
+                    characterNames.Add($"<sprite name=\"{character.alignment}\"/>${characterName}");
+                }
+            }
+            charactersAtHexText.text = string.Join(", ", characterNames);
+        }
         hoverPcName.text = "";
         hoverProduces.text = "";
 
@@ -265,7 +282,12 @@ public class Hex : MonoBehaviour
     }
 
     public void Hover()
-    {        
+    {
+        if(IsPointerOverVisibleUIElement())
+        {
+            Unhover();
+            return;
+        }
         if (!IsHidden())
         {
             hoverHexFrame.SetActive(true);
@@ -444,5 +466,47 @@ public class Hex : MonoBehaviour
             city.SetActive(false);
             port.SetActive(false);
         }
+    }
+
+    public int GetTerrainCost(Character character)
+    {
+        return character.IsArmyCommander() ? TerrainData.terrainCosts[terrainType] : 1;
+    }
+
+    private static bool IsPointerOverVisibleUIElement()
+    {
+        if (EventSystem.current == null)
+            return false;
+
+        // Set up the new Pointer Event
+        PointerEventData eventData = new(EventSystem.current)
+        {
+            position = Input.mousePosition
+        };
+
+        List<RaycastResult> results = new();
+
+        // Raycast using the Graphics Raycaster and the Event Data
+        EventSystem.current.RaycastAll(eventData, results);
+
+        // Only return true if we hit a visible UI element (not just the Canvas)
+        foreach (var result in results)
+        {
+            // Skip the Canvas itself
+            if (result.gameObject.GetComponent<Canvas>() != null)
+                continue;
+
+            // Check if it's an Image with non-zero alpha
+            Image image = result.gameObject.GetComponent<Image>();
+            if (image != null && image.color.a > 0.01f && image.raycastTarget)
+                return true;
+
+            // Check if it's Text with non-zero alpha
+            TMPro.TextMeshProUGUI tmpText = result.gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+            if (tmpText != null && tmpText.color.a > 0.01f)
+                return true;
+        }
+
+        return false;
     }
 }

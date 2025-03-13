@@ -154,6 +154,7 @@ public class Board : MonoBehaviour
         nationSpawner.Spawn();
         initialized = true;
         startButton.interactable = true;
+        startButton.GetComponentInChildren<TextMeshProUGUI>().text = FindFirstObjectByType<TextsEN>().start;
         hexes.Values.ToList().ForEach(x => { x.GetComponent<OnHoverTile>().enabled = true; x.GetComponent<OnClickTile>().enabled = true; });
     }
 
@@ -205,14 +206,6 @@ public class Board : MonoBehaviour
         if (selectedHex != Vector2.one * -1) hexes[selectedHex].Unselect();
         selectedHex = Vector2.one * -1;
 
-        // Start an inline coroutine
-        StartCoroutine(DelayedUnselectHexActions());
-    }
-    IEnumerator DelayedUnselectHexActions()
-    {
-        // Wait for 2 seconds
-        yield return new WaitForSeconds(1f);
-
         // Execute these actions after the delay
         FindFirstObjectByType<ActionsManager>().Hide();
         FindFirstObjectByType<SelectedCharacterIcon>().Hide();
@@ -228,65 +221,180 @@ public class Board : MonoBehaviour
     {
         if (!character) return;
         if (targetHexCoordinates == Vector2.one * -1) return;
-        
+        if (character.moved >= character.GetMaxMovement()) return;
+
         HexPathRenderer pathRenderer = FindFirstObjectByType<HexPathRenderer>();
-        List<Vector2> path = pathRenderer.FindPath(character.hex.v2, targetHexCoordinates, character.army != null);
+        List<Vector2> path = pathRenderer.FindPath(character.hex.v2, targetHexCoordinates, character);
 
         StartCoroutine(MoveCoroutine(character, path));
     }
 
     IEnumerator MoveCoroutine(Character character, List<Vector2> path)
     {
-        FindFirstObjectByType<ActionsManager>().Hide();
-        for (int i=0;i<path.Count;i++)
+        SelectedCharacterIcon selected = null;
+        ActionsManager actionsManager = null;
+        Hex currentHex = character.hex; // Store initial hex
+
+        try
+        {
+            actionsManager = FindFirstObjectByType<ActionsManager>();
+            actionsManager.Hide();
+            selected = FindFirstObjectByType<SelectedCharacterIcon>();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error initializing movement: {e.Message}\n{e.StackTrace}");
+            HandleMovementFailure(character, currentHex, path, -1);
+            yield break;
+        }
+
+        // Main movement loop
+        for (int i = 0; i < path.Count; i++)
         {
             if (i + 1 < path.Count)
             {
-                Hex previousHex = hexes[path[i]];
+                try
+                {
+                    // Store previous hex to revert to in case of failure
+                    Hex previousHex = hexes[path[i]];
+                    currentHex = previousHex;
 
-                if (previousHex.characters.Contains(character)) previousHex.characters.Remove(character);
-                if (character.army != null && previousHex.armies.Contains(character.army)) previousHex.armies.Remove(character.army);
-                previousHex.RedrawCharacters();
-                previousHex.RedrawArmies();
+                    if (previousHex.characters.Contains(character)) previousHex.characters.Remove(character);
+                    if (character.army != null && previousHex.armies.Contains(character.army)) previousHex.armies.Remove(character.army);
+                    previousHex.RedrawCharacters();
+                    previousHex.RedrawArmies();
 
-                Hex newHex = hexes[path[i + 1]];
+                    Hex newHex = hexes[path[i + 1]];
+                    if (!newHex.characters.Contains(character)) newHex.characters.Add(character);
+                    if (character.army != null && !newHex.armies.Contains(character.army)) newHex.armies.Add(character.army);
+                    character.hex = newHex;
+                    currentHex = newHex; // Update current hex
 
-                if (!newHex.characters.Contains(character)) newHex.characters.Add(character);
-                if (character.army != null && !newHex.armies.Contains(character.army)) newHex.armies.Add(character.army);
-                character.hex = newHex;
+                    newHex.RedrawCharacters();
+                    newHex.RedrawArmies();
+                    character.hex.RevealArea();
+                    character.hasMovedThisTurn = true;
+                    newHex.LookAt();
+                    UnselectHex();
+                    SelectHex(path[i + 1]);
 
-                newHex.RedrawCharacters();
-                newHex.RedrawArmies();
+                    character.GetOwner().visibleHexes.Remove(previousHex);
+                    character.GetOwner().visibleHexes.Add(newHex);
+                    character.moved += newHex.GetTerrainCost(character);
 
-                character.hex.RevealArea();
+                    bool wasWater = previousHex.terrainType == TerrainEnum.shallowWater || previousHex.terrainType == TerrainEnum.deepWater;
+                    bool isWater = newHex.terrainType == TerrainEnum.shallowWater || newHex.terrainType == TerrainEnum.deepWater;
 
-                character.hasMovedThisTurn = true;
-                newHex.LookAt();
+                    if (!wasWater && isWater)
+                    {
+                        character.moved = character.GetMaxMovement();
+                        break;
+                    }
+                    if (wasWater && !isWater)
+                    {
+                        character.moved = character.GetMaxMovement();
+                        break;
+                    }
 
-                character.GetOwner().visibleHexes.Remove(previousHex);
-                character.GetOwner().visibleHexes.Add(newHex);
+                    selected.RefreshMovementLeft(character);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error during character movement at step {i}: {e.Message}\n{e.StackTrace}");
+                    HandleMovementFailure(character, currentHex, path, i);
+                    yield break;
+                }
 
+                // Yield outside the try block
                 yield return new WaitForSeconds(0.5f);
             }
         }
+
+        try
+        {
+            selected.RefreshMovementLeft(character);
+            actionsManager.Refresh(character);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error finalizing movement: {e.Message}\n{e.StackTrace}");
+            HandleMovementFailure(character, currentHex, path, path.Count - 1);
+        }
+
+        // Final delay outside try block
         yield return new WaitForSeconds(0.5f);
-        FindFirstObjectByType<ActionsManager>().Refresh(character);
+    }
+
+    // Helper method to handle movement failure and ensure consistent state
+    private void HandleMovementFailure(Character character, Hex currentHex, List<Vector2> path = null, int currentIndex = -1)
+    {
+        if (currentHex != null && character != null)
+        {
+            // Only check hexes in the path rather than the entire map
+            if (path != null && currentIndex >= 0)
+            {
+                // Only need to check hexes that we've already passed through or started to enter
+                for (int i = 0; i <= currentIndex + 1 && i < path.Count; i++)
+                {
+                    if (hexes.TryGetValue(path[i], out Hex pathHex) && pathHex != currentHex)
+                    {
+                        if (pathHex.characters.Contains(character))
+                        {
+                            pathHex.characters.Remove(character);
+                            pathHex.RedrawCharacters();
+                        }
+
+                        if (character.army != null && pathHex.armies.Contains(character.army))
+                        {
+                            pathHex.armies.Remove(character.army);
+                            pathHex.RedrawArmies();
+                        }
+                    }
+                }
+            }
+
+            // Make sure character is in current hex
+            if (!currentHex.characters.Contains(character)) currentHex.characters.Add(character);
+
+            // Make sure army is in current hex
+            if (character.army != null && !currentHex.armies.Contains(character.army)) currentHex.armies.Add(character.army);
+
+            // Set character's hex reference properly
+            character.hex = currentHex;
+
+            // Redraw
+            currentHex.RedrawCharacters();
+            currentHex.RedrawArmies();
+            currentHex.LookAt();
+            SelectHex(currentHex.v2);
+        }
+
+        // Always refresh the actions manager and selected icon if available
+        var actionsManager = FindFirstObjectByType<ActionsManager>();
+        if (actionsManager != null)
+        {
+            actionsManager.Refresh(character);
+        }
+
+        var selected = FindFirstObjectByType<SelectedCharacterIcon>();
+        if (selected != null)
+        {
+            selected.RefreshMovementLeft(character);
+        }
     }
     private void UpdateGenerationProgress(float progress, string stage)
     {
         // Update the progress bar
-        if (progressBar != null)
-        {
-            progressBar.value = progress;
-        }
+        if (progressBar != null) progressBar.value = progress;
 
         // Update the status text
-        if (statusText != null)
-        {
-            statusText.text = $"{stage} - {progress * 100:F0}%";
-        }
+        if (statusText != null) statusText.text = $"{stage} - {progress * 100:F0}%";
+    }
 
-        // Log to console
-        // Debug.Log($"Board Generation: {stage} - {progress * 100:F0}%");
+    public Hex GetHex(Vector2 v2)
+    {
+        if (hexes == null) return null;
+        hexes.TryGetValue(v2, out Hex hex);
+        return hex;
     }
 }

@@ -121,14 +121,13 @@ public class BoardGenerator : MonoBehaviour
                 if (hexesProcessed % hexesPerBatch == 0)
                 {
                     float progress = (float)hexesProcessed / totalHexes;
-                    OnGenerationProgress?.Invoke(progress, "Instantiating Hexes");
+                    OnGenerationProgress?.Invoke(progress, "Configuring Board");
                     yield return null;
                 }
             }
         }
 
-        Debug.Log("Hex instantiation complete!");
-        OnGenerationProgress?.Invoke(1.0f, "Instantiation Complete");
+        OnGenerationProgress?.Invoke(1.0f, "Game ready!");
 
         onComplete?.Invoke(hexes);
     }
@@ -167,14 +166,14 @@ public class BoardGenerator : MonoBehaviour
                 if (cellsProcessed % cellsPerBatch == 0)
                 {
                     float progress = (float)cellsProcessed / totalCells;
-                    OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Initializing Grid");
+                    OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Configuring Terrain");
                     yield return null;
                 }
             }
         }
 
         currentStep++;
-        OnGenerationProgress?.Invoke(currentStep / totalSteps, "Grid Initialized");
+        OnGenerationProgress?.Invoke(currentStep / totalSteps, "Terrain ready");
     }
 
     private IEnumerator ConvertPlainsToGrasslandsCoroutine()
