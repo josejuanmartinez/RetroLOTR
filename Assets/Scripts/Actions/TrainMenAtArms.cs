@@ -19,6 +19,7 @@ public class TrainMetAtArms : CommanderPCAction
                 c.army.ma += 1;
             }
             c.hex.armies.Add(c.army);
+            c.hex.RedrawCharacters();
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c);
         };

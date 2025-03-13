@@ -1,6 +1,6 @@
 using System;
 
-public class CommanderPCAction : CommanderAction
+public class EmmissaryPCAction : EmmissaryAction
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {

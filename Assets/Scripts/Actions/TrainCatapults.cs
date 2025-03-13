@@ -19,6 +19,7 @@ public class TrainCatapults : CommanderPCAction
                 c.army.ca += 1;
             }
             c.hex.armies.Add(c.army);
+            c.hex.RedrawCharacters();
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c);
         };

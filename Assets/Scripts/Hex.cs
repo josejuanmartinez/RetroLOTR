@@ -150,7 +150,7 @@ public class Hex : MonoBehaviour
     {
         hoverHex.text = $"[{v2.x},{v2.y}]<br>";
 
-        hoverCharacterIcon.SetActive(characters.Find(x => x.army == null) != null);
+        hoverCharacterIcon.SetActive(characters.Count > 0);
 
         if (hoverCharacterIcon.activeSelf)
         {
@@ -163,7 +163,7 @@ public class Hex : MonoBehaviour
                     characterNames.Add(characterName);
                 } else
                 {
-                    characterNames.Add($"<sprite name=\"{character.alignment}\"/>${characterName}");
+                    characterNames.Add($"<sprite name=\"{character.alignment}\"/>{characterName}");
                 }
             }
             charactersAtHexText.text = string.Join(", ", characterNames);
@@ -239,45 +239,49 @@ public class Hex : MonoBehaviour
             hoverHex.text = "";
         }
 
-        Army freeArmy = new(null);
-        Army neutralArmy = new(null);
-        Army darkArmy = new(null);
-
-        foreach (Army army in armies)
+        if(armies != null && armies.Count > 0)
         {
-            switch (army.GetAlignment())
+            Army freeArmy = new(null);
+            Army neutralArmy = new(null);
+            Army darkArmy = new(null);
+
+            foreach (Army army in armies)
             {
-                case AlignmentEnum.freePeople:
-                    freeArmy.Recruit(army);
-                    break;
-                case AlignmentEnum.neutral:
-                    neutralArmy.Recruit(army);
-                    break;
-                case AlignmentEnum.darkServants:
-                    darkArmy.Recruit(army);
-                    break;
+                switch (army.GetAlignment())
+                {
+                    case AlignmentEnum.freePeople:
+                        freeArmy.Recruit(army);
+                        break;
+                    case AlignmentEnum.neutral:
+                        neutralArmy.Recruit(army);
+                        break;
+                    case AlignmentEnum.darkServants:
+                        darkArmy.Recruit(army);
+                        break;
+                }
             }
-        }
 
-        if (freeArmy.GetSize() > 0)
-        {
-            hoverFreeArmyIcon.SetActive(true);
-            hoverFreeArmy.gameObject.SetActive(true);
-            hoverFreeArmy.text = freeArmy.GetHoverText();
-        }
 
-        if (neutralArmy.GetSize() > 0)
-        {
-            hoverNeutralArmyIcon.SetActive(true);
-            hoverNeutralArmy.gameObject.SetActive(true);
-            hoverNeutralArmy.text = neutralArmy.GetHoverText();
-        }
+            if (freeArmy.GetSize() > 0)
+            {
+                hoverFreeArmyIcon.SetActive(true);
+                hoverFreeArmy.gameObject.SetActive(true);
+                hoverFreeArmy.text = freeArmy.GetHoverText();
+            }
 
-        if (darkArmy.GetSize() > 0)
-        {
-            hoverDarkArmyIcon.SetActive(true);
-            hoverDarkArmy.gameObject.SetActive(true);
-            hoverDarkArmy.text = darkArmy.GetHoverText();
+            if (neutralArmy.GetSize() > 0)
+            {
+                hoverNeutralArmyIcon.SetActive(true);
+                hoverNeutralArmy.gameObject.SetActive(true);
+                hoverNeutralArmy.text = neutralArmy.GetHoverText();
+            }
+
+            if (darkArmy.GetSize() > 0)
+            {
+                hoverDarkArmyIcon.SetActive(true);
+                hoverDarkArmy.gameObject.SetActive(true);
+                hoverDarkArmy.text = darkArmy.GetHoverText();
+            }
         }
     }
 

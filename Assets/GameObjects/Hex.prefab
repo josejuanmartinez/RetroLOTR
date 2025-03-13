@@ -2446,14 +2446,14 @@ RectTransform:
   m_GameObject: {fileID: 4674207737153123617}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.89167, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2263570521073719914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.0057288, y: 0}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &3762230243458373538
@@ -2521,8 +2521,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Gandalf Gandalf Gandalf Gandalf Gandalf Gandalf Gandalf Gandalf Gandalf
-    Gandalf Gandalf Gandalf Gandalf Gandalf
+  m_text: <sprite name="free">Gandalf\n<sprite name="dark">Sauron \n<sprite name="neutral">Saruman
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 437b22217d0e98f44812f0c5db3f83d9, type: 2}
   m_sharedMaterial: {fileID: 3414116324309062708, guid: 437b22217d0e98f44812f0c5db3f83d9, type: 2}
@@ -2541,7 +2540,7 @@ MonoBehaviour:
     bottomLeft: {r: 1, g: 1, b: 1, a: 1}
     bottomRight: {r: 1, g: 1, b: 1, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
+  m_spriteAsset: {fileID: 11400000, guid: f9066aa3ac5a66244abe77d18e84b3ca, type: 2}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
   m_TextStyleHashCode: -1183493901
@@ -2549,12 +2548,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 1.05
+  m_fontSize: 1.9
   m_fontSizeBase: 1
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 1
-  m_fontSizeMax: 1.5
+  m_fontSizeMin: 1.5
+  m_fontSizeMax: 2
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256

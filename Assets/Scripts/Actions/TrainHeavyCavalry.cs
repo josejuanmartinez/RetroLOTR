@@ -19,6 +19,7 @@ public class TrainHeavyCavalry : CommanderPCAction
                 c.army.hc += 1;
             }
             c.hex.armies.Add(c.army);
+            c.hex.RedrawCharacters();
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c);
         };
