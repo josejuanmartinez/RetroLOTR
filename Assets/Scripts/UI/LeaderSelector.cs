@@ -1,21 +1,25 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.Video;
+
 public class LeaderSelector : MonoBehaviour
 {
-    public Image leaderPicture;
+    public VideoPlayer leaderVideo;
+    // public Image leaderPicture;
     public TypewriterEffect typewriterEffect;
     public TextMeshProUGUI textUI;
-    public Illustrations illustrations;
+    // public Illustrations illustrations;
+    public Videos videos;
     public TextsEN textsEN;
 
     private List<TMP_Dropdown.OptionData> options;
     void Awake()
     {
         options = GetComponent<TMP_Dropdown>().options;
-        illustrations = FindFirstObjectByType<Illustrations>();
+        // illustrations = FindFirstObjectByType<Illustrations>();
+        videos = FindFirstObjectByType<Videos>();
         textsEN = FindFirstObjectByType<TextsEN>();
     }
 
@@ -26,7 +30,7 @@ public class LeaderSelector : MonoBehaviour
             string leaderName = options[value].text;
 
             // Get leader sprite using reflection
-            System.Reflection.FieldInfo[] illustrationFields = illustrations.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            /*System.Reflection.FieldInfo[] illustrationFields = illustrations.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
             foreach (var field in illustrationFields)
             {
                 if (string.Equals(field.Name, leaderName, System.StringComparison.OrdinalIgnoreCase))
@@ -35,6 +39,18 @@ public class LeaderSelector : MonoBehaviour
                     {
                         Sprite leaderSprite = (Sprite)field.GetValue(illustrations);
                         leaderPicture.sprite = leaderSprite;
+                        break;
+                    }
+                }
+            }*/
+            System.Reflection.FieldInfo[] videosFields = videos.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            foreach (var field in videosFields)
+            {
+                if (string.Equals(field.Name, leaderName, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    if (field.FieldType == typeof(VideoClip))
+                    {
+                        leaderVideo.clip = (VideoClip) field.GetValue(videos);
                         break;
                     }
                 }

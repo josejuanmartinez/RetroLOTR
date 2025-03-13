@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 [Serializable]
 public class Army
@@ -90,5 +91,22 @@ public class Army
         if (ws > 0) result += $"<b>WS</b>{ws} ";
 
         return result;
+    }
+
+    public bool IsCavalryOnly()
+    {
+        if (lc < 1 && hc < 1) return false;
+        if (ma > 0) return false;
+        if (ar > 0) return false;
+        if (li > 0) return false;
+        if (hi > 0) return false;
+        if (ca > 0) return false;
+        if (ws > 0) return false;
+        return true;
+    }
+
+    public MovementType GetMovementType()
+    {
+        return IsCavalryOnly() ? MovementType.ArmyCommanderCavalryOnly : MovementType.ArmyCommander;
     }
 }

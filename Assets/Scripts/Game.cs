@@ -6,11 +6,13 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
-    public Button startGameButton;
     public PlayableLeader player;
     public List<PlayableLeader> competitors;
     public List<NonPlayableLeader> npcs;
     public PlayableLeader currentlyPlaying;
+    
+    public int normalMovement = 12;
+    public int cavalryMovement = 15;
 
     public int turn = 0;
 
