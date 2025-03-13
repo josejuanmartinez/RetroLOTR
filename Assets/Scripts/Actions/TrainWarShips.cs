@@ -19,6 +19,7 @@ public class TrainWarships : CommanderPCAction
                 c.army.ws += 1;
             }
             c.hex.armies.Add(c.army);
+            c.hex.RedrawCharacters();
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c);
         };

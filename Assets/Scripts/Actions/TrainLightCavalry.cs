@@ -19,6 +19,7 @@ public class TrainLightCavalry : CommanderPCAction
                 c.army.lc += 1;
             }
             c.hex.armies.Add(c.army);
+            c.hex.RedrawCharacters();
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c);
         };

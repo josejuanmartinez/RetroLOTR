@@ -22,6 +22,16 @@ public class ActionsManager : MonoBehaviour
     public TrainWarships trainWarships;
     [HideInInspector]
     public FoundPC foundPC;
+    [HideInInspector]
+    public SellLeather sellLeather;
+    [HideInInspector]
+    public SellTimber sellTimber;
+    [HideInInspector]
+    public SellMounts sellMounts;
+    [HideInInspector]
+    public SellIron sellIron;
+    [HideInInspector]
+    public SellMithril sellMithril;
 
     public void Start()
     {
@@ -34,6 +44,11 @@ public class ActionsManager : MonoBehaviour
         trainHeavyInfantry = GetComponentInChildren<TrainHeavyInfantry>();
         trainWarships = GetComponentInChildren<TrainWarships>();
         foundPC = GetComponentInChildren<FoundPC>();
+        sellLeather = GetComponentInChildren<SellLeather>();
+        sellTimber = GetComponentInChildren<SellTimber>();
+        sellMounts = GetComponentInChildren<SellMounts>();
+        sellIron = GetComponentInChildren<SellIron>();
+        sellMithril = GetComponentInChildren<SellMithril>();
     }
 
     // Define a common base type or interface that both classes share

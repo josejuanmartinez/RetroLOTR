@@ -54,7 +54,6 @@ public class OnHoverTile : MonoBehaviour
 
         if (IsPointerOverVisibleUIElement())
         {
-            Debug.Log("IGNORING HEX");
             if (hex != null) hex.Unhover();
             return;
         }
@@ -76,7 +75,6 @@ public class OnHoverTile : MonoBehaviour
     {
         if (IsPointerOverVisibleUIElement())
         {
-            Debug.Log("IGNORING HEX");
             if (hex != null) hex.Unhover();
             return;
         }
@@ -100,7 +98,6 @@ public class OnHoverTile : MonoBehaviour
 
         if (IsPointerOverVisibleUIElement())
         {
-            Debug.Log("IGNORING HEX");
             if(pathRenderer) pathRenderer.HidePath();
             if (board)
             {

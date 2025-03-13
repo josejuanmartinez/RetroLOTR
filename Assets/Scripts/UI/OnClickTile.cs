@@ -24,7 +24,6 @@ public class OnClickTile : MonoBehaviour
             if (board.selectedHex != Vector2.one * -1)
             {
                 board.UnselectHex();
-                // MOVEMENT
                 return;
             }
             try

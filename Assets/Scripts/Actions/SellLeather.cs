@@ -1,20 +1,19 @@
 using System;
 
-public class FoundPC : EmmissaryAction
+public class SellLeather : EmmissaryPCAction
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
+        PlayableLeader playable = (c.GetOwner() as PlayableLeader);
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            PC pc = new (c.GetOwner(), "Kakota", PCSizeEnum.camp, FortSizeEnum.NONE, false, false, c.hex.terrainType);
-            c.hex.pc = pc;
-
-            c.hex.RedrawPC(true);
+            playable.goldAmount += 5;
+            if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {
-            return c.hex.pc == null && c.hex.terrainType != TerrainEnum.shallowWater && c.hex.terrainType != TerrainEnum.deepWater && (originalCondition == null || originalCondition(c));
+            return (originalCondition == null || originalCondition(c));
         };
         base.Initialize(c, condition, effect);
     }

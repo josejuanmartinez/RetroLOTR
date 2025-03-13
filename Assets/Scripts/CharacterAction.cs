@@ -117,7 +117,7 @@ public class CharacterAction : MonoBehaviour
 
             FindFirstObjectByType<StoresManager>().RefreshStores();
             FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
-
+            FindFirstObjectByType<ActionsManager>().Refresh(character);
         }
         else
         {

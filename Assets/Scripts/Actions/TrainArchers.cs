@@ -18,6 +18,7 @@ public class TrainArchers : CommanderPCAction
                 c.army.ar += 1;
             }
             c.hex.armies.Add(c.army);
+            c.hex.RedrawCharacters();
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c); 
         };
