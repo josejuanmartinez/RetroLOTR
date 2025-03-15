@@ -69,26 +69,31 @@ public class HexPathRenderer : MonoBehaviour
     public List<Vector2> FindPath(Vector2 startPos, Vector2 goalPos, Character character)
     {
         int movementLeft = character.GetMovementLeft();
-        if(movementLeft < 1) return new List<Vector2> {  };
+        if (movementLeft < 1) return new List<Vector2> { };
         // If start and goal are the same, return just that position
-        if (startPos == goalPos) return new List<Vector2> {  };
+        if (startPos == goalPos) return new List<Vector2> { startPos };
 
         var openSet = new List<Vector2>();
         var closedSet = new HashSet<Vector2>();
         var cameFrom = new Dictionary<Vector2, Vector2>();
         var gScore = new Dictionary<Vector2, float>();
         var fScore = new Dictionary<Vector2, float>();
-        var terrainTransition = new Dictionary<Vector2, bool>();
+        var hasTransition = new Dictionary<Vector2, bool>();
 
-        // Track if we've crossed from land to water or water to land
-        terrainTransition[startPos] = false;
-
+        // Initialize the starting position
         openSet.Add(startPos);
         gScore[startPos] = 0;
         fScore[startPos] = HexDistance(startPos, goalPos);
+        hasTransition[startPos] = false;
 
         // Determine if the start position is water
         bool isStartWater = IsWaterTerrain(startPos);
+
+        // Track the best path so far
+        Vector2 bestEnd = startPos;
+        float bestDistanceToGoal = HexDistance(startPos, goalPos);
+        bool foundTransitionPath = false;
+        bool foundNonTransitionPath = false;
 
         while (openSet.Count > 0)
         {
@@ -107,11 +112,31 @@ public class HexPathRenderer : MonoBehaviour
             }
 
             // Check if we've reached the goal
-            if (current == goalPos) return ReconstructPath(cameFrom, current);
+            if (current == goalPos)
+            {
+                return ReconstructPath(cameFrom, current, startPos);
+            }
 
-            // If we've already crossed from land to water or water to land, 
-            // and this isn't the goal, we stop the path here
-            if (terrainTransition[current] && current != goalPos) return ReconstructPath(cameFrom, current);
+            // Check if this could be a better endpoint
+            float distanceToGoal = HexDistance(current, goalPos);
+            bool nodeHasTransition = hasTransition[current];
+
+            // Update best path logic:
+            // 1. If we haven't found any transition path yet, update bestEnd
+            // 2. If this is a non-transition path and we don't have one yet, prefer it
+            // 3. If types match (both transition or both non-transition), prefer closer to goal
+            if ((!foundTransitionPath && !foundNonTransitionPath) ||
+                (!nodeHasTransition && !foundNonTransitionPath) ||
+                (nodeHasTransition == foundTransitionPath && nodeHasTransition == foundNonTransitionPath && distanceToGoal < bestDistanceToGoal))
+            {
+                bestEnd = current;
+                bestDistanceToGoal = distanceToGoal;
+
+                if (nodeHasTransition)
+                    foundTransitionPath = true;
+                else
+                    foundNonTransitionPath = true;
+            }
 
             openSet.Remove(current);
             closedSet.Add(current);
@@ -126,60 +151,58 @@ public class HexPathRenderer : MonoBehaviour
                 bool isNeighborWater = IsWaterTerrain(neighbor);
                 bool isTerrainTransition = isCurrentWater != isNeighborWater;
 
+                // Calculate movement cost
                 float terrainCost = GetTerrainCost(neighbor, character);
                 float tentativeGScore = gScore[current] + terrainCost;
 
-                // Skip if the movement cost exceeds the maximum limit
+                // Check if this would exceed movement
                 if (tentativeGScore > movementLeft) continue;
 
+                // Special case: Allow transition if neighbor is the goal position
+                bool isGoalPosition = neighbor == goalPos;
+
+                // If this is a transition hex and NOT the goal, mark it as an endpoint candidate but don't extend the path
+                if (isTerrainTransition && !isGoalPosition)
+                {
+                    // Update the neighbor's path information
+                    cameFrom[neighbor] = current;
+                    gScore[neighbor] = tentativeGScore;
+
+                    // Track it as a potential best endpoint
+                    float distanceToGoalNeighbor = HexDistance(neighbor, goalPos);
+                    if (!foundTransitionPath || distanceToGoalNeighbor < bestDistanceToGoal)
+                    {
+                        bestEnd = neighbor;
+                        bestDistanceToGoal = distanceToGoalNeighbor;
+                        foundTransitionPath = true;
+                    }
+
+                    // Don't add to openSet - this prevents the path from extending beyond this hex
+                    continue;
+                }
+
+                // For non-transition hexes or if it's the goal position, continue as normal
                 if (!openSet.Contains(neighbor))
                 {
                     openSet.Add(neighbor);
-                    terrainTransition[neighbor] = terrainTransition[current] || isTerrainTransition;
                 }
                 else if (gScore.TryGetValue(neighbor, out float neighborG) && tentativeGScore >= neighborG)
                 {
                     continue;
                 }
 
+                // Update path information
                 cameFrom[neighbor] = current;
                 gScore[neighbor] = tentativeGScore;
                 fScore[neighbor] = tentativeGScore + HexDistance(neighbor, goalPos);
-                terrainTransition[neighbor] = terrainTransition[current] || isTerrainTransition;
+                hasTransition[neighbor] = hasTransition[current] || isTerrainTransition;
             }
         }
 
-        // If we can't reach the goal within movement limit, find the closest reachable point
-        if (cameFrom.Count > 0)
+        // If we couldn't reach the goal but found a valid path
+        if (bestEnd != startPos)
         {
-            Vector2 bestPos = startPos;
-            float bestDistance = float.MaxValue;
-            foreach (var pos in cameFrom.Keys)
-            {
-                // Skip any position that would cost more than the available movement
-                if (!gScore.TryGetValue(pos, out float positionCost) || positionCost > movementLeft) continue;
-
-                // Don't consider positions after a terrain transition unless it's the goal
-                if (terrainTransition[pos] && pos != goalPos) continue;
-
-                float distance = HexDistance(pos, goalPos);
-                if (distance < bestDistance)
-                {
-                    bestDistance = distance;
-                    bestPos = pos;
-                }
-            }
-
-            // Verify the best position is within movement range before returning
-            if (gScore.TryGetValue(bestPos, out float bestPosCost) && bestPosCost <= movementLeft)
-            {
-                return ReconstructPath(cameFrom, bestPos);
-            }
-            else
-            {
-                // If even the best pos exceeds movement, just return the starting position
-                return new List<Vector2> { };
-            }
+            return ReconstructPath(cameFrom, bestEnd, startPos);
         }
 
         // No path found
@@ -197,7 +220,7 @@ public class HexPathRenderer : MonoBehaviour
         return false;
     }
 
-    private List<Vector2> ReconstructPath(Dictionary<Vector2, Vector2> cameFrom, Vector2 current)
+    private List<Vector2> ReconstructPath(Dictionary<Vector2, Vector2> cameFrom, Vector2 current, Vector2 startPos)
     {
         var path = new List<Vector2> { current };
 
@@ -205,6 +228,12 @@ public class HexPathRenderer : MonoBehaviour
         {
             current = cameFrom[current];
             path.Insert(0, current);
+        }
+
+        // Make sure the starting position is included
+        if (path.Count == 0 || path[0] != startPos)
+        {
+            path.Insert(0, startPos);
         }
 
         return path;

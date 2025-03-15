@@ -5,6 +5,7 @@ using UnityEngine;
 public class PC
 {
     [SerializeField] public Leader owner;
+    [SerializeField] public Hex hex;
     [SerializeField] public string pcName;
 
     [SerializeField] public int leather = 0;
@@ -19,9 +20,10 @@ public class PC
     [SerializeField] public bool hasPort;
     [SerializeField] public bool hiddenButRevealed;
 
-    public PC(Leader owner, string pcName, PCSizeEnum citySize, FortSizeEnum fortSize, bool hasPort, bool isHidden, TerrainEnum terrain)
+    public PC(Leader owner, string pcName, PCSizeEnum citySize, FortSizeEnum fortSize, bool hasPort, bool isHidden, Hex hex)
     {
         this.owner = owner;
+        this.hex = hex;
         this.pcName = pcName;
         this.citySize = citySize;
         this.fortSize = fortSize;
@@ -29,6 +31,7 @@ public class PC
         this.isHidden = isHidden;
         hiddenButRevealed = false;
 
+        TerrainEnum terrain = hex.terrainType;
         switch (terrain)
         {
             case TerrainEnum.mountains:
@@ -72,9 +75,10 @@ public class PC
                 break;
         }
         owner.controlledPcs.Add(this);
+        owner.visibleHexes.Add(hex);
     }
 
-    public PC(Leader leader): this(leader, leader.biome.startingCityName, leader.biome.startingCitySize, leader.biome.startingCityFortSize, leader.biome.startsWithPort, leader.biome.startingCityIsHidden, leader.biome.terrain)
+    public PC(Leader leader): this(leader, leader.biome.startingCityName, leader.biome.startingCitySize, leader.biome.startingCityFortSize, leader.biome.startsWithPort, leader.biome.startingCityIsHidden, leader.hex)
     {
         
     }

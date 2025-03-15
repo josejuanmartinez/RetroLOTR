@@ -79,31 +79,46 @@ public class Hex : MonoBehaviour
         characters = new();
     }
 
-    public void SpawnCapitalAtStart(Leader leader, Vector2Int v2)
+    public void SpawnCapitalAtStart(Leader leader)
     {
-        this.v2 = v2;
-
         BiomeConfig biome = leader.biome;
         bool isPlayable = leader is PlayableLeader;
         pc = new PC(leader);
 
         RedrawPC(!biome.startingCityIsHidden);
 
-        RedrawCharacters();
         encounter.SetActive(!isPlayable);
 
-        if(leader.biome.startingArmySize > 0 || leader.biome.startingWarships > 0)
-        {
-            Army army = new (leader, leader.biome.preferedTroopType, leader.biome.startingArmySize, leader.biome.startingWarships);
-            armies.Add(army);
-            leader.army = army;
-        }
+        RefreshHoverText();
+    }
 
+    public void SpawnLeaderAtStart(Leader leader)
+    {
         characters.Add(leader);
+        leader.controlledCharacters.Add(leader);
         leader.hex = this;
 
+        if (leader.biome.startingArmySize > 0 || leader.biome.startingWarships > 0)
+        {
+            leader.CreateArmy(leader.biome.preferedTroopType, leader.biome.startingArmySize, leader.biome.startingWarships);
+        }
+
+        RedrawCharacters();
         RedrawArmies();
-        RefreshHoverText();
+    }
+    public void SpawnOtherCharactersAtStart(Leader leader)
+    {
+        List<Character> otherCharaters = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => x.GetOwner() == leader && x != leader);
+        foreach(Character otherCharacter in otherCharaters)
+        {
+            if (otherCharacter as Leader != null) continue;
+            characters.Add(otherCharacter);
+            otherCharacter.hex = this;
+            leader.controlledCharacters.Add(otherCharacter);
+        }
+
+        RedrawCharacters();
+        RedrawArmies();
     }
 
     public void RedrawArmies()
@@ -121,7 +136,7 @@ public class Hex : MonoBehaviour
 
     public void RedrawCharacters()
     {
-        characterIcon.SetActive(characters.Find(x => x.army == null) != null);
+        characterIcon.SetActive(characters.Find(x => !x.IsArmyCommander()) != null);
         RefreshHoverText();
     }
 
@@ -158,13 +173,7 @@ public class Hex : MonoBehaviour
             foreach(Character character in characters)
             {
                 string characterName = char.ToUpper(character.characterName[0]) + character.characterName[1..];
-                if (character.army == null)
-                {
-                    characterNames.Add(characterName);
-                } else
-                {
-                    characterNames.Add($"<sprite name=\"{character.alignment}\"/>{characterName}");
-                }
+                characterNames.Add($"{(character.IsArmyCommander() ? $"<sprite name=\"{character.alignment}\">" : "")}{characterName}");
             }
             charactersAtHexText.text = string.Join(", ", characterNames);
         }

@@ -1,4 +1,3 @@
-using UnityEngine;
 using System;
 public class CommanderArmyAction : CommanderAction
 {
@@ -8,8 +7,7 @@ public class CommanderArmyAction : CommanderAction
         var originalCondition = condition;
         effect = (c) => { return originalEffect == null || originalEffect(c); };
         condition = (c) => {
-            Debug.Log($"Has Army? {c.army != null}");
-            return c.army != null && (originalCondition == null || originalCondition(c)); 
+            return c.IsArmyCommander() && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

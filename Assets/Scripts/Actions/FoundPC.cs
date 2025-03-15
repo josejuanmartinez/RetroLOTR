@@ -7,14 +7,20 @@ public class FoundPC : EmmissaryAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            PC pc = new (c.GetOwner(), "Kakota", PCSizeEnum.camp, FortSizeEnum.NONE, false, false, c.hex.terrainType);
+            string nextPcName = c.GetOwner().biome.pcNames[UnityEngine.Random.Range(0, c.GetOwner().biome.pcNames.Count)];
+            c.GetOwner().biome.pcNames.Remove(nextPcName);
+            PC pc = new (c.GetOwner(), nextPcName, PCSizeEnum.camp, FortSizeEnum.NONE, false, false, c.hex);
             c.hex.pc = pc;
 
             c.hex.RedrawPC(true);
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {
-            return c.hex.pc == null && c.hex.terrainType != TerrainEnum.shallowWater && c.hex.terrainType != TerrainEnum.deepWater && (originalCondition == null || originalCondition(c));
+            return c.GetOwner().controlledPcs.Count < FindFirstObjectByType<Game>().maxPcsPerPlayer &&
+            c.hex.pc == null && 
+            c.hex.terrainType != TerrainEnum.shallowWater && 
+            c.hex.terrainType != TerrainEnum.deepWater && 
+            (originalCondition == null || originalCondition(c));
         };
         base.Initialize(c, condition, effect);
     }

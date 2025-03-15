@@ -1,6 +1,6 @@
 using System;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 [Serializable]
 public class Army
@@ -108,5 +108,19 @@ public class Army
     public MovementType GetMovementType()
     {
         return IsCavalryOnly() ? MovementType.ArmyCommanderCavalryOnly : MovementType.ArmyCommander;
+    }
+
+    public void Killed()
+    {
+        GameObject.FindFirstObjectByType<Board>().GetHexes().FindAll(x => x.armies.Contains(this)).ToList().ForEach(x => x.armies.Remove(this));
+        commander = null;
+        ma = 0;
+        ar = 0;
+        li = 0;
+        hi = 0;
+        lc = 0;
+        hc = 0;
+        ca = 0;
+        ws = 0;
     }
 }

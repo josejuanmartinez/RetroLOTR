@@ -65,17 +65,15 @@ public class NationSpawner : MonoBehaviour
             // Place
             Vector2Int v2 = new (bestPosition.x, bestPosition.y);
             Hex hex = board.hexes[v2];
-            hex.SpawnCapitalAtStart(leader, v2);
-
-            // Reveal area
-            leader.RefreshVisibleHexes();
+            hex.SpawnLeaderAtStart(leader);
+            hex.SpawnOtherCharactersAtStart(leader);
+            hex.SpawnCapitalAtStart(leader);
         }
-        
     }
 
     private List<Vector2Int> FindHexesWithTerrain(TerrainEnum terrain)
     {
-        List<Vector2Int> matchingHexes = new List<Vector2Int>();
+        List<Vector2Int> matchingHexes = new ();
 
         if (board.terrainGrid == null)
         {

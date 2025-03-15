@@ -30,6 +30,11 @@ public class Illustrations : MonoBehaviour
     public Sprite waulfa;
     public Sprite saruman;
 
+    [Header("Other Characters")]
+    public Sprite bilbo;
+    public Sprite wormtongue;
+    public Sprite themouth;
+
     [Header("PC")]
     public Sprite camp;
     public Sprite village;
