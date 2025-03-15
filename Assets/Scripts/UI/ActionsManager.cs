@@ -42,6 +42,10 @@ public class ActionsManager : MonoBehaviour
     public BuyIron buyIron;
     [HideInInspector]
     public BuyMithril buyMithril;
+    [HideInInspector]
+    public WoundCharacter woundCharacter;
+    [HideInInspector]
+    public AssassinateCharacter assassinateCharacter;
 
     public void Start()
     {
@@ -64,6 +68,8 @@ public class ActionsManager : MonoBehaviour
         buyMounts = GetComponentInChildren<BuyMounts>();
         buyIron = GetComponentInChildren<BuyIron>();
         buyMithril = GetComponentInChildren<BuyMithril>();
+        woundCharacter = GetComponentInChildren<WoundCharacter>();
+        assassinateCharacter = GetComponentInChildren<AssassinateCharacter>();
     }
 
     // Define a common base type or interface that both classes share

@@ -1,10 +1,11 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(GraphicRaycaster))]
-public class CharacterAction : MonoBehaviour
+public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public string actionName;
     public Character character;
@@ -15,9 +16,13 @@ public class CharacterAction : MonoBehaviour
     public Color actionColor;
 
     [Header("Game Objects")]
-    private Image background;
-    private Button button;
-    private TextMeshProUGUI textUI;
+    public Image background;
+    public Button button;
+    public TextMeshProUGUI textUI;
+
+    [Header("Tooltip")]
+    public GameObject tooltipPanel;
+    public TextMeshProUGUI tooltipText;
 
     [Header("Required skill")]
     public int difficulty = 0;
@@ -51,12 +56,13 @@ public class CharacterAction : MonoBehaviour
     // Function delegate that returns a bool to determine if action is available
     public Func<Character, bool> effect;
 
+    private bool isHovering = false;
+    private RectTransform rectTransform;
+
     void Awake()
     {
-        background = GetComponentInChildren<Image>();
-        textUI = GetComponentInChildren<TextMeshProUGUI>();
-        button = GetComponentInChildren<Button>();
-
+        rectTransform = GetComponent<RectTransform>();
+        tooltipText.text = actionName;
         if (actionSprite)
         {
             background.sprite = actionSprite;
@@ -67,6 +73,28 @@ public class CharacterAction : MonoBehaviour
         }
 
         button.gameObject.SetActive(false);
+        tooltipPanel.SetActive(false);
+
+    }
+
+    void Update()
+    {
+        // Only perform this check if the tooltip is currently showing
+        if (tooltipPanel.activeSelf)
+        {
+            // Use a small delay before checking to ensure events have time to process
+            if (!IsPointerOverUIObject(rectTransform) && !isHovering)
+            {
+                tooltipPanel.SetActive(false);
+            }
+        }
+    }
+
+    // More reliable method to check if pointer is over UI element
+    private bool IsPointerOverUIObject(RectTransform rectTransform)
+    {
+        Vector2 localMousePosition = rectTransform.InverseTransformPoint(Input.mousePosition);
+        return rectTransform.rect.Contains(localMousePosition);
     }
 
     public virtual void Initialize(Character character, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
@@ -105,18 +133,22 @@ public class CharacterAction : MonoBehaviour
     }
     public void Execute()
     {
+        character.hasActionedThisTurn = true;
+        FindFirstObjectByType<ActionsManager>().Refresh(character);
+
+
         if (UnityEngine.Random.Range(0, 100) < difficulty || !effect(character))
         {
             MessageDisplay.ShowMessage($"{actionName} failed", Color.red);
             return;
         }
 
-        character.hasActionedThisTurn = true;
-
         character.commander += UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0;
         character.agent += UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0; ;
         character.emmissary += UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0; ;
         character.mage += UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0; ;
+
+        FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
 
         character.GetOwner().leatherAmount -= leatherCost;
         character.GetOwner().timberAmount -= timberCost;
@@ -126,7 +158,17 @@ public class CharacterAction : MonoBehaviour
         character.GetOwner().goldAmount -= goldCost;
 
         FindFirstObjectByType<StoresManager>().RefreshStores();
-        FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
-        FindFirstObjectByType<ActionsManager>().Refresh(character);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        isHovering = true;
+        tooltipPanel.SetActive(true);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        isHovering = false;
+        tooltipPanel.SetActive(false);
     }
 }

@@ -5,24 +5,29 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class SelectedCharacterIcon : MonoBehaviour
 {
+    [Header("Game Obejcts")]
     public GameObject actionsGameObject;
-    public Image icon;
-    public TextMeshProUGUI commander;
-    public TextMeshProUGUI agent;
-    public TextMeshProUGUI emmissary;
-    public TextMeshProUGUI mage;
-    public TextMeshProUGUI movementLeft;
     public GameObject moved;
     public GameObject actioned;
     public GameObject unactionedIcon;
     public GameObject actionedIcon;
 
-    private Game game;
+    [Header("Leader")]
+    public Image icon;
+
+    [Header("Health")]
+    public Image health;
+
+    [Header("Levels")]
+    public TextMeshProUGUI commander;
+    public TextMeshProUGUI agent;
+    public TextMeshProUGUI emmissary;
+    public TextMeshProUGUI mage;
+    public TextMeshProUGUI movementLeft;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        game = FindFirstObjectByType<Game>();
         icon = GetComponent<Image>();
         Hide();
     }
@@ -41,6 +46,8 @@ public class SelectedCharacterIcon : MonoBehaviour
         mage.text = c.mage.ToString();
         actionedIcon.SetActive(c.hasActionedThisTurn);
         unactionedIcon.SetActive(!actionedIcon.activeSelf);
+        health.gameObject.SetActive(true);
+        health.fillAmount = c.health / 100;
 
         RefreshMovementLeft(c);
     }
@@ -53,6 +60,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         actionsGameObject.SetActive(false);
         actioned.SetActive(false);
         moved.SetActive(false);
+        health.gameObject.SetActive(false);
     }
 
     public void RefreshMovementLeft(Character c)
