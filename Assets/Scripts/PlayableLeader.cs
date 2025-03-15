@@ -1,6 +1,5 @@
 public class PlayableLeader : Leader
 {
-
     new public void NewTurn()
     {
         base.NewTurn();

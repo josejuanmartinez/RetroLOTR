@@ -59,36 +59,48 @@ public class BoardNavigator : MonoBehaviour
         }
     }
 
-    public void LookAt(Vector3 worldPosition)
+    public void LookAt(Vector3 targetPosition)
     {
         // If there's already a LookAt coroutine running, stop it
-        if (lookAtCoroutine != null)
-        {
-            StopCoroutine(lookAtCoroutine);
-        }
+        if (lookAtCoroutine != null) StopCoroutine(lookAtCoroutine);
 
         // Start a new coroutine to smoothly move to the target position
-        lookAtCoroutine = StartCoroutine(SmoothLookAt(worldPosition));
+        lookAtCoroutine = StartCoroutine(SmoothLookAt(targetPosition));
     }
 
     private IEnumerator SmoothLookAt(Vector3 targetPosition)
     {
         Vector3 startPosition = transform.position;
-        
-        targetPosition.z = startPosition.z;
 
+        targetPosition.z = startPosition.z;
         float journeyLength = Vector3.Distance(startPosition, targetPosition);
+
+        // Check if we're already at the target position
+        if (journeyLength < 0.001f)
+        {
+            lookAtCoroutine = null;
+            yield break;
+        }
+
         float startTime = Time.time;
-        float duration = 1.0f; // 2 seconds for the transition
+        float duration = 1.0f; // 1 second for the transition
 
         while (Time.time - startTime < duration)
         {
-            float distanceCovered = (Time.time - startTime) * journeyLength / duration;
-            float fractionOfJourney = distanceCovered / journeyLength;
+            float timeElapsed = Time.time - startTime;
+            float fractionOfJourney = Mathf.Clamp01(timeElapsed / duration);
 
             // Use smoothstep interpolation for a more natural movement
             float t = Mathf.SmoothStep(0, 1, fractionOfJourney);
-            transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+
+            // Ensure we're calculating a valid position
+            Vector3 newPosition = Vector3.Lerp(startPosition, targetPosition, t);
+
+            // Safety check before assigning position
+            if (!float.IsNaN(newPosition.x) && !float.IsNaN(newPosition.y) && !float.IsNaN(newPosition.z))
+            {
+                transform.position = newPosition;
+            }
 
             yield return null;
         }
@@ -96,5 +108,18 @@ public class BoardNavigator : MonoBehaviour
         // Ensure we end exactly at the target position
         transform.position = targetPosition;
         lookAtCoroutine = null;
+    }
+
+    public void LookAtSelected()
+    {
+        Board board = FindAnyObjectByType<Board>();
+        if(board != null)
+        {
+             if(board.selectedCharacter != null && board.selectedCharacter.hex != null)
+            {
+                LookAt(board.selectedCharacter.hex.transform.position);
+            }
+        }
+        
     }
 }

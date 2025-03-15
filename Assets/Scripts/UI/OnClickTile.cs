@@ -21,11 +21,6 @@ public class OnClickTile : MonoBehaviour
     {
         if (board != null)
         {
-            if (board.selectedHex != Vector2.one * -1)
-            {
-                board.UnselectHex();
-                return;
-            }
             try
             {
                 // Find this hex's Vector2 position in the dictionary

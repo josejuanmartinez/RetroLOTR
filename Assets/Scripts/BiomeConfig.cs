@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BiomeConfig: MonoBehaviour
@@ -12,4 +13,6 @@ public class BiomeConfig: MonoBehaviour
     public bool startingCityIsHidden;
     public bool startsWithPort;
     public int startingWarships;
+
+    public List<string> pcNames;
 }

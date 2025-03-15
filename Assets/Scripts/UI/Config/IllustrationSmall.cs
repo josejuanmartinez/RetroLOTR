@@ -29,6 +29,11 @@ public class IllustrationsSmall : MonoBehaviour
     public Sprite waulfa;
     public Sprite saruman;
 
+    [Header("Other Characters")]
+    public Sprite bilbo;
+    public Sprite wormtongue;
+    public Sprite themouth;
+
     public Sprite GetIllustrationByName(string name)
     {
         name = name.ToLower();

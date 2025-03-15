@@ -6,9 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(BiomeConfig))]
 public class Leader : Character
 {
-    [HideInInspector] public BiomeConfig biome;
+    public BiomeConfig biome;
 
-    public List<PlayableLeader> controlledLeaders;
     public List<Character> controlledCharacters;
     public List<PC> controlledPcs;
     public List<Hex> visibleHexes;
@@ -21,8 +20,11 @@ public class Leader : Character
     public int mithrilAmount = 0;
     public int goldAmount = 0;
 
-    public void Awake()
+    public bool killed = false;
+
+    void Awake()
     {
+        characterName = gameObject.name;
         biome = GetComponent<BiomeConfig>();
         Initialize(null, biome.alignment);
     }
@@ -34,6 +36,7 @@ public class Leader : Character
 
     new public void NewTurn()
     {
+        if (killed) return;
         foreach (PC pc in controlledPcs)
         {
             leatherAmount += pc.leather;
@@ -44,17 +47,18 @@ public class Leader : Character
             goldAmount += ((int)pc.citySize) + 1;
         }
 
+        controlledCharacters.ForEach(x => x.moved = 0);
+        controlledCharacters.ForEach(x => x.hasActionedThisTurn = false);
+
         base.NewTurn();
     }
 
-    public void RefreshVisibleHexes()
-    {
-        visibleHexes = FindFirstObjectByType<Board>().GetHexes().FindAll(x => x.LeaderSeesHex(this));
-    }
     // The async version of RevealVisibleHexes
     public IEnumerator RevealVisibleHexesAsync()
     {
         if (FindFirstObjectByType<Game>().player != this) yield break;
+
+        FindFirstObjectByType<Board>().hexes.Values.ToList().FindAll(x => !visibleHexes.Contains(x)).ForEach(x => x.Hide());
 
         var hexesToReveal = visibleHexes.ToList(); // Create a copy to avoid potential modification issues
 
@@ -82,5 +86,19 @@ public class Leader : Character
         {
             return this;
         }
+    }
+
+    public void AutoPlay()
+    {
+        if (killed) return;
+        Debug.Log("Skipping: " + characterName);
+        FindFirstObjectByType<Game>().NextPlayer();
+    }
+
+    public bool LeaderSeesHex(Hex hex)
+    {
+        if (hex.pc != null && hex.pc.owner == GetOwner()) return true;
+        if (hex.characters.Find(x => x.GetOwner() == GetOwner())) return true;
+        return false;
     }
 }

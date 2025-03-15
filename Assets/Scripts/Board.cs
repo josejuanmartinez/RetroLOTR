@@ -158,6 +158,11 @@ public class Board : MonoBehaviour
         hexes.Values.ToList().ForEach(x => { x.GetComponent<OnHoverTile>().enabled = true; x.GetComponent<OnClickTile>().enabled = true; });
     }
 
+    public void SelectHex(Hex hex)
+    {
+        SelectHex(hex.v2);
+    }
+
     public void SelectHex(Vector2 selection)
     {
         try
@@ -165,28 +170,44 @@ public class Board : MonoBehaviour
             Leader player = FindFirstObjectByType<Game>().player;
             if (!hexes[selection].IsHidden() && (hexes[selection].HasArmyOfLeader(player) || hexes[selection].HasCharacterOfLeader(player)))
             {
-                selectedHex = selection;
-                hexes[selection].Select();
+                // If different hex, I unselect character
+                if (selection != selectedHex)
+                {
+                    UnselectHex();
+                    selectedHex = selection;
+                    hexes[selection].Select();
+                }
 
-                if (hexes[selection].characters.Count < 1)
+                // If same hex, I loop through characters
+                List<Character> myCharacters = hexes[selection].characters.FindAll(x => x.GetOwner() == player.GetOwner());
+
+                if (myCharacters.Count < 1)
                 {
                     selectedCharacter = null;
                     FindFirstObjectByType<SelectedCharacterIcon>().Hide();
                     return;
                 }
 
-                if (hexes[selection].characters.Count == 1)
+                if (myCharacters.Count == 1)
                 {
-                    selectedCharacter = hexes[selection].characters[0];
+                    UnselectHex();
+                    selectedHex = selection;
+                    hexes[selection].Select();
+
+                    selectedCharacter = myCharacters[0];
                     FindFirstObjectByType<SelectedCharacterIcon>().Refresh(selectedCharacter);
                 }
                 else
                 {
-                    // Using LINQ to find next character with single line lambda expression
-                    selectedCharacter = hexes[selection].characters
-                        .SkipWhile(c => c == selectedCharacter)
-                        .Skip(1)
-                        .FirstOrDefault() ?? hexes[selection].characters.FirstOrDefault();
+                    var currentIndex = myCharacters.IndexOf(selectedCharacter);
+                    if(currentIndex == -1)
+                    {
+                        selectedCharacter = myCharacters[0];
+                    } else
+                    {
+                        var nextIndex = (currentIndex + 1) % myCharacters.Count;
+                        selectedCharacter = myCharacters[nextIndex];
+                    }
 
                     FindFirstObjectByType<SelectedCharacterIcon>().Refresh(selectedCharacter);
                 }
@@ -198,6 +219,10 @@ public class Board : MonoBehaviour
         {
             Debug.LogError(e);
             selectedHex = Vector2.one * -1;
+            selectedCharacter = null;
+            FindFirstObjectByType<SelectedCharacterIcon>().Hide();
+            FindFirstObjectByType<ActionsManager>().Hide();
+            return;
         }
     }
 
@@ -210,6 +235,11 @@ public class Board : MonoBehaviour
         FindFirstObjectByType<ActionsManager>().Hide();
         FindFirstObjectByType<SelectedCharacterIcon>().Hide();
         selectedCharacter = null;
+    }
+
+    public void UnselectCharacter()
+    {
+
     }
 
     public List<Hex> GetHexes()
@@ -260,13 +290,28 @@ public class Board : MonoBehaviour
                     currentHex = previousHex;
 
                     if (previousHex.characters.Contains(character)) previousHex.characters.Remove(character);
-                    if (character.army != null && previousHex.armies.Contains(character.army)) previousHex.armies.Remove(character.army);
+                    if (character.IsArmyCommander())
+                    {
+                        Debug.Log($"{character} is an army commander when moving from {path[i]}. Army is {character.GetArmy()}");
+                        if (previousHex.armies.Contains(character.GetArmy())) { 
+                            Debug.Log($"Current hex {path[i]} contained the army. Removing...");
+                            previousHex.armies.Remove(character.GetArmy());
+                        }
+                    }
                     previousHex.RedrawCharacters();
                     previousHex.RedrawArmies();
 
                     Hex newHex = hexes[path[i + 1]];
                     if (!newHex.characters.Contains(character)) newHex.characters.Add(character);
-                    if (character.army != null && !newHex.armies.Contains(character.army)) newHex.armies.Add(character.army);
+                    if (character.IsArmyCommander())
+                    {
+                        Debug.Log($"{character} is an army commander when moving to {path[i + 1]}. Army is {character.GetArmy()}");
+                        if (!newHex.armies.Contains(character.GetArmy()))
+                        {
+                            Debug.Log($"Nex hex {path[i + 1]} did not contained the army. Adding...");
+                            newHex.armies.Add(character.GetArmy());
+                        }
+                    }
                     character.hex = newHex;
                     currentHex = newHex; // Update current hex
 
@@ -278,7 +323,7 @@ public class Board : MonoBehaviour
                     UnselectHex();
                     SelectHex(path[i + 1]);
 
-                    character.GetOwner().visibleHexes.Remove(previousHex);
+                    if(!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
                     character.GetOwner().visibleHexes.Add(newHex);
                     character.moved += newHex.GetTerrainCost(character);
 
@@ -344,9 +389,9 @@ public class Board : MonoBehaviour
                             pathHex.RedrawCharacters();
                         }
 
-                        if (character.army != null && pathHex.armies.Contains(character.army))
+                        if (character.IsArmyCommander() && pathHex.armies.Contains(character.GetArmy()))
                         {
-                            pathHex.armies.Remove(character.army);
+                            pathHex.armies.Remove(character.GetArmy());
                             pathHex.RedrawArmies();
                         }
                     }
@@ -357,7 +402,7 @@ public class Board : MonoBehaviour
             if (!currentHex.characters.Contains(character)) currentHex.characters.Add(character);
 
             // Make sure army is in current hex
-            if (character.army != null && !currentHex.armies.Contains(character.army)) currentHex.armies.Add(character.army);
+            if (character.IsArmyCommander() && !currentHex.armies.Contains(character.GetArmy())) currentHex.armies.Add(character.GetArmy());
 
             // Set character's hex reference properly
             character.hex = currentHex;

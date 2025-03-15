@@ -7,18 +7,14 @@ public class TrainWarships : CommanderPCAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            if (c.army == null)
+            if (!c.IsArmyCommander())
             {
-                c.army = new(c, TroopsTypeEnum.ws, 1)
-                {
-                    commander = c
-                };
+                c.CreateArmy(TroopsTypeEnum.ws, 1);
             }
             else
             {
-                c.army.ws += 1;
+                c.GetArmy().ca += 1;
             }
-            c.hex.armies.Add(c.army);
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c);

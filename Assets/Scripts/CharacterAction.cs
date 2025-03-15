@@ -15,11 +15,12 @@ public class CharacterAction : MonoBehaviour
     public Color actionColor;
 
     [Header("Game Objects")]
-    public Image background;
-    public Button button;
-    public TextMeshProUGUI textUI;
+    private Image background;
+    private Button button;
+    private TextMeshProUGUI textUI;
 
     [Header("Required skill")]
+    public int difficulty = 0;
     public int commanderSkillRequired;
     public int agentSkillRequired;
     public int emissarySkillRequired;
@@ -36,7 +37,7 @@ public class CharacterAction : MonoBehaviour
     [Header("XP")]
     public int commanderXP;
     public int agentXP;
-    public int emissaryXP;
+    public int emmissaryXP;
     public int mageXP;
 
     [Header("Reward")]
@@ -52,6 +53,10 @@ public class CharacterAction : MonoBehaviour
 
     void Awake()
     {
+        background = GetComponentInChildren<Image>();
+        textUI = GetComponentInChildren<TextMeshProUGUI>();
+        button = GetComponentInChildren<Button>();
+
         if (actionSprite)
         {
             background.sprite = actionSprite;
@@ -60,6 +65,8 @@ public class CharacterAction : MonoBehaviour
             background.color = actionColor;
             textUI.text = actionInitials.ToUpper();
         }
+
+        button.gameObject.SetActive(false);
     }
 
     public virtual void Initialize(Character character, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
@@ -98,31 +105,28 @@ public class CharacterAction : MonoBehaviour
     }
     public void Execute()
     {
-        bool result = effect(character);
-        if(result)
+        if (UnityEngine.Random.Range(0, 100) < difficulty || !effect(character))
         {
-            character.hasActionedThisTurn = true;
-
-            character.commander += commanderXP;
-            character.agent += agentXP;
-            character.emmissary += emissaryXP;
-            character.mage += mageXP;
-
-            character.GetOwner().leatherAmount -= leatherCost;
-            character.GetOwner().timberAmount -= timberCost;
-            character.GetOwner().mountsAmount -= mountsCost;
-            character.GetOwner().ironAmount -= ironCost;
-            character.GetOwner().mithrilAmount -= mithrilCost;
-            character.GetOwner().goldAmount -= goldCost;
-
-            FindFirstObjectByType<StoresManager>().RefreshStores();
-            FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
-            FindFirstObjectByType<ActionsManager>().Refresh(character);
+            MessageDisplay.ShowMessage($"{actionName} failed", Color.red);
+            return;
         }
-        else
-        {
-            Debug.LogError("Unable to execute order");
-        }
+
+        character.hasActionedThisTurn = true;
+
+        character.commander += UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0;
+        character.agent += UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0; ;
+        character.emmissary += UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0; ;
+        character.mage += UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0; ;
+
+        character.GetOwner().leatherAmount -= leatherCost;
+        character.GetOwner().timberAmount -= timberCost;
+        character.GetOwner().mountsAmount -= mountsCost;
+        character.GetOwner().ironAmount -= ironCost;
+        character.GetOwner().mithrilAmount -= mithrilCost;
+        character.GetOwner().goldAmount -= goldCost;
+
+        FindFirstObjectByType<StoresManager>().RefreshStores();
+        FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
+        FindFirstObjectByType<ActionsManager>().Refresh(character);
     }
-
 }
