@@ -327,8 +327,8 @@ public class Board : MonoBehaviour
                     character.GetOwner().visibleHexes.Add(newHex);
                     character.moved += newHex.GetTerrainCost(character);
 
-                    bool wasWater = previousHex.terrainType == TerrainEnum.shallowWater || previousHex.terrainType == TerrainEnum.deepWater;
-                    bool isWater = newHex.terrainType == TerrainEnum.shallowWater || newHex.terrainType == TerrainEnum.deepWater;
+                    bool wasWater = previousHex.IsWaterTerrain();
+                    bool isWater = newHex.IsWaterTerrain();
 
                     if (!wasWater && isWater)
                     {

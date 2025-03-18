@@ -1,11 +1,14 @@
-using UnityEngine;
-
 public enum FortSizeEnum
 {
+    NONE,
     tower,
     fort,
     keep,
     fortress,
     citadel,
-    NONE
+}
+
+public static class FortSizeData
+{
+    public static int defensePerFortSizeLevel = 3;
 }

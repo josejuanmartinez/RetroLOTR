@@ -1,109 +1,74 @@
 using System.Reflection;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ActionsManager : MonoBehaviour
 {
-    [HideInInspector]
-    public TrainMetAtArms trainMenAtArms;
-    [HideInInspector]
-    public TrainArchers trainArchers;
-    [HideInInspector]
-    public TrainCatapults trainCatapults;
-    [HideInInspector]
-    public TrainLightCavalry trainLightCavalry;
-    [HideInInspector]
-    public TrainHeavyCavalry trainHeavyCavalry;
-    [HideInInspector]
-    public TrainLightInfantry TrainLightInfantry;
-    [HideInInspector]
-    public TrainHeavyInfantry trainHeavyInfantry;
-    [HideInInspector]
-    public TrainWarships trainWarships;
-    [HideInInspector]
-    public FoundPC foundPC;
-    [HideInInspector]
-    public SellLeather sellLeather;
-    [HideInInspector]
-    public SellTimber sellTimber;
-    [HideInInspector]
-    public SellMounts sellMounts;
-    [HideInInspector]
-    public SellIron sellIron;
-    [HideInInspector]
-    public SellMithril sellMithril;
-    [HideInInspector]
-    public BuyLeather buyLeather;
-    [HideInInspector]
-    public BuyTimber buyTimber;
-    [HideInInspector]
-    public BuyMounts buyMounts;
-    [HideInInspector]
-    public BuyIron buyIron;
-    [HideInInspector]
-    public BuyMithril buyMithril;
-    [HideInInspector]
-    public WoundCharacter woundCharacter;
-    [HideInInspector]
-    public AssassinateCharacter assassinateCharacter;
+    // Dictionary to store all the action components
+    private Dictionary<Type, MonoBehaviour> actionComponents = new Dictionary<Type, MonoBehaviour>();
 
     public void Start()
     {
-        trainMenAtArms = GetComponentInChildren<TrainMetAtArms>();
-        trainArchers = GetComponentInChildren<TrainArchers>();
-        trainCatapults = GetComponentInChildren<TrainCatapults>();
-        trainLightCavalry = GetComponentInChildren<TrainLightCavalry>();
-        trainHeavyCavalry = GetComponentInChildren<TrainHeavyCavalry>();
-        TrainLightInfantry = GetComponentInChildren<TrainLightInfantry>();
-        trainHeavyInfantry = GetComponentInChildren<TrainHeavyInfantry>();
-        trainWarships = GetComponentInChildren<TrainWarships>();
-        foundPC = GetComponentInChildren<FoundPC>();
-        sellLeather = GetComponentInChildren<SellLeather>();
-        sellTimber = GetComponentInChildren<SellTimber>();
-        sellMounts = GetComponentInChildren<SellMounts>();
-        sellIron = GetComponentInChildren<SellIron>();
-        sellMithril = GetComponentInChildren<SellMithril>();
-        buyLeather = GetComponentInChildren<BuyLeather>();
-        buyTimber = GetComponentInChildren<BuyTimber>();
-        buyMounts = GetComponentInChildren<BuyMounts>();
-        buyIron = GetComponentInChildren<BuyIron>();
-        buyMithril = GetComponentInChildren<BuyMithril>();
-        woundCharacter = GetComponentInChildren<WoundCharacter>();
-        assassinateCharacter = GetComponentInChildren<AssassinateCharacter>();
+        // Get all components that might be actions (all MonoBehaviours in children)
+        MonoBehaviour[] allChildComponents = GetComponentsInChildren<MonoBehaviour>();
+
+        // Store each component by its type for easy access
+        foreach (MonoBehaviour component in allChildComponents)
+        {
+            // Skip this ActionsManager itself
+            if (component == this) continue;
+
+            Type componentType = component.GetType();
+            actionComponents[componentType] = component;
+        }
     }
 
-    // Define a common base type or interface that both classes share
-    // This could be MonoBehaviour if both inherit from it and both have the methods
+    // Generic method to get a specific action component
+    public T GetAction<T>() where T : MonoBehaviour
+    {
+        if (actionComponents.TryGetValue(typeof(T), out MonoBehaviour component))
+        {
+            return component as T;
+        }
+
+        Debug.LogWarning($"Action of type {typeof(T).Name} not found!");
+        return null;
+    }
 
     public void Refresh(Character character)
     {
-        foreach (var field in GetType().GetFields(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var component in actionComponents.Values)
         {
-            object actionObject = field.GetValue(this);
-            if (actionObject == null) continue;
+            if (component == null) continue;
 
-            // Get the type of the field value
-            Type type = actionObject.GetType();
+            // Get the type of the component
+            Type type = component.GetType();
 
             // Find the Initialize method on that type
             MethodInfo initMethod = type.GetMethod("Initialize");
-            initMethod.Invoke(actionObject, new object[] { character, null, null });
+            if (initMethod != null)
+            {
+                initMethod.Invoke(component, new object[] { character, null, null });
+            }
         }
     }
 
     public void Hide()
     {
-        foreach (var field in GetType().GetFields(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var component in actionComponents.Values)
         {
-            object actionObject = field.GetValue(this);
-            if (actionObject == null) continue;
+            if (component == null) continue;
 
-            // Get the type of the field value
-            Type type = actionObject.GetType();
+            // Get the type of the component
+            Type type = component.GetType();
 
             // Find the Reset method on that type
             MethodInfo resetMethod = type.GetMethod("Reset");
-            resetMethod.Invoke(actionObject, new object[] { });
+            if (resetMethod != null)
+            {
+                resetMethod.Invoke(component, new object[] { });
+            }
         }
     }
 }

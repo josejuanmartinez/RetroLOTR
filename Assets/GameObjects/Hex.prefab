@@ -1020,6 +1020,7 @@ MonoBehaviour:
     timber: 0
     iron: 0
     mithril: 0
+    loyalty: 0
     isHidden: 0
     citySize: 0
     fortSize: 0
@@ -2549,7 +2550,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 1.9
+  m_fontSize: 1.85
   m_fontSizeBase: 1
   m_fontWeight: 400
   m_enableAutoSizing: 1
