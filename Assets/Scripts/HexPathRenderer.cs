@@ -212,11 +212,7 @@ public class HexPathRenderer : MonoBehaviour
     // Helper method to check if a hex is water terrain
     private bool IsWaterTerrain(Vector2 position)
     {
-        if (board.hexes.TryGetValue(position, out var hex))
-        {
-            return hex.terrainType == TerrainEnum.shallowWater ||
-                   hex.terrainType == TerrainEnum.deepWater;
-        }
+        if (board.hexes.TryGetValue(position, out var hex)) return hex.IsWaterTerrain();
         return false;
     }
 

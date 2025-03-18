@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class Hex : MonoBehaviour
@@ -63,6 +61,7 @@ public class Hex : MonoBehaviour
     public PC pc;
     public List<Army> armies;
     public List<Character> characters;
+    public EncountersEnum encounterEnum;
 
     private Illustrations illustrations;
     private IllustrationsSmall illustrationsSmall;
@@ -77,6 +76,7 @@ public class Hex : MonoBehaviour
         illustrationsSmall = FindFirstObjectByType<IllustrationsSmall>();
         armies = new();
         characters = new();
+        encounterEnum = EncountersEnum.NONE;
     }
 
     public void SpawnCapitalAtStart(Leader leader)
@@ -85,9 +85,9 @@ public class Hex : MonoBehaviour
         bool isPlayable = leader is PlayableLeader;
         pc = new PC(leader);
 
-        RedrawPC(!biome.startingCityIsHidden);
+        RedrawPC();
 
-        encounter.SetActive(!isPlayable);
+        encounterEnum = EncountersEnum.NPC;
 
         RefreshHoverText();
     }
@@ -111,7 +111,7 @@ public class Hex : MonoBehaviour
         List<Character> otherCharaters = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => x.GetOwner() == leader && x != leader);
         foreach(Character otherCharacter in otherCharaters)
         {
-            if (otherCharacter as Leader != null) continue;
+            if (otherCharacter is Leader) continue;
             characters.Add(otherCharacter);
             otherCharacter.hex = this;
             leader.controlledCharacters.Add(otherCharacter);
@@ -140,9 +140,13 @@ public class Hex : MonoBehaviour
         RefreshHoverText();
     }
 
-    public void RedrawPC(bool isVisibleToCurrentPlayer)
+    public void RedrawPC()
     {
-        if (isVisibleToCurrentPlayer)
+        if (pc == null) return;
+
+        bool isHiddenToPlayer = pc.isHidden && !pc.hiddenButRevealed;
+        
+        if (!isHiddenToPlayer)
         {
             camp.SetActive(pc.citySize == PCSizeEnum.camp);
             village.SetActive(pc.citySize == PCSizeEnum.village);
@@ -158,7 +162,13 @@ public class Hex : MonoBehaviour
         fortress.SetActive(pc.fortSize == FortSizeEnum.fortress);
         citadel.SetActive(pc.fortSize == FortSizeEnum.citadel);
 
+        RedrawEncounters();
         RefreshHoverText();
+    }
+
+    public void RedrawEncounters()
+    {
+        encounter.SetActive(encounterEnum != EncountersEnum.NONE);
     }
 
     public void RefreshHoverText()
@@ -488,14 +498,10 @@ public class Hex : MonoBehaviour
 
     private static bool IsPointerOverVisibleUIElement()
     {
-        if (EventSystem.current == null)
-            return false;
+        if (EventSystem.current == null) return false;
 
         // Set up the new Pointer Event
-        PointerEventData eventData = new(EventSystem.current)
-        {
-            position = Input.mousePosition
-        };
+        PointerEventData eventData = new(EventSystem.current) { position = Input.mousePosition };
 
         List<RaycastResult> results = new();
 
@@ -506,20 +512,22 @@ public class Hex : MonoBehaviour
         foreach (var result in results)
         {
             // Skip the Canvas itself
-            if (result.gameObject.GetComponent<Canvas>() != null)
-                continue;
+            if (result.gameObject.GetComponent<Canvas>() != null) continue;
 
             // Check if it's an Image with non-zero alpha
             Image image = result.gameObject.GetComponent<Image>();
-            if (image != null && image.color.a > 0.01f && image.raycastTarget)
-                return true;
+            if (image != null && image.color.a > 0.01f && image.raycastTarget) return true;
 
             // Check if it's Text with non-zero alpha
-            TMPro.TextMeshProUGUI tmpText = result.gameObject.GetComponent<TMPro.TextMeshProUGUI>();
-            if (tmpText != null && tmpText.color.a > 0.01f)
-                return true;
+            TextMeshProUGUI tmpText = result.gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+            if (tmpText != null && tmpText.color.a > 0.01f) return true;
         }
 
         return false;
+    }
+
+    public bool IsWaterTerrain()
+    {
+        return terrainType == TerrainEnum.shallowWater || terrainType == TerrainEnum.deepWater;
     }
 }

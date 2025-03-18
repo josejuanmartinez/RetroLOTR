@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Character : MonoBehaviour
@@ -18,13 +20,19 @@ public class Character : MonoBehaviour
     public bool hasActionedThisTurn;
     public bool isEmbarked;
 
+    public List<Leader> doubledBy;
+
     [SerializeField]
     private Army army = null;
     // public List<Spell>;
     // public List<Artifact>;
+
+    public bool killed = false;
+
     void Awake()
     {
         characterName = gameObject.name;
+        doubledBy = new();
     }
 
     public void Initialize(Leader owner, AlignmentEnum alignment, string characterName = null )
@@ -83,119 +91,31 @@ public class Character : MonoBehaviour
 
     public Army GetArmy()
     {
+        if (!IsArmyCommander()) return null;
         return army;
     }
 
-    public void Killed(Leader killedBy)
+    virtual public void Killed(Leader killedBy)
     {
-        
-        if ((this as PlayableLeader) != null)
-        {
-            PlayableLeader playable = this as PlayableLeader;
-            playable.health = 0;
-            playable.killed = true;
+        health = 0;
+        killed = true;
+        if (IsArmyCommander()) army.Killed();
+        GetOwner().controlledCharacters.Remove(this);
+        hex.characters.Remove(this);
+    }
 
-            if (playable == FindFirstObjectByType<Game>().player == playable)
-            {
-                FindFirstObjectByType<Game>().EndGame();
-                return;
-            }
-            foreach (Character character in GetOwner().controlledCharacters)
-            {
-                if (character == playable)
-                {
-                    if(character.IsArmyCommander()) character.army.Killed();
-                    hex.characters.Remove(character);
-                    continue;
-                }
-                character.owner = killedBy;
-                if (character.IsArmyCommander()) character.army.commander = playable;
-                character.alignment = killedBy.alignment;
-                killedBy.controlledCharacters.Add(character);
-            }
+    public void Wounded(Leader woundedBy, int damage)
+    {
+        health -= damage;
+        if (health < 1) Killed(woundedBy);
+    }
 
-            foreach (PC pc in GetOwner().controlledPcs)
-            {
-                pc.owner = killedBy;
-                killedBy.controlledPcs.Add(pc);
-                killedBy.visibleHexes.Add(pc.hex);
-            }
-
-            playable.controlledCharacters = new System.Collections.Generic.List<Character>();
-            playable.controlledPcs = new System.Collections.Generic.List<PC>();
-            playable.visibleHexes = new System.Collections.Generic.List<Hex>();
-
-            killedBy.leatherAmount += playable.leatherAmount;
-            killedBy.mountsAmount += playable.mountsAmount;
-            killedBy.timberAmount += playable.timberAmount;
-            killedBy.ironAmount += playable.ironAmount;
-            killedBy.mithrilAmount += playable.mithrilAmount;
-            killedBy.goldAmount += playable.goldAmount;
-
-            playable.leatherAmount = 0;
-            playable.mountsAmount = 0;
-            playable.timberAmount = 0;
-            playable.ironAmount = 0;
-            playable.mithrilAmount = 0;
-            playable.goldAmount = 0;
-
-            FindFirstObjectByType<Game>().competitors.Remove(playable);
-
-            enabled = false;
-        }
-        else if ((this as NonPlayableLeader) != null)
-        {
-            NonPlayableLeader nonPlayable = (this as NonPlayableLeader);
-            nonPlayable.health = 1;
-            Character nonPlayableLeaderAsCharacter = gameObject.AddComponent<Character>();
-            foreach (Character character in GetOwner().controlledCharacters)
-            {
-                if (character == nonPlayable)
-                {                    
-                    nonPlayableLeaderAsCharacter.Initialize(killedBy, killedBy.alignment);
-                    continue;
-                }
-                character.owner = killedBy;
-                if(character.IsArmyCommander()) character.army.commander = nonPlayableLeaderAsCharacter;
-                character.alignment = killedBy.alignment;
-                killedBy.controlledCharacters.Add(character);
-            }
-
-            foreach (PC pc in GetOwner().controlledPcs)
-            {
-                pc.owner = killedBy;
-                killedBy.controlledPcs.Add(pc);
-                killedBy.visibleHexes.Add(pc.hex);
-            }
-            nonPlayable.controlledCharacters = new System.Collections.Generic.List<Character>();
-            nonPlayable.controlledPcs = new System.Collections.Generic.List<PC>();
-            nonPlayable.visibleHexes = new System.Collections.Generic.List<Hex>();
-
-            killedBy.leatherAmount += nonPlayable.leatherAmount;
-            killedBy.mountsAmount += nonPlayable.mountsAmount;
-            killedBy.timberAmount += nonPlayable.timberAmount;
-            killedBy.ironAmount += nonPlayable.ironAmount;
-            killedBy.mithrilAmount += nonPlayable.mithrilAmount;
-            killedBy.goldAmount += nonPlayable.goldAmount;
-
-            nonPlayable.leatherAmount = 0;
-            nonPlayable.mountsAmount = 0;
-            nonPlayable.timberAmount = 0;
-            nonPlayable.ironAmount = 0;
-            nonPlayable.mithrilAmount = 0;
-            nonPlayable.goldAmount = 0;
-
-            nonPlayable.killed = true;
-
-            FindFirstObjectByType<Game>().npcs.Remove(nonPlayable);
-
-            enabled = false;
-        }
-        else
-        {
-            if (IsArmyCommander()) army.Killed();
-            GetOwner().controlledCharacters.Remove(this);
-            hex.characters.Remove(this);
-        }
+    public void Doubled(Leader doubledBy)
+    {
+        this.doubledBy.Add(doubledBy);
+    }
+    public void Undouble(Leader doubledBy)
+    {
+        this.doubledBy.Remove(doubledBy);
     }
 }

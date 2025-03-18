@@ -8,9 +8,11 @@ using UnityEngine.UI;
 public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public string actionName;
+    [HideInInspector]
     public Character character;
 
     [Header("Rendering")]
+    [HideInInspector]
     public string actionInitials;
     public Sprite actionSprite;
     public Color actionColor;
@@ -61,6 +63,7 @@ public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     void Awake()
     {
+        actionInitials = gameObject.name.ToUpper();
         rectTransform = GetComponent<RectTransform>();
         tooltipText.text = actionName;
         if (actionSprite)

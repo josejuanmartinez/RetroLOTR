@@ -12,7 +12,7 @@ public class FoundPC : EmmissaryAction
             PC pc = new (c.GetOwner(), nextPcName, PCSizeEnum.camp, FortSizeEnum.NONE, false, false, c.hex);
             c.hex.pc = pc;
 
-            c.hex.RedrawPC(true);
+            c.hex.RedrawPC();
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {

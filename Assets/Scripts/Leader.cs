@@ -20,8 +20,6 @@ public class Leader : Character
     public int mithrilAmount = 0;
     public int goldAmount = 0;
 
-    public bool killed = false;
-
     void Awake()
     {
         characterName = gameObject.name;
@@ -58,9 +56,16 @@ public class Leader : Character
     {
         if (FindFirstObjectByType<Game>().player != this) yield break;
 
-        FindFirstObjectByType<Board>().hexes.Values.ToList().FindAll(x => !visibleHexes.Contains(x)).ForEach(x => x.Hide());
+        List<Hex> allHexes = FindFirstObjectByType<Board>().hexes.Values.ToList();
+        
+        allHexes.FindAll(x => !visibleHexes.Contains(x)).ForEach(x => x.Hide());
 
         var hexesToReveal = visibleHexes.ToList(); // Create a copy to avoid potential modification issues
+
+        List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
+        // We add non our visible, but spied / doubled
+        hexesToReveal.AddRange(spiedHexes);
+        hexesToReveal = hexesToReveal.Distinct().ToList();
 
         // Process revealing in smaller batches to prevent frame drops
         int batchSize = 15; // Adjust based on your needs
@@ -78,14 +83,7 @@ public class Leader : Character
     }
     override public Leader GetOwner()
     {
-        if (owner)
-        {
-            return owner;
-        }
-        else
-        {
-            return this;
-        }
+        return owner != null ? owner : this;
     }
 
     public void AutoPlay()

@@ -4,10 +4,11 @@ public class StealMithril : AgentPCAction
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
-        PlayableLeader playable = (c.GetOwner() as PlayableLeader);
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
+            PlayableLeader playable = (c.GetOwner() as PlayableLeader);
+            if (playable == null) return false;
             playable.mithrilAmount += 5;
             c.hex.pc.owner.mithrilAmount -= 5;
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
