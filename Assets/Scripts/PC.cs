@@ -27,8 +27,10 @@ public class PC
     [SerializeField] public FortSizeEnum fortSize;
     [SerializeField] public bool hasPort;
     [SerializeField] public bool hiddenButRevealed;
+    [SerializeField] public bool isCapital;
 
-    public PC(Leader owner, string pcName, PCSizeEnum citySize, FortSizeEnum fortSize, bool hasPort, bool isHidden, Hex hex, int loyalty = 100)
+
+    public PC(Leader owner, string pcName, PCSizeEnum citySize, FortSizeEnum fortSize, bool hasPort, bool isHidden, Hex hex, bool isCapital = false, int loyalty = 75)
     {
         this.owner = owner;
         this.hex = hex;
@@ -38,6 +40,7 @@ public class PC
         this.hasPort = hasPort;
         this.isHidden = isHidden;
         this.loyalty = loyalty;
+        this.isCapital = isCapital;
         hiddenButRevealed = false;
 
         TerrainEnum terrain = hex.terrainType;
@@ -93,7 +96,10 @@ public class PC
         owner.visibleHexes.Add(hex);
     }
 
-    public PC(Leader leader): this(leader, leader.biome.startingCityName, leader.biome.startingCitySize, leader.biome.startingCityFortSize, leader.biome.startsWithPort, leader.biome.startingCityIsHidden, leader.hex)
+    /**
+     * This constructor is used to create a new PC in the starting city of a leader
+     */
+    public PC(Leader leader): this(leader, leader.biome.startingCityName, leader.biome.startingCitySize, leader.biome.startingCityFortSize, leader.biome.startsWithPort, leader.biome.startingCityIsHidden, leader.hex, true)
     {
         
     }

@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,6 +20,7 @@ public class Character : MonoBehaviour
     public bool isEmbarked;
 
     public List<Leader> doubledBy;
+    public List<Artifact> artifacts;
 
     [SerializeField]
     private Army army = null;
@@ -48,13 +48,14 @@ public class Character : MonoBehaviour
 
     public AlignmentEnum GetAlignment()
     {
-        return alignment;
+        return owner != null? owner.GetAlignment() : alignment;
     }
 
     public void NewTurn()
     {
         
     }
+
     public virtual Leader GetOwner()
     {
         if (!owner && this is Leader) return this as Leader;

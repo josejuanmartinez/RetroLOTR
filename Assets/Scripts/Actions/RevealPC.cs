@@ -1,6 +1,6 @@
 using System;
 
-public class InfluenceDownPC : EmmissaryEnemyPCAction
+public class RevealPC: Spell
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
@@ -8,12 +8,12 @@ public class InfluenceDownPC : EmmissaryEnemyPCAction
         var originalCondition = condition;
         effect = (c) => {
             if (c.hex.pc == null) return false;
-            c.hex.pc.loyalty -= UnityEngine.Random.Range(0, 10) * c.emmissary;
-            c.hex.pc.loyalty = Math.Max(0, c.hex.pc.loyalty);
-            c.hex.pc.CheckLowLoyalty(c.GetOwner());
+            c.hex.pc.isHidden = false;
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return c.hex.pc != null && c.hex.pc.loyalty > 0 && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => {
+            return c.hex.pc != null && c.hex.pc.isHidden && c.hex.pc.owner.GetAlignment() != c.GetAlignment() && c.artifacts.Find(x => x.providesSpell is RevealPC) != null && (originalCondition == null || originalCondition(c)); 
+        };
         base.Initialize(c, condition, effect);
     }
 }

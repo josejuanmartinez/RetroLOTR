@@ -147,9 +147,13 @@ public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
 
         character.commander += UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0;
+        character.commander = Math.Max(5, character.commander);
         character.agent += UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0; ;
+        character.agent = Math.Max(5, character.agent);
         character.emmissary += UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0; ;
+        character.emmissary = Math.Max(5, character.emmissary);
         character.mage += UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0; ;
+        character.mage = Math.Max(5, character.mage);
 
         FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
 
@@ -173,5 +177,76 @@ public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         isHovering = false;
         tooltipPanel.SetActive(false);
+    }
+
+    protected Character FindTarget(Character assassin)
+    {
+        Character target = FindNonNeutralCharactersNoLeader(assassin);
+        if (target) return target;
+        target = FindCharactersNoLeaders(assassin);
+        if (target) return target;
+        target = FindNonNeutralCharacters(assassin);
+        if (target) return target;
+        target = FindCharacters(assassin);
+        return target;
+    }
+    protected Character FindNonNeutralCharactersNoLeader(Character c)
+    {
+        // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
+        return c.hex.characters.Find(
+            x => x.GetOwner() != c.GetOwner() &&
+            x.GetAlignment() != c.GetAlignment() &&
+            x.GetAlignment() != AlignmentEnum.neutral &&
+            x is not PlayableLeader
+        );
+    }
+    protected Character FindCharactersNoLeaders(Character c)
+    {
+        // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
+        return c.hex.characters.Find(
+            x => x.GetOwner() != c.GetOwner() &&
+            (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment()) && (x is not PlayableLeader)
+        );
+    }
+
+    protected Character FindNonNeutralCharacters(Character c)
+    {
+        // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
+        return c.hex.characters.Find(
+            x => x.GetOwner() != c.GetOwner() &&
+            x.GetAlignment() != c.GetAlignment() &&
+            x.GetAlignment() != AlignmentEnum.neutral
+        );
+    }
+
+    protected Character FindCharacters(Character c)
+    {
+        // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
+        return c.hex.characters.Find(
+            x => x.GetOwner() != c.GetOwner() &&
+            (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
+        );
+    }
+
+    protected Army FindEnemyArmy(Character c)
+    {
+        // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
+        Character commander = c.hex.characters.Find(
+            x => x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
+            (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
+        );
+        if(commander != null && commander.GetArmy() != null) return commander.GetArmy();
+        return null;
+    }
+
+    protected Army FindEnemyArmyNotNeutral(Character c)
+    {
+        // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
+        Character commander = c.hex.characters.Find(
+            x => x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
+            (x.GetAlignment() != AlignmentEnum.neutral && x.GetAlignment() != c.GetAlignment())
+        );
+        if (commander != null && commander.GetArmy() != null) return commander.GetArmy();
+        return null;
     }
 }

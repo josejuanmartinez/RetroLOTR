@@ -1,25 +1,26 @@
 using System;
 
-public class TrainMetAtArms : CommanderPCAction
+public class SummonMA: DarkSpell
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            if (!c.IsArmyCommander())
+            Character commander = c.hex.characters.Find(x => x.owner == c.owner && x.commander > 0);
+            if (!commander.IsArmyCommander())
             {
-                c.CreateArmy(TroopsTypeEnum.ma, 1);
+                commander.CreateArmy(TroopsTypeEnum.ma, 1);
             }
             else
             {
-                c.GetArmy().ma += 1;
+                commander.GetArmy().ma += 1;
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return originalCondition == null || originalCondition(c); };
+        condition = (c) => { return c.hex.pc != null && c.hex.pc.owner == c.GetOwner() && c.artifacts.Find(x => x.providesSpell is SummonMA) != null && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }

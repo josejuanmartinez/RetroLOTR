@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using Unity.Burst.Intrinsics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -381,31 +383,34 @@ public class Army
     }
 
     // Helper method to apply casualties to all defending armies in a hex
-    private void ApplyCasualties(Hex targetHex, float casualtyPercent, AlignmentEnum attackerAlignment)
+    public void ApplyCasualties(Hex targetHex, float casualtyPercent, AlignmentEnum attackerAlignment)
     {
         foreach (Army army in targetHex.armies)
         {
+            if (army == this) return;
             // Skip armies with the same alignment as the attacker and neutral armies
-            if (army.GetAlignment() != attackerAlignment && army.GetAlignment() != AlignmentEnum.neutral)
+            if (army.GetAlignment() != attackerAlignment || (army.GetAlignment() == AlignmentEnum.neutral && army.commander.owner != commander.owner))
             {
-                // Apply casualties to this army
-                army.ma = Math.Max(0, army.ma - (int)Math.Floor(army.ma * casualtyPercent));
-                army.ar = Math.Max(0, army.ar - (int)Math.Floor(army.ar * casualtyPercent));
-                army.li = Math.Max(0, army.li - (int)Math.Floor(army.li * casualtyPercent));
-                army.hi = Math.Max(0, army.hi - (int)Math.Floor(army.hi * casualtyPercent));
-                army.lc = Math.Max(0, army.lc - (int)Math.Floor(army.lc * casualtyPercent));
-                army.hc = Math.Max(0, army.hc - (int)Math.Floor(army.hc * casualtyPercent));
-                army.ca = Math.Max(0, army.ca - (int)Math.Floor(army.ca * casualtyPercent));
-
-                // Only apply casualties to warships if in water
-                if (army.commander.hex.IsWaterTerrain())
-                {
-                    army.ws = Math.Max(0, army.ws - (int)Math.Floor(army.ws * casualtyPercent));
-                }
-
-                // Check if this army was eliminated
-                if (army.GetSize(true) < 1) army.Killed();
+               army.ReceiveCasualties(casualtyPercent);
             }
         }
+    }
+
+    public void ReceiveCasualties(float casualtyPercent)
+    {
+        // Apply casualties to this this
+        this.ma = Math.Max(0, this.ma - (int)Math.Floor(this.ma * casualtyPercent));
+        this.ar = Math.Max(0, this.ar - (int)Math.Floor(this.ar * casualtyPercent));
+        this.li = Math.Max(0, this.li - (int)Math.Floor(this.li * casualtyPercent));
+        this.hi = Math.Max(0, this.hi - (int)Math.Floor(this.hi * casualtyPercent));
+        this.lc = Math.Max(0, this.lc - (int)Math.Floor(this.lc * casualtyPercent));
+        this.hc = Math.Max(0, this.hc - (int)Math.Floor(this.hc * casualtyPercent));
+        this.ca = Math.Max(0, this.ca - (int)Math.Floor(this.ca * casualtyPercent));
+
+        // Only apply casualties to warships if in water
+        if (this.commander.hex.IsWaterTerrain()) this.ws = Math.Max(0, this.ws - (int)Math.Floor(this.ws * casualtyPercent));
+
+        // Check if this this was eliminated
+        if (this.GetSize(true) < 1) this.Killed();
     }
 }

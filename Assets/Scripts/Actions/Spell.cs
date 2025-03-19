@@ -1,6 +1,6 @@
 using System;
 
-public class AgentCharacterAction : AgentAction
+public class Spell : MageAction
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
@@ -8,8 +8,7 @@ public class AgentCharacterAction : AgentAction
         var originalCondition = condition;
         effect = (c) => { return originalEffect == null || originalEffect(c); };
         condition = (c) => {
-            return c.hex.characters.Find(x => x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment()) != null &&
-            (originalCondition == null || originalCondition(c)); 
+            return c.artifacts.Count > 0 && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }
