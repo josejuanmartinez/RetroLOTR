@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(BoardGenerator), typeof(NationSpawner))]
@@ -287,61 +288,15 @@ public class Board : MonoBehaviour
                 {
                     // Store previous hex to revert to in case of failure
                     Hex previousHex = hexes[path[i]];
+                    Hex newHex = hexes[path[i + 1]];
                     currentHex = previousHex;
 
-                    if (previousHex.characters.Contains(character)) previousHex.characters.Remove(character);
-                    if (character.IsArmyCommander())
-                    {
-                        Debug.Log($"{character} is an army commander when moving from {path[i]}. Army is {character.GetArmy()}");
-                        if (previousHex.armies.Contains(character.GetArmy())) { 
-                            Debug.Log($"Current hex {path[i]} contained the army. Removing...");
-                            previousHex.armies.Remove(character.GetArmy());
-                        }
-                    }
-                    previousHex.RedrawCharacters();
-                    previousHex.RedrawArmies();
+                    MoveCharacter(character, previousHex, newHex);
 
-                    Hex newHex = hexes[path[i + 1]];
-                    if (!newHex.characters.Contains(character)) newHex.characters.Add(character);
-                    if (character.IsArmyCommander())
-                    {
-                        Debug.Log($"{character} is an army commander when moving to {path[i + 1]}. Army is {character.GetArmy()}");
-                        if (!newHex.armies.Contains(character.GetArmy()))
-                        {
-                            Debug.Log($"Nex hex {path[i + 1]} did not contained the army. Adding...");
-                            newHex.armies.Add(character.GetArmy());
-                        }
-                    }
-                    character.hex = newHex;
                     currentHex = newHex; // Update current hex
 
-                    newHex.RedrawCharacters();
-                    newHex.RedrawArmies();
-                    character.hex.RevealArea();
-                    character.hasMovedThisTurn = true;
-                    newHex.LookAt();
-                    UnselectHex();
-                    SelectHex(path[i + 1]);
-
-                    if(!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
-                    character.GetOwner().visibleHexes.Add(newHex);
-                    character.moved += newHex.GetTerrainCost(character);
-
-                    bool wasWater = previousHex.IsWaterTerrain();
-                    bool isWater = newHex.IsWaterTerrain();
-
-                    if (!wasWater && isWater)
-                    {
-                        character.moved = character.GetMaxMovement();
-                        break;
-                    }
-                    if (wasWater && !isWater)
-                    {
-                        character.moved = character.GetMaxMovement();
-                        break;
-                    }
-
                     selected.RefreshMovementLeft(character);
+
                 }
                 catch (Exception e)
                 {
@@ -370,6 +325,93 @@ public class Board : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
     }
 
+    public void MoveCharacter(Character character, Hex previousHex, Hex newHex, bool isTeleport = false)
+    {
+        try
+        {
+
+            if (previousHex.characters.Contains(character)) previousHex.characters.Remove(character);
+            if (character.IsArmyCommander())
+            {
+                if (previousHex.armies.Contains(character.GetArmy())) previousHex.armies.Remove(character.GetArmy());
+            }
+            previousHex.RedrawCharacters();
+            previousHex.RedrawArmies();
+
+            if (!newHex.characters.Contains(character)) newHex.characters.Add(character);
+            if (character.IsArmyCommander())
+            {
+                if (!newHex.armies.Contains(character.GetArmy())) newHex.armies.Add(character.GetArmy());
+            }
+            character.hex = newHex;
+
+            newHex.RedrawCharacters();
+            newHex.RedrawArmies();
+            character.hex.RevealArea();
+            character.hasMovedThisTurn = true;
+            newHex.LookAt();
+            UnselectHex();
+            SelectHex(newHex);
+
+            if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
+            character.GetOwner().visibleHexes.Add(newHex);
+            character.moved += newHex.GetTerrainCost(character);
+
+            bool wasWater = previousHex.IsWaterTerrain();
+            bool isWater = newHex.IsWaterTerrain();
+
+            if (!wasWater && isWater)
+            {
+                character.moved = character.GetMaxMovement();
+                return;
+            }
+            if (wasWater && !isWater)
+            {
+                character.moved = character.GetMaxMovement();
+                return;
+            }
+            if (isTeleport)
+            {
+                character.moved = character.GetMaxMovement();
+                return;
+            }
+        } catch (Exception e)
+        {
+            Debug.LogError($"Error moving character: {e.Message}\n{e.StackTrace}");
+            if (hexes.TryGetValue(newHex.v2, out Hex pathHex))
+            {
+                if (pathHex.characters.Contains(character))
+                {
+                    pathHex.characters.Remove(character);
+                    pathHex.RedrawCharacters();
+                }
+
+                if (character.IsArmyCommander() && pathHex.armies.Contains(character.GetArmy()))
+                {
+                    pathHex.armies.Remove(character.GetArmy());
+                    pathHex.RedrawArmies();
+                }
+            }
+
+            Hex currentHex = previousHex;
+            // Make sure character is in current hex
+            if (!currentHex.characters.Contains(character)) currentHex.characters.Add(character);
+
+            // Make sure army is in current hex
+            if (character.IsArmyCommander() && !currentHex.armies.Contains(character.GetArmy())) currentHex.armies.Add(character.GetArmy());
+
+            // Set character's hex reference properly
+            character.hex = currentHex;
+
+            // Redraw
+            currentHex.RedrawCharacters();
+            currentHex.RedrawArmies();
+            currentHex.LookAt();
+            SelectHex(currentHex.v2);
+
+        }
+    }
+
     // Helper method to handle movement failure and ensure consistent state
     private void HandleMovementFailure(Character character, Hex currentHex, List<Vector2> path = null, int currentIndex = -1)
     {
@@ -381,7 +423,7 @@ public class Board : MonoBehaviour
                 // Only need to check hexes that we've already passed through or started to enter
                 for (int i = 0; i <= currentIndex + 1 && i < path.Count; i++)
                 {
-                    if (hexes.TryGetValue(path[i], out Hex pathHex) && pathHex != currentHex)
+                    if (hexes.TryGetValue(path[i], out Hex pathHex))
                     {
                         if (pathHex.characters.Contains(character))
                         {
