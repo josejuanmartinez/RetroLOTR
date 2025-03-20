@@ -9,12 +9,12 @@ public class Teleport: Spell
         effect = (c) => {
             Hex randomHex = FindFirstObjectByType<Board>().GetHexes().Find(x => !c.GetOwner().visibleHexes.Contains(x));
             if (randomHex == null) return false;
-            randomHex.RevealArea(c.mage);
+            randomHex.RevealArea(c.GetMage());
             FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, randomHex, true);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.artifacts.Find(x => x.providesSpell is Teleport) != null && (originalCondition == null || originalCondition(c));
+            return c.artifacts.Find(x => x.providesSpell is Teleport) != null && !c.IsArmyCommander() && (originalCondition == null || originalCondition(c));
         };
         base.Initialize(c, condition, effect);
     }

@@ -125,7 +125,7 @@ public class PC
         owner.controlledPcs.Add(this);
         owner.visibleHexes.Add(hex);
         loyalty = UnityEngine.Random.Range(50, 75);
-        if (hex.encounterEnum == EncountersEnum.LowLoyalty) hex.encounterEnum = EncountersEnum.NONE;
+        if (hex.encounters.Contains(EncountersEnum.Disloyal)) hex.encounters.Remove(EncountersEnum.Disloyal);
         owner.hex.RedrawPC();
 
         if (owner.controlledPcs.Count < 1) owner.Killed(leader);
@@ -133,9 +133,9 @@ public class PC
 
     public void CheckHighLoyalty()
     {
-        if (loyalty >= 50 && hex.encounterEnum == EncountersEnum.LowLoyalty)
+        if (loyalty >= 50 && hex.encounters.Contains(EncountersEnum.Disloyal))
         {
-            hex.encounterEnum = EncountersEnum.NONE;
+            hex.encounters.Remove(EncountersEnum.Disloyal);
             owner.hex.RedrawEncounters();
         }
 
@@ -194,7 +194,7 @@ public class PC
         
         if(loyalty <= 50)
         {
-            hex.encounterEnum = EncountersEnum.LowLoyalty;
+            if (!hex.encounters.Contains(EncountersEnum.Disloyal)) hex.encounters.Add(EncountersEnum.Disloyal);
             owner.hex.RedrawEncounters();
         }
 
@@ -216,7 +216,8 @@ public class PC
 
         // Increase loyalty to avoid immediate decrease
         loyalty = 60;
-        if (hex.encounterEnum == EncountersEnum.LowLoyalty) hex.encounterEnum = EncountersEnum.NONE;
+
+        if (hex.encounters.Contains(EncountersEnum.Disloyal)) hex.encounters.Remove(EncountersEnum.Disloyal);
 
         owner.hex.RedrawPC();
 

@@ -34,6 +34,12 @@ public class IllustrationsSmall : MonoBehaviour
     public Sprite wormtongue;
     public Sprite themouth;
 
+    [Header("Generic Characters")]
+    public Sprite agent;
+    public Sprite commander;
+    public Sprite emmissary;
+    public Sprite mage;
+
     public Sprite GetIllustrationByName(string name)
     {
         name = name.ToLower();

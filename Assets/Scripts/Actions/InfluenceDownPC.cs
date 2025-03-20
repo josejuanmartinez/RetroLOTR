@@ -7,13 +7,13 @@ public class InfluenceDownPC : EmmissaryEnemyPCAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            if (c.hex.pc == null) return false;
-            c.hex.pc.loyalty -= UnityEngine.Random.Range(0, 10) * c.emmissary;
-            c.hex.pc.loyalty = Math.Max(0, c.hex.pc.loyalty);
-            c.hex.pc.CheckLowLoyalty(c.GetOwner());
+            if (c.hex.GetPC() == null) return false;
+            c.hex.GetPC().loyalty -= UnityEngine.Random.Range(0, 10) * c.GetEmmissary();
+            c.hex.GetPC().loyalty = Math.Max(0, c.hex.GetPC().loyalty);
+            c.hex.GetPC().CheckLowLoyalty(c.GetOwner());
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return c.hex.pc != null && c.hex.pc.loyalty > 0 && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => { return c.hex.GetPC() != null && c.hex.GetPC().loyalty > 0 && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }

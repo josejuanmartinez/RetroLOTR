@@ -9,7 +9,7 @@ public class Curse : DarkNeutralSpell
         effect = (c) => {
             Character enemy = FindTarget(c);
             if (enemy == null) return false;
-            enemy.Wounded(c.GetOwner(), UnityEngine.Random.Range(0, 20) * c.mage);
+            enemy.Wounded(c.GetOwner(), UnityEngine.Random.Range(0, 20) * c.GetMage());
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

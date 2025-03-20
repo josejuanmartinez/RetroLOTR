@@ -19,7 +19,7 @@ public class TrainWarships : CommanderPCAction
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return c.hex.pc != null && c.hex.pc.hasPort && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => { return c.hex.GetPC() != null && c.hex.GetPC().hasPort && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }

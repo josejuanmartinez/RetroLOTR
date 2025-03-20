@@ -24,13 +24,22 @@ public class Leader : Character
     {
         characterName = gameObject.name;
         biome = GetComponent<BiomeConfig>();
-        Initialize(null, biome.alignment);
+    }
+
+    public int GetGoldPerTurn()
+    {
+        int gold = 0;
+        foreach (PC pc in controlledPcs) gold += (int)pc.citySize;
+        foreach (Character character in controlledCharacters) gold -= character.IsArmyCommander()? 2: 1;
+        return gold;
     }
 
     new public AlignmentEnum GetAlignment()
     {
         return biome.alignment;
     }
+
+
 
     new public void NewTurn()
     {
@@ -42,8 +51,9 @@ public class Leader : Character
             timberAmount += pc.timber;
             ironAmount += pc.iron;
             mithrilAmount += pc.mithril;
-            goldAmount += ((int)pc.citySize) + 1;
         }
+
+        goldAmount += GetGoldPerTurn();
 
         controlledCharacters.ForEach(x => x.moved = 0);
         controlledCharacters.ForEach(x => x.hasActionedThisTurn = false);
@@ -95,7 +105,7 @@ public class Leader : Character
 
     public bool LeaderSeesHex(Hex hex)
     {
-        if (hex.pc != null && hex.pc.owner == GetOwner()) return true;
+        if (hex.GetPC() != null && hex.GetPC().owner == GetOwner()) return true;
         if (hex.characters.Find(x => x.GetOwner() == GetOwner())) return true;
         return false;
     }

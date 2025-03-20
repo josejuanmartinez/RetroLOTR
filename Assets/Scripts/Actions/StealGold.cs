@@ -10,12 +10,12 @@ public class StealGold : AgentPCAction
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
             playable.goldAmount += 5;
-            c.hex.pc.owner.goldAmount -= 5;
+            c.hex.GetPC().owner.goldAmount -= 5;
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return (c.hex.pc != null && c.hex.pc.owner.goldAmount >= 5 && (originalCondition == null || originalCondition(c)));
+            return (c.hex.GetPC() != null && c.hex.GetPC().owner.goldAmount >= 5 && (originalCondition == null || originalCondition(c)));
         };
         base.Initialize(c, condition, effect);
     }

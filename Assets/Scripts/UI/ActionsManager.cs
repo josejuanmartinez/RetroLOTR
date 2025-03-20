@@ -1,36 +1,31 @@
-using System.Reflection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ActionsManager : MonoBehaviour
 {
     // Dictionary to store all the action components
-    private Dictionary<Type, MonoBehaviour> actionComponents = new Dictionary<Type, MonoBehaviour>();
+    private Dictionary<Type, CharacterAction> actionComponents = new Dictionary<Type, CharacterAction>();
 
     public void Start()
     {
         // Get all components that might be actions (all MonoBehaviours in children)
-        MonoBehaviour[] allChildComponents = GetComponentsInChildren<MonoBehaviour>();
+        CharacterAction[] allChildComponents = GetComponentsInChildren<CharacterAction>();
 
         // Store each component by its type for easy access
-        foreach (MonoBehaviour component in allChildComponents)
+        foreach (CharacterAction component in allChildComponents)
         {
-            // Skip this ActionsManager itself
-            if (component == this) continue;
-
             Type componentType = component.GetType();
             actionComponents[componentType] = component;
         }
+        Hide();
     }
 
     // Generic method to get a specific action component
-    public T GetAction<T>() where T : MonoBehaviour
+    public T GetAction<T>() where T : CharacterAction
     {
-        if (actionComponents.TryGetValue(typeof(T), out MonoBehaviour component))
-        {
-            return component as T;
-        }
+        if (actionComponents.TryGetValue(typeof(T), out CharacterAction component)) return component as T;
 
         Debug.LogWarning($"Action of type {typeof(T).Name} not found!");
         return null;
@@ -38,37 +33,11 @@ public class ActionsManager : MonoBehaviour
 
     public void Refresh(Character character)
     {
-        foreach (var component in actionComponents.Values)
-        {
-            if (component == null) continue;
-
-            // Get the type of the component
-            Type type = component.GetType();
-
-            // Find the Initialize method on that type
-            MethodInfo initMethod = type.GetMethod("Initialize");
-            if (initMethod != null)
-            {
-                initMethod.Invoke(component, new object[] { character, null, null });
-            }
-        }
+        actionComponents.Values.ToList().ForEach(component => component.Initialize(character, null, null));
     }
 
     public void Hide()
     {
-        foreach (var component in actionComponents.Values)
-        {
-            if (component == null) continue;
-
-            // Get the type of the component
-            Type type = component.GetType();
-
-            // Find the Reset method on that type
-            MethodInfo resetMethod = type.GetMethod("Reset");
-            if (resetMethod != null)
-            {
-                resetMethod.Invoke(component, new object[] { });
-            }
-        }
+        actionComponents.Values.ToList().ForEach(component => component.Reset());
     }
 }

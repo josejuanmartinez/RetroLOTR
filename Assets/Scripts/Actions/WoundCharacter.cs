@@ -9,7 +9,7 @@ public class WoundCharacter : AgentCharacterAction
         effect = (c) => {
             Character enemy = FindTarget(c);
             if (enemy == null) return false;
-            enemy.Wounded(c.GetOwner(), UnityEngine.Random.Range(0, 20) * c.agent);
+            enemy.Wounded(c.GetOwner(), UnityEngine.Random.Range(0, 20) * c.GetAgent());
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => { return FindTarget(c) != null && (originalCondition == null || originalCondition(c));};

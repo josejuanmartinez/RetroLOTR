@@ -9,8 +9,8 @@ public class CommanderEnemyArmyAction : CommanderArmyAction
         effect = (c) => { return originalEffect == null || originalEffect(c); };
         condition = (c) => {
             return (
-            c.hex.armies.Find(x => x.commander != null && x.GetAlignment() != c.GetAlignment()) != null ||
-            (c.hex.pc != null && c.hex.pc.owner.GetAlignment() != c.GetAlignment())
+            c.hex.armies.Find(x => x.GetCommander() != null && x.GetAlignment() != c.GetAlignment()) != null ||
+            (c.hex.GetPC() != null && c.hex.GetPC().owner.GetAlignment() != c.GetAlignment())
             ) 
             && 
             (
