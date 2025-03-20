@@ -10,14 +10,14 @@ public class FoundPC : EmmissaryAction
             string nextPcName = c.GetOwner().biome.pcNames[UnityEngine.Random.Range(0, c.GetOwner().biome.pcNames.Count)];
             c.GetOwner().biome.pcNames.Remove(nextPcName);
             PC pc = new (c.GetOwner(), nextPcName, PCSizeEnum.camp, FortSizeEnum.NONE, false, false, c.hex);
-            c.hex.pc = pc;
+            c.hex.SetPC(pc);
 
             c.hex.RedrawPC();
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {
             return c.GetOwner().controlledPcs.Count < FindFirstObjectByType<Game>().maxPcsPerPlayer &&
-            c.hex.pc == null && 
+            c.hex.GetPC() == null && 
             c.hex.terrainType != TerrainEnum.shallowWater && 
             c.hex.terrainType != TerrainEnum.deepWater && 
             (originalCondition == null || originalCondition(c));

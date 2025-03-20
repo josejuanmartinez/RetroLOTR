@@ -7,7 +7,7 @@ public class ConjureMounts: Spell
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            c.GetOwner().mountsAmount += Math.Clamp(UnityEngine.Random.Range(0, 1) * c.mage, 1, 3);
+            c.GetOwner().mountsAmount += Math.Clamp(UnityEngine.Random.Range(0, 1) * c.GetMage(), 1, 3);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

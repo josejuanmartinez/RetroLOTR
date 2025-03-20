@@ -17,6 +17,7 @@ public class Game : MonoBehaviour
     public int normalMovement = 12;
     public int cavalryMovement = 15;
     public int maxPcsPerPlayer = 8;
+    public int maxCharactersPerPlayer = 8;
 
     public int turn = 0;
 
@@ -65,8 +66,7 @@ public class Game : MonoBehaviour
         competitors.ForEach(x => { if (!x.killed) x.NewTurn(); });
 
         // Start the coroutine to refresh hexes in the background
-        StartCoroutine(RefreshHexesAsync(player));
-        StartCoroutine(currentlyPlaying.RevealVisibleHexesAsync());
+        StartCoroutine(player.RevealVisibleHexesAsync());
     }
 
     public void NextPlayer()
@@ -129,13 +129,7 @@ public class Game : MonoBehaviour
     // Add this method to handle game ending
     public void EndGame(bool win = false)
     {
-        if (win)
-        {
-            MessageDisplay.ShowMessage("Victory!", Color.green);
-        } else
-        {
-            MessageDisplay.ShowMessage("Defeat!", Color.red);
-        }
+        if (win) MessageDisplay.ShowMessage("Victory!", Color.green); else MessageDisplay.ShowMessage("Defeat!", Color.red);
         
         UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(0);
         Application.Quit();
@@ -149,24 +143,4 @@ public class Game : MonoBehaviour
         // Or if using a GameManager:
         // GameManager.Instance.GameOver();
     }
-
-    private IEnumerator RefreshHexesAsync(Leader currentlyPlaying)
-    {
-        var hexes = FindFirstObjectByType<Board>().hexes.Values.ToList();
-
-        // Process hexes in smaller batches to prevent frame drops
-        int batchSize = 20; // Adjust based on your needs
-        for (int i = 0; i < hexes.Count; i += batchSize)
-        {
-            int endIndex = Mathf.Min(i + batchSize, hexes.Count);
-            for (int j = i; j < endIndex; j++)
-            {
-                hexes[j].RefreshForChangingPLayer(currentlyPlaying);
-            }
-
-            // Wait until next frame before processing the next batch
-            yield return null;
-        }
-    }
-
 }

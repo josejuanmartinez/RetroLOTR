@@ -5,16 +5,9 @@ public class NonPlayableLeader : Leader
         NonPlayableLeader nonPlayable = this;
         nonPlayable.health = 1;
 
-        Character nonPlayableLeaderAsCharacter = gameObject.AddComponent<Character>();
         foreach (Character character in GetOwner().controlledCharacters)
         {
-            if (character == nonPlayable)
-            {
-                nonPlayableLeaderAsCharacter.Initialize(killedBy, killedBy.alignment);
-                continue;
-            }
             character.owner = killedBy;
-            if (character.IsArmyCommander()) character.GetArmy().commander = nonPlayableLeaderAsCharacter;
             character.alignment = killedBy.alignment;
             killedBy.controlledCharacters.Add(character);
         }
@@ -25,6 +18,7 @@ public class NonPlayableLeader : Leader
             killedBy.controlledPcs.Add(pc);
             killedBy.visibleHexes.Add(pc.hex);
         }
+
         nonPlayable.controlledCharacters = new System.Collections.Generic.List<Character>();
         nonPlayable.controlledPcs = new System.Collections.Generic.List<PC>();
         nonPlayable.visibleHexes = new System.Collections.Generic.List<Hex>();

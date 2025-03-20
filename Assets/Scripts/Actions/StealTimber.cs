@@ -10,12 +10,12 @@ public class StealTimber : AgentPCAction
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
             playable.timberAmount += 5;
-            c.hex.pc.owner.timberAmount -= 5;
+            c.hex.GetPC().owner.timberAmount -= 5;
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return (c.hex.pc != null && c.hex.pc.timber > 0 && c.hex.pc.owner.timberAmount >= 5 && (originalCondition == null || originalCondition(c)));
+            return (c.hex.GetPC() != null && c.hex.GetPC().timber > 0 && c.hex.GetPC().owner.timberAmount >= 5 && (originalCondition == null || originalCondition(c)));
         };
         base.Initialize(c, condition, effect);
     }

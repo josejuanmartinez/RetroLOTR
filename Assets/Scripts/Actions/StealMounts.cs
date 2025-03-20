@@ -10,12 +10,12 @@ public class StealMounts : AgentPCAction
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
             playable.mountsAmount += 5;
-            c.hex.pc.owner.mountsAmount -= 5;
+            c.hex.GetPC().owner.mountsAmount -= 5;
             if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {
-            return (c.hex.pc != null && c.hex.pc.mounts > 0 && c.hex.pc.owner.mountsAmount >= 5 && (originalCondition == null || originalCondition(c)));
+            return (c.hex.GetPC() != null && c.hex.GetPC().mounts > 0 && c.hex.GetPC().owner.mountsAmount >= 5 && (originalCondition == null || originalCondition(c)));
         };
         base.Initialize(c, condition, effect);
     }

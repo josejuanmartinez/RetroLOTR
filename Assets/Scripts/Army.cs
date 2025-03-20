@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using Unity.Burst.Intrinsics;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -140,7 +138,7 @@ public class Army
             strength += hi * ArmyData.troopsStrength[TroopsTypeEnum.hi];
             strength += lc * ArmyData.troopsStrength[TroopsTypeEnum.lc];
             strength += hc * ArmyData.troopsStrength[TroopsTypeEnum.hc];
-            strength += (commander.hex.pc != null && commander.hex.pc.owner.GetAlignment() != GetAlignment()) ? ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] : ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] * ArmyData.catapultStrengthMultiplierInPC;
+            strength += (commander.hex.GetPC() != null && commander.hex.GetPC().owner.GetAlignment() != GetAlignment()) ? ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] : ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] * ArmyData.catapultStrengthMultiplierInPC;
         }
         if(commander.GetOwner().biome.terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
 
@@ -231,14 +229,14 @@ public class Army
         if (defenderArmy == null)
         {
             // Handle case where there's no defender army but maybe there's a PC
-            if (targetHex.pc != null && targetHex.pc.owner.GetAlignment() != attackerAlignment)
+            if (targetHex.GetPC() != null && targetHex.GetPC().owner.GetAlignment() != attackerAlignment)
             {
                 // Set defender alignment to the PC's alignment
-                defenderAlignment = targetHex.pc.owner.GetAlignment();
+                defenderAlignment = targetHex.GetPC().owner.GetAlignment();
 
                 // Calculate defender's defense based on PC only
-                int fortSize = (int) targetHex.pc.fortSize;
-                int citySize = (int)targetHex.pc.citySize;
+                int fortSize = (int) targetHex.GetPC().fortSize;
+                int citySize = (int)targetHex.GetPC().citySize;
                 defenderDefense = citySize + (fortSize * FortSizeData.defensePerFortSizeLevel);
 
                 // Calculate defender's strength based on PC only
@@ -274,13 +272,13 @@ public class Army
 
                 if (attackerDamage > 0)
                 {
-                    if(targetHex.pc.fortSize > 0)
+                    if(targetHex.GetPC().fortSize > 0)
                     {
                         // Reduce fort size first
-                        targetHex.pc.fortSize -= 1;
+                        targetHex.GetPC().fortSize -= 1;
                     } else
                     {
-                        targetHex.pc.CapturePC(commander.GetOwner());
+                        targetHex.GetPC().CapturePC(commander.GetOwner());
                     }
                 }
 
@@ -309,10 +307,10 @@ public class Army
         }
 
         // Add defense from Population Center if it exists and is aligned with defender
-        if (targetHex.pc != null && targetHex.pc.owner.GetAlignment() == defenderAlignment)
+        if (targetHex.GetPC() != null && targetHex.GetPC().owner.GetAlignment() == defenderAlignment)
         {
-            int fortSize = (int)targetHex.pc.fortSize;
-            int citySize = (int)targetHex.pc.citySize;
+            int fortSize = (int)targetHex.GetPC().fortSize;
+            int citySize = (int)targetHex.GetPC().citySize;
             defenderDefense = citySize + (fortSize * FortSizeData.defensePerFortSizeLevel);
         }
 
@@ -335,10 +333,10 @@ public class Army
         }
 
         // Add strength from Population Center if it exists and is aligned with defender
-        if (targetHex.pc != null && targetHex.pc.owner.GetAlignment() == defenderAlignment)
+        if (targetHex.GetPC() != null && targetHex.GetPC().owner.GetAlignment() == defenderAlignment)
         {
-            int fortSize = (int)targetHex.pc.fortSize;
-            int citySize = (int)targetHex.pc.citySize;
+            int fortSize = (int)targetHex.GetPC().fortSize;
+            int citySize = (int)targetHex.GetPC().citySize;
             defenderStrength = citySize + (fortSize * FortSizeData.defensePerFortSizeLevel);
         }
 
@@ -412,5 +410,10 @@ public class Army
 
         // Check if this this was eliminated
         if (this.GetSize(true) < 1) this.Killed();
+    }
+
+    public Character GetCommander()
+    {
+        return commander;
     }
 }

@@ -1,15 +1,13 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(GraphicRaycaster))]
-public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CharacterAction : MonoBehaviour
 {
     public string actionName;
-    [HideInInspector]
-    public Character character;
+    [HideInInspector] public Character character;
 
     [Header("Rendering")]
     [HideInInspector]
@@ -23,8 +21,7 @@ public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public TextMeshProUGUI textUI;
 
     [Header("Tooltip")]
-    public GameObject tooltipPanel;
-    public TextMeshProUGUI tooltipText;
+    public GameObject hoverPrefab;
 
     [Header("Required skill")]
     public int difficulty = 0;
@@ -58,14 +55,12 @@ public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExit
     // Function delegate that returns a bool to determine if action is available
     public Func<Character, bool> effect;
 
-    private bool isHovering = false;
-    private RectTransform rectTransform;
-
     void Awake()
     {
+        GameObject hoverInstance = Instantiate(hoverPrefab, button.transform);
+        hoverInstance.GetComponent<Hover>().Initialize(actionName, Vector2.one * 40, 35, TextAlignmentOptions.Center);
+
         actionInitials = gameObject.name.ToUpper();
-        rectTransform = GetComponent<RectTransform>();
-        tooltipText.text = actionName;
         if (actionSprite)
         {
             background.sprite = actionSprite;
@@ -76,29 +71,9 @@ public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
 
         button.gameObject.SetActive(false);
-        tooltipPanel.SetActive(false);
 
     }
 
-    void Update()
-    {
-        // Only perform this check if the tooltip is currently showing
-        if (tooltipPanel.activeSelf)
-        {
-            // Use a small delay before checking to ensure events have time to process
-            if (!IsPointerOverUIObject(rectTransform) && !isHovering)
-            {
-                tooltipPanel.SetActive(false);
-            }
-        }
-    }
-
-    // More reliable method to check if pointer is over UI element
-    private bool IsPointerOverUIObject(RectTransform rectTransform)
-    {
-        Vector2 localMousePosition = rectTransform.InverseTransformPoint(Input.mousePosition);
-        return rectTransform.rect.Contains(localMousePosition);
-    }
 
     public virtual void Initialize(Character character, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
@@ -120,10 +95,10 @@ public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public bool IsAvailable()
     {
         if (character.hasActionedThisTurn) return false;
-        if (character.commander < commanderSkillRequired) return false;
-        if (character.agent < agentSkillRequired) return false;
-        if (character.emmissary < emissarySkillRequired) return false;
-        if (character.mage < mageSkillRequired) return false;
+        if (character.GetCommander() < commanderSkillRequired) return false;
+        if (character.GetAgent() < agentSkillRequired) return false;
+        if (character.GetEmmissary() < emissarySkillRequired) return false;
+        if (character.GetMage() < mageSkillRequired) return false;
 
         if (character.GetOwner().leatherAmount < leatherCost) return false;
         if (character.GetOwner().timberAmount < timberCost) return false;
@@ -146,14 +121,10 @@ public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExit
             return;
         }
 
-        character.commander += UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0;
-        character.commander = Math.Max(5, character.commander);
-        character.agent += UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0; ;
-        character.agent = Math.Max(5, character.agent);
-        character.emmissary += UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0; ;
-        character.emmissary = Math.Max(5, character.emmissary);
-        character.mage += UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0; ;
-        character.mage = Math.Max(5, character.mage);
+        character.AddCommander(UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0);
+        character.AddAgent(UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0);
+        character.AddEmmissary(UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0);
+        character.AddMage(UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0);
 
         FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
 
@@ -165,18 +136,6 @@ public class CharacterAction : MonoBehaviour, IPointerEnterHandler, IPointerExit
         character.GetOwner().goldAmount -= goldCost;
 
         FindFirstObjectByType<StoresManager>().RefreshStores();
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        isHovering = true;
-        tooltipPanel.SetActive(true);
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        isHovering = false;
-        tooltipPanel.SetActive(false);
     }
 
     protected Character FindTarget(Character assassin)

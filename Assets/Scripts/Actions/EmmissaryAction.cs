@@ -8,7 +8,7 @@ public class EmmissaryAction : CharacterAction
         var originalCondition = condition;
         effect = (c) => { return originalEffect == null || originalEffect(c); };
         condition = (c) => {
-            return c.emmissary > 0 && (originalCondition == null || originalCondition(c)); 
+            return c.GetEmmissary() > 0 && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

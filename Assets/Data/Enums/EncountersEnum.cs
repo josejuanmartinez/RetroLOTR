@@ -1,7 +1,7 @@
 public enum EncountersEnum
 {
-    LowLoyalty,
-    NPC,
+    Disloyal,
+    Encounter,
     Artifact,
     Creature,
     NONE

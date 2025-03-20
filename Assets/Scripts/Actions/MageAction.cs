@@ -8,7 +8,7 @@ public class MageAction : CharacterAction
         var originalCondition = condition;
         effect = (c) => { return originalEffect == null || originalEffect(c); };
         condition = (c) => {
-            return c.mage > 0 && (originalCondition == null || originalCondition(c)); 
+            return c.GetMage() > 0 && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

@@ -8,7 +8,7 @@ public class CommanderPCAction : CommanderAction
         var originalCondition = condition;
         effect = (c) => { return originalEffect == null || originalEffect(c); };
         condition = (c) => {
-            return c.hex.pc != null && c.hex.pc.owner == c.GetOwner() && (originalCondition == null || originalCondition(c)); 
+            return c.hex.GetPC() != null && c.hex.GetPC().owner == c.GetOwner() && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

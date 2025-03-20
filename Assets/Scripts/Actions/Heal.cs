@@ -10,14 +10,14 @@ public class Heal: FreeNeutralSpell
         effect = (c) => {
             if (c.health < 100)
             {
-                c.health += UnityEngine.Random.Range(0, 10) * c.mage;
+                c.health += UnityEngine.Random.Range(0, 10) * c.GetMage();
                 if(GameObject.FindFirstObjectByType<Board>().selectedCharacter == c) GameObject.FindFirstObjectByType<SelectedCharacterIcon>().Refresh(c);
             } else
             {
                 Character target = c.hex.characters.Find(x => x.GetOwner() == c.GetOwner() && x.health < 100);
                 if(target != null)
                 {
-                    target.health += UnityEngine.Random.Range(0, 10) * c.mage;
+                    target.health += UnityEngine.Random.Range(0, 10) * c.GetMage();
                     if (GameObject.FindFirstObjectByType<Board>().selectedCharacter == target) GameObject.FindFirstObjectByType<SelectedCharacterIcon>().Refresh(target);
                 }
                 else
@@ -25,7 +25,7 @@ public class Heal: FreeNeutralSpell
                     target = c.hex.characters.Find(x => x.GetOwner() != c.GetOwner() && x.alignment == c.alignment && x.alignment != AlignmentEnum.neutral && x.health < 100);
                     if (target != null)
                     {
-                        target.health += UnityEngine.Random.Range(0, 10) * c.mage;
+                        target.health += UnityEngine.Random.Range(0, 10) * c.GetMage();
                         if (GameObject.FindFirstObjectByType<Board>().selectedCharacter == target) GameObject.FindFirstObjectByType<SelectedCharacterIcon>().Refresh(target);
                     }
                     else

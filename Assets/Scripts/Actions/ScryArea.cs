@@ -9,7 +9,7 @@ public class ScryArea : Spell
         effect = (c) => {
             Hex randomHex = FindFirstObjectByType<Board>().GetHexes().Find(x => !c.GetOwner().visibleHexes.Contains(x));
             if (randomHex == null) return false;
-            randomHex.RevealArea(c.mage);
+            randomHex.RevealArea(c.GetMage());
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {

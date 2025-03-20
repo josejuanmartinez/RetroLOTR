@@ -27,6 +27,7 @@ public class Hex : MonoBehaviour
     public GameObject characterIcon;
     public TextMeshPro charactersAtHexText;
     public GameObject encounter;
+    public TextMeshPro encountersAtHexText;
     public GameObject port;
 
     public GameObject freeArmy;
@@ -56,12 +57,14 @@ public class Hex : MonoBehaviour
     public GameObject hoverNeutralArmyIcon;
     public GameObject hoverDarkArmyIcon;
     public GameObject hoverCharacterIcon;
+    public GameObject hoverEncounterIcon;
 
     [Header("Data")]
-    public PC pc;
+    [SerializeField] private PC pc;
+
     public List<Army> armies;
     public List<Character> characters;
-    public EncountersEnum encounterEnum;
+    public List<EncountersEnum> encounters;
 
     private Illustrations illustrations;
     private IllustrationsSmall illustrationsSmall;
@@ -76,45 +79,34 @@ public class Hex : MonoBehaviour
         illustrationsSmall = FindFirstObjectByType<IllustrationsSmall>();
         armies = new();
         characters = new();
-        encounterEnum = EncountersEnum.NONE;
+        encounters = new List<EncountersEnum>();
     }
 
     public void SpawnCapitalAtStart(Leader leader)
     {
-        BiomeConfig biome = leader.biome;
-        bool isPlayable = leader is PlayableLeader;
         pc = new PC(leader);
 
-        RedrawPC();
+        if (leader is not PlayableLeader) encounters.Add(EncountersEnum.Encounter);
 
-        encounterEnum = EncountersEnum.NPC;
+        RedrawPC();
 
         RefreshHoverText();
     }
 
     public void SpawnLeaderAtStart(Leader leader)
     {
-        characters.Add(leader);
-        leader.controlledCharacters.Add(leader);
-        leader.hex = this;
-
-        if (leader.biome.startingArmySize > 0 || leader.biome.startingWarships > 0)
-        {
-            leader.CreateArmy(leader.biome.preferedTroopType, leader.biome.startingArmySize, leader.biome.startingWarships);
-        }
-
+        leader.Initialize(leader, leader.biome.alignment, this, true);
         RedrawCharacters();
         RedrawArmies();
     }
+
     public void SpawnOtherCharactersAtStart(Leader leader)
     {
         List<Character> otherCharaters = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => x.GetOwner() == leader && x != leader);
         foreach(Character otherCharacter in otherCharaters)
         {
             if (otherCharacter is Leader) continue;
-            characters.Add(otherCharacter);
-            otherCharacter.hex = this;
-            leader.controlledCharacters.Add(otherCharacter);
+            otherCharacter.Initialize(leader, leader.biome.alignment, this, false);
         }
 
         RedrawCharacters();
@@ -123,9 +115,9 @@ public class Hex : MonoBehaviour
 
     public void RedrawArmies()
     {
-        bool hasFreeArmy = armies.Find(x => x.commander.alignment == AlignmentEnum.freePeople) != null;
-        bool hasNeutralArmy = armies.Find(x => x.commander.alignment == AlignmentEnum.neutral) != null;
-        bool hasDarkArmy = armies.Find(x => x.commander.alignment == AlignmentEnum.darkServants) != null;
+        bool hasFreeArmy = armies.Find(x => x.GetCommander().alignment == AlignmentEnum.freePeople) != null;
+        bool hasNeutralArmy = armies.Find(x => x.GetCommander().alignment == AlignmentEnum.neutral) != null;
+        bool hasDarkArmy = armies.Find(x => x.GetCommander().alignment == AlignmentEnum.darkServants) != null;
 
         freeArmy.SetActive(hasFreeArmy);
         neutralArmy.SetActive(hasNeutralArmy);
@@ -144,9 +136,9 @@ public class Hex : MonoBehaviour
     {
         if (pc == null) return;
 
-        bool isHiddenToPlayer = pc.isHidden && !pc.hiddenButRevealed;
-        
-        if (!isHiddenToPlayer)
+        bool isRevealed = !pc.isHidden || pc.hiddenButRevealed || pc.owner == FindFirstObjectByType<Game>().player || (pc.owner.GetAlignment() != AlignmentEnum.neutral && pc.owner.GetAlignment() == FindFirstObjectByType<Game>().player.GetAlignment());
+
+		if (isRevealed)
         {
             camp.SetActive(pc.citySize == PCSizeEnum.camp);
             village.SetActive(pc.citySize == PCSizeEnum.village);
@@ -156,7 +148,7 @@ public class Hex : MonoBehaviour
             port.SetActive(pc.hasPort);
         }
 
-        tower.SetActive(pc.fortSize == FortSizeEnum.tower);
+		tower.SetActive(pc.fortSize == FortSizeEnum.tower);
         keep.SetActive(pc.fortSize == FortSizeEnum.keep);
         fort.SetActive(pc.fortSize == FortSizeEnum.fort);
         fortress.SetActive(pc.fortSize == FortSizeEnum.fortress);
@@ -168,7 +160,7 @@ public class Hex : MonoBehaviour
 
     public void RedrawEncounters()
     {
-        encounter.SetActive(encounterEnum != EncountersEnum.NONE);
+        encounter.SetActive(encounters.Count > 0);
     }
 
     public void RefreshHoverText()
@@ -185,8 +177,17 @@ public class Hex : MonoBehaviour
                 string characterName = char.ToUpper(character.characterName[0]) + character.characterName[1..];
                 characterNames.Add($"{(character.IsArmyCommander() ? $"<sprite name=\"{character.alignment}\">" : "")}{characterName}");
             }
-            charactersAtHexText.text = string.Join(", ", characterNames);
+            charactersAtHexText.text = string.Join(" ", characterNames);
         }
+
+        hoverEncounterIcon.SetActive(encounters.Count > 0);
+        if(hoverEncounterIcon.activeSelf)
+        {
+            List<string> encounterNames = new();
+            foreach (EncountersEnum encounter in encounters) encounterNames.Add(encounter.ToString());
+            encountersAtHexText.text = string.Join(" ", encounterNames);
+        }
+
         hoverPcName.text = "";
         hoverProduces.text = "";
 
@@ -374,7 +375,7 @@ public class Hex : MonoBehaviour
 
     public bool HasArmyOfLeader(Leader c)
     {
-        return armies.Find(x => x.commander == c || x.commander.owner == c) != null;
+        return armies.Find(x => x.GetCommander() == c || x.GetCommander().owner == c) != null;
     }
 
     public bool HasCharacterOfLeader(Leader c)
@@ -463,39 +464,10 @@ public class Hex : MonoBehaviour
     {
         return fow.activeSelf;
     }
-
-    public void RefreshForChangingPLayer(Leader currentlyPlaying)
-    {
-        RedrawCharacters();
-        hoverCharacterIcon.SetActive(characterIcon.activeSelf);
-        if(hoverCharacterIcon.activeSelf) charactersAtHexText.text = 
-                string.Join(", ", characters.Select(x => char.ToUpper(x.characterName[0]) + x.characterName[1..]));
-
-        if (pc != null && pc.isHidden && pc.owner == currentlyPlaying)
-        {
-            camp.SetActive(pc.citySize == PCSizeEnum.camp);
-            village.SetActive(pc.citySize == PCSizeEnum.village);
-            town.SetActive(pc.citySize == PCSizeEnum.town);
-            majorTown.SetActive(pc.citySize == PCSizeEnum.majorTown);
-            city.SetActive(pc.citySize == PCSizeEnum.city);
-            port.SetActive(pc.hasPort);
-        } 
-        else if(pc != null && pc.isHidden)
-        {
-            camp.SetActive(false);
-            village.SetActive(false);
-            town.SetActive(false);
-            majorTown.SetActive(false);
-            city.SetActive(false);
-            port.SetActive(false);
-        }
-    }
-
     public int GetTerrainCost(Character character)
     {
         return character.IsArmyCommander() ? TerrainData.terrainCosts[terrainType] : 1;
     }
-
     private static bool IsPointerOverVisibleUIElement()
     {
         if (EventSystem.current == null) return false;
@@ -529,5 +501,20 @@ public class Hex : MonoBehaviour
     public bool IsWaterTerrain()
     {
         return terrainType == TerrainEnum.shallowWater || terrainType == TerrainEnum.deepWater;
+    }
+
+    public PC GetPC()
+    {
+        if (pc == null) return null;
+        
+        if (!pc.isHidden || pc.hiddenButRevealed) return pc;
+        
+        return null;
+    }
+
+    public void SetPC(PC pc)
+    {
+        if (pc != null) return;
+        this.pc = pc;
     }
 }

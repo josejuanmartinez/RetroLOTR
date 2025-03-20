@@ -7,12 +7,12 @@ public class Fireworks: FreeSpell
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            if (c.hex.pc == null) return false;
-            if (c.hex.pc.owner == c.GetOwner() || (c.hex.pc.owner.alignment == c.GetAlignment() && c.hex.pc.owner.alignment != AlignmentEnum.neutral))
+            if (c.hex.GetPC() == null) return false;
+            if (c.hex.GetPC().owner == c.GetOwner() || (c.hex.GetPC().owner.alignment == c.GetAlignment() && c.hex.GetPC().owner.alignment != AlignmentEnum.neutral))
             {
-                c.hex.pc.loyalty += UnityEngine.Random.Range(0, 10) * c.mage;
-                c.hex.pc.loyalty = Math.Min(100, c.hex.pc.loyalty);
-                if (c.hex.pc.loyalty >= 50 && c.hex.encounterEnum == EncountersEnum.LowLoyalty) c.hex.encounterEnum = EncountersEnum.NONE;
+                c.hex.GetPC().loyalty += UnityEngine.Random.Range(0, 10) * c.GetMage();
+                c.hex.GetPC().loyalty = Math.Min(100, c.hex.GetPC().loyalty);
+                if (c.hex.GetPC().loyalty >= 50 && c.hex.encounters.Contains(EncountersEnum.Disloyal)) c.hex.encounters.Remove(EncountersEnum.Disloyal);
             }
             else
             {
@@ -20,7 +20,7 @@ public class Fireworks: FreeSpell
             }
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return c.hex.pc != null && (c.hex.pc.owner == c.GetOwner() || (c.hex.pc.owner.alignment == c.GetAlignment() && c.hex.pc.owner.alignment != AlignmentEnum.neutral)) && c.artifacts.Find(x => x.providesSpell is Fireworks) != null && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => { return c.hex.GetPC() != null && (c.hex.GetPC().owner == c.GetOwner() || (c.hex.GetPC().owner.alignment == c.GetAlignment() && c.hex.GetPC().owner.alignment != AlignmentEnum.neutral)) && c.artifacts.Find(x => x.providesSpell is Fireworks) != null && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }
