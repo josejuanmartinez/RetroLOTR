@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -13,6 +14,8 @@ public class Game : MonoBehaviour
     public List<NonPlayableLeader> npcs;
     [Header("Currently Playing")]
     public PlayableLeader currentlyPlaying;
+    [Header("Next Button")]
+    public TextMeshProUGUI nextButton;
 
     public int normalMovement = 12;
     public int cavalryMovement = 15;
@@ -40,9 +43,6 @@ public class Game : MonoBehaviour
     public void StartGame()
     {
         NewTurn();
-        Hex startingHex = FindFirstObjectByType<Board>().GetHexes().Find(x => x.HasCharacter(player));
-        startingHex.LookAt();
-        MessageDisplay.ShowMessage("Start!", Color.green);
     }
 
     public void NewTurn()
@@ -50,13 +50,14 @@ public class Game : MonoBehaviour
         turn++;
 
         // Check if player is killed
-        if (player.killed)
+        if (player.killed || player.controlledCharacters.Count < 1 || player.controlledPcs.Count < 1)
         {
+            player.killed = true;
             // End the game if player is killed
             EndGame();
             return;
         }
-        MessageDisplay.ShowMessage("New turn!", Color.green);
+        MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
 
         currentlyPlaying = player;
         FindFirstObjectByType<PlayableLeaderIcons>().HighlightCurrentlyPlaying(currentlyPlaying);
@@ -66,13 +67,29 @@ public class Game : MonoBehaviour
         competitors.ForEach(x => { if (!x.killed) x.NewTurn(); });
 
         // Start the coroutine to refresh hexes in the background
-        StartCoroutine(player.RevealVisibleHexesAsync());
+        StartCoroutine(player.RevealVisibleHexesAsync(() =>
+        {
+            FindFirstObjectByType<Board>().SelectCharacter(player);
+        }
+        ));
     }
 
     public void NextPlayer()
     {
+        
         if (currentlyPlaying == player)
         {
+            // Make sure all characters have actioned
+            Character stillNotActioned = player.controlledCharacters.Find(x => !x.hasActionedThisTurn);
+            if (stillNotActioned != null)
+            {
+                nextButton.text = "Awaiting Orders";
+                FindFirstObjectByType<Board>().SelectCharacter(stillNotActioned);
+                return;
+            }
+            nextButton.text = "End Turn\n<b>>>></b>";
+
+
             // Find the first non-killed competitor
             currentlyPlaying = FindNextAliveCompetitor(0);
 

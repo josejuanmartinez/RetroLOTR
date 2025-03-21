@@ -65,6 +65,7 @@ public class Hex : MonoBehaviour
     public List<Army> armies;
     public List<Character> characters;
     public List<EncountersEnum> encounters;
+    public List<Artifact> hiddenArtifacts;
 
     private Illustrations illustrations;
     private IllustrationsSmall illustrationsSmall;
@@ -79,7 +80,8 @@ public class Hex : MonoBehaviour
         illustrationsSmall = FindFirstObjectByType<IllustrationsSmall>();
         armies = new();
         characters = new();
-        encounters = new List<EncountersEnum>();
+        encounters = new ();
+        hiddenArtifacts = new();
     }
 
     public void SpawnCapitalAtStart(Leader leader)
@@ -106,7 +108,7 @@ public class Hex : MonoBehaviour
         foreach(Character otherCharacter in otherCharaters)
         {
             if (otherCharacter is Leader) continue;
-            otherCharacter.Initialize(leader, leader.biome.alignment, this, false);
+            otherCharacter.Initialize(leader, leader.biome.alignment, this, true);
         }
 
         RedrawCharacters();
@@ -134,7 +136,7 @@ public class Hex : MonoBehaviour
 
     public void RedrawPC()
     {
-        if (pc == null) return;
+        if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
 
         bool isRevealed = !pc.isHidden || pc.hiddenButRevealed || pc.owner == FindFirstObjectByType<Game>().player || (pc.owner.GetAlignment() != AlignmentEnum.neutral && pc.owner.GetAlignment() == FindFirstObjectByType<Game>().player.GetAlignment());
 
@@ -210,7 +212,7 @@ public class Hex : MonoBehaviour
         hoverNeutralArmy.gameObject.SetActive(false);
         hoverDarkArmy.gameObject.SetActive(false);
 
-        if (pc != null)
+        if (pc != null && pc.citySize != PCSizeEnum.NONE)
         {
 
             if (pc.fortSize != FortSizeEnum.NONE)
@@ -223,8 +225,9 @@ public class Hex : MonoBehaviour
                     hoverFort.gameObject.SetActive(true);
                 }
             }
+            bool isRevealed = !pc.isHidden || pc.hiddenButRevealed || pc.owner == FindFirstObjectByType<Game>().player || (pc.owner.GetAlignment() != AlignmentEnum.neutral && pc.owner.GetAlignment() == FindFirstObjectByType<Game>().player.GetAlignment());
 
-            if (!pc.isHidden || pc.hiddenButRevealed || pc.owner == FindFirstObjectByType<Game>().currentlyPlaying)
+            if (isRevealed)
             {
                 hoverPcName.text = pc.pcName;
                 hoverProduces.text = pc.GetProducesHoverText();
@@ -346,6 +349,7 @@ public class Hex : MonoBehaviour
         {
             hoverHexFrame.SetActive(true);
             isSelected = true;
+            LookAt();
         }
     }
 
@@ -369,7 +373,7 @@ public class Hex : MonoBehaviour
 
     public bool HasPcOfLeader(Leader c)
     {
-        if (pc == null) return false;
+        if (pc == null || pc.citySize == PCSizeEnum.NONE) return false;
         return pc.owner == c;
     }
 
@@ -505,8 +509,8 @@ public class Hex : MonoBehaviour
 
     public PC GetPC()
     {
-        if (pc == null) return null;
-        
+        if (pc == null || pc.citySize == PCSizeEnum.NONE) return null;
+
         if (!pc.isHidden || pc.hiddenButRevealed) return pc;
         
         return null;
@@ -514,7 +518,7 @@ public class Hex : MonoBehaviour
 
     public void SetPC(PC pc)
     {
-        if (pc != null) return;
+        if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
         this.pc = pc;
     }
 }

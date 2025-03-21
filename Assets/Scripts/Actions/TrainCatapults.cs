@@ -9,7 +9,7 @@ public class TrainCatapults : CommanderPCAction
         effect = (c) => {
             if (!c.IsArmyCommander())
             {
-                c.CreateArmy(TroopsTypeEnum.ca, 1);
+                c.CreateArmy(TroopsTypeEnum.ca, 1, false);
             }
             else
             {

@@ -10,7 +10,7 @@ public class SummonMA: DarkSpell
             Character commander = c.hex.characters.Find(x => x.owner == c.owner && x.GetCommander() > 0);
             if (!commander.IsArmyCommander())
             {
-                commander.CreateArmy(TroopsTypeEnum.ma, 1);
+                commander.CreateArmy(TroopsTypeEnum.ma, 1, false);
             }
             else
             {

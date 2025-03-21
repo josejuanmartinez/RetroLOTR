@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -95,17 +96,17 @@ public class CharacterAction : MonoBehaviour
     public bool IsAvailable()
     {
         if (character.hasActionedThisTurn) return false;
-        if (character.GetCommander() < commanderSkillRequired) return false;
-        if (character.GetAgent() < agentSkillRequired) return false;
-        if (character.GetEmmissary() < emissarySkillRequired) return false;
-        if (character.GetMage() < mageSkillRequired) return false;
+        if (commanderSkillRequired > 0 && character.GetCommander() < commanderSkillRequired) return false;
+        if (agentSkillRequired > 0 && character.GetAgent() < agentSkillRequired) return false;
+        if (emissarySkillRequired > 0 && character.GetEmmissary() < emissarySkillRequired) return false;
+        if (mageSkillRequired > 0 && character.GetMage() < mageSkillRequired) return false;
 
-        if (character.GetOwner().leatherAmount < leatherCost) return false;
-        if (character.GetOwner().timberAmount < timberCost) return false;
-        if (character.GetOwner().mountsAmount < mountsCost) return false;
-        if (character.GetOwner().ironAmount < ironCost) return false;
-        if (character.GetOwner().mithrilAmount < mithrilCost) return false;
-        if (character.GetOwner().goldAmount < goldCost) return false;
+        if (leatherCost > 0 && character.GetOwner().leatherAmount < leatherCost) return false;
+        if (timberCost > 0 && character.GetOwner().timberAmount < timberCost) return false;
+        if (mountsCost > 0 && character.GetOwner().mountsAmount < mountsCost) return false;
+        if (ironCost > 0 && character.GetOwner().ironAmount < ironCost) return false;
+        if (mithrilCost > 0 && character.GetOwner().mithrilAmount < mithrilCost) return false;
+        if (goldCost > 0 && character.GetOwner().goldAmount < goldCost) return false;
 
         return true;
     }
@@ -119,6 +120,9 @@ public class CharacterAction : MonoBehaviour
         {
             MessageDisplay.ShowMessage($"{actionName} failed", Color.red);
             return;
+        } else
+        {
+            MessageDisplay.ShowMessage($"{actionName} executed successfully", Color.grey);
         }
 
         character.AddCommander(UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0);
@@ -136,6 +140,18 @@ public class CharacterAction : MonoBehaviour
         character.GetOwner().goldAmount -= goldCost;
 
         FindFirstObjectByType<StoresManager>().RefreshStores();
+
+        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).ToList().ForEach(x =>
+        {
+            x.CheckActionConditionAnywhere(character.GetOwner(), this);
+        });
+
+        if(character.hex.GetPC() != null && character.hex.GetPC().owner is NonPlayableLeader)
+        {
+            NonPlayableLeader nonPlayableLeader = character.hex.GetPC().owner as NonPlayableLeader;
+            if (nonPlayableLeader == null) return;
+            nonPlayableLeader.CheckActionConditionAtCapital(character.GetOwner(), this);
+        }
     }
 
     protected Character FindTarget(Character assassin)

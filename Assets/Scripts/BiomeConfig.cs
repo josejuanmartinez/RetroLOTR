@@ -15,4 +15,5 @@ public class BiomeConfig: MonoBehaviour
     public int startingWarships;
 
     public List<string> pcNames;
+    public List<string> characterNames;
 }

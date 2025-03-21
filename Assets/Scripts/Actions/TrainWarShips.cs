@@ -9,7 +9,7 @@ public class TrainWarships : CommanderPCAction
         effect = (c) => {
             if (!c.IsArmyCommander())
             {
-                c.CreateArmy(TroopsTypeEnum.ws, 1);
+                c.CreateArmy(TroopsTypeEnum.ws, 1, false);
             }
             else
             {

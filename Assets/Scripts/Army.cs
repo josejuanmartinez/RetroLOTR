@@ -16,9 +16,12 @@ public class Army
     [SerializeField] public int ca = 0;
     [SerializeField] public int ws = 0;
 
-    public Army(Character commander, int ma=0, int ar=0, int li=0, int hi=0, int lc=0, int hc=0, int ca=0, int ws=0)
+    [SerializeField] public bool startingArmy = false;
+
+    public Army(Character commander, bool startingArmy = false, int ma=0, int ar=0, int li=0, int hi=0, int lc=0, int hc=0, int ca=0, int ws=0)
     {
         this.commander = commander;
+        this.startingArmy = startingArmy;
         this.ma = ma;
         this.ar = ar;
         this.li = li;
@@ -29,10 +32,11 @@ public class Army
         this.ws = ws;
     }
 
-    public Army(Character commander, TroopsTypeEnum troopsType, int amount, int ws = 0)
+    public Army(Character commander, TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0)
     {
         this.commander = commander;
-
+        this.startingArmy = startingArmy;
+     
         // Use reflection to set the field based on the enum value
         string fieldName = troopsType.ToString();
 

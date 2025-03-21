@@ -9,7 +9,7 @@ public class TrainMetAtArms : CommanderPCAction
         effect = (c) => {
             if (!c.IsArmyCommander())
             {
-                c.CreateArmy(TroopsTypeEnum.ma, 1);
+                c.CreateArmy(TroopsTypeEnum.ma, 1, false);
             }
             else
             {

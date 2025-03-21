@@ -9,7 +9,7 @@ public class TrainHeavyInfantry : CommanderPCAction
         effect = (c) => {
             if (!c.IsArmyCommander())
             {
-                c.CreateArmy(TroopsTypeEnum.hi, 1);
+                c.CreateArmy(TroopsTypeEnum.hi, 1, false);
             }
             else
             {
