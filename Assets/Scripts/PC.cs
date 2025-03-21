@@ -23,8 +23,8 @@ public class PC
     [SerializeField] public int loyalty = 100;
 
     [SerializeField] public bool isHidden;
-    [SerializeField] public PCSizeEnum citySize;
-    [SerializeField] public FortSizeEnum fortSize;
+    [SerializeField] public PCSizeEnum citySize = PCSizeEnum.NONE;
+    [SerializeField] public FortSizeEnum fortSize = FortSizeEnum.NONE;
     [SerializeField] public bool hasPort;
     [SerializeField] public bool hiddenButRevealed;
     [SerializeField] public bool isCapital;

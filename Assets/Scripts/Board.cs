@@ -51,6 +51,7 @@ public class Board : MonoBehaviour
     [Header("Selection")]
     public Vector2 selectedHex = Vector2.one * -1;
     public Character selectedCharacter = null;
+    public bool moving = false;
 
     [Header("Start button")]
     public Button startButton;
@@ -156,7 +157,52 @@ public class Board : MonoBehaviour
         initialized = true;
         startButton.interactable = true;
         startButton.GetComponentInChildren<TextMeshProUGUI>().text = FindFirstObjectByType<TextsEN>().start;
-        hexes.Values.ToList().ForEach(x => { x.GetComponent<OnHoverTile>().enabled = true; x.GetComponent<OnClickTile>().enabled = true; });
+        GetHexes().ForEach(x => { x.GetComponent<OnHoverTile>().enabled = true; x.GetComponent<OnClickTile>().enabled = true; });
+        StartCoroutine(SpawnArtifacts());
+    }
+
+    IEnumerator SpawnArtifacts()
+    {
+        // Get all hexes
+        List<Hex> hexes = GetHexes();
+
+        // Find all artifacts where hidden is true
+        Artifact[] hiddenArtifacts = FindObjectsByType<Artifact>(FindObjectsSortMode.None)
+            .Where(artifact => artifact.hidden == true)
+            .ToArray();
+
+        // Shuffle the hexes to randomize artifact placement
+        List<Hex> shuffledHexes = hexes.OrderBy(hex => UnityEngine.Random.value).ToList();
+
+        // Ensure we don't try to place more artifacts than we have hexes
+        int artifactsToPlace = Mathf.Min(hiddenArtifacts.Length, shuffledHexes.Count);
+
+        // Place artifacts in hexes (one per hex)
+        for (int i = 0; i < artifactsToPlace; i++)
+        {
+            Hex targetHex = shuffledHexes[i];
+            Debug.Log("Placing artifact in hex " + targetHex.v2);
+            Artifact artifact = hiddenArtifacts[i];
+
+            // Add the artifact to the hex's hiddenArtifacts list
+            targetHex.hiddenArtifacts.Add(artifact);
+
+            // Optional: Set artifact position to hex position
+            // artifact.transform.position = targetHex.transform.position;
+
+            // Yield to distribute over frames if needed
+            if (i % 10 == 0) yield return null;
+        }
+    }
+
+    public void SelectCharacter(Character character)
+    {
+        UnselectCharacter();
+        UnselectHex();
+        selectedCharacter = character;
+        FindFirstObjectByType<SelectedCharacterIcon>().Refresh(selectedCharacter);
+        FindFirstObjectByType<ActionsManager>().Refresh(selectedCharacter);
+        selectedCharacter.hex.LookAt();
     }
 
     public void SelectHex(Hex hex)
@@ -240,7 +286,7 @@ public class Board : MonoBehaviour
 
     public void UnselectCharacter()
     {
-
+        selectedCharacter = null;
     }
 
     public List<Hex> GetHexes()
@@ -250,6 +296,7 @@ public class Board : MonoBehaviour
 
     public void Move(Character character, Vector2 targetHexCoordinates)
     {
+        moving = true;
         if (!character) return;
         if (targetHexCoordinates == Vector2.one * -1) return;
         if (character.moved >= character.GetMaxMovement()) return;
@@ -323,6 +370,7 @@ public class Board : MonoBehaviour
 
         // Final delay outside try block
         yield return new WaitForSeconds(0.5f);
+        moving = false;
     }
 
     public void MoveCharacter(Character character, Hex previousHex, Hex newHex, bool isTeleport = false)

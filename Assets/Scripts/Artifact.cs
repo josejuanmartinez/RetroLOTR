@@ -5,6 +5,7 @@ public class Artifact : MonoBehaviour
 {
     public string artifactName;
     public string artifactDescription;
+    public bool hidden = false;
     public Spell providesSpell = null;
 
     public int commanderBonus = 0;

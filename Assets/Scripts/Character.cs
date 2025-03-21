@@ -28,6 +28,7 @@ public class Character : MonoBehaviour
     private Army army = null;
 
     public bool killed = false;
+    public bool startingCharacter = true;
 
     void Awake()
     {
@@ -35,24 +36,29 @@ public class Character : MonoBehaviour
         doubledBy = new();
     }
 
-    public void Initialize(Leader owner, AlignmentEnum alignment, Hex hex, bool startsWithDefaultAmy = false, string characterName = null )
+    public void Initialize(Leader owner, AlignmentEnum alignment, Hex hex,  bool startingCharacter, string characterName = null)
     {
-        this.owner = owner;
+        owner.GetOwner().controlledCharacters.Add(this);
+        this.owner = owner.GetOwner();
         this.alignment = alignment;
         hasActionedThisTurn = false;
         hasMovedThisTurn = false;
         isEmbarked = false;
-        this.army = null;
+        army = null;
         this.hex = hex;
         hex.characters.Add(this);
-        if (startsWithDefaultAmy)
+        this.startingCharacter = startingCharacter;
+        if (startingCharacter && (owner.biome.startingArmySize > 0 || owner.biome.startingWarships > 0))
         {
-            if(owner.biome.startingArmySize > 0 || owner.biome.startingWarships > 0)
-            {
-                CreateArmy(owner.biome.preferedTroopType, owner.biome.startingArmySize, owner.biome.startingWarships);
-            }
+            CreateArmy(owner.biome.preferedTroopType, owner.biome.startingArmySize, startingCharacter, owner.biome.startingWarships);
         }
-        this.owner.controlledCharacters.Add(this);
+        else
+        {
+            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).ToList().ForEach(x =>
+            {
+                x.CheckCharacterConditions(GetOwner());
+            });
+        }
         if (characterName != null) this.characterName = characterName;
     }
 
@@ -94,10 +100,17 @@ public class Character : MonoBehaviour
         return Mathf.Max(0, (GetMaxMovement() - moved));
     }
 
-    public void CreateArmy(TroopsTypeEnum troopsType, int amount, int ws = 0)
+    public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0)
     {
-        army = new Army(this, troopsType, amount, ws);
+        army = new Army(this, troopsType, amount, startingArmy, ws);
         hex.armies.Add(army);
+        if(!startingArmy)
+        {
+            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).ToList().ForEach(x =>
+            {
+                x.CheckArmiesConditions(GetOwner());
+            });
+        }
     }
 
     public Army GetArmy()

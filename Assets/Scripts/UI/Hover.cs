@@ -77,7 +77,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void Initialize(string text, Vector2 offset, int fontSize, TextAlignmentOptions textAlignment)
     {
         this.offset = offset;
-        textWidget.text = text;
+        textWidget.text = CreateTextWithBackground(text);
         textWidget.fontSize = fontSize;
         textWidget.alignment = textAlignment;
         
@@ -85,6 +85,11 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         LayoutRebuilder.ForceRebuildLayoutImmediate(tooltipRectTransform);
 
         initialized = true;
+    }
+
+    public string CreateTextWithBackground(string text)
+    {
+        return $"<mark=#ffffff>{text}</mark>";
     }
 
     public void OnPointerEnter(PointerEventData eventData)

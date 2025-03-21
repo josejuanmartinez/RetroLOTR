@@ -75,7 +75,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 9999
@@ -225,11 +225,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
       propertyPath: m_text
-      value: Assassinate Character
+      value: <mark=#ffffff>Text</mark>
       objectReference: {fileID: 0}
     - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
       propertyPath: m_fontSize
       value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 6fdef3feda238e14fbfd5504378269e5, type: 2}
+    - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
       propertyPath: m_spriteAsset
@@ -240,11 +260,23 @@ PrefabInstance:
       value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 6005860808784687186, guid: 6fdef3feda238e14fbfd5504378269e5, type: 2}
+    - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
       propertyPath: m_TextWrappingMode
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
       propertyPath: m_enableAutoSizing
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389901357818704694, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
+      propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2589315460493007429, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
@@ -253,7 +285,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2589315460493007429, guid: ca1b183b2bc628148898ff8515cc2c8f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

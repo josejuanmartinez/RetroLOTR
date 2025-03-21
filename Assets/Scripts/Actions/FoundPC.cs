@@ -11,7 +11,6 @@ public class FoundPC : EmmissaryAction
             c.GetOwner().biome.pcNames.Remove(nextPcName);
             PC pc = new (c.GetOwner(), nextPcName, PCSizeEnum.camp, FortSizeEnum.NONE, false, false, c.hex);
             c.hex.SetPC(pc);
-
             c.hex.RedrawPC();
             return originalEffect == null || originalEffect(c); 
         };

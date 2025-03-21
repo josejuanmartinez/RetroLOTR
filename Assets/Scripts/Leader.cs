@@ -34,63 +34,93 @@ public class Leader : Character
         return gold;
     }
 
+    public int GetLeatherPerTurn()
+    {
+        return controlledPcs.Select(x => x.leather).Sum();
+    }
+
+    public int GetMountsPerTurn()
+    {
+        return controlledPcs.Select(x => x.mounts).Sum();
+    }
+
+    public int GetTimberPerTurn()
+    {
+        return controlledPcs.Select(x => x.timber).Sum();
+    }
+
+    public int GetIronPerTurn()
+    {
+        return controlledPcs.Select(x => x.iron).Sum();
+    }
+    public int GetMithrilPerTurn()
+    {
+        return controlledPcs.Select(x => x.mithril).Sum();
+    }
+
     new public AlignmentEnum GetAlignment()
     {
         return biome.alignment;
     }
-
-
-
     new public void NewTurn()
     {
         if (killed) return;
-        foreach (PC pc in controlledPcs)
-        {
-            leatherAmount += pc.leather;
-            mountsAmount += pc.mounts;
-            timberAmount += pc.timber;
-            ironAmount += pc.iron;
-            mithrilAmount += pc.mithril;
-        }
-
+        
+        leatherAmount += GetLeatherPerTurn();
+        mountsAmount += GetMountsPerTurn();
+        timberAmount += GetTimberPerTurn();
+        ironAmount += GetIronPerTurn();
+        mithrilAmount += GetMithrilPerTurn();
         goldAmount += GetGoldPerTurn();
 
         controlledCharacters.ForEach(x => x.moved = 0);
         controlledCharacters.ForEach(x => x.hasActionedThisTurn = false);
 
+        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).ToList().ForEach(x =>
+        {
+            x.CheckStoresConditions(this);
+        });
+
         base.NewTurn();
     }
 
     // The async version of RevealVisibleHexes
-    public IEnumerator RevealVisibleHexesAsync()
+    public IEnumerator RevealVisibleHexesAsync(System.Action onComplete = null)
     {
-        if (FindFirstObjectByType<Game>().player != this) yield break;
+        Debug.Log("Starting RevealVisibleHexesAsync");
+
+        if (FindFirstObjectByType<Game>().player != this)
+        {
+            Debug.Log("Early exit: not the current player");
+            yield break; // This will exit without calling onComplete
+        }
 
         List<Hex> allHexes = FindFirstObjectByType<Board>().hexes.Values.ToList();
-        
+
         allHexes.FindAll(x => !visibleHexes.Contains(x)).ForEach(x => x.Hide());
-
-        var hexesToReveal = visibleHexes.ToList(); // Create a copy to avoid potential modification issues
-
+        var hexesToReveal = visibleHexes.ToList();
         List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
-        // We add non our visible, but spied / doubled
         hexesToReveal.AddRange(spiedHexes);
         hexesToReveal = hexesToReveal.Distinct().ToList();
 
-        // Process revealing in smaller batches to prevent frame drops
-        int batchSize = 15; // Adjust based on your needs
+        Debug.Log($"Hexes to reveal: {hexesToReveal.Count}");
+
+        int batchSize = 15;
         for (int i = 0; i < hexesToReveal.Count; i += batchSize)
         {
+            Debug.Log($"Processing batch {i / batchSize + 1} of {Mathf.Ceil(hexesToReveal.Count / (float)batchSize)}");
             int endIndex = Mathf.Min(i + batchSize, hexesToReveal.Count);
-            for (int j = i; j < endIndex; j++)
-            {
-                hexesToReveal[j].RevealArea();
-            }
-
-            // Wait until next frame before processing the next batch
+            for (int j = i; j < endIndex; j++) hexesToReveal[j].RevealArea();
+            Debug.Log("About to yield for next frame");
             yield return null;
+            Debug.Log("Resumed after frame yield");
         }
+
+        Debug.Log("Coroutine completed, calling onComplete callback");
+        onComplete?.Invoke();
+        Debug.Log("onComplete callback invoked");
     }
+
     override public Leader GetOwner()
     {
         return owner != null ? owner : this;

@@ -10,9 +10,11 @@ public class NameMage : MageCommanderAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
+            string nextCharacterName = c.GetOwner().biome.characterNames[UnityEngine.Random.Range(0, c.GetOwner().biome.characterNames.Count)];
+            c.GetOwner().biome.characterNames.Remove(nextCharacterName);
             GameObject newCharacterPrefab = Instantiate(characterPrefab, GameObject.Find("OtherCharacters").transform);
             Character character = newCharacterPrefab.GetComponent<Character>();
-            character.Initialize(c.GetOwner(), c.GetAlignment(), c.hex, false, "Mage");
+            character.Initialize(c.GetOwner(), c.GetAlignment(), c.hex, false, nextCharacterName);
             character.AddMage(1);
             c.hex.RedrawCharacters();
             return originalEffect == null || originalEffect(c); 

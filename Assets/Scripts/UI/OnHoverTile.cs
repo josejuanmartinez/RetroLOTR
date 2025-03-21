@@ -96,7 +96,7 @@ public class OnHoverTile : MonoBehaviour
     {
         Board board = FindFirstObjectByType<Board>();
 
-        if (IsPointerOverVisibleUIElement())
+        if (IsPointerOverVisibleUIElement() || board.moving)
         {
             if(pathRenderer) pathRenderer.HidePath();
             if (board)
