@@ -14,7 +14,7 @@ public class SummonMA: DarkSpell
             }
             else
             {
-                commander.GetArmy().ma += 1;
+                commander.GetArmy().Recruit(TroopsTypeEnum.ma, 1);
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();

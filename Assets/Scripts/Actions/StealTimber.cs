@@ -7,15 +7,18 @@ public class StealTimber : AgentPCAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
+            if (c.hex.GetPC() == null) return false;
+            int toSteal = Math.Min(c.hex.GetPC().owner.timberAmount, UnityEngine.Random.Range(1, c.GetAgent()));
+            if (toSteal < 1) return false;
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
-            playable.timberAmount += 5;
-            c.hex.GetPC().owner.timberAmount -= 5;
+            playable.AddTimber(toSteal);
+            c.hex.GetPC().owner.RemoveTimber(toSteal);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return (c.hex.GetPC() != null && c.hex.GetPC().timber > 0 && c.hex.GetPC().owner.timberAmount >= 5 && (originalCondition == null || originalCondition(c)));
+            return (c.hex.GetPC() != null && c.hex.GetPC().timber > 0 && (originalCondition == null || originalCondition(c)));
         };
         base.Initialize(c, condition, effect);
     }

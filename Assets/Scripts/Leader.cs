@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 [RequireComponent(typeof(BiomeConfig))]
 public class Leader : Character
@@ -22,7 +23,6 @@ public class Leader : Character
 
     void Awake()
     {
-        characterName = gameObject.name;
         biome = GetComponent<BiomeConfig>();
     }
 
@@ -30,7 +30,11 @@ public class Leader : Character
     {
         int gold = 0;
         foreach (PC pc in controlledPcs) gold += (int)pc.citySize;
-        foreach (Character character in controlledCharacters) gold -= character.IsArmyCommander()? 2: 1;
+        foreach (Character character in controlledCharacters)
+        {
+            if (!character.startingCharacter) gold -= 1;
+            if (character.GetArmy() != null) gold -= character.GetArmy().GetMaintenanceCost();
+        }
         return gold;
     }
 
@@ -76,7 +80,8 @@ public class Leader : Character
         controlledCharacters.ForEach(x => x.moved = 0);
         controlledCharacters.ForEach(x => x.hasActionedThisTurn = false);
 
-        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).ToList().ForEach(x =>
+        if(this is not PlayableLeader) return;
+        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != this).ToList().ForEach(x =>
         {
             x.CheckStoresConditions(this);
         });
@@ -87,13 +92,7 @@ public class Leader : Character
     // The async version of RevealVisibleHexes
     public IEnumerator RevealVisibleHexesAsync(System.Action onComplete = null)
     {
-        Debug.Log("Starting RevealVisibleHexesAsync");
-
-        if (FindFirstObjectByType<Game>().player != this)
-        {
-            Debug.Log("Early exit: not the current player");
-            yield break; // This will exit without calling onComplete
-        }
+        if (FindFirstObjectByType<Game>().player != this) yield break; // This will exit without calling onComplete
 
         List<Hex> allHexes = FindFirstObjectByType<Board>().hexes.Values.ToList();
 
@@ -103,22 +102,15 @@ public class Leader : Character
         hexesToReveal.AddRange(spiedHexes);
         hexesToReveal = hexesToReveal.Distinct().ToList();
 
-        Debug.Log($"Hexes to reveal: {hexesToReveal.Count}");
-
         int batchSize = 15;
         for (int i = 0; i < hexesToReveal.Count; i += batchSize)
         {
-            Debug.Log($"Processing batch {i / batchSize + 1} of {Mathf.Ceil(hexesToReveal.Count / (float)batchSize)}");
             int endIndex = Mathf.Min(i + batchSize, hexesToReveal.Count);
             for (int j = i; j < endIndex; j++) hexesToReveal[j].RevealArea();
-            Debug.Log("About to yield for next frame");
             yield return null;
-            Debug.Log("Resumed after frame yield");
         }
 
-        Debug.Log("Coroutine completed, calling onComplete callback");
         onComplete?.Invoke();
-        Debug.Log("onComplete callback invoked");
     }
 
     override public Leader GetOwner()
@@ -139,4 +131,66 @@ public class Leader : Character
         if (hex.characters.Find(x => x.GetOwner() == GetOwner())) return true;
         return false;
     }
+
+    public void AddLeather(int amount) 
+    {
+        leatherAmount += amount;
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} leather", Color.green);
+    }
+    public void AddTimber(int amount)
+    {
+        timberAmount += amount;
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} timber", Color.green);
+    }
+    public void AddMounts(int amount)
+    {
+        mountsAmount += amount;
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} mounts", Color.green);
+    }
+    public void AddIron(int amount)
+    {
+        ironAmount += amount;
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} iron", Color.green);
+    }
+    public void AddMithril(int amount)
+    {
+        mithrilAmount += amount;
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} mithril", Color.green);
+    }
+    public void AddGold(int amount)
+    {
+        goldAmount += amount;
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} gold", Color.green);
+    }
+    public void RemoveLeather(int leatherCost)
+    {
+        leatherAmount -= leatherCost;
+        if (leatherCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{leatherCost} leather", Color.red);
+    }
+    public void RemoveTimber(int timberCost)
+    {
+        timberAmount -= timberCost;
+        if (timberCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{timberCost} timber", Color.red);
+    }
+    public void RemoveMounts(int mountsCost)
+    {
+        mountsAmount -= mountsCost;
+        if (mountsCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mountsCost} mounts", Color.red);
+    }
+    public void RemoveIron(int ironCost)
+    {
+        ironAmount -= ironCost;
+        if (ironCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{ironCost} iron", Color.red);
+    }
+    public void RemoveMithril(int mithrilCost)
+    {
+        mithrilAmount -= mithrilCost;
+        if (mithrilCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mithrilCost} mithril", Color.red);
+    }
+    public void RemoveGold(int goldCost)
+    {
+        goldAmount -= goldCost;
+        if (goldCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{goldCost} gold", Color.red);
+    }
+    
 }

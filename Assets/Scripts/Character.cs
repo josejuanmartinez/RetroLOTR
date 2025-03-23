@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class Character : MonoBehaviour
 {
@@ -32,12 +35,13 @@ public class Character : MonoBehaviour
 
     void Awake()
     {
-        characterName = gameObject.name;
         doubledBy = new();
     }
 
-    public void Initialize(Leader owner, AlignmentEnum alignment, Hex hex,  bool startingCharacter, string characterName = null)
+    public void Initialize(Leader owner, AlignmentEnum alignment, Hex hex, string characterName, bool startingCharacter = false, bool generateStartingArmy = false)
     {
+        MessageDisplay.ShowMessage($"Character {characterName} starts serving {owner.GetOwner().characterName}", Color.green);
+        this.characterName = characterName;
         owner.GetOwner().controlledCharacters.Add(this);
         this.owner = owner.GetOwner();
         this.alignment = alignment;
@@ -54,12 +58,12 @@ public class Character : MonoBehaviour
         }
         else
         {
-            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).ToList().ForEach(x =>
+            if (GetOwner() is not PlayableLeader) return;
+            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != GetOwner()).ToList().ForEach(x =>
             {
                 x.CheckCharacterConditions(GetOwner());
             });
         }
-        if (characterName != null) this.characterName = characterName;
     }
 
     public AlignmentEnum GetAlignment()
@@ -104,13 +108,15 @@ public class Character : MonoBehaviour
     {
         army = new Army(this, troopsType, amount, startingArmy, ws);
         hex.armies.Add(army);
-        if(!startingArmy)
+        if(!startingArmy && GetOwner() is PlayableLeader)
         {
-            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).ToList().ForEach(x =>
+            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != GetOwner()).ToList().ForEach(x =>
             {
                 x.CheckArmiesConditions(GetOwner());
             });
         }
+
+        MessageDisplay.ShowMessage($"{characterName} just hired an army", Color.green);
     }
 
     public Army GetArmy()
@@ -121,26 +127,30 @@ public class Character : MonoBehaviour
 
     virtual public void Killed(Leader killedBy)
     {
+        if (IsArmyCommander() && !army.killed) army.Killed(killedBy);
+        if(GetOwner().controlledCharacters.Contains(this)) GetOwner().controlledCharacters.Remove(this);
+        if(hex.characters.Contains(this)) hex.characters.Remove(this);
         health = 0;
         killed = true;
-        if (IsArmyCommander()) army.Killed();
-        GetOwner().controlledCharacters.Remove(this);
-        hex.characters.Remove(this);
+        MessageDisplay.ShowMessage($"{characterName} died due to wounds", Color.red);
     }
 
     public void Wounded(Leader woundedBy, int damage)
     {
         health -= damage;
+        MessageDisplay.ShowMessage($"{characterName} was wounded by {damage}", Color.red);
         if (health < 1) Killed(woundedBy);
     }
 
     public void Doubled(Leader doubledBy)
     {
         this.doubledBy.Add(doubledBy);
+        MessageDisplay.ShowMessage($"{characterName} will share secrets with {doubledBy.characterName}", Color.green);
     }
     public void Undouble(Leader doubledBy)
     {
         this.doubledBy.Remove(doubledBy);
+        MessageDisplay.ShowMessage($"{characterName} will no longer share secrets with {doubledBy.characterName}", Color.green);
     }
 
     public int GetCommander()
@@ -202,5 +212,11 @@ public class Character : MonoBehaviour
     public void AddMage(int level)
     {
         mage = Mathf.Clamp(mage + level, 0, 5);
+    }
+
+    public void Heal(int health)
+    {
+        this.health = Mathf.Min(100, this.health + health);
+        MessageDisplay.ShowMessage($"{characterName} heals by {health}", Color.green);
     }
 }

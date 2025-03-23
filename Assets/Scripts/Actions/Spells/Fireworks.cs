@@ -10,9 +10,8 @@ public class Fireworks: FreeSpell
             if (c.hex.GetPC() == null) return false;
             if (c.hex.GetPC().owner == c.GetOwner() || (c.hex.GetPC().owner.alignment == c.GetAlignment() && c.hex.GetPC().owner.alignment != AlignmentEnum.neutral))
             {
-                c.hex.GetPC().loyalty += UnityEngine.Random.Range(0, 10) * c.GetMage();
-                c.hex.GetPC().loyalty = Math.Min(100, c.hex.GetPC().loyalty);
-                if (c.hex.GetPC().loyalty >= 50 && c.hex.encounters.Contains(EncountersEnum.Disloyal)) c.hex.encounters.Remove(EncountersEnum.Disloyal);
+                int loyalty = UnityEngine.Random.Range(0, 10) * c.GetMage();
+                c.hex.GetPC().IncreaseLoyalty(loyalty);
             }
             else
             {

@@ -1,4 +1,5 @@
 using System;
+using System.Xml.Linq;
 using UnityEngine;
 
 public class NameAgent : AgentCommanderAction
@@ -14,7 +15,7 @@ public class NameAgent : AgentCommanderAction
             c.GetOwner().biome.characterNames.Remove(nextCharacterName);
             GameObject newCharacterPrefab = Instantiate(characterPrefab, GameObject.Find("OtherCharacters").transform);
             Character character = newCharacterPrefab.GetComponent<Character>();
-            character.Initialize(c.GetOwner(), c.GetAlignment(), c.hex, false, nextCharacterName);
+            character.Initialize(c.GetOwner(), c.GetAlignment(), c.hex, nextCharacterName);
             character.AddAgent(1);
             c.hex.RedrawCharacters();
             return originalEffect == null || originalEffect(c); 

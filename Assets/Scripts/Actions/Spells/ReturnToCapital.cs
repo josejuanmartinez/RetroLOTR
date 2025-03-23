@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class ReturnToCapital: Spell
 {
@@ -10,6 +11,8 @@ public class ReturnToCapital: Spell
             Hex capitalHex = FindFirstObjectByType<Board>().GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == c.GetOwner() && x.GetPC().isCapital);
             if (capitalHex == null) return false;
             FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, capitalHex, true);
+            MessageDisplay.ShowMessage($"{c.characterName} returned to capital", Color.green);
+            FindFirstObjectByType<Board>().SelectCharacter(c);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

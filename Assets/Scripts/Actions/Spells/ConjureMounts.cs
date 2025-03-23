@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class ConjureMounts: Spell
 {
@@ -7,7 +8,8 @@ public class ConjureMounts: Spell
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            c.GetOwner().mountsAmount += Math.Clamp(UnityEngine.Random.Range(0, 1) * c.GetMage(), 1, 3);
+            int mounts = Math.Clamp(UnityEngine.Random.Range(0, 1 * c.GetMage()), 1, 3);
+            c.GetOwner().AddMounts(mounts);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

@@ -9,11 +9,11 @@ public class TrainLightCavalry : CommanderPCAction
         effect = (c) => {
             if (!c.IsArmyCommander())
             {
-                c.CreateArmy(TroopsTypeEnum.li, 1, false);
+                c.CreateArmy(TroopsTypeEnum.lc, 1, false);
             }
             else
             {
-                c.GetArmy().ca += 1;
+                c.GetArmy().Recruit(TroopsTypeEnum.lc, 1);
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();

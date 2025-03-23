@@ -1,7 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using TMPro;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -14,8 +11,6 @@ public class Game : MonoBehaviour
     public List<NonPlayableLeader> npcs;
     [Header("Currently Playing")]
     public PlayableLeader currentlyPlaying;
-    [Header("Next Button")]
-    public TextMeshProUGUI nextButton;
 
     public int normalMovement = 12;
     public int cavalryMovement = 15;
@@ -23,6 +18,7 @@ public class Game : MonoBehaviour
     public int maxCharactersPerPlayer = 8;
 
     public int turn = 0;
+    public bool started = false;
 
     public void SelectPlayer(PlayableLeader playableLeader)
     {
@@ -42,6 +38,7 @@ public class Game : MonoBehaviour
 
     public void StartGame()
     {
+        started = true;
         NewTurn();
     }
 
@@ -57,9 +54,9 @@ public class Game : MonoBehaviour
             EndGame();
             return;
         }
-        MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
 
         currentlyPlaying = player;
+        MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
         FindFirstObjectByType<PlayableLeaderIcons>().HighlightCurrentlyPlaying(currentlyPlaying);
         player.NewTurn();
 
@@ -74,21 +71,20 @@ public class Game : MonoBehaviour
         ));
     }
 
+    public bool MoveToNextCharacterToAction()
+    {
+        // Make sure all characters have actioned
+        Character stillNotActioned = player.controlledCharacters.Find(x => !x.hasActionedThisTurn && !x.killed && FindFirstObjectByType<Board>().selectedCharacter != x);
+        if (stillNotActioned != null) FindFirstObjectByType<Board>().SelectCharacter(stillNotActioned);
+        return stillNotActioned != null;
+    }
+
     public void NextPlayer()
     {
         
         if (currentlyPlaying == player)
         {
-            // Make sure all characters have actioned
-            Character stillNotActioned = player.controlledCharacters.Find(x => !x.hasActionedThisTurn);
-            if (stillNotActioned != null)
-            {
-                nextButton.text = "Awaiting Orders";
-                FindFirstObjectByType<Board>().SelectCharacter(stillNotActioned);
-                return;
-            }
-            nextButton.text = "End Turn\n<b>>>></b>";
-
+            if (MoveToNextCharacterToAction()) return;
 
             // Find the first non-killed competitor
             currentlyPlaying = FindNextAliveCompetitor(0);

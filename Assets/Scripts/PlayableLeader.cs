@@ -15,7 +15,7 @@ public class PlayableLeader : Leader
         {
             if (character == playable)
             {
-                if (character.IsArmyCommander()) character.GetArmy().Killed();
+                if (character.IsArmyCommander()) character.GetArmy().Killed(killedBy);
                 hex.characters.Remove(character);
                 continue;
             }

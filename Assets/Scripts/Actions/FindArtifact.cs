@@ -13,13 +13,17 @@ public class FindArtifact: MageAction
                 Artifact artifact = c.hex.hiddenArtifacts[0];
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
-                if(c.hex.hiddenArtifacts.Count < 1 && c.hex.encounters.Contains(EncountersEnum.Artifact)) c.hex.encounters.Remove(EncountersEnum.Artifact);
+                MessageDisplay.ShowMessage($"Artifact found: {artifact.GetText()}", Color.green);
+                if (c.hex.hiddenArtifacts.Count < 1 && c.hex.encounters.Contains(EncountersEnum.Artifact)) c.hex.encounters.Remove(EncountersEnum.Artifact);
             }
 
-            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).ToList().ForEach(x =>
+            if(c.GetOwner() is PlayableLeader)
             {
-                x.CheckArtifactConditions(c.GetOwner());
-            });
+                FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != c.GetOwner()).ToList().ForEach(x =>
+                {
+                    x.CheckArtifactConditions(c.GetOwner());
+                });
+            }
 
             return originalEffect == null || originalEffect(c);
         };

@@ -13,7 +13,7 @@ public class TrainHeavyCavalry : CommanderPCAction
             }
             else
             {
-                c.GetArmy().ca += 1;
+                c.GetArmy().Recruit(TroopsTypeEnum.hc, 1);
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();

@@ -13,7 +13,7 @@ public class TrainLightInfantry : CommanderPCAction
             }
             else
             {
-                c.GetArmy().ca += 1;
+                c.GetArmy().Recruit(TroopsTypeEnum.li, 1);
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();

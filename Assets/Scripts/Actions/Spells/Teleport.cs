@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class Teleport: Spell
 {
@@ -11,6 +12,8 @@ public class Teleport: Spell
             if (randomHex == null) return false;
             randomHex.RevealArea(c.GetMage());
             FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, randomHex, true);
+            MessageDisplay.ShowMessage($"{c.characterName} warped to an unkown place", Color.green);
+            FindFirstObjectByType<Board>().SelectCharacter(c);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

@@ -7,11 +7,13 @@ public class CommanderEnemyArmyAction : CommanderArmyAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => { return originalEffect == null || originalEffect(c); };
-        condition = (c) => {
+        condition = (c) => 
+        {
             return (
-            c.hex.armies.Find(x => x.GetCommander() != null && x.GetAlignment() != c.GetAlignment()) != null ||
-            (c.hex.GetPC() != null && c.hex.GetPC().owner.GetAlignment() != c.GetAlignment())
-            ) 
+                c.hex.armies.Find(x => x.GetCommander() != null && x.GetCommander().GetOwner() != c.GetOwner() && (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())) != null 
+                ||
+                (c.hex.GetPC() != null && c.hex.GetPC().owner != c.GetOwner() && (c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral || c.hex.GetPC().owner.GetAlignment() != c.GetAlignment()))
+            )
             && 
             (
             originalCondition == null || originalCondition(c)

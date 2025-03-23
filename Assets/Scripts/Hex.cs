@@ -97,7 +97,7 @@ public class Hex : MonoBehaviour
 
     public void SpawnLeaderAtStart(Leader leader)
     {
-        leader.Initialize(leader, leader.biome.alignment, this, true);
+        leader.Initialize(leader, leader.biome.alignment, this, leader.characterName, true, true);
         RedrawCharacters();
         RedrawArmies();
     }
@@ -108,7 +108,7 @@ public class Hex : MonoBehaviour
         foreach(Character otherCharacter in otherCharaters)
         {
             if (otherCharacter is Leader) continue;
-            otherCharacter.Initialize(leader, leader.biome.alignment, this, true);
+            otherCharacter.Initialize(leader, leader.biome.alignment, this, otherCharacter.characterName);
         }
 
         RedrawCharacters();
@@ -234,7 +234,7 @@ public class Hex : MonoBehaviour
                 
                 if (pc.owner != null)
                 {
-                    Sprite illustrationSmall = illustrationsSmall.GetIllustrationByName(pc.owner.characterName);
+                    Sprite illustrationSmall = illustrationsSmall.GetIllustrationByName(pc.owner);
                     if (illustrationSmall != null)
                     {
                         hoverIcon.GetComponent<SpriteRenderer>().sprite = illustrationSmall;
@@ -457,6 +457,7 @@ public class Hex : MonoBehaviour
             // Move to the next radius level
             currentRadius++;
         }
+        LookAt();
     }
 
     public void Hide()

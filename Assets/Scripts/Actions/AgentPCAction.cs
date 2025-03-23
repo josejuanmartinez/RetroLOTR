@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class AgentPCAction : AgentAction
 {
@@ -6,11 +7,25 @@ public class AgentPCAction : AgentAction
     {
         var originalEffect = effect;
         var originalCondition = condition;
-        effect = (c) => { return originalEffect == null || originalEffect(c); };
+        effect = (c) => {
+            if (c.hex.GetPC() == null) return false;
+            Hex capitalHex = FindFirstObjectByType<Board>().GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == c.GetOwner() && x.GetPC().isCapital);
+            if (capitalHex == null) return false;
+            int random = UnityEngine.Random.Range(0, 5);
+            string message = "Agent returned to capital";
+            if (random > c.GetAgent())
+            {
+                message += " wounded";
+                c.Wounded(c.hex.GetPC().owner, random * 10);
+            }
+            FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, capitalHex, true);
+            MessageDisplay.ShowMessage(message, Color.green);
+            return originalEffect == null || originalEffect(c);
+        };
         condition = (c) => {
             return c.hex.GetPC() != null && 
             c.hex.GetPC().owner != c.GetOwner() &&
-            (c.hex.GetPC().owner.GetAlignment() != AlignmentEnum.neutral || c.hex.GetPC().owner.GetAlignment() != c.GetAlignment()) &&
+            (c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral || c.hex.GetPC().owner.GetAlignment() != c.GetAlignment()) &&
             (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);

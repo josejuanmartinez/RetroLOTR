@@ -1,7 +1,8 @@
 using NUnit.Framework;
 using System;
+using UnityEngine;
 
-public class UndoubleCharacter : AgentCharacterAction
+public class UndoubleCharacter : AgentAction
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
@@ -13,10 +14,11 @@ public class UndoubleCharacter : AgentCharacterAction
             if (doubled == null) return false;
             
             doubled.Undouble(c.GetOwner());
+            MessageDisplay.ShowMessage($"{c.characterName} will not reveal secrets anymore", Color.green);
 
             return originalEffect == null || originalEffect(c); 
         };
-        condition = (c) => { return originalCondition == null || originalCondition(c); };
+        condition = (c) => { return FindDoubledCharacters(c) != null && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
     private Character FindDoubledCharacters(Character c)

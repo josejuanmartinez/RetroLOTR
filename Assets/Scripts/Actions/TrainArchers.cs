@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.Design;
 
 public class TrainArchers : CommanderPCAction
 {
@@ -12,7 +13,7 @@ public class TrainArchers : CommanderPCAction
                 c.CreateArmy(TroopsTypeEnum.ar, 1, false);
             } else
             {
-                c.GetArmy().ar += 1;
+                c.GetArmy().Recruit(TroopsTypeEnum.ar, 1);
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();
