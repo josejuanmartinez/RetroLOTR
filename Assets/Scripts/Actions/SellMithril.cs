@@ -9,7 +9,7 @@ public class SellMithril : EmmissaryPCAction
         effect = (c) => {
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
-            playable.goldAmount += 25;
+            playable.AddGold(25);
             if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };

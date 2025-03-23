@@ -13,7 +13,7 @@ public class TrainCatapults : CommanderPCAction
             }
             else
             {
-                c.GetArmy().ca += 1;
+                c.GetArmy().Recruit(TroopsTypeEnum.ca, 1);
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();

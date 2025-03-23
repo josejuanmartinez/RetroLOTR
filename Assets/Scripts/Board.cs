@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(BoardGenerator), typeof(NationSpawner))]
@@ -181,7 +180,6 @@ public class Board : MonoBehaviour
         for (int i = 0; i < artifactsToPlace; i++)
         {
             Hex targetHex = shuffledHexes[i];
-            Debug.Log("Placing artifact in hex " + targetHex.v2);
             Artifact artifact = hiddenArtifacts[i];
 
             // Add the artifact to the hex's hiddenArtifacts list
@@ -197,12 +195,7 @@ public class Board : MonoBehaviour
 
     public void SelectCharacter(Character character)
     {
-        UnselectCharacter();
-        UnselectHex();
-        selectedCharacter = character;
-        FindFirstObjectByType<SelectedCharacterIcon>().Refresh(selectedCharacter);
-        FindFirstObjectByType<ActionsManager>().Refresh(selectedCharacter);
-        selectedCharacter.hex.LookAt();
+        SelectHex(character.hex);
     }
 
     public void SelectHex(Hex hex)
@@ -371,6 +364,8 @@ public class Board : MonoBehaviour
         // Final delay outside try block
         yield return new WaitForSeconds(0.5f);
         moving = false;
+        SelectCharacter(character);
+        actionsManager.Refresh(character);
     }
 
     public void MoveCharacter(Character character, Hex previousHex, Hex newHex, bool isTeleport = false)
@@ -532,4 +527,5 @@ public class Board : MonoBehaviour
         hexes.TryGetValue(v2, out Hex hex);
         return hex;
     }
+
 }

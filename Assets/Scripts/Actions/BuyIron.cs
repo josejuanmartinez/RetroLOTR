@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class BuyIron : EmmissaryPCAction
 {
@@ -9,8 +10,8 @@ public class BuyIron : EmmissaryPCAction
         effect = (c) => {
             if(c.GetOwner() is not PlayableLeader) return false;
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
-            playable.ironAmount += 5;
-            if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
+            playable.AddIron(5);
+            if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {

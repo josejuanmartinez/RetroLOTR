@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class Curse : DarkNeutralSpell
 {
@@ -13,7 +14,7 @@ public class Curse : DarkNeutralSpell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.artifacts.Find(x => x.providesSpell is Curse) != null && (originalCondition == null || originalCondition(c)); 
+            return c.artifacts.Find(x => x.providesSpell is Curse) != null && FindTarget(c) != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

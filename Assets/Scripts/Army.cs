@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -18,7 +20,9 @@ public class Army
 
     [SerializeField] public bool startingArmy = false;
 
-    public Army(Character commander, bool startingArmy = false, int ma=0, int ar=0, int li=0, int hi=0, int lc=0, int hc=0, int ca=0, int ws=0)
+    public bool killed = false;
+
+    public Army(Character commander, bool startingArmy = false, int ma = 0, int ar = 0, int li = 0, int hi = 0, int lc = 0, int hc = 0, int ca = 0, int ws = 0)
     {
         this.commander = commander;
         this.startingArmy = startingArmy;
@@ -36,7 +40,7 @@ public class Army
     {
         this.commander = commander;
         this.startingArmy = startingArmy;
-     
+
         // Use reflection to set the field based on the enum value
         string fieldName = troopsType.ToString();
 
@@ -71,6 +75,49 @@ public class Army
         hc += otherArmy.hc;
         ca += otherArmy.ca;
         ws += otherArmy.ws;
+    }
+    public void Recruit(TroopsTypeEnum troopsType, int amount)
+    {
+        if (troopsType == TroopsTypeEnum.ma)
+        {
+            MessageDisplay.ShowMessage($"+{amount} Men-at-arms were hired", Color.green);
+            ma += amount;
+        }
+        if (troopsType == TroopsTypeEnum.ar)
+        {
+            MessageDisplay.ShowMessage($"+{amount} Archers were hired", Color.green);
+            ar += amount;
+        }
+        if (troopsType == TroopsTypeEnum.li)
+        {
+            MessageDisplay.ShowMessage($"+{amount} Light Infrantry was hired", Color.green);
+            li += amount;
+        }
+        if (troopsType == TroopsTypeEnum.hi)
+        {
+            MessageDisplay.ShowMessage($"+{amount} Heavy Infantry was hired", Color.green);
+            hi += amount;
+        }
+        if (troopsType == TroopsTypeEnum.lc)
+        {
+            MessageDisplay.ShowMessage($"+{amount} Light Cavalry was hired", Color.green);
+            lc += amount;
+        }
+        if (troopsType == TroopsTypeEnum.hc)
+        {
+            MessageDisplay.ShowMessage($"+{amount} Heavy Cavalry was hired", Color.green);
+            hc += amount;
+        }
+        if (troopsType == TroopsTypeEnum.ca)
+        {
+            MessageDisplay.ShowMessage($"+{amount} Catapults were built", Color.green);
+            ca += amount;
+        }
+        if (troopsType == TroopsTypeEnum.ws)
+        {
+            MessageDisplay.ShowMessage($"+{amount} Warships were built", Color.green);
+            ws += amount;
+        }
     }
 
     public int GetSize(bool withoutWs = false)
@@ -113,9 +160,14 @@ public class Army
         return IsCavalryOnly() ? MovementType.ArmyCommanderCavalryOnly : MovementType.ArmyCommander;
     }
 
-    public void Killed()
+    public void Killed(Leader killedBy)
     {
-        GameObject.FindFirstObjectByType<Board>().GetHexes().FindAll(x => x.armies.Contains(this)).ToList().ForEach(x => x.armies.Remove(this));
+        if (killed) return;
+        killed = true;
+        int wound = UnityEngine.Random.Range(0, 100);
+        MessageDisplay.ShowMessage($"{commander.characterName} army was killed and {commander.characterName} wounded by {wound}", Color.red);
+        if(commander.hex.armies.Contains(this)) commander.hex.armies.Remove(this);
+        commander.hex.RedrawArmies();
         commander = null;
         ma = 0;
         ar = 0;
@@ -125,6 +177,8 @@ public class Army
         hc = 0;
         ca = 0;
         ws = 0;
+        commander.Wounded(killedBy, wound);
+        commander = null;
     }
 
     public int GetStrength()
@@ -132,9 +186,10 @@ public class Army
         int strength = 0;
         if (commander.hex.IsWaterTerrain())
         {
-            strength += (ma+ar+li+hi+lc+hc+ca) * ArmyData.transportedStrength;
-            strength += ws * ArmyData.warshipStrength;            
-        } else
+            strength += (ma + ar + li + hi + lc + hc + ca) * ArmyData.transportedStrength;
+            strength += ws * ArmyData.warshipStrength;
+        }
+        else
         {
             strength += ma * ArmyData.troopsStrength[TroopsTypeEnum.ma];
             strength += ar * ArmyData.troopsStrength[TroopsTypeEnum.ar];
@@ -144,7 +199,7 @@ public class Army
             strength += hc * ArmyData.troopsStrength[TroopsTypeEnum.hc];
             strength += (commander.hex.GetPC() != null && commander.hex.GetPC().owner.GetAlignment() != GetAlignment()) ? ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] : ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] * ArmyData.catapultStrengthMultiplierInPC;
         }
-        if(commander.GetOwner().biome.terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
+        if (commander.GetOwner().biome.terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
 
         return strength;
     }
@@ -175,6 +230,7 @@ public class Army
 
     public void Attack(Hex targetHex)
     {
+        Leader attackerLeader = commander.GetOwner();
         // Get the attacker's alignment
         AlignmentEnum attackerAlignment = commander.GetAlignment();
 
@@ -212,6 +268,7 @@ public class Army
 
         // Find the main defending army (assume first army of different alignment)
         Army defenderArmy = null;
+        Leader defenderLeader = null;
         AlignmentEnum defenderAlignment = AlignmentEnum.neutral;
 
         foreach (Army army in targetHex.armies)
@@ -219,6 +276,7 @@ public class Army
             if (army.GetAlignment() != attackerAlignment && army.GetAlignment() != AlignmentEnum.neutral)
             {
                 defenderArmy = army;
+                defenderLeader = army.commander.GetOwner();
                 defenderAlignment = army.GetAlignment();
                 break;
             }
@@ -229,6 +287,8 @@ public class Army
         float attackerDamage = 0;
         float defenderDamage = 0;
         float attackerCasualtyPercent = 0;
+        int attackerTotalLosses = 0;
+        bool anyAttackerCasualties = false;
         // If no enemy army found, check if there's an enemy PC to attack
         if (defenderArmy == null)
         {
@@ -239,7 +299,7 @@ public class Army
                 defenderAlignment = targetHex.GetPC().owner.GetAlignment();
 
                 // Calculate defender's defense based on PC only
-                int fortSize = (int) targetHex.GetPC().fortSize;
+                int fortSize = (int)targetHex.GetPC().fortSize;
                 int citySize = (int)targetHex.GetPC().citySize;
                 defenderDefense = citySize + (fortSize * FortSizeData.defensePerFortSizeLevel);
 
@@ -256,40 +316,35 @@ public class Army
                 // Clamp casualty percentage between 0 and 1
                 attackerCasualtyPercent = Math.Clamp(attackerCasualtyPercent, 0, 1);
 
-                // Apply casualties to attacker troops - ensure values stay >= 0
-                ma = Math.Max(0, ma - (int)Math.Floor(ma * attackerCasualtyPercent));
-                ar = Math.Max(0, ar - (int)Math.Floor(ar * attackerCasualtyPercent));
-                li = Math.Max(0, li - (int)Math.Floor(li * attackerCasualtyPercent));
-                hi = Math.Max(0, hi - (int)Math.Floor(hi * attackerCasualtyPercent));
-                lc = Math.Max(0, lc - (int)Math.Floor(lc * attackerCasualtyPercent));
-                hc = Math.Max(0, hc - (int)Math.Floor(hc * attackerCasualtyPercent));
-                ca = Math.Max(0, ca - (int)Math.Floor(ca * attackerCasualtyPercent));
+                // Check if attacker will actually lose any units
+                attackerTotalLosses = CalculateTotalCasualties(attackerCasualtyPercent);
+                anyAttackerCasualties = attackerTotalLosses > 0;
 
-                // Only apply casualties to warships if in water
-                if (commander.hex.IsWaterTerrain())
-                {
-                    ws = Math.Max(0, ws - (int)Math.Floor(ws * attackerCasualtyPercent));
-                }
-
-                // Check if attacker army was eliminated
-                if (GetSize(true) < 1) Killed();
+                // Apply casualties to attacker
+                ReceiveCasualties(attackerCasualtyPercent, defenderLeader, !anyAttackerCasualties);
 
                 if (attackerDamage > 0)
                 {
-                    if(targetHex.GetPC().fortSize > 0)
+                    if (targetHex.GetPC().fortSize > FortSizeEnum.NONE)
                     {
                         // Reduce fort size first
-                        targetHex.GetPC().fortSize -= 1;
-                    } else
+                        targetHex.GetPC().DecreaseFort();
+                    }
+                    else
                     {
                         targetHex.GetPC().CapturePC(commander.GetOwner());
                     }
+                }
+                else
+                {
+                    MessageDisplay.ShowMessage($"{targetHex.GetPC().pcName} defences resisted the attack", Color.red);
                 }
 
                 // Redraw visuals
                 commander.hex.RedrawArmies();
                 commander.hex.RedrawPC();
             }
+
             return;
         }
 
@@ -356,68 +411,203 @@ public class Army
         attackerCasualtyPercent = Math.Clamp(attackerCasualtyPercent, 0, 1);
         defenderCasualtyPercent = Math.Clamp(defenderCasualtyPercent, 0, 1);
 
-        // Apply casualties to attacker troops - ensure values stay >= 0
-        ma = Math.Max(0, ma - (int)Math.Floor(ma * attackerCasualtyPercent));
-        ar = Math.Max(0, ar - (int)Math.Floor(ar * attackerCasualtyPercent));
-        li = Math.Max(0, li - (int)Math.Floor(li * attackerCasualtyPercent));
-        hi = Math.Max(0, hi - (int)Math.Floor(hi * attackerCasualtyPercent));
-        lc = Math.Max(0, lc - (int)Math.Floor(lc * attackerCasualtyPercent));
-        hc = Math.Max(0, hc - (int)Math.Floor(hc * attackerCasualtyPercent));
-        ca = Math.Max(0, ca - (int)Math.Floor(ca * attackerCasualtyPercent));
+        // Calculate actual casualties that would occur
+        attackerTotalLosses = CalculateTotalCasualties(attackerCasualtyPercent);
+        int defenderTotalLosses = defenderArmy.CalculateTotalCasualties(defenderCasualtyPercent);
 
-        // Only apply casualties to warships if in water
-        if (commander.hex.IsWaterTerrain())
+        // Check if either side will actually lose units
+        anyAttackerCasualties = attackerTotalLosses > 0;
+        bool anyDefenderCasualties = defenderTotalLosses > 0;
+
+        // If no one is taking casualties, decide who should lose one unit
+        bool forceCasualtySide = false;
+        if (!anyAttackerCasualties && !anyDefenderCasualties)
         {
-            ws = Math.Max(0, ws - (int)Math.Floor(ws * attackerCasualtyPercent));
+            // Compare strengths to decide who loses one unit
+            forceCasualtySide = attackerStrength >= defenderStrength;
         }
 
+        // Apply casualties to attacker troops
+        ReceiveCasualties(attackerCasualtyPercent, defenderLeader, !anyAttackerCasualties && !forceCasualtySide);
+
         // Apply casualties to all defending armies based on their alignment
-        ApplyCasualties(targetHex, defenderCasualtyPercent, attackerAlignment);
+        ApplyCasualtiesToDefenders(targetHex, defenderCasualtyPercent, attackerAlignment, !anyDefenderCasualties && forceCasualtySide, attackerLeader);
 
         // Check if attacker army was eliminated
-        if (GetSize(true) < 1) Killed();
+        if (!killed && GetSize(true) < 1) Killed(defenderLeader);
 
         // Redraw visuals
-        commander.hex.RedrawArmies();
-        commander.hex.RedrawPC();
         targetHex.RedrawArmies();
         targetHex.RedrawPC();
     }
 
     // Helper method to apply casualties to all defending armies in a hex
-    public void ApplyCasualties(Hex targetHex, float casualtyPercent, AlignmentEnum attackerAlignment)
+    public void ApplyCasualtiesToDefenders(Hex targetHex, float casualtyPercent, AlignmentEnum attackerAlignment, bool forceOneUnitCasualty, Leader attacker)
     {
-        foreach (Army army in targetHex.armies)
+        // If we need to force one unit casualty, find the primary defender
+        Army primaryDefender = null;
+        if (forceOneUnitCasualty)
         {
-            if (army == this) return;
+            foreach (Army army in targetHex.armies)
+            {
+                if (army.GetAlignment() != attackerAlignment || (army.GetAlignment() == AlignmentEnum.neutral && army.commander.owner != commander.owner))
+                {
+                    if (primaryDefender == null || army.GetSize(true) > primaryDefender.GetSize(true))
+                    {
+                        primaryDefender = army;
+                    }
+                }
+            }
+        }
+
+        int armiesNum = targetHex.armies.Count;
+
+        // Use a for loop with index going backwards to avoid collection modification issues
+        for (int i = armiesNum - 1; i >= 0; i--)
+        {
+            // Check if index is still valid (in case armies were removed)
+            if (i >= targetHex.armies.Count) continue;
+
+            Army army = targetHex.armies[i];
+
+            if (army == this || army == null || army.GetSize() < 1 || army.GetCommander() == null || army.killed) continue;
+
             // Skip armies with the same alignment as the attacker and neutral armies
             if (army.GetAlignment() != attackerAlignment || (army.GetAlignment() == AlignmentEnum.neutral && army.commander.owner != commander.owner))
             {
-               army.ReceiveCasualties(casualtyPercent);
+                // Force one unit casualty only on the primary defender
+                bool forceUnit = forceOneUnitCasualty && army == primaryDefender;
+                army.ReceiveCasualties(casualtyPercent, attacker, forceUnit);
             }
+        }
+
+        if ((casualtyPercent > 0.4f || UnityEngine.Random.Range(0f, 1f) >= 0.75f) && targetHex.GetPC() != null && (targetHex.GetPC().owner.GetAlignment() != attackerAlignment || targetHex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral))
+        {
+            targetHex.GetPC().DecreaseFort();
         }
     }
 
-    public void ReceiveCasualties(float casualtyPercent)
+    // Helper method to calculate total casualties without applying them
+    // Uses the same rounding function as the actual casualty calculation
+    public int CalculateTotalCasualties(float casualtyPercent)
     {
-        // Apply casualties to this this
-        this.ma = Math.Max(0, this.ma - (int)Math.Floor(this.ma * casualtyPercent));
-        this.ar = Math.Max(0, this.ar - (int)Math.Floor(this.ar * casualtyPercent));
-        this.li = Math.Max(0, this.li - (int)Math.Floor(this.li * casualtyPercent));
-        this.hi = Math.Max(0, this.hi - (int)Math.Floor(this.hi * casualtyPercent));
-        this.lc = Math.Max(0, this.lc - (int)Math.Floor(this.lc * casualtyPercent));
-        this.hc = Math.Max(0, this.hc - (int)Math.Floor(this.hc * casualtyPercent));
-        this.ca = Math.Max(0, this.ca - (int)Math.Floor(this.ca * casualtyPercent));
+        // Calculate casualties for each unit type using the chosen rounding function
+        // You can replace Math.Floor with Math.Ceiling or Math.Round as needed
+        int maCasualties = (int)Math.Round(this.ma * casualtyPercent);
+        int arCasualties = (int)Math.Round(this.ar * casualtyPercent);
+        int liCasualties = (int)Math.Round(this.li * casualtyPercent);
+        int hiCasualties = (int)Math.Round(this.hi * casualtyPercent);
+        int lcCasualties = (int)Math.Round(this.lc * casualtyPercent);
+        int hcCasualties = (int)Math.Round(this.hc * casualtyPercent);
+        int caCasualties = (int)Math.Round(this.ca * casualtyPercent);
+        int wsCasualties = commander?.hex?.IsWaterTerrain() ?? false ? (int)Math.Round(this.ws * casualtyPercent) : 0;
+
+        return maCasualties + arCasualties + liCasualties + hiCasualties +
+               lcCasualties + hcCasualties + caCasualties + wsCasualties;
+    }
+
+    public void ReceiveCasualties(float casualtyPercent, Leader defenderLeader, bool forceOneUnitCasualty = false)
+    {
+        // Calculate casualties for each unit type
+        // You can replace Math.Floor with Math.Ceiling or Math.Round depending on desired behavior
+        // Math.Floor - Minimum losses (current behavior)
+        // Math.Ceiling - Maximum losses (more aggressive)
+        // Math.Round - Balanced approach (rounds 0.5 up, otherwise follows normal rounding rules)
+        int maCasualties = (int)Math.Round(this.ma * casualtyPercent);
+        int arCasualties = (int)Math.Round(this.ar * casualtyPercent);
+        int liCasualties = (int)Math.Round(this.li * casualtyPercent);
+        int hiCasualties = (int)Math.Round(this.hi * casualtyPercent);
+        int lcCasualties = (int)Math.Round(this.lc * casualtyPercent);
+        int hcCasualties = (int)Math.Round(this.hc * casualtyPercent);
+        int caCasualties = (int)Math.Round(this.ca * casualtyPercent);
+        int wsCasualties = commander.hex.IsWaterTerrain() ? (int)Math.Round(this.ws * casualtyPercent) : 0;
+
+        // Check if there are any casualties at all
+        bool anyCasualties = maCasualties > 0 || arCasualties > 0 || liCasualties > 0 ||
+                            hiCasualties > 0 || lcCasualties > 0 || hcCasualties > 0 ||
+                            caCasualties > 0 || wsCasualties > 0;
+
+        // If no casualties and we need to force one, find the weakest unit type and remove one
+        if (!anyCasualties && forceOneUnitCasualty && GetSize(false) > 0)
+        {
+            // Check each unit type in order of weakness precedence
+            if (ma > 0)
+            {
+                maCasualties = 1;
+            }
+            else if (ar > 0)
+            {
+                arCasualties = 1;
+            }
+            else if (li > 0)
+            {
+                liCasualties = 1;
+            }
+            else if (lc > 0)
+            {
+                lcCasualties = 1;
+            }
+            else if (hi > 0)
+            {
+                hiCasualties = 1;
+            }
+            else if (hc > 0)
+            {
+                hcCasualties = 1;
+            }
+            else if (ca > 0)
+            {
+                caCasualties = 1;
+            }
+            else if (ws > 0 && commander.hex.IsWaterTerrain())
+            {
+                wsCasualties = 1;
+            }
+        }
+
+        // Apply casualties
+        this.ma = Math.Max(0, this.ma - maCasualties);
+        this.ar = Math.Max(0, this.ar - arCasualties);
+        this.li = Math.Max(0, this.li - liCasualties);
+        this.hi = Math.Max(0, this.hi - hiCasualties);
+        this.lc = Math.Max(0, this.lc - lcCasualties);
+        this.hc = Math.Max(0, this.hc - hcCasualties);
+        this.ca = Math.Max(0, this.ca - caCasualties);
 
         // Only apply casualties to warships if in water
-        if (this.commander.hex.IsWaterTerrain()) this.ws = Math.Max(0, this.ws - (int)Math.Floor(this.ws * casualtyPercent));
+        if (commander.hex.IsWaterTerrain())
+        {
+            this.ws = Math.Max(0, this.ws - wsCasualties);
+        }
 
-        // Check if this this was eliminated
-        if (this.GetSize(true) < 1) this.Killed();
+        // Check if the army was eliminated
+        if (this.GetSize(true) < 1)
+        {
+            this.Killed(defenderLeader);
+        }
+        else if (maCasualties > 0 || arCasualties > 0 || liCasualties > 0 ||
+                hiCasualties > 0 || lcCasualties > 0 || hcCasualties > 0 ||
+                caCasualties > 0 || wsCasualties > 0)
+        {
+            MessageDisplay.ShowMessage($"{commander.characterName} army receives casualties", Color.red);
+        }
     }
 
     public Character GetCommander()
     {
         return commander;
+    }
+
+    public int GetMaintenanceCost()
+    {
+        float cost = 0f;
+        cost += ma / 4;
+        cost += ar / 4;
+        cost += li / 3;
+        cost += hi / 2;
+        cost += lc / 2;
+        cost += hc;
+
+        return Mathf.FloorToInt(cost);
     }
 }

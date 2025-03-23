@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class BuyMounts : EmmissaryPCAction
 {
@@ -9,8 +10,8 @@ public class BuyMounts : EmmissaryPCAction
         effect = (c) => {
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
-            playable.mountsAmount += 5;
-            if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
+            playable.AddMounts(5);
+            if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {

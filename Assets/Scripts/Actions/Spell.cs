@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class Spell : MageAction
 {
@@ -6,7 +7,8 @@ public class Spell : MageAction
     {
         var originalEffect = effect;
         var originalCondition = condition;
-        effect = (c) => { return originalEffect == null || originalEffect(c); };
+        effect = (c) => {
+            return originalEffect == null || originalEffect(c); };
         condition = (c) => {
             return c.artifacts.Count > 0 && (originalCondition == null || originalCondition(c)); 
         };

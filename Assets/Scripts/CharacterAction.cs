@@ -120,9 +120,6 @@ public class CharacterAction : MonoBehaviour
         {
             MessageDisplay.ShowMessage($"{actionName} failed", Color.red);
             return;
-        } else
-        {
-            MessageDisplay.ShowMessage($"{actionName} executed successfully", Color.grey);
         }
 
         character.AddCommander(UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0);
@@ -132,21 +129,24 @@ public class CharacterAction : MonoBehaviour
 
         FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
 
-        character.GetOwner().leatherAmount -= leatherCost;
-        character.GetOwner().timberAmount -= timberCost;
-        character.GetOwner().mountsAmount -= mountsCost;
-        character.GetOwner().ironAmount -= ironCost;
-        character.GetOwner().mithrilAmount -= mithrilCost;
-        character.GetOwner().goldAmount -= goldCost;
+        character.GetOwner().RemoveLeather(leatherCost);
+        character.GetOwner().RemoveTimber(timberCost);
+        character.GetOwner().RemoveMounts(mountsCost);
+        character.GetOwner().RemoveIron(ironCost);
+        character.GetOwner().RemoveMithril(mithrilCost);
+        character.GetOwner().RemoveGold(goldCost);
+
+        FindFirstObjectByType<Game>().MoveToNextCharacterToAction();
 
         FindFirstObjectByType<StoresManager>().RefreshStores();
 
-        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).ToList().ForEach(x =>
+        if(character.GetOwner() is not PlayableLeader) return;
+        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != character.GetOwner()).ToList().ForEach(x =>
         {
             x.CheckActionConditionAnywhere(character.GetOwner(), this);
         });
 
-        if(character.hex.GetPC() != null && character.hex.GetPC().owner is NonPlayableLeader)
+        if(character.hex.GetPC() != null && character.hex.GetPC().owner is NonPlayableLeader && character.hex.GetPC().owner != character.GetOwner())
         {
             NonPlayableLeader nonPlayableLeader = character.hex.GetPC().owner as NonPlayableLeader;
             if (nonPlayableLeader == null) return;

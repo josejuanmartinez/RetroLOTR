@@ -47,42 +47,42 @@ public class PC
         switch (terrain)
         {
             case TerrainEnum.mountains:
-                mithril += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
-                iron += UnityEngine.Random.Range(2, Mathf.Max(2, ((PCSizeEnum.city + 1) - citySize)));
+                mithril += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
+                iron += UnityEngine.Random.Range(2, Mathf.Max(2, ((PCSizeEnum.city) - citySize)));
                 break;
             case TerrainEnum.hills:
-                iron += UnityEngine.Random.Range(1, Mathf.Max(1,  ((PCSizeEnum.city + 1) - citySize)));
-                timber += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
-                mounts += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
+                iron += UnityEngine.Random.Range(1, Mathf.Max(1,  ((PCSizeEnum.city) - citySize)));
+                timber += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
+                mounts += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
                 break;
             case TerrainEnum.plains:
             case TerrainEnum.shore:
-                mounts += UnityEngine.Random.Range(1, Mathf.Max(2, ((PCSizeEnum.city + 1) - citySize)));
-                leather += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
+                mounts += UnityEngine.Random.Range(1, Mathf.Max(2, ((PCSizeEnum.city) - citySize)));
+                leather += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
                 break;
             case TerrainEnum.grasslands:
-                mounts += UnityEngine.Random.Range(2, Mathf.Max(2, ((PCSizeEnum.city + 1) - citySize)));
-                timber += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
+                mounts += UnityEngine.Random.Range(2, Mathf.Max(2, ((PCSizeEnum.city) - citySize)));
+                timber += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
                 break;
             case TerrainEnum.forest:
-                timber += UnityEngine.Random.Range(2, Mathf.Max(2, ((PCSizeEnum.city + 1) - citySize)));
-                mounts += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
-                leather += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
+                timber += UnityEngine.Random.Range(2, Mathf.Max(2, ((PCSizeEnum.city) - citySize)));
+                mounts += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
+                leather += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
                 break;
             case TerrainEnum.shallowWater:
             case TerrainEnum.deepWater:
                 break;
             case TerrainEnum.swamp:
-                leather += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
-                timber += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
+                leather += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
+                timber += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
                 break;
             case TerrainEnum.desert:
-                mounts += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
-                leather += UnityEngine.Random.Range(1, Mathf.Max(2, ((PCSizeEnum.city + 1) - citySize)));
+                mounts += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
+                leather += UnityEngine.Random.Range(1, Mathf.Max(2, ((PCSizeEnum.city) - citySize)));
                 break;
             case TerrainEnum.wastelands:
-                iron += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
-                leather += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city + 1) - citySize)));
+                iron += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
+                leather += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
                 break;
         }
 
@@ -129,6 +129,8 @@ public class PC
         owner.hex.RedrawPC();
 
         if (owner.controlledPcs.Count < 1) owner.Killed(leader);
+
+        MessageDisplay.ShowMessage($"{pcName} was captured!", Color.red);
     }
 
     public void CheckHighLoyalty()
@@ -160,6 +162,8 @@ public class PC
         // Reduce a little the loyalty
         loyalty = 70;
 
+        MessageDisplay.ShowMessage($"Population in {pcName} grow!", Color.green);
+
         owner.hex.RedrawPC();
     }
 
@@ -170,6 +174,21 @@ public class PC
         // This will also increase gold per turn
         fortSize++;
 
+        MessageDisplay.ShowMessage($"{pcName} fort was upgraded", Color.green);
+
+        owner.hex.RedrawPC();
+    }
+
+
+    public void DecreaseFort()
+    {
+        if (fortSize <= FortSizeEnum.NONE) return;
+
+        // This will also increase gold per turn
+        fortSize--;
+
+        MessageDisplay.ShowMessage($"{pcName} fort was downgraded", Color.red);
+
         owner.hex.RedrawPC();
     }
 
@@ -177,6 +196,7 @@ public class PC
     {
         if (loyalty >= 50) return;
 
+        MessageDisplay.ShowMessage($"{pcName} suffers the effects of an unhappy population!", Color.red);
 
         if ( UnityEngine.Random.Range(0, 50) > loyalty)
         {
@@ -220,6 +240,22 @@ public class PC
         if (hex.encounters.Contains(EncountersEnum.Disloyal)) hex.encounters.Remove(EncountersEnum.Disloyal);
 
         owner.hex.RedrawPC();
+        
+        MessageDisplay.ShowMessage($"{pcName} population flee!", Color.red);
 
+    }
+
+    public void IncreaseLoyalty(int loyalty)
+    {
+        this.loyalty = Math.Min(100, this.loyalty + loyalty);
+        MessageDisplay.ShowMessage($"{pcName} population is happier now", Color.green);
+        if (loyalty >= 50 && hex.encounters.Contains(EncountersEnum.Disloyal)) hex.encounters.Remove(EncountersEnum.Disloyal);
+    }
+
+    public void DecreaseLoyalty(int loyalty, Leader decreasedBy)
+    {
+        this.loyalty = Math.Max(0, this.loyalty - loyalty);
+        MessageDisplay.ShowMessage($"{pcName} population discontent grows", Color.red);
+        CheckLowLoyalty(decreasedBy);
     }
 }

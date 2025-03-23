@@ -14,7 +14,7 @@ public class NameEmmissary : EmmissaryCommanderAction
             c.GetOwner().biome.characterNames.Remove(nextCharacterName);
             GameObject newCharacterPrefab = Instantiate(characterPrefab, GameObject.Find("OtherCharacters").transform);
             Character character = newCharacterPrefab.GetComponent<Character>();
-            character.Initialize(c.GetOwner(), c.GetAlignment(), c.hex, false, nextCharacterName);
+            character.Initialize(c.GetOwner(), c.GetAlignment(), c.hex, nextCharacterName);
             character.AddEmmissary(1);
             c.hex.RedrawCharacters();
             return originalEffect == null || originalEffect(c); 

@@ -1,4 +1,6 @@
 using System;
+using UnityEditor.Experimental;
+using UnityEngine;
 
 public class FoundPC : EmmissaryAction
 {
@@ -12,6 +14,7 @@ public class FoundPC : EmmissaryAction
             PC pc = new (c.GetOwner(), nextPcName, PCSizeEnum.camp, FortSizeEnum.NONE, false, false, c.hex);
             c.hex.SetPC(pc);
             c.hex.RedrawPC();
+            MessageDisplay.ShowMessage($"Camp found: {nextPcName}", Color.green);
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {

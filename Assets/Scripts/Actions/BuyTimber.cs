@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class BuyTimber : EmmissaryPCAction
 {
@@ -9,8 +10,8 @@ public class BuyTimber : EmmissaryPCAction
         effect = (c) => {
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
-            playable.timberAmount += 5;
-            if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
+            playable.AddTimber(5);
+            if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {

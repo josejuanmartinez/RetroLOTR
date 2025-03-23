@@ -13,7 +13,7 @@ public class TrainWarships : CommanderPCAction
             }
             else
             {
-                c.GetArmy().ca += 1;
+                c.GetArmy().Recruit(TroopsTypeEnum.ws, 1);
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();

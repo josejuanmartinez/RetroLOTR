@@ -13,7 +13,7 @@ public class TrainMetAtArms : CommanderPCAction
             }
             else
             {
-                c.GetArmy().ma += 1;
+                c.GetArmy().Recruit(TroopsTypeEnum.ma, 1);
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();

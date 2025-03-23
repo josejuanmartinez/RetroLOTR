@@ -13,4 +13,8 @@ public class Artifact : MonoBehaviour
     public int emmissaryBonus = 0;
     public int mageBonus = 0;
 
+    public string GetText()
+    {
+        return $"{artifactName}( {artifactDescription} )";
+    }
 }

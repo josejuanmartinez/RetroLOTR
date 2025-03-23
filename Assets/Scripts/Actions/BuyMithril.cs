@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class BuyMithril : EmmissaryPCAction
 {
@@ -9,8 +10,8 @@ public class BuyMithril : EmmissaryPCAction
         effect = (c) => {
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
-            playable.mithrilAmount += 5;
-            if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
+            playable.AddMithril(5);
+            if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {

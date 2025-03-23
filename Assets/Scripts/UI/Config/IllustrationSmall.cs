@@ -40,9 +40,9 @@ public class IllustrationsSmall : MonoBehaviour
     public Sprite emmissary;
     public Sprite mage;
 
-    public Sprite GetIllustrationByName(string name)
+    public Sprite GetIllustrationByName(Character character)
     {
-        name = name.ToLower();
+        string name = character.characterName.ToLower();
         // Get type information for this class
         System.Type type = this.GetType();
 
@@ -57,8 +57,13 @@ public class IllustrationsSmall : MonoBehaviour
         {
             return field.GetValue(this) as Sprite;
         }
-
-        // Return null if no matching field was found
-        return null;
+        else
+        {
+            if (character.GetAgent() > 0) return agent;
+            if (character.GetCommander() > 0) return commander;
+            if (character.GetEmmissary() > 0) return emmissary;
+            if (character.GetMage() > 0) return mage;
+        }
+        return commander;
     }
 }
