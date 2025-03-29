@@ -9,8 +9,8 @@ public class FoundPC : EmmissaryAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            string nextPcName = c.GetOwner().biome.pcNames[UnityEngine.Random.Range(0, c.GetOwner().biome.pcNames.Count)];
-            c.GetOwner().biome.pcNames.Remove(nextPcName);
+            string nextPcName = c.GetOwner().GetBiome().pcNames[UnityEngine.Random.Range(0, c.GetOwner().GetBiome().pcNames.Count)];
+            c.GetOwner().GetBiome().pcNames.Remove(nextPcName);
             PC pc = new (c.GetOwner(), nextPcName, PCSizeEnum.camp, FortSizeEnum.NONE, false, false, c.hex);
             c.hex.SetPC(pc);
             c.hex.RedrawPC();

@@ -196,7 +196,7 @@ public class Army
             strength += hc * ArmyData.troopsStrength[TroopsTypeEnum.hc];
             strength += (commander.hex.GetPC() != null && commander.hex.GetPC().owner.GetAlignment() != GetAlignment()) ? ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] : ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] * ArmyData.catapultStrengthMultiplierInPC;
         }
-        if (commander.GetOwner().biome.terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
+        if (commander.GetOwner().GetBiome().terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
 
         return strength;
     }
@@ -226,7 +226,7 @@ public class Army
             // CA usual defence even if it's PC
             defence += ca * ArmyData.troopsDefence[TroopsTypeEnum.ca];
         }
-        if (commander.GetOwner().biome.terrain == commander.hex.terrainType) defence *= ArmyData.biomeTerrainMultiplier;
+        if (commander.GetOwner().GetBiome().terrain == commander.hex.terrainType) defence *= ArmyData.biomeTerrainMultiplier;
 
         return defence;
     }

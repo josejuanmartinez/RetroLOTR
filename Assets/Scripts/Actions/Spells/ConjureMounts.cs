@@ -13,7 +13,7 @@ public class ConjureMounts: Spell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.artifacts.Find(x => x.providesSpell is ConjureMounts) != null && (originalCondition == null || originalCondition(c)); 
+            return c.artifacts.Find(x => x.providesSpell == "ConjureMounts") != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5600125084595298054}
-  - component: {fileID: 475949156540207790}
   - component: {fileID: 494929156457438720}
   m_Layer: 0
   m_Name: Dwar
@@ -33,28 +32,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &475949156540207790
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 44875593226268857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 1
-  terrain: 10
-  startingCityName: Morannon
-  startingCitySize: 3
-  startingCityFortSize: 4
-  startingArmySize: 3
-  preferedTroopType: 4
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &494929156457438720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,14 +44,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: Dendra Dwar
+  alignment: 1
   owner: {fileID: 0}
-  commander: 4
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 3
   agent: 1
   emmissary: 0
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -84,13 +71,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &166815865090123199
 GameObject:
   m_ObjectHideFlags: 0
@@ -100,7 +93,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2365969428509872374}
-  - component: {fileID: 6927982795912955715}
   - component: {fileID: 1500886401563565622}
   m_Layer: 0
   m_Name: Akhorahil
@@ -124,28 +116,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6927982795912955715
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 166815865090123199}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 1
-  terrain: 10
-  startingCityName: Luglurak
-  startingCitySize: 3
-  startingCityFortSize: 1
-  startingArmySize: 4
-  preferedTroopType: 0
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &1500886401563565622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,14 +128,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: "Akh\xF4rahil"
+  alignment: 1
   owner: {fileID: 0}
+  hex: {fileID: 0}
+  startingCharacter: 0
   commander: 1
   agent: 0
   emmissary: 0
-  mage: 5
+  mage: 3
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -175,13 +155,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &699472206460308129
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,7 +177,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4719039424609243332}
-  - component: {fileID: 703516719499649377}
   - component: {fileID: 3832229461723141621}
   m_Layer: 0
   m_Name: Galadriel
@@ -215,28 +200,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &703516719499649377
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 699472206460308129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 0
-  terrain: 5
-  startingCityName: Caras Galadhon
-  startingCitySize: 3
-  startingCityFortSize: 2
-  startingArmySize: 4
-  preferedTroopType: 1
-  startingCityIsHidden: 1
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &3832229461723141621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,14 +212,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Galadriel
   alignment: 0
   owner: {fileID: 0}
+  hex: {fileID: 0}
+  startingCharacter: 0
   commander: 1
   agent: 0
-  emmissary: 3
-  mage: 3
+  emmissary: 1
+  mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -266,13 +239,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &1294775290299385872
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,7 +261,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2761639598628471592}
-  - component: {fileID: 7423216995874503551}
   - component: {fileID: 2150134733413646068}
   m_Layer: 0
   m_Name: Waulfa
@@ -306,28 +284,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7423216995874503551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1294775290299385872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 2
-  terrain: 1
-  startingCityName: Larach Duhnnan
-  startingCitySize: 2
-  startingCityFortSize: 1
-  startingArmySize: 3
-  preferedTroopType: 0
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &2150134733413646068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,14 +296,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: Waulf
+  alignment: 2
   owner: {fileID: 0}
-  commander: 3
-  agent: 2
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
+  agent: 1
   emmissary: 0
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -357,13 +323,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &1653446068703329892
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,7 +345,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3313476191878504118}
-  - component: {fileID: 8905684552488593698}
   - component: {fileID: 8927522824822901521}
   m_Layer: 0
   m_Name: Bain
@@ -397,28 +368,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8905684552488593698
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1653446068703329892}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 0
-  terrain: 0
-  startingCityName: Iron Hills
-  startingCitySize: 2
-  startingCityFortSize: 4
-  startingArmySize: 3
-  preferedTroopType: 3
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &8927522824822901521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -431,14 +380,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Bain
   alignment: 0
   owner: {fileID: 0}
-  commander: 4
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 3
   agent: 0
   emmissary: 0
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -448,13 +407,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &1933229673088492146
 GameObject:
   m_ObjectHideFlags: 0
@@ -480,7 +445,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1933229673088492146}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.8467162, y: 2.632247, z: 90}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -530,7 +495,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8366808638103838258}
-  - component: {fileID: 8516553716252013262}
   - component: {fileID: 7256708544204827539}
   m_Layer: 0
   m_Name: Khamul
@@ -554,28 +518,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8516553716252013262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2061629705462328949}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 1
-  terrain: 5
-  startingCityName: Dol Guldur
-  startingCitySize: 3
-  startingCityFortSize: 3
-  startingArmySize: 8
-  preferedTroopType: 0
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &7256708544204827539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -588,14 +530,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: "Kham\xFBl"
+  alignment: 1
   owner: {fileID: 0}
-  commander: 4
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
   agent: 0
-  emmissary: 4
+  emmissary: 2
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -605,13 +557,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &2277050281394812401
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,7 +579,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4598518451664297221}
-  - component: {fileID: 2766712492477185370}
   - component: {fileID: 6600738491535808876}
   m_Layer: 0
   m_Name: Huz
@@ -645,28 +602,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2766712492477185370
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2277050281394812401}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 2
-  terrain: 2
-  startingCityName: Riavod
-  startingCitySize: 3
-  startingCityFortSize: 1
-  startingArmySize: 2
-  preferedTroopType: 4
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &6600738491535808876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -679,14 +614,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: "H\xFBz II"
+  alignment: 2
   owner: {fileID: 0}
-  commander: 3
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
   agent: 0
-  emmissary: 2
+  emmissary: 1
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -696,13 +641,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 30
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &2298554170895659612
 GameObject:
   m_ObjectHideFlags: 0
@@ -712,7 +663,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1903438954320200636}
-  - component: {fileID: 5510732167398047476}
   - component: {fileID: 4777131103095641339}
   m_Layer: 0
   m_Name: Haruth
@@ -736,28 +686,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5510732167398047476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2298554170895659612}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 2
-  terrain: 9
-  startingCityName: Kas Shadoul
-  startingCitySize: 3
-  startingCityFortSize: 2
-  startingArmySize: 1
-  preferedTroopType: 5
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &4777131103095641339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -770,14 +698,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: "Har\xFBth-Rammam"
+  alignment: 2
   owner: {fileID: 0}
-  commander: 4
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
   agent: 1
   emmissary: 0
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -787,13 +725,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &2395635185302467821
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,7 +747,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7210031648782592028}
-  - component: {fileID: 6118310721962003267}
   - component: {fileID: 7348927171427480760}
   m_Layer: 0
   m_Name: Aragorn
@@ -827,28 +770,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6118310721962003267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2395635185302467821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 0
-  terrain: 2
-  startingCityName: Bree
-  startingCitySize: 3
-  startingCityFortSize: 2
-  startingArmySize: 4
-  preferedTroopType: 2
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &7348927171427480760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -861,14 +782,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Aragorn
   alignment: 0
   owner: {fileID: 0}
-  commander: 4
-  agent: 2
-  emmissary: 2
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
+  agent: 1
+  emmissary: 1
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -878,13 +809,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &2600881791054424362
 GameObject:
   m_ObjectHideFlags: 0
@@ -894,7 +831,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5707287415266833620}
-  - component: {fileID: 1149957465282403605}
   - component: {fileID: 4428065010832230660}
   m_Layer: 0
   m_Name: Adunaphel
@@ -918,28 +854,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1149957465282403605
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2600881791054424362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 1
-  terrain: 9
-  startingCityName: Lugarlur
-  startingCitySize: 3
-  startingCityFortSize: 5
-  startingArmySize: 4
-  preferedTroopType: 0
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &4428065010832230660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -952,14 +866,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: Adunaphel
+  alignment: 1
   owner: {fileID: 0}
-  commander: 2
-  agent: 2
-  emmissary: 2
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 1
+  agent: 0
+  emmissary: 3
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -969,13 +893,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &3394108079933107151
 GameObject:
   m_ObjectHideFlags: 0
@@ -985,7 +915,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5390413088376222039}
-  - component: {fileID: 1223403929596254951}
   - component: {fileID: 6834038123501518515}
   m_Layer: 0
   m_Name: Ovatha
@@ -1009,28 +938,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1223403929596254951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3394108079933107151}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 2
-  terrain: 9
-  startingCityName: Sturlurtsa Khand
-  startingCitySize: 3
-  startingCityFortSize: 1
-  startingArmySize: 3
-  preferedTroopType: 2
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &6834038123501518515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1043,14 +950,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: "\xD4vatha"
+  alignment: 2
   owner: {fileID: 0}
-  commander: 3
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
   agent: 1
   emmissary: 1
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1060,13 +977,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &3438067283787823667
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,7 +999,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8250595732174790904}
-  - component: {fileID: 5022733569381674550}
   - component: {fileID: 3357130540060147578}
   m_Layer: 0
   m_Name: Sangarunya
@@ -1100,28 +1022,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5022733569381674550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3438067283787823667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 2
-  terrain: 4
-  startingCityName: Havens of Umbar
-  startingCitySize: 4
-  startingCityFortSize: 2
-  startingArmySize: 1
-  preferedTroopType: 2
-  startingCityIsHidden: 0
-  startsWithPort: 1
-  startingWarships: 3
 --- !u!114 &3357130540060147578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1134,14 +1034,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: Sangarunya
+  alignment: 2
   owner: {fileID: 0}
-  commander: 4
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 3
   agent: 0
   emmissary: 0
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1151,13 +1061,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &4066000713926884342
 GameObject:
   m_ObjectHideFlags: 0
@@ -1167,7 +1083,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8243305760283510859}
-  - component: {fileID: 5921701117749550450}
   - component: {fileID: 544159838945730007}
   m_Layer: 0
   m_Name: Uvatha
@@ -1191,28 +1106,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5921701117749550450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4066000713926884342}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 1
-  terrain: 2
-  startingCityName: Olbamarl
-  startingCitySize: 3
-  startingCityFortSize: 2
-  startingArmySize: 4
-  preferedTroopType: 4
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &544159838945730007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1225,14 +1118,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: "\xDBvatha"
+  alignment: 1
   owner: {fileID: 0}
-  commander: 4
-  agent: 0
-  emmissary: 3
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
+  agent: 1
+  emmissary: 1
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1242,13 +1145,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &4436716924470221315
 GameObject:
   m_ObjectHideFlags: 0
@@ -1258,7 +1167,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2090443858949087188}
-  - component: {fileID: 2100424577038296675}
   - component: {fileID: 4551038410753556828}
   m_Layer: 0
   m_Name: Imrahil
@@ -1282,28 +1190,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2100424577038296675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4436716924470221315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 0
-  terrain: 4
-  startingCityName: Dol Amroth
-  startingCitySize: 4
-  startingCityFortSize: 3
-  startingArmySize: 1
-  preferedTroopType: 5
-  startingCityIsHidden: 0
-  startsWithPort: 1
-  startingWarships: 1
 --- !u!114 &4551038410753556828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1316,14 +1202,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Imrahil
   alignment: 0
   owner: {fileID: 0}
-  commander: 3
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
   agent: 0
   emmissary: 1
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1333,13 +1229,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &4956545233967271098
 GameObject:
   m_ObjectHideFlags: 0
@@ -1349,7 +1251,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7545569004506723201}
-  - component: {fileID: 66324455557009030}
   - component: {fileID: 8969951500380520808}
   m_Layer: 0
   m_Name: Ecthelion
@@ -1373,28 +1274,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &66324455557009030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4956545233967271098}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 0
-  terrain: 2
-  startingCityName: Minas Tirith
-  startingCitySize: 4
-  startingCityFortSize: 4
-  startingArmySize: 5
-  preferedTroopType: 3
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &8969951500380520808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1407,14 +1286,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Ecthelion
   alignment: 0
   owner: {fileID: 0}
-  commander: 4
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
   agent: 0
   emmissary: 0
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1424,13 +1313,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &5211653005970456538
 GameObject:
   m_ObjectHideFlags: 0
@@ -1440,7 +1335,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4412107098586819314}
-  - component: {fileID: 8551950468949985604}
   - component: {fileID: 4904308121569874057}
   m_Layer: 0
   m_Name: Murazor
@@ -1464,28 +1358,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8551950468949985604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5211653005970456538}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 1
-  terrain: 0
-  startingCityName: Minas Morgul
-  startingCitySize: 3
-  startingCityFortSize: 3
-  startingArmySize: 4
-  preferedTroopType: 0
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &4904308121569874057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1498,14 +1370,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Murazor
   alignment: 0
   owner: {fileID: 0}
-  commander: 4
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 3
   agent: 0
-  emmissary: 2
-  mage: 4
+  emmissary: 0
+  mage: 2
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1515,13 +1397,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &6106112933682912406
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,7 +1419,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7606568292045348035}
-  - component: {fileID: 5851833816135608133}
   - component: {fileID: 7049285343851783574}
   m_Layer: 0
   m_Name: Elrond
@@ -1555,28 +1442,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5851833816135608133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6106112933682912406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 0
-  terrain: 4
-  startingCityName: Imladris
-  startingCitySize: 3
-  startingCityFortSize: 2
-  startingArmySize: 4
-  preferedTroopType: 2
-  startingCityIsHidden: 1
-  startsWithPort: 1
-  startingWarships: 1
 --- !u!114 &7049285343851783574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1589,14 +1454,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Elrond
   alignment: 0
   owner: {fileID: 0}
-  commander: 3
+  hex: {fileID: 0}
+  startingCharacter: 0
+  commander: 2
   agent: 0
-  emmissary: 3
-  mage: 1
+  emmissary: 2
+  mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1606,13 +1481,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &6241114061226459572
 GameObject:
   m_ObjectHideFlags: 0
@@ -1622,7 +1503,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3634173211072912106}
-  - component: {fileID: 5994791632658053129}
   - component: {fileID: 3197314637992902994}
   m_Layer: 0
   m_Name: Ren
@@ -1646,28 +1526,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5994791632658053129
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6241114061226459572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 1
-  terrain: 10
-  startingCityName: Cirith Ungol
-  startingCitySize: 3
-  startingCityFortSize: 3
-  startingArmySize: 5
-  preferedTroopType: 2
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &3197314637992902994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1680,14 +1538,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: Ren
+  alignment: 1
   owner: {fileID: 0}
+  hex: {fileID: 0}
+  startingCharacter: 0
   commander: 4
   agent: 0
   emmissary: 0
-  mage: 1
+  mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1697,13 +1565,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &6783482900340228105
 GameObject:
   m_ObjectHideFlags: 0
@@ -1713,7 +1587,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1344041272552235808}
-  - component: {fileID: 6178219138005521444}
   - component: {fileID: 3217328022120002013}
   m_Layer: 0
   m_Name: Indur
@@ -1737,28 +1610,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6178219138005521444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6783482900340228105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 1
-  terrain: 10
-  startingCityName: Kal Nargil
-  startingCitySize: 3
-  startingCityFortSize: 1
-  startingArmySize: 4
-  preferedTroopType: 0
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &3217328022120002013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1771,14 +1622,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: "J\xCE-Indur"
+  alignment: 1
   owner: {fileID: 0}
+  hex: {fileID: 0}
+  startingCharacter: 0
   commander: 1
-  agent: 5
+  agent: 3
   emmissary: 0
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1788,13 +1649,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &7856364417166176096
 GameObject:
   m_ObjectHideFlags: 0
@@ -1804,7 +1671,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 566252814663175384}
-  - component: {fileID: 1805913779698779949}
   - component: {fileID: 8012773161458786574}
   m_Layer: 0
   m_Name: Beoraborn
@@ -1828,28 +1694,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1805913779698779949
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7856364417166176096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 0
-  terrain: 5
-  startingCityName: Woodmen Town
-  startingCitySize: 2
-  startingCityFortSize: 2
-  startingArmySize: 4
-  preferedTroopType: 2
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &8012773161458786574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1862,14 +1706,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Beoraborn
   alignment: 0
   owner: {fileID: 0}
+  hex: {fileID: 0}
+  startingCharacter: 0
   commander: 3
   agent: 1
   emmissary: 0
   mage: 0
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1879,13 +1733,19 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0
 --- !u!1 &9037697955273106620
 GameObject:
   m_ObjectHideFlags: 0
@@ -1895,7 +1755,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5115086985478081247}
-  - component: {fileID: 3712560630692040433}
   - component: {fileID: 1883307241001835420}
   m_Layer: 0
   m_Name: Hoarmurath
@@ -1919,28 +1778,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3454221024815498877}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3712560630692040433
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9037697955273106620}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f71a4bac631bd354990e794cd1f4b981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alignment: 1
-  terrain: 10
-  startingCityName: Durthang
-  startingCitySize: 3
-  startingCityFortSize: 3
-  startingArmySize: 6
-  preferedTroopType: 0
-  startingCityIsHidden: 0
-  startsWithPort: 0
-  startingWarships: 0
 --- !u!114 &1883307241001835420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1953,14 +1790,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3517b4ec290904591f8c59bce7e913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
+  characterName: "Hoarm\xFBrath"
+  alignment: 1
   owner: {fileID: 0}
+  hex: {fileID: 0}
+  startingCharacter: 0
   commander: 3
   agent: 0
   emmissary: 0
-  mage: 2
+  mage: 1
   health: 100
+  moved: 0
+  hasMovedThisTurn: 0
+  hasActionedThisTurn: 0
+  isEmbarked: 0
+  reachableHexes: []
+  doubledBy: []
+  artifacts: []
+  killed: 0
   army:
     commander: {fileID: 0}
     ma: 0
@@ -1970,10 +1817,16 @@ MonoBehaviour:
     lc: 0
     hc: 0
     ca: 0
-    tr: 0
     ws: 0
-  biome: {fileID: 0}
-  controlledLeaders: []
+    startingArmy: 0
+    killed: 0
   controlledCharacters: []
   controlledPcs: []
   visibleHexes: []
+  leatherAmount: 0
+  mountsAmount: 0
+  timberAmount: 0
+  ironAmount: 0
+  mithrilAmount: 0
+  goldAmount: 0
+  joined: 0

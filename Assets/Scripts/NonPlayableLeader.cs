@@ -5,70 +5,30 @@ using UnityEngine;
 
 public class NonPlayableLeader : Leader
 {
-
-    [Header("Conditions to Join")]
-    [Header("Artifacts to Join")]
-    public List<Artifact> artifactsToJoin;
-
-    [Header("Stores to Join")]
-    public int leatherToJoin = 0;
-    public int mountsToJoin = 0;
-    public int timberToJoin = 0;
-    public int ironToJoin = 0;
-    public int mithrilToJoin = 0;
-    public int goldToJoin = 0;
-
-    [Header("Character Level to Join")]
-    public int commanderLevelToJoin = 0;
-    public int agentLevelToJoin = 0;
-    public int emmissaryLevelToJoin = 0;
-    public int mageLevelToJoin = 0;
-
-    [Header("Armies Size to Join")]
-    public int armiesToJoin = 0;
-    public int maSizeToJoin = 0;
-    public int arSizeToJoin = 0;
-    public int liSizeToJoin = 0;
-    public int hiSizeToJoin = 0;
-    public int lcSizeToJoin = 0;
-    public int hcSizeToJoin = 0;
-    public int caSizeToJoin = 0;
-    public int wsSizeToJoin = 0;
-
-    [Header("Characters to Join")]
-    public int commandersToJoin = 0;
-    public int agentsToJoin = 0;
-    public int emmissarysToJoin = 0;
-    public int magesToJoin = 0;
-
-    [Header("Actions to Join")]
-    [Header("Actions At Capital to Join")]
-    public List<CharacterAction> actionsAtCapital;
-
-    [Header("Actions Anywhere to Join")]
-    public List<CharacterAction> actionsAnywhere;
+    [Header("Non Playable Leader Starting Data")]
+    [SerializeField] private NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome;
 
     public bool joined = false;
     public void CheckArtifactConditions(Leader leader)
     {
         if (killed || joined || leader == this) return;
-        if (leader.controlledCharacters.SelectMany(x => x.artifacts).Intersect(artifactsToJoin).Any()) Joined(leader);
+        if (leader.controlledCharacters.SelectMany(x => x.artifacts).Intersect(nonPlayableLeaderBiome.artifactsToJoin).Any()) Joined(leader);
     }
 
     public void CheckArmiesConditions(Leader leader)
     {
         if (killed || joined || leader == this) return;
 
-        if (armiesToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Count() > armiesToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.armiesToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Count() > nonPlayableLeaderBiome.armiesToJoin) Joined(leader);
 
-        if (maSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ma).Sum() > maSizeToJoin) Joined(leader);
-        if (arSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ar).Sum() > arSizeToJoin) Joined(leader);
-        if (liSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().li).Sum() > liSizeToJoin) Joined(leader);
-        if (hiSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().hi).Sum() > hiSizeToJoin) Joined(leader);
-        if (lcSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().lc).Sum() > lcSizeToJoin) Joined(leader);
-        if (hcSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().hc).Sum() > hcSizeToJoin) Joined(leader);
-        if (caSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ca).Sum() > caSizeToJoin) Joined(leader);
-        if (wsSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ws).Sum() > wsSizeToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.maSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ma).Sum() > nonPlayableLeaderBiome.maSizeToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.arSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ar).Sum() > nonPlayableLeaderBiome.arSizeToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.liSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().li).Sum() > nonPlayableLeaderBiome.liSizeToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.hiSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().hi).Sum() > nonPlayableLeaderBiome.hiSizeToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.lcSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().lc).Sum() > nonPlayableLeaderBiome.lcSizeToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.hcSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().hc).Sum() > nonPlayableLeaderBiome.hcSizeToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.caSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ca).Sum() > nonPlayableLeaderBiome.caSizeToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.wsSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ws).Sum() > nonPlayableLeaderBiome.wsSizeToJoin) Joined(leader);
 
     }
 
@@ -76,15 +36,15 @@ public class NonPlayableLeader : Leader
     {
         if (killed || joined || leader == this) return;
 
-        if (commanderLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetCommander()).Where(x => x > commanderLevelToJoin).Any()) Joined(leader);
-        if (agentLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetAgent()).Where(x => x > commanderLevelToJoin).Any()) Joined(leader);
-        if (emmissaryLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetEmmissary()).Where(x => x > commanderLevelToJoin).Any()) Joined(leader);
-        if (mageLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetMage()).Where(x => x > commanderLevelToJoin).Any()) Joined(leader);
+        if (nonPlayableLeaderBiome.commanderLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetCommander()).Where(x => x > nonPlayableLeaderBiome.commanderLevelToJoin).Any()) Joined(leader);
+        if (nonPlayableLeaderBiome.agentLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetAgent()).Where(x => x > nonPlayableLeaderBiome.commanderLevelToJoin).Any()) Joined(leader);
+        if (nonPlayableLeaderBiome.emmissaryLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetEmmissary()).Where(x => x > nonPlayableLeaderBiome.commanderLevelToJoin).Any()) Joined(leader);
+        if (nonPlayableLeaderBiome.mageLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetMage()).Where(x => x > nonPlayableLeaderBiome.commanderLevelToJoin).Any()) Joined(leader);
 
-        if (commandersToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= commandersToJoin) Joined(leader);
-        if (agentsToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= agentsToJoin) Joined(leader);
-        if (emmissarysToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= emmissarysToJoin) Joined(leader);
-        if (magesToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= magesToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.commandersToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= nonPlayableLeaderBiome.commandersToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.agentsToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= nonPlayableLeaderBiome.agentsToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.emmissarysToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= nonPlayableLeaderBiome.emmissarysToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.magesToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= nonPlayableLeaderBiome.magesToJoin) Joined(leader);
 
         return;
     }
@@ -93,12 +53,12 @@ public class NonPlayableLeader : Leader
     {
         if (killed || joined || leader == this) return;
 
-        if (leatherToJoin > 0 && leader.leatherAmount > leatherToJoin) Joined(leader);
-        if (mountsToJoin > 0 && leader.mountsAmount > mountsToJoin) Joined(leader);
-        if (timberToJoin > 0 && leader.timberAmount > timberToJoin) Joined(leader);
-        if (ironToJoin > 0 && leader.ironAmount > ironToJoin) Joined(leader);
-        if (mithrilToJoin > 0 && leader.mithrilAmount > mithrilToJoin) Joined(leader);
-        if (goldToJoin > 0 && leader.goldAmount > goldToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.leatherToJoin > 0 && leader.leatherAmount > nonPlayableLeaderBiome.leatherToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.mountsToJoin > 0 && leader.mountsAmount > nonPlayableLeaderBiome.mountsToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.timberToJoin > 0 && leader.timberAmount > nonPlayableLeaderBiome.timberToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.ironToJoin > 0 && leader.ironAmount > nonPlayableLeaderBiome.ironToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.mithrilToJoin > 0 && leader.mithrilAmount > nonPlayableLeaderBiome.mithrilToJoin) Joined(leader);
+        if (nonPlayableLeaderBiome.goldToJoin > 0 && leader.goldAmount > nonPlayableLeaderBiome.goldToJoin) Joined(leader);
 
         return;
     }
@@ -107,14 +67,14 @@ public class NonPlayableLeader : Leader
     {
         if (killed || joined || leader == this) return;
 
-        if (actionsAtCapital.Contains(action)) Joined(leader);
+        if (nonPlayableLeaderBiome.actionsAtCapital.Contains(action)) Joined(leader);
     }
 
     public void CheckActionConditionAnywhere(Leader leader, CharacterAction action)
     {
         if (killed || joined || leader == this) return;
 
-        if (actionsAnywhere.Contains(action)) Joined(leader);
+        if (nonPlayableLeaderBiome.actionsAnywhere.Contains(action)) Joined(leader);
     }
 
     override public void Killed(Leader joinedTo)

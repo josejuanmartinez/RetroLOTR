@@ -166,9 +166,7 @@ public class Board : MonoBehaviour
         List<Hex> hexes = GetHexes();
 
         // Find all artifacts where hidden is true
-        Artifact[] hiddenArtifacts = FindObjectsByType<Artifact>(FindObjectsSortMode.None)
-            .Where(artifact => artifact.hidden == true)
-            .ToArray();
+        Artifact[] hiddenArtifacts = FindFirstObjectByType<Game>().artifacts.Where(artifact => artifact.hidden == true).ToArray();
 
         // Shuffle the hexes to randomize artifact placement
         List<Hex> shuffledHexes = hexes.OrderBy(hex => UnityEngine.Random.value).ToList();

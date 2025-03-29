@@ -14,7 +14,7 @@ public class RevealPC: Spell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.hex.GetPC() != null && c.hex.GetPC().owner != c.GetOwner() && c.hex.GetPC().isHidden && !c.hex.GetPC().hiddenButRevealed && (c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral || c.hex.GetPC().owner.GetAlignment() != c.GetAlignment()) && c.artifacts.Find(x => x.providesSpell is RevealPC) != null && (originalCondition == null || originalCondition(c)); 
+            return c.hex.GetPC() != null && c.hex.GetPC().owner != c.GetOwner() && c.hex.GetPC().isHidden && !c.hex.GetPC().hiddenButRevealed && (c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral || c.hex.GetPC().owner.GetAlignment() != c.GetAlignment()) && c.artifacts.Find(x => x.providesSpell == "RevealPC") != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

@@ -14,7 +14,7 @@ public class CastDarkness: DarkSpell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return FindEnemyArmyNotNeutralAtHex(c) != null && c.artifacts.Find(x => x.providesSpell is CastDarkness) != null && (originalCondition == null || originalCondition(c)); 
+            return FindEnemyArmyNotNeutralAtHex(c) != null && c.artifacts.Find(x => x.providesSpell == "CastDarkness") != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

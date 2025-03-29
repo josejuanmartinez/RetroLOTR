@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(BiomeConfig))]
 public class Leader : Character
 {
-    public BiomeConfig biome;
+    [Header("Leader Starting data")]
+    [SerializeField] private LeaderBiomeConfig leaderBiome;
 
+    [Header("Nation nata")]
     public List<Character> controlledCharacters;
     public List<PC> controlledPcs;
     public List<Hex> visibleHexes;
@@ -22,7 +23,12 @@ public class Leader : Character
 
     void Awake()
     {
-        biome = GetComponent<BiomeConfig>();
+        leaderBiome = GetComponent<LeaderBiomeConfig>();
+    }
+
+    public LeaderBiomeConfig GetBiome()
+    {
+        return leaderBiome;
     }
 
     public int GetGoldPerTurn()
@@ -63,7 +69,7 @@ public class Leader : Character
 
     new public AlignmentEnum GetAlignment()
     {
-        return biome.alignment;
+        return leaderBiome.alignment;
     }
     new public void NewTurn()
     {

@@ -19,7 +19,7 @@ public class WizardLaugh: FreeNeutralSpell
             }
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return c.hex.GetPC() != null && ( c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral) && c.artifacts.Find(x => x.providesSpell is WizardLaugh) != null && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => { return c.hex.GetPC() != null && ( c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral) && c.artifacts.Find(x => x.providesSpell == "WizardLaugh") != null && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }

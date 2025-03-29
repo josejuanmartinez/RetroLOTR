@@ -14,7 +14,6 @@ public class GameState : MonoBehaviour
     Board board;
     HexPathRenderer hexPathRenderer;
     List<Leader> leaders;
-    List<Artifact> artifacts;
 
     public void Awake()
     {
@@ -24,7 +23,6 @@ public class GameState : MonoBehaviour
         leaders = new() { game.player };
         leaders.AddRange(game.competitors);
         leaders.AddRange(game.npcs);
-        artifacts = FindObjectsByType<Artifact>(FindObjectsSortMode.None).ToList();
     }
 
     public void ResetGame()
@@ -100,11 +98,11 @@ public class GameState : MonoBehaviour
 
     public List<Artifact> GetAllArtifacts()
     {
-        return artifacts;
+        return game.artifacts;
     }
     public int GetAllArtifactsNum()
     {
-        return artifacts.Count;
+        return game.artifacts.Count;
     }
 
     public int GetTurn()

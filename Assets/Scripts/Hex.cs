@@ -97,7 +97,7 @@ public class Hex : MonoBehaviour
 
     public void SpawnLeaderAtStart(Leader leader)
     {
-        leader.Initialize(leader, leader.biome.alignment, this, leader.characterName, true, true);
+        leader.Initialize(leader, leader.GetBiome().alignment, this, leader.characterName, true, true);
         RedrawCharacters();
         RedrawArmies();
     }
@@ -108,7 +108,7 @@ public class Hex : MonoBehaviour
         foreach(Character otherCharacter in otherCharaters)
         {
             if (otherCharacter is Leader) continue;
-            otherCharacter.Initialize(leader, leader.biome.alignment, this, otherCharacter.characterName);
+            otherCharacter.Initialize(leader, leader.GetBiome().alignment, this, otherCharacter.characterName);
         }
 
         RedrawCharacters();

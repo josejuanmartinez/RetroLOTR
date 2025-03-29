@@ -1,19 +1,19 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BiomeConfig: MonoBehaviour
+[Serializable]
+public class BiomeConfig
 {
+    [Header("Alignment")]
     public AlignmentEnum alignment;
-    public TerrainEnum terrain;
-    public string startingCityName;
-    public PCSizeEnum startingCitySize;
-    public FortSizeEnum startingCityFortSize;
-    public int startingArmySize;
-    public TroopsTypeEnum preferedTroopType;
-    public bool startingCityIsHidden;
-    public bool startsWithPort;
-    public int startingWarships;
 
-    public List<string> pcNames;
-    public List<string> characterNames;
+    [Header("Character stats")]
+    public int commander = 0;
+    public int agent = 0;
+    public int emmissary = 0;
+    public int mage = 0;
+
+    [Header("Artifacts")]
+    public List<Artifact> artifacts;
 }
