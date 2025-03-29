@@ -8,7 +8,7 @@ public class PlayableLeader : Leader
 
         if (playable == FindFirstObjectByType<Game>().player == playable)
         {
-            FindFirstObjectByType<Game>().EndGame();
+            FindFirstObjectByType<Game>().EndGame(false);
             return;
         }
         foreach (Character character in GetOwner().controlledCharacters)
@@ -57,6 +57,5 @@ public class PlayableLeader : Leader
     new public void NewTurn()
     {
         base.NewTurn();
-        if(FindFirstObjectByType<Game>().player == this) FindFirstObjectByType<StoresManager>().RefreshStores();
     }
 }

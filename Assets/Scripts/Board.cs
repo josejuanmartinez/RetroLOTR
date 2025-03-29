@@ -368,8 +368,7 @@ public class Board : MonoBehaviour
         actionsManager.Refresh(character);
     }
 
-    public void MoveCharacter(Character character, Hex previousHex, Hex newHex, bool isTeleport = false)
-    {
+    public void MoveCharacter(Character character, Hex previousHex, Hex newHex, bool isTeleport = false) {
         try
         {
 
@@ -390,34 +389,30 @@ public class Board : MonoBehaviour
 
             newHex.RedrawCharacters();
             newHex.RedrawArmies();
-            character.hex.RevealArea();
             character.hasMovedThisTurn = true;
-            newHex.LookAt();
-            UnselectHex();
-            SelectHex(newHex);
+            if (character.GetOwner() == FindFirstObjectByType<Game>().player)
+            {
+                newHex.LookAt();
+                character.hex.RevealArea();
+                UnselectHex();
+                SelectHex(newHex);
+            }            
 
             if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
             character.GetOwner().visibleHexes.Add(newHex);
-            character.moved += newHex.GetTerrainCost(character);
 
             bool wasWater = previousHex.IsWaterTerrain();
             bool isWater = newHex.IsWaterTerrain();
 
-            if (!wasWater && isWater)
+            if ((!wasWater && isWater) || (wasWater && !isWater) || isTeleport)
             {
-                character.moved = character.GetMaxMovement();
-                return;
+                character.moved = character.GetMaxMovement();                
             }
-            if (wasWater && !isWater)
+            else
             {
-                character.moved = character.GetMaxMovement();
-                return;
+                character.moved += newHex.GetTerrainCost(character);                 
             }
-            if (isTeleport)
-            {
-                character.moved = character.GetMaxMovement();
-                return;
-            }
+
         } catch (Exception e)
         {
             Debug.LogError($"Error moving character: {e.Message}\n{e.StackTrace}");

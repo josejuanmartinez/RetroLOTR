@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using Unity.MLAgents;
 
+[RequireComponent(typeof(GameState))]
 public class Game : MonoBehaviour
 {
     [Header("Playable Leader (Player)")]
@@ -12,6 +15,7 @@ public class Game : MonoBehaviour
     [Header("Currently Playing")]
     public PlayableLeader currentlyPlaying;
 
+    
     public int normalMovement = 12;
     public int cavalryMovement = 15;
     public int maxPcsPerPlayer = 8;
@@ -19,6 +23,33 @@ public class Game : MonoBehaviour
 
     public int turn = 0;
     public bool started = false;
+
+    GameState state;
+    Dictionary<Character, StrategyGameAgent> characterAgents = new();
+
+    void Awake()
+    {
+        state = GetComponent<GameState>();
+    }
+
+    void Start()
+    {
+        InitializeMLAgents();
+    }
+
+    private void InitializeMLAgents()
+    {
+        // Find all ML-Agents in the scene
+        List<Character> allCharactersWithAgents = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => x.GetOwner() != player && x.GetAI() != null);
+
+        // Map each agent to its controlled character
+        foreach (Character character in allCharactersWithAgents)
+        {
+            if (character.GetAI() != null) characterAgents[character] = character.GetAI();
+        }
+
+        Debug.Log($"Initialized {characterAgents.Count} ML-Agents for training");
+    }
 
     public void SelectPlayer(PlayableLeader playableLeader)
     {
@@ -38,38 +69,18 @@ public class Game : MonoBehaviour
 
     public void StartGame()
     {
+        turn = 0;
         started = true;
-        NewTurn();
-    }
+        state.ResetGame();
 
-    public void NewTurn()
-    {
-        turn++;
-
-        // Check if player is killed
-        if (player.killed || player.controlledCharacters.Count < 1 || player.controlledPcs.Count < 1)
-        {
-            player.killed = true;
-            // End the game if player is killed
-            EndGame();
-            return;
-        }
+        // Start a new episode for all agents
+        foreach (StrategyGameAgent agent in characterAgents.Values) agent.OnEpisodeBegin();
 
         currentlyPlaying = player;
-        MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
-        FindFirstObjectByType<PlayableLeaderIcons>().HighlightCurrentlyPlaying(currentlyPlaying);
-        player.NewTurn();
-
-        // Only process competitors who aren't killed
-        competitors.ForEach(x => { if (!x.killed) x.NewTurn(); });
-
-        // Start the coroutine to refresh hexes in the background
-        StartCoroutine(player.RevealVisibleHexesAsync(() =>
-        {
-            FindFirstObjectByType<Board>().SelectCharacter(player);
-        }
-        ));
+        currentlyPlaying.NewTurn();
     }
+
+
 
     public bool MoveToNextCharacterToAction()
     {
@@ -81,23 +92,17 @@ public class Game : MonoBehaviour
 
     public void NextPlayer()
     {
-        
         if (currentlyPlaying == player)
         {
             if (MoveToNextCharacterToAction()) return;
 
             // Find the first non-killed competitor
             currentlyPlaying = FindNextAliveCompetitor(0);
-
-            // If no alive competitors found, start a new turn
             if (currentlyPlaying == null)
             {
                 EndGame(true);
                 return;
             }
-
-            FindFirstObjectByType<PlayableLeaderIcons>().HighlightCurrentlyPlaying(currentlyPlaying);
-            currentlyPlaying.AutoPlay();
         }
         else
         {
@@ -105,23 +110,18 @@ public class Game : MonoBehaviour
 
             // Find the next non-killed competitor
             currentlyPlaying = FindNextAliveCompetitor(currentIndex + 1);
+            if (currentlyPlaying == null && !player.killed) currentlyPlaying = player;
+        }
 
-            // If no more alive competitors found, start a new turn
-            if (currentlyPlaying == null)
-            {
-                if(player.killed)
-                {
-                    EndGame(true);
-                    return;
-                } else
-                {
-                    NewTurn();
-                    return;
-                }   
-            }
 
-            FindFirstObjectByType<PlayableLeaderIcons>().HighlightCurrentlyPlaying(currentlyPlaying);
-            currentlyPlaying.AutoPlay();
+        if (currentlyPlaying == null)
+        {
+            EndGame(player.killed);
+        }
+        else
+        {
+            if (currentlyPlaying == player) MessageDisplay.ShowMessage($"Turn {turn++}", Color.green);
+            currentlyPlaying.NewTurn();
         }
     }
 
@@ -140,20 +140,36 @@ public class Game : MonoBehaviour
     }
 
     // Add this method to handle game ending
-    public void EndGame(bool win = false)
+    public void EndGame(bool win)
     {
         if (win) MessageDisplay.ShowMessage("Victory!", Color.green); else MessageDisplay.ShowMessage("Defeat!", Color.red);
-        
+
+        FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => !x.killed && x.GetAI() != null).Select(x => x.GetAI()).ToList().ForEach(x =>
+        {
+            x.AddReward(x.GetCharacter().GetOwner().killed ? -25f : 25f);
+            x.EndEpisode();
+        });
+
+        // For training, we'll start a new game instead of quitting
+        if (Academy.Instance.IsCommunicatorOn)
+        {
+            // Reset the game state for a new episode
+            ResetForNewEpisode();
+            return;
+        }
+
+        // Only quit or unload scenes if not in training mode
         UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(0);
         Application.Quit();
-        // Add Unity-specific code to end the game here
-        // For example:
         Debug.Log("Game Ended!");
+    }
 
-        // You might want to show a game over screen, pause the game, etc.
-        // Example: UnityEngine.SceneManagement.SceneManager.LoadScene("GameOverScene");
+    private void ResetForNewEpisode()
+    {
+        // Reset game state variables
+        turn = 0;
 
-        // Or if using a GameManager:
-        // GameManager.Instance.GameOver();
+        // Start a new game
+        StartGame();
     }
 }

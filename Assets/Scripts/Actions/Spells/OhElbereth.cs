@@ -8,7 +8,7 @@ public class OhElbereth : FreeSpell
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            Character enemy = FindNonNeutralCharacters(c);
+            Character enemy = FindEnemyNonNeutralCharactersAtHex(c);
             if (enemy == null) return false;
             enemy.Wounded(c.GetOwner(), UnityEngine.Random.Range(0, 20) * c.GetMage());
             return originalEffect == null || originalEffect(c);

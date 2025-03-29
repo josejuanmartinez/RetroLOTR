@@ -12,12 +12,13 @@ public enum TerrainEnum
     deepWater,
     swamp,
     desert,
-    wastelands
+    wastelands,
+    MAX
 }
 
 public static class TerrainData
 {
-    public static Dictionary<TerrainEnum, int> terrainCosts = new Dictionary<TerrainEnum, int>()
+    public static Dictionary<TerrainEnum, int> terrainCosts = new ()
     {
         { TerrainEnum.mountains, 12 },
         { TerrainEnum.hills, 4 },

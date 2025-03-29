@@ -8,13 +8,13 @@ public class CastLight: FreeSpell
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            Army army = FindEnemyArmyNotNeutral(c);
+            Army army = FindEnemyArmyNotNeutralAtHex(c);
             if (army == null) return false;
             army.ReceiveCasualties(Math.Clamp(UnityEngine.Random.Range(0.05f, 0.25f) * c.GetMage(), 0.1f, 1f), c.GetOwner());
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return FindEnemyArmyNotNeutral(c) != null && c.artifacts.Find(x => x.providesSpell is CastLight) != null && (originalCondition == null || originalCondition(c)); 
+            return FindEnemyArmyNotNeutralAtHex(c) != null && c.artifacts.Find(x => x.providesSpell is CastLight) != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

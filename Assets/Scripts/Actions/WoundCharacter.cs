@@ -8,7 +8,7 @@ public class WoundCharacter : AgentCharacterAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            Character enemy = FindTarget(c);
+            Character enemy = FindEnemyCharacterTargetAtHex(c);
             if (enemy == null) return false;
 
             int wound = UnityEngine.Random.Range(0, 20) * c.GetAgent();
@@ -27,7 +27,7 @@ public class WoundCharacter : AgentCharacterAction
             enemy.Wounded(c.GetOwner(), wound);
             return originalEffect == null || originalEffect(c); 
         };
-        condition = (c) => { return FindTarget(c) != null && (originalCondition == null || originalCondition(c));};
+        condition = (c) => { return FindEnemyCharacterTargetAtHex(c) != null && (originalCondition == null || originalCondition(c));};
         base.Initialize(c, condition, effect);
     }
 }
