@@ -8,7 +8,7 @@ public class AssassinateCharacter : AgentCharacterAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            Character enemy = FindTarget(c);
+            Character enemy = FindEnemyCharacterTargetAtHex(c);
 
             if (enemy == null) return false;
             
@@ -28,7 +28,7 @@ public class AssassinateCharacter : AgentCharacterAction
 
             return originalEffect == null || originalEffect(c); 
         };
-        condition = (c) => { return FindTarget(c) != null && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => { return FindEnemyCharacterTargetAtHex(c) != null && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }

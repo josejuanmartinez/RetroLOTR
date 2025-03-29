@@ -1,7 +1,4 @@
-using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [Serializable]
@@ -204,6 +201,12 @@ public class Army
         return strength;
     }
 
+    public int GetOffence()
+    {
+        return GetStrength();
+    }
+
+
     public int GetDefence()
     {
         int defence = 0;
@@ -237,15 +240,21 @@ public class Army
         // Calculate attacker's base strength
         int attackerStrength = GetStrength();
 
-        // Add strength of allied armies in the same hex (if not neutral)
-        if (attackerAlignment != AlignmentEnum.neutral && commander != null && commander.hex != null)
+        // Add strength of allied armies in the same hex
+        if (commander != null && commander.hex != null)
         {
             foreach (Army ally in commander.hex.armies)
             {
-                // Skip the attacker itself and neutral armies
-                if (ally != this && ally.GetAlignment() == attackerAlignment && ally.GetAlignment() != AlignmentEnum.neutral)
+                // Skip the attacker itself
+                if (ally != this)
                 {
-                    attackerStrength += ally.GetStrength();
+                    // For non-neutral alignments: include armies with same alignment
+                    // For neutral alignment: include only armies with same owner
+                    if ((attackerAlignment != AlignmentEnum.neutral && ally.GetAlignment() == attackerAlignment) ||
+                        (attackerAlignment == AlignmentEnum.neutral && ally.GetAlignment() == AlignmentEnum.neutral && ally.commander.GetOwner() == commander.GetOwner()))
+                    {
+                        attackerStrength += ally.GetStrength();
+                    }
                 }
             }
         }
@@ -253,114 +262,98 @@ public class Army
         // Calculate attacker's defense for counter-attack
         int attackerDefence = GetDefence();
 
-        // Add defense from allied armies in the attacker's hex (if not neutral)
-        if (attackerAlignment != AlignmentEnum.neutral && commander != null && commander.hex != null)
+        // Add defense from allied armies in the attacker's hex
+        if (commander != null && commander.hex != null)
         {
             foreach (Army ally in commander.hex.armies)
             {
-                // Skip the attacker itself and neutral armies
-                if (ally != this && ally.GetAlignment() == attackerAlignment && ally.GetAlignment() != AlignmentEnum.neutral)
+                // Skip the attacker itself
+                if (ally != this)
                 {
-                    attackerDefence += ally.GetDefence();
-                }
-            }
-        }
-
-        // Find the main defending army (assume first army of different alignment)
-        Army defenderArmy = null;
-        Leader defenderLeader = null;
-        AlignmentEnum defenderAlignment = AlignmentEnum.neutral;
-
-        foreach (Army army in targetHex.armies)
-        {
-            if (army.GetAlignment() != attackerAlignment && army.GetAlignment() != AlignmentEnum.neutral)
-            {
-                defenderArmy = army;
-                defenderLeader = army.commander.GetOwner();
-                defenderAlignment = army.GetAlignment();
-                break;
-            }
-        }
-
-        int defenderDefense = 0;
-        int defenderStrength = 0;
-        float attackerDamage = 0;
-        float defenderDamage = 0;
-        float attackerCasualtyPercent = 0;
-        int attackerTotalLosses = 0;
-        bool anyAttackerCasualties = false;
-        // If no enemy army found, check if there's an enemy PC to attack
-        if (defenderArmy == null)
-        {
-            // Handle case where there's no defender army but maybe there's a PC
-            if (targetHex.GetPC() != null && targetHex.GetPC().owner.GetAlignment() != attackerAlignment)
-            {
-                // Set defender alignment to the PC's alignment
-                defenderAlignment = targetHex.GetPC().owner.GetAlignment();
-
-                // Calculate defender's defense based on PC only
-                int fortSize = (int)targetHex.GetPC().fortSize;
-                int citySize = (int)targetHex.GetPC().citySize;
-                defenderDefense = citySize + (fortSize * FortSizeData.defensePerFortSizeLevel);
-
-                // Calculate defender's strength based on PC only
-                defenderStrength = citySize + (fortSize * FortSizeData.defensePerFortSizeLevel);
-
-                // Calculate raw damage values
-                attackerDamage = Math.Max(0, attackerStrength - defenderDefense);
-                defenderDamage = Math.Max(0, defenderStrength - attackerDefence);
-
-                // Calculate casualties for attacker (PC can still cause casualties)
-                attackerCasualtyPercent = defenderDamage / (attackerStrength * 10);
-
-                // Clamp casualty percentage between 0 and 1
-                attackerCasualtyPercent = Math.Clamp(attackerCasualtyPercent, 0, 1);
-
-                // Check if attacker will actually lose any units
-                attackerTotalLosses = CalculateTotalCasualties(attackerCasualtyPercent);
-                anyAttackerCasualties = attackerTotalLosses > 0;
-
-                // Apply casualties to attacker
-                ReceiveCasualties(attackerCasualtyPercent, defenderLeader, !anyAttackerCasualties);
-
-                if (attackerDamage > 0)
-                {
-                    if (targetHex.GetPC().fortSize > FortSizeEnum.NONE)
+                    // For non-neutral alignments: include armies with same alignment
+                    // For neutral alignment: include only armies with same owner
+                    if ((attackerAlignment != AlignmentEnum.neutral && ally.GetAlignment() == attackerAlignment) ||
+                        (attackerAlignment == AlignmentEnum.neutral && ally.GetAlignment() == AlignmentEnum.neutral && ally.commander.GetOwner() == commander.GetOwner()))
                     {
-                        // Reduce fort size first
-                        targetHex.GetPC().DecreaseFort();
-                    }
-                    else
-                    {
-                        targetHex.GetPC().CapturePC(commander.GetOwner());
+                        attackerDefence += ally.GetDefence();
                     }
                 }
-                else
-                {
-                    MessageDisplay.ShowMessage($"{targetHex.GetPC().pcName} defences resisted the attack", Color.red);
-                }
-
-                // Redraw visuals
-                commander.hex.RedrawArmies();
-                commander.hex.RedrawPC();
             }
-
-            return;
         }
 
-        // Calculate defender's base defense
-        defenderDefense = defenderArmy.GetDefence();
+        // Check if there are any armies to attack in the target hex
+        bool foundDefenders = false;
+
+        // First, handle all enemy armies in the hex
+        foreach (Army defenderArmy in targetHex.armies)
+        {
+            // Don't attack your own armies (check ownership)
+            bool isOwnArmy = defenderArmy.commander.GetOwner() == commander.GetOwner();
+
+            // Attack if defender has different alignment OR if attacker is neutral (attacks everyone)
+            // OR if defender is neutral (everyone attacks neutrals)
+            // BUT never attack your own armies
+            if (!isOwnArmy && (defenderArmy.GetAlignment() != attackerAlignment ||
+                attackerAlignment == AlignmentEnum.neutral ||
+                defenderArmy.GetAlignment() == AlignmentEnum.neutral))
+            {
+                // Process combat against this defender
+                ProcessCombat(targetHex, defenderArmy, attackerStrength, attackerDefence, attackerLeader);
+                foundDefenders = true;
+            }
+        }
+
+        // If no enemy armies were found, check if there's a PC to attack
+        if (!foundDefenders && targetHex.GetPC() != null)
+        {
+            Leader defenderLeader = targetHex.GetPC().owner;
+            AlignmentEnum pcAlignment = defenderLeader.GetAlignment();
+
+            // Don't attack your own PC (check both alignment and owner)
+            bool isOwnPC = defenderLeader == commander.GetOwner();
+
+            // Attack PC if it has different alignment OR if attacker is neutral (attacks all)
+            // OR if PC is neutral (everyone attacks neutrals)
+            // BUT never attack your own PC
+            if (!isOwnPC && (pcAlignment != attackerAlignment ||
+                attackerAlignment == AlignmentEnum.neutral ||
+                pcAlignment == AlignmentEnum.neutral))
+            {
+                AttackPopulationCenter(targetHex, attackerStrength, attackerDefence, attackerLeader);
+            }
+        }
+
+        // Redraw visuals
+        commander.hex.RedrawArmies();
+        targetHex.RedrawArmies();
+        targetHex.RedrawPC();
+    }
+
+    // Helper method to process combat between attacker and a specific defender
+    private void ProcessCombat(Hex targetHex, Army defenderArmy, int attackerStrength, int attackerDefence, Leader attackerLeader)
+    {
+        AlignmentEnum attackerAlignment = commander.GetAlignment();
+
+        Leader defenderLeader = defenderArmy.commander.GetOwner();
+        AlignmentEnum defenderAlignment = defenderArmy.GetAlignment();
+
+        // Calculate defender's total defense and strength
+        int defenderDefense = defenderArmy.GetDefence();
+        int defenderStrength = defenderArmy.GetStrength();
 
         // Add defense from allied armies in the defender's hex
-        if (defenderAlignment != AlignmentEnum.neutral)
+        foreach (Army ally in targetHex.armies)
         {
-            foreach (Army ally in targetHex.armies)
+            // Skip the primary defender itself
+            if (ally != defenderArmy)
             {
-                // Skip the defender itself and neutral armies
-                // Also skip armies with the same alignment as attacker
-                if (ally != defenderArmy && ally.GetAlignment() != AlignmentEnum.neutral && ally.GetAlignment() != attackerAlignment)
+                // For non-neutral alignments: include armies with same alignment
+                // For neutral alignment: include only armies with same owner
+                if ((defenderAlignment != AlignmentEnum.neutral && ally.GetAlignment() == defenderAlignment) ||
+                    (defenderAlignment == AlignmentEnum.neutral && ally.GetAlignment() == AlignmentEnum.neutral && ally.commander.GetOwner() == defenderArmy.commander.GetOwner()))
                 {
                     defenderDefense += ally.GetDefence();
+                    defenderStrength += ally.GetStrength();
                 }
             }
         }
@@ -368,55 +361,28 @@ public class Army
         // Add defense from Population Center if it exists and is aligned with defender
         if (targetHex.GetPC() != null && targetHex.GetPC().owner.GetAlignment() == defenderAlignment)
         {
-            int fortSize = (int)targetHex.GetPC().fortSize;
-            int citySize = (int)targetHex.GetPC().citySize;
-            defenderDefense = citySize + (fortSize * FortSizeData.defensePerFortSizeLevel);
-        }
-
-
-        // Calculate collective defender strength for counter-attack
-        defenderStrength = defenderArmy.GetStrength();
-
-        // Add strength of allied defending armies
-        if (defenderAlignment != AlignmentEnum.neutral)
-        {
-            foreach (Army ally in targetHex.armies)
-            {
-                // Skip the defender itself and neutral armies
-                // Also skip armies with the same alignment as attacker
-                if (ally != defenderArmy && ally.GetAlignment() != AlignmentEnum.neutral && ally.GetAlignment() != attackerAlignment)
-                {
-                    defenderStrength += ally.GetStrength();
-                }
-            }
-        }
-
-        // Add strength from Population Center if it exists and is aligned with defender
-        if (targetHex.GetPC() != null && targetHex.GetPC().owner.GetAlignment() == defenderAlignment)
-        {
-            int fortSize = (int)targetHex.GetPC().fortSize;
-            int citySize = (int)targetHex.GetPC().citySize;
-            defenderStrength = citySize + (fortSize * FortSizeData.defensePerFortSizeLevel);
+            defenderDefense += targetHex.GetPC().GetDefense();
+            defenderStrength += targetHex.GetPC().GetDefense(); // PC contributes to counter-attack
         }
 
         // Calculate raw damage values
-        attackerDamage = Math.Max(0, attackerStrength - defenderDefense);
-        defenderDamage = Math.Max(0, defenderStrength - attackerDefence);
+        float attackerDamage = Math.Max(0, attackerStrength - defenderDefense);
+        float defenderDamage = Math.Max(0, defenderStrength - attackerDefence);
 
         // Calculate casualty percentages (as decimals)
-        attackerCasualtyPercent = defenderDamage / (attackerStrength * 10);
-        float defenderCasualtyPercent = attackerDamage / (defenderArmy.GetStrength() * 10);
+        float attackerCasualtyPercent = defenderDamage / (attackerStrength * 10);
+        float defenderCasualtyPercent = attackerDamage / (defenderStrength * 10);
 
         // Clamp casualty percentages between 0 and 1
         attackerCasualtyPercent = Math.Clamp(attackerCasualtyPercent, 0, 1);
         defenderCasualtyPercent = Math.Clamp(defenderCasualtyPercent, 0, 1);
 
         // Calculate actual casualties that would occur
-        attackerTotalLosses = CalculateTotalCasualties(attackerCasualtyPercent);
+        int attackerTotalLosses = CalculateTotalCasualties(attackerCasualtyPercent);
         int defenderTotalLosses = defenderArmy.CalculateTotalCasualties(defenderCasualtyPercent);
 
         // Check if either side will actually lose units
-        anyAttackerCasualties = attackerTotalLosses > 0;
+        bool anyAttackerCasualties = attackerTotalLosses > 0;
         bool anyDefenderCasualties = defenderTotalLosses > 0;
 
         // If no one is taking casualties, decide who should lose one unit
@@ -435,12 +401,57 @@ public class Army
 
         // Check if attacker army was eliminated
         if (!killed && GetSize(true) < 1) Killed(defenderLeader);
-
-        // Redraw visuals
-        targetHex.RedrawArmies();
-        targetHex.RedrawPC();
     }
 
+    // Helper method to attack a Population Center
+    private void AttackPopulationCenter(Hex targetHex, int attackerStrength, int attackerDefence, Leader attackerLeader)
+    {
+        // No defending army, only a PC
+        Leader defenderLeader = targetHex.GetPC().owner;
+        AlignmentEnum defenderAlignment = defenderLeader.GetAlignment();
+
+        int defenderDefense = targetHex.GetPC().GetDefense();
+        int defenderStrength = defenderDefense; // PC defense is its strength for counter-attack
+
+        // Calculate raw damage values
+        float attackerDamage = Math.Max(0, attackerStrength - defenderDefense);
+        float defenderDamage = Math.Max(0, defenderStrength - attackerDefence);
+
+        // Calculate casualties for attacker (PC can still cause casualties)
+        float attackerCasualtyPercent = defenderDamage / (attackerStrength * 10);
+
+        // Clamp casualty percentage between 0 and 1
+        attackerCasualtyPercent = Math.Clamp(attackerCasualtyPercent, 0, 1);
+
+        // Check if attacker will actually lose any units
+        int attackerTotalLosses = CalculateTotalCasualties(attackerCasualtyPercent);
+        bool anyAttackerCasualties = attackerTotalLosses > 0;
+
+        // Apply casualties to attacker
+        ReceiveCasualties(attackerCasualtyPercent, defenderLeader, !anyAttackerCasualties);
+
+        // Process damage to the PC
+        if (attackerDamage > 0)
+        {
+            if (targetHex.GetPC().fortSize > FortSizeEnum.NONE)
+            {
+                // Reduce fort size first
+                targetHex.GetPC().DecreaseFort();
+                MessageDisplay.ShowMessage($"Defenses at {targetHex.GetPC().pcName} were damaged", Color.yellow);
+            }
+            else
+            {
+                targetHex.GetPC().CapturePC(attackerLeader);
+            }
+        }
+        else
+        {
+            MessageDisplay.ShowMessage($"{targetHex.GetPC().pcName} defenses resisted the attack", Color.red);
+        }
+
+        // Check if attacker army was eliminated
+        if (!killed && GetSize(true) < 1) Killed(defenderLeader);
+    }
     // Helper method to apply casualties to all defending armies in a hex
     public void ApplyCasualtiesToDefenders(Hex targetHex, float casualtyPercent, AlignmentEnum attackerAlignment, bool forceOneUnitCasualty, Leader attacker)
     {
@@ -450,7 +461,13 @@ public class Army
         {
             foreach (Army army in targetHex.armies)
             {
-                if (army.GetAlignment() != attackerAlignment || (army.GetAlignment() == AlignmentEnum.neutral && army.commander.owner != commander.owner))
+                // Skip attacker's own armies
+                bool isOwnArmy = army.commander.GetOwner() == commander.GetOwner();
+
+                // Consider armies that should be attacked
+                if (!isOwnArmy && (army.GetAlignment() != attackerAlignment ||
+                    attackerAlignment == AlignmentEnum.neutral ||
+                    army.GetAlignment() == AlignmentEnum.neutral))
                 {
                     if (primaryDefender == null || army.GetSize(true) > primaryDefender.GetSize(true))
                     {
@@ -461,7 +478,6 @@ public class Army
         }
 
         int armiesNum = targetHex.armies.Count;
-
         // Use a for loop with index going backwards to avoid collection modification issues
         for (int i = armiesNum - 1; i >= 0; i--)
         {
@@ -470,10 +486,19 @@ public class Army
 
             Army army = targetHex.armies[i];
 
-            if (army == this || army == null || army.GetSize() < 1 || army.GetCommander() == null || army.killed) continue;
+            // Skip invalid armies, the attacker itself, or dead armies
+            if (army == this || army == null || army.GetSize() < 1 ||
+                army.GetCommander() == null || army.killed) continue;
 
-            // Skip armies with the same alignment as the attacker and neutral armies
-            if (army.GetAlignment() != attackerAlignment || (army.GetAlignment() == AlignmentEnum.neutral && army.commander.owner != commander.owner))
+            // Skip the attacker's own armies
+            bool isOwnArmy = army.commander.GetOwner() == commander.GetOwner();
+            if (isOwnArmy) continue;
+
+            // Apply casualties to armies that should be attacked:
+            // Different alignment OR attacker is neutral OR defender is neutral
+            if (army.GetAlignment() != attackerAlignment ||
+                attackerAlignment == AlignmentEnum.neutral ||
+                army.GetAlignment() == AlignmentEnum.neutral)
             {
                 // Force one unit casualty only on the primary defender
                 bool forceUnit = forceOneUnitCasualty && army == primaryDefender;
@@ -481,9 +506,21 @@ public class Army
             }
         }
 
-        if ((casualtyPercent > 0.4f || UnityEngine.Random.Range(0f, 1f) >= 0.75f) && targetHex.GetPC() != null && (targetHex.GetPC().owner.GetAlignment() != attackerAlignment || targetHex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral))
+        // Handle damage to population center
+        if ((casualtyPercent > 0.4f || UnityEngine.Random.Range(0f, 1f) >= 0.75f) &&
+            targetHex.GetPC() != null)
         {
-            targetHex.GetPC().DecreaseFort();
+            // Don't damage own PC
+            bool isOwnPC = targetHex.GetPC().owner == commander.GetOwner();
+
+            // Damage PC if it belongs to a different alignment OR attacker is neutral OR PC is neutral
+            // BUT never damage your own PC
+            if (!isOwnPC && (targetHex.GetPC().owner.GetAlignment() != attackerAlignment ||
+                attackerAlignment == AlignmentEnum.neutral ||
+                targetHex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral))
+            {
+                targetHex.GetPC().DecreaseFort();
+            }
         }
     }
 

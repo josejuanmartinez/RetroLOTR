@@ -522,4 +522,5 @@ public class Hex : MonoBehaviour
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
         this.pc = pc;
     }
+    
 }

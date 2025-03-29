@@ -8,13 +8,13 @@ public class Curse : DarkNeutralSpell
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            Character enemy = FindTarget(c);
+            Character enemy = FindEnemyCharacterTargetAtHex(c);
             if (enemy == null) return false;
             enemy.Wounded(c.GetOwner(), UnityEngine.Random.Range(0, 20) * c.GetMage());
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.artifacts.Find(x => x.providesSpell is Curse) != null && FindTarget(c) != null && (originalCondition == null || originalCondition(c)); 
+            return c.artifacts.Find(x => x.providesSpell is Curse) != null && FindEnemyCharacterTargetAtHex(c) != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

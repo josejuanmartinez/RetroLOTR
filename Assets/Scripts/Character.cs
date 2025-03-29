@@ -1,41 +1,46 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class Character : MonoBehaviour
 {
+    [Header("Starting data")]
     public string characterName;
     public AlignmentEnum alignment;
     public Leader owner;
     public Hex hex;
+    public bool startingCharacter;
 
+    [Header("Character stats")]
     [SerializeField] int commander = 0;
     [SerializeField] int agent = 0;
     [SerializeField] int emmissary = 0;
     [SerializeField] int mage = 0;
 
+    [Header("Turn data")]
     public int health = 100;
     public int moved = 0;
-
     public bool hasMovedThisTurn;
     public bool hasActionedThisTurn;
     public bool isEmbarked;
+    public List<Hex> reachableHexes;
 
+    [Header("Character interactions")]
     public List<Leader> doubledBy;
     public List<Artifact> artifacts;
+    public bool killed;
 
     [SerializeField]
     private Army army = null;
 
-    public bool killed = false;
-    public bool startingCharacter = true;
-
     void Awake()
     {
+        army = null;
         doubledBy = new();
+        reachableHexes = new();
+        killed = false;
+        startingCharacter = true;
     }
 
     public void Initialize(Leader owner, AlignmentEnum alignment, Hex hex, string characterName, bool startingCharacter = false, bool generateStartingArmy = false)
@@ -52,18 +57,27 @@ public class Character : MonoBehaviour
         this.hex = hex;
         hex.characters.Add(this);
         this.startingCharacter = startingCharacter;
+
         if (startingCharacter && (owner.biome.startingArmySize > 0 || owner.biome.startingWarships > 0))
         {
             CreateArmy(owner.biome.preferedTroopType, owner.biome.startingArmySize, startingCharacter, owner.biome.startingWarships);
         }
         else
         {
+            hasActionedThisTurn = true;
+            hasMovedThisTurn = true;
+            moved = GetMaxMovement();
+
             if (GetOwner() is not PlayableLeader) return;
+            
             FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != GetOwner()).ToList().ForEach(x =>
             {
                 x.CheckCharacterConditions(GetOwner());
             });
         }
+
+        // ADD RL IN CASE IT'S NOT THERE
+        if(owner != FindFirstObjectByType<Game>().player && gameObject.GetComponent<StrategyGameAgent>() == null) gameObject.AddComponent<StrategyGameAgent>();
     }
 
     public AlignmentEnum GetAlignment()
@@ -96,7 +110,7 @@ public class Character : MonoBehaviour
 
     public bool IsArmyCommander()
     {
-        return army != null && army.commander != null && army.GetSize() > 0;
+        return army != null && army.commander != null && !army.commander.killed && army.GetSize() > 0;
     }
 
     public int GetMovementLeft()
@@ -219,4 +233,15 @@ public class Character : MonoBehaviour
         this.health = Mathf.Min(100, this.health + health);
         MessageDisplay.ShowMessage($"{characterName} heals by {health}", Color.green);
     }
+
+    public void StoreReachableHexes()
+    {
+        reachableHexes = FindFirstObjectByType<HexPathRenderer>().FindAllHexesInRange(this);
+    }
+
+    public StrategyGameAgent GetAI()
+    {
+        return gameObject.GetComponent<StrategyGameAgent>();
+    }
+
 }

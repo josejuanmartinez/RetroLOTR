@@ -258,4 +258,26 @@ public class PC
         MessageDisplay.ShowMessage($"{pcName} population discontent grows", Color.red);
         CheckLowLoyalty(decreasedBy);
     }
+
+    public int GetDefense()
+    {
+        int defense = 0;
+        defense += (int)citySize;
+        defense += (int)fortSize * FortSizeData.defensePerFortSizeLevel;
+        defense += (int)loyalty / 10;
+        defense += (hasPort ? 1 : 0);
+        defense += (isCapital ? 1 : 0);
+        hex.armies.ForEach(army => defense += army.commander != null && army.commander.GetAlignment() == owner.GetAlignment() && owner.GetAlignment() != AlignmentEnum.neutral ? army.GetDefence() : 0);
+        return defense;
+    }
+
+    public int GetProduction()
+    {
+        return leather + timber + mithril + iron + mounts;
+    }
+
+    public int GetProductionPoints()
+    {
+        return leather + timber*2 + mithril*5 + iron*3 + mounts*2;
+    }
 }

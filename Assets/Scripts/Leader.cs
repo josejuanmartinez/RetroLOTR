@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 [RequireComponent(typeof(BiomeConfig))]
 public class Leader : Character
@@ -68,6 +67,8 @@ public class Leader : Character
     }
     new public void NewTurn()
     {
+        if (!killed && goldAmount < -10) Killed(this);
+
         if (killed) return;
         
         leatherAmount += GetLeatherPerTurn();
@@ -79,12 +80,35 @@ public class Leader : Character
 
         controlledCharacters.ForEach(x => x.moved = 0);
         controlledCharacters.ForEach(x => x.hasActionedThisTurn = false);
+        controlledCharacters.ForEach(x => x.hasMovedThisTurn = false);
 
-        if(this is not PlayableLeader) return;
-        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != this).ToList().ForEach(x =>
+        // Any NPC joins due to my new good stores?
+        if (this is PlayableLeader)
         {
-            x.CheckStoresConditions(this);
-        });
+            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != this).ToList().ForEach(x =>
+            {
+                x.CheckStoresConditions(this);
+            });
+        }
+
+        // AI: Act if not player
+        controlledCharacters.ForEach(x => x.StoreReachableHexes());
+        if(FindFirstObjectByType<Game>().player != this)
+        {
+            controlledCharacters.FindAll(x => x.GetAI() != null).Select(x => x.GetAI()).ToList().ForEach(x => x.NewTurn());
+        }
+        else
+        {
+            StartCoroutine(RevealVisibleHexesAsync(() =>
+            {
+                FindFirstObjectByType<Board>().SelectCharacter(this);
+            }
+            ));
+        }
+        
+        FindFirstObjectByType<PlayableLeaderIcons>().HighlightCurrentlyPlaying(this);
+
+        if (FindFirstObjectByType<Game>().player == this) FindFirstObjectByType<StoresManager>().RefreshStores();
 
         base.NewTurn();
     }
@@ -116,13 +140,6 @@ public class Leader : Character
     override public Leader GetOwner()
     {
         return owner != null ? owner : this;
-    }
-
-    public void AutoPlay()
-    {
-        if (killed) return;
-        Debug.Log("Skipping: " + characterName);
-        FindFirstObjectByType<Game>().NextPlayer();
     }
 
     public bool LeaderSeesHex(Hex hex)
@@ -192,5 +209,49 @@ public class Leader : Character
         goldAmount -= goldCost;
         if (goldCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{goldCost} gold", Color.red);
     }
-    
+
+    public int GetCharacterPoints()
+    {
+        if (killed) return 0;
+        return controlledCharacters.FindAll(x => !x.killed).Select(x => x.GetCommander() + x.GetAgent() + x.GetEmmissary() + x.GetMage() + x.artifacts.Count * 10 + x.health).Sum();
+    }
+
+    public int GetPCPoints()
+    {
+        int points = controlledPcs.Select(x => x.GetDefense()).Sum();
+        points -= controlledPcs.FindAll(x => x.hiddenButRevealed).Count() * 10;
+        points += controlledPcs.Select(x => x.GetProductionPoints()).Sum();
+        return points;
+    }
+
+    public int GetArmyPoints()
+    {
+        int offence = controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().GetOffence()).Sum();
+        int defence = controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().GetDefence()).Sum();
+        return offence + defence;
+    }
+
+    public int GetStorePoints()
+    {
+        return leatherAmount + timberAmount * 2 + mithrilAmount * 5 + ironAmount * 3 + mountsAmount * 2;
+    }
+
+    public int GetAllPoints()
+    {
+        return GetCharacterPoints() + GetPCPoints() + GetArmyPoints() + GetStorePoints();
+    }
+
+    /// <summary>
+    /// AI: Request Decision
+    /// </summary>
+    /// <param name="leader"></param>
+    public void RequestDecisionsForLeader(Leader leader)
+    {
+        foreach (Character character in controlledCharacters)
+        {
+            if (character.killed || character.GetAI() == null) continue;
+            character.GetAI().RequestDecision();
+        }
+    }
+
 }

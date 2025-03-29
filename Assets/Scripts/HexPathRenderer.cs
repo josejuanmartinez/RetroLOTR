@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum MovementType
@@ -313,4 +314,99 @@ public class HexPathRenderer : MonoBehaviour
         lineRenderer.SetPositions(new Vector3[] { });
         lineRenderer.positionCount = 0;
     }
+
+    public HashSet<Vector2> FindAllHexesV2InRange(Character character)
+    {
+        Vector2 startPos = character.hex.v2;
+        int maxMovement = character.GetMaxMovement();
+
+        // Use a HashSet for O(1) lookups and to ensure no duplicates
+        var reachableHexes = new HashSet<Vector2>();
+        var openSet = new List<Vector2>();
+        var gScore = new Dictionary<Vector2, float>();
+
+        // Add starting position
+        openSet.Add(startPos);
+        reachableHexes.Add(startPos);
+        gScore[startPos] = 0;
+
+        // Determine if the start position is water
+        bool isStartWater = IsWaterTerrain(startPos);
+
+        while (openSet.Count > 0)
+        {
+            // Find the node with the lowest cost so far
+            Vector2 current = openSet[0];
+            float lowestGScore = gScore[current];
+            int currentIndex = 0;
+
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (gScore[openSet[i]] < lowestGScore)
+                {
+                    lowestGScore = gScore[openSet[i]];
+                    current = openSet[i];
+                    currentIndex = i;
+                }
+            }
+
+            // Remove the current hex from openSet for efficiency
+            // (faster than Remove which searches the entire list)
+            openSet[currentIndex] = openSet[openSet.Count - 1];
+            openSet.RemoveAt(openSet.Count - 1);
+
+            // Check all neighbors
+            foreach (var neighbor in GetNeighbors(current))
+            {
+                // Skip if not on the board
+                if (!board.hexes.ContainsKey(neighbor)) continue;
+
+                // Check terrain transition (land to water or water to land)
+                bool isCurrentWater = IsWaterTerrain(current);
+                bool isNeighborWater = IsWaterTerrain(neighbor);
+                bool isTerrainTransition = isCurrentWater != isNeighborWater;
+
+                // Calculate movement cost to reach this neighbor
+                float terrainCost = GetTerrainCost(neighbor, character);
+                float tentativeGScore = gScore[current] + terrainCost;
+
+                // Check if this would exceed movement
+                if (tentativeGScore > maxMovement) continue;
+
+                // If this is a terrain transition (water to land or land to water)
+                // We mark it as reachable but don't expand from it (just like in FindPath)
+                if (isTerrainTransition)
+                {
+                    if (!reachableHexes.Contains(neighbor))
+                    {
+                        reachableHexes.Add(neighbor);
+                        gScore[neighbor] = tentativeGScore;
+                    }
+                    continue; // Don't expand beyond a transition hex
+                }
+
+                // For regular hexes, continue expanding
+                if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor])
+                {
+                    // This path to neighbor is better than any previous one
+                    gScore[neighbor] = tentativeGScore;
+
+                    if (!reachableHexes.Contains(neighbor))
+                    {
+                        reachableHexes.Add(neighbor);
+                        openSet.Add(neighbor);
+                    }
+                }
+            }
+        }
+
+        return reachableHexes;
+    }
+
+    public List<Hex> FindAllHexesInRange(Character character)
+    {
+        return FindAllHexesV2InRange(character).Select(v2 => board.hexes[v2]).ToList();
+    }
+
+
 }
