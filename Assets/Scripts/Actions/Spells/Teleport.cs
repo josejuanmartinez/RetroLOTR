@@ -17,7 +17,7 @@ public class Teleport: Spell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.artifacts.Find(x => x.providesSpell is Teleport) != null && !c.IsArmyCommander() && (originalCondition == null || originalCondition(c));
+            return c.artifacts.Find(x => x.providesSpell == "Teleport") != null && !c.IsArmyCommander() && (originalCondition == null || originalCondition(c));
         };
         base.Initialize(c, condition, effect);
     }

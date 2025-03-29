@@ -14,7 +14,7 @@ public class CastLight: FreeSpell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return FindEnemyArmyNotNeutralAtHex(c) != null && c.artifacts.Find(x => x.providesSpell is CastLight) != null && (originalCondition == null || originalCondition(c)); 
+            return FindEnemyArmyNotNeutralAtHex(c) != null && c.artifacts.Find(x => x.providesSpell == "CastLight") != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

@@ -38,7 +38,7 @@ public class Heal: FreeNeutralSpell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return  c.artifacts.Find(x => x.providesSpell is Heal) != null && (originalCondition == null || originalCondition(c)); 
+            return  c.artifacts.Find(x => x.providesSpell == "Heal") != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

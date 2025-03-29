@@ -20,7 +20,7 @@ public class SummonMA: DarkSpell
             c.hex.RedrawArmies();
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return c.hex.GetPC() != null && c.hex.GetPC().owner == c.GetOwner() && c.artifacts.Find(x => x.providesSpell is SummonMA) != null && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => { return c.hex.GetPC() != null && c.hex.GetPC().owner == c.GetOwner() && c.artifacts.Find(x => x.providesSpell == "SummonMA") != null && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }

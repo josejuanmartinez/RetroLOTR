@@ -1,36 +1,46 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    [Header("Starting data")]
+    [Header("Character Starting Data")]
+    [SerializeField] private BiomeConfig characterBiome;
+
+    [Header("Metadata")]
+    public bool startingCharacter;
+
+    [Header("Current allegiance")]
+    [HideIf("startingCharacter")]
     public string characterName;
     public AlignmentEnum alignment;
     public Leader owner;
+    
+    [Header("Current placement")]
     public Hex hex;
-    public bool startingCharacter;
 
-    [Header("Character stats")]
+    [Header("Current character stats")]
     [SerializeField] int commander = 0;
     [SerializeField] int agent = 0;
     [SerializeField] int emmissary = 0;
     [SerializeField] int mage = 0;
-
-    [Header("Turn data")]
     public int health = 100;
     public int moved = 0;
+    public bool killed;
+
+    [Header("Turn data")]
     public bool hasMovedThisTurn;
     public bool hasActionedThisTurn;
     public bool isEmbarked;
     public List<Hex> reachableHexes;
 
-    [Header("Character interactions")]
+    [Header("Spionage")]
     public List<Leader> doubledBy;
+    
+    [Header("Artifacts")]
     public List<Artifact> artifacts;
-    public bool killed;
 
+    [Header("Army")]
     [SerializeField]
     private Army army = null;
 
@@ -58,9 +68,9 @@ public class Character : MonoBehaviour
         hex.characters.Add(this);
         this.startingCharacter = startingCharacter;
 
-        if (startingCharacter && (owner.biome.startingArmySize > 0 || owner.biome.startingWarships > 0))
+        if (startingCharacter && (owner.GetBiome().startingArmySize > 0 || owner.GetBiome().startingWarships > 0))
         {
-            CreateArmy(owner.biome.preferedTroopType, owner.biome.startingArmySize, startingCharacter, owner.biome.startingWarships);
+            CreateArmy(owner.GetBiome().preferedTroopType, owner.GetBiome().startingArmySize, startingCharacter, owner.GetBiome().startingWarships);
         }
         else
         {

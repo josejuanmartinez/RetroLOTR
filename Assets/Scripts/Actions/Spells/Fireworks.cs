@@ -19,7 +19,7 @@ public class Fireworks: FreeSpell
             }
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return c.hex.GetPC() != null && (c.hex.GetPC().owner == c.GetOwner() || (c.hex.GetPC().owner.alignment == c.GetAlignment() && c.hex.GetPC().owner.alignment != AlignmentEnum.neutral)) && c.artifacts.Find(x => x.providesSpell is Fireworks) != null && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => { return c.hex.GetPC() != null && (c.hex.GetPC().owner == c.GetOwner() || (c.hex.GetPC().owner.alignment == c.GetAlignment() && c.hex.GetPC().owner.alignment != AlignmentEnum.neutral)) && c.artifacts.Find(x => x.providesSpell == "Fireworks") != null && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }

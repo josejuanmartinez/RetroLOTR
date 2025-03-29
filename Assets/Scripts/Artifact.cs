@@ -1,11 +1,12 @@
-using UnityEngine;
+using System;
 
-public class Artifact : MonoBehaviour
+[Serializable]
+public class Artifact
 {
     public string artifactName;
     public string artifactDescription;
-    public bool hidden = false;
-    public Spell providesSpell = null;
+    public bool hidden = false; 
+    public string providesSpell;
     public int commanderBonus = 0;
     public int agentBonus = 0;
     public int emmissaryBonus = 0;
@@ -13,15 +14,6 @@ public class Artifact : MonoBehaviour
 
     // Add a unique identifier for each artifact
     public string artifactId;
-
-    private void Awake()
-    {
-        // If no artifactId exists, generate one
-        if (string.IsNullOrEmpty(artifactId))
-        {
-            artifactId = System.Guid.NewGuid().ToString();
-        }
-    }
 
     public string GetText()
     {

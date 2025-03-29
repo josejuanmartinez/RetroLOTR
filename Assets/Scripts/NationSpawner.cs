@@ -37,7 +37,7 @@ public class NationSpawner : MonoBehaviour
         }
 
         // Get all BiomeConfig fields from Leaders
-        FieldInfo biomeField = typeof(Leader).GetFields(BindingFlags.Public | BindingFlags.Instance).Where(f => f.FieldType == typeof(BiomeConfig)).First();
+        FieldInfo biomeField = typeof(Leader).GetFields(BindingFlags.Public | BindingFlags.Instance).Where(f => f.FieldType == typeof(LeaderBiomeConfig)).First();
 
         // List to track placed player positions
         List<Vector2Int> placedPositions = new List<Vector2Int>();
@@ -45,7 +45,7 @@ public class NationSpawner : MonoBehaviour
         // For each player field, find a suitable location
         foreach(Leader leader in leaders)
         {
-            BiomeConfig biomeConfig = biomeField.GetValue(leader) as BiomeConfig;
+            LeaderBiomeConfig biomeConfig = biomeField.GetValue(leader) as LeaderBiomeConfig;
 
             // Find suitable hexes for this terrain type
             List<Vector2Int> suitableHexes = FindHexesWithTerrain(biomeConfig.terrain);

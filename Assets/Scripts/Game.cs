@@ -14,8 +14,9 @@ public class Game : MonoBehaviour
     public List<NonPlayableLeader> npcs;
     [Header("Currently Playing")]
     public PlayableLeader currentlyPlaying;
+    [Header("Artifacts")]
+    public List<Artifact> artifacts;
 
-    
     public int normalMovement = 12;
     public int cavalryMovement = 15;
     public int maxPcsPerPlayer = 8;
