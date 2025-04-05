@@ -5,13 +5,10 @@ using UnityEngine;
 
 public class Leader : Character
 {
-    [Header("Leader Starting data")]
-    [SerializeField] private LeaderBiomeConfig leaderBiome;
-
-    [Header("Nation nata")]
-    public List<Character> controlledCharacters;
-    public List<PC> controlledPcs;
-    public List<Hex> visibleHexes;
+    [Header("Nation data")]
+    public List<Character> controlledCharacters = new();
+    public List<PC> controlledPcs = new();
+    public List<Hex> visibleHexes = new();
 
     [Header("Stores")]
     public int leatherAmount = 0;
@@ -21,9 +18,12 @@ public class Leader : Character
     public int mithrilAmount = 0;
     public int goldAmount = 0;
 
-    void Awake()
+    private LeaderBiomeConfig leaderBiome;
+
+    public void Initialize(Hex hex, LeaderBiomeConfig leaderBiome)
     {
-        leaderBiome = GetComponent<LeaderBiomeConfig>();
+		this.leaderBiome = leaderBiome;
+		InitializeFromBiome(this, hex, leaderBiome);
     }
 
     public LeaderBiomeConfig GetBiome()

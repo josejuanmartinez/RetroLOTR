@@ -1,0 +1,72 @@
+{
+  "biomes": [
+    {
+      "characterName": "Galadriel",
+      "alignment": 0,
+      "commander": 0,
+      "agent": 0,
+      "emmissary": 2,
+      "mage": 0,
+      "artifacts": [
+        {
+          "artifactName": "Nenya",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 1
+        }
+      ],
+      "terrain": 5,
+      "startingCityName": "Caras Galadhon",
+      "startingCitySize": 3,
+      "startingCityFortSize": 0,
+      "startingArmySize": 300,
+      "preferedTroopType": 1,
+      "startingCityIsHidden": true,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": [
+        {
+          "characterName": "Celeborn",
+          "alignment": 0,
+          "commander": 2,
+          "agent": 0,
+          "emmissary": 0,
+          "mage": 0,
+          "artifacts": []
+        }
+      ],
+      "pcNames": [ ],
+      "characterNames": [ ],
+      "artifactsToJoin": [ "OneRing" ],
+      "leatherToJoin": 0,
+      "mountsToJoin": 0,
+      "timberToJoin": 0,
+      "ironToJoin": 0,
+      "mithrilToJoin": 0,
+      "goldToJoin": 0,
+      "commanderLevelToJoin": 0,
+      "agentLevelToJoin": 0,
+      "emmissaryLevelToJoin": 0,
+      "mageLevelToJoin": 0,
+      "armiesToJoin": 0,
+      "maSizeToJoin": 0,
+      "arSizeToJoin": 0,
+      "liSizeToJoin": 0,
+      "hiSizeToJoin": 0,
+      "lcSizeToJoin": 0,
+      "hcSizeToJoin": 0,
+      "caSizeToJoin": 0,
+      "wsSizeToJoin": 0,
+      "commandersToJoin": 0,
+      "agentsToJoin": 0,
+      "emmissarysToJoin": 0,
+      "magesToJoin": 0,
+      "actionsAtCapital": [ ],
+      "actionsAnywhere": [ ]
+    }
+  ]
+}

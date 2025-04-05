@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7484011693821525717
+--- !u!1 &8559055102628918390
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,65 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8970163367952372853}
-  - component: {fileID: 2827468205219680830}
+  - component: {fileID: 7081832743813536392}
+  - component: {fileID: 2626947324709786918}
   m_Layer: 0
-  m_Name: Character
+  m_Name: CharacterInstantiator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8970163367952372853
+--- !u!4 &7081832743813536392
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7484011693821525717}
+  m_GameObject: {fileID: 8559055102628918390}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 476.83795, y: 363.5474, z: -4.1397457}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2827468205219680830
+--- !u!114 &2626947324709786918
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7484011693821525717}
+  m_GameObject: {fileID: 8559055102628918390}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ca65cf7a7bafff42983e0eb9312aece, type: 3}
+  m_Script: {fileID: 11500000, guid: e1defe5055651ba44a5eadb7a406dc70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
-  alignment: 0
-  owner: {fileID: 0}
-  hex: {fileID: 0}
-  commander: 0
-  agent: 0
-  emmissary: 0
-  mage: 0
-  health: 100
-  moved: 0
-  hasMovedThisTurn: 0
-  hasActionedThisTurn: 0
-  isEmbarked: 0
-  doubledBy: []
-  artifacts: []
-  army:
-    commander: {fileID: 0}
-    ma: 0
-    ar: 0
-    li: 0
-    hi: 0
-    lc: 0
-    hc: 0
-    ca: 0
-    ws: 0
-  killed: 0
+  characterPrefab: {fileID: 7484011693821525717, guid: 1633a889af8c6124ca0cda03c20485e8, type: 3}

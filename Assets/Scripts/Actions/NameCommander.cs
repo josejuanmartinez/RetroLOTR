@@ -1,10 +1,7 @@
 using System;
-using UnityEngine;
 
 public class NameCommander : CharacterAction
 {
-    [Header("Character Prefab")]
-    public GameObject characterPrefab;
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
         var originalEffect = effect;
@@ -12,10 +9,8 @@ public class NameCommander : CharacterAction
         effect = (c) => {
             string nextCharacterName = c.GetOwner().GetBiome().characterNames[UnityEngine.Random.Range(0, c.GetOwner().GetBiome().characterNames.Count)];
             c.GetOwner().GetBiome().characterNames.Remove(nextCharacterName);
-            GameObject newCharacterPrefab = Instantiate(characterPrefab, GameObject.Find("OtherCharacters").transform);
-            Character character = newCharacterPrefab.GetComponent<Character>();
-            character.Initialize(c.GetOwner(), c.GetAlignment(), c.hex, nextCharacterName);
-            character.AddCommander(1);
+            Character character = FindFirstObjectByType<CharacterInstantiator>().InstantiateCharacter();
+            character.Initialize(c.GetOwner(), c.GetAlignment(), c.hex, nextCharacterName, 1, 0, 0, 0);
             c.hex.RedrawCharacters();
             return originalEffect == null || originalEffect(c); 
         };

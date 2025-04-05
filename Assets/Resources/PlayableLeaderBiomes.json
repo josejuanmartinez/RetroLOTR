@@ -1,0 +1,54 @@
+{
+  "biomes": [
+    {
+      "characterName": "Gandalf",
+      "alignment": 0,
+      "commander": 1,
+      "agent": 0,
+      "emmissary": 1,
+      "mage": 2,
+      "artifacts": [
+        {
+          "artifactName": "Narya",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "",
+          "commanderBonus": 0,
+          "agentBonus": 1,
+          "emmissaryBonus": 0,
+          "mageBonus": 0
+        }
+      ],
+      "terrain": 3,
+      "startingCityName": "Hobbiton",
+      "startingCitySize": 1,
+      "startingCityFortSize": 0,
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
+      "startingCityIsHidden": false,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": [
+        {
+          "characterName": "Bilbo",
+          "alignment": 0,
+          "commander": 0,
+          "agent": 0,
+          "emmissary": 1,
+          "mage": 0,
+          "artifacts": []
+        }
+      ],
+      "pcNames": [
+        "Buckland",
+        "Michel Delving"
+      ],
+      "characterNames": [
+        "Frodo",
+        "Sam",
+        "Pippin",
+        "Merry"
+      ]
+    }
+  ]
+}
