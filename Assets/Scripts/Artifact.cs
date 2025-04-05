@@ -12,9 +12,6 @@ public class Artifact
     public int emmissaryBonus = 0;
     public int mageBonus = 0;
 
-    // Add a unique identifier for each artifact
-    public string artifactId;
-
     public string GetText()
     {
         return $"{artifactName}( {artifactDescription} )";

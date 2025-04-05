@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    [Header("Character Starting Data")]
-    [SerializeField] private BiomeConfig characterBiome;
-
     [Header("Metadata")]
     public bool startingCharacter;
 
-    [Header("Current allegiance")]
-    [HideIf("startingCharacter")]
+    [Header("Given name")]
     public string characterName;
+    
+    [Header("Allegiance")]
     public AlignmentEnum alignment;
+    
+    [Header("Owner")]
     public Leader owner;
     
     [Header("Current placement")]
@@ -32,17 +32,18 @@ public class Character : MonoBehaviour
     public bool hasMovedThisTurn;
     public bool hasActionedThisTurn;
     public bool isEmbarked;
-    public List<Hex> reachableHexes;
+    public List<Hex> reachableHexes = new();
 
     [Header("Spionage")]
-    public List<Leader> doubledBy;
-    
+    public List<Leader> doubledBy = new();
+
     [Header("Artifacts")]
-    public List<Artifact> artifacts;
+    public List<Artifact> artifacts = new();
 
     [Header("Army")]
-    [SerializeField]
-    private Army army = null;
+    [SerializeField] private Army army = null;
+
+    private BiomeConfig characterBiome;
 
     void Awake()
     {
@@ -50,16 +51,34 @@ public class Character : MonoBehaviour
         doubledBy = new();
         reachableHexes = new();
         killed = false;
-        startingCharacter = true;
+    }
+    public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome)
+    {
+        this.characterBiome = characterBiome;
+        Initialize(leader, characterBiome.alignment, hex, characterBiome.characterName, characterBiome.commander, characterBiome.agent, characterBiome.emmissary, characterBiome.mage, true);
     }
 
-    public void Initialize(Leader owner, AlignmentEnum alignment, Hex hex, string characterName, bool startingCharacter = false, bool generateStartingArmy = false)
+    public void Initialize(
+        Leader owner, 
+        AlignmentEnum alignment, 
+        Hex hex, 
+        string characterName,
+        int commander,
+        int agent,
+        int emmissary,
+        int mage,
+        bool startingCharacter = false)
     {
         MessageDisplay.ShowMessage($"Character {characterName} starts serving {owner.GetOwner().characterName}", Color.green);
         this.characterName = characterName;
+        this.commander = commander;
+        this.agent = agent;
+        this.emmissary = emmissary;
+        this.mage = mage;
+        this.alignment = alignment;
+
         owner.GetOwner().controlledCharacters.Add(this);
         this.owner = owner.GetOwner();
-        this.alignment = alignment;
         hasActionedThisTurn = false;
         hasMovedThisTurn = false;
         isEmbarked = false;

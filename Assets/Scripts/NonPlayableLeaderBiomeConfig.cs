@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+
+[Serializable]
+public class NonPlayableLeaderBiomeConfigCollection
+{
+    public List<NonPlayableLeaderBiomeConfig> biomes = new();
+}
 
 [Serializable]
 public class NonPlayableLeaderBiomeConfig: LeaderBiomeConfig
 {
-    [Header("Conditions to Join")]
-    [Header("Artifacts to Join")]
-    public List<Artifact> artifactsToJoin;
 
-    [Header("Stores to Join")]
+    public List<string> artifactsToJoin = new();
+
     public int leatherToJoin = 0;
     public int mountsToJoin = 0;
     public int timberToJoin = 0;
@@ -17,13 +20,11 @@ public class NonPlayableLeaderBiomeConfig: LeaderBiomeConfig
     public int mithrilToJoin = 0;
     public int goldToJoin = 0;
 
-    [Header("Character Level to Join")]
     public int commanderLevelToJoin = 0;
     public int agentLevelToJoin = 0;
     public int emmissaryLevelToJoin = 0;
     public int mageLevelToJoin = 0;
 
-    [Header("Armies Size to Join")]
     public int armiesToJoin = 0;
     public int maSizeToJoin = 0;
     public int arSizeToJoin = 0;
@@ -34,16 +35,12 @@ public class NonPlayableLeaderBiomeConfig: LeaderBiomeConfig
     public int caSizeToJoin = 0;
     public int wsSizeToJoin = 0;
 
-    [Header("Characters to Join")]
     public int commandersToJoin = 0;
     public int agentsToJoin = 0;
     public int emmissarysToJoin = 0;
     public int magesToJoin = 0;
 
-    [Header("Actions to Join")]
-    [Header("Actions At Capital to Join")]
-    public List<CharacterAction> actionsAtCapital;
+    public List<string> actionsAtCapital;
 
-    [Header("Actions Anywhere to Join")]
-    public List<CharacterAction> actionsAnywhere;
+    public List<string> actionsAnywhere;
 }

@@ -1,10 +1,5 @@
-using UnityEngine;
-
 public class PlayableLeader : Leader
 {
-    [Header("Leader Starting Data")]
-    private LeaderBiomeConfig playableLeaderBiome;
-
     override public void Killed(Leader killedBy)
     {
         PlayableLeader playable = this;

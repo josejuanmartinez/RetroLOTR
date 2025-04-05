@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Board))]
@@ -9,66 +8,72 @@ public class NationSpawner : MonoBehaviour
 {
     public Board board;
 
-    private List<Leader> leaders;
+    private PlayableLeaders playableLeaders;
+    private NonPlayableLeaders nonPlayableLeaders;
+    
+    // List to track placed player positions
+    private List<Vector2Int> placedPositions = new();
 
     public void Initialize(Board board)
     {
-        leaders = new();
         this.board = board;
 
-        PlayableLeaders playableLeaders = FindFirstObjectByType<PlayableLeaders>();
+        playableLeaders = FindFirstObjectByType<PlayableLeaders>();
         playableLeaders.Initialize();
-        NonPlayableLeaders nonPlayableLeaders = FindFirstObjectByType<NonPlayableLeaders>();
+        nonPlayableLeaders = FindFirstObjectByType<NonPlayableLeaders>();
         nonPlayableLeaders.Initialize();
-        leaders.AddRange(playableLeaders.playableLeaders);
-        leaders.AddRange(nonPlayableLeaders.nonPlayableLeaders);
     }
 
     public void Spawn()
     {
-        if (board == null)
+        InstantiateLeadersAndCharacters(playableLeaders.playableLeaders.biomes, placedPositions);
+        InstantiateLeadersAndCharacters(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
+    }
+
+    private void InstantiateLeadersAndCharacters(List<LeaderBiomeConfig> leaderBiomes, List<Vector2Int> placedPositions)
+    {
+        foreach (LeaderBiomeConfig leaderBiomeConfig in leaderBiomes) InstantiateLeaderAndCharacters(leaderBiomeConfig, placedPositions, true);
+    }
+    private void InstantiateLeadersAndCharacters(List<NonPlayableLeaderBiomeConfig> nonPlayableleaderBiomes, List<Vector2Int> placedPositions)
+    {
+        foreach (NonPlayableLeaderBiomeConfig nonPlayableleaderBiomeConfig in nonPlayableleaderBiomes) InstantiateLeaderAndCharacters(nonPlayableleaderBiomeConfig, placedPositions, false);
+    }
+    
+    private void InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable)
+    {
+        // Find suitable hexes for this terrain type
+        List<Vector2Int> suitableHexes = FindHexesWithTerrain(leaderBiomeConfig.terrain);
+
+        if (suitableHexes.Count == 0)
         {
-            throw new System.Exception("Board reference is null. Did you call Initialize?");
+            throw new System.Exception($"No suitable hexes found with terrain {leaderBiomeConfig.terrain}. Skipping.");
         }
 
-        if (leaders == null)
+        // Find the hex that is farthest from all other players
+        Vector2Int bestPosition = FindFarthestPosition(suitableHexes, placedPositions);
+        placedPositions.Add(bestPosition);
+
+        // Log the placement
+        // Debug.Log($"Placed player {field.Name} at position ({bestPosition.x}, {bestPosition.y}) with terrain {leaderBiomeConfig.terrain}");
+
+        // Place
+        Vector2Int v2 = new(bestPosition.x, bestPosition.y);
+        Hex hex = board.hexes[v2];
+        Leader leader;
+        if(leaderBiomeConfig is NonPlayableLeaderBiomeConfig)
         {
-            throw new System.Exception("Players reference is null. Check if Players component exists.");
+            leader = hex.SpawnNonPlayableLeaderAtStart(leaderBiomeConfig as NonPlayableLeaderBiomeConfig);
+        } else
+        {
+            leader = hex.SpawnLeaderAtStart(leaderBiomeConfig);
         }
 
-        // Get all BiomeConfig fields from Leaders
-        FieldInfo biomeField = typeof(Leader).GetFields(BindingFlags.Public | BindingFlags.Instance).Where(f => f.FieldType == typeof(LeaderBiomeConfig)).First();
-
-        // List to track placed player positions
-        List<Vector2Int> placedPositions = new List<Vector2Int>();
-
-        // For each player field, find a suitable location
-        foreach(Leader leader in leaders)
+        foreach (BiomeConfig otherCharacterBiome in leader.GetBiome().startingCharacters)
         {
-            LeaderBiomeConfig biomeConfig = biomeField.GetValue(leader) as LeaderBiomeConfig;
-
-            // Find suitable hexes for this terrain type
-            List<Vector2Int> suitableHexes = FindHexesWithTerrain(biomeConfig.terrain);
-
-            if (suitableHexes.Count == 0)
-            {
-                throw new System.Exception($"No suitable hexes found for {biomeField.Name} with terrain {biomeConfig.terrain}. Skipping.");
-            }
-
-            // Find the hex that is farthest from all other players
-            Vector2Int bestPosition = FindFarthestPosition(suitableHexes, placedPositions);
-            placedPositions.Add(bestPosition);
-
-            // Log the placement
-            // Debug.Log($"Placed player {field.Name} at position ({bestPosition.x}, {bestPosition.y}) with terrain {biomeConfig.terrain}");
-
-            // Place
-            Vector2Int v2 = new (bestPosition.x, bestPosition.y);
-            Hex hex = board.hexes[v2];
-            hex.SpawnLeaderAtStart(leader);
-            hex.SpawnOtherCharactersAtStart(leader);
-            hex.SpawnCapitalAtStart(leader);
+            hex.SpawnOtherCharacterAtStart(leader, otherCharacterBiome);
         }
+
+        hex.SpawnCapitalAtStart(leader);
     }
 
     private List<Vector2Int> FindHexesWithTerrain(TerrainEnum terrain)

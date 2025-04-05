@@ -65,7 +65,7 @@ public class Hex : MonoBehaviour
     public List<Army> armies;
     public List<Character> characters;
     public List<EncountersEnum> encounters;
-    public List<Artifact> hiddenArtifacts;
+    public List<Artifact> hiddenArtifacts = new();
 
     private Illustrations illustrations;
     private IllustrationsSmall illustrationsSmall;
@@ -95,22 +95,28 @@ public class Hex : MonoBehaviour
         RefreshHoverText();
     }
 
-    public void SpawnLeaderAtStart(Leader leader)
+    public Leader SpawnLeaderAtStart(LeaderBiomeConfig leaderBiome)
     {
-        leader.Initialize(leader, leader.GetBiome().alignment, this, leader.characterName, true, true);
+        Leader leader = FindFirstObjectByType<CharacterInstantiator>().InstantiateLeader();
+        leader.Initialize(this, leaderBiome);
         RedrawCharacters();
         RedrawArmies();
+        return leader;
     }
 
-    public void SpawnOtherCharactersAtStart(Leader leader)
+    public NonPlayableLeader SpawnNonPlayableLeaderAtStart(NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome)
     {
-        List<Character> otherCharaters = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => x.GetOwner() == leader && x != leader);
-        foreach(Character otherCharacter in otherCharaters)
-        {
-            if (otherCharacter is Leader) continue;
-            otherCharacter.Initialize(leader, leader.GetBiome().alignment, this, otherCharacter.characterName);
-        }
+        NonPlayableLeader nonPlayableLeader = FindFirstObjectByType<CharacterInstantiator>().InstantiateNonPlayableLeader();
+        nonPlayableLeader.Initialize(this, nonPlayableLeaderBiome);
+        RedrawCharacters();
+        RedrawArmies();
+        return nonPlayableLeader;
+    }
 
+    public void SpawnOtherCharacterAtStart(Leader leader, BiomeConfig biomeConfig)
+    {
+        Character otherCharacter = FindFirstObjectByType<CharacterInstantiator>().InstantiateCharacter();
+        otherCharacter.InitializeFromBiome(leader, this, biomeConfig);
         RedrawCharacters();
         RedrawArmies();
     }
@@ -138,7 +144,14 @@ public class Hex : MonoBehaviour
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
 
-        bool isRevealed = !pc.isHidden || pc.hiddenButRevealed || pc.owner == FindFirstObjectByType<Game>().player || (pc.owner.GetAlignment() != AlignmentEnum.neutral && pc.owner.GetAlignment() == FindFirstObjectByType<Game>().player.GetAlignment());
+        Leader player = FindFirstObjectByType<Game>().player;
+
+        bool isRevealed = false;
+
+        if (player)
+        {
+            isRevealed = !pc.isHidden || pc.hiddenButRevealed || pc.owner == player || (pc.owner.GetAlignment() != AlignmentEnum.neutral && pc.owner.GetAlignment() == player.GetAlignment());
+        }
 
 		if (isRevealed)
         {
@@ -225,8 +238,15 @@ public class Hex : MonoBehaviour
                     hoverFort.gameObject.SetActive(true);
                 }
             }
-            bool isRevealed = !pc.isHidden || pc.hiddenButRevealed || pc.owner == FindFirstObjectByType<Game>().player || (pc.owner.GetAlignment() != AlignmentEnum.neutral && pc.owner.GetAlignment() == FindFirstObjectByType<Game>().player.GetAlignment());
 
+            Leader player = FindFirstObjectByType<Game>().player;
+
+            bool isRevealed = false;
+
+            if (player)
+            {
+                isRevealed = !pc.isHidden || pc.hiddenButRevealed || pc.owner == player || (pc.owner.GetAlignment() != AlignmentEnum.neutral && pc.owner.GetAlignment() == player.GetAlignment());
+            }
             if (isRevealed)
             {
                 hoverPcName.text = pc.pcName;

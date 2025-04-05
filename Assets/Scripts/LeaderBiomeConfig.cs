@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+
+[Serializable]
+public class LeaderBiomeConfigCollection
+{
+	public List<LeaderBiomeConfig> biomes = new ();
+}
 
 [Serializable]
 public class LeaderBiomeConfig: BiomeConfig
 {
-    [Header("Starting")]
     public TerrainEnum terrain;
     public string startingCityName;
     public PCSizeEnum startingCitySize;
@@ -16,10 +20,8 @@ public class LeaderBiomeConfig: BiomeConfig
     public bool startsWithPort;
     public int startingWarships;
 
-    [Header("Characters")]
-    public List<LeaderBiomeConfig> startingCharacters;
+    public List<BiomeConfig> startingCharacters = new();
 
-    [Header("New")]
     public List<string> pcNames;
     public List<string> characterNames;
 }

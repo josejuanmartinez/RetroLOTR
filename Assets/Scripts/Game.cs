@@ -15,7 +15,7 @@ public class Game : MonoBehaviour
     [Header("Currently Playing")]
     public PlayableLeader currentlyPlaying;
     [Header("Artifacts")]
-    public List<Artifact> artifacts;
+    public List<Artifact> artifacts = new();
 
     public int normalMovement = 12;
     public int cavalryMovement = 15;

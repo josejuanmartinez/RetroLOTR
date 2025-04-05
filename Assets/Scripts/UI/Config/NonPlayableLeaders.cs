@@ -1,13 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class NonPlayableLeaders : MonoBehaviour
 {
-    public List<NonPlayableLeader> nonPlayableLeaders;
+    public NonPlayableLeaderBiomeConfigCollection nonPlayableLeaders;
 
     public void Initialize()
     {
-        nonPlayableLeaders = transform.GetComponentsInChildren<NonPlayableLeader>().ToList();
+        // Non PLayable Leaders
+        TextAsset jsonFile = Resources.Load<TextAsset>("NonPlayableLeaderBiomes");
+        nonPlayableLeaders = JsonUtility.FromJson<NonPlayableLeaderBiomeConfigCollection>(jsonFile.text);
     }
 }

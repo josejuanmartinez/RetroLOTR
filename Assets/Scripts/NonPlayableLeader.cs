@@ -5,14 +5,20 @@ using UnityEngine;
 
 public class NonPlayableLeader : Leader
 {
-    [Header("Non Playable Leader Starting Data")]
-    [SerializeField] private NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome;
+	public bool joined = false;
 
-    public bool joined = false;
-    public void CheckArtifactConditions(Leader leader)
+	NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome;
+
+	public void Initialize(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome)
+	{
+		this.nonPlayableLeaderBiome = nonPlayableLeaderBiome;
+        base.Initialize(hex, nonPlayableLeaderBiome);
+	}
+
+	public void CheckArtifactConditions(Leader leader)
     {
         if (killed || joined || leader == this) return;
-        if (leader.controlledCharacters.SelectMany(x => x.artifacts).Intersect(nonPlayableLeaderBiome.artifactsToJoin).Any()) Joined(leader);
+        if (leader.controlledCharacters.SelectMany(x => x.artifacts).Select(x => x.artifactName).Intersect(nonPlayableLeaderBiome.artifactsToJoin).Any()) Joined(leader);
     }
 
     public void CheckArmiesConditions(Leader leader)
@@ -67,14 +73,14 @@ public class NonPlayableLeader : Leader
     {
         if (killed || joined || leader == this) return;
 
-        if (nonPlayableLeaderBiome.actionsAtCapital.Contains(action)) Joined(leader);
+        if (nonPlayableLeaderBiome.actionsAtCapital.Contains(action.actionName)) Joined(leader);
     }
 
     public void CheckActionConditionAnywhere(Leader leader, CharacterAction action)
     {
         if (killed || joined || leader == this) return;
 
-        if (nonPlayableLeaderBiome.actionsAnywhere.Contains(action)) Joined(leader);
+        if (nonPlayableLeaderBiome.actionsAnywhere.Contains(action.actionName)) Joined(leader);
     }
 
     override public void Killed(Leader joinedTo)
