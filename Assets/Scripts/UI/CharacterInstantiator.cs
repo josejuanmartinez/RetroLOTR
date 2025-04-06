@@ -2,20 +2,33 @@ using UnityEngine;
 
 public class CharacterInstantiator : MonoBehaviour
 {
-    public Character InstantiateCharacter()
+    public Transform leadersParent;
+    public Transform nonPlayableLeadersParent;
+    public Transform otherCharactersParent;
+    public Character InstantiateCharacter(Leader leader, Hex hex, BiomeConfig biomeConfig)
     {
-        GameObject newCharacterPrefab = new ();
-        return newCharacterPrefab.AddComponent<Character>();
+        Character character = InstantiatePrefab(biomeConfig.characterName, otherCharactersParent).AddComponent<Character>();
+        character.InitializeFromBiome(leader, hex, biomeConfig);
+        return character;
     }
-    public Leader InstantiateLeader()
+    public PlayableLeader InstantiatePlayableLeader(Hex hex, LeaderBiomeConfig leaderBiomeConfig)
     {
-        GameObject newCharacterPrefab = new ();
-        return newCharacterPrefab.AddComponent<Leader>();
+        PlayableLeader playableLeader = InstantiatePrefab(leaderBiomeConfig.characterName, leadersParent).AddComponent<PlayableLeader>();
+        playableLeader.Initialize(hex, leaderBiomeConfig);
+        return playableLeader;
     }
-    public NonPlayableLeader InstantiateNonPlayableLeader()
+    public NonPlayableLeader InstantiateNonPlayableLeader(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiomeConfig)
     {
-        GameObject newCharacterPrefab = new ();
-        return newCharacterPrefab.AddComponent<NonPlayableLeader>();
+        NonPlayableLeader nonPlayableLeader = InstantiatePrefab(nonPlayableLeaderBiomeConfig.characterName, nonPlayableLeadersParent).AddComponent<NonPlayableLeader>();
+        nonPlayableLeader.Initialize(hex, nonPlayableLeaderBiomeConfig);
+        return nonPlayableLeader;
+    }
+
+    private GameObject InstantiatePrefab(string name, Transform t)
+    {
+        GameObject newCharacterPrefab = new(name);
+        newCharacterPrefab.transform.parent = t;
+        return newCharacterPrefab;
     }
 
     public void ResetForNewEpisode()

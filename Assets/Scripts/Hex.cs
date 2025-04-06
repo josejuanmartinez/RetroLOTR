@@ -95,32 +95,6 @@ public class Hex : MonoBehaviour
         RefreshHoverText();
     }
 
-    public Leader SpawnLeaderAtStart(LeaderBiomeConfig leaderBiome)
-    {
-        Leader leader = FindFirstObjectByType<CharacterInstantiator>().InstantiateLeader();
-        leader.Initialize(this, leaderBiome);
-        RedrawCharacters();
-        RedrawArmies();
-        return leader;
-    }
-
-    public NonPlayableLeader SpawnNonPlayableLeaderAtStart(NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome)
-    {
-        NonPlayableLeader nonPlayableLeader = FindFirstObjectByType<CharacterInstantiator>().InstantiateNonPlayableLeader();
-        nonPlayableLeader.Initialize(this, nonPlayableLeaderBiome);
-        RedrawCharacters();
-        RedrawArmies();
-        return nonPlayableLeader;
-    }
-
-    public void SpawnOtherCharacterAtStart(Leader leader, BiomeConfig biomeConfig)
-    {
-        Character otherCharacter = FindFirstObjectByType<CharacterInstantiator>().InstantiateCharacter();
-        otherCharacter.InitializeFromBiome(leader, this, biomeConfig);
-        RedrawCharacters();
-        RedrawArmies();
-    }
-
     public void RedrawArmies()
     {
         bool hasFreeArmy = armies.Find(x => x.GetCommander().alignment == AlignmentEnum.freePeople) != null;

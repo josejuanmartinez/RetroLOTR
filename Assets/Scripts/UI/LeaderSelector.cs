@@ -1,26 +1,53 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.Video;
+using System.Linq;
 
 public class LeaderSelector : MonoBehaviour
 {
+    public VideoPlayer introVideoPlayer;
     public VideoPlayer leaderVideo;
-    // public Image leaderPicture;
     public TypewriterEffect typewriterEffect;
     public TextMeshProUGUI textUI;
-    // public Illustrations illustrations;
-    public Videos videos;
-    public TextsEN textsEN;
+    
+    
+    Videos videos;
+    List<TMP_Dropdown.OptionData> options;
+    TMP_Dropdown dropdown;
 
-    private List<TMP_Dropdown.OptionData> options;
+    List<string> loadedLeaders = new();
+    bool loadedFirst = false;
     void Awake()
     {
-        options = GetComponent<TMP_Dropdown>().options;
-        // illustrations = FindFirstObjectByType<Illustrations>();
+        dropdown = GetComponent<TMP_Dropdown>();
+        options = dropdown.options;
         videos = FindFirstObjectByType<Videos>();
-        textsEN = FindFirstObjectByType<TextsEN>();
+    }
+
+    void Update()
+    {
+        List<PlayableLeader> playableLeaders = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList();
+        if (loadedLeaders.Count < playableLeaders.Count)
+        {
+            for(int i=0; i<playableLeaders.Count; i++)
+            {
+                string leaderName = playableLeaders[i].characterName;
+                if (loadedLeaders.Contains(leaderName)) continue;
+                string alignment = playableLeaders[i].alignment.ToString();
+                options.Add(new TMP_Dropdown.OptionData(leaderName, FindFirstObjectByType<IllustrationsSmall>().GetIllustrationByName(alignment), Color.white));
+                loadedLeaders.Add(leaderName);
+
+                if (!loadedFirst)
+                {
+                    loadedFirst = true;
+                    dropdown.value = 0;
+                    dropdown.RefreshShownValue();
+                    SelectLeader(0);
+                    introVideoPlayer.GetComponent<Canvas>().sortingOrder = 0;
+                }
+            }
+        }
     }
 
     public void SelectLeader(int value)
@@ -28,21 +55,8 @@ public class LeaderSelector : MonoBehaviour
         if (options.Count > value)
         {
             string leaderName = options[value].text;
+            string leaderDescription = FindAnyObjectByType<PlayableLeaders>().playableLeaders.biomes.Find(x => x.characterName.ToLower() == leaderName.ToLower()).description;
 
-            // Get leader sprite using reflection
-            /*System.Reflection.FieldInfo[] illustrationFields = illustrations.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-            foreach (var field in illustrationFields)
-            {
-                if (string.Equals(field.Name, leaderName, System.StringComparison.OrdinalIgnoreCase))
-                {
-                    if (field.FieldType == typeof(Sprite))
-                    {
-                        Sprite leaderSprite = (Sprite)field.GetValue(illustrations);
-                        leaderPicture.sprite = leaderSprite;
-                        break;
-                    }
-                }
-            }*/
             System.Reflection.FieldInfo[] videosFields = videos.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
             foreach (var field in videosFields)
             {
@@ -56,28 +70,7 @@ public class LeaderSelector : MonoBehaviour
                 }
             }
 
-            // Get leader text using reflection in the same way
-            System.Reflection.FieldInfo[] textFields = textsEN.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-            foreach (var field in textFields)
-            {
-                if (string.Equals(field.Name, leaderName + "Text", System.StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(field.Name, leaderName + "Description", System.StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(field.Name, leaderName, System.StringComparison.OrdinalIgnoreCase))
-                {
-                    if (field.FieldType == typeof(string))
-                    {
-                        string leaderText = (string)field.GetValue(textsEN);
-                        if (typewriterEffect)
-                        {
-                            typewriterEffect.StartWriting(leaderText);
-                        } else
-                        {
-                            textUI.text = leaderText;
-                        }
-                        break;
-                    }
-                }
-            }
+            if (typewriterEffect) typewriterEffect.StartWriting(leaderDescription); else textUI.text = leaderDescription;
 
             PlayableLeader player = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList().Find((x) => x.characterName.ToLower() == leaderName.ToLower());
             FindFirstObjectByType<Game>().SelectPlayer(player);

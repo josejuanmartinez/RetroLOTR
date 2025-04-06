@@ -24,6 +24,7 @@ public class Leader : Character
     {
 		this.leaderBiome = leaderBiome;
 		InitializeFromBiome(this, hex, leaderBiome);
+        if(leaderBiome is not NonPlayableLeaderBiomeConfig) FindFirstObjectByType<PlayableLeaderIcons>().Instantiate(this);
     }
 
     public LeaderBiomeConfig GetBiome()

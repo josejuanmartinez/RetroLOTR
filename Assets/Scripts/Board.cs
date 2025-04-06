@@ -155,7 +155,7 @@ public class Board : MonoBehaviour
         nationSpawner.Spawn();
         initialized = true;
         startButton.interactable = true;
-        startButton.GetComponentInChildren<TextMeshProUGUI>().text = FindFirstObjectByType<TextsEN>().start;
+        startButton.GetComponentInChildren<TextMeshProUGUI>().text = $"> Start as this leader <";
         GetHexes().ForEach(x => { x.GetComponent<OnHoverTile>().enabled = true; x.GetComponent<OnClickTile>().enabled = true; });
         StartCoroutine(SpawnArtifacts());
     }
@@ -511,7 +511,7 @@ public class Board : MonoBehaviour
         if (progressBar != null) progressBar.value = progress;
 
         // Update the status text
-        if (statusText != null) statusText.text = $"{stage} - {progress * 100:F0}%";
+        if (statusText != null) statusText.text = $"<mark=#ffffff>{stage} - {progress * 100:F0}%</mark>";
     }
 
     public Hex GetHex(Vector2 v2)

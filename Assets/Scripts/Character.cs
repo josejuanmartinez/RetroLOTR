@@ -55,7 +55,8 @@ public class Character : MonoBehaviour
     public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome)
     {
         this.characterBiome = characterBiome;
-        Initialize(leader, characterBiome.alignment, hex, characterBiome.characterName, characterBiome.commander, characterBiome.agent, characterBiome.emmissary, characterBiome.mage, true);
+        bool isLeader = characterBiome is LeaderBiomeConfig;
+        Initialize(leader, characterBiome.alignment, hex, characterBiome.characterName, characterBiome.commander, characterBiome.agent, characterBiome.emmissary, characterBiome.mage);
     }
 
     public void Initialize(
@@ -66,8 +67,7 @@ public class Character : MonoBehaviour
         int commander,
         int agent,
         int emmissary,
-        int mage,
-        bool startingCharacter = false)
+        int mage)
     {
         MessageDisplay.ShowMessage($"Character {characterName} starts serving {owner.GetOwner().characterName}", Color.green);
         this.characterName = characterName;
@@ -85,9 +85,8 @@ public class Character : MonoBehaviour
         army = null;
         this.hex = hex;
         hex.characters.Add(this);
-        this.startingCharacter = startingCharacter;
 
-        if (startingCharacter && (owner.GetBiome().startingArmySize > 0 || owner.GetBiome().startingWarships > 0))
+        if (this == owner && (owner.GetBiome().startingArmySize > 0 || owner.GetBiome().startingWarships > 0))
         {
             CreateArmy(owner.GetBiome().preferedTroopType, owner.GetBiome().startingArmySize, startingCharacter, owner.GetBiome().startingWarships);
         }

@@ -13,10 +13,12 @@ public class NationSpawner : MonoBehaviour
     
     // List to track placed player positions
     private List<Vector2Int> placedPositions = new();
+    private CharacterInstantiator characterInstantiator;
 
     public void Initialize(Board board)
     {
         this.board = board;
+        characterInstantiator = FindFirstObjectByType<CharacterInstantiator>();
 
         playableLeaders = FindFirstObjectByType<PlayableLeaders>();
         playableLeaders.Initialize();
@@ -59,21 +61,18 @@ public class NationSpawner : MonoBehaviour
         // Place
         Vector2Int v2 = new(bestPosition.x, bestPosition.y);
         Hex hex = board.hexes[v2];
-        Leader leader;
-        if(leaderBiomeConfig is NonPlayableLeaderBiomeConfig)
-        {
-            leader = hex.SpawnNonPlayableLeaderAtStart(leaderBiomeConfig as NonPlayableLeaderBiomeConfig);
-        } else
-        {
-            leader = hex.SpawnLeaderAtStart(leaderBiomeConfig);
-        }
+        
+        string leaderName = leaderBiomeConfig.characterName;
 
-        foreach (BiomeConfig otherCharacterBiome in leader.GetBiome().startingCharacters)
-        {
-            hex.SpawnOtherCharacterAtStart(leader, otherCharacterBiome);
-        }
+        Leader leader = leaderBiomeConfig is NonPlayableLeaderBiomeConfig? characterInstantiator.InstantiateNonPlayableLeader(hex, leaderBiomeConfig as NonPlayableLeaderBiomeConfig) : characterInstantiator.InstantiatePlayableLeader(hex, leaderBiomeConfig);
+
+        leader.GetBiome().startingCharacters.ForEach(x => characterInstantiator.InstantiateCharacter(leader, hex, x));
 
         hex.SpawnCapitalAtStart(leader);
+
+        hex.RedrawArmies();
+        hex.RedrawCharacters();
+
     }
 
     private List<Vector2Int> FindHexesWithTerrain(TerrainEnum terrain)
