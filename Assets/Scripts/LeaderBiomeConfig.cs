@@ -10,6 +10,8 @@ public class LeaderBiomeConfigCollection
 [Serializable]
 public class LeaderBiomeConfig: BiomeConfig
 {
+    public string description;
+    public string joinedText;
     public TerrainEnum terrain;
     public string startingCityName;
     public PCSizeEnum startingCitySize;
@@ -21,7 +23,4 @@ public class LeaderBiomeConfig: BiomeConfig
     public int startingWarships;
 
     public List<BiomeConfig> startingCharacters = new();
-
-    public List<string> pcNames;
-    public List<string> characterNames;
 }

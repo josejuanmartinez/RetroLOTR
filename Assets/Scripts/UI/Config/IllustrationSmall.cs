@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class IllustrationsSmall : MonoBehaviour
 {
@@ -40,14 +41,18 @@ public class IllustrationsSmall : MonoBehaviour
     public Sprite emmissary;
     public Sprite mage;
 
-    public Sprite GetIllustrationByName(Character character)
+    [Header("Alignments")]
+    public Sprite freePeople;
+    public Sprite darkServants;
+    public Sprite neutral;
+
+    public Sprite GetIllustrationByName(string characterName)
     {
-        string name = character.characterName.ToLower();
         // Get type information for this class
         System.Type type = this.GetType();
 
         // Get the field with the matching name (case-insensitive)
-        System.Reflection.FieldInfo field = type.GetField(name,
+        System.Reflection.FieldInfo field = type.GetField(characterName,
             System.Reflection.BindingFlags.Public |
             System.Reflection.BindingFlags.Instance |
             System.Reflection.BindingFlags.IgnoreCase);
@@ -59,11 +64,25 @@ public class IllustrationsSmall : MonoBehaviour
         }
         else
         {
+            return null;
+        }
+    }
+    public Sprite GetIllustrationByName(Character character)
+    {
+        string characterName = character.characterName.ToLower();
+       
+        Sprite sprite = GetIllustrationByName(characterName);
+        if(sprite == null)
+        {
             if (character.GetAgent() > 0) return agent;
             if (character.GetCommander() > 0) return commander;
             if (character.GetEmmissary() > 0) return emmissary;
             if (character.GetMage() > 0) return mage;
+            return commander;
         }
-        return commander;
+        else
+        {
+            return sprite;
+        }   
     }
 }

@@ -8,6 +8,6 @@ public class PlayableLeaders : MonoBehaviour
     {
         // Playable Leaders
         TextAsset jsonFile = Resources.Load<TextAsset>("PlayableLeaderBiomes");
-        this.playableLeaders = JsonUtility.FromJson<LeaderBiomeConfigCollection>(jsonFile.text);
+        playableLeaders = JsonUtility.FromJson<LeaderBiomeConfigCollection>(jsonFile.text);
     }
 }

@@ -19,6 +19,8 @@
           "mageBonus": 0
         }
       ],
+      "description": "<b>Gandalf</b> <sprite name=\"commander\"> <sprite name=\"emmissary\"> <sprite name=\"mage\"><br>Starts with:<br>- Hobbiton <sprite name=\"village\"/><br>- Bilbo <sprite name=\"character\"/>( <sprite name=\"emmissary\"/>) <br>- Spells <sprite name=\"mage\"/>and Artifacts <sprite name=\"artifact\"/><br><br>Shrouded in robes the color of storm clouds, Gandalf the Grey wanders the realms of Middle-earth with ancient staff in hand and wisdom etched upon his weathered face.<br><br>Sent by the Valar in an age when darkness threatens to consume the land, this mysterious wizard seeks not to confront evil with raw power, but to unite the free peoples through counsel and courage.<br><br>From the grand halls of dwarven kingdoms to the humble hearths of halfling homes, he moves like mist between worlds, known to many as merely a creator of magnificent fireworks, while concealing his true purpose – to guide the most unlikely of heroes against a shadow that would devour all light and hope from the world.",
+      "joinedText": "The grey pilgrim arrives!",
       "terrain": 3,
       "startingCityName": "Hobbiton",
       "startingCitySize": 1,
@@ -38,16 +40,132 @@
           "mage": 0,
           "artifacts": []
         }
+      ]
+    },
+    {
+      "characterName": "Radagast",
+      "alignment": 0,
+      "commander": 0,
+      "agent": 2,
+      "emmissary": 0,
+      "mage": 1,
+      "artifacts": [
+        {
+          "artifactName": "Brown Robes",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "",
+          "commanderBonus": 0,
+          "agentBonus": 1,
+          "emmissaryBonus": 0,
+          "mageBonus": 0
+        }
       ],
-      "pcNames": [
-        "Buckland",
-        "Michel Delving"
+      "description": "<b>Radagast</b><sprite name=\"agent\"><sprite name=\"mage\"><br>Starts with:<br>- Rhosgobel <sprite name=\"hidden\"/> <sprite name=\"camp\"/><br>- Spells <sprite name=\"mage\"/>and Artifacts <sprite name=\"artifact\"/><br><br>Disheveled and nature-bound, Radagast the Brown wanders Middle-earth's forests as a guardian of wildlife rather than kingdoms.<br><br>With animals following his gentle footsteps and herbs stuffed in his pockets, this wizard abandoned the grand politics of his order to heal wounded creatures and commune with forest spirits, his apparent distraction from the growing darkness masking a deeper wisdom—that preserving Middle-earth's very essence might be as crucial to defeating evil as any council of war.",
+      "joinedText": "Mirkwood reveals its lonely guardian!",
+      "terrain": 5,
+      "startingCityName": "Rhosgobel",
+      "startingCitySize": 1,
+      "startingCityFortSize": 0,
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
+      "startingCityIsHidden": true,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": []
+    },
+    {
+      "characterName": "Saruman",
+      "alignment": 2,
+      "commander": 0,
+      "agent": 0,
+      "emmissary": 2,
+      "mage": 2,
+      "artifacts": [
+        {
+          "artifactName": "Ring of Orthanc",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "",
+          "commanderBonus": 1,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0
+        }
       ],
-      "characterNames": [
-        "Frodo",
-        "Sam",
-        "Pippin",
-        "Merry"
+      "description": "<b>Saruman</b> <sprite name=\"commander\"> <sprite name=\"emmissary\"> <sprite name=\"mage\"><br>Starts with:<br>- Orthanc <sprite name=\"camp\"/> <sprite name=\"tower\"/><br>- Grima <sprite name=\"character\"/>( <sprite name=\"agent\"/>)<br>- A low-quality small <sprite name=\"neutral\"/> army<br>- Spells <sprite name=\"mage\"/>and Artifacts <sprite name=\"artifact\"/><br><br>Saruman the White commands respect as the head of the Istari order, his voice as smooth as silk yet powerful as thunder.<br><br>From the gleaming tower of Orthanc, this most learned of wizards studies ancient lore and the craft of many devices, believing that to defeat the enemy, one must understand his methods and tools.<br><br>Though sent as a guardian against darkness, Saruman's brilliant mind increasingly turned away — his white robes concealing a heart slowly being consumed by pride and ambition as he gazes into forbidden knowledge, convincing himself that Middle-earth requires not a servant of the light but a new master to bring order to a chaotic world.",
+      "joinedText": "White wizard seeks ultimate power!",
+      "terrain": 1,
+      "startingCityName": "Orthanc",
+      "startingCitySize": 1,
+      "startingCityFortSize": 1,
+      "startingArmySize": 300,
+      "preferedTroopType": 0,
+      "startingCityIsHidden": false,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": [
+        {
+          "characterName": "Grima",
+          "alignment": 2,
+          "commander": 0,
+          "agent": 1,
+          "emmissary": 0,
+          "mage": 0,
+          "artifacts": []
+        }
+      ]
+    },
+    {
+      "characterName": "Sauron",
+      "alignment": 2,
+      "commander": 2,
+      "agent": 0,
+      "emmissary": 1,
+      "mage": 1,
+      "artifacts": [
+        {
+          "artifactName": "Sauron's Mace'",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "",
+          "commanderBonus": 1,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0
+        },
+        {
+          "artifactName": "Sauron's Armour'",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "",
+          "commanderBonus": 1,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0
+        }
+      ],
+      "description": "<b>Sauron</b> <sprite name=\"commander\"> <sprite name=\"emmissary\"> <sprite name=\"mage\"><br>Starts with:<br>- Barad-dur <sprite name=\"camp\"/> <sprite name=\"tower\"/><br>- Mouth of Sauron <sprite name=\"character\"/>( <sprite name=\"emmissary\"/>)<br>- A low-quality average <sprite name=\"darkServants\"/>army<br>- Spells <sprite name=\"mage\"/>and Artifacts <sprite name=\"artifact\"/><br><br>Sauron the Deceiver once stood as the greatest of Morgoth's lieutenants before rising to claim his master's mantle of darkness.<br><br>From the shadowed depths of Mordor, this fallen Maia extends his will across Middle-earth like a creeping poison, his fair form long abandoned for one of nightmare and dread.<br><br>Though diminished after the loss of the One Ring, Sauron's essence remains—a lidless eye wreathed in flame, ever-searching, patient and cunning beyond mortal comprehension.<br><br>Through whispered promises of power and subtle corruption of noble intentions, he works to bind all lands to his dominion, not out of mere cruelty, but from a twisted desire to reshape creation according to his own perfect and merciless vision of order.",
+      "joinedText": "The dark lord returns!",
+      "terrain": 10,
+      "startingCityName": "Barad-dur",
+      "startingCitySize": 1,
+      "startingCityFortSize": 1,
+      "startingArmySize": 500,
+      "preferedTroopType": 0,
+      "startingCityIsHidden": false,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": [
+        {
+          "characterName": "Mouth of Sauron",
+          "alignment": 0,
+          "commander": 0,
+          "agent": 0,
+          "emmissary": 2,
+          "mage": 0,
+          "artifacts": []
+        }
       ]
     }
   ]

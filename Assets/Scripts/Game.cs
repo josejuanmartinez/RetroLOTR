@@ -77,6 +77,7 @@ public class Game : MonoBehaviour
         // Start a new episode for all agents
         foreach (StrategyGameAgent agent in characterAgents.Values) agent.OnEpisodeBegin();
 
+        if (player == null) SelectPlayer(competitors.Find(x => x.characterName.ToLower() == "gandalf"));
         currentlyPlaying = player;
         currentlyPlaying.NewTurn();
     }
