@@ -10,9 +10,16 @@ using UnityEngine;
  */
 public class GameState : MonoBehaviour
 {
-    Game game;
-    Board board;
-    HexPathRenderer hexPathRenderer;
+    private Game game;
+    private Board board;
+    private HexPathRenderer hexPathRenderer;
+    private Dictionary<Character, List<Hex>> relevantHexesCache = new();
+    private List<Leader> leadersCache;
+    private List<Character> allCharactersCache;
+    private int boardSize;
+    private int maxX;
+    private int maxY;
+    private int leadersNum;
 
     public void Awake()
     {
@@ -21,110 +28,94 @@ public class GameState : MonoBehaviour
         hexPathRenderer = FindFirstObjectByType<HexPathRenderer>();
     }
 
+    private void UpdateCaches()
+    {
+        leadersCache = new List<Leader> { game.player };
+        leadersCache.AddRange(game.competitors);
+        leadersCache.AddRange(game.npcs);
+        allCharactersCache = leadersCache.SelectMany(x => x.controlledCharacters).ToList();
+        boardSize = board.GetHexes().Count;
+        maxX = board.width;
+        maxY = board.height;
+        leadersNum = leadersCache.Count;
+        relevantHexesCache.Clear();
+    }
+
     public void ResetGame()
     {
-
+        UpdateCaches();
     }
 
     public List<Hex> GetRelevantHexes(Character c)
     {
-        // First, determine relevant hexes
-        List<Hex> relevantHexes = new ();
-
-        foreach (var hex in board.GetHexes())
+        if (relevantHexesCache.TryGetValue(c, out var cachedHexes))
         {
-            // Include if it has units
-            bool hasUnits = hex.characters.Count() > 0;
-
-            // Include if it has resources
-            bool hasArmies = hex.armies.Count() > 0;
-
-            // Artifacts
-            bool hasArtifacts = hex.hiddenArtifacts.Count() > 0;
-
-            bool hasPCs = hex.GetPC() != null;
-
-            // Closest strategic hexes
-            bool isStrategic = hexPathRenderer.FindAllHexesInRange(c).Contains(hex);
-
-            if (hasUnits || hasArmies || hasPCs || hasArtifacts || isStrategic) relevantHexes.Add(hex);
+            return cachedHexes;
         }
+
+        List<Hex> relevantHexes = new();
+        var hexes = board.GetHexes();
+        var characterRange = hexPathRenderer.FindAllHexesInRange(c);
+
+        foreach (var hex in hexes)
+        {
+            if (hex.characters.Count > 0 || 
+                hex.armies.Count > 0 || 
+                hex.GetPC() != null || 
+                hex.hiddenArtifacts.Count > 0 || 
+                characterRange.Contains(hex))
+            {
+                relevantHexes.Add(hex);
+            }
+        }
+
+        relevantHexesCache[c] = relevantHexes;
         return relevantHexes;
     }
 
-    public int GetLeadersNum()
-    {
-        return game.competitors.Count + game.npcs.Count + 1;
-    }
+    public int GetLeadersNum() => leadersNum;
 
-    public List<Leader> GetLeaders()
-    {
-        List<Leader> result = new();
-        result.Add(game.player);
-        result.AddRange(game.competitors);
-        return result;
-    }
+    public List<Leader> GetLeaders() => leadersCache;
 
-    public int GetIndexOfLeader(Leader leader)
-    {
-        List<Leader> result = new();
-        result.Add(game.player);
-        result.AddRange(game.competitors);
-        return result.IndexOf(leader);
-    }
+    public int GetIndexOfLeader(Leader leader) => leadersCache.IndexOf(leader);
 
-    public int GetBoardSize()
-    {
-        return board.GetHexes().Count;
-    }
+    public int GetBoardSize() => boardSize;
 
-    public int GetMaxX()
-    {
-        return board.width;
-    }
+    public int GetMaxX() => maxX;
 
-    public int GetMaxY()
-    {
-        return board.height;
-    }
+    public int GetMaxY() => maxY;
 
-    public int GetAllCharactersNum()
-    {
-        return GetLeaders().SelectMany(x => x.controlledCharacters).Count();
-    }
+    public int GetAllCharactersNum() => allCharactersCache.Count;
 
-    public List<Character> GetAllCharacters()
-    {
-        return GetLeaders().SelectMany(x => x.controlledCharacters).ToList();
-    }
+    public List<Character> GetAllCharacters() => allCharactersCache;
 
-    public List<Artifact> GetAllArtifacts()
-    {
-        return game.artifacts;
-    }
-    public int GetAllArtifactsNum()
-    {
-        return game.artifacts.Count;
-    }
+    public List<Artifact> GetAllArtifacts() => game.artifacts;
 
-    public int GetTurn()
-    {
-        return game.turn;
-    }
+    public int GetAllArtifactsNum() => game.artifacts.Count;
+
+    public int GetTurn() => game.turn;
 
     public int GetFriendlyPoints(Leader leader)
     {
-        return GetLeaders().FindAll(x => x.GetAlignment() != AlignmentEnum.neutral && x.GetAlignment() == leader.GetAlignment() && x != leader).Select(x => x.GetArmyPoints() + x.GetCharacterPoints() + x.GetPCPoints()).Sum();
+        return leadersCache
+            .Where(x => x.GetAlignment() != AlignmentEnum.neutral && 
+                       x.GetAlignment() == leader.GetAlignment() && 
+                       x != leader)
+            .Sum(x => x.GetArmyPoints() + x.GetCharacterPoints() + x.GetPCPoints());
     }
+
     public int GetEnemyPoints(Leader leader)
     {
-        return GetLeaders().FindAll(x => (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != leader.GetAlignment())  && x != leader).Select(x => x.GetArmyPoints() + x.GetCharacterPoints() + x.GetPCPoints()).Sum();
+        return leadersCache
+            .Where(x => (x.GetAlignment() == AlignmentEnum.neutral || 
+                        x.GetAlignment() != leader.GetAlignment()) && 
+                       x != leader)
+            .Sum(x => x.GetArmyPoints() + x.GetCharacterPoints() + x.GetPCPoints());
     }
 
     public Leader GetWinner()
     {
-        List<Leader> leaders = GetLeaders();
-        int maxPoints = leaders.Max(x => x.GetAllPoints());
-        return leaders.FirstOrDefault(x => x.GetAllPoints() == maxPoints);
+        int maxPoints = leadersCache.Max(x => x.GetAllPoints());
+        return leadersCache.FirstOrDefault(x => x.GetAllPoints() == maxPoints);
     }
 }

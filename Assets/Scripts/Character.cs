@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
 using UnityEngine;
 
 public class Character : MonoBehaviour
@@ -105,7 +107,18 @@ public class Character : MonoBehaviour
         }
 
         // ADD RL IN CASE IT'S NOT THERE
-        if(owner != FindFirstObjectByType<Game>().player && gameObject.GetComponent<StrategyGameAgent>() == null) gameObject.AddComponent<StrategyGameAgent>();
+        if(owner != FindFirstObjectByType<Game>().player && gameObject.GetComponent<StrategyGameAgent>() == null)
+        {
+            // Add StrategyGameAgent component
+            var ai = gameObject.AddComponent<StrategyGameAgent>();
+            
+            // Add and configure Behavior Parameters component
+            var behaviorParams = ai.GetComponent<BehaviorParameters>();
+            behaviorParams.BehaviorName = "StrategyGame"; // You can change this name
+            behaviorParams.BrainParameters.VectorObservationSize = ai.GetTotalObservationSize();
+            behaviorParams.BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(1); // Single discrete action
+            behaviorParams.BrainParameters.NumStackedVectorObservations = 1;
+        }
     }
 
     public AlignmentEnum GetAlignment()
