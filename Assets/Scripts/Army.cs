@@ -157,13 +157,13 @@ public class Army
         return IsCavalryOnly() ? MovementType.ArmyCommanderCavalryOnly : MovementType.ArmyCommander;
     }
 
-    public void Killed(Leader killedBy)
+    public void Killed(Leader killedBy, bool onlyMark = false)
     {
         if (killed) return;
         killed = true;
         int wound = UnityEngine.Random.Range(0, 100);
         MessageDisplay.ShowMessage($"{commander.characterName} army was killed and {commander.characterName} wounded by {wound}", Color.red);
-        if(commander.hex.armies.Contains(this)) commander.hex.armies.Remove(this);
+        if(!onlyMark && commander.hex.armies.Contains(this)) commander.hex.armies.Remove(this);
         commander.hex.RedrawArmies();
         commander = null;
         ma = 0;

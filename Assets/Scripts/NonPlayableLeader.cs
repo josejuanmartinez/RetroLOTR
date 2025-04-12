@@ -83,43 +83,30 @@ public class NonPlayableLeader : Leader
         if (nonPlayableLeaderBiome.actionsAnywhere.Contains(action.actionName)) Joined(leader);
     }
 
-    override public void Killed(Leader joinedTo)
+    override public void Killed(Leader killedBy, bool onlyMask = false)
     {
-        if (killed || joinedTo == this) return;
+        if (killed) return;
 
-        if(!joined)
+        if(!joined && killedBy.GetAlignment() == alignment && killedBy != this)
         {
             health = 1;
             controlledCharacters.ForEach(x => x.health = 1);
             controlledPcs.ForEach(x => x.DecreaseSize());
             controlledPcs.ForEach(x => x.DecreaseFort());
+            Joined(killedBy);
         } else
         {
-            killed = true;
-            health = 0;
+            base.Killed(killedBy);
         }
-
-        Joined(joinedTo);
     }
 
     public void Joined(Leader joinedTo)
     {
-        if (joined || joinedTo == this) return;
-        if (!killed && joinedTo.GetAlignment() != alignment) return;
-
-        if(killed)
-        {
-            MessageDisplay.ShowMessage($"{name} has been killed by {joinedTo.characterName}", Color.red);
-        } else
-        {
-            MessageDisplay.ShowMessage($"{name} has joined {joinedTo.characterName}", Color.green);
-        }
-
-        NonPlayableLeader nonPlayable = this;
-
+        MessageDisplay.ShowMessage($"{name} has joined {joinedTo.characterName}", Color.green);
+        
         // Create temporary lists to avoid modifying collections during iteration
-        List<Character> charactersToTransfer = new List<Character>(GetOwner().controlledCharacters);
-        List<PC> pcsToTransfer = new List<PC>(GetOwner().controlledPcs);
+        List<Character> charactersToTransfer = new (GetOwner().controlledCharacters);
+        List<PC> pcsToTransfer = new (GetOwner().controlledPcs);
 
         // Transfer characters
         foreach (Character character in charactersToTransfer)
@@ -128,6 +115,7 @@ public class NonPlayableLeader : Leader
             character.alignment = joinedTo.alignment;
             joinedTo.controlledCharacters.Add(character);
         }
+
 
         // Transfer PCs
         foreach (PC pc in pcsToTransfer)
@@ -139,33 +127,31 @@ public class NonPlayableLeader : Leader
         }
 
         // Clear the original leader's collections after transfer
-        nonPlayable.controlledCharacters.Clear();
-        nonPlayable.controlledPcs.Clear();
-        nonPlayable.visibleHexes.Clear();
+        GetOwner().controlledCharacters.Clear();
+        GetOwner().controlledPcs.Clear();
+        visibleHexes.Clear();
 
         // Transfer resources
-        joinedTo.leatherAmount += nonPlayable.leatherAmount;
-        joinedTo.mountsAmount += nonPlayable.mountsAmount;
-        joinedTo.timberAmount += nonPlayable.timberAmount;
-        joinedTo.ironAmount += nonPlayable.ironAmount;
-        joinedTo.mithrilAmount += nonPlayable.mithrilAmount;
-        joinedTo.goldAmount += nonPlayable.goldAmount;
+        joinedTo.leatherAmount += leatherAmount;
+        joinedTo.mountsAmount += mountsAmount;
+        joinedTo.timberAmount += timberAmount;
+        joinedTo.ironAmount += ironAmount;
+        joinedTo.mithrilAmount += mithrilAmount;
+        joinedTo.goldAmount += goldAmount;
 
         // Reset resources to 0
-        nonPlayable.leatherAmount = 0;
-        nonPlayable.mountsAmount = 0;
-        nonPlayable.timberAmount = 0;
-        nonPlayable.ironAmount = 0;
-        nonPlayable.mithrilAmount = 0;
-        nonPlayable.goldAmount = 0;
+        leatherAmount = 0;
+        mountsAmount = 0;
+        timberAmount = 0;
+        ironAmount = 0;
+        mithrilAmount = 0;
+        goldAmount = 0;
 
         // Mark as killed and remove from NPCs list safely
-        nonPlayable.joined = true;
+        joined = true;
 
         // Schedule the removal for after the current iteration completes
         StartCoroutine(RemoveFromNPCsNextFrame());
-
-        enabled = false;
     }
 
     private IEnumerator RemoveFromNPCsNextFrame()

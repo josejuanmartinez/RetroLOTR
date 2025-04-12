@@ -68,11 +68,8 @@ public class NationSpawner : MonoBehaviour
 
         leader.GetBiome().startingCharacters.ForEach(x => characterInstantiator.InstantiateCharacter(leader, hex, x));
 
-        hex.SpawnCapitalAtStart(leader);
-
-        hex.RedrawArmies();
-        hex.RedrawCharacters();
-
+        PC pc = new (leader, hex);
+        hex.SetPC(pc);
     }
 
     private List<Vector2Int> FindHexesWithTerrain(TerrainEnum terrain)

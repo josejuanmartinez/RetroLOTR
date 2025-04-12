@@ -84,17 +84,6 @@ public class Hex : MonoBehaviour
         hiddenArtifacts = new();
     }
 
-    public void SpawnCapitalAtStart(Leader leader)
-    {
-        pc = new PC(leader);
-
-        if (leader is not PlayableLeader) encounters.Add(EncountersEnum.Encounter);
-
-        RedrawPC();
-
-        RefreshHoverText();
-    }
-
     public void RedrawArmies()
     {
         bool hasFreeArmy = armies.Find(x => x.GetCommander().alignment == AlignmentEnum.freePeople) != null;

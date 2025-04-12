@@ -1,71 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class IllustrationsSmall : MonoBehaviour
 {
-    [Header("Leaders Icons")]
-    public Sprite gandalf;
-    public Sprite radagast;
-    public Sprite beoraborn;
-    public Sprite aragorn;
-    public Sprite ecthelion;
-    public Sprite imrahil;
-    public Sprite elrond;
-    public Sprite galadriel;
-    public Sprite bain;
-    public Sprite murazor;
-    public Sprite sauron;
-    public Sprite khamul;
-    public Sprite ren;
-    public Sprite hoarmurath;
-    public Sprite dwar;
-    public Sprite indur;
-    public Sprite akhorahil;
-    public Sprite adunaphel;
-    public Sprite ovatha;
-    public Sprite sangarunya;
-    public Sprite haruth;
-    public Sprite huz;
-    public Sprite uvatha;
-    public Sprite waulfa;
-    public Sprite saruman;
-
-    [Header("Other Characters")]
-    public Sprite bilbo;
-    public Sprite wormtongue;
-    public Sprite themouth;
-
-    [Header("Generic Characters")]
-    public Sprite agent;
-    public Sprite commander;
-    public Sprite emmissary;
-    public Sprite mage;
-
-    [Header("Alignments")]
-    public Sprite freePeople;
-    public Sprite darkServants;
-    public Sprite neutral;
-
+    public List<Sprite> illustrationsSmall;
     public Sprite GetIllustrationByName(string characterName)
     {
-        // Get type information for this class
-        System.Type type = this.GetType();
-
-        // Get the field with the matching name (case-insensitive)
-        System.Reflection.FieldInfo field = type.GetField(characterName,
-            System.Reflection.BindingFlags.Public |
-            System.Reflection.BindingFlags.Instance |
-            System.Reflection.BindingFlags.IgnoreCase);
-
-        // If we found a matching field, return its value as a Sprite
-        if (field != null)
-        {
-            return field.GetValue(this) as Sprite;
-        }
-        else
-        {
-            return null;
-        }
+        return illustrationsSmall.Find(x => x.name.ToLower() == characterName.ToLower());
     }
     public Sprite GetIllustrationByName(Character character)
     {
@@ -74,11 +15,11 @@ public class IllustrationsSmall : MonoBehaviour
         Sprite sprite = GetIllustrationByName(characterName);
         if(sprite == null)
         {
-            if (character.GetAgent() > 0) return agent;
-            if (character.GetCommander() > 0) return commander;
-            if (character.GetEmmissary() > 0) return emmissary;
-            if (character.GetMage() > 0) return mage;
-            return commander;
+            if (character.GetAgent() > 0) return GetIllustrationByName("agent");
+            if (character.GetCommander() > 0) return GetIllustrationByName("commander");
+            if (character.GetEmmissary() > 0) return GetIllustrationByName("emmissary");
+            if (character.GetMage() > 0) return GetIllustrationByName("mage");
+            return GetIllustrationByName("commander");
         }
         else
         {

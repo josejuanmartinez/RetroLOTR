@@ -24,4 +24,20 @@ public class PlayableLeaderIcons : MonoBehaviour
             }
         }
     }
+
+    public void AddDeadIcon(Leader currentlyPlaying)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i).gameObject.name.ToLower() == currentlyPlaying.characterName.ToLower())
+            {
+                transform.GetChild(i).localScale = new Vector3(1f, 1f, 1f);
+                transform.GetChild(i).GetComponent<PlayableLeaderIcon>().SetDead();
+            }
+            else
+            {
+                transform.GetChild(i).localScale = new Vector3(1f, 1f, 1f);
+            }
+        }
+    }
 }

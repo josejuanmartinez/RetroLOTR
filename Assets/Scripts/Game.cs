@@ -35,7 +35,7 @@ public class Game : MonoBehaviour
 
     void Start()
     {
-        InitializeMLAgents();
+        // InitializeMLAgents();
     }
 
     private void InitializeMLAgents()
@@ -77,8 +77,8 @@ public class Game : MonoBehaviour
         // Start a new episode for all agents
         foreach (StrategyGameAgent agent in characterAgents.Values) agent.OnEpisodeBegin();
 
-        if (player == null) SelectPlayer(competitors.Find(x => x.characterName.ToLower() == "gandalf"));
         currentlyPlaying = player;
+        FindFirstObjectByType<Board>().StartGame();
         currentlyPlaying.NewTurn();
     }
 
@@ -146,22 +146,22 @@ public class Game : MonoBehaviour
     {
         if (win) MessageDisplay.ShowMessage("Victory!", Color.green); else MessageDisplay.ShowMessage("Defeat!", Color.red);
 
-        FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => !x.killed && x.GetAI() != null).Select(x => x.GetAI()).ToList().ForEach(x =>
-        {
-            x.AddReward(x.GetCharacter().GetOwner().killed ? -25f : 25f);
-            x.EndEpisode();
-        });
+        //FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => !x.killed && x.GetAI() != null).Select(x => x.GetAI()).ToList().ForEach(x =>
+        //{
+        //    x.AddReward(x.GetCharacter().GetOwner().killed ? -25f : 25f);
+        //    x.EndEpisode();
+        //});
 
         // For training, we'll start a new game instead of quitting
-        if (Academy.Instance.IsCommunicatorOn)
-        {
+        //if (Academy.Instance.IsCommunicatorOn)
+        //{
             // Reset the game state for a new episode
-            ResetForNewEpisode();
-            return;
-        }
+        //    ResetForNewEpisode();
+        //    return;
+        //}
 
         // Only quit or unload scenes if not in training mode
-        UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(0);
+        //UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(0);
         Application.Quit();
         Debug.Log("Game Ended!");
     }
