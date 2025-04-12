@@ -167,14 +167,18 @@ public class Character : MonoBehaviour
         return army;
     }
 
-    virtual public void Killed(Leader killedBy)
+    virtual public void Killed(Leader killedBy, bool onlyMark=false)
     {
-        if (IsArmyCommander() && !army.killed) army.Killed(killedBy);
-        if(GetOwner().controlledCharacters.Contains(this)) GetOwner().controlledCharacters.Remove(this);
-        if(hex.characters.Contains(this)) hex.characters.Remove(this);
+        if (IsArmyCommander() && !army.killed) army.Killed(killedBy, onlyMark);
+        if(!onlyMark)
+        {
+            if(GetOwner().controlledCharacters.Contains(this)) GetOwner().controlledCharacters.Remove(this);
+            if(hex.characters.Contains(this)) hex.characters.Remove(this);
+            hex.RedrawCharacters();
+        }
         health = 0;
         killed = true;
-        MessageDisplay.ShowMessage($"{characterName} died due to wounds", Color.red);
+        MessageDisplay.ShowMessage($"{characterName} was eliminated", Color.red);
     }
 
     public void Wounded(Leader woundedBy, int damage)

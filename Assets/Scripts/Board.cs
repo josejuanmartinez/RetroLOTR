@@ -191,6 +191,16 @@ public class Board : MonoBehaviour
         }
     }
 
+    public void StartGame()
+    {
+        foreach (Hex hex in GetHexes())
+        {
+            if (hex.characters.Count > 0) hex.RedrawCharacters();
+            if (hex.armies.Count > 0) hex.RedrawArmies();
+            if (hex.GetPC() != null) hex.RedrawPC();
+        }
+    }
+
     public void SelectCharacter(Character character)
     {
         SelectHex(character.hex);

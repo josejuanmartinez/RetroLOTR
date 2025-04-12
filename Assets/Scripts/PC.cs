@@ -94,14 +94,16 @@ public class PC
 
         owner.controlledPcs.Add(this);
         owner.visibleHexes.Add(hex);
+
+        hex.SetPC(this);
     }
 
     /**
      * This constructor is used to create a new PC in the starting city of a leader
      */
-    public PC(Leader leader): this(leader, leader.GetBiome().startingCityName, leader.GetBiome().startingCitySize, leader.GetBiome().startingCityFortSize, leader.GetBiome().startsWithPort, leader.GetBiome().startingCityIsHidden, leader.hex, true)
+    public PC(Leader leader, Hex hex): this(leader, leader.GetBiome().startingCityName, leader.GetBiome().startingCitySize, leader.GetBiome().startingCityFortSize, leader.GetBiome().startsWithPort, leader.GetBiome().startingCityIsHidden, hex, true)
     {
-        
+        if (leader is not PlayableLeader) hex.encounters.Add(EncountersEnum.Encounter);
     }
 
     public string GetProducesHoverText()

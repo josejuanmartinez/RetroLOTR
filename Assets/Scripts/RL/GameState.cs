@@ -13,16 +13,12 @@ public class GameState : MonoBehaviour
     Game game;
     Board board;
     HexPathRenderer hexPathRenderer;
-    List<Leader> leaders;
 
     public void Awake()
     {
         game = GetComponent<Game>();
         board = FindFirstObjectByType<Board>();
         hexPathRenderer = FindFirstObjectByType<HexPathRenderer>();
-        leaders = new() { game.player };
-        leaders.AddRange(game.competitors);
-        leaders.AddRange(game.npcs);
     }
 
     public void ResetGame()
@@ -58,17 +54,23 @@ public class GameState : MonoBehaviour
 
     public int GetLeadersNum()
     {
-        return leaders.Count;
+        return game.competitors.Count + game.npcs.Count + 1;
     }
 
     public List<Leader> GetLeaders()
     {
-        return leaders;
+        List<Leader> result = new();
+        result.Add(game.player);
+        result.AddRange(game.competitors);
+        return result;
     }
 
     public int GetIndexOfLeader(Leader leader)
     {
-        return leaders.IndexOf(leader);
+        List<Leader> result = new();
+        result.Add(game.player);
+        result.AddRange(game.competitors);
+        return result.IndexOf(leader);
     }
 
     public int GetBoardSize()

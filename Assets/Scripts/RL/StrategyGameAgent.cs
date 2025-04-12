@@ -53,7 +53,7 @@ public class StrategyGameAgent : Agent
                 unitsByOwner[gameState.GetIndexOfLeader(character.GetOwner())]++;
                 totalUnits++;
             }
-
+            
             for (int i = 0; i < unitsByOwner.Length; i++)
             {
                 sensor.AddObservation(unitsByOwner[i] / totalUnits); // Normalize

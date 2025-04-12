@@ -6,6 +6,7 @@ using System.Collections;
 public class PlayableLeaderIcon : MonoBehaviour
 {
     public Image image;
+    public CanvasGroup deadCanvasGroup;
     public TextMeshProUGUI joinedText;
 
     public void Initialize(Leader leader)
@@ -24,5 +25,10 @@ public class PlayableLeaderIcon : MonoBehaviour
 
         // Hide the text
         joinedText.gameObject.SetActive(false);
+    }
+
+    public void SetDead()
+    {
+        deadCanvasGroup.alpha = 1;
     }
 }

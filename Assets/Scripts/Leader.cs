@@ -77,7 +77,9 @@ public class Leader : Character
         if (!killed && goldAmount < -10) Killed(this);
 
         if (killed) return;
-        
+
+        base.NewTurn();
+
         leatherAmount += GetLeatherPerTurn();
         mountsAmount += GetMountsPerTurn();
         timberAmount += GetTimberPerTurn();
@@ -103,21 +105,18 @@ public class Leader : Character
         if(FindFirstObjectByType<Game>().player != this)
         {
             controlledCharacters.FindAll(x => x.GetAI() != null).Select(x => x.GetAI()).ToList().ForEach(x => x.NewTurn());
+            FindFirstObjectByType<Game>().NextPlayer();
         }
         else
         {
+            FindFirstObjectByType<StoresManager>().RefreshStores();
+
             StartCoroutine(RevealVisibleHexesAsync(() =>
             {
                 FindFirstObjectByType<Board>().SelectCharacter(this);
             }
             ));
         }
-        
-        FindFirstObjectByType<PlayableLeaderIcons>().HighlightCurrentlyPlaying(this);
-
-        if (FindFirstObjectByType<Game>().player == this) FindFirstObjectByType<StoresManager>().RefreshStores();
-
-        base.NewTurn();
     }
 
     // The async version of RevealVisibleHexes
@@ -259,6 +258,72 @@ public class Leader : Character
             if (character.killed || character.GetAI() == null) continue;
             character.GetAI().RequestDecision();
         }
+    }
+
+    public override void Killed(Leader killedBy, bool onlyMask = false)
+    {
+        if(killedBy == this)
+        {
+            MessageDisplay.ShowMessage($"{name}'s realm collapsed!", Color.red);
+        } else
+        {
+            MessageDisplay.ShowMessage($"{name} was killed by {killedBy.characterName}", Color.red);
+        }
+
+        controlledCharacters.ForEach(x =>
+        {
+            x.hex.characters.Remove(x);
+            x.hex.armies.Remove(x.GetArmy());
+            x.hex.RedrawCharacters();
+            x.hex.RedrawArmies();
+            if (x != this) x.Killed(killedBy, true);
+        });
+
+        List<Character> markedAsKilled = controlledCharacters.FindAll(x => x.killed);
+        foreach (Character marked in markedAsKilled)
+        {
+            if (controlledCharacters.Contains(marked) && marked != this) marked.Killed(killedBy);
+        }
+
+        // Not autokilled (like bankrupt)
+        if (killedBy != this)
+        {
+            foreach (PC pc in GetOwner().controlledPcs)
+            {
+                pc.owner = killedBy;
+                killedBy.controlledPcs.Add(pc);
+                killedBy.visibleHexes.Add(pc.hex);
+            }
+        }
+        else
+        {
+            foreach (PC pc in GetOwner().controlledPcs)
+            {
+                pc.owner = null;
+                pc.hex.SetPC(null);
+                pc.hex.RedrawPC();
+            }
+        }
+
+        GetOwner().controlledCharacters.Clear();
+        GetOwner().controlledPcs.Clear();
+        visibleHexes.Clear();
+
+        killedBy.leatherAmount += leatherAmount;
+        killedBy.mountsAmount += mountsAmount;
+        killedBy.timberAmount += timberAmount;
+        killedBy.ironAmount += ironAmount;
+        killedBy.mithrilAmount += mithrilAmount;
+        killedBy.goldAmount += goldAmount;
+
+        leatherAmount = 0;
+        mountsAmount = 0;
+        timberAmount = 0;
+        ironAmount = 0;
+        mithrilAmount = 0;
+        goldAmount = 0;
+
+        base.Killed(killedBy);
     }
 
 }
