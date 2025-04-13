@@ -78,6 +78,7 @@ public class Character : MonoBehaviour
         this.emmissary = emmissary;
         this.mage = mage;
         this.alignment = alignment;
+        this.startingCharacter = true;
 
         owner.GetOwner().controlledCharacters.Add(this);
         this.owner = owner.GetOwner();
@@ -104,20 +105,6 @@ public class Character : MonoBehaviour
             {
                 x.CheckCharacterConditions(GetOwner());
             });
-        }
-
-        // ADD RL IN CASE IT'S NOT THERE
-        if(owner != FindFirstObjectByType<Game>().player && gameObject.GetComponent<StrategyGameAgent>() == null)
-        {
-            // Add StrategyGameAgent component
-            var ai = gameObject.AddComponent<StrategyGameAgent>();
-            
-            // Add and configure Behavior Parameters component
-            var behaviorParams = ai.GetComponent<BehaviorParameters>();
-            behaviorParams.BehaviorName = "StrategyGame"; // You can change this name
-            behaviorParams.BrainParameters.VectorObservationSize = ai.GetTotalObservationSize();
-            behaviorParams.BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(1); // Single discrete action
-            behaviorParams.BrainParameters.NumStackedVectorObservations = 1;
         }
     }
 
@@ -286,7 +273,7 @@ public class Character : MonoBehaviour
 
     public StrategyGameAgent GetAI()
     {
-        return gameObject.GetComponent<StrategyGameAgent>();
+        return gameObject.GetComponentInChildren<StrategyGameAgent>();
     }
 
 }

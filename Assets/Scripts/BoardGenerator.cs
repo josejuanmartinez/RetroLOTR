@@ -3,19 +3,24 @@ using System;
 using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
+using System.Linq;
+using UnityEngine.Pool;
 
 [RequireComponent(typeof(Board))]
 public class BoardGenerator : MonoBehaviour
 {
     [Header("Terrain Grid Batch configuration")]
-    public int cellsPerBatch = 500; // Process 500 cells at a time
+    public int cellsPerBatch = 1000; // Increased batch size for better performance
     [Header("Game Object Hex Batch configuration")]
-    public int hexesPerBatch = 10; // Process 10 hexes at a time
+    public int hexesPerBatch = 20; // Increased batch size for better performance
 
     public Board board;
     // Array to store the terrain types
     private TerrainEnum[,] terrainGrid;
     private Dictionary<Vector2, GameObject> hexes;
+    private ObjectPool<GameObject> hexPool;
+    private Dictionary<TerrainEnum, Color> terrainColors;
+    private Dictionary<TerrainEnum, Sprite> terrainTextures;
 
     // Delegate for progress reporting
     public delegate void GenerationProgressDelegate(float progress, string stage);
@@ -25,9 +30,89 @@ public class BoardGenerator : MonoBehaviour
     private float totalSteps = 8; // Total generation steps
     private float currentStep = 0;
 
+    private void Awake()
+    {
+        if (board == null)
+        {
+            board = GetComponent<Board>();
+        }
+
+        if (board != null && board.hexPrefab != null)
+        {
+            hexPool = new ObjectPool<GameObject>(
+                createFunc: () => Instantiate(board.hexPrefab),
+                actionOnGet: (obj) => obj.SetActive(true),
+                actionOnRelease: (obj) => obj.SetActive(false),
+                actionOnDestroy: (obj) => Destroy(obj),
+                defaultCapacity: 1000,
+                maxSize: 10000
+            );
+        }
+        else
+        {
+            Debug.LogError("Board or hexPrefab is not assigned in BoardGenerator!");
+        }
+    }
+
     public void Initialize(Board board)
     {
+        if (board == null)
+        {
+            Debug.LogError("Board is null in BoardGenerator.Initialize!");
+            return;
+        }
+
         this.board = board;
+        
+        if (board.colors == null || board.textures == null)
+        {
+            Debug.LogError("Board colors or textures are not assigned!");
+            return;
+        }
+
+        CacheTerrainAssets();
+    }
+
+    private void CacheTerrainAssets()
+    {
+        if (board == null || board.colors == null || board.textures == null)
+        {
+            Debug.LogError("Cannot cache terrain assets: Board, colors, or textures are null!");
+            return;
+        }
+
+        terrainColors = new Dictionary<TerrainEnum, Color>();
+        terrainTextures = new Dictionary<TerrainEnum, Sprite>();
+
+        foreach (TerrainEnum terrain in Enum.GetValues(typeof(TerrainEnum)))
+        {
+            try
+            {
+                var colorFieldInfo = typeof(Colors).GetField(terrain.ToString());
+                if (colorFieldInfo != null)
+                {
+                    terrainColors[terrain] = (Color)colorFieldInfo.GetValue(board.colors);
+                }
+                else
+                {
+                    Debug.LogWarning($"Color field not found for terrain type: {terrain}");
+                }
+
+                var textureFieldInfo = typeof(Textures).GetField(terrain.ToString());
+                if (textureFieldInfo != null)
+                {
+                    terrainTextures[terrain] = (Sprite)textureFieldInfo.GetValue(board.textures);
+                }
+                else
+                {
+                    Debug.LogWarning($"Texture field not found for terrain type: {terrain}");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error caching assets for terrain {terrain}: {e.Message}");
+            }
+        }
     }
 
     // Main entry point - now returns a coroutine
@@ -37,7 +122,7 @@ public class BoardGenerator : MonoBehaviour
         currentStep = 0;
 
         // Initialize the terrain grid with plains as default
-        terrainGrid = new TerrainEnum[board.height, board.width];
+        terrainGrid = new TerrainEnum[board.GetHeight(), board.GetWidth()];
         yield return StartCoroutine(InitializeGridCoroutine());
 
         // Convert some plains to grasslands
@@ -83,52 +168,75 @@ public class BoardGenerator : MonoBehaviour
 
     public IEnumerator InstantiateHexesCoroutine(Action<Dictionary<Vector2, GameObject>> onComplete)
     {
-        // Debug.Log("Starting hex instantiation...");
-
-        hexes = new Dictionary<Vector2, GameObject>();
-        for (int i = transform.childCount - 1; i >= 0; i--)
+        hexes = new Dictionary<Vector2, GameObject>(board.GetHeight() * board.GetWidth());
+        
+        // Clear existing hexes more efficiently
+        while (transform.childCount > 0)
         {
-            DestroyImmediate(transform.GetChild(i).gameObject);
+            DestroyImmediate(transform.GetChild(0).gameObject);
         }
 
-        int totalHexes = board.height * board.width;
+        int totalHexes = board.GetHeight() * board.GetWidth();
         int hexesProcessed = 0;
+        var positions = new Vector3[hexesPerBatch];
+        var hexObjects = new GameObject[hexesPerBatch];
+        int batchIndex = 0;
 
-        for (int row = 0; row < board.height; row++)
+        for (int row = 0; row < board.GetHeight(); row++)
         {
-            for (int col = 0; col < board.width; col++)
+            for (int col = 0; col < board.GetWidth(); col++)
             {
-                GameObject hexGo = Instantiate(board.hexPrefab, transform);
+                GameObject hexGo = hexPool.Get();
                 hexGo.name = $"{row},{col}";
-                hexGo.transform.position = GetPosition(row, col);
+                positions[batchIndex] = GetPosition(row, col);
+                hexObjects[batchIndex] = hexGo;
+                batchIndex++;
 
-                // Use reflection to get the field based on the enum name for terrain features
-                var colorFieldInfo = typeof(Colors).GetField(terrainGrid[row, col].ToString());
-                hexGo.GetComponent<SpriteRenderer>().color = (Color)colorFieldInfo.GetValue(board.colors);
-
-                var textureFieldInfo = typeof(Textures).GetField(terrainGrid[row, col].ToString());
-                Hex hex = hexGo.GetComponent<Hex>();
-                hex.terrainType = terrainGrid[row, col];
-                hex.terrainTexture.sprite = (Sprite)textureFieldInfo.GetValue(board.textures);
-                hex.v2 = new Vector2Int(row, col);
-                hex.RefreshHoverText();
-
-                hexes[new Vector2(row, col)] = hexGo;
-
-                hexesProcessed++;
-
-                // Yield every batch to distribute the work
-                if (hexesProcessed % hexesPerBatch == 0)
+                if (batchIndex >= hexesPerBatch)
                 {
+                    // Batch process positions and components
+                    for (int i = 0; i < batchIndex; i++)
+                    {
+                        hexObjects[i].transform.position = positions[i];
+                        var hex = hexObjects[i].GetComponent<Hex>();
+                        var terrainType = terrainGrid[row - (batchIndex - 1 - i) / board.GetWidth(), col - (batchIndex - 1 - i) % board.GetWidth()];
+                        
+                        hexObjects[i].GetComponent<SpriteRenderer>().color = terrainColors[terrainType];
+                        hex.terrainType = terrainType;
+                        hex.terrainTexture.sprite = terrainTextures[terrainType];
+                        hex.v2 = new Vector2Int(row - (batchIndex - 1 - i) / board.GetWidth(), col - (batchIndex - 1 - i) % board.GetWidth());
+                        hex.RefreshHoverText();
+                        hexes[new Vector2(row - (batchIndex - 1 - i) / board.GetWidth(), col - (batchIndex - 1 - i) % board.GetWidth())] = hexObjects[i];
+                    }
+
+                    hexesProcessed += batchIndex;
                     float progress = (float)hexesProcessed / totalHexes;
                     OnGenerationProgress?.Invoke(progress, "Configuring Board");
                     yield return null;
+                    batchIndex = 0;
                 }
             }
         }
 
-        OnGenerationProgress?.Invoke(1.0f, "Game ready!");
+        // Process remaining hexes
+        if (batchIndex > 0)
+        {
+            for (int i = 0; i < batchIndex; i++)
+            {
+                hexObjects[i].transform.position = positions[i];
+                var hex = hexObjects[i].GetComponent<Hex>();
+                var terrainType = terrainGrid[board.GetHeight() - 1 - (batchIndex - 1 - i) / board.GetWidth(), board.GetWidth() - 1 - (batchIndex - 1 - i) % board.GetWidth()];
+                
+                hexObjects[i].GetComponent<SpriteRenderer>().color = terrainColors[terrainType];
+                hex.terrainType = terrainType;
+                hex.terrainTexture.sprite = terrainTextures[terrainType];
+                hex.v2 = new Vector2Int(board.GetHeight() - 1 - (batchIndex - 1 - i) / board.GetWidth(), board.GetWidth() - 1 - (batchIndex - 1 - i) % board.GetWidth());
+                hex.RefreshHoverText();
+                hexes[new Vector2(board.GetHeight() - 1 - (batchIndex - 1 - i) / board.GetWidth(), board.GetWidth() - 1 - (batchIndex - 1 - i) % board.GetWidth())] = hexObjects[i];
+            }
+        }
 
+        OnGenerationProgress?.Invoke(1.0f, "Game ready!");
         onComplete?.Invoke(hexes);
     }
 
@@ -143,7 +251,7 @@ public class BoardGenerator : MonoBehaviour
         // Shift odd rows to interlock with the previous row
         if (row % 2 == 1)
         {
-            xOffset += hexWidth * 0.5f; // Half of a hex board.width
+            xOffset += hexWidth * 0.5f; // Half of a hex board.GetWidth()
         }
 
         return new Vector3(xOffset, yOffset, 0);
@@ -151,12 +259,12 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator InitializeGridCoroutine()
     {
-        int totalCells = board.height * board.width;
+        int totalCells = board.GetHeight() * board.GetWidth();
         int cellsProcessed = 0;
 
-        for (int row = 0; row < board.height; row++)
+        for (int row = 0; row < board.GetHeight(); row++)
         {
-            for (int col = 0; col < board.width; col++)
+            for (int col = 0; col < board.GetWidth(); col++)
             {
                 terrainGrid[row, col] = TerrainEnum.plains;
 
@@ -178,13 +286,13 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator ConvertPlainsToGrasslandsCoroutine()
     {
-        int totalCells = board.height * board.width;
+        int totalCells = board.GetHeight() * board.GetWidth();
         int cellsPerBatch = 500;
         int cellsProcessed = 0;
 
-        for (int row = 0; row < board.height; row++)
+        for (int row = 0; row < board.GetHeight(); row++)
         {
-            for (int col = 0; col < board.width; col++)
+            for (int col = 0; col < board.GetWidth(); col++)
             {
                 if (terrainGrid[row, col] == TerrainEnum.plains && Random.value < board.grasslandsProbability)
                 {
@@ -208,9 +316,9 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateWaterWithNaturalCoastlineCoroutine(int seaBorder)
     {
-        int waterWidth = Mathf.FloorToInt(board.width * board.waterPercentage);
-        int waterHeight = Mathf.FloorToInt(board.height * board.waterPercentage);
-        int coastlineDepth = Mathf.FloorToInt(Mathf.Min(board.width, board.height) * board.coastDepth);
+        int waterWidth = Mathf.FloorToInt(board.GetWidth() * board.waterPercentage);
+        int waterHeight = Mathf.FloorToInt(board.GetHeight() * board.waterPercentage);
+        int coastlineDepth = Mathf.FloorToInt(Mathf.Min(board.GetWidth(), board.GetHeight()) * board.coastDepth);
 
         // Create a noise-based coastline
         int seedX = Random.Range(0, 10000);
@@ -238,11 +346,11 @@ public class BoardGenerator : MonoBehaviour
         switch (seaBorder)
         {
             case 0: // North border
-                totalCells = waterHeight * board.width;
+                totalCells = waterHeight * board.GetWidth();
 
                 for (int row = 0; row < waterHeight; row++)
                 {
-                    for (int col = 0; col < board.width; col++)
+                    for (int col = 0; col < board.GetWidth(); col++)
                     {
                         // Generate perlin noise for the coastline
                         float noise = Mathf.PerlinNoise((col + seedX) * 0.1f, seedY * 0.1f);
@@ -272,24 +380,24 @@ public class BoardGenerator : MonoBehaviour
                 break;
 
             case 1: // East border
-                totalCells = board.height * waterWidth;
+                totalCells = board.GetHeight() * waterWidth;
 
-                for (int row = 0; row < board.height; row++)
+                for (int row = 0; row < board.GetHeight(); row++)
                 {
-                    for (int col = board.width - waterWidth; col < board.width; col++)
+                    for (int col = board.GetWidth() - waterWidth; col < board.GetWidth(); col++)
                     {
                         // Generate perlin noise for the coastline
                         float noise = Mathf.PerlinNoise(seedX * 0.1f, (row + seedY) * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
                         // Calculate boundary for deep water based on proportion
-                        int deepWaterStart = board.width - Mathf.FloorToInt(waterWidth * board.deepWaterProportion);
+                        int deepWaterStart = board.GetWidth() - Mathf.FloorToInt(waterWidth * board.deepWaterProportion);
 
                         if (col > deepWaterStart + noiseOffset)
                         {
                             terrainGrid[row, col] = TerrainEnum.deepWater;
                         }
-                        else if (col > board.width - waterWidth - noiseOffset)
+                        else if (col > board.GetWidth() - waterWidth - noiseOffset)
                         {
                             terrainGrid[row, col] = TerrainEnum.shallowWater;
                         }
@@ -306,24 +414,24 @@ public class BoardGenerator : MonoBehaviour
                 break;
 
             case 2: // South border
-                totalCells = waterHeight * board.width;
+                totalCells = waterHeight * board.GetWidth();
 
-                for (int row = board.height - waterHeight; row < board.height; row++)
+                for (int row = board.GetHeight() - waterHeight; row < board.GetHeight(); row++)
                 {
-                    for (int col = 0; col < board.width; col++)
+                    for (int col = 0; col < board.GetWidth(); col++)
                     {
                         // Generate perlin noise for the coastline
                         float noise = Mathf.PerlinNoise((col + seedX) * 0.1f, seedY * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
                         // Calculate boundary for deep water based on proportion
-                        int deepWaterStart = board.height - Mathf.FloorToInt(waterHeight * board.deepWaterProportion);
+                        int deepWaterStart = board.GetHeight() - Mathf.FloorToInt(waterHeight * board.deepWaterProportion);
 
                         if (row > deepWaterStart + noiseOffset)
                         {
                             terrainGrid[row, col] = TerrainEnum.deepWater;
                         }
-                        else if (row > board.height - waterHeight - noiseOffset)
+                        else if (row > board.GetHeight() - waterHeight - noiseOffset)
                         {
                             terrainGrid[row, col] = TerrainEnum.shallowWater;
                         }
@@ -340,9 +448,9 @@ public class BoardGenerator : MonoBehaviour
                 break;
 
             case 3: // West border
-                totalCells = board.height * waterWidth;
+                totalCells = board.GetHeight() * waterWidth;
 
-                for (int row = 0; row < board.height; row++)
+                for (int row = 0; row < board.GetHeight(); row++)
                 {
                     for (int col = 0; col < waterWidth; col++)
                     {
@@ -386,18 +494,18 @@ public class BoardGenerator : MonoBehaviour
             case 0: // North border - fingers extend south
                 for (int i = 0; i < numFingers; i++)
                 {
-                    int startCol = Random.Range(0, board.width);
+                    int startCol = Random.Range(0, board.GetWidth());
                     int fingerLength = Random.Range(coastlineDepth, coastlineDepth * 2);
                     int fingerWidth = Random.Range(3, 6);
                     int cellsPerFinger = fingerLength * fingerWidth;
                     int cellsProcessed = 0;
 
-                    for (int row = waterHeight; row < waterHeight + fingerLength && row < board.height; row++)
+                    for (int row = waterHeight; row < waterHeight + fingerLength && row < board.GetHeight(); row++)
                     {
                         for (int colOffset = -fingerWidth / 2; colOffset <= fingerWidth / 2; colOffset++)
                         {
                             int col = startCol + colOffset;
-                            if (col >= 0 && col < board.width)
+                            if (col >= 0 && col < board.GetWidth())
                             {
                                 // Taper the finger as it extends
                                 float taperChance = (float)(row - waterHeight) / fingerLength;
@@ -435,23 +543,23 @@ public class BoardGenerator : MonoBehaviour
             case 1: // East border - fingers extend west
                 for (int i = 0; i < numFingers; i++)
                 {
-                    int startRow = Random.Range(0, board.height);
+                    int startRow = Random.Range(0, board.GetHeight());
                     int fingerLength = Random.Range(coastlineDepth, coastlineDepth * 2);
                     int fingerWidth = Random.Range(3, 6);
                     int cellsPerFinger = fingerLength * fingerWidth;
                     int cellsProcessed = 0;
 
-                    for (int col = board.width - waterWidth - 1; col >= board.width - waterWidth - fingerLength && col >= 0; col--)
+                    for (int col = board.GetWidth() - waterWidth - 1; col >= board.GetWidth() - waterWidth - fingerLength && col >= 0; col--)
                     {
                         for (int rowOffset = -fingerWidth / 2; rowOffset <= fingerWidth / 2; rowOffset++)
                         {
                             int row = startRow + rowOffset;
-                            if (row >= 0 && row < board.height)
+                            if (row >= 0 && row < board.GetHeight())
                             {
-                                float taperChance = (float)(board.width - waterWidth - col) / fingerLength;
+                                float taperChance = (float)(board.GetWidth() - waterWidth - col) / fingerLength;
                                 if (Random.value > taperChance * 0.8f)
                                 {
-                                    if (col > board.width - waterWidth - fingerLength / 3)
+                                    if (col > board.GetWidth() - waterWidth - fingerLength / 3)
                                     {
                                         terrainGrid[row, col] = TerrainEnum.shallowWater;
                                     }
@@ -467,7 +575,7 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         // Yield occasionally to distribute work
-                        if ((board.width - waterWidth - 1 - col) % 3 == 0)
+                        if ((board.GetWidth() - waterWidth - 1 - col) % 3 == 0)
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
@@ -483,23 +591,23 @@ public class BoardGenerator : MonoBehaviour
             case 2: // South border - fingers extend north
                 for (int i = 0; i < numFingers; i++)
                 {
-                    int startCol = Random.Range(0, board.width);
+                    int startCol = Random.Range(0, board.GetWidth());
                     int fingerLength = Random.Range(coastlineDepth, coastlineDepth * 2);
                     int fingerWidth = Random.Range(3, 6);
                     int cellsPerFinger = fingerLength * fingerWidth;
                     int cellsProcessed = 0;
 
-                    for (int row = board.height - waterHeight - 1; row >= board.height - waterHeight - fingerLength && row >= 0; row--)
+                    for (int row = board.GetHeight() - waterHeight - 1; row >= board.GetHeight() - waterHeight - fingerLength && row >= 0; row--)
                     {
                         for (int colOffset = -fingerWidth / 2; colOffset <= fingerWidth / 2; colOffset++)
                         {
                             int col = startCol + colOffset;
-                            if (col >= 0 && col < board.width)
+                            if (col >= 0 && col < board.GetWidth())
                             {
-                                float taperChance = (float)(board.height - waterHeight - row) / fingerLength;
+                                float taperChance = (float)(board.GetHeight() - waterHeight - row) / fingerLength;
                                 if (Random.value > taperChance * 0.8f)
                                 {
-                                    if (row > board.height - waterHeight - fingerLength / 3)
+                                    if (row > board.GetHeight() - waterHeight - fingerLength / 3)
                                     {
                                         terrainGrid[row, col] = TerrainEnum.shallowWater;
                                     }
@@ -515,7 +623,7 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         // Yield occasionally to distribute work
-                        if ((board.height - waterHeight - 1 - row) % 3 == 0)
+                        if ((board.GetHeight() - waterHeight - 1 - row) % 3 == 0)
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
@@ -531,18 +639,18 @@ public class BoardGenerator : MonoBehaviour
             case 3: // West border - fingers extend east
                 for (int i = 0; i < numFingers; i++)
                 {
-                    int startRow = Random.Range(0, board.height);
+                    int startRow = Random.Range(0, board.GetHeight());
                     int fingerLength = Random.Range(coastlineDepth, coastlineDepth * 2);
                     int fingerWidth = Random.Range(3, 6);
                     int cellsPerFinger = fingerLength * fingerWidth;
                     int cellsProcessed = 0;
 
-                    for (int col = waterWidth; col < waterWidth + fingerLength && col < board.width; col++)
+                    for (int col = waterWidth; col < waterWidth + fingerLength && col < board.GetWidth(); col++)
                     {
                         for (int rowOffset = -fingerWidth / 2; rowOffset <= fingerWidth / 2; rowOffset++)
                         {
                             int row = startRow + rowOffset;
-                            if (row >= 0 && row < board.height)
+                            if (row >= 0 && row < board.GetHeight())
                             {
                                 float taperChance = (float)(col - waterWidth) / fingerLength;
                                 if (Random.value > taperChance * 0.8f)
@@ -593,23 +701,23 @@ public class BoardGenerator : MonoBehaviour
             {
                 case 0: // North
                     islandRow = Random.Range(0, waterHeight);
-                    islandCol = Random.Range(0, board.width);
+                    islandCol = Random.Range(0, board.GetWidth());
                     break;
                 case 1: // East
-                    islandRow = Random.Range(0, board.height);
-                    islandCol = Random.Range(board.width - waterWidth, board.width);
+                    islandRow = Random.Range(0, board.GetHeight());
+                    islandCol = Random.Range(board.GetWidth() - waterWidth, board.GetWidth());
                     break;
                 case 2: // South
-                    islandRow = Random.Range(board.height - waterHeight, board.height);
-                    islandCol = Random.Range(0, board.width);
+                    islandRow = Random.Range(board.GetHeight() - waterHeight, board.GetHeight());
+                    islandCol = Random.Range(0, board.GetWidth());
                     break;
                 case 3: // West
-                    islandRow = Random.Range(0, board.height);
+                    islandRow = Random.Range(0, board.GetHeight());
                     islandCol = Random.Range(0, waterWidth);
                     break;
                 default:
-                    islandRow = Random.Range(0, board.height);
-                    islandCol = Random.Range(0, board.width);
+                    islandRow = Random.Range(0, board.GetHeight());
+                    islandCol = Random.Range(0, board.GetWidth());
                     break;
             }
 
@@ -641,7 +749,7 @@ public class BoardGenerator : MonoBehaviour
                         int newRow = current.x + dir.x;
                         int newCol = current.y + dir.y;
 
-                        if (newRow >= 0 && newRow < board.height && newCol >= 0 && newCol < board.width &&
+                        if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth() &&
                             (terrainGrid[newRow, newCol] == TerrainEnum.deepWater ||
                              terrainGrid[newRow, newCol] == TerrainEnum.shallowWater) &&
                             Random.value < 0.6f)
@@ -685,7 +793,7 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateMountainChainsCoroutine()
     {
-        int maxChainLength = Mathf.FloorToInt(Mathf.Max(board.width, board.height) * 0.4f * board.mountainChainLengthMultiplier);
+        int maxChainLength = Mathf.FloorToInt(Mathf.Max(board.GetWidth(), board.GetHeight()) * 0.4f * board.mountainChainLengthMultiplier);
         int totalChains = board.mountainChainCount;
         int chainsProcessed = 0;
 
@@ -698,8 +806,8 @@ public class BoardGenerator : MonoBehaviour
 
             do
             {
-                startRow = Random.Range(0, board.height);
-                startCol = Random.Range(0, board.width);
+                startRow = Random.Range(0, board.GetHeight());
+                startCol = Random.Range(0, board.GetWidth());
                 if (terrainGrid[startRow, startCol] == TerrainEnum.plains)
                 {
                     validStart = true;
@@ -743,7 +851,7 @@ public class BoardGenerator : MonoBehaviour
                 Vector2Int next = current + nextDir;
 
                 // Check if next position is valid and not water
-                if (next.x >= 0 && next.x < board.height && next.y >= 0 && next.y < board.width &&
+                if (next.x >= 0 && next.x < board.GetHeight() && next.y >= 0 && next.y < board.GetWidth() &&
                     terrainGrid[next.x, next.y] != TerrainEnum.deepWater &&
                     terrainGrid[next.x, next.y] != TerrainEnum.shallowWater)
                 {
@@ -774,17 +882,17 @@ public class BoardGenerator : MonoBehaviour
     private IEnumerator AddHillsAroundMountainsCoroutine()
     {
         // Create a copy of the current terrain
-        TerrainEnum[,] terrainCopy = new TerrainEnum[board.height, board.width];
+        TerrainEnum[,] terrainCopy = new TerrainEnum[board.GetHeight(), board.GetWidth()];
         Array.Copy(terrainGrid, terrainCopy, terrainGrid.Length);
 
-        int totalCells = board.height * board.width;
+        int totalCells = board.GetHeight() * board.GetWidth();
         int cellsPerBatch = 300;
         int cellsProcessed = 0;
 
         // Add hills around mountains
-        for (int row = 0; row < board.height; row++)
+        for (int row = 0; row < board.GetHeight(); row++)
         {
-            for (int col = 0; col < board.width; col++)
+            for (int col = 0; col < board.GetWidth(); col++)
             {
                 if (terrainCopy[row, col] == TerrainEnum.mountains)
                 {
@@ -797,7 +905,7 @@ public class BoardGenerator : MonoBehaviour
                         int newCol = col + dir.y;
 
                         // Check bounds
-                        if (newRow >= 0 && newRow < board.height && newCol >= 0 && newCol < board.width)
+                        if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth())
                         {
                             // Make surrounding plains into hills (80% chance)
                             if (terrainGrid[newRow, newCol] == TerrainEnum.plains && Random.value < 0.8f)
@@ -824,14 +932,14 @@ public class BoardGenerator : MonoBehaviour
         // Generate one major forest
         for (int i = 0; i < board.majorForestCount; i++)
         {
-            int forestSize = Mathf.FloorToInt(board.width * board.height * 0.08f); // 8% of the map
+            int forestSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.08f); // 8% of the map
             yield return StartCoroutine(GenerateForestPatchCoroutine(forestSize, "Major Forest"));
         }
 
         // Generate smaller forests
         for (int i = 0; i < board.minorForestCount; i++)
         {
-            int forestSize = Mathf.FloorToInt(board.width * board.height * 0.02f); // 2% of the map
+            int forestSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.02f); // 2% of the map
             yield return StartCoroutine(GenerateForestPatchCoroutine(forestSize, "Minor Forest"));
         }
 
@@ -848,8 +956,8 @@ public class BoardGenerator : MonoBehaviour
         // Find a suitable starting location (not water or mountains)
         do
         {
-            startRow = Random.Range(0, board.height);
-            startCol = Random.Range(0, board.width);
+            startRow = Random.Range(0, board.GetHeight());
+            startCol = Random.Range(0, board.GetWidth());
             if (terrainGrid[startRow, startCol] != TerrainEnum.deepWater &&
                 terrainGrid[startRow, startCol] != TerrainEnum.shallowWater &&
                 terrainGrid[startRow, startCol] != TerrainEnum.mountains)
@@ -890,7 +998,7 @@ public class BoardGenerator : MonoBehaviour
                 int newCol = current.y + dir.y;
 
                 // Check bounds
-                if (newRow >= 0 && newRow < board.height && newCol >= 0 && newCol < board.width)
+                if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth())
                 {
                     // Only convert plains to forest
                     if (terrainGrid[newRow, newCol] == TerrainEnum.plains)
@@ -937,8 +1045,8 @@ public class BoardGenerator : MonoBehaviour
             // Try to place swamps near water when possible
             do
             {
-                startRow = Random.Range(0, board.height);
-                startCol = Random.Range(0, board.width);
+                startRow = Random.Range(0, board.GetHeight());
+                startCol = Random.Range(0, board.GetWidth());
 
                 if (terrainGrid[startRow, startCol] != TerrainEnum.plains)
                 {
@@ -955,7 +1063,7 @@ public class BoardGenerator : MonoBehaviour
                     int newRow = startRow + dir.x;
                     int newCol = startCol + dir.y;
 
-                    if (newRow >= 0 && newRow < board.height && newCol >= 0 && newCol < board.width &&
+                    if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth() &&
                         (terrainGrid[newRow, newCol] == TerrainEnum.shallowWater))
                     {
                         nearWater = true;
@@ -974,8 +1082,8 @@ public class BoardGenerator : MonoBehaviour
                 attempts = 0;
                 do
                 {
-                    startRow = Random.Range(0, board.height);
-                    startCol = Random.Range(0, board.width);
+                    startRow = Random.Range(0, board.GetHeight());
+                    startCol = Random.Range(0, board.GetWidth());
                     validStart = terrainGrid[startRow, startCol] == TerrainEnum.plains;
                     attempts++;
                 } while (!validStart && attempts < 20);
@@ -1006,7 +1114,7 @@ public class BoardGenerator : MonoBehaviour
                 int newRow = startRow + dir.x;
                 int newCol = startCol + dir.y;
 
-                if (newRow >= 0 && newRow < board.height && newCol >= 0 && newCol < board.width &&
+                if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth() &&
                     (terrainGrid[newRow, newCol] == TerrainEnum.plains || terrainGrid[newRow, newCol] == TerrainEnum.forest))
                 {
                     terrainGrid[newRow, newCol] = TerrainEnum.swamp;
@@ -1030,14 +1138,14 @@ public class BoardGenerator : MonoBehaviour
         // Generate one major wasteland area
         for (int i = 0; i < board.majorWastelandCount; i++)
         {
-            int wastelandSize = Mathf.FloorToInt(board.width * board.height * 0.07f); // Major wasteland covers ~7% of map
+            int wastelandSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.07f); // Major wasteland covers ~7% of map
             yield return StartCoroutine(GenerateWastelandPatchCoroutine(wastelandSize, true, "Major Wasteland"));
         }
 
         // Generate smaller wasteland patches
         for (int i = 0; i < board.minorWastelandCount; i++)
         {
-            int wastelandSize = Mathf.FloorToInt(board.width * board.height * 0.02f); // Minor wasteland ~2% of map
+            int wastelandSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.02f); // Minor wasteland ~2% of map
             yield return StartCoroutine(GenerateWastelandPatchCoroutine(wastelandSize, false, "Minor Wasteland"));
         }
 
@@ -1057,8 +1165,8 @@ public class BoardGenerator : MonoBehaviour
             // Find a suitable starting location for major wasteland (central area)
             do
             {
-                startRow = Random.Range(board.height / 4, 3 * board.height / 4);
-                startCol = Random.Range(board.width / 4, 3 * board.width / 4);
+                startRow = Random.Range(board.GetHeight() / 4, 3 * board.GetHeight() / 4);
+                startCol = Random.Range(board.GetWidth() / 4, 3 * board.GetWidth() / 4);
                 validStart = (terrainGrid[startRow, startCol] == TerrainEnum.plains ||
                              terrainGrid[startRow, startCol] == TerrainEnum.grasslands);
                 attempts++;
@@ -1069,8 +1177,8 @@ public class BoardGenerator : MonoBehaviour
             // Find a suitable starting location for minor wasteland away from major wastelands
             do
             {
-                startRow = Random.Range(0, board.height);
-                startCol = Random.Range(0, board.width);
+                startRow = Random.Range(0, board.GetHeight());
+                startCol = Random.Range(0, board.GetWidth());
 
                 validStart = (terrainGrid[startRow, startCol] == TerrainEnum.plains ||
                              terrainGrid[startRow, startCol] == TerrainEnum.grasslands);
@@ -1129,7 +1237,7 @@ public class BoardGenerator : MonoBehaviour
                 int newCol = current.y + dir.y;
 
                 // Check bounds
-                if (newRow >= 0 && newRow < board.height && newCol >= 0 && newCol < board.width)
+                if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth())
                 {
                     // Only convert plains/grasslands to wasteland
                     if ((terrainGrid[newRow, newCol] == TerrainEnum.plains ||
@@ -1172,16 +1280,16 @@ public class BoardGenerator : MonoBehaviour
     private IEnumerator ApplyShoresCoroutine()
     {
         // Create a copy of the terrain to avoid immediate changes affecting the process
-        TerrainEnum[,] terrainCopy = new TerrainEnum[board.height, board.width];
+        TerrainEnum[,] terrainCopy = new TerrainEnum[board.GetHeight(), board.GetWidth()];
         Array.Copy(terrainGrid, terrainCopy, terrainGrid.Length);
 
-        int totalCells = board.height * board.width;
+        int totalCells = board.GetHeight() * board.GetWidth();
         int cellsPerBatch = 300;
         int cellsProcessed = 0;
 
-        for (int row = 0; row < board.height; row++)
+        for (int row = 0; row < board.GetHeight(); row++)
         {
-            for (int col = 0; col < board.width; col++)
+            for (int col = 0; col < board.GetWidth(); col++)
             {
                 // Find land tiles adjacent to shallow water
                 if (terrainCopy[row, col] != TerrainEnum.deepWater &&
@@ -1197,7 +1305,7 @@ public class BoardGenerator : MonoBehaviour
                         int newRow = row + dir.x;
                         int newCol = col + dir.y;
 
-                        if (newRow >= 0 && newRow < board.height && newCol >= 0 && newCol < board.width &&
+                        if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth() &&
                             terrainCopy[newRow, newCol] == TerrainEnum.shallowWater)
                         {
                             adjacentToWater = true;
@@ -1234,9 +1342,9 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateDesertCoroutine(int desertBorder)
     {
-        int desertWidth = Mathf.FloorToInt(board.width * board.desertPercentage);
-        int desertHeight = Mathf.FloorToInt(board.height * board.desertPercentage);
-        int desertDepth = Mathf.FloorToInt(Mathf.Min(board.width, board.height) * 0.12f);
+        int desertWidth = Mathf.FloorToInt(board.GetWidth() * board.desertPercentage);
+        int desertHeight = Mathf.FloorToInt(board.GetHeight() * board.desertPercentage);
+        int desertDepth = Mathf.FloorToInt(Mathf.Min(board.GetWidth(), board.GetHeight()) * 0.12f);
 
         // Create noise for the desert border
         int seedX = Random.Range(0, 10000);
@@ -1249,11 +1357,11 @@ public class BoardGenerator : MonoBehaviour
         switch (desertBorder)
         {
             case 0: // North border
-                totalCells = desertHeight * board.width;
+                totalCells = desertHeight * board.GetWidth();
 
                 for (int row = 0; row < desertHeight; row++)
                 {
-                    for (int col = 0; col < board.width; col++)
+                    for (int col = 0; col < board.GetWidth(); col++)
                     {
                         // Skip if water or mountains already present
                         if (terrainGrid[row, col] == TerrainEnum.deepWater ||
@@ -1283,11 +1391,11 @@ public class BoardGenerator : MonoBehaviour
                 break;
 
             case 1: // East border
-                totalCells = board.height * desertWidth;
+                totalCells = board.GetHeight() * desertWidth;
 
-                for (int row = 0; row < board.height; row++)
+                for (int row = 0; row < board.GetHeight(); row++)
                 {
-                    for (int col = board.width - desertWidth; col < board.width; col++)
+                    for (int col = board.GetWidth() - desertWidth; col < board.GetWidth(); col++)
                     {
                         // Skip if water or mountains already present
                         if (terrainGrid[row, col] == TerrainEnum.deepWater ||
@@ -1300,7 +1408,7 @@ public class BoardGenerator : MonoBehaviour
                         float noise = Mathf.PerlinNoise(seedX * 0.1f, (row + seedY) * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * desertDepth);
 
-                        if (col > board.width - desertWidth + noiseOffset)
+                        if (col > board.GetWidth() - desertWidth + noiseOffset)
                         {
                             terrainGrid[row, col] = TerrainEnum.desert;
                         }
@@ -1317,11 +1425,11 @@ public class BoardGenerator : MonoBehaviour
                 break;
 
             case 2: // South border
-                totalCells = desertHeight * board.width;
+                totalCells = desertHeight * board.GetWidth();
 
-                for (int row = board.height - desertHeight; row < board.height; row++)
+                for (int row = board.GetHeight() - desertHeight; row < board.GetHeight(); row++)
                 {
-                    for (int col = 0; col < board.width; col++)
+                    for (int col = 0; col < board.GetWidth(); col++)
                     {
                         // Skip if water or mountains already present
                         if (terrainGrid[row, col] == TerrainEnum.deepWater ||
@@ -1334,7 +1442,7 @@ public class BoardGenerator : MonoBehaviour
                         float noise = Mathf.PerlinNoise((col + seedX) * 0.1f, seedY * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * desertDepth);
 
-                        if (row > board.height - desertHeight + noiseOffset)
+                        if (row > board.GetHeight() - desertHeight + noiseOffset)
                         {
                             terrainGrid[row, col] = TerrainEnum.desert;
                         }
@@ -1351,9 +1459,9 @@ public class BoardGenerator : MonoBehaviour
                 break;
 
             case 3: // West border
-                totalCells = board.height * desertWidth;
+                totalCells = board.GetHeight() * desertWidth;
 
-                for (int row = 0; row < board.height; row++)
+                for (int row = 0; row < board.GetHeight(); row++)
                 {
                     for (int col = 0; col < desertWidth; col++)
                     {
@@ -1401,7 +1509,7 @@ public class BoardGenerator : MonoBehaviour
             int newRow = row + dir.x;
             int newCol = col + dir.y;
 
-            if (newRow >= 0 && newRow < board.height && newCol >= 0 && newCol < board.width)
+            if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth())
             {
                 result.Add(new Vector2Int(newRow, newCol));
             }
@@ -1444,7 +1552,7 @@ public class BoardGenerator : MonoBehaviour
                 int newCol = current.position.y + dir.y;
                 Vector2Int next = new Vector2Int(newRow, newCol);
 
-                if (newRow >= 0 && newRow < board.height && newCol >= 0 && newCol < board.width && !visited.Contains(next))
+                if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth() && !visited.Contains(next))
                 {
                     visited.Add(next);
                     queue.Enqueue(new Vector2IntWithDistance(next, current.distance + 1));

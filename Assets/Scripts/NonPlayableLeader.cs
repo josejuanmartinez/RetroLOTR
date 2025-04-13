@@ -113,6 +113,7 @@ public class NonPlayableLeader : Leader
         {
             character.owner = joinedTo;
             character.alignment = joinedTo.alignment;
+            character.startingCharacter = false;
             joinedTo.controlledCharacters.Add(character);
         }
 

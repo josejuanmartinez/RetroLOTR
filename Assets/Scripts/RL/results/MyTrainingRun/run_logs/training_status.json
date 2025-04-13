@@ -1,0 +1,29 @@
+{
+    "Character": {
+        "checkpoints": [
+            {
+                "steps": 0,
+                "file_path": "results\\MyTrainingRun\\Character\\Character-0.onnx",
+                "reward": null,
+                "creation_time": 1744552787.8485355,
+                "auxillary_file_paths": [
+                    "results\\MyTrainingRun\\Character\\Character-0.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 0,
+            "file_path": "results\\MyTrainingRun\\Character.onnx",
+            "reward": null,
+            "creation_time": 1744552787.8485355,
+            "auxillary_file_paths": [
+                "results\\MyTrainingRun\\Character\\Character-0.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.29.0",
+        "torch_version": "2.4.1+cu121"
+    }
+}
