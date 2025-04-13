@@ -21,14 +21,15 @@ public class Game : MonoBehaviour
     [Header("MAX CAPS")]
     public int normalMovement = 12;
     public int cavalryMovement = 15;
-    public int maxPcsPerPlayer = 8;
-    public int maxCharactersPerPlayer = 8;
+
     public int maxLeaders = 30;
     public int maxBoardWidth = 25;
     public int maxBoardHeight = 75;
     public int maxArtifacts = 40;
-    public int maxRelevantHexes = 500; // 469 is a radius of 12 + some relevant additional character / pc / artifact hexes
-    public int maxObservationSpace = 60000;
+    public int maxCharacters = 100;
+    public int maxPCs = 50;
+    public int maxTurns = 200;
+    
 
     [Header("Starting info")]
     public int turn = 0;
@@ -131,7 +132,16 @@ public class Game : MonoBehaviour
             return;
         }
 
-        if (currentlyPlaying == player) MessageDisplay.ShowMessage($"Turn {turn++}", Color.green);
+        if (currentlyPlaying == player)
+        {
+            turn++;
+            if(turn >= maxTurns)
+            {
+                EndGame(false);
+                return;
+            }
+            MessageDisplay.ShowMessage($"Turn {turn++}", Color.green);
+        }
         currentlyPlaying.NewTurn();
         FindFirstObjectByType<Board>().RefreshRelevantHexes();
     }

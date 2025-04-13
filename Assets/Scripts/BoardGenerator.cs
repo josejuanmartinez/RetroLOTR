@@ -187,6 +187,7 @@ public class BoardGenerator : MonoBehaviour
             for (int col = 0; col < board.GetWidth(); col++)
             {
                 GameObject hexGo = hexPool.Get();
+                hexGo.transform.SetParent(transform);
                 hexGo.name = $"{row},{col}";
                 positions[batchIndex] = GetPosition(row, col);
                 hexObjects[batchIndex] = hexGo;
