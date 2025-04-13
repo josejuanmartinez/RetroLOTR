@@ -10,8 +10,8 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour
 {
     [Header("Board Size")]
-    public int width = 25;
-    public int height = 75;
+    [SerializeField] int width = 25;
+    [SerializeField] int height = 75;
 
     [Header("Hex Configuration")]
     public GameObject hexPrefab;
@@ -73,6 +73,9 @@ public class Board : MonoBehaviour
     public TerrainEnum[,] terrainGrid;
     // Dictionary to store all generated hexes
     public Dictionary<Vector2, Hex> hexes;
+    public List<Hex> hexesWithCharacters;
+    public List<Hex> hexesWithPCs;
+    public List<Hex> hexesWithArtifacts;
 
     // Direction vectors for hex neighbors (flat-top)
     public readonly Vector2Int[] evenRowNeighbors = new[] {
@@ -97,12 +100,41 @@ public class Board : MonoBehaviour
 
     void Start()
     {
+        if (startButton == null)
+        {
+            Debug.LogError("Start button is not assigned!");
+            return;
+        }
         startButton.interactable = false;
+
         colors = FindFirstObjectByType<Colors>();
+        if (colors == null)
+        {
+            Debug.LogError("Colors component not found!");
+            return;
+        }
+
         textures = FindFirstObjectByType<Textures>();
+        if (textures == null)
+        {
+            Debug.LogError("Textures component not found!");
+            return;
+        }
+
         boardGenerator = GetComponent<BoardGenerator>();
+        if (boardGenerator == null)
+        {
+            Debug.LogError("BoardGenerator component not found!");
+            return;
+        }
         boardGenerator.Initialize(this);
+
         nationSpawner = GetComponent<NationSpawner>();
+        if (nationSpawner == null)
+        {
+            Debug.LogError("NationSpawner component not found!");
+            return;
+        }
         nationSpawner.Initialize(this);
 
         // Subscribe to generation progress events
@@ -120,6 +152,16 @@ public class Board : MonoBehaviour
         }
     }
 
+    public int GetWidth()
+    {
+        return Math.Min(width, FindFirstObjectByType<Game>().maxBoardWidth);
+    }
+
+    public int GetHeight()
+    {
+        return Math.Min(height, FindFirstObjectByType<Game>().maxBoardHeight);
+    }
+
     public void ForceDraw()
     {
         StartCoroutine(DrawCoroutine(true));
@@ -130,7 +172,10 @@ public class Board : MonoBehaviour
         if (!initialized || forced)
         {
             // Generate terrain first
-            if (terrainGrid == null || regenerate)  yield return StartCoroutine(boardGenerator.GenerateTerrainCoroutine(OnTerrainGenerated));
+            if (terrainGrid == null || regenerate)
+            {
+                yield return StartCoroutine(boardGenerator.GenerateTerrainCoroutine(OnTerrainGenerated));
+            }
 
             // Then instantiate hexes
             yield return StartCoroutine(boardGenerator.InstantiateHexesCoroutine(OnHexesInstantiated));
@@ -139,24 +184,50 @@ public class Board : MonoBehaviour
 
     private void OnTerrainGenerated(TerrainEnum[,] terrainGrid)
     {
-        // Debug.Log("Terrain generation completed");
         this.terrainGrid = terrainGrid;
+        // Update the terrain hex cache in NationSpawner
+        nationSpawner.BuildTerrainHexCache(terrainGrid);
     }
 
     private void OnHexesInstantiated(Dictionary<Vector2, GameObject> hexesGameObjects)
     {
-        // Debug.Log($"Hex instantiation completed. {hexesGameObjects.Count} hexes created");
+        if (hexesGameObjects == null)
+        {
+            Debug.LogError("Hexes instantiation failed!");
+            return;
+        }
+
         hexes = hexesGameObjects
-        .ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.GetComponent<Hex>()
-        );
+            .ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.GetComponent<Hex>()
+            );
+
+        if (hexes == null || hexes.Count == 0)
+        {
+            Debug.LogError("Failed to create hex dictionary!");
+            return;
+        }
 
         nationSpawner.Spawn();
         initialized = true;
         startButton.interactable = true;
         startButton.GetComponentInChildren<TextMeshProUGUI>().text = $"> Start as this leader <";
-        GetHexes().ForEach(x => { x.GetComponent<OnHoverTile>().enabled = true; x.GetComponent<OnClickTile>().enabled = true; });
+        
+        var hexList = GetHexes();
+        if (hexList != null)
+        {
+            hexList.ForEach(x => {
+                if (x != null)
+                {
+                    var hoverTile = x.GetComponent<OnHoverTile>();
+                    var clickTile = x.GetComponent<OnClickTile>();
+                    if (hoverTile != null) hoverTile.enabled = true;
+                    if (clickTile != null) clickTile.enabled = true;
+                }
+            });
+        }
+        
         StartCoroutine(SpawnArtifacts());
     }
 
@@ -199,6 +270,14 @@ public class Board : MonoBehaviour
             if (hex.armies.Count > 0) hex.RedrawArmies();
             if (hex.GetPC() != null) hex.RedrawPC();
         }
+        RefreshRelevantHexes();
+    }
+
+    public void RefreshRelevantHexes()
+    {
+        hexesWithArtifacts = GetHexes().FindAll(x => x.hiddenArtifacts.Count > 0);
+        hexesWithPCs = GetHexes().FindAll(x => x.GetPC() != null);
+        hexesWithCharacters = GetHexes().FindAll(x => x.characters.Count > 0);
     }
 
     public void SelectCharacter(Character character)

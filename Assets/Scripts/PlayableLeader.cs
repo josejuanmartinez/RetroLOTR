@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 public class PlayableLeader : Leader
 {
     override public void Killed(Leader killedBy, bool onlyMask = false)

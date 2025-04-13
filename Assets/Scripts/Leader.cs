@@ -102,21 +102,21 @@ public class Leader : Character
 
         // AI: Act if not player
         controlledCharacters.ForEach(x => x.StoreReachableHexes());
-        if(FindFirstObjectByType<Game>().player != this)
-        {
+        //if(FindFirstObjectByType<Game>().player != this)
+        //{
             controlledCharacters.FindAll(x => x.GetAI() != null).Select(x => x.GetAI()).ToList().ForEach(x => x.NewTurn());
             FindFirstObjectByType<Game>().NextPlayer();
-        }
-        else
-        {
-            FindFirstObjectByType<StoresManager>().RefreshStores();
+        //}
+        //else
+        //{
+        //    FindFirstObjectByType<StoresManager>().RefreshStores();
 
-            StartCoroutine(RevealVisibleHexesAsync(() =>
-            {
-                FindFirstObjectByType<Board>().SelectCharacter(this);
-            }
-            ));
-        }
+        //    StartCoroutine(RevealVisibleHexesAsync(() =>
+        //    {
+        //        FindFirstObjectByType<Board>().SelectCharacter(this);
+        //    }
+        //    ));
+        //}
     }
 
     // The async version of RevealVisibleHexes

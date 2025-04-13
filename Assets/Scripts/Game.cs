@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Unity.MLAgents;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(GameState))]
 public class Game : MonoBehaviour
@@ -17,13 +18,24 @@ public class Game : MonoBehaviour
     [Header("Artifacts")]
     public List<Artifact> artifacts = new();
 
+    [Header("MAX CAPS")]
     public int normalMovement = 12;
     public int cavalryMovement = 15;
     public int maxPcsPerPlayer = 8;
     public int maxCharactersPerPlayer = 8;
+    public int maxLeaders = 30;
+    public int maxBoardWidth = 25;
+    public int maxBoardHeight = 75;
+    public int maxArtifacts = 40;
+    public int maxRelevantHexes = 500; // 469 is a radius of 12 + some relevant additional character / pc / artifact hexes
+    public int maxObservationSpace = 60000;
 
+    [Header("Starting info")]
     public int turn = 0;
     public bool started = false;
+
+    [Header("AI")]
+    public GameObject strategyGameAgentCharacterPrefab;
 
     GameState state;
     Dictionary<Character, StrategyGameAgent> characterAgents = new();
@@ -33,20 +45,16 @@ public class Game : MonoBehaviour
         state = GetComponent<GameState>();
     }
 
-    void Start()
-    {
-        // InitializeMLAgents();
-    }
 
     private void InitializeMLAgents()
     {
         // Find all ML-Agents in the scene
-        List<Character> allCharactersWithAgents = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => x.GetOwner() != player && x.GetAI() != null);
-
-        // Map each agent to its controlled character
-        foreach (Character character in allCharactersWithAgents)
+        List<Character> allCharacters = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList();
+        foreach(Character character in allCharacters)
         {
-            if (character.GetAI() != null) characterAgents[character] = character.GetAI();
+            Instantiate(strategyGameAgentCharacterPrefab, character.transform);
+            characterAgents[character] = character.GetAI();
+            characterAgents[character].OnEpisodeBegin();
         }
 
         Debug.Log($"Initialized {characterAgents.Count} ML-Agents for training");
@@ -72,14 +80,15 @@ public class Game : MonoBehaviour
     {
         turn = 0;
         started = true;
-        state.ResetGame();
-
-        // Start a new episode for all agents
-        foreach (StrategyGameAgent agent in characterAgents.Values) agent.OnEpisodeBegin();
 
         currentlyPlaying = player;
+        
         FindFirstObjectByType<Board>().StartGame();
+        state.InitializeGameState();
+        InitializeMLAgents();
+
         currentlyPlaying.NewTurn();
+
     }
 
 
@@ -119,12 +128,12 @@ public class Game : MonoBehaviour
         if (currentlyPlaying == null)
         {
             EndGame(player.killed);
+            return;
         }
-        else
-        {
-            if (currentlyPlaying == player) MessageDisplay.ShowMessage($"Turn {turn++}", Color.green);
-            currentlyPlaying.NewTurn();
-        }
+
+        if (currentlyPlaying == player) MessageDisplay.ShowMessage($"Turn {turn++}", Color.green);
+        currentlyPlaying.NewTurn();
+        FindFirstObjectByType<Board>().RefreshRelevantHexes();
     }
 
     // Helper method to find the next alive competitor

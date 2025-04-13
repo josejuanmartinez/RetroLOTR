@@ -5,8 +5,9 @@ using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using System.Linq;
 using System;
+using NUnit.Framework;
+using Unity.MLAgents.Policies;
 
-[RequireComponent(typeof(Character))]
 public class StrategyGameAgent : Agent
 {
     [Header("Character info references")]
@@ -14,28 +15,50 @@ public class StrategyGameAgent : Agent
     [SerializeField] private List<CharacterAction> allPossibleActions;
     [SerializeField] private Character controlledCharacter;
 
-    // Constants for observation sizes
-    private const int MAX_HEXES = 100; // Maximum number of hexes to observe
-    private const int MAX_LEADERS = 8; // Maximum number of leaders
-    private const int MAX_CHARACTERS = 50; // Maximum number of characters
-    private const int MAX_ARTIFACTS = 20; // Maximum number of artifacts
+    int maxX;
+    int maxY;
+    int allArtifactsNum;
 
-    // Observation component sizes
-    private const int POSITION_OBS_SIZE = 2; // x, y
-    private const int TERRAIN_OBS_SIZE = 2; // type, cost
-    private const int UNITS_OBS_SIZE = 1; // count
-    private const int ARMIES_OBS_SIZE = 1; // count
-    private const int PC_OBS_SIZE = 4; // presence, artifacts, owner type, defense
-    private const int RESOURCES_OBS_SIZE = 12; // 6 resources * 2 (amount and per turn)
-    private const int CHARACTER_OBS_SIZE = 20; // status, position, health, alignment, etc.
-    private const int TURN_OBS_SIZE = 1;
+    List<Character> allCharacters = new();
+    List<Leader> leaders = new();
+    AlignmentEnum characterAlignment;
 
-    public override void Initialize()
+    // Pre-calculate terrain type count
+    int terrainTypeCount;
+    int alignmentTypeCount;
+    float maxTerrainCost;
+
+    public override void OnEpisodeBegin()
     {
         base.Initialize();
         gameState = FindFirstObjectByType<GameState>();
-        controlledCharacter = GetComponent<Character>();
+        controlledCharacter = transform.parent.GetComponent<Character>();
         allPossibleActions = FindObjectsByType<CharacterAction>(FindObjectsSortMode.None).ToList();
+
+        maxX = gameState.GetMaxX();
+        maxY = gameState.GetMaxY();
+        allArtifactsNum = gameState.GetAllArtifactsNum();
+        allCharacters = gameState.GetAllCharacters();
+        leaders = gameState.GetLeaders();
+        characterAlignment = controlledCharacter.GetAlignment();
+
+        // Pre-calculate terrain type count
+        terrainTypeCount = Enum.GetValues(typeof(TerrainEnum)).Length - 1;
+        alignmentTypeCount = Enum.GetValues(typeof(AlignmentEnum)).Length - 1;
+        maxTerrainCost = TerrainData.terrainCosts.Values.Max();
+
+        // Add and configure Behavior Parameters component
+        var behaviorParams = GetComponent<BehaviorParameters>();
+        if (behaviorParams != null)
+        {
+            behaviorParams.BehaviorName = "Character";
+            // Set the correct action space size
+            behaviorParams.BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(48); // Match your actual number of actions
+        }
+        else
+        {
+            Debug.LogError("Behavior Parameters component not found!");
+        }
     }
 
     public void NewTurn()
@@ -48,243 +71,49 @@ public class StrategyGameAgent : Agent
     {
         if (gameState == null || controlledCharacter == null) return;
 
-        int observationCount = 0;
-
-        // Cache frequently used values
+        // Only observe relevant hexes around the character
         var relevantHexes = gameState.GetRelevantHexes(controlledCharacter);
-        var boardSize = gameState.GetBoardSize();
-        var maxX = gameState.GetMaxX();
-        var maxY = gameState.GetMaxY();
-        var leadersNum = gameState.GetLeadersNum();
-        var allArtifactsNum = gameState.GetAllArtifactsNum();
-        var allCharacters = gameState.GetAllCharacters();
-        var leaders = gameState.GetLeaders();
-        var characterAlignment = controlledCharacter.GetAlignment();
+        int maxRelevantHexes = 10; // Reduced from 20 to 10
+        int hexesToProcess = Mathf.Min(relevantHexes.Count, maxRelevantHexes);
 
-        // Add count of relevant hexes (normalized)
-        sensor.AddObservation(relevantHexes.Count / (float)boardSize);
-        observationCount++;
-
-        // Pre-calculate terrain type count
-        int terrainTypeCount = Enum.GetValues(typeof(TerrainEnum)).Length - 1;
-        float maxTerrainCost = TerrainData.terrainCosts.Values.Max();
-
-        // Process hexes (up to MAX_HEXES)
-        int hexesProcessed = 0;
-        foreach (Hex hex in relevantHexes)
+        for (int i = 0; i < hexesToProcess; i++)
         {
-            if (hexesProcessed >= MAX_HEXES) break;
-            hexesProcessed++;
+            Hex hex = relevantHexes[i];
+            if (hex == null)
+            {
+                // Add minimal null hex observations
+                sensor.AddObservation(0f); // x position
+                sensor.AddObservation(0f); // y position
+                sensor.AddOneHotObservation(0, terrainTypeCount); // terrain type
+                continue;
+            }
 
             // Position (normalized)
             sensor.AddObservation(hex.v2.x / maxX);
             sensor.AddObservation(hex.v2.y / maxY);
-            observationCount += 2;
 
-            // Terrain type and cost
+            // Terrain type
             sensor.AddOneHotObservation((int)hex.terrainType, terrainTypeCount);
-            sensor.AddObservation(TerrainData.terrainCosts[hex.terrainType] / maxTerrainCost);
-            observationCount += terrainTypeCount + 1;
 
-            // Unit presence
-            int[] unitsByOwner = new int[MAX_LEADERS];
-            int totalUnits = 0;
-            foreach (Character character in hex.characters)
-            {
-                if (character.killed) continue;
-                int leaderIndex = gameState.GetIndexOfLeader(character.GetOwner());
-                if (leaderIndex < MAX_LEADERS)
-                {
-                    unitsByOwner[leaderIndex]++;
-                    totalUnits++;
-                }
-            }
-            
-            // Normalize and add unit observations
-            float totalUnitsFloat = totalUnits > 0 ? totalUnits : 1f;
-            for (int i = 0; i < MAX_LEADERS; i++)
-            {
-                sensor.AddObservation(unitsByOwner[i] / totalUnitsFloat);
-                observationCount++;
-            }
+            // Simplified unit and army presence (combined into single value)
+            int totalUnits = hex.characters.Count(x => x != null && !x.killed) +
+                           hex.armies.Count(x => x != null && !x.killed && x.commander != null && !x.commander.killed);
+            sensor.AddObservation(totalUnits / 10f); // Normalize
 
-            // Army presence
-            int[] armiesByOwner = new int[MAX_LEADERS];
-            int totalArmies = 0;
-            foreach (Army army in hex.armies)
-            {
-                if (army.commander == null || army.commander.killed) continue;
-                int leaderIndex = gameState.GetIndexOfLeader(army.commander.GetOwner());
-                if (leaderIndex < MAX_LEADERS)
-                {
-                    armiesByOwner[leaderIndex]++;
-                    totalArmies++;
-                }
-            }
-
-            // Normalize and add army observations
-            float totalArmiesFloat = totalArmies > 0 ? totalArmies : 1f;
-            for (int i = 0; i < MAX_LEADERS; i++)
-            {
-                sensor.AddObservation(armiesByOwner[i] / totalArmiesFloat);
-                observationCount++;
-            }
-
-            // PC presence and properties
+            // Simplified PC presence (just defense if present)
             var pc = hex.GetPC();
-            bool hasPC = pc != null;
-            sensor.AddOneHotObservation(hasPC ? 1 : 0, 2);
-            sensor.AddObservation(allArtifactsNum < 1 ? 0 : hex.hiddenArtifacts.Count / (float)MAX_ARTIFACTS);
-            sensor.AddOneHotObservation(hasPC && pc.owner is NonPlayableLeader ? 1 : 0, 2);
-            observationCount += 2 + 1 + 2;
-
-            // PC alignment and defense
-            if (hasPC)
-            {
-                float defense = pc.GetDefense() / 1000f;
-                if (pc.owner.alignment != AlignmentEnum.neutral && pc.owner.alignment == characterAlignment)
-                    sensor.AddObservation(defense);
-                else
-                    sensor.AddObservation(0f);
-
-                if (pc.owner.alignment != characterAlignment)
-                    sensor.AddObservation(defense);
-                else
-                    sensor.AddObservation(0f);
-
-                if (pc.owner.alignment == AlignmentEnum.neutral)
-                    sensor.AddObservation(defense);
-                else
-                    sensor.AddObservation(0f);
-            }
-            else
-            {
-                sensor.AddObservation(0f);
-                sensor.AddObservation(0f);
-                sensor.AddObservation(0f);
-            }
-            observationCount += 3;
+            sensor.AddObservation(pc != null ? pc.GetDefense() / 1000f : 0f);
         }
 
-        // Add padding for remaining hexes
-        for (int i = hexesProcessed; i < MAX_HEXES; i++)
-        {
-            // Add zero observations for unused hex slots
-            sensor.AddObservation(0f); // x
-            sensor.AddObservation(0f); // y
-            sensor.AddOneHotObservation(0, terrainTypeCount); // terrain type
-            sensor.AddObservation(0f); // terrain cost
-            for (int j = 0; j < MAX_LEADERS; j++) sensor.AddObservation(0f); // units
-            for (int j = 0; j < MAX_LEADERS; j++) sensor.AddObservation(0f); // armies
-            sensor.AddOneHotObservation(0, 2); // PC presence
-            sensor.AddObservation(0f); // artifacts
-            sensor.AddOneHotObservation(0, 2); // PC owner type
-            sensor.AddObservation(0f); // PC defense 1
-            sensor.AddObservation(0f); // PC defense 2
-            sensor.AddObservation(0f); // PC defense 3
-            observationCount += 2 + terrainTypeCount + 1 + MAX_LEADERS + MAX_LEADERS + 2 + 1 + 2 + 3;
-        }
+        // Add character's own state (compressed)
+        sensor.AddObservation(controlledCharacter.health / 100f);
+        sensor.AddOneHotObservation((int)controlledCharacter.GetAlignment(), alignmentTypeCount);
+        sensor.AddObservation(controlledCharacter.hasMovedThisTurn ? 0f : 1f);
+        sensor.AddObservation(controlledCharacter.hasActionedThisTurn ? 0f : 1f);
 
-        // Add player resources (normalized)
-        int leadersProcessed = 0;
-        foreach (var player in leaders)
-        {
-            if (leadersProcessed >= MAX_LEADERS) break;
-            leadersProcessed++;
-
-            sensor.AddObservation(player.goldAmount / 1000f);
-            sensor.AddObservation(player.leatherAmount / 1000f);
-            sensor.AddObservation(player.mithrilAmount / 1000f);
-            sensor.AddObservation(player.mountsAmount / 1000f);
-            sensor.AddObservation(player.ironAmount / 1000f);
-            sensor.AddObservation(player.timberAmount / 1000f);
-
-            sensor.AddObservation(player.GetGoldPerTurn() / 100f);
-            sensor.AddObservation(player.GetLeatherPerTurn() / 100f);
-            sensor.AddObservation(player.GetMithrilPerTurn() / 100f);
-            sensor.AddObservation(player.GetMountsPerTurn() / 100f);
-            sensor.AddObservation(player.GetIronPerTurn() / 100f);
-            sensor.AddObservation(player.GetTimberPerTurn() / 100f);
-            observationCount += 12;
-        }
-
-        // Add padding for remaining leaders
-        for (int i = leadersProcessed; i < MAX_LEADERS; i++)
-        {
-            for (int j = 0; j < RESOURCES_OBS_SIZE; j++)
-            {
-                sensor.AddObservation(0f);
-                observationCount++;
-            }
-        }
-
-        // Add character information
-        int charactersProcessed = 0;
-        foreach (var character in allCharacters)
-        {
-            if (charactersProcessed >= MAX_CHARACTERS) break;
-            charactersProcessed++;
-
-            sensor.AddOneHotObservation(character.killed ? 1 : 0, 2);
-            sensor.AddOneHotObservation(character is NonPlayableLeader && (character as NonPlayableLeader).joined ? 1 : 0, 2);
-            sensor.AddObservation(gameState.GetIndexOfLeader(character.GetOwner()) / (float)MAX_LEADERS);
-            sensor.AddObservation(character.hex.v2.x / maxX);
-            sensor.AddObservation(character.hex.v2.y / maxY);
-            sensor.AddObservation(character.health / 100f);
-            sensor.AddOneHotObservation((int)character.GetAlignment(), terrainTypeCount);
-            sensor.AddOneHotObservation(character.killed ? 0 : 1, 2);
-            sensor.AddOneHotObservation(character.hasMovedThisTurn ? 0 : 1, 2);
-            sensor.AddOneHotObservation(character.hasActionedThisTurn ? 0 : 1, 2);
-            sensor.AddOneHotObservation(character.isEmbarked ? 0 : 1, 2);
-            sensor.AddOneHotObservation(character.startingCharacter ? 0 : 1, 2);
-            sensor.AddObservation(character.GetCommander() / 5f);
-            sensor.AddObservation(character.GetAgent() / 5f);
-            sensor.AddObservation(character.GetEmmissary() / 5f);
-            sensor.AddObservation(character.GetMage() / 5f);
-            sensor.AddOneHotObservation(character.IsArmyCommander() ? 1 : 0, 2);
-            observationCount += 2 + 2 + 1 + 2 + 1 + terrainTypeCount + 2 + 2 + 2 + 2 + 2 + 4 + 2;
-
-            if (character.IsArmyCommander())
-            {
-                var army = character.GetArmy();
-                sensor.AddObservation(army.GetSize() / 100f);
-                sensor.AddObservation(army.GetDefence() / 100f);
-                sensor.AddObservation(army.GetOffence() / 100f);
-                sensor.AddObservation(army.ma / 100f);
-                sensor.AddObservation(army.ar / 100f);
-                sensor.AddObservation(army.li / 100f);
-                sensor.AddObservation(army.hi / 100f);
-                sensor.AddObservation(army.lc / 100f);
-                sensor.AddObservation(army.hc / 100f);
-                sensor.AddObservation(army.ca / 100f);
-                sensor.AddObservation(army.ws / 100f);
-                observationCount += 11;
-            }
-            else
-            {
-                for (int i = 0; i < 11; i++) sensor.AddObservation(0f);
-                observationCount += 11;
-            }
-
-            sensor.AddObservation(allArtifactsNum < 1 ? 0 : character.artifacts.Count / (float)MAX_ARTIFACTS);
-            observationCount++;
-        }
-
-        // Add padding for remaining characters
-        for (int i = charactersProcessed; i < MAX_CHARACTERS; i++)
-        {
-            for (int j = 0; j < CHARACTER_OBS_SIZE; j++)
-            {
-                sensor.AddObservation(0f);
-                observationCount++;
-            }
-        }
-
-        // Add turn information
-        sensor.AddObservation(gameState.GetTurn() / 100f);
-        observationCount++;
-
-        Debug.Log($"Total observations added: {observationCount}");
+        // Add simplified leader state (just gold)
+        var owner = controlledCharacter.GetOwner();
+        sensor.AddObservation(owner != null ? owner.goldAmount / 1000f : 0f);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -351,23 +180,64 @@ public class StrategyGameAgent : Agent
 
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
-        // Mask unavailable actions
-        List<int> availableActions = GetAvailableActionIds(controlledCharacter);
+        if (controlledCharacter == null || allPossibleActions == null)
+        {
+            Debug.LogError("Controlled character or possible actions are null!");
+            return;
+        }
 
-        // For branch 0 (assuming single branch with all actions)
+        // Get available actions
+        List<int> availableActions = GetAvailableActionIds(controlledCharacter);
+        
+        // Get the behavior parameters to validate action space
+        var behaviorParams = GetComponent<BehaviorParameters>();
+        if (behaviorParams == null)
+        {
+            Debug.LogError("Behavior Parameters component not found!");
+            return;
+        }
+
+        // Validate action space size
+        int expectedActionCount = behaviorParams.BrainParameters.ActionSpec.BranchSizes[0];
+        if (allPossibleActions.Count != expectedActionCount)
+        {
+            Debug.LogError($"Action count mismatch! Expected {expectedActionCount}, got {allPossibleActions.Count}");
+            return;
+        }
+
+        // Mask all actions first
         for (int i = 0; i < allPossibleActions.Count; i++)
         {
-            // Set mask to false (unavailable) for all unavailable actions
-            actionMask.SetActionEnabled(0, i, availableActions.Contains(i));
+            actionMask.SetActionEnabled(0, i, false);
+        }
+
+        // Enable only available actions
+        foreach (int actionId in availableActions)
+        {
+            if (actionId >= 0 && actionId < allPossibleActions.Count)
+            {
+                actionMask.SetActionEnabled(0, actionId, true);
+            }
+            else
+            {
+                Debug.LogWarning($"Invalid action ID: {actionId}");
+            }
         }
     }
 
     private List<int> GetAvailableActionIds(Character character)
     {
+        if (character == null || allPossibleActions == null)
+        {
+            Debug.LogError("Character or possible actions are null!");
+            return new List<int>();
+        }
+
         return allPossibleActions
-        .Where(action => action.IsAvailable())
-        .Select(action => action.actionId)
-        .ToList();
+            .Where(action => action != null && action.IsAvailable())
+            .Select(action => action.actionId)
+            .Where(id => id >= 0 && id < allPossibleActions.Count)
+            .ToList();
     }
 
     private bool IsGameOver(Leader leader)
@@ -385,45 +255,4 @@ public class StrategyGameAgent : Agent
         return controlledCharacter;
     }
 
-    public int GetTotalObservationSize()
-    {
-        int terrainTypeCount = Enum.GetValues(typeof(TerrainEnum)).Length - 1;
-
-        // Calculate size for each component
-        int hexObservations = 1 + // hex count
-            (POSITION_OBS_SIZE + // x, y
-            terrainTypeCount + // terrain type (one-hot)
-            1 + // terrain cost
-            MAX_LEADERS + // units by owner
-            MAX_LEADERS + // armies by owner
-            2 + // PC presence (one-hot)
-            1 + // artifacts
-            2 + // PC owner type (one-hot)
-            3) * MAX_HEXES; // PC defense values
-
-        int resourceObservations = RESOURCES_OBS_SIZE * MAX_LEADERS;
-
-        int characterObservations = 
-            (2 + // killed (one-hot)
-            2 + // joined (one-hot)
-            1 + // owner index
-            2 + // position
-            1 + // health
-            terrainTypeCount + // alignment (one-hot)
-            2 + // killed (one-hot)
-            2 + // hasMoved (one-hot)
-            2 + // hasActioned (one-hot)
-            2 + // isEmbarked (one-hot)
-            2 + // startingCharacter (one-hot)
-            4 + // commander, agent, emmissary, mage
-            2 + // isArmyCommander (one-hot)
-            11 + // army stats
-            1) * MAX_CHARACTERS; // artifacts
-
-        int turnObservations = TURN_OBS_SIZE;
-
-        int totalSize = hexObservations + resourceObservations + characterObservations + turnObservations;
-        Debug.Log($"Calculated observation size: {totalSize}");
-        return totalSize;
-    }
 }

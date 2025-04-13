@@ -1,7 +1,7 @@
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
 [RequireComponent(typeof(Game))]
 /**
  * 
@@ -13,109 +13,162 @@ public class GameState : MonoBehaviour
     private Game game;
     private Board board;
     private HexPathRenderer hexPathRenderer;
-    private Dictionary<Character, List<Hex>> relevantHexesCache = new();
-    private List<Leader> leadersCache;
-    private List<Character> allCharactersCache;
-    private int boardSize;
-    private int maxX;
-    private int maxY;
-    private int leadersNum;
+    private List<Leader> allLeaders;
+    private List<Character> allCharacters;
+
+    // Cached sized lists for performance
+    private List<Leader> sizedLeadersList = new();
+    private List<Character> sizedCharactersList = new();
+    private List<Artifact> sizedArtifactsList = new();
 
     public void Awake()
     {
         game = GetComponent<Game>();
         board = FindFirstObjectByType<Board>();
-        hexPathRenderer = FindFirstObjectByType<HexPathRenderer>();
+        hexPathRenderer = FindFirstObjectByType<HexPathRenderer>();        
     }
 
-    private void UpdateCaches()
+    public void InitializeGameState()
     {
-        leadersCache = new List<Leader> { game.player };
-        leadersCache.AddRange(game.competitors);
-        leadersCache.AddRange(game.npcs);
-        allCharactersCache = leadersCache.SelectMany(x => x.controlledCharacters).ToList();
-        boardSize = board.GetHexes().Count;
-        maxX = board.width;
-        maxY = board.height;
-        leadersNum = leadersCache.Count;
-        relevantHexesCache.Clear();
+        allLeaders = new List<Leader> { game.player };
+        allLeaders.AddRange(game.competitors);
+        allLeaders.AddRange(game.npcs);
+        allCharacters = allLeaders.SelectMany(x => x.controlledCharacters).ToList();
+
+        sizedLeadersList = CreateLeaders();
+        sizedCharactersList = CreateCharacters();
+        sizedArtifactsList = CreateArtifacts();
     }
 
-    public void ResetGame()
+    List<Artifact> CreateArtifacts()
     {
-        UpdateCaches();
+        // Clear and refill the list to avoid allocations
+        sizedArtifactsList.Clear();
+
+        // Add existing artifacts (up to max)
+        var artifacts = game.artifacts ?? new List<Artifact>();
+        int count = Mathf.Min(artifacts.Count, game.maxArtifacts);
+        for (int i = 0; i < count; i++)
+            sizedArtifactsList.Add(artifacts[i]);
+
+        // Fill with nulls if needed
+        for (int i = count; i < game.maxArtifacts; i++)
+            sizedArtifactsList.Add(null);
+
+        Assert.IsTrue(sizedArtifactsList.Count == game.maxArtifacts, "Artifact list size mismatch!");
+        return sizedArtifactsList;
     }
+
+    List<Leader> CreateLeaders()
+    {
+        // Clear and refill the list to avoid allocations
+        sizedLeadersList.Clear();
+
+        // Add existing leaders (up to max)
+        int count = Mathf.Min(allLeaders.Count, game.maxLeaders);
+        for (int i = 0; i < count; i++)
+            sizedLeadersList.Add(allLeaders[i]);
+
+        // Fill with nulls if needed
+        for (int i = count; i < game.maxLeaders; i++)
+            sizedLeadersList.Add(null);
+
+        Assert.IsTrue(sizedLeadersList.Count == game.maxLeaders, "Leader list size mismatch!");
+        return sizedLeadersList;
+    }
+    List<Character> CreateCharacters()
+    {
+        // Clear and refill the list to avoid allocations
+        sizedCharactersList.Clear();
+
+        // Add existing characters (up to max)
+        int maxCharacters = GetAllCharactersNum();
+        int count = Mathf.Min(allCharacters.Count, maxCharacters);
+        for (int i = 0; i < count; i++)
+            sizedCharactersList.Add(allCharacters[i]);
+
+        // Fill with nulls if needed
+        for (int i = count; i < maxCharacters; i++)
+            sizedCharactersList.Add(null);
+
+        Assert.IsTrue(sizedCharactersList.Count == maxCharacters, "Character list size mismatch!");
+        return sizedCharactersList;
+    }
+
+    /************* RUNTIME ***************/
+
+    public int GetMaxObservationSpace() => game.maxObservationSpace;
 
     public List<Hex> GetRelevantHexes(Character c)
     {
-        if (relevantHexesCache.TryGetValue(c, out var cachedHexes))
-        {
-            return cachedHexes;
-        }
+        // Pre-allocate exactly 500 elements for maximum efficiency
+        List<Hex> relevantHexes = new(game.maxRelevantHexes);
 
-        List<Hex> relevantHexes = new();
-        var hexes = board.GetHexes();
-        var characterRange = hexPathRenderer.FindAllHexesInRange(c);
+        // Use direct access to source collections with index-based insertion
+        var inRangeHexes = hexPathRenderer.FindAllHexesInRange(c);
 
-        foreach (var hex in hexes)
-        {
-            if (hex.characters.Count > 0 || 
-                hex.armies.Count > 0 || 
-                hex.GetPC() != null || 
-                hex.hiddenArtifacts.Count > 0 || 
-                characterRange.Contains(hex))
-            {
-                relevantHexes.Add(hex);
-            }
-        }
+        var artifactHexes = board.hexesWithArtifacts;
+        var characterHexes = board.hexesWithCharacters;
+        var pcHexes = board.hexesWithPCs;
 
-        relevantHexesCache[c] = relevantHexes;
+        // Add items directly to pre-sized list using index
+        for (int i = 0; i < inRangeHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
+            relevantHexes.Add(inRangeHexes[i]);
+
+        for (int i = 0; i < artifactHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
+            relevantHexes.Add(artifactHexes[i]);
+
+        for (int i = 0; i < characterHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
+            relevantHexes.Add(characterHexes[i]);
+
+        for (int i = 0; i < pcHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
+            relevantHexes.Add(pcHexes[i]);
+
+        // Fill remaining slots with null (if any)
+        int remainingHexes = game.maxRelevantHexes - relevantHexes.Count;
+        for (int i = 0; i < remainingHexes; i++)
+            relevantHexes.Add(null);
+
+        Assert.IsTrue(relevantHexes.Count == game.maxRelevantHexes, "Relevant hexes list size mismatch!");
         return relevantHexes;
     }
 
-    public int GetLeadersNum() => leadersNum;
+    public int GetLeadersNum() => game.maxLeaders;
 
-    public List<Leader> GetLeaders() => leadersCache;
+    public List<Leader> GetLeaders() => sizedLeadersList;
+    
+    public int GetIndexOfLeader(Leader leader) => allLeaders.IndexOf(leader);
+    public int GetBoardSize() => game.maxBoardWidth * game.maxBoardHeight;
+    public int GetMaxX() => game.maxBoardWidth;
+    public int GetMaxY() => game.maxBoardHeight;
+    public int GetAllCharactersNum() => game.maxLeaders * game.maxCharactersPerPlayer;
 
-    public int GetIndexOfLeader(Leader leader) => leadersCache.IndexOf(leader);
+    public List<Character> GetAllCharacters() => sizedCharactersList;    
 
-    public int GetBoardSize() => boardSize;
-
-    public int GetMaxX() => maxX;
-
-    public int GetMaxY() => maxY;
-
-    public int GetAllCharactersNum() => allCharactersCache.Count;
-
-    public List<Character> GetAllCharacters() => allCharactersCache;
-
-    public List<Artifact> GetAllArtifacts() => game.artifacts;
-
-    public int GetAllArtifactsNum() => game.artifacts.Count;
-
+    public List<Artifact> GetAllArtifacts() => sizedArtifactsList;
+    public int GetAllArtifactsNum() => game.maxArtifacts;
     public int GetTurn() => game.turn;
 
+    /******************** REWARDS ********************/
     public int GetFriendlyPoints(Leader leader)
     {
-        return leadersCache
-            .Where(x => x.GetAlignment() != AlignmentEnum.neutral && 
-                       x.GetAlignment() == leader.GetAlignment() && 
+        return allLeaders
+            .Where(x => x.GetAlignment() != AlignmentEnum.neutral &&
+                       x.GetAlignment() == leader.GetAlignment() &&
                        x != leader)
             .Sum(x => x.GetArmyPoints() + x.GetCharacterPoints() + x.GetPCPoints());
     }
-
     public int GetEnemyPoints(Leader leader)
     {
-        return leadersCache
-            .Where(x => (x.GetAlignment() == AlignmentEnum.neutral || 
-                        x.GetAlignment() != leader.GetAlignment()) && 
+        return allLeaders
+            .Where(x => (x.GetAlignment() == AlignmentEnum.neutral ||
+                        x.GetAlignment() != leader.GetAlignment()) &&
                        x != leader)
             .Sum(x => x.GetArmyPoints() + x.GetCharacterPoints() + x.GetPCPoints());
     }
-
     public Leader GetWinner()
     {
-        int maxPoints = leadersCache.Max(x => x.GetAllPoints());
-        return leadersCache.FirstOrDefault(x => x.GetAllPoints() == maxPoints);
+        int maxPoints = allLeaders.Max(x => x.GetAllPoints());
+        return allLeaders.FirstOrDefault(x => x.GetAllPoints() == maxPoints);
     }
 }
