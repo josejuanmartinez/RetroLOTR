@@ -115,6 +115,11 @@ public class NationSpawner : MonoBehaviour
     
     private void InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable)
     {
+        if (FindObjectsByType<Leader>(FindObjectsSortMode.None).Length >= FindFirstObjectByType<Game>().maxLeaders)
+        {
+            Debug.LogWarning("Max leaders reached. Skipping leader instantiation.");
+            return;
+        }
         List<Vector2Int> suitableHexes = GetCachedHexesWithTerrain(leaderBiomeConfig.terrain);
 
         if (suitableHexes.Count == 0)
@@ -134,7 +139,18 @@ public class NationSpawner : MonoBehaviour
 
         foreach (var character in leader.GetBiome().startingCharacters)
         {
+            if (FindObjectsByType<Character>(FindObjectsSortMode.None).Length >= FindFirstObjectByType<Game>().maxCharacters)
+            {
+                Debug.LogWarning("Max characters reached. Skipping leader instantiation.");
+                return;
+            }
             characterInstantiator.InstantiateCharacter(leader, hex, character);
+        }
+
+        if(board.GetHexes().Count(x => x.GetPC() != null) >= FindFirstObjectByType<Game>().maxPCs)
+        {
+            Debug.LogWarning("Max PCs reached. Skipping PC instantiation.");
+            return;
         }
 
         PC pc = new (leader, hex);

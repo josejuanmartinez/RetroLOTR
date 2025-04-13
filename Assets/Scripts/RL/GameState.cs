@@ -12,7 +12,6 @@ public class GameState : MonoBehaviour
 {
     private Game game;
     private Board board;
-    private HexPathRenderer hexPathRenderer;
     private List<Leader> allLeaders;
     private List<Character> allCharacters;
 
@@ -25,7 +24,6 @@ public class GameState : MonoBehaviour
     {
         game = GetComponent<Game>();
         board = FindFirstObjectByType<Board>();
-        hexPathRenderer = FindFirstObjectByType<HexPathRenderer>();        
     }
 
     public void InitializeGameState()
@@ -82,7 +80,7 @@ public class GameState : MonoBehaviour
         sizedCharactersList.Clear();
 
         // Add existing characters (up to max)
-        int maxCharacters = GetAllCharactersNum();
+        int maxCharacters = GetMaxCharacters();
         int count = Mathf.Min(allCharacters.Count, maxCharacters);
         for (int i = 0; i < count; i++)
             sizedCharactersList.Add(allCharacters[i]);
@@ -97,57 +95,54 @@ public class GameState : MonoBehaviour
 
     /************* RUNTIME ***************/
 
-    public int GetMaxObservationSpace() => game.maxObservationSpace;
-
     public List<Hex> GetRelevantHexes(Character c)
     {
-        // Pre-allocate exactly 500 elements for maximum efficiency
-        List<Hex> relevantHexes = new(game.maxRelevantHexes);
+        int maxRelevantHexes = game.maxCharacters + game.maxArtifacts + game.maxPCs;
+        // Pre-allocate exactly 190 elements for maximum efficiency
+        List<Hex> relevantHexes = new(maxRelevantHexes);
 
         // Use direct access to source collections with index-based insertion
-        var inRangeHexes = hexPathRenderer.FindAllHexesInRange(c);
+        // var inRangeHexes = hexPathRenderer.FindAllHexesInRange(c);
 
         var artifactHexes = board.hexesWithArtifacts;
         var characterHexes = board.hexesWithCharacters;
         var pcHexes = board.hexesWithPCs;
 
         // Add items directly to pre-sized list using index
-        for (int i = 0; i < inRangeHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
-            relevantHexes.Add(inRangeHexes[i]);
+        //for (int i = 0; i < inRangeHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
+        //    relevantHexes.Add(inRangeHexes[i]);
 
-        for (int i = 0; i < artifactHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
+        for (int i = 0; i < artifactHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
             relevantHexes.Add(artifactHexes[i]);
 
-        for (int i = 0; i < characterHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
+        for (int i = 0; i < characterHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
             relevantHexes.Add(characterHexes[i]);
 
-        for (int i = 0; i < pcHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
+        for (int i = 0; i < pcHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
             relevantHexes.Add(pcHexes[i]);
 
         // Fill remaining slots with null (if any)
-        int remainingHexes = game.maxRelevantHexes - relevantHexes.Count;
+        int remainingHexes = maxRelevantHexes - relevantHexes.Count;
         for (int i = 0; i < remainingHexes; i++)
             relevantHexes.Add(null);
 
-        Assert.IsTrue(relevantHexes.Count == game.maxRelevantHexes, "Relevant hexes list size mismatch!");
+        Debug.Log("Max relevant hexes: " + maxRelevantHexes);
+
+        Assert.IsTrue(relevantHexes.Count == maxRelevantHexes, "Relevant hexes list size mismatch!");
         return relevantHexes;
     }
 
-    public int GetLeadersNum() => game.maxLeaders;
-
-    public List<Leader> GetLeaders() => sizedLeadersList;
+    public int GetMaxLeaders() => game.maxLeaders;
     
     public int GetIndexOfLeader(Leader leader) => allLeaders.IndexOf(leader);
-    public int GetBoardSize() => game.maxBoardWidth * game.maxBoardHeight;
     public int GetMaxX() => game.maxBoardWidth;
     public int GetMaxY() => game.maxBoardHeight;
-    public int GetAllCharactersNum() => game.maxLeaders * game.maxCharactersPerPlayer;
-
-    public List<Character> GetAllCharacters() => sizedCharactersList;    
-
-    public List<Artifact> GetAllArtifacts() => sizedArtifactsList;
-    public int GetAllArtifactsNum() => game.maxArtifacts;
+    public int GetMaxCharacters() => game.maxCharacters;
+    public int GetMaxArtifacts() => game.maxArtifacts;
     public int GetTurn() => game.turn;
+    public int GetMaxTurns() => game.maxTurns;
+
+    public int GetMaxMovement() => game.cavalryMovement;
 
     /******************** REWARDS ********************/
     public int GetFriendlyPoints(Leader leader)
