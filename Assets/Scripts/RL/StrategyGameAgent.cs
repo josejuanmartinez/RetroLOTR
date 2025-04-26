@@ -13,20 +13,26 @@ public class StrategyGameAgent : Agent
     [SerializeField] private GameState gameState;
     [SerializeField] private List<CharacterAction> allPossibleActions;
     [SerializeField] private Character controlledCharacter;
+    [SerializeField] private CharacterAction chosenAction;
 
-    // Pre-calculate terrain type count
-    int terrainTypeCount;
+    [Header("Training Settings")]
+    [SerializeField] private bool isPlayerControlled = false;
+    [SerializeField] private bool isTrainingMode = true;
+
+    private bool hasGameStarted = false;
+
     int alignmentTypeCount;
+
+    // For decision visualization
+    public List<int> availableActionsIds = new List<int>();
 
     public override void OnEpisodeBegin()
     {
-        base.Initialize();
         gameState = FindFirstObjectByType<GameState>();
         controlledCharacter = transform.parent.GetComponent<Character>();
         allPossibleActions = FindObjectsByType<CharacterAction>(FindObjectsSortMode.None).ToList();
 
-        // Pre-calculate terrain type count
-        terrainTypeCount = Enum.GetValues(typeof(TerrainEnum)).Length - 1;
+        // Pre-calculate alignment type count
         alignmentTypeCount = Enum.GetValues(typeof(AlignmentEnum)).Length - 1;
 
         // Add and configure Behavior Parameters component
@@ -41,26 +47,336 @@ public class StrategyGameAgent : Agent
         {
             Debug.LogError("Behavior Parameters component not found!");
         }
+
+        // Reset chosen action
+        chosenAction = null;
+
+        if (!hasGameStarted) return;
+
+        base.Initialize();
     }
 
-    public void NewTurn()
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
+        // This method is called when using Heuristic mode in the agent
+        var discreteActions = actionsOut.DiscreteActions;
+
+        // Skip processing if game hasn't started
+        if (!hasGameStarted)
+        {
+            // Just set a default action (0) to avoid errors
+            discreteActions[0] = 0;
+            return;
+        }
+
+        // If we have a chosen action, use that
+        if (chosenAction != null)
+        {
+            discreteActions[0] = chosenAction.actionId;
+        }
+        else
+        {
+            // Default to first available action or 0 if none are available
+            var availableActions = GetAvailableActionIds(controlledCharacter);
+            discreteActions[0] = availableActions.Count > 0 ? availableActions[0] : 0;
+        }
+    }
+    public void NewTurn(bool isPlayerControlled, bool isTrainingMode)
+    {
+        this.isPlayerControlled = isPlayerControlled;
+        this.isTrainingMode = isTrainingMode;
+
+        if (!hasGameStarted)
+        {
+            hasGameStarted = true;
+            OnEpisodeBegin();
+        }
+
+        // Initialize all possible actions
         allPossibleActions.ForEach(x => x.Initialize(controlledCharacter));
+
+        if (isPlayerControlled)
+        {
+            // In player mode, we'll wait for SetPlayerAction to be called
+            // Optionally, we can visualize what the agent would do
+            if (isTrainingMode)
+            {
+                VisualizeAgentDecisions();
+            }
+        }
+        else
+        {
+            // In AI mode, request and immediately execute decision
+            Debug.Log("AI controlled character making decision...");
+            RequestDecision();
+
+            // Check if we got a valid action, if not use fallback
+            if (chosenAction == null)
+            {
+                List<int> availableActions = GetAvailableActionIds(controlledCharacter);
+                if (availableActions.Count > 0)
+                {
+                    int fallbackActionId = availableActions[0]; // Just take the first available
+                    chosenAction = allPossibleActions.Find(a => a.actionId == fallbackActionId);
+                    Debug.LogWarning($"AI controlled character made no decision! Taking fallback action: {chosenAction?.name} (ID: {fallbackActionId}) WITHOUT SUPPORTING DATA");
+                }
+                else
+                {
+                    Debug.LogError("No available actions for AI controlled character!");
+                }
+            }
+
+            ExecuteMovementBefore();
+            ExecuteChosenAction();
+            ExecuteMovementAfter();
+        }
+    }
+
+    private void ExecuteMovementBefore()
+    {
+        Debug.Log($"Moving before to: {controlledCharacter.hex}");
+    }
+    private void ExecuteMovementAfter()
+    {
+        Debug.Log($"Moving after to: {controlledCharacter.hex}");
+    }
+
+    private void VisualizeAgentDecisions()
+    {
+        // Store available actions for UI
+        availableActionsIds = GetAvailableActionIds(controlledCharacter);
+
+        // DEBUG: Log available actions count
+        Debug.Log($"Available actions count: {availableActionsIds.Count}");
+        foreach (var actionId in availableActionsIds)
+        {
+            var action = allPossibleActions.Find(a => a.actionId == actionId);
+            Debug.Log($"  Available action: {action?.name} (ID: {actionId})");
+        }
+
+        if (availableActionsIds.Count == 0)
+        {
+            Debug.LogWarning("No available actions for this character! Taking fallback action...");
+            // If we want to force a fallback action here, we could set chosenAction to something
+            return;
+        }
+
+        // Store current chosen action
+        CharacterAction previousAction = chosenAction;
+        chosenAction = null;
+
+        // Request a decision but don't execute it yet
+        Debug.Log("Requesting agent decision for visualization...");
         RequestDecision();
+
+        // DEBUG: Add a small delay and check if chosenAction got set
+        Debug.Log($"After RequestDecision, chosenAction is: {(chosenAction != null ? chosenAction.name : "NULL")}");
+
+        // If no action was chosen but we have available actions, select a fallback
+        if (chosenAction == null && availableActionsIds.Count > 0)
+        {
+            int fallbackActionId = availableActionsIds[0]; // Just take the first available
+            chosenAction = allPossibleActions.Find(a => a.actionId == fallbackActionId);
+            Debug.LogWarning($"AI made no suggestion! Taking fallback action: {chosenAction?.name} (ID: {fallbackActionId}) WITHOUT SUPPORTING DATA");
+        }
+
+        ExecuteMovementBefore();
+
+        // Now chosenAction contains what the AI would do
+        CharacterAction aiSuggestion = chosenAction;
+
+        // Reset to previous state
+        chosenAction = previousAction;
+
+        // Log the AI's suggestion (you would show this in UI)
+        if (aiSuggestion != null)
+        {
+            Debug.Log($"AI suggestion: {aiSuggestion.name} (ID: {aiSuggestion.actionId})");
+        }
+        else
+        {
+            Debug.Log("AI has no suggestion after attempting fallback");
+        }
+
+        ExecuteMovementAfter();
+    }
+
+    public void SetPlayerAction(CharacterAction action)
+    {
+        // Called from UI when player selects an action
+        chosenAction = action;
+
+        if (isTrainingMode)
+        {
+            // Convert player choice to action buffers for training
+            ActionBuffers buffers = new ActionBuffers();
+            var discreteActions = buffers.DiscreteActions;
+            discreteActions[0] = action.actionId;  // Changed from Array access to indexer
+
+            // Process the action for training purposes
+            OnActionReceived(buffers);
+        }
+        else
+        {
+            // Just execute the action without training
+            ExecuteChosenAction();
+        }
+    }
+
+    private void ExecuteChosenAction()
+    {
+        if (chosenAction != null)
+        {
+            Debug.Log($"Action chosen: {chosenAction.name}");
+
+            // Get leader state before action
+            var leader = controlledCharacter.GetOwner();
+
+            if (leader == null)
+            {
+                Debug.LogError("Leader is null! Cannot execute action properly.");
+                return;
+            }
+
+            bool wasBankrupted = leader.GetGoldPerTurn() < 0;
+            bool wasNegative = leader.goldAmount < 0;
+            int storesBefore = leader.GetStorePoints();
+            int enemiesStrengthBefore = gameState.GetEnemyPoints(leader);
+            int friendlyStrengthBefore = gameState.GetFriendlyPoints(leader);
+            int characterPointsBefore = leader.GetCharacterPoints();
+            int pcsStrengthBefore = leader.GetPCPoints();
+            int armiesStrengthBefore = leader.GetArmyPoints();
+
+            // Execute the actual action
+            chosenAction.Execute();
+
+            if (isTrainingMode)
+            {
+                // Calculate post-action state
+                bool isBankrupted = leader.GetGoldPerTurn() < 0;
+                bool isNegative = leader.goldAmount < 0;
+                int storesAfter = leader.GetStorePoints();
+                int enemiesStrengthAfter = gameState.GetEnemyPoints(leader);
+                int friendlyStrengthAfter = gameState.GetFriendlyPoints(leader);
+                int charactersPointsAfter = leader.GetCharacterPoints();
+                int pcsStrengthAfter = leader.GetPCPoints();
+                int armiesStrengthAfter = leader.GetArmyPoints();
+
+                // Add rewards
+                float actionReward = chosenAction.reward / 10f; // Normalize reward
+                AddReward(actionReward);
+
+                // STRATEGIC REWARDS
+                if (wasBankrupted && !isBankrupted) AddReward(5 / 10f);
+                if (wasNegative && !isNegative) AddReward(5 / 10f);
+                if (!wasBankrupted && isBankrupted) AddReward(-5 / 10f);
+                if (!wasNegative && isNegative) AddReward(-5 / 10f);
+                AddReward((storesAfter - storesBefore) / 100f);
+                AddReward((friendlyStrengthAfter - friendlyStrengthBefore) / 100f);
+                AddReward((enemiesStrengthBefore - enemiesStrengthAfter) / 100f);
+                AddReward((charactersPointsAfter - characterPointsBefore) / 100f);
+                AddReward((pcsStrengthAfter - pcsStrengthBefore) / 100f);
+                AddReward((armiesStrengthAfter - armiesStrengthBefore) / 100f);
+
+                // Check for game over condition
+                if (IsGameOver(leader))
+                {
+                    AddReward(IsWinner(leader) ? 25 : -25);
+                    EndEpisode();
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("No action chosen to execute! This should never happen due to fallback mechanism.");
+
+            // Last resort fallback - try to find any available action
+            List<int> availableActions = GetAvailableActionIds(controlledCharacter);
+            if (availableActions.Count > 0)
+            {
+                int emergencyActionId = availableActions[0];
+                chosenAction = allPossibleActions.Find(a => a.actionId == emergencyActionId);
+                Debug.LogWarning($"EMERGENCY FALLBACK! Taking action: {chosenAction?.name} (ID: {emergencyActionId}) WITHOUT SUPPORTING DATA");
+                ExecuteChosenAction(); // Recursive call, but should have chosenAction set now
+            }
+        }
+    }
+
+    private void AddDummyObservations(VectorSensor sensor)
+    {
+        // Add dummy hex observations (11 per hex * 190 hexes = 2090)
+        for (int i = 0; i < 190; i++)
+        {
+            // Position
+            sensor.AddObservation(-1f);
+            sensor.AddObservation(-1f);
+
+            // Movement cost
+            sensor.AddObservation(1f);
+
+            // Unit presence
+            sensor.AddObservation(0f);
+            sensor.AddObservation(0f);
+
+            // Army presence
+            sensor.AddObservation(0f);
+            sensor.AddObservation(0f);
+
+            // PC presence
+            sensor.AddObservation(-1f);
+            sensor.AddObservation(-1f);
+            sensor.AddObservation(-1f);
+
+            // Artifact presence
+            sensor.AddObservation(-1f);
+        }
+
+        // Add dummy character state observations (15)
+        // Leader info
+        sensor.AddObservation(-1f);
+        sensor.AddObservation(-1f);
+        sensor.AddObservation(-1f);
+
+        // Character health
+        sensor.AddObservation(1f);
+        sensor.AddObservation(0f);
+
+        // Alignment (one-hot)
+        for (int i = 0; i < alignmentTypeCount; i++)
+        {
+            sensor.AddObservation(i == 0 ? 1f : 0f);
+        }
+
+        // Leader stores
+        sensor.AddObservation(0f);
+        sensor.AddObservation(0f);
+        sensor.AddObservation(0f);
+        sensor.AddObservation(0f);
+        sensor.AddObservation(0f);
+        sensor.AddObservation(0f);
+
+        // Leader stats
+        sensor.AddObservation(0f);
+        sensor.AddObservation(0f);
+
+        // Turn
+        sensor.AddObservation(0f);
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        if (gameState == null || controlledCharacter == null) return;
 
-        // Only observe relevant hexes around the character: 190 Hexes
-        var relevantHexes = gameState.GetRelevantHexes(controlledCharacter);
+        // Check if game has started
+        if (!hasGameStarted)
+        {
+            AddDummyObservations(sensor);
+            return;
+        }
 
-        // 0...189
-        for (int i = 0; i < relevantHexes.Count; i++)
+        for (int i = 0; i < controlledCharacter.relevantHexes.Count; i++)
         {
             // 11 observations each
-            Hex hex = relevantHexes[i];
+            Hex hex = controlledCharacter.relevantHexes[i];
             if (hex == null)
             {
                 // Add minimal null hex observations
@@ -97,20 +413,18 @@ public class StrategyGameAgent : Agent
 
             // Enemy Army presence
             int totalEnemyArmies = hex.armies.Count(x => x != null && !x.killed && x.commander != null && !x.commander.killed && (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != controlledCharacter.GetAlignment()));
-            hex.armies.Count(x => x != null && !x.killed && x.commander != null && !x.commander.killed);
             sensor.AddObservation(totalEnemyArmies / (float)gameState.GetMaxCharacters()); // Normalize (1 army per character max)
 
             // Friendly Army presence
             int totalFriendlyArmies = hex.armies.Count(x => x != null && !x.killed && x.commander != null && !x.commander.killed && x.GetAlignment() == controlledCharacter.GetAlignment());
-            hex.armies.Count(x => x != null && !x.killed && x.commander != null && !x.commander.killed);
             sensor.AddObservation(totalFriendlyArmies / (float)gameState.GetMaxCharacters()); // Normalize (1 army per character max)
 
             // Enemy PC defense
             var pc = hex.GetPC();
-            sensor.AddObservation(pc != null && (pc.owner.GetAlignment() == AlignmentEnum.neutral || pc.owner.GetAlignment() != controlledCharacter.GetAlignment())? pc.GetDefense() / 10000f : -1f);
+            sensor.AddObservation(pc != null && (pc.owner.GetAlignment() == AlignmentEnum.neutral || pc.owner.GetAlignment() != controlledCharacter.GetAlignment()) ? pc.GetDefense() / 10000f : -1f);
 
             // Friendly PC defense
-            sensor.AddObservation(pc != null &&  pc.owner.GetAlignment() == controlledCharacter.GetAlignment() ? pc.GetDefense() / 10000f : -1f);
+            sensor.AddObservation(pc != null && pc.owner.GetAlignment() == controlledCharacter.GetAlignment() ? pc.GetDefense() / 10000f : -1f);
 
             // NPC presence
             sensor.AddObservation(pc != null && pc.owner is NonPlayableLeader ? 1f : -1f);
@@ -118,7 +432,6 @@ public class StrategyGameAgent : Agent
             // Artifact presence
             sensor.AddObservation(hex.hiddenArtifacts.Count > 0 ? hex.hiddenArtifacts.Count / (float)gameState.GetMaxArtifacts() : -1f);
         }
-
         // TOTAL SO FAR: 11 * 190 = 2090 OBSERVATIONS
 
         // 15 OBSERVATIONS
@@ -126,9 +439,9 @@ public class StrategyGameAgent : Agent
 
         // Add character's own state (compressed)
         var owner = controlledCharacter.GetOwner();
-        sensor.AddObservation(owner!= null? gameState.GetIndexOfLeader(owner) / (float)gameState.GetMaxLeaders() : -1f);
-        sensor.AddObservation(owner != null && owner is NonPlayableLeader? 1f: -1f);
-        sensor.AddObservation(owner != null && owner is NonPlayableLeader && (owner as NonPlayableLeader).joined? 1f : -1f);
+        sensor.AddObservation(owner != null ? gameState.GetIndexOfLeader(owner) / (float)gameState.GetMaxLeaders() : -1f);
+        sensor.AddObservation(owner != null && owner is NonPlayableLeader ? 1f : -1f);
+        sensor.AddObservation(owner != null && owner is NonPlayableLeader && (owner as NonPlayableLeader).joined ? 1f : -1f);
         sensor.AddObservation(controlledCharacter.health / 100f);
         sensor.AddObservation(owner != null || controlledCharacter.killed ? 0f : 1f);
         sensor.AddOneHotObservation((int)controlledCharacter.GetAlignment(), alignmentTypeCount);
@@ -147,7 +460,6 @@ public class StrategyGameAgent : Agent
 
         // Turn
         sensor.AddObservation(gameState.GetTurn() / (float)gameState.GetMaxTurns());
-
         /**********************************************************/
 
         // TOTAL SO FAR: 2090 + 15 + 1(automatically temporal observations) = 2106 OBSERVATIONS
@@ -156,62 +468,50 @@ public class StrategyGameAgent : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         // Get the action chosen by the agent
-        int actionId = actionBuffers.DiscreteActions[0];
+        int selectedActionId = actionBuffers.DiscreteActions[0];
 
-        // Only execute if the action is valid
+        Debug.Log($"OnActionReceived: Selected action ID = {selectedActionId}");
+
+        // Only set the action if it's valid
         List<int> availableActions = GetAvailableActionIds(controlledCharacter);
-        if (availableActions.Contains(actionId))
+
+        Debug.Log($"Available actions: {string.Join(", ", availableActions)}");
+
+        if (availableActions.Contains(selectedActionId))
         {
-            bool wasBankrupted = controlledCharacter.GetOwner().GetGoldPerTurn() < 0;
-            bool wasNegative = controlledCharacter.GetOwner().goldAmount < 0;
-            int storesBefore = controlledCharacter.GetOwner().GetStorePoints();
-            int enemiesStrengthBefore = gameState.GetEnemyPoints(controlledCharacter.GetOwner());
-            int friendlyStrengthBefore = gameState.GetFriendlyPoints(controlledCharacter.GetOwner());
-            int characterPointsBefore = controlledCharacter.GetOwner().GetCharacterPoints();
-            int pcsStrengthBefore = controlledCharacter.GetOwner().GetPCPoints();
-            int armiesStrengthBefore = controlledCharacter.GetOwner().GetArmyPoints();
+            chosenAction = allPossibleActions.Find(a => a.actionId == selectedActionId);
+            Debug.Log($"Valid action selected: {chosenAction?.name} (ID: {selectedActionId})");
 
-            // Execute the action
-            CharacterAction chosenAction = allPossibleActions.Find(a => a.actionId == actionId);
-            chosenAction.Execute();
-
-            bool isBankrupted = controlledCharacter.GetOwner().GetGoldPerTurn() < 0;
-            bool isNegative = controlledCharacter.GetOwner().goldAmount < 0;
-            int storesAfter = controlledCharacter.GetOwner().GetStorePoints();
-            int enemiesStrengthAfter = gameState.GetEnemyPoints(controlledCharacter.GetOwner());
-            int friendlyStrengthAfter = gameState.GetFriendlyPoints(controlledCharacter.GetOwner());
-            int charactersPointsAfter = controlledCharacter.GetOwner().GetCharacterPoints();
-            int pcsStrengthAfter = controlledCharacter.GetOwner().GetPCPoints();
-            int armiesStrengthAfter = controlledCharacter.GetOwner().GetArmyPoints();
-
-            // Give immediate reward
-            AddReward(chosenAction.reward / 10f); // Normalize reward
-
-            // STRATEGIC REWARDS
-            // <-------------------------->
-            if (wasBankrupted && !isBankrupted) AddReward(5 / 10f);
-            if (wasNegative && !isNegative) AddReward(5 / 10f);
-            if (!wasBankrupted && isBankrupted) AddReward(-5 / 10f);
-            if (!wasNegative && isNegative) AddReward(-5 / 10f);
-            AddReward(storesAfter - storesBefore / 100f);
-            AddReward(friendlyStrengthAfter - friendlyStrengthBefore / 100f);
-            AddReward(enemiesStrengthBefore - enemiesStrengthAfter / 100f);
-            AddReward(charactersPointsAfter - characterPointsBefore / 100f);
-            AddReward(pcsStrengthAfter - pcsStrengthBefore / 100f);
-            AddReward(armiesStrengthAfter - armiesStrengthBefore / 100f);
-            // <-------------------------->
+            // In AI mode, execute immediately
+            if (!isPlayerControlled)
+            {
+                ExecuteChosenAction();
+            }
         }
         else
         {
             // Penalize invalid actions
+            Debug.LogWarning($"Invalid action selected (ID: {selectedActionId})! Penalizing agent.");
             AddReward(-0.1f);
-        }
 
-        // Check if the episode should end
-        if (IsGameOver(controlledCharacter.GetOwner()))
-        {
-            AddReward(IsWinner(controlledCharacter.GetOwner()) ? 25 : -25);
-            EndEpisode();
+            // If no valid action was selected but we have available actions, select a fallback
+            if (availableActions.Count > 0)
+            {
+                int fallbackActionId = availableActions[0]; // Just take the first available
+                chosenAction = allPossibleActions.Find(a => a.actionId == fallbackActionId);
+                Debug.LogWarning($"Taking fallback action: {chosenAction?.name} (ID: {fallbackActionId}) WITHOUT SUPPORTING DATA");
+
+                // In AI mode, execute immediately
+                if (!isPlayerControlled)
+                {
+                    ExecuteChosenAction();
+                }
+            }
+            else
+            {
+                chosenAction = null;
+                Debug.LogError("No available actions for this character!");
+            }
         }
     }
 
@@ -225,7 +525,10 @@ public class StrategyGameAgent : Agent
 
         // Get available actions
         List<int> availableActions = GetAvailableActionIds(controlledCharacter);
-        
+
+        // DEBUG: Log action mask details
+        Debug.Log($"Writing action mask. Available actions: {availableActions.Count}");
+
         // Get the behavior parameters to validate action space
         var behaviorParams = GetComponent<BehaviorParameters>();
         if (behaviorParams == null)
@@ -254,11 +557,19 @@ public class StrategyGameAgent : Agent
             if (actionId >= 0 && actionId < allPossibleActions.Count)
             {
                 actionMask.SetActionEnabled(0, actionId, true);
+                Debug.Log($"Enabled action ID: {actionId} ({allPossibleActions.Find(a => a.actionId == actionId)?.name})");
             }
             else
             {
                 Debug.LogWarning($"Invalid action ID: {actionId}");
             }
+        }
+
+        // If no actions are available, enable at least one as fallback
+        if (availableActions.Count == 0 && allPossibleActions.Count > 0)
+        {
+            actionMask.SetActionEnabled(0, 0, true);
+            Debug.LogWarning("No available actions! Enabling action 0 as fallback.");
         }
     }
 
@@ -270,11 +581,16 @@ public class StrategyGameAgent : Agent
             return new List<int>();
         }
 
-        return allPossibleActions
+        var availableActions = allPossibleActions
             .Where(action => action != null && action.IsAvailable())
             .Select(action => action.actionId)
             .Where(id => id >= 0 && id < allPossibleActions.Count)
             .ToList();
+
+        // Debug: Log available action count
+        Debug.Log($"GetAvailableActionIds: Found {availableActions.Count} available actions");
+
+        return availableActions;
     }
 
     private bool IsGameOver(Leader leader)
@@ -292,4 +608,28 @@ public class StrategyGameAgent : Agent
         return controlledCharacter;
     }
 
+    public List<CharacterAction> GetAvailableActions()
+    {
+        return allPossibleActions
+            .Where(action => action != null && action.IsAvailable())
+            .ToList();
+    }
+
+    // Toggle between player and AI control
+    public void SetPlayerControlled(bool isControlled)
+    {
+        isPlayerControlled = isControlled;
+    }
+
+    // Toggle training mode
+    public void SetTrainingMode(bool training)
+    {
+        isTrainingMode = training;
+    }
+
+    // Get the agent's chosen action (useful for UI display)
+    public CharacterAction GetChosenAction()
+    {
+        return chosenAction;
+    }
 }

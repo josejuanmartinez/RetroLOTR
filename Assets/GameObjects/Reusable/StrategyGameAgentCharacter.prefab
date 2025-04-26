@@ -83,3 +83,7 @@ MonoBehaviour:
   gameState: {fileID: 0}
   allPossibleActions: []
   controlledCharacter: {fileID: 0}
+  chosenAction: {fileID: 0}
+  isPlayerControlled: 0
+  isTrainingMode: 1
+  availableActionsIds: 

@@ -124,7 +124,7 @@ public class NationSpawner : MonoBehaviour
 
         if (suitableHexes.Count == 0)
         {
-            throw new System.Exception($"No suitable hexes found with terrain {leaderBiomeConfig.terrain}. Skipping.");
+            throw new Exception($"No suitable hexes found with terrain {leaderBiomeConfig.terrain}. Skipping.");
         }
 
         Vector2Int bestPosition = FindFarthestPosition(suitableHexes, placedPositions);

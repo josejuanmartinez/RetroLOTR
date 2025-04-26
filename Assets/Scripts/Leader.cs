@@ -78,8 +78,6 @@ public class Leader : Character
 
         if (killed) return;
 
-        base.NewTurn();
-
         leatherAmount += GetLeatherPerTurn();
         mountsAmount += GetMountsPerTurn();
         timberAmount += GetTimberPerTurn();
@@ -87,9 +85,6 @@ public class Leader : Character
         mithrilAmount += GetMithrilPerTurn();
         goldAmount += GetGoldPerTurn();
 
-        controlledCharacters.ForEach(x => x.moved = 0);
-        controlledCharacters.ForEach(x => x.hasActionedThisTurn = false);
-        controlledCharacters.ForEach(x => x.hasMovedThisTurn = false);
 
         // Any NPC joins due to my new good stores?
         if (this is PlayableLeader)
@@ -100,23 +95,26 @@ public class Leader : Character
             });
         }
 
+        // This includes themselves
+        controlledCharacters.ForEach(x => x.NewTurn());
+        
         // AI: Act if not player
-        controlledCharacters.ForEach(x => x.StoreReachableHexes());
-        //if(FindFirstObjectByType<Game>().player != this)
-        //{
-            controlledCharacters.FindAll(x => x.GetAI() != null).Select(x => x.GetAI()).ToList().ForEach(x => x.NewTurn());
+        if (FindFirstObjectByType<Game>().player != this)
+        {
             FindFirstObjectByType<Game>().NextPlayer();
-        //}
-        //else
-        //{
-        //    FindFirstObjectByType<StoresManager>().RefreshStores();
-
-        //    StartCoroutine(RevealVisibleHexesAsync(() =>
-        //    {
-        //        FindFirstObjectByType<Board>().SelectCharacter(this);
-        //    }
-        //    ));
-        //}
+        }
+        else
+        {
+            // Refresh UI
+            FindFirstObjectByType<StoresManager>().RefreshStores();
+            // Refresh hexes
+            StartCoroutine(RevealVisibleHexesAsync(() =>
+            {
+                // Prompt for action to the player
+                FindFirstObjectByType<Board>().SelectCharacter(this);
+            }
+            ));
+        }
     }
 
     // The async version of RevealVisibleHexes
@@ -245,19 +243,6 @@ public class Leader : Character
     public int GetAllPoints()
     {
         return GetCharacterPoints() + GetPCPoints() + GetArmyPoints() + GetStorePoints();
-    }
-
-    /// <summary>
-    /// AI: Request Decision
-    /// </summary>
-    /// <param name="leader"></param>
-    public void RequestDecisionsForLeader(Leader leader)
-    {
-        foreach (Character character in controlledCharacters)
-        {
-            if (character.killed || character.GetAI() == null) continue;
-            character.GetAI().RequestDecision();
-        }
     }
 
     public override void Killed(Leader killedBy, bool onlyMask = false)
