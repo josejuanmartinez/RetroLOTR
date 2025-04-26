@@ -29,6 +29,24 @@ public class BoardGenerator : MonoBehaviour
     // For tracking progress
     private float totalSteps = 8; // Total generation steps
     private float currentStep = 0;
+    private float[] stepWeights = new float[] { 0.1f, 0.1f, 0.2f, 0.1f, 0.1f, 0.1f, 0.1f, 0.2f }; // Weights for each step
+
+    private float GetStepProgress(float stepProgress)
+    {
+        float totalWeight = 0f;
+        for (int i = 0; i < currentStep; i++)
+        {
+            totalWeight += stepWeights[i];
+        }
+        
+        // If we're at the last step or beyond, just return 1.0f
+        if (currentStep >= stepWeights.Length)
+        {
+            return 1.0f;
+        }
+        
+        return Mathf.Clamp01(totalWeight + (stepProgress * stepWeights[(int)currentStep]));
+    }
 
     private void Awake()
     {
@@ -118,7 +136,6 @@ public class BoardGenerator : MonoBehaviour
     // Main entry point - now returns a coroutine
     public IEnumerator GenerateTerrainCoroutine(Action<TerrainEnum[,]> onComplete)
     {
-        // Debug.Log("Starting terrain generation...");
         currentStep = 0;
 
         // Initialize the terrain grid with plains as default
@@ -159,10 +176,7 @@ public class BoardGenerator : MonoBehaviour
         // Apply shore terrain to areas adjacent to shallow water
         yield return StartCoroutine(ApplyShoresCoroutine());
 
-        // Debug.Log("Terrain generation complete!");
         OnGenerationProgress?.Invoke(1.0f, "Complete");
-
-        // Return the completed terrain grid
         onComplete?.Invoke(terrainGrid);
     }
 
@@ -212,7 +226,7 @@ public class BoardGenerator : MonoBehaviour
 
                     hexesProcessed += batchIndex;
                     float progress = (float)hexesProcessed / totalHexes;
-                    OnGenerationProgress?.Invoke(progress, "Configuring Board");
+                    OnGenerationProgress?.Invoke(Mathf.Min(progress, 1.0f), "Configuring Board");
                     yield return null;
                     batchIndex = 0;
                 }
@@ -275,14 +289,15 @@ public class BoardGenerator : MonoBehaviour
                 if (cellsProcessed % cellsPerBatch == 0)
                 {
                     float progress = (float)cellsProcessed / totalCells;
-                    OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Configuring Terrain");
+                    float stepProgress = GetStepProgress(progress);
+                    OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Configuring Terrain");
                     yield return null;
                 }
             }
         }
 
-        currentStep++;
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Terrain ready");
+        currentStep++;
     }
 
     private IEnumerator ConvertPlainsToGrasslandsCoroutine()
@@ -305,14 +320,15 @@ public class BoardGenerator : MonoBehaviour
                 if (cellsProcessed % cellsPerBatch == 0)
                 {
                     float progress = (float)cellsProcessed / totalCells;
-                    OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Creating Grasslands");
+                    float stepProgress = GetStepProgress(progress);
+                    OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Grasslands");
                     yield return null;
                 }
             }
         }
 
-        currentStep++;
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Grasslands Created");
+        currentStep++;
     }
 
     private IEnumerator GenerateWaterWithNaturalCoastlineCoroutine(int seaBorder)
@@ -334,8 +350,8 @@ public class BoardGenerator : MonoBehaviour
         // Create islands
         yield return StartCoroutine(GenerateIslandsCoroutine(seaBorder, waterWidth, waterHeight));
 
+        OnGenerationProgress?.Invoke(GetStepProgress(1.0f), "Water Generation Complete");
         currentStep++;
-        OnGenerationProgress?.Invoke(currentStep / totalSteps, "Water Generation Complete");
     }
 
     private IEnumerator GenerateCoastlineCoroutine(int seaBorder, int waterWidth, int waterHeight, int coastlineDepth, int seedX, int seedY)
@@ -373,7 +389,7 @@ public class BoardGenerator : MonoBehaviour
                         if (cellsProcessed % cellsPerBatch == 0)
                         {
                             float progress = (float)cellsProcessed / totalCells;
-                            OnGenerationProgress?.Invoke(progress * 0.4f / totalSteps + currentStep / totalSteps, "Creating Coastline");
+                            OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
                             yield return null;
                         }
                     }
@@ -407,7 +423,7 @@ public class BoardGenerator : MonoBehaviour
                         if (cellsProcessed % cellsPerBatch == 0)
                         {
                             float progress = (float)cellsProcessed / totalCells;
-                            OnGenerationProgress?.Invoke(progress * 0.4f / totalSteps + currentStep / totalSteps, "Creating Coastline");
+                            OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
                             yield return null;
                         }
                     }
@@ -441,7 +457,7 @@ public class BoardGenerator : MonoBehaviour
                         if (cellsProcessed % cellsPerBatch == 0)
                         {
                             float progress = (float)cellsProcessed / totalCells;
-                            OnGenerationProgress?.Invoke(progress * 0.4f / totalSteps + currentStep / totalSteps, "Creating Coastline");
+                            OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
                             yield return null;
                         }
                     }
@@ -475,7 +491,7 @@ public class BoardGenerator : MonoBehaviour
                         if (cellsProcessed % cellsPerBatch == 0)
                         {
                             float progress = (float)cellsProcessed / totalCells;
-                            OnGenerationProgress?.Invoke(progress * 0.4f / totalSteps + currentStep / totalSteps, "Creating Coastline");
+                            OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
                             yield return null;
                         }
                     }
@@ -532,7 +548,7 @@ public class BoardGenerator : MonoBehaviour
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
-                            OnGenerationProgress?.Invoke((0.4f + overallProgress * 0.3f) / totalSteps + currentStep / totalSteps, "Creating Water Features");
+                            OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
                             yield return null;
                         }
                     }
@@ -580,7 +596,7 @@ public class BoardGenerator : MonoBehaviour
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
-                            OnGenerationProgress?.Invoke((0.4f + overallProgress * 0.3f) / totalSteps + currentStep / totalSteps, "Creating Water Features");
+                            OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
                             yield return null;
                         }
                     }
@@ -628,7 +644,7 @@ public class BoardGenerator : MonoBehaviour
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
-                            OnGenerationProgress?.Invoke((0.4f + overallProgress * 0.3f) / totalSteps + currentStep / totalSteps, "Creating Water Features");
+                            OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
                             yield return null;
                         }
                     }
@@ -676,7 +692,7 @@ public class BoardGenerator : MonoBehaviour
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
-                            OnGenerationProgress?.Invoke((0.4f + overallProgress * 0.3f) / totalSteps + currentStep / totalSteps, "Creating Water Features");
+                            OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
                             yield return null;
                         }
                     }
@@ -785,9 +801,7 @@ public class BoardGenerator : MonoBehaviour
 
             islandsProcessed++;
             float islandProgress = (float)islandsProcessed / totalIslands;
-            OnGenerationProgress?.Invoke((0.7f + islandProgress * 0.3f) / totalSteps + currentStep / totalSteps, "Creating Islands");
-
-            // Yield after each island
+            OnGenerationProgress?.Invoke(GetStepProgress(0.7f + islandProgress * 0.3f), "Creating Islands");
             yield return null;
         }
     }
@@ -865,7 +879,8 @@ public class BoardGenerator : MonoBehaviour
                 {
                     float chainProgress = (float)j / chainLength;
                     float overallProgress = (chainsProcessed + chainProgress) / totalChains;
-                    OnGenerationProgress?.Invoke(overallProgress / totalSteps + currentStep / totalSteps, "Creating Mountains");
+                    float stepProgress = GetStepProgress(overallProgress);
+                    OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Mountains");
                     yield return null;
                 }
             }
@@ -876,8 +891,8 @@ public class BoardGenerator : MonoBehaviour
         // Add hills around mountains
         yield return StartCoroutine(AddHillsAroundMountainsCoroutine());
 
-        currentStep++;
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Mountains Created");
+        currentStep++;
     }
 
     private IEnumerator AddHillsAroundMountainsCoroutine()
@@ -921,7 +936,8 @@ public class BoardGenerator : MonoBehaviour
                 if (cellsProcessed % cellsPerBatch == 0)
                 {
                     float progress = (float)cellsProcessed / totalCells;
-                    OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Creating Hills");
+                    float stepProgress = GetStepProgress(progress);
+                    OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Hills");
                     yield return null;
                 }
             }
@@ -944,8 +960,8 @@ public class BoardGenerator : MonoBehaviour
             yield return StartCoroutine(GenerateForestPatchCoroutine(forestSize, "Minor Forest"));
         }
 
-        currentStep++;
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Forests Created");
+        currentStep++;
     }
 
     private IEnumerator GenerateForestPatchCoroutine(int forestSize, string forestType)
@@ -1025,7 +1041,8 @@ public class BoardGenerator : MonoBehaviour
             if (iterations % 20 == 0)
             {
                 float forestProgress = (float)tilesProcessed / forestSize;
-                OnGenerationProgress?.Invoke(forestProgress / totalSteps + currentStep / totalSteps, $"Creating {forestType}");
+                float stepProgress = GetStepProgress(forestProgress);
+                OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), $"Creating {forestType}");
                 yield return null;
             }
         }
@@ -1125,13 +1142,14 @@ public class BoardGenerator : MonoBehaviour
 
             swampsProcessed++;
             float swampProgress = (float)swampsProcessed / totalSwamps;
-            OnGenerationProgress?.Invoke(swampProgress / totalSteps + currentStep / totalSteps, "Creating Swamps");
+            float stepProgress = GetStepProgress(swampProgress);
+            OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Swamps");
 
             yield return null; // Yield after each swamp
         }
 
-        currentStep++;
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Swamps Created");
+        currentStep++;
     }
 
     private IEnumerator GenerateWastelandsCoroutine()
@@ -1150,8 +1168,8 @@ public class BoardGenerator : MonoBehaviour
             yield return StartCoroutine(GenerateWastelandPatchCoroutine(wastelandSize, false, "Minor Wasteland"));
         }
 
-        currentStep++;
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Wastelands Created");
+        currentStep++;
     }
 
     private IEnumerator GenerateWastelandPatchCoroutine(int wastelandSize, bool isMajor, string wastelandType)
@@ -1272,7 +1290,8 @@ public class BoardGenerator : MonoBehaviour
             if (iterations % 20 == 0)
             {
                 float wastelandProgress = (float)cellsProcessed / wastelandSize;
-                OnGenerationProgress?.Invoke(wastelandProgress / totalSteps + currentStep / totalSteps, $"Creating {wastelandType}");
+                float stepProgress = GetStepProgress(wastelandProgress);
+                OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), $"Creating {wastelandType}");
                 yield return null;
             }
         }
@@ -1331,7 +1350,8 @@ public class BoardGenerator : MonoBehaviour
                 if (cellsProcessed % cellsPerBatch == 0)
                 {
                     float progress = (float)cellsProcessed / totalCells;
-                    OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Creating Shores");
+                    float stepProgress = GetStepProgress(progress);
+                    OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Shores");
                     yield return null;
                 }
             }
@@ -1384,7 +1404,8 @@ public class BoardGenerator : MonoBehaviour
                         if (cellsProcessed % cellsPerBatch == 0)
                         {
                             float progress = (float)cellsProcessed / totalCells;
-                            OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Creating Desert");
+                            float stepProgress = GetStepProgress(progress);
+                            OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
                             yield return null;
                         }
                     }
@@ -1418,7 +1439,8 @@ public class BoardGenerator : MonoBehaviour
                         if (cellsProcessed % cellsPerBatch == 0)
                         {
                             float progress = (float)cellsProcessed / totalCells;
-                            OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Creating Desert");
+                            float stepProgress = GetStepProgress(progress);
+                            OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
                             yield return null;
                         }
                     }
@@ -1452,7 +1474,8 @@ public class BoardGenerator : MonoBehaviour
                         if (cellsProcessed % cellsPerBatch == 0)
                         {
                             float progress = (float)cellsProcessed / totalCells;
-                            OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Creating Desert");
+                            float stepProgress = GetStepProgress(progress);
+                            OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
                             yield return null;
                         }
                     }
@@ -1486,7 +1509,8 @@ public class BoardGenerator : MonoBehaviour
                         if (cellsProcessed % cellsPerBatch == 0)
                         {
                             float progress = (float)cellsProcessed / totalCells;
-                            OnGenerationProgress?.Invoke(progress / totalSteps + currentStep / totalSteps, "Creating Desert");
+                            float stepProgress = GetStepProgress(progress);
+                            OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
                             yield return null;
                         }
                     }
@@ -1494,8 +1518,8 @@ public class BoardGenerator : MonoBehaviour
                 break;
         }
 
-        currentStep++;
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Desert Created");
+        currentStep++;
     }
 
 
