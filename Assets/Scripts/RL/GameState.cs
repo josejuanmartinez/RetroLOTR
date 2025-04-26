@@ -95,43 +95,6 @@ public class GameState : MonoBehaviour
 
     /************* RUNTIME ***************/
 
-    public List<Hex> GetRelevantHexes(Character c)
-    {
-        int maxRelevantHexes = game.maxCharacters + game.maxArtifacts + game.maxPCs;
-        // Pre-allocate exactly 190 elements for maximum efficiency
-        List<Hex> relevantHexes = new(maxRelevantHexes);
-
-        // Use direct access to source collections with index-based insertion
-        // var inRangeHexes = hexPathRenderer.FindAllHexesInRange(c);
-
-        var artifactHexes = board.hexesWithArtifacts;
-        var characterHexes = board.hexesWithCharacters;
-        var pcHexes = board.hexesWithPCs;
-
-        // Add items directly to pre-sized list using index
-        //for (int i = 0; i < inRangeHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
-        //    relevantHexes.Add(inRangeHexes[i]);
-
-        for (int i = 0; i < artifactHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
-            relevantHexes.Add(artifactHexes[i]);
-
-        for (int i = 0; i < characterHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
-            relevantHexes.Add(characterHexes[i]);
-
-        for (int i = 0; i < pcHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
-            relevantHexes.Add(pcHexes[i]);
-
-        // Fill remaining slots with null (if any)
-        int remainingHexes = maxRelevantHexes - relevantHexes.Count;
-        for (int i = 0; i < remainingHexes; i++)
-            relevantHexes.Add(null);
-
-        Debug.Log("Max relevant hexes: " + maxRelevantHexes);
-
-        Assert.IsTrue(relevantHexes.Count == maxRelevantHexes, "Relevant hexes list size mismatch!");
-        return relevantHexes;
-    }
-
     public int GetMaxLeaders() => game.maxLeaders;
     
     public int GetIndexOfLeader(Leader leader) => allLeaders.IndexOf(leader);

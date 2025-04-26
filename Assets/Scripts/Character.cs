@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.MLAgents.Actuators;
-using Unity.MLAgents.Policies;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class Character : MonoBehaviour
 {
@@ -35,6 +34,7 @@ public class Character : MonoBehaviour
     public bool hasActionedThisTurn;
     public bool isEmbarked;
     public List<Hex> reachableHexes = new();
+    public List<Hex> relevantHexes = new();
 
     [Header("Spionage")]
     public List<Leader> doubledBy = new();
@@ -45,6 +45,10 @@ public class Character : MonoBehaviour
     [Header("Army")]
     [SerializeField] private Army army = null;
 
+    [Header("AI")]
+    public bool isPlayerControlled = true;
+    private bool trainingMode = false;
+
     private BiomeConfig characterBiome;
 
     void Awake()
@@ -53,6 +57,7 @@ public class Character : MonoBehaviour
         doubledBy = new();
         reachableHexes = new();
         killed = false;
+        trainingMode = FindAnyObjectByType<Game>().trainingMode;
     }
     public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome)
     {
@@ -115,7 +120,20 @@ public class Character : MonoBehaviour
 
     public void NewTurn()
     {
-        
+        Debug.Log($"New turn for {characterName} {(isPlayerControlled? "[PLAYER]": "[AI]")}");
+        moved = 0;
+        hasMovedThisTurn = false;
+        hasActionedThisTurn = false;
+        StoreReachableHexes();
+        StoreRelevantHexes();
+
+        GetAI().NewTurn(isPlayerControlled, trainingMode);
+        if (!isPlayerControlled)
+        {
+            moved = GetMaxMovement();
+            hasMovedThisTurn = true;
+            hasActionedThisTurn = true;
+        }
     }
 
     public virtual Leader GetOwner()
@@ -269,6 +287,45 @@ public class Character : MonoBehaviour
     public void StoreReachableHexes()
     {
         reachableHexes = FindFirstObjectByType<HexPathRenderer>().FindAllHexesInRange(this);
+    }
+
+    public void StoreRelevantHexes()
+    {
+        Game game = FindFirstObjectByType<Game>();
+        Board board = FindFirstObjectByType<Board>();
+        int maxRelevantHexes = game.maxCharacters + game.maxArtifacts + game.maxPCs;
+        // Pre-allocate exactly 190 elements for maximum efficiency
+        List<Hex> relevantHexes = new(maxRelevantHexes);
+
+        // Use direct access to source collections with index-based insertion
+        // var inRangeHexes = hexPathRenderer.FindAllHexesInRange(c);
+
+        var artifactHexes = board.hexesWithArtifacts;
+        var characterHexes = board.hexesWithCharacters;
+        var pcHexes = board.hexesWithPCs;
+
+        // Add items directly to pre-sized list using index
+        //for (int i = 0; i < inRangeHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
+        //    relevantHexes.Add(inRangeHexes[i]);
+
+        for (int i = 0; i < artifactHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
+            relevantHexes.Add(artifactHexes[i]);
+
+        for (int i = 0; i < characterHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
+            relevantHexes.Add(characterHexes[i]);
+
+        for (int i = 0; i < pcHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
+            relevantHexes.Add(pcHexes[i]);
+
+        // Fill remaining slots with null (if any)
+        int remainingHexes = maxRelevantHexes - relevantHexes.Count;
+        for (int i = 0; i < remainingHexes; i++)
+            relevantHexes.Add(null);
+
+        Debug.Log($"Max relevant hexes for character ${characterName}: " + maxRelevantHexes);
+
+        Assert.IsTrue(relevantHexes.Count == maxRelevantHexes, "Relevant hexes list size mismatch!");
+        this.relevantHexes = relevantHexes;
     }
 
     public StrategyGameAgent GetAI()

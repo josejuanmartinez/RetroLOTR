@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Unity.MLAgents;
-using Unity.VisualScripting;
 
 [RequireComponent(typeof(GameState))]
 public class Game : MonoBehaviour
 {
+    [Header("Training mode")]
+    public bool trainingMode = true;
+
     [Header("Playable Leader (Player)")]
     public PlayableLeader player;
     [Header("Other Playable Leaders")]
@@ -53,9 +54,9 @@ public class Game : MonoBehaviour
         List<Character> allCharacters = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList();
         foreach(Character character in allCharacters)
         {
-            Instantiate(strategyGameAgentCharacterPrefab, character.transform);
+            character.isPlayerControlled = character.GetOwner() == player;
+            GameObject ai = Instantiate(strategyGameAgentCharacterPrefab, character.transform);
             characterAgents[character] = character.GetAI();
-            characterAgents[character].OnEpisodeBegin();
         }
 
         Debug.Log($"Initialized {characterAgents.Count} ML-Agents for training");
