@@ -59,8 +59,10 @@ public class CharacterAction : MonoBehaviour
     // Function delegate that returns a bool to determine if action is available
     public Func<Character, bool> effect;
 
+    private Game game;
     void Awake()
     {
+        game = FindAnyObjectByType<Game>();
         GameObject hoverInstance = Instantiate(hoverPrefab, button.transform);
         hoverInstance.GetComponent<Hover>().Initialize(actionName, Vector2.one * 40, 35, TextAlignmentOptions.Center);
 
@@ -139,7 +141,7 @@ public class CharacterAction : MonoBehaviour
         character.GetOwner().RemoveMithril(mithrilCost);
         character.GetOwner().RemoveGold(goldCost);
 
-        FindFirstObjectByType<Game>().MoveToNextCharacterToAction();
+        game.MoveToNextCharacterToAction();
 
         FindFirstObjectByType<StoresManager>().RefreshStores();
 
@@ -154,6 +156,11 @@ public class CharacterAction : MonoBehaviour
             NonPlayableLeader nonPlayableLeader = character.hex.GetPC().owner as NonPlayableLeader;
             if (nonPlayableLeader == null) return;
             nonPlayableLeader.CheckActionConditionAtCapital(character.GetOwner(), this);
+        }
+
+        if(game.player == character.GetOwner() && game.trainingMode)
+        {
+            character.GetAI().FeedbackWithPlayerActions(this);
         }
     }
 

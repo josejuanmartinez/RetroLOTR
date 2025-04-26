@@ -76,7 +76,10 @@ public class Character : MonoBehaviour
         int emmissary,
         int mage)
     {
-        MessageDisplay.ShowMessage($"Character {characterName} starts serving {owner.GetOwner().characterName}", Color.green);
+        string ownerName = "";
+        if (owner != null && owner.characterName != null) ownerName = owner.characterName;
+        if (ownerName.Trim() == "") ownerName = "themselves";
+        MessageDisplay.ShowMessage($"Character {characterName} starts serving {ownerName}", Color.green);
         this.characterName = characterName;
         this.commander = commander;
         this.agent = agent;
@@ -321,8 +324,6 @@ public class Character : MonoBehaviour
         int remainingHexes = maxRelevantHexes - relevantHexes.Count;
         for (int i = 0; i < remainingHexes; i++)
             relevantHexes.Add(null);
-
-        Debug.Log($"Max relevant hexes for character ${characterName}: " + maxRelevantHexes);
 
         Assert.IsTrue(relevantHexes.Count == maxRelevantHexes, "Relevant hexes list size mismatch!");
         this.relevantHexes = relevantHexes;
