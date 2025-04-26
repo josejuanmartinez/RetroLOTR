@@ -3,15 +3,20 @@ using TMPro;
 using System.Collections.Generic;
 using UnityEngine.Video;
 using System.Linq;
+using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class LeaderSelector : MonoBehaviour
 {
-    public VideoPlayer introVideoPlayer;
+    public Image background;
     public VideoPlayer leaderVideo;
     public TypewriterEffect typewriterEffect;
     public TextMeshProUGUI textUI;
-    
-    
+    public GameObject progress;
+    public GameObject progressText;
+
+
+
     Videos videos;
     List<TMP_Dropdown.OptionData> options;
     TMP_Dropdown dropdown;
@@ -44,7 +49,9 @@ public class LeaderSelector : MonoBehaviour
                     dropdown.value = 0;
                     dropdown.RefreshShownValue();
                     SelectLeader(0);
-                    introVideoPlayer.GetComponent<Canvas>().sortingOrder = 0;
+                    background.enabled = false;
+                    progress.SetActive(false);
+                    progressText.SetActive(false);
                 }
             }
         }
