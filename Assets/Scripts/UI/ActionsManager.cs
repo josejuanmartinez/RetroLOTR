@@ -5,16 +5,18 @@ using UnityEngine;
 
 public class ActionsManager : MonoBehaviour
 {
+    public CharacterAction DEFAULT;
+    public CharacterAction[] characterActions;
     // Dictionary to store all the action components
-    private Dictionary<Type, CharacterAction> actionComponents = new Dictionary<Type, CharacterAction>();
+    private Dictionary<Type, CharacterAction> actionComponents = new ();
 
     public void Start()
     {
         // Get all components that might be actions (all MonoBehaviours in children)
-        CharacterAction[] allChildComponents = GetComponentsInChildren<CharacterAction>();
+        characterActions = GetComponentsInChildren<CharacterAction>();
 
         // Store each component by its type for easy access
-        foreach (CharacterAction component in allChildComponents)
+        foreach (CharacterAction component in characterActions)
         {
             Type componentType = component.GetType();
             actionComponents[componentType] = component;
@@ -39,5 +41,10 @@ public class ActionsManager : MonoBehaviour
     public void Hide()
     {
         actionComponents.Values.ToList().ForEach(component => component.Reset());
+    }
+
+    public int GetDefault()
+    {
+        return DEFAULT.actionId;
     }
 }
