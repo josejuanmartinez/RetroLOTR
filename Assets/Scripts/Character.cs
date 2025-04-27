@@ -48,8 +48,11 @@ public class Character : MonoBehaviour
     [Header("AI")]
     public bool isPlayerControlled = true;
     private bool trainingMode = false;
+    public bool autoplay = false;
 
     private BiomeConfig characterBiome;
+
+    private bool awaken = false;
 
     void Awake()
     {
@@ -58,9 +61,12 @@ public class Character : MonoBehaviour
         reachableHexes = new();
         killed = false;
         trainingMode = FindAnyObjectByType<Game>().trainingMode;
+        autoplay = FindAnyObjectByType<Game>().autoplay;
+        awaken = true;
     }
     public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome)
     {
+        if (!awaken) Awake();
         this.characterBiome = characterBiome;
         bool isLeader = characterBiome is LeaderBiomeConfig;
         Initialize(leader, characterBiome.alignment, hex, characterBiome.characterName, characterBiome.commander, characterBiome.agent, characterBiome.emmissary, characterBiome.mage);
@@ -76,6 +82,8 @@ public class Character : MonoBehaviour
         int emmissary,
         int mage)
     {
+        if (!awaken) Awake();
+
         string ownerName = "";
         if (owner != null && owner.characterName != null) ownerName = owner.characterName;
         if (ownerName.Trim() == "") ownerName = "themselves";
@@ -130,7 +138,7 @@ public class Character : MonoBehaviour
         StoreReachableHexes();
         StoreRelevantHexes();
 
-        GetAI().NewTurn(isPlayerControlled, trainingMode);
+        GetAI().NewTurn(isPlayerControlled, autoplay, trainingMode);
         if (!isPlayerControlled)
         {
             moved = GetMaxMovement();

@@ -1,11 +1,11 @@
-using System.Collections.Generic;
-using UnityEngine;
-using Unity.MLAgents;
-using Unity.MLAgents.Sensors;
-using Unity.MLAgents.Actuators;
-using System.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
+using Unity.MLAgents.Sensors;
+using UnityEngine;
 
 public class StrategyGameAgent : Agent
 {
@@ -18,12 +18,15 @@ public class StrategyGameAgent : Agent
 
     [Header("Training Settings")]
     [SerializeField] private bool isPlayerControlled = false;
+    [SerializeField] private bool autoplay = false;
     [SerializeField] private bool isTrainingMode = true;
 
     BehaviorParameters behaviorParams;
 
     private bool initialized = false;
     private bool hasGameStarted = false;
+
+    CharacterAction DEFAULT;
 
     int alignmentTypeCount;
 
@@ -33,6 +36,7 @@ public class StrategyGameAgent : Agent
         controlledCharacter = transform.parent.GetComponent<Character>();
         allPossibleActions = FindFirstObjectByType<ActionsManager>().characterActions.ToList();
         behaviorParams = GetComponent<BehaviorParameters>();
+        DEFAULT = FindFirstObjectByType<ActionsManager>().DEFAULT;
 
         // Pre-calculate alignment type count
         alignmentTypeCount = Enum.GetValues(typeof(AlignmentEnum)).Length - 1;
@@ -76,10 +80,11 @@ public class StrategyGameAgent : Agent
         }
 
     }
-    public void NewTurn(bool isPlayerControlled, bool isTrainingMode)
+    public void NewTurn(bool isPlayerControlled, bool autoplay, bool isTrainingMode)
     {
         if (!initialized) Awaken();
         this.isPlayerControlled = isPlayerControlled;
+        this.autoplay = autoplay;
         this.isTrainingMode = isTrainingMode;
 
         if (!hasGameStarted)
@@ -92,7 +97,7 @@ public class StrategyGameAgent : Agent
         allPossibleActions.ForEach(x => x.Initialize(controlledCharacter));
         availableActionsIds = GetAvailableActionIds(controlledCharacter);
 
-        if (isPlayerControlled)
+        if (isPlayerControlled && !autoplay)
         {
             // In player mode, we'll wait for SetPlayerAction to be called
             // Optionally, we can visualize what the agent would do
@@ -384,65 +389,44 @@ public class StrategyGameAgent : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         // Get the action chosen by the agent
-        int selectedActionIndex = actionBuffers.DiscreteActions[0];
+        //int selectedActionIndex = actionBuffers.DiscreteActions[0];
+        int selectedActionId = actionBuffers.DiscreteActions[0];
+        chosenAction = allPossibleActions.Find(x => x.actionId == selectedActionId);
 
         // Log the received action index for debugging
-        Debug.Log($"- [{controlledCharacter.characterName}] Received action index: {selectedActionIndex}");
+        //Debug.Log($"- [{controlledCharacter.characterName}] Received action index: {selectedActionIndex}");
 
-        // First, verify the action corresponds to an available action
-        // We need to convert from action index to action ID and check availability
-        CharacterAction selectedAction = null;
-
-        if (selectedActionIndex >= 0 && selectedActionIndex < allPossibleActions.Count)
+        //if (selectedActionIndex >= 0 && selectedActionIndex < allPossibleActions.Count)
+        if (chosenAction != null)
         {
-            int candidateActionId = allPossibleActions[selectedActionIndex].actionId;
-
             // Check if this action ID is in our available actions list
-            if (availableActionsIds.Contains(candidateActionId))
+            if (!availableActionsIds.Contains(selectedActionId))
             {
-                selectedAction = allPossibleActions[selectedActionIndex];
-            }
-            else
-            {
-                Debug.LogWarning($"- [{controlledCharacter.characterName}] Action masking failure: Selected index {selectedActionIndex} " +
-                    $"(action ID {candidateActionId}: {allPossibleActions[selectedActionIndex].actionName}) is not in available actions!");
+                Debug.LogWarning($"- [{controlledCharacter.characterName}] Action masking failure: Selected action {selectedActionId} " +
+                    $": {chosenAction.actionName}) is not in available action! Falling back to PASS");
 
                 // Debug output to see what actions are available
                 Debug.LogWarning($"- [{controlledCharacter.characterName}] Available action IDs: {string.Join(", ", availableActionsIds)}");
+
+                chosenAction = DEFAULT;
             }
         }
         else
         {
-            Debug.LogError($"- [{controlledCharacter.characterName}] Invalid action index {selectedActionIndex}. Total actions: {allPossibleActions.Count}");
+            Debug.LogError($"- [{controlledCharacter.characterName}] Invalid action id {selectedActionId}: not found in all possible actions! Falling back to PASS");
+            chosenAction = DEFAULT;
         }
 
-        // If we didn't get a valid action, select a random available one
-        if (selectedAction == null && availableActionsIds.Count > 0)
-        {
-            int randomAvailableActionId = availableActionsIds[UnityEngine.Random.Range(0, availableActionsIds.Count)];
-            selectedAction = allPossibleActions.Find(a => a.actionId == randomAvailableActionId);
-            Debug.LogWarning($"- [{controlledCharacter.characterName}] Falling back to random available action: {selectedAction.actionName} (ID: {randomAvailableActionId})");
-        }
+        Debug.Log($"- [{controlledCharacter.characterName}] Final chosen action: {chosenAction.actionName} (ID: {chosenAction.actionId})");
 
-        // Set the chosen action and execute if appropriate
-        if (selectedAction != null)
+        // In AI mode, execute immediately
+        if (!isPlayerControlled || autoplay)
         {
-            chosenAction = selectedAction;
-            Debug.Log($"- [{controlledCharacter.characterName}] Final chosen action: {chosenAction.name} {chosenAction.actionName} (ID: {chosenAction.actionId})");
-
-            // In AI mode, execute immediately
-            if (!isPlayerControlled)
-            {
-                ExecuteChosenAction();
-            }
-            else
-            {
-                Debug.Log($"- [{controlledCharacter.characterName}] Not executed as it was just a suggestion");
-            }
+            ExecuteChosenAction();
         }
         else
         {
-            Debug.LogError($"- [{controlledCharacter.characterName}] No valid action could be selected! Available actions count: {availableActionsIds.Count}");
+            Debug.Log($"- [{controlledCharacter.characterName}] Not executed as it was just a suggestion");
         }
     }
 
