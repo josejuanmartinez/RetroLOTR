@@ -169,6 +169,43 @@ public class CharacterAction : MonoBehaviour
         }
     }
 
+    public bool ExecuteAI()
+    {
+        character.hasActionedThisTurn = true;
+
+        if (UnityEngine.Random.Range(0, 100) < difficulty || !effect(character))
+        {
+            return false;
+        }
+
+        character.AddCommander(UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0);
+        character.AddAgent(UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0);
+        character.AddEmmissary(UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0);
+        character.AddMage(UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0);
+
+        character.GetOwner().RemoveLeather(leatherCost);
+        character.GetOwner().RemoveTimber(timberCost);
+        character.GetOwner().RemoveMounts(mountsCost);
+        character.GetOwner().RemoveIron(ironCost);
+        character.GetOwner().RemoveMithril(mithrilCost);
+        character.GetOwner().RemoveGold(goldCost);
+
+        if (character.GetOwner() is not PlayableLeader) return true;
+        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != character.GetOwner()).ToList().ForEach(x =>
+        {
+            x.CheckActionConditionAnywhere(character.GetOwner(), this);
+        });
+
+        if (character.hex.GetPC() != null && character.hex.GetPC().owner is NonPlayableLeader && character.hex.GetPC().owner != character.GetOwner())
+        {
+            NonPlayableLeader nonPlayableLeader = character.hex.GetPC().owner as NonPlayableLeader;
+            if (nonPlayableLeader == null) return true;
+            nonPlayableLeader.CheckActionConditionAtCapital(character.GetOwner(), this);
+        }
+
+        return true;
+    }
+
     protected Character FindEnemyCharacterTargetAtHex(Character assassin)
     {
         Character target = FindEnemyNonNeutralCharactersAtHexNoLeader(assassin);

@@ -45,15 +45,15 @@ public class GameState : MonoBehaviour
 
         // Add existing artifacts (up to max)
         var artifacts = game.artifacts ?? new List<Artifact>();
-        int count = Mathf.Min(artifacts.Count, game.maxArtifacts);
+        int count = Mathf.Min(artifacts.Count, Game.MAX_ARTIFACTS);
         for (int i = 0; i < count; i++)
             sizedArtifactsList.Add(artifacts[i]);
 
         // Fill with nulls if needed
-        for (int i = count; i < game.maxArtifacts; i++)
+        for (int i = count; i < Game.MAX_ARTIFACTS; i++)
             sizedArtifactsList.Add(null);
 
-        Assert.IsTrue(sizedArtifactsList.Count == game.maxArtifacts, "Artifact list size mismatch!");
+        Assert.IsTrue(sizedArtifactsList.Count == Game.MAX_ARTIFACTS, "Artifact list size mismatch!");
         return sizedArtifactsList;
     }
 
@@ -63,15 +63,15 @@ public class GameState : MonoBehaviour
         sizedLeadersList.Clear();
 
         // Add existing leaders (up to max)
-        int count = Mathf.Min(allLeaders.Count, game.maxLeaders);
+        int count = Mathf.Min(allLeaders.Count, Game.MAX_LEADERS);
         for (int i = 0; i < count; i++)
             sizedLeadersList.Add(allLeaders[i]);
 
         // Fill with nulls if needed
-        for (int i = count; i < game.maxLeaders; i++)
+        for (int i = count; i < Game.MAX_LEADERS; i++)
             sizedLeadersList.Add(null);
 
-        Assert.IsTrue(sizedLeadersList.Count == game.maxLeaders, "Leader list size mismatch!");
+        Assert.IsTrue(sizedLeadersList.Count == Game.MAX_LEADERS, "Leader list size mismatch!");
         return sizedLeadersList;
     }
     List<Character> CreateCharacters()
@@ -95,15 +95,15 @@ public class GameState : MonoBehaviour
 
     /************* RUNTIME ***************/
 
-    public int GetMaxLeaders() => game.maxLeaders;
+    public int GetMaxLeaders() => Game.MAX_LEADERS;
     
     public int GetIndexOfLeader(Leader leader) => allLeaders.IndexOf(leader);
-    public int GetMaxX() => game.maxBoardWidth;
-    public int GetMaxY() => game.maxBoardHeight;
-    public int GetMaxCharacters() => game.maxCharacters;
-    public int GetMaxArtifacts() => game.maxArtifacts;
+    public int GetMaxX() => Game.MAX_BOARD_WIDTH;
+    public int GetMaxY() => Game.MAX_BOARD_HEIGHT;
+    public int GetMaxCharacters() => Game.MAX_CHARACTERS;
+    public int GetMaxArtifacts() => Game.MAX_ARTIFACTS;
     public int GetTurn() => game.turn;
-    public int GetMaxTurns() => game.maxTurns;
+    public int GetMaxTurns() => Game.MAX_TURNS;
 
     public int GetMaxMovement() => game.cavalryMovement;
 

@@ -115,7 +115,7 @@ public class NationSpawner : MonoBehaviour
     
     private void InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable)
     {
-        if (FindObjectsByType<Leader>(FindObjectsSortMode.None).Length >= FindFirstObjectByType<Game>().maxLeaders)
+        if (FindObjectsByType<Leader>(FindObjectsSortMode.None).Length >= Game.MAX_LEADERS)
         {
             Debug.LogWarning("Max leaders reached. Skipping leader instantiation.");
             return;
@@ -139,7 +139,7 @@ public class NationSpawner : MonoBehaviour
 
         foreach (var character in leader.GetBiome().startingCharacters)
         {
-            if (FindObjectsByType<Character>(FindObjectsSortMode.None).Length >= FindFirstObjectByType<Game>().maxCharacters)
+            if (FindObjectsByType<Character>(FindObjectsSortMode.None).Length >= Game.MAX_CHARACTERS)
             {
                 Debug.LogWarning("Max characters reached. Skipping leader instantiation.");
                 return;
@@ -147,7 +147,7 @@ public class NationSpawner : MonoBehaviour
             characterInstantiator.InstantiateCharacter(leader, hex, character);
         }
 
-        if(board.GetHexes().Count(x => x.GetPC() != null) >= FindFirstObjectByType<Game>().maxPCs)
+        if(board.GetHexes().Count(x => x.GetPC() != null) >= Game.MAX_PCS)
         {
             Debug.LogWarning("Max PCs reached. Skipping PC instantiation.");
             return;

@@ -18,11 +18,13 @@ public class Leader : Character
     public int mithrilAmount = 0;
     public int goldAmount = 0;
 
+    private Game game;
     private LeaderBiomeConfig leaderBiome;
 
     public void Initialize(Hex hex, LeaderBiomeConfig leaderBiome)
     {
-		this.leaderBiome = leaderBiome;
+        game = FindFirstObjectByType<Game>();
+        this.leaderBiome = leaderBiome;
 		InitializeFromBiome(this, hex, leaderBiome);
         if(leaderBiome is not NonPlayableLeaderBiomeConfig) FindFirstObjectByType<PlayableLeaderIcons>().Instantiate(this);
     }
@@ -94,13 +96,19 @@ public class Leader : Character
                 x.CheckStoresConditions(this);
             });
         }
-
-        // This includes themselves
-        controlledCharacters.ForEach(x => x.NewTurn());
         
+        controlledCharacters.FindAll(x => !x.killed).ForEach(x => x.NewTurn());
+        StartCoroutine(WaitUntilEndOfTurn());
+    }
+
+    private IEnumerator WaitUntilEndOfTurn()
+    {
+        yield return new WaitForEndOfFrame();
+
         // AI: Act if not player
-        if (FindFirstObjectByType<Game>().player != this)
+        if (game.player != this || game.autoplay)
         {
+            yield return new WaitUntil(() => controlledCharacters.All(c => c.killed || c.hasActionedThisTurn || c.hasMovedThisTurn));
             FindFirstObjectByType<Game>().NextPlayer();
         }
         else
@@ -238,6 +246,11 @@ public class Leader : Character
     public int GetStorePoints()
     {
         return leatherAmount + timberAmount * 2 + mithrilAmount * 5 + ironAmount * 3 + mountsAmount * 2;
+    }
+
+    public int GetResourceProductionPoints()
+    {
+        return GetLeatherPerTurn() + GetTimberPerTurn() * 2 + GetMithrilPerTurn() * 5 + GetIronPerTurn() * 3 + GetMountsPerTurn() * 2;
     }
 
     public int GetAllPoints()

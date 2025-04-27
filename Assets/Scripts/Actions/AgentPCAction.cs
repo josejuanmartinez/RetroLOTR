@@ -18,7 +18,7 @@ public class AgentPCAction : AgentAction
                 message += " wounded";
                 c.Wounded(c.hex.GetPC().owner, random * 10);
             }
-            FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, capitalHex, true);
+            FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
             MessageDisplay.ShowMessage(message, Color.green);
             return originalEffect == null || originalEffect(c);
         };

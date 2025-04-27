@@ -13,19 +13,19 @@ public class LookForArmyDestination : CommanderArmyAction
             Army army = FindTargetEnemyArmyInRange(destinations, c);
             if(army !=null && army.commander != null && army.GetSize() > 0)
             {
-                FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, army.commander.hex, true); 
+                FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, army.commander.hex, true); 
             }
             else
             {
                 PC pc = FindEnemyTargetPCInRange(destinations, c);
                 if (pc != null)
                 {
-                    FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, pc.hex, true);
+                    FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, pc.hex, true);
                 }
                 else
                 {
                     // Move to a random hex in range
-                    FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, destinations[UnityEngine.Random.Range(0, destinations.Count)], true);
+                    FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, destinations[UnityEngine.Random.Range(0, destinations.Count)], true);
                 }
             }
 

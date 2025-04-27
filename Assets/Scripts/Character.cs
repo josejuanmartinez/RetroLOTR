@@ -5,6 +5,8 @@ using UnityEngine.Assertions;
 
 public class Character : MonoBehaviour
 {
+    public static int MAX_RELEVANT_HEXES = Game.MAX_CHARACTERS + Game.MAX_ARTIFACTS + Game.MAX_PCS;
+
     [Header("Metadata")]
     public bool startingCharacter;
 
@@ -139,12 +141,6 @@ public class Character : MonoBehaviour
         StoreRelevantHexes();
 
         GetAI().NewTurn(isPlayerControlled, autoplay, trainingMode);
-        if (!isPlayerControlled)
-        {
-            moved = GetMaxMovement();
-            hasMovedThisTurn = true;
-            hasActionedThisTurn = true;
-        }
     }
 
     public virtual Leader GetOwner()
@@ -304,9 +300,8 @@ public class Character : MonoBehaviour
     {
         Game game = FindFirstObjectByType<Game>();
         Board board = FindFirstObjectByType<Board>();
-        int maxRelevantHexes = game.maxCharacters + game.maxArtifacts + game.maxPCs;
         // Pre-allocate exactly 190 elements for maximum efficiency
-        List<Hex> relevantHexes = new(maxRelevantHexes);
+        List<Hex> relevantHexes = new(MAX_RELEVANT_HEXES);
 
         // Use direct access to source collections with index-based insertion
         // var inRangeHexes = hexPathRenderer.FindAllHexesInRange(c);
@@ -319,21 +314,21 @@ public class Character : MonoBehaviour
         //for (int i = 0; i < inRangeHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
         //    relevantHexes.Add(inRangeHexes[i]);
 
-        for (int i = 0; i < artifactHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
+        for (int i = 0; i < artifactHexes.Count && relevantHexes.Count < MAX_RELEVANT_HEXES; i++)
             relevantHexes.Add(artifactHexes[i]);
 
-        for (int i = 0; i < characterHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
+        for (int i = 0; i < characterHexes.Count && relevantHexes.Count < MAX_RELEVANT_HEXES; i++)
             relevantHexes.Add(characterHexes[i]);
 
-        for (int i = 0; i < pcHexes.Count && relevantHexes.Count < maxRelevantHexes; i++)
+        for (int i = 0; i < pcHexes.Count && relevantHexes.Count < MAX_RELEVANT_HEXES; i++)
             relevantHexes.Add(pcHexes[i]);
 
         // Fill remaining slots with null (if any)
-        int remainingHexes = maxRelevantHexes - relevantHexes.Count;
+        int remainingHexes = MAX_RELEVANT_HEXES - relevantHexes.Count;
         for (int i = 0; i < remainingHexes; i++)
             relevantHexes.Add(null);
 
-        Assert.IsTrue(relevantHexes.Count == maxRelevantHexes, "Relevant hexes list size mismatch!");
+        Assert.IsTrue(relevantHexes.Count == MAX_RELEVANT_HEXES, "Relevant hexes list size mismatch!");
         this.relevantHexes = relevantHexes;
     }
 
@@ -342,4 +337,8 @@ public class Character : MonoBehaviour
         return gameObject.GetComponentInChildren<StrategyGameAgent>();
     }
 
+    public void MoveTo(Hex newHex)
+    {
+
+    }
 }

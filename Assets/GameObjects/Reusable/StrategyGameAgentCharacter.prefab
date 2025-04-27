@@ -46,12 +46,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 2106
+    VectorObservationSize: 155
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 30000000
-    VectorActionSize: 30000000
+      BranchSizes: 06000000030000000300000030000000
+    VectorActionSize: 06000000030000000300000030000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -82,8 +82,14 @@ MonoBehaviour:
   MaxStep: 100
   gameState: {fileID: 0}
   allPossibleActions: []
+  availableActionsIds: 
   controlledCharacter: {fileID: 0}
   chosenAction: {fileID: 0}
   isPlayerControlled: 0
+  autoplay: 0
   isTrainingMode: 1
-  availableActionsIds: 
+  enemyWeight: 1.5
+  resourceWeight: 1
+  territoryWeight: 0.8
+  artifactWeight: 2
+  allyWeight: 0.5
