@@ -85,9 +85,14 @@ public class CharacterAction : MonoBehaviour
     {
         var originalCondition = condition;
         this.character = character;
-        this.condition = (character) => { return IsAvailable() && (originalCondition == null || originalCondition(character)); };
+        this.condition = (character) => { return ResourcesAvailable() && (originalCondition == null || originalCondition(character)); };
         this.effect = effect;
         button.gameObject.SetActive(this.condition(character));
+    }
+
+    public bool FulfillsConditions()
+    {
+        return condition(character);
     }
 
     public void Reset()
@@ -98,7 +103,7 @@ public class CharacterAction : MonoBehaviour
         button.gameObject.SetActive(false);
     }
 
-    public bool IsAvailable()
+    public bool ResourcesAvailable()
     {
         if (character.hasActionedThisTurn) return false;
         if (commanderSkillRequired > 0 && character.GetCommander() < commanderSkillRequired) return false;
