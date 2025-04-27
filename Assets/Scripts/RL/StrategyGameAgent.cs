@@ -106,25 +106,6 @@ public class StrategyGameAgent : Agent
             // In AI mode, request and immediately execute decision
             Debug.Log($"- [{controlledCharacter.characterName}] AI controlled character making decision...");
             RequestDecision();
-
-            // Check if we got a valid action, if not use fallback
-            if (chosenAction == null)
-            {
-                if (availableActionsIds.Count > 0)
-                {
-                    int fallbackActionId = availableActionsIds[UnityEngine.Random.Range(0, availableActionsIds.Count)]; // Just take the first available
-                    chosenAction = allPossibleActions.Find(a => a.actionId == fallbackActionId);
-                    Debug.LogWarning($"- [{controlledCharacter.characterName}] AI controlled character made no decision! Taking fallback action: {chosenAction?.name} (ID: {fallbackActionId}) WITHOUT SUPPORTING DATA");
-                }
-                else
-                {
-                    Debug.LogError($"- [{controlledCharacter.characterName}] No available actions for AI controlled character!");
-                }
-            }
-
-            ExecuteMovementBefore();
-            ExecuteChosenAction();
-            ExecuteMovementAfter();
         }
     }
 
@@ -195,8 +176,10 @@ public class StrategyGameAgent : Agent
         int pcsStrengthBefore = leader.GetPCPoints();
         int armiesStrengthBefore = leader.GetArmyPoints();
 
-        // Execute the actual action
+
+        ExecuteMovementBefore();
         chosenAction.Execute();
+        ExecuteMovementAfter();
 
         if (isTrainingMode)
         {
@@ -402,46 +385,81 @@ public class StrategyGameAgent : Agent
     {
         // Get the action chosen by the agent
         int selectedActionIndex = actionBuffers.DiscreteActions[0];
-        int selectedActionId = -1;
 
-        if (selectedActionIndex > availableActionsIds.Count - 1)
+        // Log the received action index for debugging
+        Debug.Log($"- [{controlledCharacter.characterName}] Received action index: {selectedActionIndex}");
+
+        // First, verify the action corresponds to an available action
+        // We need to convert from action index to action ID and check availability
+        CharacterAction selectedAction = null;
+
+        if (selectedActionIndex >= 0 && selectedActionIndex < allPossibleActions.Count)
         {
-            Debug.LogWarning($"- [{controlledCharacter.characterName}] Invalid action index selected ({selectedActionIndex})! Chosing a random one");
-            selectedActionId = availableActionsIds[UnityEngine.Random.Range(0, availableActionsIds.Count)]; // Just take a random
+            int candidateActionId = allPossibleActions[selectedActionIndex].actionId;
+
+            // Check if this action ID is in our available actions list
+            if (availableActionsIds.Contains(candidateActionId))
+            {
+                selectedAction = allPossibleActions[selectedActionIndex];
+            }
+            else
+            {
+                Debug.LogWarning($"- [{controlledCharacter.characterName}] Action masking failure: Selected index {selectedActionIndex} " +
+                    $"(action ID {candidateActionId}: {allPossibleActions[selectedActionIndex].actionName}) is not in available actions!");
+
+                // Debug output to see what actions are available
+                Debug.LogWarning($"- [{controlledCharacter.characterName}] Available action IDs: {string.Join(", ", availableActionsIds)}");
+            }
         }
         else
         {
-            selectedActionId = availableActionsIds[selectedActionIndex];
+            Debug.LogError($"- [{controlledCharacter.characterName}] Invalid action index {selectedActionIndex}. Total actions: {allPossibleActions.Count}");
         }
 
-        chosenAction = allPossibleActions.Find(a => a.actionId == selectedActionId);
-        
-        Debug.Log($"- [{controlledCharacter.characterName}] Action Received: {chosenAction?.name} {chosenAction?.actionName} (ID: {selectedActionId})");
-     
-        // In AI mode, execute immediately
-        if (!isPlayerControlled)
+        // If we didn't get a valid action, select a random available one
+        if (selectedAction == null && availableActionsIds.Count > 0)
         {
-            ExecuteChosenAction();
+            int randomAvailableActionId = availableActionsIds[UnityEngine.Random.Range(0, availableActionsIds.Count)];
+            selectedAction = allPossibleActions.Find(a => a.actionId == randomAvailableActionId);
+            Debug.LogWarning($"- [{controlledCharacter.characterName}] Falling back to random available action: {selectedAction.actionName} (ID: {randomAvailableActionId})");
+        }
+
+        // Set the chosen action and execute if appropriate
+        if (selectedAction != null)
+        {
+            chosenAction = selectedAction;
+            Debug.Log($"- [{controlledCharacter.characterName}] Final chosen action: {chosenAction.name} {chosenAction.actionName} (ID: {chosenAction.actionId})");
+
+            // In AI mode, execute immediately
+            if (!isPlayerControlled)
+            {
+                ExecuteChosenAction();
+            }
+            else
+            {
+                Debug.Log($"- [{controlledCharacter.characterName}] Not executed as it was just a suggestion");
+            }
         }
         else
         {
-            Debug.Log($"- [{controlledCharacter.characterName}] Not executed as it was just a suggestion");
+            Debug.LogError($"- [{controlledCharacter.characterName}] No valid action could be selected! Available actions count: {availableActionsIds.Count}");
         }
     }
 
+    // Ensure the action mask is correctly set up
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
-        if(!initialized) Awaken();
+        if (!initialized) Awaken();
 
         if (controlledCharacter == null)
         {
-            Debug.LogError("Controlled character actions is null!");
+            Debug.LogError("Controlled character is null!");
             return;
         }
 
         if (availableActionsIds == null || availableActionsIds.Count < 1)
         {
-            Debug.LogError($"- [{controlledCharacter.characterName}] available actions are null!");
+            Debug.LogError($"- [{controlledCharacter.characterName}] Available actions are null or empty!");
             return;
         }
 
@@ -455,20 +473,30 @@ public class StrategyGameAgent : Agent
 
         // Validate action space size
         int expectedActionCount = behaviorParams.BrainParameters.ActionSpec.BranchSizes[0];
-        Debug.Log($" - [{ controlledCharacter.characterName}] Expected action count: { expectedActionCount}, Available actions: { availableActionsIds.Count}");
+        Debug.Log($" - [{controlledCharacter.characterName}] Expected action count: {expectedActionCount}, Available actions: {availableActionsIds.Count}");
 
-        // Mask all actions first
+        // Important: First, disable ALL actions to ensure a clean slate
         for (int i = 0; i < expectedActionCount; i++)
         {
             actionMask.SetActionEnabled(0, i, false);
         }
 
-        // Enable only available actions
+        // Then enable ONLY available actions
         foreach (int actionId in availableActionsIds)
         {
-            int i = allPossibleActions.FindIndex(a => a.actionId == actionId);
-            actionMask.SetActionEnabled(0, i, true);
-            Debug.Log($"- [{controlledCharacter.characterName}] Enabled action ID: {actionId} ({allPossibleActions.Find(a => a.actionId == actionId)?.actionName})");
+            // Find the index in allPossibleActions that corresponds to this action ID
+            int actionIndex = allPossibleActions.FindIndex(a => a.actionId == actionId);
+
+            // Verify the index is valid before enabling
+            if (actionIndex >= 0 && actionIndex < expectedActionCount)
+            {
+                actionMask.SetActionEnabled(0, actionIndex, true);
+                Debug.Log($"- [{controlledCharacter.characterName}] Enabled action index: {actionIndex} for ID: {actionId} ({allPossibleActions[actionIndex].actionName})");
+            }
+            else
+            {
+                Debug.LogError($"- [{controlledCharacter.characterName}] Invalid action index {actionIndex} for ID: {actionId}. Cannot enable in mask!");
+            }
         }
     }
 
