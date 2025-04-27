@@ -7,6 +7,7 @@ public class Game : MonoBehaviour
 {
     [Header("Training mode")]
     public bool trainingMode = true;
+    public bool autoplay = true;
 
     [Header("Playable Leader (Player)")]
     public PlayableLeader player;
