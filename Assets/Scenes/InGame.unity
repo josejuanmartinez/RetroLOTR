@@ -843,7 +843,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Assassinate Character
-  actionId: 19
+  actionId: 119
   character: {fileID: 0}
   actionInitials: AC
   actionSprite: {fileID: 0}
@@ -1102,7 +1102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Buy 5 Leather
-  actionId: 10
+  actionId: 110
   character: {fileID: 0}
   actionInitials: +5 LE
   actionSprite: {fileID: 0}
@@ -2471,7 +2471,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Steal Iron
-  actionId: 47
+  actionId: 147
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -3434,7 +3434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Pass
-  actionId: 52
+  actionId: 152
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -3560,7 +3560,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Train Archers
-  actionId: 0
+  actionId: 100
   character: {fileID: 0}
   actionInitials: AR
   actionSprite: {fileID: 0}
@@ -3949,7 +3949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Undouble Character
-  actionId: 22
+  actionId: 122
   character: {fileID: 0}
   actionInitials: UC
   actionSprite: {fileID: 0}
@@ -4075,7 +4075,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Increase Fortifications
-  actionId: 26
+  actionId: 126
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -4201,7 +4201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Buy 5 Mounts
-  actionId: 12
+  actionId: 112
   character: {fileID: 0}
   actionInitials: +5 MO
   actionSprite: {fileID: 0}
@@ -4327,7 +4327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Buy 5 Timber
-  actionId: 16
+  actionId: 116
   character: {fileID: 0}
   actionInitials: +5 TI
   actionSprite: {fileID: 0}
@@ -5132,7 +5132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Wizards Laugh
-  actionId: 37
+  actionId: 137
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -5258,7 +5258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Teleport
-  actionId: 35
+  actionId: 135
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -5646,7 +5646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Increase Loyalty
-  actionId: 23
+  actionId: 123
   character: {fileID: 0}
   actionInitials: IL
   actionSprite: {fileID: 0}
@@ -5910,7 +5910,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Buy 5 Mithril
-  actionId: 18
+  actionId: 118
   character: {fileID: 0}
   actionInitials: +5 MI
   actionSprite: {fileID: 0}
@@ -6036,7 +6036,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Find Artifact
-  actionId: 44
+  actionId: 144
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -6319,7 +6319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Wound Character
-  actionId: 20
+  actionId: 120
   character: {fileID: 0}
   actionInitials: WC
   actionSprite: {fileID: 0}
@@ -7072,7 +7072,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Sell 5 Mithril
-  actionId: 17
+  actionId: 117
   character: {fileID: 0}
   actionInitials: -5 MI
   actionSprite: {fileID: 0}
@@ -7788,7 +7788,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Summon Men-at-arms
-  actionId: 36
+  actionId: 136
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -8695,7 +8695,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Sell 5 Timber
-  actionId: 15
+  actionId: 115
   character: {fileID: 0}
   actionInitials: -5 TI
   actionSprite: {fileID: 0}
@@ -8826,7 +8826,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Steal Leather
-  actionId: 48
+  actionId: 148
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -9195,7 +9195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Scry Area
-  actionId: 34
+  actionId: 134
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -10068,7 +10068,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Conjure Mounts
-  actionId: 29
+  actionId: 129
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -10194,7 +10194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Fireworks
-  actionId: 39
+  actionId: 139
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -10320,7 +10320,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Steal Mithril
-  actionId: 49
+  actionId: 149
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -10446,7 +10446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Train Heavy Infantry
-  actionId: 3
+  actionId: 103
   character: {fileID: 0}
   actionInitials: HI
   actionSprite: {fileID: 0}
@@ -10572,7 +10572,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Train Light Cavalry
-  actionId: 4
+  actionId: 104
   character: {fileID: 0}
   actionInitials: LC
   actionSprite: {fileID: 0}
@@ -10834,7 +10834,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Scry Artifact
-  actionId: 45
+  actionId: 145
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -11096,7 +11096,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Sell 5 Mounts
-  actionId: 11
+  actionId: 111
   character: {fileID: 0}
   actionInitials: -5 MO
   actionSprite: {fileID: 0}
@@ -11183,7 +11183,7 @@ GameObject:
   - component: {fileID: 1029285060}
   - component: {fileID: 1029285059}
   m_Layer: 5
-  m_Name: SM
+  m_Name: SMO
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11222,7 +11222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Steal Mounts
-  actionId: 50
+  actionId: 150
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -11628,7 +11628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Decrease Loyalty
-  actionId: 24
+  actionId: 124
   character: {fileID: 0}
   actionInitials: DL
   actionSprite: {fileID: 0}
@@ -12828,7 +12828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Double Character
-  actionId: 21
+  actionId: 121
   character: {fileID: 0}
   actionInitials: DC
   actionSprite: {fileID: 0}
@@ -13090,7 +13090,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Reveal PC
-  actionId: 33
+  actionId: 133
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -13352,7 +13352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Curse
-  actionId: 30
+  actionId: 130
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -14491,7 +14491,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Steal Gold
-  actionId: 46
+  actionId: 146
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -14753,7 +14753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Buy 5 Iron
-  actionId: 14
+  actionId: 114
   character: {fileID: 0}
   actionInitials: +5 IR
   actionSprite: {fileID: 0}
@@ -16000,7 +16000,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Cast Darkness
-  actionId: 27
+  actionId: 127
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -16471,7 +16471,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Heal
-  actionId: 38
+  actionId: 138
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -17801,7 +17801,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Oh, Elbereth!
-  actionId: 31
+  actionId: 131
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -18407,7 +18407,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Steal Timber
-  actionId: 51
+  actionId: 151
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -18533,7 +18533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Train Heavy Cavalry
-  actionId: 5
+  actionId: 105
   character: {fileID: 0}
   actionInitials: HC
   actionSprite: {fileID: 0}
@@ -18659,7 +18659,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Train Catapults
-  actionId: 6
+  actionId: 106
   character: {fileID: 0}
   actionInitials: CA
   actionSprite: {fileID: 0}
@@ -19104,7 +19104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Train Met-at-arms
-  actionId: 1
+  actionId: 101
   character: {fileID: 0}
   actionInitials: MA
   actionSprite: {fileID: 0}
@@ -19230,7 +19230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Cast Light
-  actionId: 28
+  actionId: 128
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -20153,7 +20153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Train Warships
-  actionId: 7
+  actionId: 107
   character: {fileID: 0}
   actionInitials: WS
   actionSprite: {fileID: 0}
@@ -21205,7 +21205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Return To Capital
-  actionId: 32
+  actionId: 132
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -21744,7 +21744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Sell 5 Leather
-  actionId: 9
+  actionId: 109
   character: {fileID: 0}
   actionInitials: -5 LE
   actionSprite: {fileID: 0}
@@ -21875,7 +21875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Train Light Infantry
-  actionId: 2
+  actionId: 102
   character: {fileID: 0}
   actionInitials: LI
   actionSprite: {fileID: 0}
@@ -22298,7 +22298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Attack
-  actionId: 25
+  actionId: 125
   character: {fileID: 0}
   actionInitials: 
   actionSprite: {fileID: 0}
@@ -22525,7 +22525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47dcc057b48df3f488e4c30072d6c766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DEFAULT: {fileID: 0}
+  DEFAULT: {fileID: 337254756}
   characterActions: []
 --- !u!114 &2036955598
 MonoBehaviour:
@@ -23052,7 +23052,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Sell 5 Iron
-  actionId: 13
+  actionId: 113
   character: {fileID: 0}
   actionInitials: -5 IR
   actionSprite: {fileID: 0}
@@ -24487,7 +24487,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: hexesPerBatch
-      value: 25
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6570169573634531441, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: m_Name

@@ -51,15 +51,16 @@ public class StrategyGameAgent : Agent
         // Set the correct action space size
         behaviorParams.BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(allPossibleActions.Count);
 
-        if (!hasGameStarted) return;
-
         base.Initialize();
     }
 
+    /**
+     * This method is called at the end to modify the action taken by the agent with custom heuristics
+     */
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         if (!initialized) Awaken();
-        // This method is called when using Heuristic mode in the agent
+
         var discreteActions = actionsOut.DiscreteActions;
 
         // Skip processing if game hasn't started
@@ -70,9 +71,10 @@ public class StrategyGameAgent : Agent
         }
         else
         {
-            discreteActions[0] = chosenAction.actionId;
+            // Ignoring heuristics for now
+            // discreteActions[0] = chosenAction.actionId;
         }
-            
+
     }
     public void NewTurn(bool isPlayerControlled, bool isTrainingMode)
     {
@@ -147,17 +149,6 @@ public class StrategyGameAgent : Agent
         // Request a decision but don't execute it yet
         RequestDecision();
 
-        // If no action was chosen but we have available actions, select a fallback
-        if (chosenAction == null)
-        {
-            int fallbackActionId = availableActionsIds[UnityEngine.Random.Range(0, availableActionsIds.Count)];
-            chosenAction = allPossibleActions.Find(a => a.actionId == fallbackActionId);
-            Debug.LogWarning($"- [{controlledCharacter.characterName}] AI made no suggestion! Suggesting RANDOM action: {chosenAction?.actionName} (ID: {fallbackActionId}) WITHOUT SUPPORTING DATA");
-        }
-
-        // DEBUG: Add a small delay and check if chosenAction got set
-        Debug.Log($"- [{controlledCharacter.characterName}] After RequestDecision, suggested chosenAction is: {(chosenAction != null ? chosenAction.actionName : "NULL")}");
-
     }
 
     public void FeedbackWithPlayerActions(CharacterAction action)
@@ -184,7 +175,7 @@ public class StrategyGameAgent : Agent
 
     private void ExecuteChosenAction()
     {
-        Debug.Log($"- [{controlledCharacter.characterName}] Action chosen: {chosenAction.name}");
+        Debug.Log($"- [{controlledCharacter.characterName}] Executing action: {chosenAction.actionName}");
 
         // Get leader state before action
         var leader = controlledCharacter.GetOwner();
@@ -410,28 +401,31 @@ public class StrategyGameAgent : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         // Get the action chosen by the agent
-        int selectedActionId = actionBuffers.DiscreteActions[0];
+        int selectedActionIndex = actionBuffers.DiscreteActions[0];
+        int selectedActionId = -1;
 
-        if (availableActionsIds.Contains(selectedActionId))
+        if (selectedActionIndex > availableActionsIds.Count - 1)
         {
-            chosenAction = allPossibleActions.Find(a => a.actionId == selectedActionId);
-            Debug.Log($"- [{controlledCharacter.characterName}] Valid action selected: {chosenAction?.name} {chosenAction?.actionName} (ID: {selectedActionId})");
-
+            Debug.LogWarning($"- [{controlledCharacter.characterName}] Invalid action index selected ({selectedActionIndex})! Chosing a random one");
+            selectedActionId = availableActionsIds[UnityEngine.Random.Range(0, availableActionsIds.Count)]; // Just take a random
         }
         else
         {
-            Debug.LogWarning($"- [{controlledCharacter.characterName}] Invalid action selected (ID: {selectedActionId})! Chosing a random one");
-
-            int fallbackActionId = availableActionsIds[UnityEngine.Random.Range(0, availableActionsIds.Count)]; // Just take a random
-            chosenAction = allPossibleActions.Find(a => a.actionId == fallbackActionId);
-            Debug.LogWarning($"- [{controlledCharacter.characterName}] Taking fallback action: {chosenAction?.name} {chosenAction?.actionName} (ID: {fallbackActionId}) WITHOUT SUPPORTING DATA");
-
+            selectedActionId = availableActionsIds[selectedActionIndex];
         }
 
+        chosenAction = allPossibleActions.Find(a => a.actionId == selectedActionId);
+        
+        Debug.Log($"- [{controlledCharacter.characterName}] Action Received: {chosenAction?.name} {chosenAction?.actionName} (ID: {selectedActionId})");
+     
         // In AI mode, execute immediately
         if (!isPlayerControlled)
         {
             ExecuteChosenAction();
+        }
+        else
+        {
+            Debug.Log($"- [{controlledCharacter.characterName}] Not executed as it was just a suggestion");
         }
     }
 
@@ -493,7 +487,7 @@ public class StrategyGameAgent : Agent
         }
 
         var availableActions = allPossibleActions
-            .Where(action => action != null && action.IsAvailable())
+            .Where(action => action != null && action.FulfillsConditions())
             .Select(action => action.actionId)
             .ToList();
 
@@ -518,7 +512,7 @@ public class StrategyGameAgent : Agent
     public List<CharacterAction> GetAvailableActions()
     {
         return allPossibleActions
-            .Where(action => action != null && action.IsAvailable())
+            .Where(action => action != null && action.ResourcesAvailable())
             .ToList();
     }
 
