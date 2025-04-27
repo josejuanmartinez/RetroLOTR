@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Collections;
 
 [RequireComponent(typeof(GameState))]
 public class Game : MonoBehaviour
@@ -24,13 +25,13 @@ public class Game : MonoBehaviour
     public int normalMovement = 12;
     public int cavalryMovement = 15;
 
-    public int maxLeaders = 30;
-    public int maxBoardWidth = 25;
-    public int maxBoardHeight = 75;
-    public int maxArtifacts = 40;
-    public int maxCharacters = 100;
-    public int maxPCs = 50;
-    public int maxTurns = 200;
+    public static int MAX_LEADERS = 30;
+    public static int MAX_BOARD_WIDTH = 25;
+    public static int MAX_BOARD_HEIGHT = 75;
+    public static int MAX_ARTIFACTS = 40;
+    public static int MAX_CHARACTERS = 100;
+    public static int MAX_PCS = 50;
+    public static int MAX_TURNS = 200;
     
 
     [Header("Starting info")]
@@ -108,14 +109,21 @@ public class Game : MonoBehaviour
     {
         if (currentlyPlaying == player)
         {
-            if (MoveToNextCharacterToAction()) return;
-
-            // Find the first non-killed competitor
-            currentlyPlaying = FindNextAliveCompetitor(0);
-            if (currentlyPlaying == null)
+            if (autoplay)
             {
-                EndGame(true);
-                return;
+                currentlyPlaying = FindNextAliveCompetitor(0);
+            }
+            else
+            {
+                if (MoveToNextCharacterToAction()) return;
+
+                // Find the first non-killed competitor
+                currentlyPlaying = FindNextAliveCompetitor(0);
+                if (currentlyPlaying == null)
+                {
+                    EndGame(true);
+                    return;
+                }
             }
         }
         else
@@ -137,15 +145,15 @@ public class Game : MonoBehaviour
         if (currentlyPlaying == player)
         {
             turn++;
-            if(turn >= maxTurns)
+            if (turn >= MAX_TURNS)
             {
                 EndGame(false);
                 return;
             }
             MessageDisplay.ShowMessage($"Turn {turn++}", Color.green);
         }
-        currentlyPlaying.NewTurn();
         FindFirstObjectByType<Board>().RefreshRelevantHexes();
+        currentlyPlaying.NewTurn();
     }
 
     // Helper method to find the next alive competitor

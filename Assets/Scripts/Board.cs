@@ -154,12 +154,12 @@ public class Board : MonoBehaviour
 
     public int GetWidth()
     {
-        return Math.Min(width, FindFirstObjectByType<Game>().maxBoardWidth);
+        return Math.Min(width, Game.MAX_BOARD_WIDTH);
     }
 
     public int GetHeight()
     {
-        return Math.Min(height, FindFirstObjectByType<Game>().maxBoardHeight);
+        return Math.Min(height, Game.MAX_BOARD_HEIGHT);
     }
 
     public void ForceDraw()
@@ -418,7 +418,7 @@ public class Board : MonoBehaviour
                     Hex newHex = hexes[path[i + 1]];
                     currentHex = previousHex;
 
-                    MoveCharacter(character, previousHex, newHex);
+                    MoveCharacterOneHex(character, previousHex, newHex);
 
                     currentHex = newHex; // Update current hex
 
@@ -455,9 +455,10 @@ public class Board : MonoBehaviour
         actionsManager.Refresh(character);
     }
 
-    public void MoveCharacter(Character character, Hex previousHex, Hex newHex, bool isTeleport = false) {
+    public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool isTeleport = false) {
         try
         {
+            character.hasMovedThisTurn = true;
 
             if (previousHex.characters.Contains(character)) previousHex.characters.Remove(character);
             if (character.IsArmyCommander())
@@ -476,7 +477,6 @@ public class Board : MonoBehaviour
 
             newHex.RedrawCharacters();
             newHex.RedrawArmies();
-            character.hasMovedThisTurn = true;
             if (character.GetOwner() == FindFirstObjectByType<Game>().player)
             {
                 newHex.LookAt();
@@ -502,6 +502,7 @@ public class Board : MonoBehaviour
 
         } catch (Exception e)
         {
+            character.hasMovedThisTurn = false;
             Debug.LogError($"Error moving character: {e.Message}\n{e.StackTrace}");
             if (hexes.TryGetValue(newHex.v2, out Hex pathHex))
             {

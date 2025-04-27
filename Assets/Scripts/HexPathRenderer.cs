@@ -12,6 +12,8 @@ public enum MovementType
 [RequireComponent(typeof(Board), typeof(LineRenderer))]
 public class HexPathRenderer : MonoBehaviour
 {
+    public static int MAX_REACHABLE_HEXES = 631; // MAX_MOVEMENT OF 14, hex, supposing all cost 1 => 1 + 6 * (n(n+1)/2)
+
     private LineRenderer lineRenderer;
     private Board board;
     private Game game;
@@ -440,5 +442,28 @@ public class HexPathRenderer : MonoBehaviour
         rangeCache.Clear();
         waterTerrainCache.Clear();
         terrainCostCache.Clear();
+    }
+
+    public float GetPathCost(Vector2 startHex, Vector2 endHex, Character character)
+    {
+        // Find the path first
+        List<Vector2> path = FindPath(startHex, endHex, character);
+
+        // If there's no valid path, return an impossible cost (or -1 if you prefer)
+        if (path == null || path.Count < 2)
+        {
+            return -1f;
+        }
+
+        float totalCost = 0f;
+
+        // Sum terrain costs between each hex in the path
+        for (int i = 1; i < path.Count; i++)
+        {
+            Vector2 currentHex = path[i];
+            totalCost += GetTerrainCost(currentHex, character);
+        }
+
+        return totalCost;
     }
 }

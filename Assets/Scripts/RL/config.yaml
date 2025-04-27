@@ -1,5 +1,4 @@
 behaviors:
-  # Replace MyBehavior with the name of your behavior
   Character:
     trainer_type: ppo
     hyperparameters:
@@ -20,42 +19,19 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 500000
+    max_steps: 500
     time_horizon: 64
-    summary_freq: 10000
-
+    summary_freq: 1  # Reduced to get more frequent updates
 environment_parameters:
-  # You can define curriculum learning parameters here if needed
-  # Example:
-  # difficulty:
-  #   curriculum:
-  #     - name: Lesson0
-  #       completion_criteria:
-  #         measure: reward
-  #         behavior: MyBehavior
-  #         min_lesson_length: 100
-  #         threshold: 0.1
-  #       value: 0.0
-  #     - name: Lesson1
-  #       completion_criteria:
-  #         measure: reward
-  #         behavior: MyBehavior
-  #         min_lesson_length: 100
-  #         threshold: 0.3
-  #       value: 0.2
-  #     - name: Lesson2
-  #       value: 1.0
-
+  # Curriculum learning parameters can be added here if needed
 checkpoint_settings:
-  run_id: MyTrainingRun
+  run_id: MyTrainingRun  # Changed to match command line parameter
   initialize_from: null
   load_model: false
   resume: false
   force: true
-  train_model: false
+  train_model: true
   inference: false
-
 torch_settings:
-  device: cuda:0  # Set to 'cuda:0' to use GPU or 'cpu' for CPU training
-
+  device: cuda:0
 debug: false

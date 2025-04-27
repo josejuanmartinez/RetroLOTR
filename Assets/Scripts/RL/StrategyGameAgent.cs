@@ -6,6 +6,7 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StrategyGameAgent : Agent
 {
@@ -22,13 +23,58 @@ public class StrategyGameAgent : Agent
     [SerializeField] private bool isTrainingMode = true;
 
     BehaviorParameters behaviorParams;
+    Board board;
+    HexPathRenderer hexPathRenderer;
 
-    private bool initialized = false;
-    private bool hasGameStarted = false;
+    private bool awaken = false;
+    private bool hasEpisodeBegun = false;
 
-    CharacterAction DEFAULT;
+    CharacterAction DEFAULT_ACTION;
 
     int alignmentTypeCount;
+
+    // Feature-based decision making
+    [SerializeField] private float enemyWeight = 1.5f;
+    [SerializeField] private float resourceWeight = 1.0f;
+    [SerializeField] private float territoryWeight = 0.8f;
+    [SerializeField] private float artifactWeight = 2.0f;
+    [SerializeField] private float allyWeight = 0.5f;
+
+    // New phase system with feature-based decision making
+    private enum AgentPhase { EvaluateObjectives, MoveTowardsObjective, ChooseAction }
+    private AgentPhase phase = AgentPhase.EvaluateObjectives;
+
+    private Hex strategicTargetHex;
+    private float lastDistanceToTarget = float.MaxValue;
+    private HexObjectiveType currentObjective = HexObjectiveType.None;
+
+    // Objective types for more strategic decision making
+    private enum HexObjectiveType
+    {
+        None,
+        AttackEnemy,
+        DefendAlly,
+        GatherResource,
+        SecureTerritory,
+        RetrieveArtifact,
+        RetreatToSafety
+    }
+
+    // Objective evaluation scores for each hex
+    private Dictionary<Hex, float> hexObjectiveScores = new ();
+    private Dictionary<Hex, HexObjectiveType> hexObjectiveTypes = new ();
+
+    const int OBJECTIVE_TYPE_BRANCH = 0;    // What type of objective to pursue
+    const int TARGET_HEX_BRANCH = 1;        // Which specific hex to target
+    const int MOVEMENT_BRANCH = 2;          // How to move toward the target
+    const int ACTION_BRANCH = 3;            // What action to take once there
+
+    // Number of objective types (must match HexObjectiveType enum count - 1)
+    const int OBJECTIVE_TYPE_COUNT = 6;
+    // Number of priority levels for target selection
+    const int TARGET_PRIORITY_LEVELS = 3;   // High, Medium, Low priority targets
+    // Number of movement strategies
+    const int MOVEMENT_STRATEGY_COUNT = 3;  // Direct, Cautious, Aggressive
 
     void Awaken()
     {
@@ -36,7 +82,9 @@ public class StrategyGameAgent : Agent
         controlledCharacter = transform.parent.GetComponent<Character>();
         allPossibleActions = FindFirstObjectByType<ActionsManager>().characterActions.ToList();
         behaviorParams = GetComponent<BehaviorParameters>();
-        DEFAULT = FindFirstObjectByType<ActionsManager>().DEFAULT;
+        DEFAULT_ACTION = FindFirstObjectByType<ActionsManager>().DEFAULT;
+        board = FindFirstObjectByType<Board>();
+        hexPathRenderer = FindAnyObjectByType<HexPathRenderer>();
 
         // Pre-calculate alignment type count
         alignmentTypeCount = Enum.GetValues(typeof(AlignmentEnum)).Length - 1;
@@ -44,58 +92,180 @@ public class StrategyGameAgent : Agent
         // Reset chosen action
         chosenAction = null;
 
-        initialized = true;
+        awaken = true;
     }
-
 
     public override void OnEpisodeBegin()
     {
-        if(!initialized) Awaken();
+        if (!awaken) Awaken();
+
+        strategicTargetHex = null;
+        lastDistanceToTarget = float.MaxValue;
+        phase = AgentPhase.EvaluateObjectives;
+        currentObjective = HexObjectiveType.None;
+
         behaviorParams.BehaviorName = "Character";
         // Set the correct action space size
-        behaviorParams.BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(allPossibleActions.Count);
+        behaviorParams.BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(new int[] {
+            OBJECTIVE_TYPE_COUNT,          // branch 0 - what kind of objective to pursue
+            TARGET_PRIORITY_LEVELS,        // branch 1 - target priority level
+            MOVEMENT_STRATEGY_COUNT,       // branch 2 - how to move toward the target
+            allPossibleActions.Count       // branch 3 - what action to take once there
+        });
 
-        base.Initialize();
+        base.OnEpisodeBegin();
+
+        hasEpisodeBegun = true;
     }
 
     /**
      * This method is called at the end to modify the action taken by the agent with custom heuristics
+     * And it's important when Pytorch Training is not running
      */
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        if (!initialized) Awaken();
+        if (!awaken) Awaken();
 
         var discreteActions = actionsOut.DiscreteActions;
 
         // Skip processing if game hasn't started
-        if (!hasGameStarted)
+        if (!hasEpisodeBegun)
         {
-            // Just set a default action to avoid errors when not started
-            discreteActions[0] = FindFirstObjectByType<ActionsManager>().GetDefault();
+            // Just set default actions to avoid errors
+            discreteActions[OBJECTIVE_TYPE_BRANCH] = (int)HexObjectiveType.None;
+            discreteActions[TARGET_HEX_BRANCH] = 0;
+            discreteActions[MOVEMENT_BRANCH] = 0;
+            discreteActions[ACTION_BRANCH] = FindFirstObjectByType<ActionsManager>().GetDefault();
         }
         else
         {
-            // Ignoring heuristics for now
-            // discreteActions[0] = chosenAction.actionId;
+            // Set reasonable defaults based on the current state
+            // discreteActions[OBJECTIVE_TYPE_BRANCH] = DetermineDefaultObjective();
+            // discreteActions[TARGET_HEX_BRANCH] = 0; // Medium priority
+            // discreteActions[MOVEMENT_BRANCH] = 0; // Direct movement
+            // discreteActions[ACTION_BRANCH] = allPossibleActions.FindIndex(0, x => x.actionId == DEFAULT_ACTION.actionId);
         }
-
     }
+
+    // Determine a reasonable default objective based on the situation
+    private int DetermineDefaultObjective()
+    {
+        if (controlledCharacter == null) return 0;
+
+        // Check if we're in danger
+        bool inDanger = IsInDanger();
+        if (inDanger) return (int)HexObjectiveType.RetreatToSafety;
+
+        // Check if there are nearby artifacts
+        bool nearbyArtifacts = HasNearbyArtifacts();
+        if (nearbyArtifacts) return (int)HexObjectiveType.RetrieveArtifact;
+
+        // Check if there are vulnerable enemies
+        bool vulnerableEnemies = HasVulnerableEnemiesNearby();
+        if (vulnerableEnemies) return (int)HexObjectiveType.AttackEnemy;
+
+        // Check if allies need help
+        bool alliesNeedHelp = AlliesNeedDefense();
+        if (alliesNeedHelp) return (int)HexObjectiveType.DefendAlly;
+
+        // Default to resource gathering
+        return (int)HexObjectiveType.GatherResource;
+    }
+
+    // Helper methods for determining default objectives
+    private bool IsInDanger()
+    {
+        if (controlledCharacter == null || controlledCharacter.hex == null) return false;
+
+        // Check for nearby enemies that might pose a threat
+        foreach (var hex in controlledCharacter.relevantHexes)
+        {
+            if (hex == null) continue;
+
+            int enemyCount = hex.characters.Count(x =>
+                x != null && !x.killed &&
+                (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != controlledCharacter.GetAlignment()));
+
+            // If there are multiple enemies or we're low on health
+            if ((enemyCount > 1 || (enemyCount > 0 && controlledCharacter.health < 30)))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool HasNearbyArtifacts()
+    {
+        if (controlledCharacter == null) return false;
+
+        foreach (var hex in controlledCharacter.relevantHexes)
+        {
+            if (hex != null && hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool HasVulnerableEnemiesNearby()
+    {
+        if (controlledCharacter == null) return false;
+
+        foreach (var hex in controlledCharacter.relevantHexes)
+        {
+            if (hex == null) continue;
+
+            var enemies = hex.characters.Where(x =>
+                x != null && !x.killed &&
+                (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != controlledCharacter.GetAlignment()))
+                .ToList();
+
+            if (enemies.Any(e => e.health < 50)) // Vulnerable enemy
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool AlliesNeedDefense()
+    {
+        if (controlledCharacter == null) return false;
+
+        foreach (var hex in controlledCharacter.relevantHexes)
+        {
+            if (hex == null) continue;
+
+            var allies = hex.characters.Where(x =>
+                x != null && !x.killed &&
+                x.GetAlignment() == controlledCharacter.GetAlignment() &&
+                x != controlledCharacter)
+                .ToList();
+
+            if (allies.Any(a => a.health < 50)) // Ally needs help
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void NewTurn(bool isPlayerControlled, bool autoplay, bool isTrainingMode)
     {
-        if (!initialized) Awaken();
+        if (!awaken) Awaken();
         this.isPlayerControlled = isPlayerControlled;
         this.autoplay = autoplay;
         this.isTrainingMode = isTrainingMode;
 
-        if (!hasGameStarted)
+        hexObjectiveScores.Clear();
+        hexObjectiveTypes.Clear();
+
+        if (!hasEpisodeBegun)
         {
-            hasGameStarted = true;
             OnEpisodeBegin();
         }
-
-        // Initialize all possible actions
-        allPossibleActions.ForEach(x => x.Initialize(controlledCharacter));
-        availableActionsIds = GetAvailableActionIds(controlledCharacter);
 
         if (isPlayerControlled && !autoplay)
         {
@@ -109,18 +279,281 @@ public class StrategyGameAgent : Agent
         else
         {
             // In AI mode, request and immediately execute decision
-            Debug.Log($"- [{controlledCharacter.characterName}] AI controlled character making decision...");
+            // Debug.Log($"- [{controlledCharacter.characterName}] AI controlled character making decision...");
             RequestDecision();
         }
     }
 
-    private void ExecuteMovementBefore()
+    private void EvaluateHexObjectives()
     {
-        Debug.Log($"- [{controlledCharacter.characterName}] moving before to: {controlledCharacter.hex}");
+        hexObjectiveScores.Clear();
+        hexObjectiveTypes.Clear();
+
+        if (controlledCharacter == null || controlledCharacter.relevantHexes == null) return;
+
+        foreach (var hex in controlledCharacter.relevantHexes)
+        {
+            if (hex == null) continue;
+
+            // Score each hex based on various objectives
+            float attackScore = EvaluateAttackScore(hex);
+            float defenseScore = EvaluateDefenseScore(hex);
+            float resourceScore = EvaluateResourceScore(hex);
+            float territoryScore = EvaluateTerritoryScore(hex);
+            float artifactScore = EvaluateArtifactScore(hex);
+            float safetyScore = EvaluateSafetyScore(hex);
+
+            // Determine the primary objective for this hex
+            float maxScore = Mathf.Max(attackScore, defenseScore, resourceScore, territoryScore, artifactScore, safetyScore);
+            HexObjectiveType objectiveType = HexObjectiveType.None;
+
+            if (maxScore == attackScore && attackScore > 0) objectiveType = HexObjectiveType.AttackEnemy;
+            else if (maxScore == defenseScore && defenseScore > 0) objectiveType = HexObjectiveType.DefendAlly;
+            else if (maxScore == resourceScore && resourceScore > 0) objectiveType = HexObjectiveType.GatherResource;
+            else if (maxScore == territoryScore && territoryScore > 0) objectiveType = HexObjectiveType.SecureTerritory;
+            else if (maxScore == artifactScore && artifactScore > 0) objectiveType = HexObjectiveType.RetrieveArtifact;
+            else if (maxScore == safetyScore && safetyScore > 0) objectiveType = HexObjectiveType.RetreatToSafety;
+
+            hexObjectiveScores[hex] = maxScore;
+            hexObjectiveTypes[hex] = objectiveType;
+
+            // Debug.Log($"Hex {hex.v2}: {objectiveType} with score {maxScore}");
+        }
     }
-    private void ExecuteMovementAfter()
+
+    // Evaluation functions for different objective types
+    private float EvaluateAttackScore(Hex hex)
     {
-        Debug.Log($"- [{controlledCharacter.characterName}] moving after to: {controlledCharacter.hex}");
+        float score = 0;
+
+        // Check for enemy units
+        foreach (var enemy in hex.characters.Where(x =>
+            x != null && !x.killed &&
+            (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != controlledCharacter.GetAlignment())))
+        {
+            // Stronger score for weaker enemies (better targets)
+            score += enemyWeight * (100 - enemy.health) / 100f;
+        }
+
+        // Check for enemy armies
+        foreach (var army in hex.armies.Where(x =>
+            x != null && !x.killed && x.commander != null && !x.commander.killed &&
+            (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != controlledCharacter.GetAlignment())))
+        {
+            score += enemyWeight * 0.5f; // Armies are secondary targets
+        }
+
+        // Check for enemy PCs
+        var pc = hex.GetPC();
+        if (pc != null && (pc.owner.GetAlignment() == AlignmentEnum.neutral ||
+                          pc.owner.GetAlignment() != controlledCharacter.GetAlignment()))
+        {
+            // Scale by inverse of defense - weaker PCs are better targets
+            score += enemyWeight * (1 - Mathf.Min(pc.GetDefense() / 10000f, 1.0f));
+        }
+
+        return score;
+    }
+
+    private float EvaluateDefenseScore(Hex hex)
+    {
+        float score = 0;
+
+        // Check for allied units that need defense
+        foreach (var ally in hex.characters.Where(x =>
+            x != null && !x.killed &&
+            x.GetAlignment() == controlledCharacter.GetAlignment() &&
+            x != controlledCharacter))
+        {
+            // Higher score for allies with lower health
+            score += allyWeight * (1 - ally.health / 100f);
+        }
+
+        // Check for allied armies
+        foreach (var army in hex.armies.Where(x =>
+            x != null && !x.killed && x.commander != null && !x.commander.killed &&
+            x.GetAlignment() == controlledCharacter.GetAlignment()))
+        {
+            score += allyWeight * 0.3f;
+        }
+
+        // Check for allied PCs
+        var pc = hex.GetPC();
+        if (pc != null && pc.owner.GetAlignment() == controlledCharacter.GetAlignment())
+        {
+            // Scale by inverse of defense - weaker allied PCs need more defense
+            score += allyWeight * (1 - Mathf.Min(pc.GetDefense() / 10000f, 1.0f));
+        }
+
+        return score;
+    }
+
+    private float EvaluateResourceScore(Hex hex)
+    {
+        float score = 0;
+        var owner = controlledCharacter.GetOwner();
+        if (owner == null) return 0;
+
+        // Check for resource value of the hex
+        // This would depend on your game's economy system
+        // For example:
+        if (hex.terrainType == TerrainEnum.forest)
+        {
+            score += resourceWeight * (1 - Mathf.Min(owner.timberAmount / 2000f, 1.0f));
+        }
+        else if (hex.terrainType == TerrainEnum.mountains)
+        {
+            score += resourceWeight * (1 - Mathf.Min(owner.ironAmount / 2000f, 1.0f));
+        }
+        else if (hex.terrainType == TerrainEnum.grasslands)
+        {
+            score += resourceWeight * (1 - Mathf.Min(owner.leatherAmount / 2000f, 1.0f));
+        }
+
+        return score;
+    }
+
+    private float EvaluateTerritoryScore(Hex hex)
+    {
+        float score = 0;
+
+        // Strategic value of the territory
+        bool isStrategicLocation = IsStrategicLocation(hex);
+        if (isStrategicLocation)
+        {
+            score += territoryWeight;
+        }
+
+        // Value increases if it's a point of contention
+        bool isContested = IsContestedLocation(hex);
+        if (isContested)
+        {
+            score += territoryWeight * 0.5f;
+        }
+
+        return score;
+    }
+
+    private bool IsStrategicLocation(Hex hex)
+    {
+        // Define what makes a location strategic in your game
+        // Examples:
+        if (hex.GetPC() != null) return true; // Cities/settlements are strategic
+        if (hex.hiddenArtifacts.Count > 0) return true; // Artifacts are strategic
+        if (hex.terrainType == TerrainEnum.shore) return true; // Shores are strategic
+        return false;
+    }
+
+    private bool IsContestedLocation(Hex hex)
+    {
+        // A location is contested if there are both allies and enemies nearby
+        bool hasAllies = false;
+        bool hasEnemies = false;
+
+        foreach (var nearbyHex in GetNearbyHexes(hex))
+        {
+            if (nearbyHex == null) continue;
+
+            // Check for allied presence
+            if (nearbyHex.characters.Any(x =>
+                x != null && !x.killed &&
+                x.GetAlignment() == controlledCharacter.GetAlignment()))
+            {
+                hasAllies = true;
+            }
+
+            // Check for enemy presence
+            if (nearbyHex.characters.Any(x =>
+                x != null && !x.killed &&
+                (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != controlledCharacter.GetAlignment())))
+            {
+                hasEnemies = true;
+            }
+
+            // If we found both, we can return
+            if (hasAllies && hasEnemies) return true;
+        }
+
+        return hasAllies && hasEnemies;
+    }
+
+    private List<Hex> GetNearbyHexes(Hex center)
+    {
+        // Get hexes in the vicinity
+        // This is a simplified version - you'd need to adapt for your board implementation
+        var nearbyHexes = new List<Hex>();
+        foreach (var hex in controlledCharacter.relevantHexes)
+        {
+            if (hex != null && Vector2Int.Distance(hex.v2, center.v2) <= 2)
+            {
+                nearbyHexes.Add(hex);
+            }
+        }
+        return nearbyHexes;
+    }
+
+    private float EvaluateArtifactScore(Hex hex)
+    {
+        float score = 0;
+
+        // Check for artifacts
+        if (hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0)
+        {
+            score += artifactWeight * hex.hiddenArtifacts.Count;
+        }
+
+        return score;
+    }
+
+    private float EvaluateSafetyScore(Hex hex)
+    {
+        float score = 0;
+
+        // Safety increases with distance from enemies
+        float minEnemyDistance = float.MaxValue;
+        bool enemiesPresent = false;
+
+        foreach (var relevantHex in controlledCharacter.relevantHexes)
+        {
+            if (relevantHex == null) continue;
+
+            // Check for enemy presence
+            bool hasEnemies = relevantHex.characters.Any(x =>
+                x != null && !x.killed &&
+                (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != controlledCharacter.GetAlignment()));
+
+            if (hasEnemies)
+            {
+                enemiesPresent = true;
+                float distance = Vector2Int.Distance(hex.v2, relevantHex.v2);
+                minEnemyDistance = Mathf.Min(minEnemyDistance, distance);
+            }
+        }
+
+        // If no enemies are present, no need for safety
+        if (!enemiesPresent) return 0;
+
+        // Score increases with distance from closest enemy
+        // and decreases with proximity to the map edge
+        score = Mathf.Min(minEnemyDistance / 5f, 1.0f); // Normalize to 0-1
+
+        // Bonus for being near friendly units (protection)
+        foreach (var relevantHex in controlledCharacter.relevantHexes)
+        {
+            if (relevantHex == null) continue;
+
+            int allyCount = relevantHex.characters.Count(x =>
+                x != null && !x.killed &&
+                x.GetAlignment() == controlledCharacter.GetAlignment() &&
+                x != controlledCharacter);
+
+            if (allyCount > 0 && Vector2Int.Distance(hex.v2, relevantHex.v2) <= 2)
+            {
+                score += 0.2f * allyCount; // Bonus for each nearby ally
+            }
+        }
+
+        return score;
     }
 
     private void VisualizeAgentDecisions()
@@ -129,12 +562,17 @@ public class StrategyGameAgent : Agent
         foreach (var actionId in availableActionsIds)
         {
             var action = allPossibleActions.Find(a => a.actionId == actionId);
-            Debug.Log($"- [{controlledCharacter.characterName}] Available action: {action?.name} {action?.actionName} (ID: {actionId})");
+            // Debug.Log($"- [{controlledCharacter.characterName}] Available action: {action?.name} {action?.actionName} (ID: {actionId})");
+        }
+
+        // Log objective evaluation
+        foreach (var hexScore in hexObjectiveScores.OrderByDescending(x => x.Value).Take(5))
+        {
+            // Debug.Log($"- [{controlledCharacter.characterName}] Objective: {hexObjectiveTypes[hexScore.Key]} at {hexScore.Key.v2} with score {hexScore.Value}");
         }
 
         // Request a decision but don't execute it yet
         RequestDecision();
-
     }
 
     public void FeedbackWithPlayerActions(CharacterAction action)
@@ -145,8 +583,13 @@ public class StrategyGameAgent : Agent
         if (isTrainingMode)
         {
             // Create an array for discrete actions
-            int[] discreteActionsArray = new int[1]; // or whatever number of discrete actions you have
-            discreteActionsArray[0] = action.actionId;
+            int[] discreteActionsArray = new int[4]; // We have 4 branches now
+
+            // Set reasonable defaults for other branches
+            discreteActionsArray[OBJECTIVE_TYPE_BRANCH] = (int)currentObjective;
+            discreteActionsArray[TARGET_HEX_BRANCH] = 0; // Medium priority
+            discreteActionsArray[MOVEMENT_BRANCH] = 0; // Direct path
+            discreteActionsArray[ACTION_BRANCH] = allPossibleActions.FindIndex(0, x => x.actionId == action.actionId);
 
             // Create ActionBuffers with discrete actions
             ActionBuffers buffers = new ActionBuffers(
@@ -154,21 +597,29 @@ public class StrategyGameAgent : Agent
                 discreteActionsArray
             );
 
+            phase = AgentPhase.ChooseAction;
             // Process the action for training purposes
             OnActionReceived(buffers);
         }
     }
 
+
     private void ExecuteChosenAction()
     {
-        Debug.Log($"- [{controlledCharacter.characterName}] Executing action: {chosenAction.actionName}");
+        if (chosenAction == null)
+        {
+            // Debug.LogError($"- [{controlledCharacter.characterName}] No action chosen to execute!");
+            return;
+        }
+
+        // Debug.Log($"- [{controlledCharacter.characterName}] Executing action: {chosenAction.actionName}");
 
         // Get leader state before action
         var leader = controlledCharacter.GetOwner();
 
         if (leader == null)
         {
-            Debug.LogError($"- [{controlledCharacter.characterName}] Leader is null! Cannot execute action properly.");
+            // Debug.LogError($"- [{controlledCharacter.characterName}] Leader is null! Cannot execute action properly.");
             return;
         }
 
@@ -181,12 +632,22 @@ public class StrategyGameAgent : Agent
         int pcsStrengthBefore = leader.GetPCPoints();
         int armiesStrengthBefore = leader.GetArmyPoints();
 
+        // Additional metrics for more detailed rewards
+        int territoryControlBefore = CountControlledHexes(leader);
+        int resourceProductionBefore = leader.GetResourceProductionPoints();
+        float averageCharHealthBefore = GetAverageCharacterHealth(leader);
+        int strategicLocationsBefore = CountStrategicLocations(leader);
+        int artifactsBefore = CountArtifacts(leader);
 
-        ExecuteMovementBefore();
-        chosenAction.Execute();
-        ExecuteMovementAfter();
+        // In AI mode, execute immediately. If it's character, it will be executed separately (in the game interfacE)
+        bool applyRewards = isTrainingMode;
+        if (!isPlayerControlled || autoplay)
+        {
+            // If the order fails, that is an issue of skill and randomness, we will not check the consequences and get rewards as nothing happened
+            applyRewards &= chosenAction.ExecuteAI();
+        }
 
-        if (isTrainingMode)
+        if (applyRewards)
         {
             // Calculate post-action state
             bool isBankrupted = leader.GetGoldPerTurn() < 0;
@@ -198,15 +659,24 @@ public class StrategyGameAgent : Agent
             int pcsStrengthAfter = leader.GetPCPoints();
             int armiesStrengthAfter = leader.GetArmyPoints();
 
-            // Add rewards
+            // Additional post-action metrics
+            int territoryControlAfter = CountControlledHexes(leader);
+            int resourceProductionAfter = leader.GetResourceProductionPoints();
+            float averageCharHealthAfter = GetAverageCharacterHealth(leader);
+            int strategicLocationsAfter = CountStrategicLocations(leader);
+            int artifactsAfter = CountArtifacts(leader);
+
+            // Base action reward
             float actionReward = chosenAction.reward / 10f; // Normalize reward
             AddReward(actionReward);
 
             // STRATEGIC REWARDS
-            if (wasBankrupted && !isBankrupted) AddReward(5 / 10f);
-            if (wasNegative && !isNegative) AddReward(5 / 10f);
-            if (!wasBankrupted && isBankrupted) AddReward(-5 / 10f);
-            if (!wasNegative && isNegative) AddReward(-5 / 10f);
+            if (wasBankrupted && !isBankrupted) AddReward(5f / 10f);
+            if (wasNegative && !isNegative) AddReward(5f / 10f);
+            if (!wasBankrupted && isBankrupted) AddReward(-5f / 10f);
+            if (!wasNegative && isNegative) AddReward(-5f / 10f);
+
+            // Core game metrics rewards
             AddReward((storesAfter - storesBefore) / 100f);
             AddReward((friendlyStrengthAfter - friendlyStrengthBefore) / 100f);
             AddReward((enemiesStrengthBefore - enemiesStrengthAfter) / 100f);
@@ -214,152 +684,204 @@ public class StrategyGameAgent : Agent
             AddReward((pcsStrengthAfter - pcsStrengthBefore) / 100f);
             AddReward((armiesStrengthAfter - armiesStrengthBefore) / 100f);
 
+            // Additional refined rewards
+            AddReward((territoryControlAfter - territoryControlBefore) / 50f);
+            AddReward((resourceProductionAfter - resourceProductionBefore) / 50f);
+            AddReward((averageCharHealthAfter - averageCharHealthBefore) / 25f);
+            AddReward((strategicLocationsAfter - strategicLocationsBefore) / 5f);
+            AddReward((artifactsAfter - artifactsBefore) * 2f);
+
+            // Objective-based rewards
+            if (currentObjective != HexObjectiveType.None && strategicTargetHex != null)
+            {
+                bool objectiveCompleted = false;
+
+                switch (currentObjective)
+                {
+                    case HexObjectiveType.AttackEnemy:
+                        // Check if we defeated enemies
+                        objectiveCompleted = enemiesStrengthAfter < enemiesStrengthBefore;
+                        break;
+                    case HexObjectiveType.DefendAlly:
+                        // Check if ally condition improved
+                        objectiveCompleted = averageCharHealthAfter > averageCharHealthBefore;
+                        break;
+                    case HexObjectiveType.GatherResource:
+                        // Check if resources increased
+                        objectiveCompleted = storesAfter > storesBefore || resourceProductionAfter > resourceProductionBefore;
+                        break;
+                    case HexObjectiveType.SecureTerritory:
+                        // Check if territory expanded
+                        objectiveCompleted = territoryControlAfter > territoryControlBefore ||
+                                           strategicLocationsAfter > strategicLocationsBefore;
+                        break;
+                    case HexObjectiveType.RetrieveArtifact:
+                        // Check if we got artifacts
+                        objectiveCompleted = artifactsAfter > artifactsBefore;
+                        break;
+                    case HexObjectiveType.RetreatToSafety:
+                        // Check if we're safer (further from enemies)
+                        float currentSafetyScore = EvaluateSafetyScore(controlledCharacter.hex);
+                        objectiveCompleted = currentSafetyScore > 0.6f; // Threshold for "safe"
+                        break;
+                }
+
+                if (objectiveCompleted)
+                {
+                    AddReward(3.0f); // Strong reward for completing the selected objective
+                    // Debug.Log($"- [{controlledCharacter.characterName}] Completed objective: {currentObjective}");
+                }
+            }
+
             // Check for game over condition
             if (IsGameOver(leader))
             {
-                AddReward(IsWinner(leader) ? 25 : -25);
+                AddReward(IsWinner(leader) ? 25f : -25f);
                 EndEpisode();
             }
         }
     }
 
-    private void AddDummyObservations(VectorSensor sensor)
+    // Helper methods for refined reward calculation
+    private int CountControlledHexes(Leader leader)
     {
-        // Add dummy hex observations (11 per hex * 190 hexes = 2090)
-        for (int i = 0; i < 190; i++)
+        // Count hexes controlled by this leader
+        // This is a simplified placeholder - implement according to your game logic
+        int count = 0;
+        if (board != null)
         {
-            // Position
-            sensor.AddObservation(-1f);
-            sensor.AddObservation(-1f);
+            // Example: Count hexes with units belonging to this leader
+            foreach (var hex in board.GetHexes())
+            {
+                if (hex.characters.Any(c => c != null && !c.killed && c.GetOwner() == leader))
+                {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 
-            // Movement cost
-            sensor.AddObservation(1f);
 
-            // Unit presence
-            sensor.AddObservation(0f);
-            sensor.AddObservation(0f);
+    private float GetAverageCharacterHealth(Leader leader)
+    {
+        // Calculate average health of all characters
+        var characters = leader.controlledCharacters;
+        if (characters == null || characters.Count == 0) return 0;
 
-            // Army presence
-            sensor.AddObservation(0f);
-            sensor.AddObservation(0f);
+        float totalHealth = 0;
+        int count = 0;
 
-            // PC presence
-            sensor.AddObservation(-1f);
-            sensor.AddObservation(-1f);
-            sensor.AddObservation(-1f);
-
-            // Artifact presence
-            sensor.AddObservation(-1f);
+        foreach (var character in characters)
+        {
+            if (character != null && !character.killed)
+            {
+                totalHealth += character.health;
+                count++;
+            }
         }
 
-        // Add dummy character state observations (15)
-        // Leader info
-        sensor.AddObservation(-1f);
-        sensor.AddObservation(-1f);
-        sensor.AddObservation(-1f);
+        return count > 0 ? totalHealth / count : 0;
+    }
 
-        // Character health
-        sensor.AddObservation(1f);
-        sensor.AddObservation(0f);
+    private int CountStrategicLocations(Leader leader)
+    {
+        // Count strategic locations controlled by this leader
+        int count = 0;
+
+        // Count PCs owned by this leader
+        count += leader.controlledPcs.Count(pc => pc != null);
+
+        // Add other strategic locations as defined by your game
+        return count;
+    }
+
+    private int CountArtifacts(Leader leader)
+    {
+        // Count artifacts owned by this leader
+        return leader.controlledCharacters.Sum(c => c != null ? c.artifacts.Count : 0);
+    }
+
+    private void AddDummyActionObservations(VectorSensor sensor)
+    {
+        // Add dummy character state observations (expanded for new features)
+        // Leader info
+        sensor.AddObservation(-1f); // Leader index
+        sensor.AddObservation(-1f); // Is NPC
+        sensor.AddObservation(-1f); // Is joined NPC
+
+        // Character stats
+        sensor.AddObservation(1f);  // Health
+        sensor.AddObservation(0f);  // Is free agent
 
         // Alignment (one-hot)
-        for (int i = 0; i < alignmentTypeCount; i++)
-        {
-            sensor.AddObservation(i == 0 ? 1f : 0f);
-        }
+        sensor.AddOneHotObservation((int)controlledCharacter.GetAlignment(), alignmentTypeCount);
 
-        // Leader stores
-        sensor.AddObservation(0f);
-        sensor.AddObservation(0f);
-        sensor.AddObservation(0f);
-        sensor.AddObservation(0f);
-        sensor.AddObservation(0f);
-        sensor.AddObservation(0f);
+        // Leader resources
+        sensor.AddObservation(0f);  // Gold
+        sensor.AddObservation(0f);  // Leather
+        sensor.AddObservation(0f);  // Timber
+        sensor.AddObservation(0f);  // Mounts
+        sensor.AddObservation(0f);  // Iron
+        sensor.AddObservation(0f);  // Mithril
 
         // Leader stats
-        sensor.AddObservation(0f);
-        sensor.AddObservation(0f);
+        sensor.AddObservation(0f);  // Character count
+        sensor.AddObservation(0f);  // PC count
 
-        // Turn
-        sensor.AddObservation(0f);
+        // Game state
+        sensor.AddObservation(0f);  // Current turn
+
+        // New feature observations
+        sensor.AddObservation(0f);  // Territory control
+        sensor.AddObservation(0f);  // Resource production
+        sensor.AddObservation(0f);  // Average character health
+        sensor.AddObservation(0f);  // Strategic locations
+        sensor.AddObservation(0f);  // Artifacts
+
+        // Current objective
+        sensor.AddOneHotObservation(0, OBJECTIVE_TYPE_COUNT);
+
+        // FEATURE-BASED HEX OBSERVATIONS
+        // For each relevant hex (we'll use 10 as a placeholder)
+        for (int i = 0; i < 10; i++)
+        {
+            // Distance from current position
+            sensor.AddObservation(-1f);
+
+            // Objective scores
+            sensor.AddObservation(0f); // Attack score
+            sensor.AddObservation(0f); // Defense score
+            sensor.AddObservation(0f); // Resource score
+            sensor.AddObservation(0f); // Territory score
+            sensor.AddObservation(0f); // Artifact score
+            sensor.AddObservation(0f); // Safety score
+
+            // Path cost
+            sensor.AddObservation(1f);
+
+            // Feature-based presence indicators
+            sensor.AddObservation(0f); // Enemy threat level
+            sensor.AddObservation(0f); // Ally support level
+            sensor.AddObservation(0f); // Resource value
+            sensor.AddObservation(0f); // Strategic value
+        }
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        if (!awaken) Awaken();
 
-        // Check if game has started
-        if (!hasGameStarted)
+        if (!hasEpisodeBegun)
         {
-            AddDummyObservations(sensor);
+            AddDummyActionObservations(sensor);
             return;
         }
 
-        for (int i = 0; i < controlledCharacter.relevantHexes.Count; i++)
-        {
-            // 11 observations each
-            Hex hex = controlledCharacter.relevantHexes[i];
-            if (hex == null)
-            {
-                // Add minimal null hex observations
-                sensor.AddObservation(-1f); // x position
-                sensor.AddObservation(-1f); // y position
-                sensor.AddObservation(1f); // movement cost
-                sensor.AddObservation(0f); // enemy unit presence
-                sensor.AddObservation(0f); // friendly unit presence
-                sensor.AddObservation(0f); // army presence
-                sensor.AddObservation(0f); // enemy presence
-                sensor.AddObservation(-1f); // enemy PC presence
-                sensor.AddObservation(-1f); // friendly PC presence
-                sensor.AddObservation(-1f); // NPC presence
-                sensor.AddObservation(-1f); // artifact PC presence
-                continue;
-            }
-            // 11 observations each
-            /***************************************/
-
-            // Position (normalized)
-            sensor.AddObservation(hex.v2.x / gameState.GetMaxX());
-            sensor.AddObservation(hex.v2.y / gameState.GetMaxY());
-
-            // Movement cost
-            sensor.AddObservation(hex.GetTerrainCost(controlledCharacter) / (float)gameState.GetMaxMovement()); // Normalize
-
-            // Enemy Unit presence
-            int totalEnemyUnits = hex.characters.Count(x => x != null && !x.killed && (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != controlledCharacter.GetAlignment()));
-            sensor.AddObservation(totalEnemyUnits / (float)gameState.GetMaxCharacters()); // Normalize
-
-            // Friendly Unit presence
-            int totalFriendlyUnits = hex.characters.Count(x => x != null && !x.killed && x.GetAlignment() == controlledCharacter.GetAlignment());
-            sensor.AddObservation(totalFriendlyUnits / (float)gameState.GetMaxCharacters()); // Normalize
-
-            // Enemy Army presence
-            int totalEnemyArmies = hex.armies.Count(x => x != null && !x.killed && x.commander != null && !x.commander.killed && (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != controlledCharacter.GetAlignment()));
-            sensor.AddObservation(totalEnemyArmies / (float)gameState.GetMaxCharacters()); // Normalize (1 army per character max)
-
-            // Friendly Army presence
-            int totalFriendlyArmies = hex.armies.Count(x => x != null && !x.killed && x.commander != null && !x.commander.killed && x.GetAlignment() == controlledCharacter.GetAlignment());
-            sensor.AddObservation(totalFriendlyArmies / (float)gameState.GetMaxCharacters()); // Normalize (1 army per character max)
-
-            // Enemy PC defense
-            var pc = hex.GetPC();
-            sensor.AddObservation(pc != null && (pc.owner.GetAlignment() == AlignmentEnum.neutral || pc.owner.GetAlignment() != controlledCharacter.GetAlignment()) ? pc.GetDefense() / 10000f : -1f);
-
-            // Friendly PC defense
-            sensor.AddObservation(pc != null && pc.owner.GetAlignment() == controlledCharacter.GetAlignment() ? pc.GetDefense() / 10000f : -1f);
-
-            // NPC presence
-            sensor.AddObservation(pc != null && pc.owner is NonPlayableLeader ? 1f : -1f);
-
-            // Artifact presence
-            sensor.AddObservation(hex.hiddenArtifacts.Count > 0 ? hex.hiddenArtifacts.Count / (float)gameState.GetMaxArtifacts() : -1f);
-        }
-        // TOTAL SO FAR: 11 * 190 = 2090 OBSERVATIONS
-
-        // 15 OBSERVATIONS
-        /**********************************************************/
-
-        // Add character's own state (compressed)
+        // Feature-based representation of the game state
         var owner = controlledCharacter.GetOwner();
+
+        // LEADER AND CHARACTER INFO (15 observations)
         sensor.AddObservation(owner != null ? gameState.GetIndexOfLeader(owner) / (float)gameState.GetMaxLeaders() : -1f);
         sensor.AddObservation(owner != null && owner is NonPlayableLeader ? 1f : -1f);
         sensor.AddObservation(owner != null && owner is NonPlayableLeader && (owner as NonPlayableLeader).joined ? 1f : -1f);
@@ -367,7 +889,7 @@ public class StrategyGameAgent : Agent
         sensor.AddObservation(owner != null || controlledCharacter.killed ? 0f : 1f);
         sensor.AddOneHotObservation((int)controlledCharacter.GetAlignment(), alignmentTypeCount);
 
-        // Add leader stores
+        // RESOURCES (6 observations)
         sensor.AddObservation(owner != null ? owner.goldAmount / 10000f : 0f);
         sensor.AddObservation(owner != null ? owner.leatherAmount / 10000f : 0f);
         sensor.AddObservation(owner != null ? owner.timberAmount / 10000f : 0f);
@@ -375,126 +897,494 @@ public class StrategyGameAgent : Agent
         sensor.AddObservation(owner != null ? owner.ironAmount / 10000f : 0f);
         sensor.AddObservation(owner != null ? owner.mithrilAmount / 10000f : 0f);
 
-        // Add leader stats
+        // STATUS METRICS (2 observations)
         sensor.AddObservation(owner != null ? owner.controlledCharacters.Count / (float)gameState.GetMaxCharacters() : 0f);
         sensor.AddObservation(owner != null ? owner.controlledPcs.Count / (float)gameState.GetMaxCharacters() : 0f);
 
-        // Turn
+        // GAME PROGRESS (1 observation)
         sensor.AddObservation(gameState.GetTurn() / (float)gameState.GetMaxTurns());
-        /**********************************************************/
 
-        // TOTAL SO FAR: 2090 + 15 + 1(automatically temporal observations) = 2106 OBSERVATIONS
+        // NEW STRATEGIC METRICS (5 observations)
+        sensor.AddObservation(owner != null ? CountControlledHexes(owner) / 100f : 0f);
+        sensor.AddObservation(owner != null ? owner.GetResourceProductionPoints() / 500f : 0f);
+        sensor.AddObservation(owner != null ? GetAverageCharacterHealth(owner) / 100f : 0f);
+        sensor.AddObservation(owner != null ? CountStrategicLocations(owner) / 20f : 0f);
+        sensor.AddObservation(owner != null ? CountArtifacts(owner) / 10f : 0f);
+
+        // CURRENT OBJECTIVE (6 observations - one-hot)
+        sensor.AddOneHotObservation((int)currentObjective, OBJECTIVE_TYPE_COUNT);
+
+        // FEATURE-BASED HEX OBSERVATIONS
+        // Sort hexes by their objective scores for more consistent representation
+        var sortedHexes = controlledCharacter.relevantHexes
+            .Where(h => h != null)
+            .OrderByDescending(h => hexObjectiveScores.ContainsKey(h) ? hexObjectiveScores[h] : 0)
+            .Take(10) // Limit to top 10 most promising hexes
+            .ToList();
+
+        // Ensure we always have 10 hex observations (padding with nulls if needed)
+        while (sortedHexes.Count < 10)
+        {
+            sortedHexes.Add(null);
+        }
+
+        foreach (var hex in sortedHexes)
+        {
+            if (hex == null)
+            {
+                // Dummy values for null hexes
+                sensor.AddObservation(-1f); // Distance
+                sensor.AddObservation(0f);  // Attack score
+                sensor.AddObservation(0f);  // Defense score
+                sensor.AddObservation(0f);  // Resource score
+                sensor.AddObservation(0f);  // Territory score
+                sensor.AddObservation(0f);  // Artifact score
+                sensor.AddObservation(0f);  // Safety score
+                sensor.AddObservation(1f);  // Path cost
+                sensor.AddObservation(0f);  // Enemy threat
+                sensor.AddObservation(0f);  // Ally support
+                sensor.AddObservation(0f);  // Resource value
+                sensor.AddObservation(0f);  // Strategic value
+                continue;
+            }
+
+            // Distance from current position (normalized)
+            float distance = Vector2Int.Distance(controlledCharacter.hex.v2, hex.v2);
+            sensor.AddObservation(distance / 20f); // Normalize by assumed max distance
+
+            // Individual objective scores for this hex (normalized)
+            sensor.AddObservation(EvaluateAttackScore(hex));
+            sensor.AddObservation(EvaluateDefenseScore(hex));
+            sensor.AddObservation(EvaluateResourceScore(hex));
+            sensor.AddObservation(EvaluateTerritoryScore(hex));
+            sensor.AddObservation(EvaluateArtifactScore(hex));
+            sensor.AddObservation(EvaluateSafetyScore(hex));
+
+            // Path cost (normalized)
+            float pathCost = hexPathRenderer.GetPathCost(controlledCharacter.hex.v2, hex.v2, controlledCharacter);
+            sensor.AddObservation(pathCost / gameState.GetMaxMovement());
+
+            // Feature-based presence indicators
+            float enemyThreat = CalculateEnemyThreat(hex);
+            float allySupport = CalculateAllySupport(hex);
+            float resourceValue = CalculateResourceValue(hex);
+            float strategicValue = IsStrategicLocation(hex) ? 1f : 0f;
+
+            sensor.AddObservation(enemyThreat);
+            sensor.AddObservation(allySupport);
+            sensor.AddObservation(resourceValue);
+            sensor.AddObservation(strategicValue);
+        }
+    }
+
+    // Helper methods for feature-based observations
+    private float CalculateEnemyThreat(Hex hex)
+    {
+        float threat = 0;
+
+        // Count enemy characters and their strength
+        foreach (var enemy in hex.characters.Where(c =>
+            c != null && !c.killed &&
+            (c.GetAlignment() == AlignmentEnum.neutral || c.GetAlignment() != controlledCharacter.GetAlignment())))
+        {
+            threat += enemy.health / 100f;
+        }
+
+        // Count enemy armies
+        foreach (var army in hex.armies.Where(a =>
+            a != null && !a.killed && a.commander != null && !a.commander.killed &&
+            (a.GetAlignment() == AlignmentEnum.neutral || a.GetAlignment() != controlledCharacter.GetAlignment())))
+        {
+            threat += 0.5f;
+        }
+
+        // Enemy PC threat
+        var pc = hex.GetPC();
+        if (pc != null && (pc.owner.GetAlignment() == AlignmentEnum.neutral ||
+                        pc.owner.GetAlignment() != controlledCharacter.GetAlignment()))
+        {
+            threat += pc.GetDefense() / 10000f;
+        }
+
+        return Mathf.Min(threat, 1f); // Normalize to 0-1
+    }
+
+    private float CalculateAllySupport(Hex hex)
+    {
+        float support = 0;
+
+        // Count allied characters and their strength
+        foreach (var ally in hex.characters.Where(c =>
+            c != null && !c.killed &&
+            c.GetAlignment() == controlledCharacter.GetAlignment() &&
+            c != controlledCharacter))
+        {
+            support += ally.health / 100f;
+        }
+
+        // Count allied armies
+        foreach (var army in hex.armies.Where(a =>
+            a != null && !a.killed && a.commander != null && !a.commander.killed &&
+            a.GetAlignment() == controlledCharacter.GetAlignment()))
+        {
+            support += 0.5f;
+        }
+
+        // Allied PC support
+        var pc = hex.GetPC();
+        if (pc != null && pc.owner.GetAlignment() == controlledCharacter.GetAlignment())
+        {
+            support += pc.GetDefense() / 10000f;
+        }
+
+        return Mathf.Min(support, 1f); // Normalize to 0-1
+    }
+
+    private float CalculateResourceValue(Hex hex)
+    {
+        // Calculate resource value based on terrain
+        switch (hex.terrainType)
+        {
+            case TerrainEnum.forest:
+                return 0.8f;
+            case TerrainEnum.mountains:
+                return 0.9f;
+            case TerrainEnum.hills:
+                return 0.5f;
+            default:
+                return 0.2f;
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        // Get the action chosen by the agent
-        //int selectedActionIndex = actionBuffers.DiscreteActions[0];
-        int selectedActionId = actionBuffers.DiscreteActions[0];
-        chosenAction = allPossibleActions.Find(x => x.actionId == selectedActionId);
-
-        // Log the received action index for debugging
-        //Debug.Log($"- [{controlledCharacter.characterName}] Received action index: {selectedActionIndex}");
-
-        //if (selectedActionIndex >= 0 && selectedActionIndex < allPossibleActions.Count)
-        if (chosenAction != null)
+        if (!awaken) Awaken();
+        if (!hasEpisodeBegun) return;
+        if (hexObjectiveScores.Count < 1 || hexObjectiveTypes.Count < 1)
         {
-            // Check if this action ID is in our available actions list
-            if (!availableActionsIds.Contains(selectedActionId))
+            // Reset objective evaluation for the new turn
+            EvaluateHexObjectives();
+        }
+
+        switch (phase)
+        {
+            case AgentPhase.EvaluateObjectives:
+                // Step 1: Determine what type of objective to pursue
+                int objectiveTypeIndex = actionBuffers.DiscreteActions[OBJECTIVE_TYPE_BRANCH];
+                currentObjective = (HexObjectiveType)(objectiveTypeIndex + 1); // +1 because enums start at 1, None = 0
+
+                // Step 2: Find hexes that match this objective type
+                var candidateHexes = controlledCharacter.relevantHexes
+                    .Where(h => h != null && hexObjectiveTypes.ContainsKey(h) && hexObjectiveTypes[h] == currentObjective)
+                    .OrderByDescending(h => hexObjectiveScores[h])
+                    .ToList();
+
+                // If no hexes match our objective, look for any scored hexes
+                if (candidateHexes.Count == 0)
+                {
+                    candidateHexes = controlledCharacter.relevantHexes
+                        .Where(h => h != null && hexObjectiveScores.ContainsKey(h))
+                        .OrderByDescending(h => hexObjectiveScores[h])
+                        .ToList();
+                }
+
+                // Step 3: Select a target based on priority level
+                int priorityLevel = actionBuffers.DiscreteActions[TARGET_HEX_BRANCH];
+                int targetIndex = 0;
+
+                // Priority level determines which part of the sorted list to choose from
+                switch (priorityLevel)
+                {
+                    case 0: // High priority - top of the list
+                        targetIndex = 0;
+                        break;
+                    case 1: // Medium priority - middle of the list
+                        targetIndex = candidateHexes.Count > 2 ? candidateHexes.Count / 2 : 0;
+                        break;
+                    case 2: // Low priority - lower part of the list
+                        targetIndex = candidateHexes.Count > 3 ? candidateHexes.Count * 2 / 3 : 0;
+                        break;
+                }
+
+                // Make sure we have a valid index
+                targetIndex = Mathf.Clamp(targetIndex, 0, candidateHexes.Count - 1);
+
+                // Set our strategic target
+                if (candidateHexes.Count > 0)
+                {
+                    strategicTargetHex = candidateHexes[targetIndex];
+                    lastDistanceToTarget = Vector2Int.Distance(controlledCharacter.hex.v2, strategicTargetHex.v2);
+                    // Debug.Log($"- [{controlledCharacter.characterName}] Objective: {currentObjective}, Target: {strategicTargetHex.v2}");
+                }
+                else if (controlledCharacter.relevantHexes.Count > 0)
+                {
+                    // Default to first relevant hex if no scored hexes
+                    strategicTargetHex = controlledCharacter.relevantHexes[0];
+                    lastDistanceToTarget = Vector2Int.Distance(controlledCharacter.hex.v2, strategicTargetHex.v2);
+                    // Debug.Log($"- [{controlledCharacter.characterName}] No scored hexes, using default target: {strategicTargetHex.v2}");
+                }
+                else
+                {
+                    // Debug.Log($"- [{controlledCharacter.characterName}] No relevant hexes available!");
+                }
+
+                phase = AgentPhase.MoveTowardsObjective;
+                RequestDecision();
+                break;
+
+            case AgentPhase.MoveTowardsObjective:
+                // Step 4: Determine how to move toward the target
+                int movementStrategy = actionBuffers.DiscreteActions[MOVEMENT_BRANCH];
+
+                if (strategicTargetHex == null || controlledCharacter.reachableHexes.Count == 0)
+                {
+                    // Debug.Log($"- [{controlledCharacter.characterName}] No target or no reachable hexes, skipping movement");
+                    phase = AgentPhase.ChooseAction;
+                    RequestDecision();
+                    break;
+                }
+
+                // Find the best hex to move to based on strategy
+                Hex destinationHex = null;
+
+                switch (movementStrategy)
+                {
+                    case 0: // Direct path - minimize distance to target
+                        destinationHex = FindDirectPathHex();
+                        break;
+                    case 1: // Cautious path - balance safety and progress
+                        destinationHex = FindCautiousPathHex();
+                        break;
+                    case 2: // Aggressive path - focus on enemy engagement
+                        destinationHex = FindAggressivePathHex();
+                        break;
+                }
+
+                if (destinationHex != null)
+                {
+                    float previousDistance = Vector2Int.Distance(controlledCharacter.hex.v2, strategicTargetHex.v2);
+                    if(!isPlayerControlled || autoplay)
+                    {
+                        board.MoveCharacterOneHex(controlledCharacter, controlledCharacter.hex, destinationHex, true);
+                    }   
+                    float newDistance = Vector2Int.Distance(destinationHex.v2, strategicTargetHex.v2);
+
+                    // Debug.Log($"- [{controlledCharacter.characterName}] Moved to {destinationHex.v2} " +
+                    //          $"(Strategy: {(MovementStrategy)movementStrategy})");
+
+                    if (newDistance < previousDistance)
+                    {
+                        AddReward(0.05f); // Progress reward
+                    }
+
+                    lastDistanceToTarget = newDistance;
+                }
+                else
+                {
+                    // Debug.Log($"- [{controlledCharacter.characterName}] Could not find a valid movement destination");
+                }
+
+                phase = AgentPhase.ChooseAction;
+                RequestDecision();
+                break;
+
+            case AgentPhase.ChooseAction:
+                // Step 5: Choose an action to perform
+                int selectedActionIndex = actionBuffers.DiscreteActions[ACTION_BRANCH];
+                
+                if (selectedActionIndex < allPossibleActions.Count)
+                {
+                    chosenAction = allPossibleActions[selectedActionIndex];
+
+                    // Check if this action is available
+                    if (!availableActionsIds.Contains(chosenAction.actionId))
+                    {
+                        // Debug.LogWarning($"- [{controlledCharacter.characterName}] Action {chosenAction.actionName} " +
+                        //               $"not available, falling back to default");
+                        chosenAction = DEFAULT_ACTION;
+                    }
+                }
+                else
+                {
+                    // Debug.LogError($"- [{controlledCharacter.characterName}] Invalid action index {selectedActionIndex}");
+                    chosenAction = DEFAULT_ACTION;
+                }
+
+                // Debug.Log($"- [{controlledCharacter.characterName}] Choosing action: {chosenAction.actionName}");
+
+                if (!isPlayerControlled || autoplay) ExecuteChosenAction();
+
+                phase = AgentPhase.EvaluateObjectives;
+                break;
+        }
+    }
+
+    // Movement strategy enums for better readability
+    private enum MovementStrategy
+    {
+        Direct = 0,
+        Cautious = 1,
+        Aggressive = 2
+    }
+
+    // Helper methods for different movement strategies
+    private Hex FindDirectPathHex()
+    {
+        // Find the hex that minimizes distance to target
+        Hex bestHex = null;
+        float bestCost = float.MaxValue;
+
+        foreach (var hex in controlledCharacter.reachableHexes)
+        {
+            if (hex == null) continue;
+
+            float costToTarget = hexPathRenderer.GetPathCost(
+                hex.v2,
+                strategicTargetHex.v2,
+                controlledCharacter
+            );
+
+            if (costToTarget < bestCost)
             {
-                Debug.LogWarning($"- [{controlledCharacter.characterName}] Action masking failure: Selected action {selectedActionId} " +
-                    $": {chosenAction.actionName}) is not in available action! Falling back to PASS");
-
-                // Debug output to see what actions are available
-                Debug.LogWarning($"- [{controlledCharacter.characterName}] Available action IDs: {string.Join(", ", availableActionsIds)}");
-
-                chosenAction = DEFAULT;
+                bestCost = costToTarget;
+                bestHex = hex;
             }
         }
-        else
+
+        return bestHex;
+    }
+
+    private Hex FindCautiousPathHex()
+    {
+        // Balance progress and safety
+        Hex bestHex = null;
+        float bestScore = float.MinValue;
+
+        foreach (var hex in controlledCharacter.reachableHexes)
         {
-            Debug.LogError($"- [{controlledCharacter.characterName}] Invalid action id {selectedActionId}: not found in all possible actions! Falling back to PASS");
-            chosenAction = DEFAULT;
+            if (hex == null) continue;
+
+            // Get cost to target (lower is better)
+            float costToTarget = hexPathRenderer.GetPathCost(
+                hex.v2,
+                strategicTargetHex.v2,
+                controlledCharacter
+            );
+
+            // Get safety score (higher is better)
+            float safetyScore = EvaluateSafetyScore(hex);
+
+            // Combined score: negative cost (so lower costs are better) plus safety
+            float score = -costToTarget / gameState.GetMaxMovement() + safetyScore * 2;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestHex = hex;
+            }
         }
 
-        Debug.Log($"- [{controlledCharacter.characterName}] Final chosen action: {chosenAction.actionName} (ID: {chosenAction.actionId})");
+        return bestHex;
+    }
 
-        // In AI mode, execute immediately
-        if (!isPlayerControlled || autoplay)
+    private Hex FindAggressivePathHex()
+    {
+        // Prioritize hexes that engage enemies while making progress
+        Hex bestHex = null;
+        float bestScore = float.MinValue;
+
+        foreach (var hex in controlledCharacter.reachableHexes)
         {
-            ExecuteChosenAction();
+            if (hex == null) continue;
+
+            // Get cost to target (lower is better)
+            float costToTarget = hexPathRenderer.GetPathCost(
+                hex.v2,
+                strategicTargetHex.v2,
+                controlledCharacter
+            );
+
+            // Get enemy engagement score (higher is better)
+            float attackScore = EvaluateAttackScore(hex);
+
+            // Combined score: negative cost plus attack value
+            float score = -costToTarget / gameState.GetMaxMovement() + attackScore * 3;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestHex = hex;
+            }
         }
-        else
-        {
-            Debug.Log($"- [{controlledCharacter.characterName}] Not executed as it was just a suggestion");
-        }
+
+        return bestHex;
     }
 
     // Ensure the action mask is correctly set up
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
-        if (!initialized) Awaken();
-
-        if (controlledCharacter == null)
-        {
-            Debug.LogError("Controlled character is null!");
-            return;
-        }
-
-        if (availableActionsIds == null || availableActionsIds.Count < 1)
-        {
-            Debug.LogError($"- [{controlledCharacter.characterName}] Available actions are null or empty!");
-            return;
-        }
+        if (!awaken) Awaken();
+        if (!hasEpisodeBegun) return;
 
         // Get the behavior parameters to validate action space
         var behaviorParams = GetComponent<BehaviorParameters>();
         if (behaviorParams == null)
         {
-            Debug.LogError($"- [{controlledCharacter.characterName}] Behavior Parameters component not found!");
+            // Debug.LogError($"- [{controlledCharacter.characterName}] Behavior Parameters missing!");
             return;
         }
 
-        // Validate action space size
-        int expectedActionCount = behaviorParams.BrainParameters.ActionSpec.BranchSizes[0];
-        Debug.Log($" - [{controlledCharacter.characterName}] Expected action count: {expectedActionCount}, Available actions: {availableActionsIds.Count}");
-
-        // Important: First, disable ALL actions to ensure a clean slate
-        for (int i = 0; i < expectedActionCount; i++)
+        // Clear everything first (enable all actions by default)
+        for (int branch = 0; branch < behaviorParams.BrainParameters.ActionSpec.BranchSizes.Length; branch++)
         {
-            actionMask.SetActionEnabled(0, i, false);
+            for (int i = 0; i < behaviorParams.BrainParameters.ActionSpec.BranchSizes[branch]; i++)
+            {
+                actionMask.SetActionEnabled(branch, i, true);
+            }
         }
 
-        // Then enable ONLY available actions
-        foreach (int actionId in availableActionsIds)
+        switch (phase)
         {
-            // Find the index in allPossibleActions that corresponds to this action ID
-            int actionIndex = allPossibleActions.FindIndex(a => a.actionId == actionId);
+            case AgentPhase.EvaluateObjectives:
+                EvaluateHexObjectives();
+                break;
 
-            // Verify the index is valid before enabling
-            if (actionIndex >= 0 && actionIndex < expectedActionCount)
-            {
-                actionMask.SetActionEnabled(0, actionIndex, true);
-                Debug.Log($"- [{controlledCharacter.characterName}] Enabled action index: {actionIndex} for ID: {actionId} ({allPossibleActions[actionIndex].actionName})");
-            }
-            else
-            {
-                Debug.LogError($"- [{controlledCharacter.characterName}] Invalid action index {actionIndex} for ID: {actionId}. Cannot enable in mask!");
-            }
+            case AgentPhase.MoveTowardsObjective:
+                break;
+
+            case AgentPhase.ChooseAction:
+
+                // Initialize all possible actions
+                allPossibleActions.ForEach(x => x.Initialize(controlledCharacter));
+                availableActionsIds = GetAvailableActionIds(controlledCharacter);
+                if(availableActionsIds.Count < 1)
+                {
+                    // Debug.Log($"- [{controlledCharacter.characterName}] No available actions! Why? Is it killed? {controlledCharacter.killed}");
+                    availableActionsIds.Add(DEFAULT_ACTION.actionId);
+                }
+                // Only enable actions that are actually available
+                for (int actionIndex = 0; actionIndex < allPossibleActions.Count; actionIndex++)
+                {
+                    int actionId = allPossibleActions[actionIndex].actionId;
+                    bool isAvailable = availableActionsIds.Contains(actionId);
+                    actionMask.SetActionEnabled(ACTION_BRANCH, actionIndex, isAvailable);
+                }
+
+                break;
         }
     }
 
     private List<int> GetAvailableActionIds(Character character)
     {
-        if(controlledCharacter == null)
+        if (controlledCharacter == null)
         {
-            Debug.LogError("Controlled character actions is null!");
+            // Debug.LogError("Controlled character is null!");
             return new List<int>();
         }
 
         if (allPossibleActions == null)
         {
-            Debug.LogError($"- [{controlledCharacter.characterName}] Possible actions are null!");
+            // Debug.LogError($"- [{controlledCharacter.characterName}] Possible actions are null!");
             return new List<int>();
         }
 

@@ -2,22 +2,22 @@
     "Character": {
         "checkpoints": [
             {
-                "steps": 0,
-                "file_path": "results\\MyTrainingRun2\\Character\\Character-0.onnx",
-                "reward": null,
-                "creation_time": 1745763461.209014,
+                "steps": 19,
+                "file_path": "results\\MyTrainingRun2\\Character\\Character-19.onnx",
+                "reward": 0.028571428997176036,
+                "creation_time": 1745780286.356633,
                 "auxillary_file_paths": [
-                    "results\\MyTrainingRun2\\Character\\Character-0.pt"
+                    "results\\MyTrainingRun2\\Character\\Character-19.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 0,
+            "steps": 19,
             "file_path": "results\\MyTrainingRun2\\Character.onnx",
-            "reward": null,
-            "creation_time": 1745763461.209014,
+            "reward": 0.028571428997176036,
+            "creation_time": 1745780286.356633,
             "auxillary_file_paths": [
-                "results\\MyTrainingRun2\\Character\\Character-0.pt"
+                "results\\MyTrainingRun2\\Character\\Character-19.pt"
             ]
         }
     },

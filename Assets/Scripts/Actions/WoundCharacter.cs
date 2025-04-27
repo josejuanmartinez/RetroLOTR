@@ -21,7 +21,7 @@ public class WoundCharacter : AgentCharacterAction
                 message += " wounded";
                 c.Wounded(c.hex.GetPC().owner, random * 10);
             }
-            FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, capitalHex, true);
+            FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
             MessageDisplay.ShowMessage(message, Color.green);
 
             enemy.Wounded(c.GetOwner(), wound);
