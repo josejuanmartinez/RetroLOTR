@@ -97,7 +97,8 @@ public class Leader : Character
             });
         }
         
-        controlledCharacters.FindAll(x => !x.killed).ForEach(x => x.NewTurn());
+        // Make all characters in nation act!
+        controlledCharacters.FindAll(c => !c.killed && !c.hasActionedThisTurn && !c.hasMovedThisTurn).ForEach(x => x.NewTurn());
         StartCoroutine(WaitUntilEndOfTurn());
     }
 
@@ -106,7 +107,7 @@ public class Leader : Character
         yield return new WaitForEndOfFrame();
 
         // AI: Act if not player
-        if (game.player != this || game.autoplay)
+        if (game.player != this || game.trainingMode)
         {
             yield return new WaitUntil(() => controlledCharacters.All(c => c.killed || c.hasActionedThisTurn || c.hasMovedThisTurn));
             FindFirstObjectByType<Game>().NextPlayer();
