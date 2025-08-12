@@ -50,7 +50,6 @@ public class Character : MonoBehaviour
     [Header("AI")]
     public bool isPlayerControlled = true;
     private bool trainingMode = false;
-    public bool autoplay = false;
 
     private BiomeConfig characterBiome;
 
@@ -63,7 +62,6 @@ public class Character : MonoBehaviour
         reachableHexes = new();
         killed = false;
         trainingMode = FindAnyObjectByType<Game>().trainingMode;
-        autoplay = FindAnyObjectByType<Game>().autoplay;
         awaken = true;
     }
     public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome)
@@ -140,7 +138,7 @@ public class Character : MonoBehaviour
         StoreReachableHexes();
         StoreRelevantHexes();
 
-        GetAI().NewTurn(isPlayerControlled, autoplay, trainingMode);
+        GetAI().NewTurn(isPlayerControlled, trainingMode);
     }
 
     public virtual Leader GetOwner()

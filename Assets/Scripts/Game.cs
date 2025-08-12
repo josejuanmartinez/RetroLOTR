@@ -8,7 +8,6 @@ public class Game : MonoBehaviour
 {
     [Header("Training mode")]
     public bool trainingMode = true;
-    public bool autoplay = true;
 
     [Header("Playable Leader (Player)")]
     public PlayableLeader player;
@@ -49,8 +48,7 @@ public class Game : MonoBehaviour
         state = GetComponent<GameState>();
     }
 
-
-    private void InitializeMLAgents()
+    private void InitializeCharactersAI()
     {
         // Find all ML-Agents in the scene
         List<Character> allCharacters = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList();
@@ -61,7 +59,7 @@ public class Game : MonoBehaviour
             characterAgents[character] = character.GetAI();
         }
 
-        Debug.Log($"Initialized {characterAgents.Count} ML-Agents for training");
+        Debug.Log($"Initialized {characterAgents.Count} Characters AI");
     }
 
     public void SelectPlayer(PlayableLeader playableLeader)
@@ -88,11 +86,9 @@ public class Game : MonoBehaviour
         currentlyPlaying = player;
         
         FindFirstObjectByType<Board>().StartGame();
+        InitializeCharactersAI();
         state.InitializeGameState();
-        InitializeMLAgents();
-
         currentlyPlaying.NewTurn();
-
     }
 
 
@@ -109,7 +105,7 @@ public class Game : MonoBehaviour
     {
         if (currentlyPlaying == player)
         {
-            if (autoplay)
+            if (trainingMode)
             {
                 currentlyPlaying = FindNextAliveCompetitor(0);
             }
