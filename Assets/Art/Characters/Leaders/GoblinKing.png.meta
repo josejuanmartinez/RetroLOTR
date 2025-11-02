@@ -3,8 +3,8 @@ guid: bff7738046f16ea4f9ae5f868f53475b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 520225715028809734
-    second: ChatGPT Image Apr 1, 2025, 08_36_37 PM_0
+      213: 1351902681591436168
+    second: GoblinKing_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ChatGPT Image Apr 1, 2025, 08_36_37 PM_0
+      name: GoblinKing_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 1024
-        height: 1536
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 608d0531886383700800000000000000
-      internalID: 520225715028809734
+      spriteID: 883d723835ce2c210800000000000000
+      internalID: 1351902681591436168
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ChatGPT Image Apr 1, 2025, 08_36_37 PM_0: 520225715028809734
+      GoblinKing_0: 1351902681591436168
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

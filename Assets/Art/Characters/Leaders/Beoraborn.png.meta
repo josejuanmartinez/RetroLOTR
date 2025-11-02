@@ -3,10 +3,8 @@ guid: c2540388288d3bc4da082d7f93855e83
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3259816978580906741
-    second: Retro RPG Lineart Contour Engraving_asset_LUa4TnK1gh2RxLqMunRX84kQ_A
-      gondorian commander leaving the great city of Minas Tirith, with a fine armour
-      with the symbol of the white tree on a horse, towards the darkness_0
+      213: 6456552232582979933
+    second: Beoraborn_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,26 +96,11 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Retro RPG Lineart Contour Engraving_asset_LUa4TnK1gh2RxLqMunRX84kQ_A
-        gondorian commander leaving the great city of Minas Tirith, with a fine armour
-        with the symbol of the white tree on a horse, towards the darkness_0
+      name: Beoraborn_0
       rect:
         serializedVersion: 2
         x: 0
@@ -132,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5f22a1155423d3d20800000000000000
-      internalID: 3259816978580906741
+      spriteID: d512dd81c084a9950800000000000000
+      internalID: 6456552232582979933
       vertices: []
       indices: 
       edges: []
@@ -152,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Retro RPG Lineart Contour Engraving_asset_LUa4TnK1gh2RxLqMunRX84kQ_A gondorian commander leaving the great city of Minas Tirith, with a fine armour with the symbol of the white tree on a horse, towards the darkness_0: 3259816978580906741
+      Beoraborn_0: 6456552232582979933
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

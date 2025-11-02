@@ -107,7 +107,7 @@ public class Leader : Character
         yield return new WaitForEndOfFrame();
 
         // AI: Act if not player
-        if (game.player != this || game.trainingMode)
+        if (game.player != this)
         {
             yield return new WaitUntil(() => controlledCharacters.All(c => c.killed || c.hasActionedThisTurn || c.hasMovedThisTurn));
             FindFirstObjectByType<Game>().NextPlayer();

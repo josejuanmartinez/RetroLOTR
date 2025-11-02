@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3261100172023844959}
   - component: {fileID: 5794153034429842723}
-  - component: {fileID: 1432090372927082787}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -45,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ec5824c88e74e4458bfab182bc75364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trainingMode: 1
   player: {fileID: 0}
   competitors:
   - {fileID: 0}
@@ -76,19 +76,5 @@ MonoBehaviour:
   artifacts: []
   normalMovement: 12
   cavalryMovement: 15
-  maxPcsPerPlayer: 8
-  maxCharactersPerPlayer: 8
   turn: 0
   started: 0
---- !u!114 &1432090372927082787
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4985763033077050972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1cbf9da85f4c3da498ab511c7aeddcd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

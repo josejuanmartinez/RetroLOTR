@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -25,9 +24,12 @@ public class Hex : MonoBehaviour
     public GameObject citadel;
 
     public GameObject characterIcon;
+
+    public TextMeshPro freeArmiesAtHexText;
+    public TextMeshPro neutralArmiesAtHexText;
+    public TextMeshPro darkServantArmiesAtHexText;
     public TextMeshPro charactersAtHexText;
     public GameObject encounter;
-    public TextMeshPro encountersAtHexText;
     public GameObject port;
 
     public GameObject freeArmy;
@@ -41,24 +43,13 @@ public class Hex : MonoBehaviour
 
     [Header("Hover")]
     public GameObject hoverHexFrame;
-    public GameObject hoverTooltip;
+    /*public GameObject hoverTooltip;
     public GameObject hoverIcon;
-    public SpriteRenderer hoverPc;
-    public SpriteRenderer hoverFort;
-    public SpriteRenderer hoverPort;
     public SpriteRenderer hoverHidden;
-    public TextMeshPro hoverFreeArmy;
-    public TextMeshPro hoverNeutralArmy;
-    public TextMeshPro hoverDarkArmy;
     public TextMeshPro hoverPcName;
     public TextMeshPro hoverProduces;
-    public TextMeshPro hoverHex;
-    public GameObject hoverFreeArmyIcon;
-    public GameObject hoverNeutralArmyIcon;
-    public GameObject hoverDarkArmyIcon;
-    public GameObject hoverCharacterIcon;
-    public GameObject hoverEncounterIcon;
-
+    public GameObject hoverCharacterIcon;*/
+    
     [Header("Data")]
     [SerializeField] private PC pc;
 
@@ -68,7 +59,6 @@ public class Hex : MonoBehaviour
     public List<Artifact> hiddenArtifacts = new();
 
     private Illustrations illustrations;
-    private IllustrationsSmall illustrationsSmall;
 
     public bool isSelected = false;
 
@@ -77,7 +67,6 @@ public class Hex : MonoBehaviour
         pc = null;
         sprite = GetComponent<SpriteRenderer>();
         illustrations = FindFirstObjectByType<Illustrations>();
-        illustrationsSmall = FindFirstObjectByType<IllustrationsSmall>();
         armies = new();
         characters = new();
         encounters = new ();
@@ -143,64 +132,45 @@ public class Hex : MonoBehaviour
 
     public void RefreshHoverText()
     {
-        hoverHex.text = $"[{v2.x},{v2.y}]<br>";
 
-        hoverCharacterIcon.SetActive(characters.Count > 0);
-
-        if (hoverCharacterIcon.activeSelf)
+        if (characterIcon.activeSelf)
         {
-            List<string> characterNames = new();
-            foreach(Character character in characters)
+            charactersAtHexText.text = "";
+            freeArmiesAtHexText.text = "";
+            darkServantArmiesAtHexText.text = "";
+            neutralArmiesAtHexText.text = "";
+            foreach (Character character in characters)
             {
-                string characterName = char.ToUpper(character.characterName[0]) + character.characterName[1..];
-                characterNames.Add($"{(character.IsArmyCommander() ? $"<sprite name=\"{character.alignment}\">" : "")}{characterName}");
+                charactersAtHexText.text += $"<mark=#ffffff>{character.GetHoverText(true, true, false)}</mark>\n";
+                if(character.IsArmyCommander())
+                {
+                    string armyText = $"<mark=#ffffff>{character.GetHoverText(false, false, true)}</mark>\n";
+                    switch (character.alignment)
+                    {
+                        case AlignmentEnum.freePeople:
+                            freeArmiesAtHexText.text += armyText;
+                            break;
+                        case AlignmentEnum.neutral:
+                            neutralArmiesAtHexText.text += armyText;
+                            break;
+                        case AlignmentEnum.darkServants:
+                            darkServantArmiesAtHexText.text += armyText;
+                            break;
+                    }
+                }                
             }
-            charactersAtHexText.text = string.Join(" ", characterNames);
         }
 
-        hoverEncounterIcon.SetActive(encounters.Count > 0);
-        if(hoverEncounterIcon.activeSelf)
-        {
-            List<string> encounterNames = new();
-            foreach (EncountersEnum encounter in encounters) encounterNames.Add(encounter.ToString());
-            encountersAtHexText.text = string.Join(" ", encounterNames);
-        }
-
+        /*
         hoverPcName.text = "";
         hoverProduces.text = "";
 
         hoverIcon.SetActive(false);
 
-        hoverPc.gameObject.SetActive(false);
-        hoverPort.gameObject.SetActive(false);
         hoverHidden.gameObject.SetActive(false);
-        hoverFort.gameObject.SetActive(false);
-
-        hoverFreeArmy.text = "";
-        hoverNeutralArmy.text = "";
-        hoverDarkArmy.text = "";
-
-        hoverFreeArmyIcon.SetActive(false);
-        hoverNeutralArmyIcon.SetActive(false);
-        hoverDarkArmyIcon.SetActive(false);
-
-        hoverFreeArmy.gameObject.SetActive(false);
-        hoverNeutralArmy.gameObject.SetActive(false);
-        hoverDarkArmy.gameObject.SetActive(false);
-
+        
         if (pc != null && pc.citySize != PCSizeEnum.NONE)
         {
-
-            if (pc.fortSize != FortSizeEnum.NONE)
-            {
-                string pcFortSize = pc.fortSize.ToString();
-                Sprite illustration = illustrations.GetIllustrationByName(pcFortSize);
-                if (illustration != null)
-                {
-                    hoverFort.sprite = illustration;
-                    hoverFort.gameObject.SetActive(true);
-                }
-            }
 
             Leader player = FindFirstObjectByType<Game>().player;
 
@@ -225,70 +195,10 @@ public class Hex : MonoBehaviour
                     }
                 }
 
-                hoverPort.gameObject.SetActive(pc.hasPort);
                 hoverHidden.gameObject.SetActive(pc.hiddenButRevealed);
 
-                if (pc.citySize != PCSizeEnum.NONE)
-                {
-                    string pcSize = pc.citySize.ToString();
-                    Sprite illustration = illustrations.GetIllustrationByName(pcSize);
-                    if (illustration != null)
-                    {
-                        hoverPc.sprite = illustration;
-                        hoverPc.gameObject.SetActive(true);
-                    }
-                }
             }
-        } else
-        {
-            hoverPcName.text = hoverHex.text;
-            hoverHex.text = "";
-        }
-
-        if(armies != null && armies.Count > 0)
-        {
-            Army freeArmy = new(null);
-            Army neutralArmy = new(null);
-            Army darkArmy = new(null);
-
-            foreach (Army army in armies)
-            {
-                switch (army.GetAlignment())
-                {
-                    case AlignmentEnum.freePeople:
-                        freeArmy.Recruit(army);
-                        break;
-                    case AlignmentEnum.neutral:
-                        neutralArmy.Recruit(army);
-                        break;
-                    case AlignmentEnum.darkServants:
-                        darkArmy.Recruit(army);
-                        break;
-                }
-            }
-
-
-            if (freeArmy.GetSize() > 0)
-            {
-                hoverFreeArmyIcon.SetActive(true);
-                hoverFreeArmy.gameObject.SetActive(true);
-                hoverFreeArmy.text = freeArmy.GetHoverText();
-            }
-
-            if (neutralArmy.GetSize() > 0)
-            {
-                hoverNeutralArmyIcon.SetActive(true);
-                hoverNeutralArmy.gameObject.SetActive(true);
-                hoverNeutralArmy.text = neutralArmy.GetHoverText();
-            }
-
-            if (darkArmy.GetSize() > 0)
-            {
-                hoverDarkArmyIcon.SetActive(true);
-                hoverDarkArmy.gameObject.SetActive(true);
-                hoverDarkArmy.text = darkArmy.GetHoverText();
-            }
-        }
+        }*/
     }
 
     public void Hover()
@@ -301,17 +211,17 @@ public class Hex : MonoBehaviour
         if (!IsHidden())
         {
             hoverHexFrame.SetActive(true);
-            hoverTooltip.SetActive(true);
+            // hoverTooltip.SetActive(true);
             try
             {
                 float ortoSize = Camera.main.orthographicSize;
-                float factor = 6;
-                hoverTooltip.transform.localScale = new Vector3(ortoSize/ factor, ortoSize/ factor, 1);
+                // float factor = 6;
+                /*hoverTooltip.transform.localScale = new Vector3(ortoSize/ factor, ortoSize/ factor, 1);
                 hoverTooltip.transform.localPosition = new Vector3(
                     hoverTooltip.transform.localPosition.x,
                     0.5f * 0.1f * factor + (hoverTooltip.transform.localScale.y),
                     1
-                );
+                );*/
             } catch(System.Exception)
             {
 
@@ -323,7 +233,7 @@ public class Hex : MonoBehaviour
     public void Unhover()
     {
         if(!isSelected) hoverHexFrame.SetActive(false);
-        hoverTooltip.SetActive(false);
+        // hoverTooltip.SetActive(false);
     }
 
     public void Select()
@@ -340,7 +250,7 @@ public class Hex : MonoBehaviour
     {
         isSelected = false;
         hoverHexFrame.SetActive(false);
-        hoverTooltip.SetActive(false);
+        // hoverTooltip.SetActive(false);
     }
 
     public void LookAt()

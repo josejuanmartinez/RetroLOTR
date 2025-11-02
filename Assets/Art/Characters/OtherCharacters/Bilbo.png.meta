@@ -3,10 +3,8 @@ guid: 682422d97f2f9ac44ab382a331992f26
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4923380962552881752
-    second: Retro RPG Lineart Contour Engraving_asset_kL1ZGobQ1B2mp8U1TfVxKriz_A
-      scholarly hobbit Bilbo or Frodo Baggins studying maps in a cozy underground
-      burrow filled with books and gentle sunlight flowing through round wi_0
+      213: 3431508167226121798
+    second: Bilbo_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,26 +96,11 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Retro RPG Lineart Contour Engraving_asset_kL1ZGobQ1B2mp8U1TfVxKriz_A
-        scholarly hobbit Bilbo or Frodo Baggins studying maps in a cozy underground
-        burrow filled with books and gentle sunlight flowing through round wi_0
+      name: Bilbo_0
       rect:
         serializedVersion: 2
         x: 0
@@ -132,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8ad5d198913acabb0800000000000000
-      internalID: -4923380962552881752
+      spriteID: 64e5d574f7a2f9f20800000000000000
+      internalID: 3431508167226121798
       vertices: []
       indices: 
       edges: []
@@ -152,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Retro RPG Lineart Contour Engraving_asset_kL1ZGobQ1B2mp8U1TfVxKriz_A scholarly hobbit Bilbo or Frodo Baggins studying maps in a cozy underground burrow filled with books and gentle sunlight flowing through round wi_0: -4923380962552881752
+      Bilbo_0: 3431508167226121798
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

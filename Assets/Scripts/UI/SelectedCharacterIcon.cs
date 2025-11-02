@@ -43,7 +43,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         actionsGameObject.SetActive(true);
         actioned.SetActive(true);
         moved.SetActive(true);
-        icon.sprite = FindFirstObjectByType<IllustrationsSmall>().GetIllustrationByName(c);
+        icon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c);
         commander.text = c.GetCommander().ToString();
         agent.text = c.GetAgent().ToString();
         emmissary.text = c.GetEmmissary().ToString();

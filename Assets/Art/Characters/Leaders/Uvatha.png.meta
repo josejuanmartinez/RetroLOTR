@@ -3,8 +3,8 @@ guid: d4d0d799b08bcf94197d1344bc25777c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5791844026236648848
-    second: canvas-2025-02-27-07_38-PM-0_0
+      213: 2870707203048152113
+    second: Uvatha_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,24 +96,11 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: canvas-2025-02-27-07_38-PM-0_0
+      name: Uvatha_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 09dbd429473c06050800000000000000
-      internalID: 5791844026236648848
+      spriteID: 13c17d3ddfcc6d720800000000000000
+      internalID: 2870707203048152113
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      canvas-2025-02-27-07_38-PM-0_0: 5791844026236648848
+      Uvatha_0: 2870707203048152113
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

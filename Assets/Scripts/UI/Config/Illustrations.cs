@@ -10,4 +10,9 @@ public class Illustrations : MonoBehaviour
     {
         return illustrations.Find(x => x.name.ToLower() == name.ToLower());
     }
+
+    public Sprite GetIllustrationByName(Character character)
+    {
+        return illustrations.Find(x => x.name.ToLower() == character.characterName.ToLower());
+    }
 }

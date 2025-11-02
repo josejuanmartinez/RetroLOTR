@@ -3,8 +3,8 @@ guid: 0608657df90104b42b7f8431fdad2638
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2064916282797234562
-    second: ChatGPT Image Apr 6, 2025, 06_01_58 PM_0
+      213: 2141624315190285573
+    second: Arwen_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ChatGPT Image Apr 6, 2025, 06_01_58 PM_0
+      name: Arwen_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 1024
-        height: 1536
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e7663f8c491f753e0800000000000000
-      internalID: -2064916282797234562
+      spriteID: 5059145c7f398bd10800000000000000
+      internalID: 2141624315190285573
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ChatGPT Image Apr 6, 2025, 06_01_58 PM_0: -2064916282797234562
+      Arwen_0: 2141624315190285573
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

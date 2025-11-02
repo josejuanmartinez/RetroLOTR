@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.TextCore.Text;
 
 public class Character : MonoBehaviour
 {
@@ -49,8 +50,7 @@ public class Character : MonoBehaviour
 
     [Header("AI")]
     public bool isPlayerControlled = true;
-    private bool trainingMode = false;
-
+    
     private BiomeConfig characterBiome;
 
     private bool awaken = false;
@@ -61,7 +61,6 @@ public class Character : MonoBehaviour
         doubledBy = new();
         reachableHexes = new();
         killed = false;
-        trainingMode = FindAnyObjectByType<Game>().trainingMode;
         awaken = true;
     }
     public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome)
@@ -137,8 +136,6 @@ public class Character : MonoBehaviour
         hasActionedThisTurn = false;
         StoreReachableHexes();
         StoreRelevantHexes();
-
-        GetAI().NewTurn(isPlayerControlled, trainingMode);
     }
 
     public virtual Leader GetOwner()
@@ -146,6 +143,20 @@ public class Character : MonoBehaviour
         if (!owner && this is Leader) return this as Leader;
         
         return owner;
+    }
+
+    public string GetHoverText(bool withAlignment, bool withLevels = true, bool withArmy = false)
+    {
+        List<string> result = new() { };
+        if(withAlignment) result.Add($"<sprite name=\"{alignment}\">");
+        result.Add($"{characterName}");
+        if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? "["+commander.ToString()+"]" : "")}");
+        if (agent > 0) result.Add($"<sprite name=\"agent\">{(withLevels ? "["+agent.ToString()+"]" : "")}");
+        if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">{(withLevels ? "["+emmissary.ToString()+"]" : "")}");
+        if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? "[" + mage.ToString() + "]" : "")}");
+
+        if (withArmy) result.Add(GetArmy().GetHoverText());
+        return string.Join("", result);
     }
 
     public MovementType GetMovementType()
@@ -328,11 +339,6 @@ public class Character : MonoBehaviour
 
         Assert.IsTrue(relevantHexes.Count == MAX_RELEVANT_HEXES, "Relevant hexes list size mismatch!");
         this.relevantHexes = relevantHexes;
-    }
-
-    public StrategyGameAgent GetAI()
-    {
-        return gameObject.GetComponentInChildren<StrategyGameAgent>();
     }
 
     public void MoveTo(Hex newHex)

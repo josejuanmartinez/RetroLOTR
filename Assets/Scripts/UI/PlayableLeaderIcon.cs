@@ -11,7 +11,7 @@ public class PlayableLeaderIcon : MonoBehaviour
 
     public void Initialize(Leader leader)
     {
-        image.sprite = FindFirstObjectByType<IllustrationsSmall>().GetIllustrationByName(leader.characterName);
+        image.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(leader.characterName);
         joinedText.text = $"<mark=#ffffff>{leader.GetBiome().joinedText}</mark>";
 
         // Start the coroutine to hide the text after 6 seconds

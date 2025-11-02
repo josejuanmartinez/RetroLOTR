@@ -3,10 +3,8 @@ guid: 88891d105f1a1654a9967d8d96c68bcb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1971892472735687699
-    second: Retro RPG Lineart Contour Engraving_asset_MUA8QXNDF2Wunb5kUg3fZTYo_A
-      fearsome Witch-King figura clad in ominous dark armor with an iron crown helmet
-      covering his all face shrouded in dark mist, rendered in a gothic_0
+      213: 3441079447128890527
+    second: Murazor_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,26 +96,11 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Retro RPG Lineart Contour Engraving_asset_MUA8QXNDF2Wunb5kUg3fZTYo_A
-        fearsome Witch-King figura clad in ominous dark armor with an iron crown
-        helmet covering his all face shrouded in dark mist, rendered in a gothic_0
+      name: Murazor_0
       rect:
         serializedVersion: 2
         x: 0
@@ -132,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3146da4a1c19d5b10800000000000000
-      internalID: 1971892472735687699
+      spriteID: f9cd30a868b21cf20800000000000000
+      internalID: 3441079447128890527
       vertices: []
       indices: 
       edges: []
@@ -152,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Retro RPG Lineart Contour Engraving_asset_MUA8QXNDF2Wunb5kUg3fZTYo_A fearsome Witch-King figura clad in ominous dark armor with an iron crown helmet covering his all face shrouded in dark mist, rendered in a gothic_0: 1971892472735687699
+      Murazor_0: 3441079447128890527
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

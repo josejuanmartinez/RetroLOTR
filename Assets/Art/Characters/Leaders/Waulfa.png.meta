@@ -3,10 +3,8 @@ guid: 3f925412575095a4a989f1f57d47b17e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -490776798820244182
-    second: Retro RPG Lineart Contour Engraving_asset_Cqm6ETnWMhrZU2dVZ1zbcAtX_A
-      gondorian commander leaving the great city of Minas Tirith, with a fine armour
-      with the symbol of the white tree on a horse, towards the darkness_0
+      213: -6010350366152101992
+    second: Waulfa_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,26 +96,11 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Retro RPG Lineart Contour Engraving_asset_Cqm6ETnWMhrZU2dVZ1zbcAtX_A
-        gondorian commander leaving the great city of Minas Tirith, with a fine armour
-        with the symbol of the white tree on a horse, towards the darkness_0
+      name: Waulfa_0
       rect:
         serializedVersion: 2
         x: 0
@@ -132,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a25e05a0a196039f0800000000000000
-      internalID: -490776798820244182
+      spriteID: 89f6dd9af22f69ca0800000000000000
+      internalID: -6010350366152101992
       vertices: []
       indices: 
       edges: []
@@ -152,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Retro RPG Lineart Contour Engraving_asset_Cqm6ETnWMhrZU2dVZ1zbcAtX_A gondorian commander leaving the great city of Minas Tirith, with a fine armour with the symbol of the white tree on a horse, towards the darkness_0: -490776798820244182
+      Waulfa_0: -6010350366152101992
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

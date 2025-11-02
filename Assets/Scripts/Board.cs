@@ -20,6 +20,7 @@ public class Board : MonoBehaviour
     [Header("Generation progress")]
     public Slider progressBar;
     public TextMeshProUGUI statusText;
+    public bool drawMark = false;
 
     // Chance parameters
     [Header("Generation Parameters")]
@@ -180,6 +181,8 @@ public class Board : MonoBehaviour
             // Then instantiate hexes
             yield return StartCoroutine(boardGenerator.InstantiateHexesCoroutine(OnHexesInstantiated));
         }
+        // In case the video has not finished yet and we have, we return the download priority to normal
+        Application.backgroundLoadingPriority = ThreadPriority.Normal;
     }
 
     private void OnTerrainGenerated(TerrainEnum[,] terrainGrid)
@@ -601,7 +604,14 @@ public class Board : MonoBehaviour
         if (progressBar != null) progressBar.value = progress;
 
         // Update the status text
-        if (statusText != null) statusText.text = $"<mark=#ffffff>{stage} - {progress * 100:F0}%</mark>";
+        if (statusText != null)
+        {
+            string markStart = drawMark ? "<mark=#ffffff>" : "";
+            string markEnd = drawMark ? "</mark>" : "";
+            string sProgress = progress >= 0.9 ? "Loading game. Please, wait..." : $"{stage} - {progress * 100:F0}%"; 
+            statusText.text = $"{markStart}{sProgress}{markEnd}";
+        }
+            
     }
 
     public Hex GetHex(Vector2 v2)

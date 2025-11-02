@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,12 +68,13 @@ public class CharacterAction : MonoBehaviour
         hoverInstance.GetComponent<Hover>().Initialize(actionName, Vector2.one * 40, 35, TextAlignmentOptions.Center);
 
         actionInitials = gameObject.name.ToUpper();
+        background.color = actionColor;
         if (actionSprite)
         {
             background.sprite = actionSprite;
+            textUI.text = "";
         } else
         {
-            background.color = actionColor;
             textUI.text = actionInitials.ToUpper();
         }
 
@@ -122,51 +124,60 @@ public class CharacterAction : MonoBehaviour
     }
     public void Execute()
     {
-        character.hasActionedThisTurn = true;
-        FindFirstObjectByType<ActionsManager>().Refresh(character);
-
-
-        if (UnityEngine.Random.Range(0, 100) < difficulty || !effect(character))
+        bool isAI = character.isPlayerControlled;
+        try
         {
-            MessageDisplay.ShowMessage($"{actionName} failed", Color.red);
+            // All characters
+            character.hasActionedThisTurn = true;
+            if (!isAI) FindFirstObjectByType<ActionsManager>().Refresh(character);
+
+            if (UnityEngine.Random.Range(0, 100) < difficulty || !effect(character))
+            {
+                if (!isAI) MessageDisplay.ShowMessage($"{actionName} failed", Color.red);
+                return;
+            }
+
+            character.AddCommander(UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0);
+            character.AddAgent(UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0);
+            character.AddEmmissary(UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0);
+            character.AddMage(UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0);
+
+            FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
+
+            character.GetOwner().RemoveLeather(leatherCost);
+            character.GetOwner().RemoveTimber(timberCost);
+            character.GetOwner().RemoveMounts(mountsCost);
+            character.GetOwner().RemoveIron(ironCost);
+            character.GetOwner().RemoveMithril(mithrilCost);
+            character.GetOwner().RemoveGold(goldCost);
+
+            game.MoveToNextCharacterToAction();
+
+            FindFirstObjectByType<StoresManager>().RefreshStores();
+
+            if (character.GetOwner() is not PlayableLeader) return;
+
+            // Now check influence in NPCs
+            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != character.GetOwner()).ToList().ForEach(x =>
+            {
+                x.CheckActionConditionAnywhere(character.GetOwner(), this);
+            });
+
+            if (character.hex.GetPC() != null && character.hex.GetPC().owner is NonPlayableLeader && character.hex.GetPC().owner != character.GetOwner())
+            {
+                NonPlayableLeader nonPlayableLeader = character.hex.GetPC().owner as NonPlayableLeader;
+                if (nonPlayableLeader == null) return;
+                nonPlayableLeader.CheckActionConditionAtCapital(character.GetOwner(), this);
+            }
             return;
         }
-
-        character.AddCommander(UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0);
-        character.AddAgent(UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0);
-        character.AddEmmissary(UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0);
-        character.AddMage(UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0);
-
-        FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
-
-        character.GetOwner().RemoveLeather(leatherCost);
-        character.GetOwner().RemoveTimber(timberCost);
-        character.GetOwner().RemoveMounts(mountsCost);
-        character.GetOwner().RemoveIron(ironCost);
-        character.GetOwner().RemoveMithril(mithrilCost);
-        character.GetOwner().RemoveGold(goldCost);
-
-        game.MoveToNextCharacterToAction();
-
-        FindFirstObjectByType<StoresManager>().RefreshStores();
-
-        if(character.GetOwner() is not PlayableLeader) return;
-        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != character.GetOwner()).ToList().ForEach(x =>
+        catch (Exception e)
         {
-            x.CheckActionConditionAnywhere(character.GetOwner(), this);
-        });
-
-        if(character.hex.GetPC() != null && character.hex.GetPC().owner is NonPlayableLeader && character.hex.GetPC().owner != character.GetOwner())
-        {
-            NonPlayableLeader nonPlayableLeader = character.hex.GetPC().owner as NonPlayableLeader;
-            if (nonPlayableLeader == null) return;
-            nonPlayableLeader.CheckActionConditionAtCapital(character.GetOwner(), this);
+            Debug.LogError($"{character.characterName} was unable to Execute action {actionName} {actionId} {actionInitials} {e}");
+            character.hasActionedThisTurn = true;
+            return;
         }
-
-        if(game.player == character.GetOwner() && game.trainingMode)
-        {
-            character.GetAI().FeedbackWithPlayerActions(this);
-        }
+        
     }
 
     public bool ExecuteAI()

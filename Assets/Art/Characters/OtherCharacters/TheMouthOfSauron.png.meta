@@ -3,10 +3,8 @@ guid: d4ee4b4c04acf6c45ae25b3d549ddf85
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2236672778121079930
-    second: Retro RPG Lineart Contour Engraving_asset_HeE13rrQ7DFrsryLvvtxvx6z_A
-      fearsome Witch-King figura clad in ominous dark armor with a spike helmet covering
-      his all face shrouded in mist, rendered in a gothic art style _0
+      213: 8165637413251660086
+    second: TheMouthOfSauron_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,32 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Retro RPG Lineart Contour Engraving_asset_HeE13rrQ7DFrsryLvvtxvx6z_A
-        fearsome Witch-King figura clad in ominous dark armor with a spike helmet
-        covering his all face shrouded in mist, rendered in a gothic art style _0
+      name: TheMouthOfSauron_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1024
+        width: 1100
+        height: 1133
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a7c61b29a024a0f10800000000000000
-      internalID: 2236672778121079930
+      spriteID: 6393185c6fb225170800000000000000
+      internalID: 8165637413251660086
       vertices: []
       indices: 
       edges: []
@@ -152,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Retro RPG Lineart Contour Engraving_asset_HeE13rrQ7DFrsryLvvtxvx6z_A fearsome Witch-King figura clad in ominous dark armor with a spike helmet covering his all face shrouded in mist, rendered in a gothic art style _0: 2236672778121079930
+      TheMouthOfSauron_0: 8165637413251660086
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

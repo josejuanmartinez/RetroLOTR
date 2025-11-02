@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -126,18 +128,18 @@ public class Army
 
     public string GetHoverText()
     {
-        string result = "";
+        List<string> result = new() { "leading an army of " };
+    
+        if (ma > 0) result.Add($"<sprite name=\"ma\">[{ma}]");
+        if (ar > 0) result.Add($"<sprite name=\"ar\">[{ar}]");
+        if (li > 0) result.Add($"<sprite name=\"li\">[{li}]");
+        if (hi > 0) result.Add($"<sprite name=\"hi\">[{hi}]");
+        if (lc > 0) result.Add($"<sprite name=\"lc\">[{lc}]");
+        if (hc > 0) result.Add($"<sprite name=\"hc\">[{hc}]");
+        if (ca > 0) result.Add($"<sprite name=\"ca\">[{ca}]");
+        if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}]");
 
-        if (ma > 0) result += $"<b>MA</b>{ma} ";
-        if (ar > 0) result += $"<b>AR</b>{ar} ";
-        if (li > 0) result += $"<b>LI</b>{li} ";
-        if (hi > 0) result += $"<b>HI</b>{hi} ";
-        if (lc > 0) result += $"<b>LC</b>{lc} ";
-        if (hc > 0) result += $"<b>HC</b>{hc} ";
-        if (ca > 0) result += $"<b>CA</b>{ca} ";
-        if (ws > 0) result += $"<b>WS</b>{ws} ";
-
-        return result;
+        return string.Join("", result);
     }
 
     public bool IsCavalryOnly()

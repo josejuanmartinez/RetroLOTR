@@ -3,10 +3,8 @@ guid: d2e92321be161f24ba38e0e39519a3e9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6898985863177457070
-    second: Retro RPG Lineart Contour Engraving_asset_pNWMg8foUXoUTreUEW7RqpAx_A
-      fearsome Witch-King figura clad in ominous dark armor with an iron crown helmet
-      covering his all face shrouded in dark mist, rendered in a gothic_0
+      213: -6928351326618600510
+    second: Ovatha_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,26 +96,11 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Retro RPG Lineart Contour Engraving_asset_pNWMg8foUXoUTreUEW7RqpAx_A
-        fearsome Witch-King figura clad in ominous dark armor with an iron crown
-        helmet covering his all face shrouded in dark mist, rendered in a gothic_0
+      name: Ovatha_0
       rect:
         serializedVersion: 2
         x: 0
@@ -132,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ead4225171f1ebf50800000000000000
-      internalID: 6898985863177457070
+      spriteID: 2cbbac92d2d89df90800000000000000
+      internalID: -6928351326618600510
       vertices: []
       indices: 
       edges: []
@@ -152,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Retro RPG Lineart Contour Engraving_asset_pNWMg8foUXoUTreUEW7RqpAx_A fearsome Witch-King figura clad in ominous dark armor with an iron crown helmet covering his all face shrouded in dark mist, rendered in a gothic_0: 6898985863177457070
+      Ovatha_0: -6928351326618600510
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

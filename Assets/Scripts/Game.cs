@@ -1,14 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System.Collections;
 
-[RequireComponent(typeof(GameState))]
+
 public class Game : MonoBehaviour
 {
-    [Header("Training mode")]
-    public bool trainingMode = true;
-
     [Header("Playable Leader (Player)")]
     public PlayableLeader player;
     [Header("Other Playable Leaders")]
@@ -37,29 +33,19 @@ public class Game : MonoBehaviour
     public int turn = 0;
     public bool started = false;
 
-    [Header("AI")]
-    public GameObject strategyGameAgentCharacterPrefab;
-
-    GameState state;
-    Dictionary<Character, StrategyGameAgent> characterAgents = new();
-
     void Awake()
     {
-        state = GetComponent<GameState>();
+
     }
 
-    private void InitializeCharactersAI()
+    private void AssignAIandHumans()
     {
         // Find all ML-Agents in the scene
         List<Character> allCharacters = FindObjectsByType<Character>(FindObjectsSortMode.None).ToList();
         foreach(Character character in allCharacters)
         {
             character.isPlayerControlled = character.GetOwner() == player;
-            GameObject ai = Instantiate(strategyGameAgentCharacterPrefab, character.transform);
-            characterAgents[character] = character.GetAI();
         }
-
-        Debug.Log($"Initialized {characterAgents.Count} Characters AI");
     }
 
     public void SelectPlayer(PlayableLeader playableLeader)
@@ -86,8 +72,7 @@ public class Game : MonoBehaviour
         currentlyPlaying = player;
         
         FindFirstObjectByType<Board>().StartGame();
-        InitializeCharactersAI();
-        state.InitializeGameState();
+        AssignAIandHumans();
         currentlyPlaying.NewTurn();
     }
 
@@ -105,22 +90,17 @@ public class Game : MonoBehaviour
     {
         if (currentlyPlaying == player)
         {
-            if (trainingMode)
-            {
-                currentlyPlaying = FindNextAliveCompetitor(0);
-            }
-            else
-            {
-                if (MoveToNextCharacterToAction()) return;
+            
+            if (MoveToNextCharacterToAction()) return;
 
-                // Find the first non-killed competitor
-                currentlyPlaying = FindNextAliveCompetitor(0);
-                if (currentlyPlaying == null)
-                {
-                    EndGame(true);
-                    return;
-                }
+            // Find the first non-killed competitor
+            currentlyPlaying = FindNextAliveCompetitor(0);
+            if (currentlyPlaying == null)
+            {
+                EndGame(true);
+                return;
             }
+            
         }
         else
         {

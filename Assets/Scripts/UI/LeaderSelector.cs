@@ -3,19 +3,15 @@ using TMPro;
 using System.Collections.Generic;
 using UnityEngine.Video;
 using System.Linq;
-using UnityEngine.UI;
-using Unity.VisualScripting;
 
 public class LeaderSelector : MonoBehaviour
 {
-    public Image background;
+    public VideoPlayer introVideo;
     public VideoPlayer leaderVideo;
     public TypewriterEffect typewriterEffect;
     public TextMeshProUGUI textUI;
     public GameObject progress;
     public GameObject progressText;
-
-
 
     Videos videos;
     List<TMP_Dropdown.OptionData> options;
@@ -40,7 +36,7 @@ public class LeaderSelector : MonoBehaviour
                 string leaderName = playableLeaders[i].characterName;
                 if (loadedLeaders.Contains(leaderName)) continue;
                 string alignment = playableLeaders[i].alignment.ToString();
-                options.Add(new TMP_Dropdown.OptionData(leaderName, FindFirstObjectByType<IllustrationsSmall>().GetIllustrationByName(alignment), Color.white));
+                options.Add(new TMP_Dropdown.OptionData(leaderName, FindFirstObjectByType<Illustrations>().GetIllustrationByName(alignment), Color.white));
                 loadedLeaders.Add(leaderName);
 
                 if (!loadedFirst)
@@ -49,7 +45,7 @@ public class LeaderSelector : MonoBehaviour
                     dropdown.value = 0;
                     dropdown.RefreshShownValue();
                     SelectLeader(0);
-                    background.enabled = false;
+                    introVideo.gameObject.SetActive(false);
                     progress.SetActive(false);
                     progressText.SetActive(false);
                 }

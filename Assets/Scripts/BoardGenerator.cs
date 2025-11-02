@@ -1,20 +1,55 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
-using System.Linq;
+// using System.Linq; // ⚠️ Avoid in hot paths to prevent hidden allocs
 using UnityEngine.Pool;
+
+#region Small helper to time-slice work per frame
+
+/// <summary>
+/// Simple per-frame time budget helper. Call Spent() inside hot loops and yield when true.
+/// </summary>
+public struct FrameBudget
+{
+    private float _start;
+    private readonly float _maxSeconds; // e.g., 0.002f = 2ms
+
+    public FrameBudget(float maxSeconds)
+    {
+        _start = Time.realtimeSinceStartup;
+        _maxSeconds = maxSeconds;
+    }
+
+    public bool Spent()
+    {
+        return Time.realtimeSinceStartup - _start >= _maxSeconds;
+    }
+
+    public void Reset()
+    {
+        _start = Time.realtimeSinceStartup;
+    }
+}
+
+#endregion
 
 [RequireComponent(typeof(Board))]
 public class BoardGenerator : MonoBehaviour
 {
     [Header("Terrain Grid Batch configuration")]
-    public int cellsPerBatch = 1000; // Increased batch size for better performance
+    public int cellsPerBatch = 1000; // kept; we also time-slice by frame budget
+
     [Header("Game Object Hex Batch configuration")]
-    public int hexesPerBatch = 20; // Increased batch size for better performance
+    public int hexesPerBatch = 20;
+
+    [Header("Time-slicing (seconds)")]
+    [Tooltip("Max main-thread time per frame that generation may use. Tighten this while video plays (e.g., 0.0015–0.003).")]
+    [SerializeField] private float generationFrameBudgetSeconds = 0.002f;
 
     public Board board;
+
     // Array to store the terrain types
     private TerrainEnum[,] terrainGrid;
     private Dictionary<Vector2, GameObject> hexes;
@@ -38,18 +73,20 @@ public class BoardGenerator : MonoBehaviour
         {
             totalWeight += stepWeights[i];
         }
-        
+
         // If we're at the last step or beyond, just return 1.0f
         if (currentStep >= stepWeights.Length)
         {
             return 1.0f;
         }
-        
+
         return Mathf.Clamp01(totalWeight + (stepProgress * stepWeights[(int)currentStep]));
     }
 
     private void Awake()
     {
+        Application.backgroundLoadingPriority = ThreadPriority.Low;
+
         if (board == null)
         {
             board = GetComponent<Board>();
@@ -72,6 +109,18 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Call this when your video starts/stops to tighten/relax budgets and loader priority.
+    /// </summary>
+    public void SetVideoPlaying(bool playing)
+    {
+        if(!playing)
+        {
+            generationFrameBudgetSeconds *= 100;
+            Application.backgroundLoadingPriority = ThreadPriority.Normal;
+        }
+    }
+
     public void Initialize(Board board)
     {
         if (board == null)
@@ -81,7 +130,7 @@ public class BoardGenerator : MonoBehaviour
         }
 
         this.board = board;
-        
+
         if (board.colors == null || board.textures == null)
         {
             Debug.LogError("Board colors or textures are not assigned!");
@@ -183,76 +232,145 @@ public class BoardGenerator : MonoBehaviour
     public IEnumerator InstantiateHexesCoroutine(Action<Dictionary<Vector2, GameObject>> onComplete)
     {
         hexes = new Dictionary<Vector2, GameObject>(board.GetHeight() * board.GetWidth());
-        
-        // Clear existing hexes more efficiently
-        while (transform.childCount > 0)
-        {
-            DestroyImmediate(transform.GetChild(0).gameObject);
-        }
+
+        // Clear existing children safely and time-sliced
+        yield return StartCoroutine(ClearChildrenCoroutine());
 
         int totalHexes = board.GetHeight() * board.GetWidth();
         int hexesProcessed = 0;
+
+        // Pre-allocate batch buffers
         var positions = new Vector3[hexesPerBatch];
         var hexObjects = new GameObject[hexesPerBatch];
+        var rowsBuf = new int[hexesPerBatch];
+        var colsBuf = new int[hexesPerBatch];
         int batchIndex = 0;
+
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
+        // Safety: make sure terrainGrid exists and matches board dims
+        if (terrainGrid == null ||
+            terrainGrid.GetLength(0) != board.GetHeight() ||
+            terrainGrid.GetLength(1) != board.GetWidth())
+        {
+            Debug.LogError("InstantiateHexesCoroutine: terrainGrid is null or has wrong size.");
+            onComplete?.Invoke(hexes);
+            yield break;
+        }
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
             for (int col = 0; col < board.GetWidth(); col++)
             {
                 GameObject hexGo = hexPool.Get();
-                hexGo.transform.SetParent(transform);
+                hexGo.transform.SetParent(transform, false);
                 hexGo.name = $"{row},{col}";
+
                 positions[batchIndex] = GetPosition(row, col);
                 hexObjects[batchIndex] = hexGo;
+                rowsBuf[batchIndex] = row;   // << store exact row
+                colsBuf[batchIndex] = col;   // << store exact col
                 batchIndex++;
 
-                if (batchIndex >= hexesPerBatch)
+                // Flush if batch full OR time budget spent
+                if (batchIndex >= hexesPerBatch || budget.Spent())
                 {
-                    // Batch process positions and components
                     for (int i = 0; i < batchIndex; i++)
                     {
-                        hexObjects[i].transform.position = positions[i];
-                        var hex = hexObjects[i].GetComponent<Hex>();
-                        var terrainType = terrainGrid[row - (batchIndex - 1 - i) / board.GetWidth(), col - (batchIndex - 1 - i) % board.GetWidth()];
-                        
-                        hexObjects[i].GetComponent<SpriteRenderer>().color = terrainColors[terrainType];
+                        var go = hexObjects[i];
+                        var r = rowsBuf[i];
+                        var c = colsBuf[i];
+
+                        // bounds guard (paranoia)
+                        if ((uint)r >= (uint)board.GetHeight() || (uint)c >= (uint)board.GetWidth())
+                            continue;
+
+                        go.transform.position = positions[i];
+
+                        var hex = go.GetComponent<Hex>();
+                        var sr = go.GetComponent<SpriteRenderer>();
+                        var terrainType = terrainGrid[r, c];
+
+                        sr.color = terrainColors[terrainType];
                         hex.terrainType = terrainType;
                         hex.terrainTexture.sprite = terrainTextures[terrainType];
-                        hex.v2 = new Vector2Int(row - (batchIndex - 1 - i) / board.GetWidth(), col - (batchIndex - 1 - i) % board.GetWidth());
+                        hex.v2 = new Vector2Int(r, c);
                         hex.RefreshHoverText();
-                        hexes[new Vector2(row - (batchIndex - 1 - i) / board.GetWidth(), col - (batchIndex - 1 - i) % board.GetWidth())] = hexObjects[i];
+
+                        hexes[new Vector2(r, c)] = go;
                     }
 
                     hexesProcessed += batchIndex;
                     float progress = (float)hexesProcessed / totalHexes;
                     OnGenerationProgress?.Invoke(Mathf.Min(progress, 1.0f), "Configuring Board");
-                    yield return null;
+
+                    // reset batch and yield
                     batchIndex = 0;
+                    budget.Reset();
+                    yield return null;
                 }
             }
         }
 
-        // Process remaining hexes
+        // Flush remainder
         if (batchIndex > 0)
         {
             for (int i = 0; i < batchIndex; i++)
             {
-                hexObjects[i].transform.position = positions[i];
-                var hex = hexObjects[i].GetComponent<Hex>();
-                var terrainType = terrainGrid[board.GetHeight() - 1 - (batchIndex - 1 - i) / board.GetWidth(), board.GetWidth() - 1 - (batchIndex - 1 - i) % board.GetWidth()];
-                
-                hexObjects[i].GetComponent<SpriteRenderer>().color = terrainColors[terrainType];
+                var go = hexObjects[i];
+                var r = rowsBuf[i];
+                var c = colsBuf[i];
+
+                if ((uint)r >= (uint)board.GetHeight() || (uint)c >= (uint)board.GetWidth())
+                    continue;
+
+                go.transform.position = positions[i];
+
+                var hex = go.GetComponent<Hex>();
+                var sr = go.GetComponent<SpriteRenderer>();
+                var terrainType = terrainGrid[r, c];
+
+                sr.color = terrainColors[terrainType];
                 hex.terrainType = terrainType;
                 hex.terrainTexture.sprite = terrainTextures[terrainType];
-                hex.v2 = new Vector2Int(board.GetHeight() - 1 - (batchIndex - 1 - i) / board.GetWidth(), board.GetWidth() - 1 - (batchIndex - 1 - i) % board.GetWidth());
+                hex.v2 = new Vector2Int(r, c);
                 hex.RefreshHoverText();
-                hexes[new Vector2(board.GetHeight() - 1 - (batchIndex - 1 - i) / board.GetWidth(), board.GetWidth() - 1 - (batchIndex - 1 - i) % board.GetWidth())] = hexObjects[i];
+
+                hexes[new Vector2(r, c)] = go;
             }
         }
 
         OnGenerationProgress?.Invoke(1.0f, "Game ready!");
         onComplete?.Invoke(hexes);
+    }
+
+
+    private IEnumerator ClearChildrenCoroutine()
+    {
+        // Release pooled children if they belong to the pool, otherwise Destroy().
+        // Time-sliced to avoid spikes.
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
+        // Snapshot because we're modifying the hierarchy
+        int count = transform.childCount;
+        if (count == 0) yield break;
+
+        var toClear = new List<GameObject>(count);
+        for (int i = 0; i < count; i++)
+            toClear.Add(transform.GetChild(i).gameObject);
+
+        foreach (var go in toClear)
+        {
+            // If this object came from our pool, release; otherwise, Destroy().
+            // (If you're *sure* all children are pooled, you can always Release.)
+            hexPool.Release(go);
+
+            if (budget.Spent())
+            {
+                budget.Reset();
+                yield return null;
+            }
+        }
     }
 
     private Vector3 GetPosition(int row, int col)
@@ -277,6 +395,8 @@ public class BoardGenerator : MonoBehaviour
         int totalCells = board.GetHeight() * board.GetWidth();
         int cellsProcessed = 0;
 
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
         for (int row = 0; row < board.GetHeight(); row++)
         {
             for (int col = 0; col < board.GetWidth(); col++)
@@ -285,12 +405,13 @@ public class BoardGenerator : MonoBehaviour
 
                 cellsProcessed++;
 
-                // Yield every batch to distribute the work
-                if (cellsProcessed % cellsPerBatch == 0)
+                // Yield by batch OR when time budget is spent
+                if (cellsProcessed % cellsPerBatch == 0 || budget.Spent())
                 {
                     float progress = (float)cellsProcessed / totalCells;
                     float stepProgress = GetStepProgress(progress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Configuring Terrain");
+                    budget.Reset();
                     yield return null;
                 }
             }
@@ -303,8 +424,10 @@ public class BoardGenerator : MonoBehaviour
     private IEnumerator ConvertPlainsToGrasslandsCoroutine()
     {
         int totalCells = board.GetHeight() * board.GetWidth();
-        int cellsPerBatch = 500;
+        int cellsPerBatchLocal = 500;
         int cellsProcessed = 0;
+
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
@@ -317,11 +440,12 @@ public class BoardGenerator : MonoBehaviour
 
                 cellsProcessed++;
 
-                if (cellsProcessed % cellsPerBatch == 0)
+                if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                 {
                     float progress = (float)cellsProcessed / totalCells;
                     float stepProgress = GetStepProgress(progress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Grasslands");
+                    budget.Reset();
                     yield return null;
                 }
             }
@@ -357,8 +481,10 @@ public class BoardGenerator : MonoBehaviour
     private IEnumerator GenerateCoastlineCoroutine(int seaBorder, int waterWidth, int waterHeight, int coastlineDepth, int seedX, int seedY)
     {
         int totalCells;
-        int cellsPerBatch = 300;
+        int cellsPerBatchLocal = 300;
         int cellsProcessed = 0;
+
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
 
         switch (seaBorder)
         {
@@ -369,11 +495,9 @@ public class BoardGenerator : MonoBehaviour
                 {
                     for (int col = 0; col < board.GetWidth(); col++)
                     {
-                        // Generate perlin noise for the coastline
                         float noise = Mathf.PerlinNoise((col + seedX) * 0.1f, seedY * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
-                        // Calculate boundary for deep water based on proportion
                         int deepWaterBoundary = Mathf.FloorToInt(waterHeight * board.deepWaterProportion);
 
                         if (row < deepWaterBoundary - noiseOffset)
@@ -386,10 +510,11 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         cellsProcessed++;
-                        if (cellsProcessed % cellsPerBatch == 0)
+                        if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -403,11 +528,9 @@ public class BoardGenerator : MonoBehaviour
                 {
                     for (int col = board.GetWidth() - waterWidth; col < board.GetWidth(); col++)
                     {
-                        // Generate perlin noise for the coastline
                         float noise = Mathf.PerlinNoise(seedX * 0.1f, (row + seedY) * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
-                        // Calculate boundary for deep water based on proportion
                         int deepWaterStart = board.GetWidth() - Mathf.FloorToInt(waterWidth * board.deepWaterProportion);
 
                         if (col > deepWaterStart + noiseOffset)
@@ -420,10 +543,11 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         cellsProcessed++;
-                        if (cellsProcessed % cellsPerBatch == 0)
+                        if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -437,11 +561,9 @@ public class BoardGenerator : MonoBehaviour
                 {
                     for (int col = 0; col < board.GetWidth(); col++)
                     {
-                        // Generate perlin noise for the coastline
                         float noise = Mathf.PerlinNoise((col + seedX) * 0.1f, seedY * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
-                        // Calculate boundary for deep water based on proportion
                         int deepWaterStart = board.GetHeight() - Mathf.FloorToInt(waterHeight * board.deepWaterProportion);
 
                         if (row > deepWaterStart + noiseOffset)
@@ -454,10 +576,11 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         cellsProcessed++;
-                        if (cellsProcessed % cellsPerBatch == 0)
+                        if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -471,11 +594,9 @@ public class BoardGenerator : MonoBehaviour
                 {
                     for (int col = 0; col < waterWidth; col++)
                     {
-                        // Generate perlin noise for the coastline
                         float noise = Mathf.PerlinNoise(seedX * 0.1f, (row + seedY) * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
-                        // Calculate boundary for deep water based on proportion
                         int deepWaterBoundary = Mathf.FloorToInt(waterWidth * board.deepWaterProportion);
 
                         if (col < deepWaterBoundary - noiseOffset)
@@ -488,10 +609,11 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         cellsProcessed++;
-                        if (cellsProcessed % cellsPerBatch == 0)
+                        if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -505,6 +627,8 @@ public class BoardGenerator : MonoBehaviour
         int numFingers = Random.Range(2, 5);
         int totalFingers = numFingers;
         int fingersProcessed = 0;
+
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
 
         switch (seaBorder)
         {
@@ -524,7 +648,6 @@ public class BoardGenerator : MonoBehaviour
                             int col = startCol + colOffset;
                             if (col >= 0 && col < board.GetWidth())
                             {
-                                // Taper the finger as it extends
                                 float taperChance = (float)(row - waterHeight) / fingerLength;
                                 if (Random.value > taperChance * 0.8f)
                                 {
@@ -543,12 +666,12 @@ public class BoardGenerator : MonoBehaviour
                             cellsProcessed++;
                         }
 
-                        // Yield occasionally to distribute work
-                        if (row % 3 == 0)
+                        if ((row % 3 == 0) || budget.Spent())
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
                             OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -591,12 +714,12 @@ public class BoardGenerator : MonoBehaviour
                             cellsProcessed++;
                         }
 
-                        // Yield occasionally to distribute work
-                        if ((board.GetWidth() - waterWidth - 1 - col) % 3 == 0)
+                        if (((board.GetWidth() - waterWidth - 1 - col) % 3 == 0) || budget.Spent())
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
                             OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -639,12 +762,12 @@ public class BoardGenerator : MonoBehaviour
                             cellsProcessed++;
                         }
 
-                        // Yield occasionally to distribute work
-                        if ((board.GetHeight() - waterHeight - 1 - row) % 3 == 0)
+                        if (((board.GetHeight() - waterHeight - 1 - row) % 3 == 0) || budget.Spent())
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
                             OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -687,12 +810,12 @@ public class BoardGenerator : MonoBehaviour
                             cellsProcessed++;
                         }
 
-                        // Yield occasionally to distribute work
-                        if ((col - waterWidth) % 3 == 0)
+                        if (((col - waterWidth) % 3 == 0) || budget.Spent())
                         {
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
                             OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -708,6 +831,8 @@ public class BoardGenerator : MonoBehaviour
         int numIslands = Random.Range(board.minIslands, board.maxIslands);
         int totalIslands = numIslands;
         int islandsProcessed = 0;
+
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
 
         for (int i = 0; i < numIslands; i++)
         {
@@ -738,16 +863,13 @@ public class BoardGenerator : MonoBehaviour
                     break;
             }
 
-            // Only place island if in water (preferably deep water)
             if (terrainGrid[islandRow, islandCol] == TerrainEnum.deepWater ||
                 terrainGrid[islandRow, islandCol] == TerrainEnum.shallowWater)
             {
-                // Island size
                 int islandSize = Random.Range(3, 8);
                 Queue<Vector2Int> islandCells = new Queue<Vector2Int>();
                 islandCells.Enqueue(new Vector2Int(islandRow, islandCol));
 
-                // Mark center as shore
                 terrainGrid[islandRow, islandCol] = TerrainEnum.shore;
 
                 int cellsProcessed = 1;
@@ -758,7 +880,6 @@ public class BoardGenerator : MonoBehaviour
                 {
                     Vector2Int current = islandCells.Dequeue();
 
-                    // Get neighbors
                     Vector2Int[] neighbors = (current.x % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
 
                     foreach (Vector2Int dir in neighbors)
@@ -774,7 +895,6 @@ public class BoardGenerator : MonoBehaviour
                             terrainGrid[newRow, newCol] = TerrainEnum.shore;
                             islandCells.Enqueue(new Vector2Int(newRow, newCol));
                             cellsProcessed++;
-
                             if (cellsProcessed >= islandSize)
                                 break;
                         }
@@ -782,9 +902,9 @@ public class BoardGenerator : MonoBehaviour
 
                     iterations++;
 
-                    // Yield occasionally to distribute work
-                    if (iterations % 5 == 0)
+                    if ((iterations % 5 == 0) || budget.Spent())
                     {
+                        budget.Reset();
                         yield return null;
                     }
                 }
@@ -802,7 +922,13 @@ public class BoardGenerator : MonoBehaviour
             islandsProcessed++;
             float islandProgress = (float)islandsProcessed / totalIslands;
             OnGenerationProgress?.Invoke(GetStepProgress(0.7f + islandProgress * 0.3f), "Creating Islands");
-            yield return null;
+
+            // Yield per island if budget spent
+            if (budget.Spent())
+            {
+                budget.Reset();
+                yield return null;
+            }
         }
     }
 
@@ -812,9 +938,10 @@ public class BoardGenerator : MonoBehaviour
         int totalChains = board.mountainChainCount;
         int chainsProcessed = 0;
 
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
         for (int i = 0; i < board.mountainChainCount; i++)
         {
-            // Choose a random starting point for each mountain chain
             int startRow, startCol;
             bool validStart = false;
             int attempts = 0;
@@ -830,42 +957,33 @@ public class BoardGenerator : MonoBehaviour
                 attempts++;
             } while (!validStart && attempts < 50);
 
-            if (!validStart) continue; // Skip this chain if can't find a valid start
+            if (!validStart) continue;
 
-            // Determine a directional preference (x or y dominant)
             bool xDominant = Random.value > 0.5f;
 
-            // Choose chain length with some variety
             int chainLength = Random.Range(maxChainLength / 2, maxChainLength);
 
-            // Create the chain
             Vector2Int current = new Vector2Int(startRow, startCol);
             terrainGrid[current.x, current.y] = TerrainEnum.mountains;
 
-            yield return null; // Yield after setting up each chain
+            yield return null; // small yield after setup
 
             for (int j = 0; j < chainLength; j++)
             {
-                // Get current position's neighbors
                 Vector2Int[] neighbors = (current.x % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
 
-                // Choose a direction with preference based on x or y dominance
                 Vector2Int nextDir;
                 if (xDominant)
                 {
-                    // Prefer east or west
                     nextDir = neighbors[Random.value > 0.7f ? Random.Range(0, 6) : Random.Range(1, 4) % 6];
                 }
                 else
                 {
-                    // Prefer north or south
                     nextDir = neighbors[Random.value > 0.7f ? Random.Range(0, 6) : Random.Range(0, 3) * 2];
                 }
 
-                // Calculate next position
                 Vector2Int next = current + nextDir;
 
-                // Check if next position is valid and not water
                 if (next.x >= 0 && next.x < board.GetHeight() && next.y >= 0 && next.y < board.GetWidth() &&
                     terrainGrid[next.x, next.y] != TerrainEnum.deepWater &&
                     terrainGrid[next.x, next.y] != TerrainEnum.shallowWater)
@@ -874,13 +992,13 @@ public class BoardGenerator : MonoBehaviour
                     terrainGrid[current.x, current.y] = TerrainEnum.mountains;
                 }
 
-                // Yield occasionally during mountain chain generation
-                if (j % 10 == 0)
+                if ((j % 10 == 0) || budget.Spent())
                 {
                     float chainProgress = (float)j / chainLength;
                     float overallProgress = (chainsProcessed + chainProgress) / totalChains;
                     float stepProgress = GetStepProgress(overallProgress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Mountains");
+                    budget.Reset();
                     yield return null;
                 }
             }
@@ -897,22 +1015,21 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator AddHillsAroundMountainsCoroutine()
     {
-        // Create a copy of the current terrain
         TerrainEnum[,] terrainCopy = new TerrainEnum[board.GetHeight(), board.GetWidth()];
         Array.Copy(terrainGrid, terrainCopy, terrainGrid.Length);
 
         int totalCells = board.GetHeight() * board.GetWidth();
-        int cellsPerBatch = 300;
+        int cellsPerBatchLocal = 300;
         int cellsProcessed = 0;
 
-        // Add hills around mountains
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
         for (int row = 0; row < board.GetHeight(); row++)
         {
             for (int col = 0; col < board.GetWidth(); col++)
             {
                 if (terrainCopy[row, col] == TerrainEnum.mountains)
                 {
-                    // Get neighbors
                     Vector2Int[] neighbors = (row % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
 
                     foreach (Vector2Int dir in neighbors)
@@ -920,10 +1037,8 @@ public class BoardGenerator : MonoBehaviour
                         int newRow = row + dir.x;
                         int newCol = col + dir.y;
 
-                        // Check bounds
                         if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth())
                         {
-                            // Make surrounding plains into hills (80% chance)
                             if (terrainGrid[newRow, newCol] == TerrainEnum.plains && Random.value < 0.8f)
                             {
                                 terrainGrid[newRow, newCol] = TerrainEnum.hills;
@@ -933,11 +1048,12 @@ public class BoardGenerator : MonoBehaviour
                 }
 
                 cellsProcessed++;
-                if (cellsProcessed % cellsPerBatch == 0)
+                if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                 {
                     float progress = (float)cellsProcessed / totalCells;
                     float stepProgress = GetStepProgress(progress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Hills");
+                    budget.Reset();
                     yield return null;
                 }
             }
@@ -946,17 +1062,15 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateForestsCoroutine()
     {
-        // Generate one major forest
         for (int i = 0; i < board.majorForestCount; i++)
         {
-            int forestSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.08f); // 8% of the map
+            int forestSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.08f); // 8%
             yield return StartCoroutine(GenerateForestPatchCoroutine(forestSize, "Major Forest"));
         }
 
-        // Generate smaller forests
         for (int i = 0; i < board.minorForestCount; i++)
         {
-            int forestSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.02f); // 2% of the map
+            int forestSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.02f); // 2%
             yield return StartCoroutine(GenerateForestPatchCoroutine(forestSize, "Minor Forest"));
         }
 
@@ -970,7 +1084,8 @@ public class BoardGenerator : MonoBehaviour
         bool validStart = false;
         int attempts = 0;
 
-        // Find a suitable starting location (not water or mountains)
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
         do
         {
             startRow = Random.Range(0, board.GetHeight());
@@ -984,25 +1099,23 @@ public class BoardGenerator : MonoBehaviour
             attempts++;
         } while (!validStart && attempts < 50);
 
-        if (!validStart) yield break; // Skip this forest if can't find a valid start
+        if (!validStart) yield break;
 
-        // Use a modified flood fill to create the forest
         Queue<Vector2Int> tilesToProcess = new Queue<Vector2Int>();
         tilesToProcess.Enqueue(new Vector2Int(startRow, startCol));
         terrainGrid[startRow, startCol] = TerrainEnum.forest;
 
         int tilesProcessed = 1;
         int iterations = 0;
-        int maxIterations = forestSize * 3; // Prevent infinite loops
+        int maxIterations = forestSize * 3;
 
         while (tilesToProcess.Count > 0 && tilesProcessed < forestSize && iterations < maxIterations)
         {
             Vector2Int current = tilesToProcess.Dequeue();
 
-            // Get current tile's neighbors
             Vector2Int[] neighbors = (current.x % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
 
-            // Shuffle neighbors
+            // shuffle neighbors
             for (int i = 0; i < neighbors.Length; i++)
             {
                 int j = Random.Range(i, neighbors.Length);
@@ -1014,20 +1127,16 @@ public class BoardGenerator : MonoBehaviour
                 int newRow = current.x + dir.x;
                 int newCol = current.y + dir.y;
 
-                // Check bounds
                 if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth())
                 {
-                    // Only convert plains to forest
                     if (terrainGrid[newRow, newCol] == TerrainEnum.plains)
                     {
-                        // Chance to expand reduces as we get further from center
                         float distanceRatio = (float)tilesProcessed / forestSize;
                         if (Random.value > distanceRatio)
                         {
                             terrainGrid[newRow, newCol] = TerrainEnum.forest;
                             tilesToProcess.Enqueue(new Vector2Int(newRow, newCol));
                             tilesProcessed++;
-
                             if (tilesProcessed >= forestSize)
                                 break;
                         }
@@ -1037,12 +1146,12 @@ public class BoardGenerator : MonoBehaviour
 
             iterations++;
 
-            // Yield occasionally during forest generation
-            if (iterations % 20 == 0)
+            if ((iterations % 20 == 0) || budget.Spent())
             {
                 float forestProgress = (float)tilesProcessed / forestSize;
                 float stepProgress = GetStepProgress(forestProgress);
                 OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), $"Creating {forestType}");
+                budget.Reset();
                 yield return null;
             }
         }
@@ -1053,6 +1162,8 @@ public class BoardGenerator : MonoBehaviour
         int totalSwamps = board.swampCount;
         int swampsProcessed = 0;
 
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
         for (int i = 0; i < board.swampCount; i++)
         {
             int startRow, startCol;
@@ -1060,7 +1171,6 @@ public class BoardGenerator : MonoBehaviour
             int attempts = 0;
             bool nearWater = false;
 
-            // Try to place swamps near water when possible
             do
             {
                 startRow = Random.Range(0, board.GetHeight());
@@ -1074,7 +1184,6 @@ public class BoardGenerator : MonoBehaviour
 
                 validStart = true;
 
-                // Check if a water tile is adjacent
                 Vector2Int[] neighbors = (startRow % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
                 foreach (Vector2Int dir in neighbors)
                 {
@@ -1093,10 +1202,8 @@ public class BoardGenerator : MonoBehaviour
 
             } while ((!validStart || !nearWater) && attempts < 50);
 
-            // If after 50 attempts we can't find an ideal location, just use a valid one even if not near water
             if (!validStart)
             {
-                // Try once more for any valid location
                 attempts = 0;
                 do
                 {
@@ -1106,23 +1213,19 @@ public class BoardGenerator : MonoBehaviour
                     attempts++;
                 } while (!validStart && attempts < 20);
 
-                if (!validStart) continue; // Skip this swamp if we can't find a valid position at all
+                if (!validStart) continue;
             }
 
-            // Create the swamp patch
             terrainGrid[startRow, startCol] = TerrainEnum.swamp;
 
-            // Get neighbors
             Vector2Int[] swampNeighbors = (startRow % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
 
-            // Shuffle neighbors
             for (int n = 0; n < swampNeighbors.Length; n++)
             {
                 int j = Random.Range(n, swampNeighbors.Length);
                 (swampNeighbors[n], swampNeighbors[j]) = (swampNeighbors[j], swampNeighbors[n]);
             }
 
-            // Add a few swamp tiles around the initial one
             int swampTiles = 1;
             foreach (Vector2Int dir in swampNeighbors)
             {
@@ -1145,7 +1248,11 @@ public class BoardGenerator : MonoBehaviour
             float stepProgress = GetStepProgress(swampProgress);
             OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Swamps");
 
-            yield return null; // Yield after each swamp
+            if (budget.Spent())
+            {
+                budget.Reset();
+                yield return null;
+            }
         }
 
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Swamps Created");
@@ -1154,17 +1261,15 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateWastelandsCoroutine()
     {
-        // Generate one major wasteland area
         for (int i = 0; i < board.majorWastelandCount; i++)
         {
-            int wastelandSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.07f); // Major wasteland covers ~7% of map
+            int wastelandSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.07f);
             yield return StartCoroutine(GenerateWastelandPatchCoroutine(wastelandSize, true, "Major Wasteland"));
         }
 
-        // Generate smaller wasteland patches
         for (int i = 0; i < board.minorWastelandCount; i++)
         {
-            int wastelandSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.02f); // Minor wasteland ~2% of map
+            int wastelandSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.02f);
             yield return StartCoroutine(GenerateWastelandPatchCoroutine(wastelandSize, false, "Minor Wasteland"));
         }
 
@@ -1178,39 +1283,35 @@ public class BoardGenerator : MonoBehaviour
         bool validStart = false;
         int attempts = 0;
 
-        // Select location based on wasteland type
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
         if (isMajor)
         {
-            // Find a suitable starting location for major wasteland (central area)
             do
             {
                 startRow = Random.Range(board.GetHeight() / 4, 3 * board.GetHeight() / 4);
                 startCol = Random.Range(board.GetWidth() / 4, 3 * board.GetWidth() / 4);
                 validStart = (terrainGrid[startRow, startCol] == TerrainEnum.plains ||
-                             terrainGrid[startRow, startCol] == TerrainEnum.grasslands);
+                              terrainGrid[startRow, startCol] == TerrainEnum.grasslands);
                 attempts++;
             } while (!validStart && attempts < 50);
         }
         else
         {
-            // Find a suitable starting location for minor wasteland away from major wastelands
             do
             {
                 startRow = Random.Range(0, board.GetHeight());
                 startCol = Random.Range(0, board.GetWidth());
 
                 validStart = (terrainGrid[startRow, startCol] == TerrainEnum.plains ||
-                             terrainGrid[startRow, startCol] == TerrainEnum.grasslands);
+                              terrainGrid[startRow, startCol] == TerrainEnum.grasslands);
 
-                // If we found a valid terrain type, check if there are any wastelands nearby
                 if (validStart)
                 {
-                    // Check if there's any wasteland nearby already
                     foreach (Vector2Int neighbor in GetNeighborsInRadius(startRow, startCol, 4))
                     {
                         if (terrainGrid[neighbor.x, neighbor.y] == TerrainEnum.wastelands)
                         {
-                            // Location is invalid if there's a wasteland nearby
                             validStart = false;
                             break;
                         }
@@ -1221,12 +1322,10 @@ public class BoardGenerator : MonoBehaviour
             } while (!validStart && attempts < 50);
         }
 
-        if (!validStart) yield break; // Skip this wasteland if can't find a valid start
+        if (!validStart) yield break;
 
-        // Set initial cell to wasteland
         terrainGrid[startRow, startCol] = TerrainEnum.wastelands;
 
-        // Create irregular wasteland patch
         Queue<Vector2Int> expansionCells = new Queue<Vector2Int>();
         expansionCells.Enqueue(new Vector2Int(startRow, startCol));
 
@@ -1234,16 +1333,14 @@ public class BoardGenerator : MonoBehaviour
         float noiseScale = 0.15f;
         int noiseSeed = Random.Range(0, 10000);
         int iterations = 0;
-        int maxIterations = wastelandSize * 3; // Prevent infinite loops
+        int maxIterations = wastelandSize * 3;
 
         while (expansionCells.Count > 0 && cellsProcessed < wastelandSize && iterations < maxIterations)
         {
             Vector2Int current = expansionCells.Dequeue();
 
-            // Get neighbors
             Vector2Int[] neighbors = (current.x % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
 
-            // Shuffle neighbors
             for (int n = 0; n < neighbors.Length; n++)
             {
                 int j = Random.Range(n, neighbors.Length);
@@ -1255,28 +1352,24 @@ public class BoardGenerator : MonoBehaviour
                 int newRow = current.x + dir.x;
                 int newCol = current.y + dir.y;
 
-                // Check bounds
                 if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth())
                 {
-                    // Only convert plains/grasslands to wasteland
                     if ((terrainGrid[newRow, newCol] == TerrainEnum.plains ||
-                        terrainGrid[newRow, newCol] == TerrainEnum.grasslands) &&
+                         terrainGrid[newRow, newCol] == TerrainEnum.grasslands) &&
                         terrainGrid[newRow, newCol] != TerrainEnum.wastelands)
                     {
-                        // Use noise to create more irregular, realistic borders
                         float noise = Mathf.PerlinNoise((newCol + noiseSeed) * noiseScale, (newRow + noiseSeed) * noiseScale);
                         float expandChance = isMajor ?
-                            (0.8f - (float)cellsProcessed / wastelandSize * 0.5f) : // Major wastelands spread wider
-                            0.7f; // Minor wastelands are more compact
+                            (0.8f - (float)cellsProcessed / wastelandSize * 0.5f) :
+                            0.7f;
 
-                        expandChance *= (0.5f + noise * 0.5f); // Use noise to vary expansion chance
+                        expandChance *= (0.5f + noise * 0.5f);
 
                         if (Random.value < expandChance)
                         {
                             terrainGrid[newRow, newCol] = TerrainEnum.wastelands;
                             expansionCells.Enqueue(new Vector2Int(newRow, newCol));
                             cellsProcessed++;
-
                             if (cellsProcessed >= wastelandSize)
                                 break;
                         }
@@ -1286,12 +1379,12 @@ public class BoardGenerator : MonoBehaviour
 
             iterations++;
 
-            // Yield occasionally during wasteland generation
-            if (iterations % 20 == 0)
+            if ((iterations % 20 == 0) || budget.Spent())
             {
                 float wastelandProgress = (float)cellsProcessed / wastelandSize;
                 float stepProgress = GetStepProgress(wastelandProgress);
                 OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), $"Creating {wastelandType}");
+                budget.Reset();
                 yield return null;
             }
         }
@@ -1299,25 +1392,24 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator ApplyShoresCoroutine()
     {
-        // Create a copy of the terrain to avoid immediate changes affecting the process
         TerrainEnum[,] terrainCopy = new TerrainEnum[board.GetHeight(), board.GetWidth()];
         Array.Copy(terrainGrid, terrainCopy, terrainGrid.Length);
 
         int totalCells = board.GetHeight() * board.GetWidth();
-        int cellsPerBatch = 300;
+        int cellsPerBatchLocal = 300;
         int cellsProcessed = 0;
+
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
             for (int col = 0; col < board.GetWidth(); col++)
             {
-                // Find land tiles adjacent to shallow water
                 if (terrainCopy[row, col] != TerrainEnum.deepWater &&
                     terrainCopy[row, col] != TerrainEnum.shallowWater)
                 {
                     bool adjacentToWater = false;
 
-                    // Get neighbors
                     Vector2Int[] neighbors = (row % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
 
                     foreach (Vector2Int dir in neighbors)
@@ -1333,7 +1425,6 @@ public class BoardGenerator : MonoBehaviour
                         }
                     }
 
-                    // If adjacent to water and not mountains, hills or swamp, high chance to become shore
                     if (adjacentToWater &&
                         terrainCopy[row, col] != TerrainEnum.mountains &&
                         terrainCopy[row, col] != TerrainEnum.hills &&
@@ -1347,11 +1438,12 @@ public class BoardGenerator : MonoBehaviour
                 }
 
                 cellsProcessed++;
-                if (cellsProcessed % cellsPerBatch == 0)
+                if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                 {
                     float progress = (float)cellsProcessed / totalCells;
                     float stepProgress = GetStepProgress(progress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Shores");
+                    budget.Reset();
                     yield return null;
                 }
             }
@@ -1367,13 +1459,14 @@ public class BoardGenerator : MonoBehaviour
         int desertHeight = Mathf.FloorToInt(board.GetHeight() * board.desertPercentage);
         int desertDepth = Mathf.FloorToInt(Mathf.Min(board.GetWidth(), board.GetHeight()) * 0.12f);
 
-        // Create noise for the desert border
         int seedX = Random.Range(0, 10000);
         int seedY = Random.Range(0, 10000);
 
-        int cellsPerBatch = 300;
+        int cellsPerBatchLocal = 300;
         int totalCells;
         int cellsProcessed = 0;
+
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
 
         switch (desertBorder)
         {
@@ -1384,14 +1477,12 @@ public class BoardGenerator : MonoBehaviour
                 {
                     for (int col = 0; col < board.GetWidth(); col++)
                     {
-                        // Skip if water or mountains already present
                         if (terrainGrid[row, col] == TerrainEnum.deepWater ||
                             terrainGrid[row, col] == TerrainEnum.shallowWater ||
                             terrainGrid[row, col] == TerrainEnum.mountains ||
                             terrainGrid[row, col] == TerrainEnum.hills)
                             continue;
 
-                        // Generate perlin noise for the desert edge
                         float noise = Mathf.PerlinNoise((col + seedX) * 0.1f, seedY * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * desertDepth);
 
@@ -1401,11 +1492,12 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         cellsProcessed++;
-                        if (cellsProcessed % cellsPerBatch == 0)
+                        if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             float stepProgress = GetStepProgress(progress);
                             OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -1419,14 +1511,12 @@ public class BoardGenerator : MonoBehaviour
                 {
                     for (int col = board.GetWidth() - desertWidth; col < board.GetWidth(); col++)
                     {
-                        // Skip if water or mountains already present
                         if (terrainGrid[row, col] == TerrainEnum.deepWater ||
                             terrainGrid[row, col] == TerrainEnum.shallowWater ||
                             terrainGrid[row, col] == TerrainEnum.mountains ||
                             terrainGrid[row, col] == TerrainEnum.hills)
                             continue;
 
-                        // Generate perlin noise for the desert edge
                         float noise = Mathf.PerlinNoise(seedX * 0.1f, (row + seedY) * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * desertDepth);
 
@@ -1436,11 +1526,12 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         cellsProcessed++;
-                        if (cellsProcessed % cellsPerBatch == 0)
+                        if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             float stepProgress = GetStepProgress(progress);
                             OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -1454,14 +1545,12 @@ public class BoardGenerator : MonoBehaviour
                 {
                     for (int col = 0; col < board.GetWidth(); col++)
                     {
-                        // Skip if water or mountains already present
                         if (terrainGrid[row, col] == TerrainEnum.deepWater ||
                             terrainGrid[row, col] == TerrainEnum.shallowWater ||
                             terrainGrid[row, col] == TerrainEnum.mountains ||
                             terrainGrid[row, col] == TerrainEnum.hills)
                             continue;
 
-                        // Generate perlin noise for the desert edge
                         float noise = Mathf.PerlinNoise((col + seedX) * 0.1f, seedY * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * desertDepth);
 
@@ -1471,11 +1560,12 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         cellsProcessed++;
-                        if (cellsProcessed % cellsPerBatch == 0)
+                        if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             float stepProgress = GetStepProgress(progress);
                             OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -1489,14 +1579,12 @@ public class BoardGenerator : MonoBehaviour
                 {
                     for (int col = 0; col < desertWidth; col++)
                     {
-                        // Skip if water or mountains already present
                         if (terrainGrid[row, col] == TerrainEnum.deepWater ||
                             terrainGrid[row, col] == TerrainEnum.shallowWater ||
                             terrainGrid[row, col] == TerrainEnum.mountains ||
                             terrainGrid[row, col] == TerrainEnum.hills)
                             continue;
 
-                        // Generate perlin noise for the desert edge
                         float noise = Mathf.PerlinNoise(seedX * 0.1f, (row + seedY) * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * desertDepth);
 
@@ -1506,11 +1594,12 @@ public class BoardGenerator : MonoBehaviour
                         }
 
                         cellsProcessed++;
-                        if (cellsProcessed % cellsPerBatch == 0)
+                        if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             float stepProgress = GetStepProgress(progress);
                             OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
+                            budget.Reset();
                             yield return null;
                         }
                     }
@@ -1521,7 +1610,6 @@ public class BoardGenerator : MonoBehaviour
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Desert Created");
         currentStep++;
     }
-
 
     // A utility method to get all neighbors of a given hex
     private List<Vector2Int> GetNeighbors(int row, int col)
@@ -1558,17 +1646,14 @@ public class BoardGenerator : MonoBehaviour
         {
             Vector2IntWithDistance current = queue.Dequeue();
 
-            // Skip the center point
             if (current.distance > 0)
             {
                 result.Add(current.position);
             }
 
-            // If we've reached the radius limit, don't add more cells to the queue
             if (current.distance >= radius)
                 continue;
 
-            // Add neighbors
             Vector2Int[] neighbors = (current.position.x % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
 
             foreach (Vector2Int dir in neighbors)
