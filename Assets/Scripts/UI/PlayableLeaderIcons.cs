@@ -4,23 +4,25 @@ public class PlayableLeaderIcons : MonoBehaviour
 {
     public GameObject playerLeaderIconPrefab;
 
-    public void Instantiate(Leader leader)
+    public void Instantiate(PlayableLeader leader)
     {
         GameObject icon = Instantiate(playerLeaderIconPrefab, transform);
         icon.name = leader.characterName;
         icon.GetComponent<PlayableLeaderIcon>().Initialize(leader);
     }
 
-    public void HighlightCurrentlyPlaying(Leader currentlyPlaying)
+    public void HighlightCurrentlyPlaying(PlayableLeader currentlyPlaying)
     {
         for(int i=0;i<transform.childCount;i++)
         {
-            if(transform.GetChild(i).gameObject.name.ToLower() == currentlyPlaying.characterName.ToLower())
+            PlayableLeaderIcon playableLeaderIcon = transform.GetChild(i).GetComponent<PlayableLeaderIcon>();
+            PlayableLeader playableLeader = playableLeaderIcon.playableLeader;
+            if (playableLeader == currentlyPlaying)
             {
-                transform.GetChild(i).localScale = new Vector3(1.5f, 1.5f, 1f);
+                playableLeaderIcon.SetCurrentlyPlayingEffect();
             } else
             {
-                transform.GetChild(i).localScale = new Vector3(1f, 1f, 1f);
+                playableLeaderIcon.RemoveCurrentlyPlayingEffect();
             }
         }
     }

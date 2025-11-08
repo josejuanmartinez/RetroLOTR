@@ -20,15 +20,15 @@ public static class TerrainData
 {
     public static Dictionary<TerrainEnum, int> terrainCosts = new ()
     {
-        { TerrainEnum.mountains, 12 },
-        { TerrainEnum.hills, 4 },
+        { TerrainEnum.mountains, 5 },
+        { TerrainEnum.hills, 3 },
         { TerrainEnum.plains, 1 },
         { TerrainEnum.grasslands, 1 },
         { TerrainEnum.shore, 1 },
         { TerrainEnum.forest, 3 },
-        { TerrainEnum.shallowWater, 3 },
+        { TerrainEnum.shallowWater, 5 },
         { TerrainEnum.deepWater, 1 },
-        { TerrainEnum.swamp, 6 },
+        { TerrainEnum.swamp, 4 },
         { TerrainEnum.desert, 3 },
         { TerrainEnum.wastelands, 2 }
     };

@@ -26,7 +26,7 @@ public class HoverNoUI : MonoBehaviour
     {
         if (rayCamera == null) rayCamera = Camera.main;
         bool isHovering = IsMouseOverThis();
-        if (isHovering) Debug.Log($"Hovering over {gameObject.transform.parent.name}->{transform.name}");
+        // if (isHovering) Debug.Log($"Hovering over {gameObject.transform.parent.name}->{transform.name}");
 
         // Handle show/hide transitions
         if (isHovering && !wasHovering)

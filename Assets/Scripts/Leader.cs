@@ -26,7 +26,6 @@ public class Leader : Character
         game = FindFirstObjectByType<Game>();
         this.leaderBiome = leaderBiome;
 		InitializeFromBiome(this, hex, leaderBiome);
-        if(leaderBiome is not NonPlayableLeaderBiomeConfig) FindFirstObjectByType<PlayableLeaderIcons>().Instantiate(this);
     }
 
     public LeaderBiomeConfig GetBiome()
@@ -109,6 +108,7 @@ public class Leader : Character
         // AI: Act if not player
         if (game.player != this)
         {
+            controlledCharacters.ForEach((x) => x.Pass());
             yield return new WaitUntil(() => controlledCharacters.All(c => c.killed || c.hasActionedThisTurn || c.hasMovedThisTurn));
             FindFirstObjectByType<Game>().NextPlayer();
         }
@@ -143,7 +143,7 @@ public class Leader : Character
         for (int i = 0; i < hexesToReveal.Count; i += batchSize)
         {
             int endIndex = Mathf.Min(i + batchSize, hexesToReveal.Count);
-            for (int j = i; j < endIndex; j++) hexesToReveal[j].RevealArea();
+            for (int j = i; j < endIndex; j++) hexesToReveal[j].RevealArea(1, false);
             yield return null;
         }
 

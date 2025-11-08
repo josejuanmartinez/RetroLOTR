@@ -1,5 +1,12 @@
+
 public class PlayableLeader : Leader
 {
+    new public void Initialize(Hex hex, LeaderBiomeConfig playableLeaderBiome)
+    {
+        base.Initialize(hex, playableLeaderBiome);
+        FindFirstObjectByType<PlayableLeaderIcons>().Instantiate(this);
+    }
+
     override public void Killed(Leader killedBy, bool onlyMask = false)
     {
         if (killed) return;
@@ -26,4 +33,5 @@ public class PlayableLeader : Leader
 
         base.NewTurn();
     }
+
 }

@@ -17,9 +17,9 @@ public class HexPathRenderer : MonoBehaviour
     private LineRenderer lineRenderer;
     private Board board;
     private Game game;
-    private Dictionary<(Character, int), HashSet<Vector2>> rangeCache = new();
-    private Dictionary<Vector2, bool> waterTerrainCache = new();
-    private Dictionary<(Vector2, Character), float> terrainCostCache = new();
+    private Dictionary<(Character, int), HashSet<Vector2Int>> rangeCache = new();
+    private Dictionary<Vector2Int, bool> waterTerrainCache = new();
+    private Dictionary<(Vector2Int, Character), float> terrainCostCache = new();
 
     void Start()
     {
@@ -37,14 +37,14 @@ public class HexPathRenderer : MonoBehaviour
         OnHoverTile.UpdateMouseState(Input.GetMouseButton(1));
     }
 
-    public void DrawPathBetweenHexes(Vector2 from, Vector2 to, Character character)
+    public void DrawPathBetweenHexes(Vector2Int from, Vector2Int to, Character character)
     {
         // Round the input coordinates to ensure they match actual hex positions
-        Vector2 fromRounded = new (Mathf.RoundToInt(from.x), Mathf.RoundToInt(from.y));
-        Vector2 toRounded = new (Mathf.RoundToInt(to.x), Mathf.RoundToInt(to.y));
+        Vector2Int fromRounded = new (Mathf.RoundToInt(from.x), Mathf.RoundToInt(from.y));
+        Vector2Int toRounded = new (Mathf.RoundToInt(to.x), Mathf.RoundToInt(to.y));
 
         // Find the path using A* algorithm
-        List<Vector2> path = FindPath(fromRounded, toRounded, character);
+        List<Vector2Int> path = FindPath(fromRounded, toRounded, character);
 
         lineRenderer.positionCount = 0;
         lineRenderer.SetPositions(new Vector3[] { });
@@ -52,39 +52,44 @@ public class HexPathRenderer : MonoBehaviour
         // Check if path exists
         if (path == null || path.Count == 0) return;
 
+        int movementLeft = character.GetMovementLeft();
         // Set the line renderer positions
         lineRenderer.positionCount = path.Count;
 
         // Convert hex coordinates to world positions
         for (int i = 0; i < path.Count; i++)
         {
-            Vector2 hexPos = path[i];
+            Vector2Int hexPos = path[i];
             if (board.hexes.TryGetValue(hexPos, out Hex hexObj))
             {
                 // Get the world position of the hex center
                 Vector3 worldPos = hexObj.transform.position;
                 lineRenderer.SetPosition(i, worldPos);
+                int terrainCost = i == 0? 0 : hexObj.GetTerrainCost(character);
+                movementLeft -= terrainCost;
+                hexObj.ShowMovementLeft(movementLeft, character);
             }
             else
             {
                 Debug.LogError($"Hex at position {hexPos} not found in board.hexes dictionary!");
+                HidePath();
             }
         }
     }
 
-    public List<Vector2> FindPath(Vector2 startPos, Vector2 goalPos, Character character)
+    public List<Vector2Int> FindPath(Vector2Int startPos, Vector2Int goalPos, Character character)
     {
         int movementLeft = character.GetMovementLeft();
-        if (movementLeft < 1) return new List<Vector2> { };
+        if (movementLeft < 1) return new List<Vector2Int> { };
         // If start and goal are the same, return just that position
-        if (startPos == goalPos) return new List<Vector2> { startPos };
+        if (startPos == goalPos) return new List<Vector2Int> { startPos };
 
-        var openSet = new List<Vector2>();
-        var closedSet = new HashSet<Vector2>();
-        var cameFrom = new Dictionary<Vector2, Vector2>();
-        var gScore = new Dictionary<Vector2, float>();
-        var fScore = new Dictionary<Vector2, float>();
-        var hasTransition = new Dictionary<Vector2, bool>();
+        var openSet = new List<Vector2Int>();
+        var closedSet = new HashSet<Vector2Int>();
+        var cameFrom = new Dictionary<Vector2Int, Vector2Int>();
+        var gScore = new Dictionary<Vector2Int, float>();
+        var fScore = new Dictionary<Vector2Int, float>();
+        var hasTransition = new Dictionary<Vector2Int, bool>();
 
         // Initialize the starting position
         openSet.Add(startPos);
@@ -96,7 +101,7 @@ public class HexPathRenderer : MonoBehaviour
         bool isStartWater = IsWaterTerrain(startPos);
 
         // Track the best path so far
-        Vector2 bestEnd = startPos;
+        Vector2Int bestEnd = startPos;
         float bestDistanceToGoal = HexDistance(startPos, goalPos);
         bool foundTransitionPath = false;
         bool foundNonTransitionPath = false;
@@ -104,7 +109,7 @@ public class HexPathRenderer : MonoBehaviour
         while (openSet.Count > 0)
         {
             // Find hex with lowest fScore in openSet
-            Vector2 current = openSet[0];
+            Vector2Int current = openSet[0];
             float lowestFScore = float.MaxValue;
             if (fScore.TryGetValue(current, out float currentF)) lowestFScore = currentF;
 
@@ -212,11 +217,11 @@ public class HexPathRenderer : MonoBehaviour
         }
 
         // No path found
-        return new List<Vector2> { };
+        return new List<Vector2Int> { };
     }
 
     // Helper method to check if a hex is water terrain
-    private bool IsWaterTerrain(Vector2 position)
+    private bool IsWaterTerrain(Vector2Int position)
     {
         if (waterTerrainCache.TryGetValue(position, out bool isWater))
         {
@@ -232,9 +237,9 @@ public class HexPathRenderer : MonoBehaviour
         return false;
     }
 
-    private List<Vector2> ReconstructPath(Dictionary<Vector2, Vector2> cameFrom, Vector2 current, Vector2 startPos)
+    private List<Vector2Int> ReconstructPath(Dictionary<Vector2Int, Vector2Int> cameFrom, Vector2Int current, Vector2Int startPos)
     {
-        var path = new List<Vector2> { current };
+        var path = new List<Vector2Int> { current };
 
         while (cameFrom.ContainsKey(current))
         {
@@ -251,9 +256,9 @@ public class HexPathRenderer : MonoBehaviour
         return path;
     }
 
-    private List<Vector2> GetNeighbors(Vector2 hexPos)
+    private List<Vector2Int> GetNeighbors(Vector2Int hexPos)
     {
-        var neighbors = new List<Vector2>();
+        var neighbors = new List<Vector2Int>();
         Vector2Int[] directionsToCheck;
 
         // Round to ensure we're using integer coordinates for lookup
@@ -274,7 +279,7 @@ public class HexPathRenderer : MonoBehaviour
         // Add all six neighbors
         foreach (var dir in directionsToCheck)
         {
-            Vector2 neighborPos = new Vector2(x + dir.x, y + dir.y);
+            Vector2Int neighborPos = new Vector2Int(x + dir.x, y + dir.y);
 
             // Only add if the hex exists on the board
             if (board.hexes.ContainsKey(neighborPos)) neighbors.Add(neighborPos);
@@ -284,7 +289,7 @@ public class HexPathRenderer : MonoBehaviour
     }
 
     // Get the terrain cost for a hex
-    private float GetTerrainCost(Vector2 hexPos, Character character)
+    private float GetTerrainCost(Vector2Int hexPos, Character character)
     {
         var cacheKey = (hexPos, character);
         if (terrainCostCache.TryGetValue(cacheKey, out float cost))
@@ -303,7 +308,7 @@ public class HexPathRenderer : MonoBehaviour
     }
 
     // Calculate the hex distance (in a hex grid)
-    private float HexDistance(Vector2 a, Vector2 b)
+    private float HexDistance(Vector2Int a, Vector2Int b)
     {
         // Convert to cube coordinates for easier distance calculation
         Vector3 aCube = OffsetToCube(a);
@@ -317,7 +322,7 @@ public class HexPathRenderer : MonoBehaviour
         );
     }
 
-    private Vector3 OffsetToCube(Vector2 hex)
+    private Vector3 OffsetToCube(Vector2Int hex)
     {
         int x = Mathf.RoundToInt(hex.x);
         int y = Mathf.RoundToInt(hex.y);
@@ -333,13 +338,14 @@ public class HexPathRenderer : MonoBehaviour
 
     public void HidePath()
     {
+        FindObjectsByType<MovementCostManager>(FindObjectsSortMode.None).ToList().ForEach((x) => x.Hide()); 
         lineRenderer.SetPositions(new Vector3[] { });
         lineRenderer.positionCount = 0;
     }
 
-    public HashSet<Vector2> FindAllHexesV2InRange(Character character)
+    public HashSet<Vector2Int> FindAllHexesV2InRange(Character character)
     {
-        Vector2 startPos = character.hex.v2;
+        Vector2Int startPos = character.hex.v2;
         int maxMovement = character.GetMaxMovement();
 
         // Check cache first
@@ -349,9 +355,9 @@ public class HexPathRenderer : MonoBehaviour
             return cachedRange;
         }
 
-        var reachableHexes = new HashSet<Vector2>();
-        var openSet = new List<Vector2>();
-        var gScore = new Dictionary<Vector2, float>();
+        var reachableHexes = new HashSet<Vector2Int>();
+        var openSet = new List<Vector2Int>();
+        var gScore = new Dictionary<Vector2Int, float>();
 
         openSet.Add(startPos);
         reachableHexes.Add(startPos);
@@ -362,7 +368,7 @@ public class HexPathRenderer : MonoBehaviour
         while (openSet.Count > 0)
         {
             // Find node with lowest cost
-            Vector2 current = openSet[0];
+            Vector2Int current = openSet[0];
             float lowestGScore = gScore[current];
             int currentIndex = 0;
 
@@ -444,10 +450,10 @@ public class HexPathRenderer : MonoBehaviour
         terrainCostCache.Clear();
     }
 
-    public float GetPathCost(Vector2 startHex, Vector2 endHex, Character character)
+    public float GetPathCost(Vector2Int startHex, Vector2Int endHex, Character character)
     {
         // Find the path first
-        List<Vector2> path = FindPath(startHex, endHex, character);
+        List<Vector2Int> path = FindPath(startHex, endHex, character);
 
         // If there's no valid path, return an impossible cost (or -1 if you prefer)
         if (path == null || path.Count < 2)
@@ -460,7 +466,7 @@ public class HexPathRenderer : MonoBehaviour
         // Sum terrain costs between each hex in the path
         for (int i = 1; i < path.Count; i++)
         {
-            Vector2 currentHex = path[i];
+            Vector2Int currentHex = path[i];
             totalCost += GetTerrainCost(currentHex, character);
         }
 

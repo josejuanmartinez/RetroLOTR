@@ -51,7 +51,10 @@ MonoBehaviour:
   width: 25
   height: 75
   hexPrefab: {fileID: 1656764412083736294, guid: 5ee48be796f7a844c9eb1a6fa53080bc, type: 3}
-  hexSize: {x: 1.55, y: 0.9}
+  hexSize: {x: 1.5, y: 0.85}
+  progressBar: {fileID: 0}
+  statusText: {fileID: 0}
+  drawMark: 0
   minIslands: 1
   maxIslands: 5
   waterPercentage: 0.15
@@ -68,12 +71,18 @@ MonoBehaviour:
   majorWastelandCount: 1
   minorWastelandCount: 2
   selectedHex: {x: -1, y: -1}
+  selectedCharacter: {fileID: 0}
+  moving: 0
+  startButton: {fileID: 0}
   redraw: 0
   regenerate: 0
   colors: {fileID: 0}
   textures: {fileID: 0}
   boardGenerator: {fileID: 4799891737429854110}
   nationSpawner: {fileID: 2391223479585344954}
+  hexesWithCharacters: []
+  hexesWithPCs: []
+  hexesWithArtifacts: []
 --- !u!114 &4799891737429854110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,6 +95,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5d8ca7660d45849bce143756b60856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cellsPerBatch: 200
+  hexesPerBatch: 200
+  generationFrameBudgetSeconds: 0.25
   board: {fileID: 577319869002409797}
 --- !u!114 &2391223479585344954
 MonoBehaviour:
@@ -112,8 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc837316658897540a79761a942b177d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineRenderer: {fileID: 2623480377557684074}
-  board: {fileID: 577319869002409797}
 --- !u!120 &2623480377557684074
 LineRenderer:
   serializedVersion: 2

@@ -11,9 +11,12 @@ public class SelectedCharacterIcon : MonoBehaviour
     public GameObject actioned;
     public GameObject unactionedIcon;
     public GameObject actionedIcon;
+    public GameObject border;
 
     [Header("Leader")]
     public Image icon;
+    public TextMeshProUGUI textWidget;
+    public Image alignmentIcon;
 
     [Header("Health")]
     public Image health;
@@ -39,7 +42,11 @@ public class SelectedCharacterIcon : MonoBehaviour
     // Update is called once per frame
     public void Refresh(Character c)
     {
+        border.SetActive(true);
         icon.enabled = true;
+        alignmentIcon.enabled = true;
+        alignmentIcon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c.GetAlignment().ToString());
+        textWidget.text = $"<mark=#ffffff>{c.GetHoverText(false, false, false, true, false)}</mark>";
         actionsGameObject.SetActive(true);
         actioned.SetActive(true);
         moved.SetActive(true);
@@ -73,7 +80,10 @@ public class SelectedCharacterIcon : MonoBehaviour
     // Update is called once per frame
     public void Hide()
     {
+        border.SetActive(false);
+        alignmentIcon.enabled = false;
         icon.enabled = false;
+        textWidget.text = "";
         actionsGameObject.SetActive(false);
         actioned.SetActive(false);
         moved.SetActive(false);

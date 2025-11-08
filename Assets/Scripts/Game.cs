@@ -1,10 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using NUnit.Framework.Constraints;
 
 
 public class Game : MonoBehaviour
 {
+    [Header("Sound")]
+    public AudioSource soundPlayer;
+    public AudioSource musicPlayer;
+
     [Header("Playable Leader (Player)")]
     public PlayableLeader player;
     [Header("Other Playable Leaders")]
@@ -16,10 +21,12 @@ public class Game : MonoBehaviour
     [Header("Artifacts")]
     public List<Artifact> artifacts = new();
 
-    [Header("MAX CAPS")]
-    public int normalMovement = 12;
-    public int cavalryMovement = 15;
+    [Header("Movement")]
+    public int characterMovement = 5;
+    public int armyMovement = 5;
+    public int cavalryMovement = 7;
 
+    [Header("Caps")]
     public static int MAX_LEADERS = 30;
     public static int MAX_BOARD_WIDTH = 25;
     public static int MAX_BOARD_HEIGHT = 75;
@@ -70,10 +77,20 @@ public class Game : MonoBehaviour
         started = true;
 
         currentlyPlaying = player;
-        
+
         FindFirstObjectByType<Board>().StartGame();
         AssignAIandHumans();
         currentlyPlaying.NewTurn();
+
+
+        soundPlayer.PlayOneShot(FindFirstObjectByType<Sounds>().GetSoundByName($"{currentlyPlaying.alignment}_intro"));
+        FindFirstObjectByType<PopupManager>().Initialize(
+            currentlyPlaying.GetBiome().joinedTitle,
+            FindFirstObjectByType<Illustrations>().GetIllustrationByName(currentlyPlaying.GetBiome().introActor1),
+            FindFirstObjectByType<Illustrations>().GetIllustrationByName(currentlyPlaying.GetBiome().introActor2),
+            currentlyPlaying.GetBiome().joinedText,
+            true
+        );
     }
 
 

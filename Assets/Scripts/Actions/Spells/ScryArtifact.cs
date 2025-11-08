@@ -15,7 +15,6 @@ public class ScryArtifact: Spell
             if(randomHex == null) return false;
             if(randomHex.hiddenArtifacts.Count < 1) return false;
             Artifact artifact = randomHex.hiddenArtifacts[0];
-            randomHex.encounters.Add(EncountersEnum.Artifact);
             randomHex.Reveal();
             randomHex.LookAt();            
             MessageDisplay.ShowMessage($"You sense the power of {artifact.GetText()}", Color.green);

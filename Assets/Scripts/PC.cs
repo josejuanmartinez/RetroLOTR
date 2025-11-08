@@ -103,7 +103,7 @@ public class PC
      */
     public PC(Leader leader, Hex hex): this(leader, leader.GetBiome().startingCityName, leader.GetBiome().startingCitySize, leader.GetBiome().startingCityFortSize, leader.GetBiome().startsWithPort, leader.GetBiome().startingCityIsHidden, hex, true)
     {
-        if (leader is not PlayableLeader) hex.encounters.Add(EncountersEnum.Encounter);
+        
     }
 
     public string GetProducesHoverText()
@@ -127,7 +127,6 @@ public class PC
         owner.controlledPcs.Add(this);
         owner.visibleHexes.Add(hex);
         loyalty = UnityEngine.Random.Range(50, 75);
-        if (hex.encounters.Contains(EncountersEnum.Disloyal)) hex.encounters.Remove(EncountersEnum.Disloyal);
         owner.hex.RedrawPC();
 
         if (owner.controlledPcs.Count < 1) owner.Killed(leader);
@@ -137,12 +136,6 @@ public class PC
 
     public void CheckHighLoyalty()
     {
-        if (loyalty >= 50 && hex.encounters.Contains(EncountersEnum.Disloyal))
-        {
-            hex.encounters.Remove(EncountersEnum.Disloyal);
-            owner.hex.RedrawEncounters();
-        }
-
         if (loyalty < 100 || citySize == PCSizeEnum.city) return;
 
         if (UnityEngine.Random.Range(1, 5) >= ((int)citySize) + 1) IncreaseSize();
@@ -214,12 +207,6 @@ public class PC
             owner.hex.RedrawPC();
         } 
         
-        if(loyalty <= 50)
-        {
-            if (!hex.encounters.Contains(EncountersEnum.Disloyal)) hex.encounters.Add(EncountersEnum.Disloyal);
-            owner.hex.RedrawEncounters();
-        }
-
         if (owner.controlledPcs.Count < 1) owner.Killed(leader);
     }
 
@@ -239,8 +226,6 @@ public class PC
         // Increase loyalty to avoid immediate decrease
         loyalty = 60;
 
-        if (hex.encounters.Contains(EncountersEnum.Disloyal)) hex.encounters.Remove(EncountersEnum.Disloyal);
-
         owner.hex.RedrawPC();
         
         MessageDisplay.ShowMessage($"{pcName} population flee!", Color.red);
@@ -251,7 +236,6 @@ public class PC
     {
         this.loyalty = Math.Min(100, this.loyalty + loyalty);
         MessageDisplay.ShowMessage($"{pcName} population is happier now", Color.green);
-        if (loyalty >= 50 && hex.encounters.Contains(EncountersEnum.Disloyal)) hex.encounters.Remove(EncountersEnum.Disloyal);
     }
 
     public void DecreaseLoyalty(int loyalty, Leader decreasedBy)

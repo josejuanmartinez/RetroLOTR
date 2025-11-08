@@ -5,6 +5,7 @@ using System.Collections;
 using Random = UnityEngine.Random;
 // using System.Linq; // ⚠️ Avoid in hot paths to prevent hidden allocs
 using UnityEngine.Pool;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 #region Small helper to time-slice work per frame
 
@@ -52,7 +53,7 @@ public class BoardGenerator : MonoBehaviour
 
     // Array to store the terrain types
     private TerrainEnum[,] terrainGrid;
-    private Dictionary<Vector2, GameObject> hexes;
+    private Dictionary<Vector2Int, GameObject> hexes;
     private ObjectPool<GameObject> hexPool;
     private Dictionary<TerrainEnum, Color> terrainColors;
     private Dictionary<TerrainEnum, Sprite> terrainTextures;
@@ -229,9 +230,9 @@ public class BoardGenerator : MonoBehaviour
         onComplete?.Invoke(terrainGrid);
     }
 
-    public IEnumerator InstantiateHexesCoroutine(Action<Dictionary<Vector2, GameObject>> onComplete)
+    public IEnumerator InstantiateHexesCoroutine(Action<Dictionary<Vector2Int, GameObject>> onComplete)
     {
-        hexes = new Dictionary<Vector2, GameObject>(board.GetHeight() * board.GetWidth());
+        hexes = new Dictionary<Vector2Int, GameObject>(board.GetHeight() * board.GetWidth());
 
         // Clear existing children safely and time-sliced
         yield return StartCoroutine(ClearChildrenCoroutine());
@@ -263,6 +264,7 @@ public class BoardGenerator : MonoBehaviour
             for (int col = 0; col < board.GetWidth(); col++)
             {
                 GameObject hexGo = hexPool.Get();
+                hexGo.GetComponent<Hex>().Initialize(row, col);
                 hexGo.transform.SetParent(transform, false);
                 hexGo.name = $"{row},{col}";
 
@@ -292,12 +294,10 @@ public class BoardGenerator : MonoBehaviour
                         var terrainType = terrainGrid[r, c];
 
                         sr.color = terrainColors[terrainType];
-                        hex.terrainType = terrainType;
-                        hex.terrainTexture.sprite = terrainTextures[terrainType];
-                        hex.v2 = new Vector2Int(r, c);
-                        hex.RefreshHoverText();
+                        hex.SetTerrain(terrainType, terrainTextures[terrainType], terrainColors[terrainType]);
+                        // hex.RefreshHoverText();
 
-                        hexes[new Vector2(r, c)] = go;
+                        hexes[new Vector2Int(r, c)] = go;
                     }
 
                     hexesProcessed += batchIndex;
@@ -327,16 +327,15 @@ public class BoardGenerator : MonoBehaviour
                 go.transform.position = positions[i];
 
                 var hex = go.GetComponent<Hex>();
+                hex.Initialize(r, c);
                 var sr = go.GetComponent<SpriteRenderer>();
                 var terrainType = terrainGrid[r, c];
 
                 sr.color = terrainColors[terrainType];
-                hex.terrainType = terrainType;
-                hex.terrainTexture.sprite = terrainTextures[terrainType];
-                hex.v2 = new Vector2Int(r, c);
-                hex.RefreshHoverText();
+                hex.SetTerrain(terrainType, terrainTextures[terrainType], terrainColors[terrainType]);
+                //hex.RefreshHoverText();
 
-                hexes[new Vector2(r, c)] = go;
+                hexes[new Vector2Int(r, c)] = go;
             }
         }
 

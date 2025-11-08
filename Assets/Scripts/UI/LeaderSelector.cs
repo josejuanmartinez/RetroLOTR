@@ -60,19 +60,8 @@ public class LeaderSelector : MonoBehaviour
             string leaderName = options[value].text;
             string leaderDescription = FindAnyObjectByType<PlayableLeaders>().playableLeaders.biomes.Find(x => x.characterName.ToLower() == leaderName.ToLower()).description;
 
-            System.Reflection.FieldInfo[] videosFields = videos.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-            foreach (var field in videosFields)
-            {
-                if (string.Equals(field.Name, leaderName, System.StringComparison.OrdinalIgnoreCase))
-                {
-                    if (field.FieldType == typeof(VideoClip))
-                    {
-                        leaderVideo.clip = (VideoClip) field.GetValue(videos);
-                        break;
-                    }
-                }
-            }
-
+            leaderVideo.clip = videos.GetVideoByName(leaderName);
+    
             if (typewriterEffect) typewriterEffect.StartWriting(leaderDescription); else textUI.text = leaderDescription;
 
             PlayableLeader player = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList().Find((x) => x.characterName.ToLower() == leaderName.ToLower());

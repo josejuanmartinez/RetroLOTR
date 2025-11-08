@@ -7,29 +7,31 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(GraphicRaycaster))]
-public class CharacterAction : MonoBehaviour
+public class CharacterAction : SearcherByName
 {
     [Header("IDs")]
     public string actionName;
     public int actionId;
     [HideInInspector] public Character character;
-
+        
     [Header("Rendering")]
     [HideInInspector]
     public string actionInitials;
+    public Image background;
     public Sprite actionSprite;
     public Color actionColor;
 
     [Header("Game Objects")]
-    public Image background;
+    public Image spriteImage;
     public Button button;
     public TextMeshProUGUI textUI;
 
     [Header("Tooltip")]
     public GameObject hoverPrefab;
 
-    [Header("Required skill")]
+    [Header("Failure rate (0-100) %")]
     public int difficulty = 0;
+    [Header("Required skill")]
     public int commanderSkillRequired;
     public int agentSkillRequired;
     public int emissarySkillRequired;
@@ -43,13 +45,13 @@ public class CharacterAction : MonoBehaviour
     public int mithrilCost;
     public int goldCost;
 
-    [Header("XP")]
+    [Header("XP Chance (0-100) %")]
     public int commanderXP;
     public int agentXP;
     public int emmissaryXP;
     public int mageXP;
 
-    [Header("Reward")]
+    [Header("XP Rewarded")]
     public int reward = 1;
 
     [Header("Availability")]
@@ -59,37 +61,57 @@ public class CharacterAction : MonoBehaviour
     [Header("Effect")]
     // Function delegate that returns a bool to determine if action is available
     public Func<Character, bool> effect;
-
+    
     private Game game;
+    private bool initialized = false;
     void Awake()
     {
         game = FindAnyObjectByType<Game>();
-        GameObject hoverInstance = Instantiate(hoverPrefab, button.transform);
-        hoverInstance.GetComponent<Hover>().Initialize(actionName, Vector2.one * 40, 35, TextAlignmentOptions.Center);
-
-        actionInitials = gameObject.name.ToUpper();
-        background.color = actionColor;
-        if (actionSprite)
-        {
-            background.sprite = actionSprite;
-            textUI.text = "";
-        } else
-        {
-            textUI.text = actionInitials.ToUpper();
-        }
-
-        button.gameObject.SetActive(false);
-
     }
 
 
     public virtual void Initialize(Character character, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
-        var originalCondition = condition;
-        this.character = character;
-        this.condition = (character) => { return ResourcesAvailable() && (originalCondition == null || originalCondition(character)); };
-        this.effect = effect;
-        button.gameObject.SetActive(this.condition(character));
+        try
+        {
+            var originalCondition = condition;
+            this.character = character;
+
+            this.condition = (character) => { return 
+                (!character.hasActionedThisTurn || this.actionName == FindFirstObjectByType<ActionsManager>().DEFAULT.actionName) 
+                &&  ResourcesAvailable() 
+                && (originalCondition == null || originalCondition(character)); 
+            };
+            this.effect = effect;
+
+            bool activate = this.condition(character);
+            button.gameObject.SetActive(activate);
+
+            if (activate && !initialized)
+            {
+                GameObject hoverInstance = Instantiate(hoverPrefab, button.transform);
+                hoverInstance.GetComponent<Hover>().Initialize(actionName, Vector2.one * 40, 35, TextAlignmentOptions.Center);
+
+                actionInitials = gameObject.name.ToUpper();
+                spriteImage.color = actionColor;
+                if (actionSprite && spriteImage)
+                {
+                    spriteImage.sprite = actionSprite;
+                    textUI.text = "";
+                }
+                else
+                {
+                    Debug.LogWarning($"Action {actionName} does not have action sprite or the spriteImage reference is not set");
+                    textUI.text = actionInitials.ToUpper();
+                }
+                initialized = true;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Unable to Initialize CharacterAction {actionName}");
+            Debug.LogError(e.ToString());
+        }        
     }
 
     public bool FulfillsConditions()
@@ -105,13 +127,17 @@ public class CharacterAction : MonoBehaviour
         button.gameObject.SetActive(false);
     }
 
+    public bool IsProvidedByArtifact()
+    {
+        return character.artifacts.Find(x => Normalize(x.providesSpell) == Normalize(actionName)) != null;
+    }
+
     public bool ResourcesAvailable()
     {
-        if (character.hasActionedThisTurn) return false;
-        if (commanderSkillRequired > 0 && character.GetCommander() < commanderSkillRequired) return false;
-        if (agentSkillRequired > 0 && character.GetAgent() < agentSkillRequired) return false;
-        if (emissarySkillRequired > 0 && character.GetEmmissary() < emissarySkillRequired) return false;
-        if (mageSkillRequired > 0 && character.GetMage() < mageSkillRequired) return false;
+        if (commanderSkillRequired > 0 && !IsProvidedByArtifact() && character.GetCommander() < commanderSkillRequired) return false;
+        if (agentSkillRequired > 0 && !IsProvidedByArtifact() && character.GetAgent() < agentSkillRequired) return false;
+        if (emissarySkillRequired > 0 && !IsProvidedByArtifact() && character.GetEmmissary() < emissarySkillRequired) return false;
+        if (mageSkillRequired > 0 && !IsProvidedByArtifact() && character.GetMage() < mageSkillRequired) return false;
 
         if (leatherCost > 0 && character.GetOwner().leatherAmount < leatherCost) return false;
         if (timberCost > 0 && character.GetOwner().timberAmount < timberCost) return false;
@@ -124,36 +150,100 @@ public class CharacterAction : MonoBehaviour
     }
     public void Execute()
     {
-        bool isAI = character.isPlayerControlled;
+        bool isAI = !character.isPlayerControlled;
         try
         {
             // All characters
             character.hasActionedThisTurn = true;
-            if (!isAI) FindFirstObjectByType<ActionsManager>().Refresh(character);
+            if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
 
             if (UnityEngine.Random.Range(0, 100) < difficulty || !effect(character))
             {
-                if (!isAI) MessageDisplay.ShowMessage($"{actionName} failed", Color.red);
+                string message = $"{actionName} failed";
+                Debug.Log(message);
+                if (!isAI) MessageDisplay.ShowMessage(message, Color.red);
+                if (!isAI) game.MoveToNextCharacterToAction();
                 return;
+            } else
+            {
+                string message = actionName;
+                Debug.Log($"{character.characterName} succeeds on {message}");
+                if (!isAI) MessageDisplay.ShowMessage(message, Color.green);
             }
 
-            character.AddCommander(UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0);
-            character.AddAgent(UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0);
-            character.AddEmmissary(UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0);
-            character.AddMage(UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0);
+            if(UnityEngine.Random.Range(0, 100) < commanderXP)
+            {
+                character.AddCommander(1);
+                Debug.Log($"{character.characterName} gets +1 to commander XP");
+                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"commander\"/>", Color.green);
+            }
 
-            FindFirstObjectByType<SelectedCharacterIcon>().Refresh(character);
+            if (UnityEngine.Random.Range(0, 100) < agentXP)
+            {
+                character.AddCommander(1);
+                Debug.Log($"{character.characterName} gets +1 to agent XP");
+                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"agent\"/> +1", Color.green);
+            }
 
-            character.GetOwner().RemoveLeather(leatherCost);
-            character.GetOwner().RemoveTimber(timberCost);
-            character.GetOwner().RemoveMounts(mountsCost);
-            character.GetOwner().RemoveIron(ironCost);
-            character.GetOwner().RemoveMithril(mithrilCost);
-            character.GetOwner().RemoveGold(goldCost);
+            if (UnityEngine.Random.Range(0, 100) < emmissaryXP)
+            {
+                character.AddCommander(1);
+                Debug.Log($"{character.characterName} gets +1 to commander XP");
+                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"emmissary\"/> +1", Color.green);
+            }
 
-            game.MoveToNextCharacterToAction();
+            if (UnityEngine.Random.Range(0, 100) < mageXP)
+            {
+                character.AddCommander(1);
+                Debug.Log($"{character.characterName} gets +1 to commander XP");
+                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"mage\"/> +1", Color.green);
+            }
 
-            FindFirstObjectByType<StoresManager>().RefreshStores();
+            if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
+
+            if(leatherCost > 0)
+            {
+                character.GetOwner().RemoveLeather(leatherCost);
+                Debug.Log($"{character.characterName} spends {leatherCost} leather");
+                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"leather\"/> -{leatherCost}", Color.red);
+            }
+            if (timberCost > 0)
+            {
+                character.GetOwner().RemoveLeather(timberCost);
+                Debug.Log($"{character.characterName} spends {timberCost} timberCost");
+                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"timber\"/> -{timberCost}", Color.red);
+            }
+            if (mountsCost > 0)
+            {
+                character.GetOwner().RemoveLeather(mountsCost);
+                Debug.Log($"{character.characterName} spends {mountsCost} mounts");
+                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mounts\"/> -{mountsCost}", Color.red);
+            }
+
+            if (ironCost > 0)
+            {
+                character.GetOwner().RemoveLeather(ironCost);
+                Debug.Log($"{character.characterName} spends {ironCost} iron");
+                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{ironCost}", Color.red);
+            }
+
+            if (mithrilCost > 0)
+            {
+                character.GetOwner().RemoveLeather(mithrilCost);
+                Debug.Log($"{character.characterName} spends {mithrilCost} mithril");
+                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{mithrilCost}", Color.red);
+            }
+
+            if (goldCost > 0)
+            {
+                character.GetOwner().RemoveLeather(goldCost);
+                Debug.Log($"{character.characterName} spends {goldCost} gold");
+                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{goldCost}", Color.red);
+            }
+
+            if (!isAI) FindFirstObjectByType<StoresManager>().RefreshStores();
+
+            if (!isAI) game.MoveToNextCharacterToAction();
 
             if (character.GetOwner() is not PlayableLeader) return;
 
@@ -178,43 +268,6 @@ public class CharacterAction : MonoBehaviour
             return;
         }
         
-    }
-
-    public bool ExecuteAI()
-    {
-        character.hasActionedThisTurn = true;
-
-        if (UnityEngine.Random.Range(0, 100) < difficulty || !effect(character))
-        {
-            return false;
-        }
-
-        character.AddCommander(UnityEngine.Random.Range(0, 100) < commanderXP ? 1 : 0);
-        character.AddAgent(UnityEngine.Random.Range(0, 100) < agentXP ? 1 : 0);
-        character.AddEmmissary(UnityEngine.Random.Range(0, 100) < emmissaryXP ? 1 : 0);
-        character.AddMage(UnityEngine.Random.Range(0, 100) < mageXP ? 1 : 0);
-
-        character.GetOwner().RemoveLeather(leatherCost);
-        character.GetOwner().RemoveTimber(timberCost);
-        character.GetOwner().RemoveMounts(mountsCost);
-        character.GetOwner().RemoveIron(ironCost);
-        character.GetOwner().RemoveMithril(mithrilCost);
-        character.GetOwner().RemoveGold(goldCost);
-
-        if (character.GetOwner() is not PlayableLeader) return true;
-        FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != character.GetOwner()).ToList().ForEach(x =>
-        {
-            x.CheckActionConditionAnywhere(character.GetOwner(), this);
-        });
-
-        if (character.hex.GetPC() != null && character.hex.GetPC().owner is NonPlayableLeader && character.hex.GetPC().owner != character.GetOwner())
-        {
-            NonPlayableLeader nonPlayableLeader = character.hex.GetPC().owner as NonPlayableLeader;
-            if (nonPlayableLeader == null) return true;
-            nonPlayableLeader.CheckActionConditionAtCapital(character.GetOwner(), this);
-        }
-
-        return true;
     }
 
     protected Character FindEnemyCharacterTargetAtHex(Character assassin)

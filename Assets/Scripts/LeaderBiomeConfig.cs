@@ -11,7 +11,10 @@ public class LeaderBiomeConfigCollection
 public class LeaderBiomeConfig: BiomeConfig
 {
     public string description;
+    public string joinedTitle;
     public string joinedText;
+    public string introActor1;
+    public string introActor2;
     public TerrainEnum terrain;
     public string startingCityName;
     public PCSizeEnum startingCitySize;

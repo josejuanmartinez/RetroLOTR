@@ -11,6 +11,9 @@ public class Artifact
     public int agentBonus = 0;
     public int emmissaryBonus = 0;
     public int mageBonus = 0;
+    public int bonusAttack = 0;
+    public int bonusDefense = 0;
+    public bool oneShot = false;
 
     public string GetText()
     {

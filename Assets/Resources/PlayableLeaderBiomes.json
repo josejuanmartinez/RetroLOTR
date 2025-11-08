@@ -12,11 +12,27 @@
           "artifactName": "Narya",
           "artifactDescription": "",
           "hidden": false,
+          "providesSpell": "RevealPC",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        },
+        {
+          "artifactName": "Wizard Staff",
+          "artifactDescription": "",
+          "hidden": false,
           "providesSpell": "CastLight",
           "commanderBonus": 0,
-          "agentBonus": 1,
+          "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         },
         {
           "artifactName": "Wizard's Cart",
@@ -26,8 +42,11 @@
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
-        },        
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        },
         {
           "artifactName": "Longpipe",
           "artifactDescription": "",
@@ -36,11 +55,30 @@
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        },
+        {
+          "artifactName": "Shadowfax",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Haste",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         }
       ],
-      "description": "<b>Gandalf</b><sprite name=\"commander\"><sprite name=\"emmissary\"><sprite name=\"mage\"><br>Starts with:<br>- Hobbiton 2<sprite name=\"pc\"/>;<br>- A group of hobbits<sprite name=\"emmissary\"/><br>- Spells<sprite name=\"mage\"/> and Artifacts<sprite name=\"artifact\"/><br><br>Shrouded in robes the color of storm clouds, Gandalf the Grey wanders the realms of Middle-earth with ancient staff in hand and wisdom etched upon his weathered face.<br><br>Sent by the Valar in an age when darkness threatens to consume the land, this mysterious wizard seeks not to confront evil with raw power, but to unite the free peoples through counsel and courage.<br><br>From the grand halls of dwarven kingdoms to the humble hearths of halfling homes, he moves like mist between worlds, known to many as merely a creator of magnificent fireworks, while concealing his true purpose � to guide the most unlikely of heroes against a shadow that would devour all light and hope from the world.",
-      "joinedText": "The grey pilgrim arrives!",
+      "description": "<b>Gandalf</b><sprite name=\"commander\"><sprite name=\"emmissary\"><sprite name=\"mage\"><br>Starts with:<br>- Hobbiton <sprite name=\"pc\"/>[2]<br>- Frodo <sprite name=\"commander\"/><br>- Sam <sprite name=\"agent\"/><br>- Pippin <sprite name=\"emmissary\"/><br>- Merry <sprite name=\"agent\"/><br>- Spells <sprite name=\"spell\"/> and Artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty: <mark=#ff0000>Hard</mark></b><br>- Starting power: <mark=#ff0000>Bad</mark><br>- Recruitable allies: <mark=#00ff00>Good</mark><br>- Recruitable armies: <mark=#ff0000>Bad</mark><br>- Gameplay style: character play",
+      "joinedTitle": "The unexpected fate of the Ring",
+      "joinedText": "Frodo… there’s something I never told you.<br><br>I always said I kept the ring with me. Every breath.<br><br>But there was one night when I took it off—just for a heartbeat. I needed silence. I meant to pick it up again immediately.<br><br>But something happened.<br><br>I must have closed my eyes. Then suddenly it was morning, and the ring was gone.<br>No sound. No trail. Just absence.<br><br>I searched. Days, maybe weeks. Time felt wrong. The harder I looked, the more it felt like the ring wasn’t lost — it had moved on.<br><br>And I’m sorry, Frodo… truly. I never meant for the burden to fall on you. But it has.<br><br>Gandalf will guide you now, my boy… where I could not.",
+      "introActor1": "Bilbo",
+      "introActor2": "Frodo",
       "terrain": 3,
       "startingCityName": "Hobbiton",
       "startingCitySize": 1,
@@ -54,20 +92,23 @@
         {
           "characterName": "Frodo",
           "alignment": 0,
-          "commander": 0,
-          "agent": 1,
+          "commander": 1,
+          "agent": 0,
           "emmissary": 0,
           "mage": 0,
           "artifacts": [
-              {
+            {
               "artifactName": "Elvish Song",
               "artifactDescription": "",
               "hidden": false,
               "providesSpell": "OhElbereth",
               "commanderBonus": 0,
-              "agentBonus": 1,
+              "agentBonus": 0,
               "emmissaryBonus": 0,
-              "mageBonus": 0
+              "mageBonus": 0,
+              "oneShot": true,
+              "bonusAttack": 0,
+              "bonusDefense": 0
             }
           ]
         },
@@ -93,54 +134,12 @@
           "characterName": "Merry",
           "alignment": 0,
           "commander": 0,
-          "agent": 0,
-          "emmissary": 1,
+          "agent": 1,
+          "emmissary": 0,
           "mage": 0,
           "artifacts": []
         }
       ]
-    },
-    {
-      "characterName": "Radagast",
-      "alignment": 0,
-      "commander": 0,
-      "agent": 2,
-      "emmissary": 0,
-      "mage": 3,
-      "artifacts": [
-        {
-          "artifactName": "Brown Robes",
-          "artifactDescription": "",
-          "hidden": false,
-          "providesSpell": "",
-          "commanderBonus": 0,
-          "agentBonus": 1,
-          "emmissaryBonus": 0,
-          "mageBonus": 0
-        },
-        {
-          "artifactName": "Rhosobel Rabbits",
-          "artifactDescription": "",
-          "hidden": false,
-          "providesSpell": "Teleport",
-          "commanderBonus": 0,
-          "agentBonus": 0,
-          "emmissaryBonus": 0,
-          "mageBonus": 0
-        }
-      ],
-      "description": "<b>Radagast</b><sprite name=\"agent\"><sprite name=\"mage\"><br>Starts with:<br>- Rhosgobel<sprite name=\"pc\"/>1 (hidden)<br>- Spells<sprite name=\"mage\"/> and Artifacts<sprite name=\"artifact\"/><br><br>Disheveled and nature-bound, Radagast the Brown wanders Middle-earth's forests as a guardian of wildlife rather than kingdoms.<br><br>With animals following his gentle footsteps and herbs stuffed in his pockets, this wizard abandoned the grand politics of his order to heal wounded creatures and commune with forest spirits, his apparent distraction from the growing darkness masking a deeper wisdom�that preserving Middle-earth's very essence might be as crucial to defeating evil as any council of war.",
-      "joinedText": "Mirkwood reveals its lonely guardian!",
-      "terrain": 5,
-      "startingCityName": "Rhosgobel",
-      "startingCitySize": 1,
-      "startingCityFortSize": 0,
-      "startingArmySize": 0,
-      "preferedTroopType": 0,
-      "startingCityIsHidden": true,
-      "startsWithPort": false,
-      "startingWarships": 0,
-      "startingCharacters": []
     },
     {
       "characterName": "Saruman",
@@ -154,11 +153,27 @@
           "artifactName": "Ring of Orthanc",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "SummonMA",
+          "providesSpell": "CastDarkness",
           "commanderBonus": 1,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        },
+        {
+          "artifactName": "Banner of the White Hand",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "SummonMA",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         },
         {
           "artifactName": "Many-coloured robes",
@@ -168,7 +183,10 @@
           "commanderBonus": 1,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         },
         {
           "artifactName": "Yellow teeth",
@@ -178,7 +196,10 @@
           "commanderBonus": 1,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         },
         {
           "artifactName": "Palantir of Orthanc",
@@ -188,11 +209,17 @@
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         }
       ],
-      "description": "<b>Saruman</b><sprite name=\"commander\"><sprite name=\"emmissary\"><sprite name=\"mage\"><br>Starts with:<br>- Orthanc 1<sprite name=\"pc\"/>1<sprite name=\"fort\"/><br>- Grima<sprite name=\"agent\"/><br>- A low-quality small <sprite name=\"neutral\"/>army<br>- Spells<sprite name=\"mage\"/> and Artifacts<sprite name=\"artifact\"/><br><br>Saruman the White commands respect as the head of the Istari order, his voice as smooth as silk yet powerful as thunder.<br><br>From the gleaming tower of Orthanc, this most learned of wizards studies ancient lore and the craft of many devices, believing that to defeat the enemy, one must understand his methods and tools.<br><br>Though sent as a guardian against darkness, Saruman's brilliant mind increasingly turned away his white robes concealing a heart slowly being consumed by pride and ambition as he gazes into forbidden knowledge, convincing himself that Middle-earth requires not a servant of the light but a new master to bring order to a chaotic world.",
-      "joinedText": "White wizard seeks ultimate power!",
+      "description": "<b>Saruman</b><sprite name=\"commander\"><sprite name=\"emmissary\"><sprite name=\"mage\"><br>Starts with:<br>- Orthanc <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/>[1]<br>- Grima<sprite name=\"agent\"/><sprite name=\"emmissary\"/><br>- Bill Ferny<sprite name=\"agent\"/><br>- A low-quality small <sprite name=\"neutral\"/>army<br>- Spells <sprite name=\"spell\"/> and Artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty: <mark=#ffff00>Average</mark></b><br>- Starting Power: <mark=#ffff00>Average</mark><br>- Recruitable allies: <mark=#ffff00>Average</mark><br>- Recruitable armies: <mark=#ffff00>Average</mark><br>- Gameplay style: balanced",
+      "joinedTitle": "Saruman not the white, but of Many Colours!",
+      "joinedText": "Gríma… listen carefully.<br><br>For years, I have searched for the One Ring.<br><br>Others believe it vanished into myth — that time swallowed it. But I felt its echo.<br><br>There was a moment — in the deep archives of the ancient world — when I sensed its presence.<br><br>Like a whisper slipping behind my ear.<br><br>I followed it through ruins, storms, sleepless nights. And then… nothing.<br><br>I should have found it. I should have been the one to wield it.<br><br>They call me Saruman the White — but no, Gríma.<br><br>I pursue much more - power, dominion. I am Saruman, of Many Colours.",
+      "introActor1": "Saruman",
+      "introActor2": "Grima",
       "terrain": 1,
       "startingCityName": "Orthanc",
       "startingCitySize": 1,
@@ -211,6 +238,29 @@
           "emmissary": 1,
           "mage": 0,
           "artifacts": []
+        },
+        {
+          "characterName": "Bill Ferny",
+          "alignment": 2,
+          "commander": 1,
+          "agent": 1,
+          "emmissary": 0,
+          "mage": 0,
+          "artifacts": [
+            {
+              "artifactName": "Bill, the Pony",
+              "artifactDescription": "",
+              "hidden": false,
+              "providesSpell": "Return To Capital",
+              "commanderBonus": 0,
+              "agentBonus": 0,
+              "emmissaryBonus": 0,
+              "mageBonus": 0,
+              "oneShot": false,
+              "bonusAttack": 0,
+              "bonusDefense": 0
+            }
+          ]
         }
       ]
     },
@@ -223,24 +273,30 @@
       "mage": 4,
       "artifacts": [
         {
-          "artifactName": "Sauron's Mace'",
+          "artifactName": "The Burning Eye",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "",
-          "commanderBonus": 1,
+          "providesSpell": "SummonMA",
+          "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         },
         {
-          "artifactName": "Sauron's Armour'",
+          "artifactName": "Forbidden Book",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "",
-          "commanderBonus": 1,
+          "providesSpell": "RevealPC",
+          "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         },
         {
           "artifactName": "Palantir of Ithil",
@@ -250,11 +306,17 @@
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         }
       ],
-      "description": "<b>Sauron</b><sprite name=\"commander\"><sprite name=\"emmissary\"><sprite name=\"mage\"><br>Starts with:<br>- Barad-dur 1<sprite name=\"pc\"/>1<sprite name=\"fort\"/><br>- Mouth of Sauron <sprite name=\"emmissary\"/><br>- A low-quality average <sprite name=\"darkServants\"/>army<br>- Spells<sprite name=\"mage\"/> and Artifacts<sprite name=\"artifact\"/><br><br>Sauron the Deceiver once stood as the greatest of Morgoth's lieutenants before rising to claim his master's mantle of darkness.<br><br>From the shadowed depths of Mordor, this fallen Maia extends his will across Middle-earth like a creeping poison, his fair form long abandoned for one of nightmare and dread.<br><br>Though diminished after the loss of the One Ring, Sauron's essence remains�a lidless eye wreathed in flame, ever-searching, patient and cunning beyond mortal comprehension.<br><br>Through whispered promises of power and subtle corruption of noble intentions, he works to bind all lands to his dominion, not out of mere cruelty, but from a twisted desire to reshape creation according to his own perfect and merciless vision of order.",
-      "joinedText": "The dark lord returns!",
+      "description": "<b>Sauron</b><sprite name=\"commander\"><sprite name=\"emmissary\"><sprite name=\"mage\"><br>Starts with:<br>- Barad-dur <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/>[1]<br>- Mouth of Sauron <sprite name=\"emmissary\"/><br>- Gollum <sprite name=\"agent\"/><br>- A low-quality <mark=#ffff00>Average</mark> <sprite name=\"darkServants\"/>army<br>- Spells <sprite name=\"spell\"/> and Artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty: <mark=#00ff00>Easy</mark></b><br>- Starting Power: <mark=#ffff00>Average</mark><br>- Recruitable characters: <mark=#00ff00>Good</mark><br>- Recruitable armies: <mark=#00ff00>Good</mark><br>- Gameplay style: conquest",
+      "joinedTitle": "Ssshire...Bagginz...",
+      "joinedText": "Listen well, creature.<br><br>You think your trembling bought you mercy.<br><br>It did not. I kept you because you knew something.<br><br>A place. A name. A direction that others have failed to see.<br><br>A land of small folk and smaller courage.<br><br>A place so insignificant no map dares to mark it.<br><br>Now I know enough. You may scurry back to your holes and rivers. My servants are already on the road.<br><br>The Ring is there — I taste its shadow.<br><br>You are still bound to it, wretch. You will follow it, and I will find you.<br><br>Any creature that finds it will succumb to the Lord of the Rings.",
+      "introActor1": "Sauron",
+      "introActor2": "Gollum",
       "terrain": 10,
       "startingCityName": "Barad-dur",
       "startingCitySize": 1,
@@ -271,6 +333,29 @@
           "commander": 0,
           "agent": 0,
           "emmissary": 3,
+          "mage": 0,
+          "artifacts": [
+            {
+              "artifactName": "Yellow teeth",
+              "artifactDescription": "",
+              "hidden": false,
+              "providesSpell": "WizardsLaugh",
+              "commanderBonus": 1,
+              "agentBonus": 0,
+              "emmissaryBonus": 1,
+              "mageBonus": 0,
+              "oneShot": false,
+              "bonusAttack": 0,
+              "bonusDefense": 0
+            }
+          ]
+        },
+        {
+          "characterName": "Gollum",
+          "alignment": 1,
+          "commander": 0,
+          "agent": 1,
+          "emmissary": 0,
           "mage": 0,
           "artifacts": []
         }

@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class Hex : MonoBehaviour
 {
     public Vector2Int v2;
@@ -17,6 +20,12 @@ public class Hex : MonoBehaviour
     public GameObject majorTown;
     public GameObject city;
 
+    public TextMeshPro campText;
+    public TextMeshPro villageText;
+    public TextMeshPro townText;
+    public TextMeshPro majorTownText;
+    public TextMeshPro cityText;
+
     public GameObject tower;
     public GameObject keep;
     public GameObject fort;
@@ -29,7 +38,6 @@ public class Hex : MonoBehaviour
     public TextMeshPro neutralArmiesAtHexText;
     public TextMeshPro darkServantArmiesAtHexText;
     public TextMeshPro charactersAtHexText;
-    public GameObject encounter;
     public GameObject port;
 
     public GameObject freeArmy;
@@ -40,229 +48,352 @@ public class Hex : MonoBehaviour
     public SpriteRenderer terrainTexture;
 
     public GameObject fow;
+    public GameObject movement;
+    public MovementCostManager movementCostManager;
+
+    public SpriteRenderer campSR;
+    public SpriteRenderer villageSR;
+    public SpriteRenderer townSR;
+    public SpriteRenderer majorTownSR;
+    public SpriteRenderer citySR;
+    public SpriteRenderer freeArmySR;
+    public SpriteRenderer neutralArmySR;
+    public SpriteRenderer darkArmySR;
 
     [Header("Hover")]
     public GameObject hoverHexFrame;
-    /*public GameObject hoverTooltip;
-    public GameObject hoverIcon;
-    public SpriteRenderer hoverHidden;
-    public TextMeshPro hoverPcName;
-    public TextMeshPro hoverProduces;
-    public GameObject hoverCharacterIcon;*/
-    
+
     [Header("Data")]
     [SerializeField] private PC pc;
 
-    public List<Army> armies;
-    public List<Character> characters;
-    public List<EncountersEnum> encounters;
+    public List<Army> armies = new();
+    public List<Character> characters = new();
     public List<Artifact> hiddenArtifacts = new();
 
     private Illustrations illustrations;
 
+    // Use HashSet for O(1) contains
+    private HashSet<Leader> scoutedBy = new();
+
     public bool isSelected = false;
+
+    // Cached for speed
+    private PlayableLeader leader;
+
+    // Cached singletons/components (avoid repeated global lookups)
+    private Colors colors;
+    private Board board;
+    private BoardNavigator navigator;
+    private Game game;
+
+    // Reused buffers to avoid GC in UI building / raycasts
+    private static readonly StringBuilder sbChars = new(256);
+    private static readonly StringBuilder sbFree = new(256);
+    private static readonly StringBuilder sbNeutral = new(256);
+    private static readonly StringBuilder sbDark = new(256);
+    private static readonly List<RaycastResult> raycastResults = new(16);
+    private static PointerEventData sharedPED;
+
+    private const string Unknown = "?";
 
     void Awake()
     {
         pc = null;
-        sprite = GetComponent<SpriteRenderer>();
         illustrations = FindFirstObjectByType<Illustrations>();
-        armies = new();
-        characters = new();
-        encounters = new ();
-        hiddenArtifacts = new();
+
+        // Cache singletons once
+        game = FindFirstObjectByType<Game>();
+        colors = FindFirstObjectByType<Colors>();
+        board = FindFirstObjectByType<Board>();
+        navigator = FindFirstObjectByType<BoardNavigator>();
+
+        darkArmySR = darkArmy ? darkArmy.GetComponent<SpriteRenderer>() : null;
+
+        if (EventSystem.current && sharedPED == null) sharedPED = new PointerEventData(EventSystem.current);
     }
 
-    public void RedrawArmies()
+    public bool IsHexRevealed() => !fow.activeSelf;
+
+    public PlayableLeader GetPlayer()
     {
-        bool hasFreeArmy = armies.Find(x => x.GetCommander().alignment == AlignmentEnum.freePeople) != null;
-        bool hasNeutralArmy = armies.Find(x => x.GetCommander().alignment == AlignmentEnum.neutral) != null;
-        bool hasDarkArmy = armies.Find(x => x.GetCommander().alignment == AlignmentEnum.darkServants) != null;
-
-        freeArmy.SetActive(hasFreeArmy);
-        neutralArmy.SetActive(hasNeutralArmy);
-        darkArmy.SetActive(hasDarkArmy);
-
-        RefreshHoverText();
+        if (leader != null) return leader;
+        leader = FindFirstObjectByType<Game>().player;
+        return leader;
     }
 
-    public void RedrawCharacters()
+    public bool IsPCRevealed(PlayableLeader overrideLeader = null)
     {
-        characterIcon.SetActive(characters.Find(x => !x.IsArmyCommander()) != null);
-        RefreshHoverText();
+        var l = overrideLeader ? overrideLeader : GetPlayer();
+        if (l == null || pc == null) return false;
+
+        if (!pc.isHidden || pc.hiddenButRevealed) return true;
+
+        var pcOwner = pc.owner;
+        if (pcOwner == l) return true;
+
+        var pcAlign = pcOwner.GetAlignment();
+        var lAlign = l.GetAlignment();
+        return pcAlign != AlignmentEnum.neutral && pcAlign == lAlign;
     }
 
-    public void RedrawPC()
+    public bool IsScouted(PlayableLeader overrideLeader = null)
     {
-        if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
+        var l = overrideLeader ? overrideLeader : GetPlayer();
+        return l != null && scoutedBy.Contains(l);
+    }
 
-        Leader player = FindFirstObjectByType<Game>().player;
+    public bool IsFriendlyPC(PlayableLeader overrideLeader = null)
+    {
+        var l = overrideLeader ? overrideLeader : GetPlayer();
+        if (l == null || pc == null) return false;
+        if (!IsPCRevealed(l)) return false;
+        if(l == pc.owner) return true;
+        var a = pc.owner.GetAlignment();
+        return a != AlignmentEnum.neutral && a == l.GetAlignment();
+    }
 
-        bool isRevealed = false;
+    public bool IsFriendlyCharacter(Character character, PlayableLeader overrideLeader = null)
+    {
+        var l = overrideLeader ? overrideLeader : GetPlayer();
+        if (l == character.GetOwner()) return true;
+        if (l == null || !character || character.killed) return false;
+        var a = character.GetOwner().GetAlignment();
+        return a != AlignmentEnum.neutral && a == l.GetAlignment();
+    }
 
-        if (player)
+    public void Initialize(int row, int col)
+    {
+        v2 = new Vector2Int(row, col);
+        if (game == null) game = FindFirstObjectByType<Game>();
+    }
+
+    public SpriteRenderer GetCharacterSpriteRendererOnHex(Character character)
+    {
+        if (character.IsArmyCommander())
         {
-            isRevealed = !pc.isHidden || pc.hiddenButRevealed || pc.owner == player || (pc.owner.GetAlignment() != AlignmentEnum.neutral && pc.owner.GetAlignment() == player.GetAlignment());
+            return character.alignment switch
+            {
+                AlignmentEnum.freePeople => freeArmySR,
+                AlignmentEnum.darkServants => darkArmySR,
+                AlignmentEnum.neutral => neutralArmySR,
+                _ => characterIcon.GetComponent<SpriteRenderer>()
+            };
+        }
+        return characterIcon.GetComponent<SpriteRenderer>();
+    }
+
+    public void SetTerrain(TerrainEnum terrainType, Sprite terrainTexture, Color terrainColor)
+    {
+        this.terrainType = terrainType;
+        this.terrainTexture.sprite = terrainTexture;
+        this.terrainTexture.color = terrainColor;
+    }
+
+    public void RedrawArmies(bool refreshHoverText = true)
+    {
+        // scan once; no LINQ allocs
+        bool hasFree = false, hasNeutral = false, hasDark = false;
+        for (int i = 0, n = armies.Count; i < n; i++)
+        {
+            var a = armies[i].GetCommander().alignment;
+            if (a == AlignmentEnum.freePeople) hasFree = true;
+            else if (a == AlignmentEnum.neutral) hasNeutral = true;
+            else if (a == AlignmentEnum.darkServants) hasDark = true;
         }
 
-		if (isRevealed)
+        bool revealed = IsHexRevealed();
+        SetActiveFast(freeArmy, revealed && hasFree);
+        SetActiveFast(neutralArmy, revealed && hasNeutral);
+        SetActiveFast(darkArmy, revealed && hasDark);
+
+        if (refreshHoverText) RefreshHoverText();
+    }
+
+    public void RedrawCharacters(bool refreshHoverText = true)
+    {
+        SetActiveFast(characterIcon, IsHexRevealed() && characters.Find((x) => !x.IsArmyCommander()) != null);
+        if (refreshHoverText) RefreshHoverText();
+    }
+
+    public void RedrawPC(bool refreshHoverText = true)
+    {
+        bool revealed = IsHexRevealed();
+        bool pcRevealed = revealed && IsPCRevealed();
+
+        // city size visibility
+        SetActiveFast(camp, pcRevealed && pc.citySize == PCSizeEnum.camp);
+        SetActiveFast(village, pcRevealed && pc.citySize == PCSizeEnum.village);
+        SetActiveFast(town, pcRevealed && pc.citySize == PCSizeEnum.town);
+        SetActiveFast(majorTown, pcRevealed && pc.citySize == PCSizeEnum.majorTown);
+        SetActiveFast(city, pcRevealed && pc.citySize == PCSizeEnum.city);
+        SetActiveFast(port, pcRevealed && pc.hasPort);
+
+        // color once
+        if (pcRevealed && colors != null)
         {
-            camp.SetActive(pc.citySize == PCSizeEnum.camp);
-            village.SetActive(pc.citySize == PCSizeEnum.village);
-            town.SetActive(pc.citySize == PCSizeEnum.town);
-            majorTown.SetActive(pc.citySize == PCSizeEnum.majorTown);
-            city.SetActive(pc.citySize == PCSizeEnum.city);
-            port.SetActive(pc.hasPort);
+            var a = pc.owner.GetAlignment();
+            var c = a == AlignmentEnum.freePeople ? colors.freePeople
+                    : a == AlignmentEnum.darkServants ? colors.darkServants
+                    : colors.neutral;
+
+            if (camp && camp.activeSelf && campSR) campSR.color = c;
+            if (village && village.activeSelf && villageSR) villageSR.color = c;
+            if (town && town.activeSelf && townSR) townSR.color = c;
+            if (majorTown && majorTown.activeSelf && majorTownSR) majorTownSR.color = c;
+            if (city && city.activeSelf && citySR) citySR.color = c;
         }
 
-		tower.SetActive(pc.fortSize == FortSizeEnum.tower);
-        keep.SetActive(pc.fortSize == FortSizeEnum.keep);
-        fort.SetActive(pc.fortSize == FortSizeEnum.fort);
-        fortress.SetActive(pc.fortSize == FortSizeEnum.fortress);
-        citadel.SetActive(pc.fortSize == FortSizeEnum.citadel);
+        // forts (note: keep tower/fortress visibility rules as in original)
+        SetActiveFast(tower, revealed && pc != null && pc.fortSize == FortSizeEnum.tower);
+        SetActiveFast(keep, revealed && pc != null && pc.fortSize == FortSizeEnum.keep);
+        SetActiveFast(fort, pcRevealed && pc.fortSize == FortSizeEnum.fort);
+        SetActiveFast(fortress, revealed && pc != null && pc.fortSize == FortSizeEnum.fortress);
+        SetActiveFast(citadel, pcRevealed && pc.fortSize == FortSizeEnum.citadel);
 
-        RedrawEncounters();
-        RefreshHoverText();
+        if (refreshHoverText) RefreshHoverText();
     }
-
-    public void RedrawEncounters()
-    {
-        encounter.SetActive(encounters.Count > 0);
-    }
-
     public void RefreshHoverText()
     {
+        bool revealed = IsHexRevealed();
+        bool pcRev = revealed && IsPCRevealed();
+        bool showPCName = IsScouted() || IsFriendlyPC();
 
-        if (characterIcon.activeSelf)
+        if (pcRev)
         {
-            charactersAtHexText.text = "";
-            freeArmiesAtHexText.text = "";
-            darkServantArmiesAtHexText.text = "";
-            neutralArmiesAtHexText.text = "";
-            foreach (Character character in characters)
+            string nameOrQ = showPCName ? pc.pcName : Unknown;
+            if (camp && camp.activeSelf)
             {
-                charactersAtHexText.text += $"<mark=#ffffff>{character.GetHoverText(true, true, false)}</mark>\n";
-                if(character.IsArmyCommander())
-                {
-                    string armyText = $"<mark=#ffffff>{character.GetHoverText(false, false, true)}</mark>\n";
-                    switch (character.alignment)
-                    {
-                        case AlignmentEnum.freePeople:
-                            freeArmiesAtHexText.text += armyText;
-                            break;
-                        case AlignmentEnum.neutral:
-                            neutralArmiesAtHexText.text += armyText;
-                            break;
-                        case AlignmentEnum.darkServants:
-                            darkServantArmiesAtHexText.text += armyText;
-                            break;
-                    }
-                }                
+                campText.text = $"{nameOrQ}<sprite name=\"pc\">[1]";
+                campText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
+            }
+            if (village && village.activeSelf)
+            {
+                villageText.text = $"{nameOrQ}<sprite name=\"pc\">[2]";
+                villageText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
+            }
+            if (town && town.activeSelf)
+            {
+                townText.text = $"{nameOrQ}<sprite name=\"pc\">[3]";
+                townText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
+            }
+            if (majorTown && majorTown.activeSelf)
+            {
+                majorTownText.text = $"{nameOrQ}<sprite name=\"pc\">[4]";
+                majorTownText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
+            }
+            if (city && city.activeSelf)
+            {
+                cityText.text = $"{nameOrQ}<sprite name=\"pc\">[5]";
+                cityText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
         }
-
-        /*
-        hoverPcName.text = "";
-        hoverProduces.text = "";
-
-        hoverIcon.SetActive(false);
-
-        hoverHidden.gameObject.SetActive(false);
         
-        if (pc != null && pc.citySize != PCSizeEnum.NONE)
+        sbChars.Clear();
+        sbFree.Clear();
+        sbDark.Clear();
+        sbNeutral.Clear();
+
+        // Track whether we've already shown an Unknown for each bucket
+        bool unkCharsShown = false;
+        bool unkFreeShown = false;
+        bool unkDarkShown = false;
+        bool unkNeutralShown = false;
+
+        for (int i = 0, n = characters.Count; i < n; i++)
         {
+            var ch = characters[i];
+            bool canSee = IsScouted() || IsFriendlyCharacter(ch);
 
-            Leader player = FindFirstObjectByType<Game>().player;
-
-            bool isRevealed = false;
-
-            if (player)
+            if (canSee)
             {
-                isRevealed = !pc.isHidden || pc.hiddenButRevealed || pc.owner == player || (pc.owner.GetAlignment() != AlignmentEnum.neutral && pc.owner.GetAlignment() == player.GetAlignment());
-            }
-            if (isRevealed)
-            {
-                hoverPcName.text = pc.pcName;
-                hoverProduces.text = pc.GetProducesHoverText();
-                
-                if (pc.owner != null)
+                var charName = ch.GetHoverText(true, true, true, false, true);
+                if (ch.IsArmyCommander())
                 {
-                    Sprite illustrationSmall = illustrationsSmall.GetIllustrationByName(pc.owner);
-                    if (illustrationSmall != null)
+                    var text = ch.GetHoverText(false, true, true, true, true);
+                    switch (ch.alignment)
                     {
-                        hoverIcon.GetComponent<SpriteRenderer>().sprite = illustrationSmall;
-                        hoverIcon.SetActive(true);
+                        case AlignmentEnum.freePeople: sbFree.Append(text).Append('\n'); break;
+                        case AlignmentEnum.neutral: sbNeutral.Append(text).Append('\n'); break;
+                        case AlignmentEnum.darkServants: sbDark.Append(text).Append('\n'); break;
                     }
                 }
-
-                hoverHidden.gameObject.SetActive(pc.hiddenButRevealed);
-
+                else
+                {
+                    sbChars.Append(charName).Append('\n');
+                }
             }
-        }*/
+            else
+            {
+                if (ch.IsArmyCommander())
+                {
+                    switch (ch.alignment)
+                    {
+                        case AlignmentEnum.freePeople:
+                            if (!unkFreeShown) { sbFree.Append(Unknown).Append('\n'); unkFreeShown = true; }
+                            break;
+                        case AlignmentEnum.neutral:
+                            if (!unkNeutralShown) { sbNeutral.Append(Unknown).Append('\n'); unkNeutralShown = true; }
+                            break;
+                        case AlignmentEnum.darkServants:
+                            if (!unkDarkShown) { sbDark.Append(Unknown).Append('\n'); unkDarkShown = true; }
+                            break;
+                    }
+                }
+                else
+                {
+                    if (!unkCharsShown) { sbChars.Append(Unknown).Append('\n'); unkCharsShown = true; }
+                }
+            }
+            
+
+            // Trim a trailing newline if present
+            charactersAtHexText.text = sbChars.ToString().TrimEnd('\n');
+            freeArmiesAtHexText.text = sbFree.ToString().TrimEnd('\n');
+            darkServantArmiesAtHexText.text = sbDark.ToString().TrimEnd('\n');
+            neutralArmiesAtHexText.text = sbNeutral.ToString().TrimEnd('\n');
+        }
     }
+
 
     public void Hover()
     {
-        if(IsPointerOverVisibleUIElement())
+        if (IsPointerOverVisibleUIElement())
         {
             Unhover();
             return;
         }
-        if (!IsHidden())
-        {
-            hoverHexFrame.SetActive(true);
-            // hoverTooltip.SetActive(true);
-            try
-            {
-                float ortoSize = Camera.main.orthographicSize;
-                // float factor = 6;
-                /*hoverTooltip.transform.localScale = new Vector3(ortoSize/ factor, ortoSize/ factor, 1);
-                hoverTooltip.transform.localPosition = new Vector3(
-                    hoverTooltip.transform.localPosition.x,
-                    0.5f * 0.1f * factor + (hoverTooltip.transform.localScale.y),
-                    1
-                );*/
-            } catch(System.Exception)
-            {
-
-            }
-            
-        }
+        if (!IsHidden()) SetActiveFast(hoverHexFrame, true);
     }
 
     public void Unhover()
     {
-        if(!isSelected) hoverHexFrame.SetActive(false);
-        // hoverTooltip.SetActive(false);
+        if (!isSelected) SetActiveFast(hoverHexFrame, false);
     }
 
-    public void Select()
+    public void Select(bool lookAt = true)
     {
         if (!IsHidden())
         {
-            hoverHexFrame.SetActive(true);
+            SetActiveFast(hoverHexFrame, true);
             isSelected = true;
-            LookAt();
+            if (lookAt) LookAt();
         }
     }
 
     public void Unselect()
     {
         isSelected = false;
-        hoverHexFrame.SetActive(false);
-        // hoverTooltip.SetActive(false);
+        SetActiveFast(hoverHexFrame, false);
     }
 
     public void LookAt()
     {
-        GameObject goHex = GameObject.Find($"{v2.x},{v2.y}");
-        FindFirstObjectByType<BoardNavigator>().LookAt(goHex.transform.position);
+        // Avoid GameObject.Find/string allocs; use our own transform
+        if (navigator == null) navigator = FindFirstObjectByType<BoardNavigator>();
+        if (navigator != null) navigator.LookAt(transform.position);
     }
 
-    public bool HasCharacter(Character c)
-    {
-        return characters.Contains(c);
-    }
+    public bool HasCharacter(Character c) => characters.Contains(c);
 
     public bool HasPcOfLeader(Leader c)
     {
@@ -272,127 +403,110 @@ public class Hex : MonoBehaviour
 
     public bool HasArmyOfLeader(Leader c)
     {
-        return armies.Find(x => x.GetCommander() == c || x.GetCommander().owner == c) != null;
+        for (int i = 0, n = armies.Count; i < n; i++)
+        {
+            var cmd = armies[i].GetCommander();
+            if (cmd == c || cmd.GetOwner() == c) return true;
+        }
+        return false;
     }
 
     public bool HasCharacterOfLeader(Leader c)
     {
-        return characters.Find(x => x == c || x.owner == c) != null;
+        for (int i = 0, n = characters.Count; i < n; i++)
+        {
+            var ch = characters[i];
+            if (ch == c || ch.GetOwner() == c) return true;
+        }
+        return false;
     }
 
-    public bool LeaderSeesHex(Leader c)
+    public bool LeaderSeesHex(Leader c) => HasArmyOfLeader(c) || HasPcOfLeader(c) || HasCharacterOfLeader(c);
+
+    public void Reveal(Leader scoutedByPlayer = null)
     {
-        return HasArmyOfLeader(c) || HasPcOfLeader(c) || HasCharacterOfLeader(c);
+        if(scoutedByPlayer) scoutedBy.Add(scoutedByPlayer);
+        SetActiveFast(fow, false);
+        RedrawArmies(false);
+        RedrawCharacters(false);
+        RedrawPC(false);
+        RefreshHoverText();
     }
 
-    public void Reveal()
+    public void RevealArea(int radius = 1, bool lookAt = true, Leader scoutedByPlayer = null)
     {
-        fow.SetActive(false);
-    }
+        if (board == null) board = FindFirstObjectByType<Board>();
 
-    public void RevealArea(int radius = 1)
-    {
-        Board board = FindFirstObjectByType<Board>();
-        // First reveal this hex
-        Reveal();
+        Reveal(scoutedByPlayer);
+        if (radius <= 0 || board == null) { if (lookAt) LookAt(); return; }
 
-        // No need to continue if radius is 0
-        if (radius <= 0) return;
-
-        // Queue for breadth-first search
-        Queue<Vector2> queue = new Queue<Vector2>();
-        // Set to keep track of visited hexes
-        HashSet<Vector2> visited = new HashSet<Vector2>();
-
-        // Start with this hex
+        var queue = new Queue<Vector2Int>(32);
+        var visited = new HashSet<Vector2Int>();
         queue.Enqueue(v2);
         visited.Add(v2);
 
-        // Track current radius
         int currentRadius = 0;
-
         while (queue.Count > 0 && currentRadius < radius)
         {
-            // Process all hexes at the current radius level
             int hexCount = queue.Count;
             for (int i = 0; i < hexCount; i++)
             {
-                Vector2 currentHex = queue.Dequeue();
+                var currentHex = queue.Dequeue();
+                var neighbors = ((currentHex.x & 1) == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
 
-                // Get the appropriate neighbor vectors based on whether the row is even or odd
-                Vector2Int[] neighbors = Mathf.RoundToInt(currentHex.x) % 2 == 0
-                    ? board.evenRowNeighbors
-                    : board.oddRowNeighbors;
-
-                // Check all neighbors
-                foreach (Vector2Int offset in neighbors)
+                for (int j = 0; j < neighbors.Length; j++)
                 {
-                    Vector2 neighborPos = new Vector2(
-                        currentHex.x + offset.x,
-                        currentHex.y + offset.y
-                    );
+                    var offset = neighbors[j];
+                    var neighborPos = new Vector2Int(currentHex.x + offset.x, currentHex.y + offset.y);
+                    if (!visited.Add(neighborPos)) continue;
 
-                    // Skip if already visited
-                    if (visited.Contains(neighborPos)) continue;
-
-                    // Mark as visited
-                    visited.Add(neighborPos);
-
-                    // If hex exists in the board, reveal it and add to queue
                     if (board.hexes.TryGetValue(neighborPos, out Hex neighborHex))
                     {
-                        neighborHex.Reveal();
+                        neighborHex.Reveal(scoutedByPlayer);
                         queue.Enqueue(neighborPos);
                     }
                 }
             }
-
-            // Move to the next radius level
             currentRadius++;
         }
-        LookAt();
+        if (lookAt) LookAt();
     }
 
     public void Hide()
     {
-        fow.SetActive(true);
+        SetActiveFast(fow, true);
+        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game != null) scoutedBy.Remove(game.currentlyPlaying);
     }
 
-    public bool IsHidden()
-    {
-        return fow.activeSelf;
-    }
+    public bool IsHidden() => !IsHexRevealed();
+
     public int GetTerrainCost(Character character)
     {
         return character.IsArmyCommander() ? TerrainData.terrainCosts[terrainType] : 1;
     }
+
     private static bool IsPointerOverVisibleUIElement()
     {
         if (EventSystem.current == null) return false;
 
-        // Set up the new Pointer Event
-        PointerEventData eventData = new(EventSystem.current) { position = Input.mousePosition };
+        if (sharedPED == null) sharedPED = new PointerEventData(EventSystem.current);
+        sharedPED.position = Input.mousePosition;
 
-        List<RaycastResult> results = new();
+        raycastResults.Clear();
+        EventSystem.current.RaycastAll(sharedPED, raycastResults);
 
-        // Raycast using the Graphics Raycaster and the Event Data
-        EventSystem.current.RaycastAll(eventData, results);
-
-        // Only return true if we hit a visible UI element (not just the Canvas)
-        foreach (var result in results)
+        for (int i = 0, n = raycastResults.Count; i < n; i++)
         {
-            // Skip the Canvas itself
-            if (result.gameObject.GetComponent<Canvas>() != null) continue;
+            var go = raycastResults[i].gameObject;
+            if (go.TryGetComponent<Canvas>(out _)) continue;
 
-            // Check if it's an Image with non-zero alpha
-            Image image = result.gameObject.GetComponent<Image>();
-            if (image != null && image.color.a > 0.01f && image.raycastTarget) return true;
+            if (go.TryGetComponent<Image>(out var img))
+                if (img.raycastTarget && img.color.a > 0.01f) return true;
 
-            // Check if it's Text with non-zero alpha
-            TextMeshProUGUI tmpText = result.gameObject.GetComponent<TMPro.TextMeshProUGUI>();
-            if (tmpText != null && tmpText.color.a > 0.01f) return true;
+            if (go.TryGetComponent<TextMeshProUGUI>(out var tmp) && tmp.color.a > 0.01f)
+                return true;
         }
-
         return false;
     }
 
@@ -404,9 +518,7 @@ public class Hex : MonoBehaviour
     public PC GetPC()
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return null;
-
         if (!pc.isHidden || pc.hiddenButRevealed) return pc;
-        
         return null;
     }
 
@@ -415,5 +527,17 @@ public class Hex : MonoBehaviour
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
         this.pc = pc;
     }
-    
+
+    public void ShowMovementLeft(int movementLeft, Character character)
+    {
+        SetActiveFast(movement, true);
+        movementCostManager.ShowMovementLeft(movementLeft, character);
+    }
+
+    // Safe SetActive that avoids redundant calls/dirtying the obj
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    private static void SetActiveFast(GameObject go, bool state)
+    {
+        if (go && go.activeSelf != state) go.SetActive(state);
+    }
 }

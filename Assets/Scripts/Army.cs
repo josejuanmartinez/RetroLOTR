@@ -128,7 +128,7 @@ public class Army
 
     public string GetHoverText()
     {
-        List<string> result = new() { "leading an army of " };
+        List<string> result = new() { " leading an army of " };
     
         if (ma > 0) result.Add($"<sprite name=\"ma\">[{ma}]");
         if (ar > 0) result.Add($"<sprite name=\"ar\">[{ar}]");

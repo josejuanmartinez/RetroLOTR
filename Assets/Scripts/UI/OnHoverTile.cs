@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,10 +8,10 @@ public class OnHoverTile : MonoBehaviour
 {
     private Board board;
     private Hex hex;
-    private Vector2 hexCoordinates; // Store this hex's coordinates
+    private Vector2Int hexCoordinates; // Store this hex's coordinates
     private static HexPathRenderer pathRenderer;
     private static bool isRightMouseDown = false;
-    private static Vector2 currentHoverCoordinates = Vector2.one * -1;
+    private static Vector2Int currentHoverCoordinates = Vector2Int.one * -1;
 
     void Start()
     {
@@ -52,6 +53,19 @@ public class OnHoverTile : MonoBehaviour
     {
         if (board == null) return;
 
+        if (FindFirstObjectByType<Layout>() != null)
+        {
+            try
+            {
+                FindFirstObjectByType<Layout>().GetHexNumberManager().Show(hexCoordinates);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+        
+
         if (IsPointerOverVisibleUIElement())
         {
             if (hex != null) hex.Unhover();
@@ -85,7 +99,7 @@ public class OnHoverTile : MonoBehaviour
         // Clear hover coordinates if this is the current one
         if (currentHoverCoordinates == hexCoordinates)
         {
-            currentHoverCoordinates = Vector2.one * -1;
+            currentHoverCoordinates = Vector2Int.one * -1;
             // Hide path when mouse exits
             if (pathRenderer != null) pathRenderer.HidePath();
         }

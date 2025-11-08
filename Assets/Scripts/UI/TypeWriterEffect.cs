@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class TypewriterEffect : MonoBehaviour
 {
-    public TMP_Text textMeshPro;  // Assign in Inspector
+    public TMP_Text textMeshPro;
     
-    [TextArea] public string fullText; // The text to display
+    [TextArea] public string fullText;
     
-    public float typingSpeed = 0.05f; // Adjust speed
+    public float typingSpeed = 0.05f;
 
     public Coroutine coroutine;
 
@@ -16,6 +16,12 @@ public class TypewriterEffect : MonoBehaviour
 
     void Start()
     {
+        if(textMeshPro == null) textMeshPro = GetComponent<TextMeshPro>();
+        if (fullText.Trim().Length == 0 && textMeshPro.text.Trim().Length > 0)
+        {
+            fullText = textMeshPro.text;
+            textMeshPro.text = "";
+        }
         if (startUponInstantiating) StartWriting(fullText);    
     }
     public void StartWriting(string text = null)

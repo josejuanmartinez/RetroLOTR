@@ -12,6 +12,7 @@ public class NonPlayableLeaderBiomeConfig: LeaderBiomeConfig
 {
 
     public List<string> artifactsToJoin = new();
+    public int artifactsQtyToJoin = 0;
 
     public int leatherToJoin = 0;
     public int mountsToJoin = 0;

@@ -6,7 +6,10 @@ public class Pass : CharacterAction
     {
         var originalEffect = effect;
         var originalCondition = condition;
-        effect = (c) => { return originalEffect == null || originalEffect(c); };
+        effect = (c) => {
+            c.moved = c.GetMaxMovement();
+            return originalEffect == null || originalEffect(c); 
+        };
         condition = (c) => {
             return originalCondition == null || originalCondition(c); 
         };

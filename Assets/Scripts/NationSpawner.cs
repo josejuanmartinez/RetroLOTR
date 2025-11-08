@@ -115,11 +115,11 @@ public class NationSpawner : MonoBehaviour
     
     private void InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable)
     {
-        if (FindObjectsByType<Leader>(FindObjectsSortMode.None).Length >= Game.MAX_LEADERS)
+        /*if (FindObjectsByType<Leader>(FindObjectsSortMode.None).Length >= Game.MAX_LEADERS)
         {
             Debug.LogWarning("Max leaders reached. Skipping leader instantiation.");
             return;
-        }
+        }*/
         List<Vector2Int> suitableHexes = GetCachedHexesWithTerrain(leaderBiomeConfig.terrain);
 
         if (suitableHexes.Count == 0)

@@ -14,7 +14,6 @@ public class FindArtifact: MageAction
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
                 MessageDisplay.ShowMessage($"Artifact found: {artifact.GetText()}", Color.green);
-                if (c.hex.hiddenArtifacts.Count < 1 && c.hex.encounters.Contains(EncountersEnum.Artifact)) c.hex.encounters.Remove(EncountersEnum.Artifact);
             }
 
             if(c.GetOwner() is PlayableLeader)

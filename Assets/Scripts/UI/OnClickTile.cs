@@ -28,7 +28,7 @@ public class OnClickTile : MonoBehaviour
                 {
                     if (entry.Value.gameObject == gameObject)
                     {
-                        Vector2 hexPosition = entry.Key;
+                        Vector2Int hexPosition = entry.Key;
                         board.SelectHex(hexPosition);
                         return;
                     }

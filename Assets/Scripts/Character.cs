@@ -50,9 +50,10 @@ public class Character : MonoBehaviour
 
     [Header("AI")]
     public bool isPlayerControlled = true;
-    
+
     private BiomeConfig characterBiome;
 
+    private Colors colors;
     private bool awaken = false;
 
     void Awake()
@@ -62,6 +63,7 @@ public class Character : MonoBehaviour
         reachableHexes = new();
         killed = false;
         awaken = true;
+        colors = FindFirstObjectByType<Colors>();
     }
     public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome)
     {
@@ -110,10 +112,6 @@ public class Character : MonoBehaviour
         }
         else
         {
-            hasActionedThisTurn = true;
-            hasMovedThisTurn = true;
-            moved = GetMaxMovement();
-
             if (GetOwner() is not PlayableLeader) return;
             
             FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != GetOwner()).ToList().ForEach(x =>
@@ -126,6 +124,12 @@ public class Character : MonoBehaviour
     public AlignmentEnum GetAlignment()
     {
         return owner != null? owner.GetAlignment() : alignment;
+    }
+
+    public void Pass()
+    {
+        CharacterAction action = FindFirstObjectByType<ActionsManager>().DEFAULT;
+        action.Execute();
     }
 
     public void NewTurn()
@@ -145,17 +149,22 @@ public class Character : MonoBehaviour
         return owner;
     }
 
-    public string GetHoverText(bool withAlignment, bool withLevels = true, bool withArmy = false)
+    public string GetHoverText(bool withAlignment, bool withCharInfo, bool withLevels, bool withArmy, bool withColor)
     {
         List<string> result = new() { };
+        if (withColor) result.Add($"<color={colors.GetHexColorByName(alignment.ToString())}>");
         if(withAlignment) result.Add($"<sprite name=\"{alignment}\">");
         result.Add($"{characterName}");
-        if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? "["+commander.ToString()+"]" : "")}");
-        if (agent > 0) result.Add($"<sprite name=\"agent\">{(withLevels ? "["+agent.ToString()+"]" : "")}");
-        if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">{(withLevels ? "["+emmissary.ToString()+"]" : "")}");
-        if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? "[" + mage.ToString() + "]" : "")}");
+        if (withCharInfo)
+        {
+            if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? "[" + commander.ToString() + "]" : "")}");
+            if (agent > 0) result.Add($"<sprite name=\"agent\">{(withLevels ? "[" + agent.ToString() + "]" : "")}");
+            if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">{(withLevels ? "[" + emmissary.ToString() + "]" : "")}");
+            if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? "[" + mage.ToString() + "]" : "")}");
+        }
 
-        if (withArmy) result.Add(GetArmy().GetHoverText());
+        if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText());
+        if (withColor) result.Add("</color>");
         return string.Join("", result);
     }
 
@@ -167,7 +176,17 @@ public class Character : MonoBehaviour
     public int GetMaxMovement()
     {
         MovementType movementType = army == null ? MovementType.Character : army.GetMovementType();
-        return movementType == MovementType.ArmyCommanderCavalryOnly ? FindFirstObjectByType<Game>().cavalryMovement : FindFirstObjectByType<Game>().normalMovement;
+        switch(movementType)
+        {            
+            case MovementType.ArmyCommander:
+                return FindFirstObjectByType<Game>().armyMovement;
+            case MovementType.ArmyCommanderCavalryOnly:
+                return FindFirstObjectByType<Game>().cavalryMovement;
+            case MovementType.Character:
+            default:
+                return FindFirstObjectByType<Game>().characterMovement;            
+        }
+        
     }
 
     public bool IsArmyCommander()

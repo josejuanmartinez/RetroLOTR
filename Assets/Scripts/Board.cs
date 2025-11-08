@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,9 +49,15 @@ public class Board : MonoBehaviour
     [Range(0, 3)] public int minorWastelandCount = 2;
 
     [Header("Selection")]
-    public Vector2 selectedHex = Vector2.one * -1;
+    public Vector2Int selectedHex = Vector2Int.one * -1;
     public Character selectedCharacter = null;
+
+    [Header("Movement over board")]
     public bool moving = false;
+    [SerializeField] private SpriteRenderer characterMoverImage;
+    [SerializeField] private SpriteRenderer freeArmyMoverImage;
+    [SerializeField] private SpriteRenderer darkServantsMoverImage;
+    [SerializeField] private SpriteRenderer neutralMoverImage;
 
     [Header("Start button")]
     public Button startButton;
@@ -73,7 +79,7 @@ public class Board : MonoBehaviour
     // Array to store the terrain types
     public TerrainEnum[,] terrainGrid;
     // Dictionary to store all generated hexes
-    public Dictionary<Vector2, Hex> hexes;
+    public Dictionary<Vector2Int, Hex> hexes;
     public List<Hex> hexesWithCharacters;
     public List<Hex> hexesWithPCs;
     public List<Hex> hexesWithArtifacts;
@@ -192,7 +198,7 @@ public class Board : MonoBehaviour
         nationSpawner.BuildTerrainHexCache(terrainGrid);
     }
 
-    private void OnHexesInstantiated(Dictionary<Vector2, GameObject> hexesGameObjects)
+    private void OnHexesInstantiated(Dictionary<Vector2Int, GameObject> hexesGameObjects)
     {
         if (hexesGameObjects == null)
         {
@@ -267,12 +273,6 @@ public class Board : MonoBehaviour
 
     public void StartGame()
     {
-        foreach (Hex hex in GetHexes())
-        {
-            if (hex.characters.Count > 0) hex.RedrawCharacters();
-            if (hex.armies.Count > 0) hex.RedrawArmies();
-            if (hex.GetPC() != null) hex.RedrawPC();
-        }
         RefreshRelevantHexes();
     }
 
@@ -283,17 +283,17 @@ public class Board : MonoBehaviour
         hexesWithCharacters = GetHexes().FindAll(x => x.characters.Count > 0);
     }
 
-    public void SelectCharacter(Character character)
+    public void SelectCharacter(Character character, bool lookAt = true)
     {
-        SelectHex(character.hex);
+        SelectHex(character.hex, lookAt);
     }
 
-    public void SelectHex(Hex hex)
+    public void SelectHex(Hex hex, bool lookAt = true)
     {
-        SelectHex(hex.v2);
+        SelectHex(hex.v2, lookAt);
     }
 
-    public void SelectHex(Vector2 selection)
+    public void SelectHex(Vector2Int selection, bool lookAt = true)
     {
         try
         {
@@ -305,7 +305,7 @@ public class Board : MonoBehaviour
                 {
                     UnselectHex();
                     selectedHex = selection;
-                    hexes[selection].Select();
+                    hexes[selection].Select(lookAt);
                 }
 
                 // If same hex, I loop through characters
@@ -314,7 +314,7 @@ public class Board : MonoBehaviour
                 if (myCharacters.Count < 1)
                 {
                     selectedCharacter = null;
-                    FindFirstObjectByType<SelectedCharacterIcon>().Hide();
+                    FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Hide();
                     return;
                 }
 
@@ -322,10 +322,10 @@ public class Board : MonoBehaviour
                 {
                     UnselectHex();
                     selectedHex = selection;
-                    hexes[selection].Select();
+                    hexes[selection].Select(lookAt);
 
                     selectedCharacter = myCharacters[0];
-                    FindFirstObjectByType<SelectedCharacterIcon>().Refresh(selectedCharacter);
+                    FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(selectedCharacter);
                 }
                 else
                 {
@@ -339,31 +339,31 @@ public class Board : MonoBehaviour
                         selectedCharacter = myCharacters[nextIndex];
                     }
 
-                    FindFirstObjectByType<SelectedCharacterIcon>().Refresh(selectedCharacter);
+                    FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(selectedCharacter);
                 }
 
-                FindFirstObjectByType<ActionsManager>().Refresh(selectedCharacter);
+                FindFirstObjectByType<Layout>().GetActionsManager().Refresh(selectedCharacter);
             }
         }
         catch (Exception e)
         {
             Debug.LogError(e);
-            selectedHex = Vector2.one * -1;
+            selectedHex = Vector2Int.one * -1;
             selectedCharacter = null;
-            FindFirstObjectByType<SelectedCharacterIcon>().Hide();
-            FindFirstObjectByType<ActionsManager>().Hide();
+            FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Hide();
+            FindFirstObjectByType<Layout>().GetActionsManager().Hide();
             return;
         }
     }
 
     public void UnselectHex()
     {
-        if (selectedHex != Vector2.one * -1) hexes[selectedHex].Unselect();
-        selectedHex = Vector2.one * -1;
+        if (selectedHex != Vector2Int.one * -1) hexes[selectedHex].Unselect();
+        selectedHex = Vector2Int.one * -1;
 
         // Execute these actions after the delay
-        FindFirstObjectByType<ActionsManager>().Hide();
-        FindFirstObjectByType<SelectedCharacterIcon>().Hide();
+        FindFirstObjectByType<Layout>().GetActionsManager().Hide();
+        FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Hide();
         selectedCharacter = null;
     }
 
@@ -377,7 +377,7 @@ public class Board : MonoBehaviour
         return hexes.Values.ToList();
     }
 
-    public void Move(Character character, Vector2 targetHexCoordinates)
+    public void Move(Character character, Vector2Int targetHexCoordinates)
     {
         moving = true;
         if (!character) return;
@@ -385,22 +385,104 @@ public class Board : MonoBehaviour
         if (character.moved >= character.GetMaxMovement()) return;
 
         HexPathRenderer pathRenderer = FindFirstObjectByType<HexPathRenderer>();
-        List<Vector2> path = pathRenderer.FindPath(character.hex.v2, targetHexCoordinates, character);
+        List<Vector2Int> path = pathRenderer.FindPath(character.hex.v2, targetHexCoordinates, character);
 
         StartCoroutine(MoveCoroutine(character, path));
     }
 
-    IEnumerator MoveCoroutine(Character character, List<Vector2> path)
+    private IEnumerator AnimateSpriteBetween(
+    SpriteRenderer fromSR,
+    SpriteRenderer toSR,
+    SpriteRenderer moverSR,
+    Vector3 start,
+    Vector3 end,
+    float duration,
+    Camera followCam = null,
+    AnimationCurve ease = null)
     {
+        // Copy look
+        moverSR.sprite = fromSR.sprite;
+        moverSR.color = fromSR.color;
+        moverSR.flipX = fromSR.flipX;
+        moverSR.flipY = fromSR.flipY;
+        moverSR.sharedMaterial = fromSR.sharedMaterial;
+
+        // Make sure mover appears above board
+        moverSR.sortingLayerID = fromSR.sortingLayerID;
+        moverSR.sortingOrder = fromSR.sortingOrder + 100;
+
+        moverSR.transform.localScale = fromSR.transform.lossyScale;
+        moverSR.transform.rotation = fromSR.transform.rotation;
+
+        // Hide the static icons during tween so you don't see the destination early
+        bool fromPrevEnabled = fromSR != null && fromSR.enabled;
+        bool toPrevEnabled = toSR != null && toSR.enabled;
+        if (fromSR != null) fromSR.enabled = false;
+        if (toSR != null) toSR.enabled = false;
+
+        moverSR.gameObject.SetActive(true);
+        moverSR.transform.position = start;
+
+        // Camera follow setup
+        Vector3 camOffset = Vector3.zero;
+        if (followCam != null)
+            camOffset = followCam.transform.position - start;
+
+        float elapsed = 0f;
+        ease ??= AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float e = ease.Evaluate(t);
+
+            Vector3 pos = Vector3.Lerp(start, end, e);
+            moverSR.transform.position = pos;
+
+            if (followCam != null)
+            {
+                // Keep same offset and preserve camera z (for 2D orthographic)
+                Vector3 camPos = pos + camOffset;
+                camPos.z = followCam.transform.position.z;
+                followCam.transform.position = camPos;
+            }
+
+            yield return null;
+        }
+
+        moverSR.transform.position = end;
+        moverSR.gameObject.SetActive(false);
+
+        // Restore icon visibility (destination will be redrawn after MoveCharacterOneHex anyway)
+        if (fromSR != null) fromSR.enabled = fromPrevEnabled;
+        if (toSR != null) toSR.enabled = toPrevEnabled;
+    }
+
+
+    // Centralize how you get a hex’s world spot.
+    // If your Hex already has a center/world pos property, use it here.
+    private Vector3 GetHexWorldPosition(Hex h)
+    {
+        // Common options—pick the one that matches your project:
+        // return h.WorldPosition;
+        // return h.CenterWorld;
+        return h.transform.position;
+    }
+
+
+    IEnumerator MoveCoroutine(Character character, List<Vector2Int> path)
+    {
+        FindFirstObjectByType<HexPathRenderer>().HidePath();
         SelectedCharacterIcon selected = null;
         ActionsManager actionsManager = null;
         Hex currentHex = character.hex; // Store initial hex
 
         try
         {
-            actionsManager = FindFirstObjectByType<ActionsManager>();
+            actionsManager = FindFirstObjectByType<Layout>().GetActionsManager();
             actionsManager.Hide();
-            selected = FindFirstObjectByType<SelectedCharacterIcon>();
+            selected = FindFirstObjectByType<Layout>().GetSelectedCharacterIcon();
         }
         catch (Exception e)
         {
@@ -409,35 +491,80 @@ public class Board : MonoBehaviour
             yield break;
         }
 
-        // Main movement loop
-        for (int i = 0; i < path.Count; i++)
+
+        SpriteRenderer moverImage = characterMoverImage;
+        if (character.IsArmyCommander())
         {
-            if (i + 1 < path.Count)
+            switch (character.alignment)
             {
-                try
-                {
-                    // Store previous hex to revert to in case of failure
-                    Hex previousHex = hexes[path[i]];
-                    Hex newHex = hexes[path[i + 1]];
-                    currentHex = previousHex;
-
-                    MoveCharacterOneHex(character, previousHex, newHex);
-
-                    currentHex = newHex; // Update current hex
-
-                    selected.RefreshMovementLeft(character);
-
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Error during character movement at step {i}: {e.Message}\n{e.StackTrace}");
-                    HandleMovementFailure(character, currentHex, path, i);
-                    yield break;
-                }
-
-                // Yield outside the try block
-                yield return new WaitForSeconds(0.5f);
+                case AlignmentEnum.freePeople:
+                    moverImage = freeArmyMoverImage; break;
+                case AlignmentEnum.darkServants:
+                    moverImage = darkServantsMoverImage; break;
+                case AlignmentEnum.neutral:
+                    moverImage = neutralMoverImage; break;
             }
+        }
+
+        for (int i = 0; i < path.Count - 1; i++)
+        {
+            Hex previousHex = hexes[path[i]];
+            Hex newHex = hexes[path[i + 1]];
+            currentHex = previousHex;
+
+            // Pick the mover sprite to use (you already do this)
+            SpriteRenderer moverSR = characterMoverImage;
+            if (character.IsArmyCommander())
+            {
+                switch (character.alignment)
+                {
+                    case AlignmentEnum.freePeople: moverSR = freeArmyMoverImage; break;
+                    case AlignmentEnum.darkServants: moverSR = darkServantsMoverImage; break;
+                    case AlignmentEnum.neutral: moverSR = neutralMoverImage; break;
+                }
+            }
+
+            // Get the visible sprites on each hex
+            SpriteRenderer fromSR = previousHex.GetCharacterSpriteRendererOnHex(character);
+            SpriteRenderer toSR = newHex.GetCharacterSpriteRendererOnHex(character);
+
+            // Use the sprite transforms’ world positions (NOT RectTransform)
+            Vector3 startPos = (fromSR != null) ? fromSR.transform.position : previousHex.transform.position;
+            Vector3 endPos = (toSR != null) ? toSR.transform.position : newHex.transform.position;
+
+            IEnumerator tween = null; 
+            bool canAnimate = (moverSR != null && fromSR != null); // need at least fromSR for look/size
+
+            try
+            {
+                if (canAnimate)
+                    tween = AnimateSpriteBetween(fromSR, toSR, moverSR, startPos, endPos, 0.35f);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error preparing animation at step {i}: {e.Message}\n{e.StackTrace}");
+                HandleMovementFailure(character, currentHex, path, i);
+                canAnimate = false;
+            }
+
+            if (canAnimate) yield return tween;
+
+            try
+            {
+                // Commit logic AFTER the tween so Redraw snaps to the new hex cleanly
+                MoveCharacterOneHex(character, previousHex, newHex, false, false);
+                currentHex = newHex;
+                selected.RefreshMovementLeft(character);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error during character movement at step {i}: {e.Message}\n{e.StackTrace}");
+                HandleMovementFailure(character, currentHex, path, i);
+                yield break;
+            }
+
+            // optional: tiny pacing pause
+            // yield return new WaitForSeconds(0.02f);
         }
 
         try
@@ -458,7 +585,7 @@ public class Board : MonoBehaviour
         actionsManager.Refresh(character);
     }
 
-    public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool isTeleport = false) {
+    public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true) {
         try
         {
             character.hasMovedThisTurn = true;
@@ -482,10 +609,10 @@ public class Board : MonoBehaviour
             newHex.RedrawArmies();
             if (character.GetOwner() == FindFirstObjectByType<Game>().player)
             {
-                newHex.LookAt();
-                character.hex.RevealArea();
+                if (lookAt) newHex.LookAt();
+                character.hex.RevealArea(1, lookAt);
                 UnselectHex();
-                SelectHex(newHex);
+                SelectHex(newHex, lookAt);
             }            
 
             if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
@@ -494,7 +621,7 @@ public class Board : MonoBehaviour
             bool wasWater = previousHex.IsWaterTerrain();
             bool isWater = newHex.IsWaterTerrain();
 
-            if ((!wasWater && isWater) || (wasWater && !isWater) || isTeleport)
+            if ((!wasWater && isWater) || (wasWater && !isWater) || finishMovement)
             {
                 character.moved = character.GetMaxMovement();                
             }
@@ -535,14 +662,14 @@ public class Board : MonoBehaviour
             // Redraw
             currentHex.RedrawCharacters();
             currentHex.RedrawArmies();
-            currentHex.LookAt();
-            SelectHex(currentHex.v2);
+            if (lookAt) currentHex.LookAt();
+            SelectHex(currentHex.v2, lookAt);
 
         }
     }
 
     // Helper method to handle movement failure and ensure consistent state
-    private void HandleMovementFailure(Character character, Hex currentHex, List<Vector2> path = null, int currentIndex = -1)
+    private void HandleMovementFailure(Character character, Hex currentHex, List<Vector2Int> path = null, int currentIndex = -1)
     {
         if (currentHex != null && character != null)
         {
@@ -586,13 +713,13 @@ public class Board : MonoBehaviour
         }
 
         // Always refresh the actions manager and selected icon if available
-        var actionsManager = FindFirstObjectByType<ActionsManager>();
+        var actionsManager = FindFirstObjectByType<Layout>().GetActionsManager();
         if (actionsManager != null)
         {
             actionsManager.Refresh(character);
         }
 
-        var selected = FindFirstObjectByType<SelectedCharacterIcon>();
+        var selected = FindFirstObjectByType<Layout>().GetSelectedCharacterIcon();
         if (selected != null)
         {
             selected.RefreshMovementLeft(character);
@@ -608,13 +735,13 @@ public class Board : MonoBehaviour
         {
             string markStart = drawMark ? "<mark=#ffffff>" : "";
             string markEnd = drawMark ? "</mark>" : "";
-            string sProgress = progress >= 0.9 ? "Loading game. Please, wait..." : $"{stage} - {progress * 100:F0}%"; 
+            string sProgress = progress >= 0.99 ? "Launching the game. Please, wait..." : $"{stage} - {progress * 100:F0}%"; 
             statusText.text = $"{markStart}{sProgress}{markEnd}";
         }
             
     }
 
-    public Hex GetHex(Vector2 v2)
+    public Hex GetHex(Vector2Int v2)
     {
         if (hexes == null) return null;
         hexes.TryGetValue(v2, out Hex hex);

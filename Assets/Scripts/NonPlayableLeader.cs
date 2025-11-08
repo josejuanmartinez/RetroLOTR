@@ -13,7 +13,13 @@ public class NonPlayableLeader : Leader
 	{
 		this.nonPlayableLeaderBiome = nonPlayableLeaderBiome;
         base.Initialize(hex, nonPlayableLeaderBiome);
-	}
+        PlayableLeaderIcon alignmentPlayableLeader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First((x => x.alignment == nonPlayableLeaderBiome.alignment));
+        if (!alignmentPlayableLeader)
+        {
+            Debug.LogWarning($"Could not find PlayableLeaderIcons for alignment {nonPlayableLeaderBiome.alignment}");
+        }
+        alignmentPlayableLeader.AddNonPlayableLeader(this);
+    }
 
 	public void CheckArtifactConditions(Leader leader)
     {

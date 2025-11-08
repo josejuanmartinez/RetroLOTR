@@ -12,14 +12,14 @@ public class Heal: FreeNeutralSpell
             if (c.health < 100)
             {
                 c.Heal(health);
-                if(GameObject.FindFirstObjectByType<Board>().selectedCharacter == c) GameObject.FindFirstObjectByType<SelectedCharacterIcon>().Refresh(c);
+                if(GameObject.FindFirstObjectByType<Board>().selectedCharacter == c) GameObject.FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(c);
             } else
             {
                 Character target = c.hex.characters.Find(x => x.GetOwner() == c.GetOwner() && x.health < 100);
                 if(target != null)
                 {
                     target.Heal(health);
-                    if (GameObject.FindFirstObjectByType<Board>().selectedCharacter == target) GameObject.FindFirstObjectByType<SelectedCharacterIcon>().Refresh(target);
+                    if (GameObject.FindFirstObjectByType<Board>().selectedCharacter == target) GameObject.FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(target);
                 }
                 else
                 {
@@ -27,7 +27,7 @@ public class Heal: FreeNeutralSpell
                     if (target != null)
                     {
                         target.Heal(health);
-                        if (GameObject.FindFirstObjectByType<Board>().selectedCharacter == target) GameObject.FindFirstObjectByType<SelectedCharacterIcon>().Refresh(target);
+                        if (GameObject.FindFirstObjectByType<Board>().selectedCharacter == target) GameObject.FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(target);
                     }
                     else
                     {

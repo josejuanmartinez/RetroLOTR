@@ -6,29 +6,78 @@ using System.Collections;
 public class PlayableLeaderIcon : MonoBehaviour
 {
     public Image image;
+    public NonPlayableLeaderIcons nonPlayableLeaderIcons;
     public CanvasGroup deadCanvasGroup;
-    public TextMeshProUGUI joinedText;
+    // public TextMeshProUGUI joinedText;
+    public TextMeshProUGUI textWidget;
+    public Image alignmentImage;
+    public Image border;
 
-    public void Initialize(Leader leader)
+    [HideInInspector]
+    public AlignmentEnum alignment;
+    [HideInInspector]
+    public PlayableLeader playableLeader;
+
+    private Sprite sprite = null;
+    private string text = string.Empty;
+
+    public void Initialize(PlayableLeader leader)
     {
-        image.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(leader.characterName);
-        joinedText.text = $"<mark=#ffffff>{leader.GetBiome().joinedText}</mark>";
+        playableLeader = leader;
+        alignment = leader.alignment;
+        Illustrations illustrations = FindFirstObjectByType<Illustrations>();
+        sprite = illustrations.GetIllustrationByName(leader.characterName);
+        text = $"<mark=#ffffff>{leader.characterName}</mark>"; ;
+        image.sprite = sprite;
+        textWidget.text = text;
+        // joinedText.text = $"<mark=#ffffff>{leader.GetBiome().joinedText}</mark>";
+
+        alignmentImage.sprite = illustrations.GetIllustrationByName(leader.alignment.ToString());
 
         // Start the coroutine to hide the text after 6 seconds
-        StartCoroutine(HideJoinedTextAfterDelay(6f));
+        // StartCoroutine(HideJoinedTextAfterDelay(6f));
     }
 
-    private IEnumerator HideJoinedTextAfterDelay(float delay)
+    /*private IEnumerator HideJoinedTextAfterDelay(float delay)
     {
         // Wait for the specified delay
         yield return new WaitForSeconds(delay);
 
         // Hide the text
-        joinedText.gameObject.SetActive(false);
-    }
+        // joinedText.gameObject.SetActive(false);
+    }*/
 
     public void SetDead()
     {
         deadCanvasGroup.alpha = 1;
+    }
+
+    public void AddNonPlayableLeader(NonPlayableLeader nonPlayableLeader)
+    {
+        nonPlayableLeaderIcons.Instantiate(nonPlayableLeader);
+    }
+
+    public void HighlighNonPlayableLeader(Sprite leader, string leaderText)
+    {
+        image.sprite = leader;
+        textWidget.text = leaderText;
+    }
+
+    public void Restore(Sprite leader)
+    {
+        if (image.sprite == leader)
+        {
+            image.sprite = sprite;
+            textWidget.text = text;
+        }
+    }
+
+    public void SetCurrentlyPlayingEffect()
+    {
+        border.color = Color.white;
+    }
+    public void RemoveCurrentlyPlayingEffect()
+    {
+        border.color = Color.black;
     }
 }

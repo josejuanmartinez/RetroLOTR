@@ -44,14 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 512e9fc01b6a1dd49b10a20667f4ddb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  plains: {fileID: 0}
-  grasslands: {fileID: 0}
-  deepWater: {fileID: -712631045867808456, guid: e2cc3720e426e1b4d86ddca2557b2653, type: 3}
-  shallowWater: {fileID: -712631045867808456, guid: e2cc3720e426e1b4d86ddca2557b2653, type: 3}
-  forest: {fileID: 21300000, guid: 7cb2a62cf10f7aa4fbd771d2de440a67, type: 3}
-  mountains: {fileID: 21300000, guid: bd140318cda41f74f86db4aae821dbd4, type: 3}
-  hills: {fileID: 21300000, guid: bd140318cda41f74f86db4aae821dbd4, type: 3}
-  wastelands: {fileID: -712631045867808456, guid: 32a6b51ec1f10b34c8bdde1656c4b28d, type: 3}
-  desert: {fileID: 21300000, guid: 8e6f5729780ec67408eed8a3bff7cea7, type: 3}
-  shore: {fileID: 21300000, guid: 8e6f5729780ec67408eed8a3bff7cea7, type: 3}
-  swamp: {fileID: 21300000, guid: 7cb2a62cf10f7aa4fbd771d2de440a67, type: 3}
+  plains: {fileID: 21300000, guid: 30faf9e4761cdb744ae300fa5a0898f6, type: 3}
+  grasslands: {fileID: 21300000, guid: 17e22c8b5bd1e5e46a6f467993ed0fcc, type: 3}
+  deepWater: {fileID: 21300000, guid: 2dfcc1166c22dfa4dbb50c1a3827f42f, type: 3}
+  shallowWater: {fileID: 21300000, guid: 2dfcc1166c22dfa4dbb50c1a3827f42f, type: 3}
+  forest: {fileID: 21300000, guid: acdb117b5a05326468099659580006a6, type: 3}
+  mountains: {fileID: 21300000, guid: b6733db33aea4e543b8188468f99217b, type: 3}
+  hills: {fileID: 21300000, guid: 5ee2fbedc184d1846877df7ecb40d45f, type: 3}
+  wastelands: {fileID: 21300000, guid: b3bda2cb4e6f58943b4d2f4344c2fe88, type: 3}
+  desert: {fileID: 21300000, guid: dd077a848dba67741b2ae426649109f1, type: 3}
+  shore: {fileID: 21300000, guid: dd077a848dba67741b2ae426649109f1, type: 3}
+  swamp: {fileID: 21300000, guid: 17e22c8b5bd1e5e46a6f467993ed0fcc, type: 3}

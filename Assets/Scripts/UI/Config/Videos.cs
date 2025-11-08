@@ -1,11 +1,16 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Video;
 
-public class Videos : MonoBehaviour
+public class Videos : SearcherByName
 {
-    public VideoClip gandalf;
-    public VideoClip radagast;
-    public VideoClip saruman;
-    public VideoClip sauron;
-    public VideoClip intro;
+    public List<VideoClip> videos;
+
+    public VideoClip GetVideoByName(string name)
+    {
+        VideoClip video = videos.Find(x => Normalize(x.name) == Normalize(name));
+        if (!video) Debug.LogWarning($"Video for {name} is not registered. Typo? Forgot to add it?");
+        return video;
+    }
 }
