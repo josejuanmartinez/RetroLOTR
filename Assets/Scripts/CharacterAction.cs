@@ -175,26 +175,26 @@ public class CharacterAction : SearcherByName
             {
                 character.AddCommander(1);
                 Debug.Log($"{character.characterName} gets +1 to commander XP");
-                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"commander\"/>", Color.green);
+                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"commander\"/> +1", Color.green);
             }
 
             if (UnityEngine.Random.Range(0, 100) < agentXP)
             {
-                character.AddCommander(1);
+                character.AddAgent(1);
                 Debug.Log($"{character.characterName} gets +1 to agent XP");
                 if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"agent\"/> +1", Color.green);
             }
 
             if (UnityEngine.Random.Range(0, 100) < emmissaryXP)
             {
-                character.AddCommander(1);
-                Debug.Log($"{character.characterName} gets +1 to commander XP");
+                character.AddEmmissary(1);
+                Debug.Log($"{character.characterName} gets +1 to emmissary XP");
                 if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"emmissary\"/> +1", Color.green);
             }
 
             if (UnityEngine.Random.Range(0, 100) < mageXP)
             {
-                character.AddCommander(1);
+                character.AddMage(1);
                 Debug.Log($"{character.characterName} gets +1 to commander XP");
                 if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"mage\"/> +1", Color.green);
             }
@@ -209,36 +209,36 @@ public class CharacterAction : SearcherByName
             }
             if (timberCost > 0)
             {
-                character.GetOwner().RemoveLeather(timberCost);
+                character.GetOwner().RemoveTimber(timberCost);
                 Debug.Log($"{character.characterName} spends {timberCost} timberCost");
                 if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"timber\"/> -{timberCost}", Color.red);
             }
             if (mountsCost > 0)
             {
-                character.GetOwner().RemoveLeather(mountsCost);
+                character.GetOwner().RemoveMounts(mountsCost);
                 Debug.Log($"{character.characterName} spends {mountsCost} mounts");
                 if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mounts\"/> -{mountsCost}", Color.red);
             }
 
             if (ironCost > 0)
             {
-                character.GetOwner().RemoveLeather(ironCost);
+                character.GetOwner().RemoveIron(ironCost);
                 Debug.Log($"{character.characterName} spends {ironCost} iron");
                 if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{ironCost}", Color.red);
             }
 
             if (mithrilCost > 0)
             {
-                character.GetOwner().RemoveLeather(mithrilCost);
+                character.GetOwner().RemoveMithril(mithrilCost);
                 Debug.Log($"{character.characterName} spends {mithrilCost} mithril");
-                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{mithrilCost}", Color.red);
+                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mithril\"/> -{mithrilCost}", Color.red);
             }
 
             if (goldCost > 0)
             {
                 character.GetOwner().RemoveLeather(goldCost);
                 Debug.Log($"{character.characterName} spends {goldCost} gold");
-                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{goldCost}", Color.red);
+                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"gold\"/> -{goldCost}", Color.red);
             }
 
             if (!isAI) FindFirstObjectByType<StoresManager>().RefreshStores();
@@ -278,7 +278,7 @@ public class CharacterAction : SearcherByName
         if (target) return target;
         target = FindEnemyNonNeutralCharactersAtHex(assassin);
         if (target) return target;
-        target = FindEnemyCharactersAtHex(assassin);
+        target = FindEnemyCharacterAtHex(assassin);
         return target;
     }
     protected Character FindEnemyNonNeutralCharactersAtHexNoLeader(Character c)
@@ -310,7 +310,7 @@ public class CharacterAction : SearcherByName
         );
     }
 
-    protected Character FindEnemyCharactersAtHex(Character c)
+    protected Character FindEnemyCharacterAtHex(Character c)
     {
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.Find(
@@ -318,13 +318,46 @@ public class CharacterAction : SearcherByName
             (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
         );
     }
+    protected List<Character> FindEnemyCharactersAtHex(Character c)
+    {
+        // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
+        return c.hex.characters.FindAll(
+            x => x.GetOwner() != c.GetOwner() &&
+            (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
+        );
+    }
+    protected List<Character> FindEnemyCharactersNotArmyCommandersAtHex(Character c)
+    {
+        // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
+        return c.hex.characters.FindAll(
+            x => !x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
+            (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
+        );
+    }
 
     protected Army FindEnemyArmyNotNeutralAtHex(Character c)
     {
-        // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         Character commander = c.hex.characters.Find(
             x => x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() != AlignmentEnum.neutral && x.GetAlignment() != c.GetAlignment())
+        );
+        if (commander != null && commander.GetArmy() != null) return commander.GetArmy();
+        return null;
+    }
+    protected Army FindEnemyArmyAtHex(Character c)
+    {
+        Character commander = c.hex.characters.Find(
+            x => x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
+            (x.GetAlignment() != c.GetAlignment())
+        );
+        if (commander != null && commander.GetArmy() != null) return commander.GetArmy();
+        return null;
+    }
+
+    protected Army FindFriendlyArmyAtHex(Character c)
+    {
+        Character commander = c.hex.characters.Find(
+            x => x.IsArmyCommander() && (x.GetOwner() == c.GetOwner() || (x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral))
         );
         if (commander != null && commander.GetArmy() != null) return commander.GetArmy();
         return null;

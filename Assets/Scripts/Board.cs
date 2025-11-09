@@ -586,10 +586,9 @@ public class Board : MonoBehaviour
     }
 
     public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true) {
+        int movedBefore = character.moved;
         try
         {
-            character.hasMovedThisTurn = true;
-
             if (previousHex.characters.Contains(character)) previousHex.characters.Remove(character);
             if (character.IsArmyCommander())
             {
@@ -632,7 +631,7 @@ public class Board : MonoBehaviour
 
         } catch (Exception e)
         {
-            character.hasMovedThisTurn = false;
+            character.moved = movedBefore;
             Debug.LogError($"Error moving character: {e.Message}\n{e.StackTrace}");
             if (hexes.TryGetValue(newHex.v2, out Hex pathHex))
             {

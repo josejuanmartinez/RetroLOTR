@@ -7,6 +7,7 @@ public class BiomeConfig
     public string characterName;
 
     public AlignmentEnum alignment;
+    public RacesEnum race;
 
     public int commander = 0;
     public int agent = 0;

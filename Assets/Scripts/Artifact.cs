@@ -14,6 +14,7 @@ public class Artifact
     public int bonusAttack = 0;
     public int bonusDefense = 0;
     public bool oneShot = false;
+    public bool transferable = true;
 
     public string GetText()
     {

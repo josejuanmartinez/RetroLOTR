@@ -11,10 +11,11 @@ public class OhElbereth : FreeSpell
             Character enemy = FindEnemyNonNeutralCharactersAtHex(c);
             if (enemy == null) return false;
             enemy.Wounded(c.GetOwner(), UnityEngine.Random.Range(0, 20) * c.GetMage());
+            if(enemy.race == RacesEnum.Nazgul) enemy.Halt();
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.artifacts.Find(x => x.providesSpell == "OhElbereth") != null && (originalCondition == null || originalCondition(c)); 
+            return c.artifacts.Find(x => x.providesSpell == actionName) != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

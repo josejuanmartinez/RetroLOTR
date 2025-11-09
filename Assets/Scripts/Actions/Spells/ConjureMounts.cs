@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class ConjureMounts: Spell
+public class ConjureMounts: DarkNeutralSpell
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {
@@ -13,7 +13,7 @@ public class ConjureMounts: Spell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.artifacts.Find(x => x.providesSpell == "ConjureMounts") != null && (originalCondition == null || originalCondition(c)); 
+            return c.artifacts.Find(x => x.providesSpell == actionName) != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

@@ -30,12 +30,4 @@ public class CharacterInstantiator : MonoBehaviour
         newCharacterPrefab.transform.parent = t;
         return newCharacterPrefab;
     }
-
-    public void ResetForNewEpisode()
-    {
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
-    }
 }

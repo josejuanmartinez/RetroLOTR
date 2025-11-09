@@ -9,7 +9,7 @@ public class MessageDisplay : MonoBehaviour
     private static MessageDisplay instance;
     private CanvasGroup canvasGroup;
     [SerializeField] private TextMeshProUGUI messageText;
-    [SerializeField] private float displayDuration = 3f;
+    [SerializeField] private float displayDuration = 1f;
     [SerializeField] private float fadeDuration = 0.5f;
 
     private Queue<MessageData> messageQueue = new Queue<MessageData>();

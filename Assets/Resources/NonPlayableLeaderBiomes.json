@@ -7,6 +7,7 @@
       "agent": 0,
       "emmissary": 3,
       "mage": 3,
+      "race": 1,
       "artifacts": [
         {
           "artifactName": "Nenya",
@@ -52,6 +53,7 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
+          "race": 1,
           "artifacts": []
         },
         {
@@ -61,6 +63,7 @@
           "agent": 1,
           "emmissary": 0,
           "mage": 0,
+          "race": 1,
           "artifacts": []
         }
       ],
@@ -98,6 +101,7 @@
       "agent": 0,
       "emmissary": 2,
       "mage": 1,
+      "race": 1,
       "artifacts": [
         {
           "artifactName": "Miruvor",
@@ -124,6 +128,19 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0
+        },
+        {
+          "artifactName": "Andúril",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 2,
+          "bonusDefense": 0
         }
       ],
       "terrain": 5,
@@ -143,6 +160,7 @@
           "agent": 0,
           "emmissary": 2,
           "mage": 0,
+          "race": 1,
           "artifacts": []
         },
         {
@@ -152,6 +170,7 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
+          "race": 1,
           "artifacts": []
         },
         {
@@ -161,6 +180,7 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
+          "race": 3,
           "artifacts": [
             {
               "artifactName": "Sting",
@@ -200,6 +220,20 @@
               "oneShot": true,
               "bonusAttack": 0,
               "bonusDefense": 0
+            },
+            {
+              "artifactName": "Riddle",
+              "artifactDescription": "",
+              "hidden": false,
+              "providesSpell": "Halt",
+              "commanderBonus": 0,
+              "agentBonus": 0,
+              "emmissaryBonus": 0,
+              "mageBonus": 0,
+              "oneShot": false,
+              "bonusAttack": 0,
+              "bonusDefense": 0,
+              "transferable": false
             }
           ]
         }
@@ -238,6 +272,7 @@
       "agent": 0,
       "emmissary": 2,
       "mage": 0,
+      "race": 1,
       "artifacts": [
         {
           "artifactName": "Lasgalen Gems",
@@ -283,6 +318,7 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
+          "race": 1,
           "artifacts": [
             {
               "artifactName": "Lembas",
@@ -347,6 +383,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 3,
+      "race": 7,
       "artifacts": [
         {
           "artifactName": "Black Horse",
@@ -445,6 +482,7 @@
       "agent": 0,
       "emmissary": 4,
       "mage": 0,
+      "race": 7,
       "artifacts": [
         {
           "artifactName": "Black Horse",
@@ -516,15 +554,17 @@
           "agent": 1,
           "emmissary": 0,
           "mage": 0,
+          "race": 5,
           "artifacts": []
         },
         {
           "characterName": "Azog",
-          "alignment": 0,
+          "alignment": 1,
           "commander": 3,
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
+          "race": 5,
           "artifacts": []
         }
       ],
@@ -562,6 +602,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 3,
+      "race": 7,
       "artifacts": [
         {
           "artifactName": "Black Horse",
@@ -587,7 +628,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "transferable": false
         },
         {
           "artifactName": "Akhorahil's Ring",
@@ -661,6 +703,7 @@
       "agent": 3,
       "emmissary": 0,
       "mage": 0,
+      "race": 7,
       "artifacts": [
         {
           "artifactName": "Black Horse",
@@ -760,6 +803,7 @@
       "agent": 2,
       "emmissary": 0,
       "mage": 0,
+      "race": 7,
       "artifacts": [
         {
           "artifactName": "Black Horse",
@@ -818,6 +862,7 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
+          "race": 0,
           "artifacts": [
             {
               "artifactName": "Black Horse",
@@ -869,6 +914,7 @@
       "agent": 0,
       "emmissary": 3,
       "mage": 0,
+      "race": 7,
       "artifacts": [
         {
           "artifactName": "Black Horse",
@@ -954,6 +1000,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 7,
       "artifacts": [
         {
           "artifactName": "Black Horse",
@@ -1039,12 +1086,13 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 7,
       "artifacts": [
         {
           "artifactName": "Black Horse",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "Return To Capital",
+          "providesSpell": "Haste",
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
@@ -1057,7 +1105,7 @@
           "artifactName": "Hoarmûrath's Ring",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "Cast Darkness",
+          "providesSpell": "Ice Storm",
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
@@ -1124,6 +1172,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 7,
       "artifacts": [
         {
           "artifactName": "Black Horse",
@@ -1222,6 +1271,7 @@
       "agent": 1,
       "emmissary": 0,
       "mage": 0,
+      "race": 12,
       "artifacts": [
         {
           "artifactName": "Ring of Barahir",
@@ -1280,6 +1330,7 @@
           "agent": 2,
           "emmissary": 1,
           "mage": 0,
+          "race": 12,
           "artifacts": []
         },
         {
@@ -1289,6 +1340,7 @@
           "agent": 1,
           "emmissary": 2,
           "mage": 0,
+          "race": 12,
           "artifacts": []
         }
       ],
@@ -1326,6 +1378,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 0,
       "artifacts": [],
       "terrain": 1,
       "startingCityName": "Larach Duhnnan",
@@ -1371,7 +1424,23 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
-      "artifacts": [],
+      "race": 13,
+      "artifacts": [
+        {
+          "artifactName": "High Pass Toll",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Halt",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0,
+          "transferable": false
+        }
+      ],
       "terrain": 1,
       "startingCityName": "The Carrock",
       "startingCitySize": 1,
@@ -1416,6 +1485,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 0,
       "artifacts": [],
       "terrain": 5,
       "startingCityName": "Woodmen town",
@@ -1461,10 +1531,10 @@
       "agent": 4,
       "emmissary": 0,
       "mage": 0,
+      "race": 8,
       "artifacts": [
-
         {
-          "artifactName": "Shelob On Hunt",
+          "artifactName": "Stinger",
           "artifactDescription": "",
           "hidden": false,
           "providesSpell": "Curse",
@@ -1473,10 +1543,10 @@
           "emmissaryBonus": 0,
           "mageBonus": 0,
           "oneShot": false,
-          "bonusAttack": -1,
-          "bonusDefense": -1
+          "bonusAttack": 0,
+          "bonusDefense": 0,
+          "transferable": false
         }
-
       ],
       "terrain": 0,
       "startingCityName": "Shelob's Lair",
@@ -1522,19 +1592,21 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 10,
       "artifacts": [
         {
           "artifactName": "Sword of Flame",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "",
+          "providesSpell": "CastDarkness",
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 1,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "transferable": false
         },
         {
           "artifactName": "Fire Whip",
@@ -1547,20 +1619,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 1,
-          "bonusDefense": 0
-        },
-        {
-          "artifactName": "Flame of Udûn",
-          "artifactDescription": "",
-          "hidden": false,
-          "providesSpell": "CastDarkness",
-          "commanderBonus": 0,
-          "agentBonus": 0,
-          "emmissaryBonus": 0,
-          "mageBonus": 0,
-          "oneShot": false,
-          "bonusAttack": -1,
-          "bonusDefense": -1
+          "bonusDefense": 0,
+          "transferable": false
         }
       ],
       "terrain": 0,
@@ -1573,7 +1633,7 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ ],
+      "artifactsToJoin": [],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -1607,22 +1667,22 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 9,
       "artifacts": [
-
         {
-          "artifactName": "Smaug On Haunt",
+          "artifactName": "Dragon Wings",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "ScryArea",
+          "providesSpell": "Scry Area",
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
           "mageBonus": 0,
           "oneShot": false,
-          "bonusAttack": -2,
-          "bonusDefense": -2
+          "bonusAttack": 0,
+          "bonusDefense": 0,
+          "transferable": false
         }
-
       ],
       "terrain": 0,
       "startingCityName": "Erebor (Lost)",
@@ -1634,7 +1694,7 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [ "OneRing", "Vilya", "Nenya", "Narya", "Black Arrow" ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -1668,6 +1728,7 @@
       "agent": 0,
       "emmissary": 1,
       "mage": 0,
+      "race": 0,
       "artifacts": [
         {
           "artifactName": "Black Arrow",
@@ -1727,6 +1788,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 0,
       "artifacts": [],
       "terrain": 9,
       "startingCityName": "Sturlurtsa Khand",
@@ -1772,6 +1834,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 0,
       "artifacts": [],
       "terrain": 9,
       "startingCityName": "Kas Shadoul",
@@ -1817,6 +1880,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 0,
       "artifacts": [],
       "terrain": 9,
       "startingCityName": "Havens of Umbar",
@@ -1862,7 +1926,22 @@
       "agent": 0,
       "emmissary": 2,
       "mage": 0,
-      "artifacts": [],
+      "race": 1,
+      "artifacts": [
+        {
+          "artifactName": "Palantir of Elostirion",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "ScryArea",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        }
+      ],
       "terrain": 0,
       "startingCityName": "The Grey Havens",
       "startingCitySize": 3,
@@ -1907,7 +1986,36 @@
       "agent": 0,
       "emmissary": 1,
       "mage": 0,
-      "artifacts": [],
+      "race": 0,
+      "artifacts": [
+        {
+          "artifactName": "The White Tree",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Courage",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 1,
+          "bonusDefense": 0,
+          "transferable": false
+        },
+        {
+          "artifactName": "Palantir of Minas Tirith",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "ScryArea",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        }
+      ],
       "terrain": 3,
       "startingCityName": "Minas Tirith",
       "startingCitySize": 5,
@@ -1925,13 +2033,14 @@
           "agent": 0,
           "emmissary": 0,
           "mage": 0,
+          "race": 0,
           "artifacts": [
             {
               "artifactName": "Horn of Gondor",
               "artifactDescription": "",
               "hidden": false,
-              "providesSpell": "",
-              "commanderBonus": 1,
+              "providesSpell": "Courage",
+              "commanderBonus": 0,
               "agentBonus": 0,
               "emmissaryBonus": 0,
               "mageBonus": 0,
@@ -1976,6 +2085,7 @@
       "agent": 2,
       "emmissary": 0,
       "mage": 0,
+      "race": 0,
       "artifacts": [],
       "terrain": 5,
       "startingCityName": "Henneth Annûn",
@@ -2021,12 +2131,13 @@
       "agent": 0,
       "emmissary": 1,
       "mage": 0,
+      "race": 0,
       "artifacts": [
         {
           "artifactName": "Herugrim",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "",
+          "providesSpell": "Courage",
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
@@ -2079,6 +2190,7 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
+          "race": 0,
           "artifacts": []
         },
         {
@@ -2088,6 +2200,7 @@
           "agent": 0,
           "emmissary": 0,
           "mage": 0,
+          "race": 0,
           "artifacts": [
             {
               "artifactName": "Firefoot",
@@ -2139,6 +2252,7 @@
       "agent": 0,
       "emmissary": 1,
       "mage": 0,
+      "race": 2,
       "artifacts": [],
       "terrain": 0,
       "startingCityName": "Iron Hills",
@@ -2184,6 +2298,7 @@
       "agent": 0,
       "emmissary": 1,
       "mage": 0,
+      "race": 2,
       "artifacts": [],
       "terrain": 0,
       "startingCityName": "Blue Mountains",
@@ -2202,6 +2317,7 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
+          "race": 2,
           "artifacts": [
             {
               "artifactName": "Gimli's Axe",
@@ -2253,8 +2369,8 @@
       "agent": 2,
       "emmissary": 0,
       "mage": 2,
+      "race": 4,
       "artifacts": [
-
         {
           "artifactName": "Rabbits of Rhosgobel",
           "artifactDescription": "",
@@ -2266,10 +2382,11 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "transferable": false
         },
         {
-          "artifactName": "Birds",
+          "artifactName": "Birds of Mirkwood",
           "artifactDescription": "",
           "hidden": false,
           "providesSpell": "ScryArea",
@@ -2279,7 +2396,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "transferable": false
         }
 
       ],
@@ -2317,7 +2435,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Wizards Laugh" ],
+      "actionsAtCapital": [ "Wizard's Laugh" ],
       "actionsAnywhere": []
     },
     {
@@ -2327,6 +2445,7 @@
       "agent": 2,
       "emmissary": 0,
       "mage": 0,
+      "race": 15,
       "artifacts": [],
       "terrain": 5,
       "startingCityName": "Drúadan Forest",
@@ -2372,6 +2491,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 16,
       "artifacts": [
         {
           "artifactName": "Goblin Cleaver",
@@ -2431,6 +2551,7 @@
       "agent": 1,
       "emmissary": 1,
       "mage": 1,
+      "race": 4,
       "artifacts": [
         {
           "artifactName": "Yellow boots",
@@ -2504,6 +2625,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 11,
       "artifacts": [],
       "terrain": 0,
       "startingCityName": "Paths of the Dead",
@@ -2550,6 +2672,7 @@
       "agent": 0,
       "emmissary": 2,
       "mage": 2,
+      "race": 4,
       "artifacts": [
         {
           "artifactName": "Robes of Aman",
@@ -2613,7 +2736,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Wizards Laugh" ],
+      "actionsAtCapital": [ "Wizard's Laugh" ],
       "actionsAnywhere": []
     },
     {
@@ -2623,6 +2746,7 @@
       "agent": 1,
       "emmissary": 1,
       "mage": 2,
+      "race": 4,
       "artifacts": [
         {
           "artifactName": "Blue Bow",
@@ -2634,7 +2758,7 @@
           "emmissaryBonus": 0,
           "mageBonus": 0,
           "oneShot": false,
-          "bonusAttack": 3,
+          "bonusAttack": 2,
           "bonusDefense": 0
         },
         {
@@ -2687,7 +2811,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 6,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Wizards Laugh" ],
+      "actionsAtCapital": [ "Wizard's Laugh" ],
       "actionsAnywhere": []
     },
     {
@@ -2697,6 +2821,7 @@
       "agent": 0,
       "emmissary": 0,
       "mage": 0,
+      "race": 17,
       "artifacts": [
         {
           "artifactName": "Ent-draught",
@@ -2747,10 +2872,9 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 6,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Wizards Laugh" ],
+      "actionsAtCapital": [ "Wizard's Laugh" ],
       "actionsAnywhere": []
     },
-
     {
       "characterName": "Celdacil",
       "alignment": 2,
@@ -2758,6 +2882,7 @@
       "agent": 1,
       "emmissary": 1,
       "mage": 0,
+      "race": 0,
       "artifacts": [],
       "terrain": 4,
       "startingCityName": "Sarn Lothduin",
@@ -2804,7 +2929,35 @@
       "agent": 0,
       "emmissary": 2,
       "mage": 0,
-      "artifacts": [],
+      "race": 0,
+      "artifacts": [
+        {
+          "artifactName": "Wine of Dorwinion",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Courage",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": true,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        },
+        {
+          "artifactName": "Dorwinion Grapes",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Heal",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": true,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        }
+      ],
       "terrain": 4,
       "startingCityName": "Shrel-Kain",
       "startingCitySize": 4,
@@ -2841,6 +2994,140 @@
       "emmissarysToJoin": 6,
       "magesToJoin": 0,
       "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAnywhere": []
+    },
+    {
+      "characterName": "Barrow-wight",
+      "alignment": 1,
+      "commander": 1,
+      "agent": 0,
+      "emmissary": 0,
+      "mage": 2,
+      "race": 11,
+      "artifacts": [
+        {
+          "artifactName": "Westernesse Blade",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Cast Darkness",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        },
+        {
+          "artifactName": "Crown-shard of Cardolan",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Words of Dispair",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        },
+        {
+          "artifactName": "Gripping Bone",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Curse",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        }
+      ],
+      "terrain": 1,
+      "startingCityName": "Barrow-downs",
+      "startingCitySize": 1,
+      "startingCityFortSize": 0,
+      "startingArmySize": 0,
+      "preferedTroopType": 2,
+      "startingCityIsHidden": false,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": [],
+      "artifactsToJoin": [],
+      "artifactsQtyToJoin": 10,
+      "leatherToJoin": 0,
+      "mountsToJoin": 0,
+      "timberToJoin": 0,
+      "ironToJoin": 0,
+      "mithrilToJoin": 0,
+      "goldToJoin": 0,
+      "commanderLevelToJoin": 0,
+      "agentLevelToJoin": 0,
+      "emmissaryLevelToJoin": 0,
+      "mageLevelToJoin": 0,
+      "armiesToJoin": 0,
+      "maSizeToJoin": 0,
+      "arSizeToJoin": 0,
+      "liSizeToJoin": 0,
+      "hiSizeToJoin": 0,
+      "lcSizeToJoin": 0,
+      "hcSizeToJoin": 0,
+      "caSizeToJoin": 0,
+      "wsSizeToJoin": 0,
+      "commandersToJoin": 0,
+      "agentsToJoin": 0,
+      "emmissarysToJoin": 0,
+      "magesToJoin": 0,
+      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAnywhere": []
+    },
+    {
+      "characterName": "Gwaihir",
+      "alignment": 0,
+      "commander": 0,
+      "agent": 3,
+      "emmissary": 0,
+      "mage": 0,
+      "race": 14,
+      "artifacts": [],
+      "terrain": 0,
+      "startingCityName": "Eagle's Eyrie",
+      "startingCitySize": 1,
+      "startingCityFortSize": 0,
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
+      "startingCityIsHidden": true,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": [],
+      "artifactsToJoin": [],
+      "artifactsQtyToJoin": 0,
+      "leatherToJoin": 0,
+      "mountsToJoin": 0,
+      "timberToJoin": 0,
+      "ironToJoin": 0,
+      "mithrilToJoin": 0,
+      "goldToJoin": 0,
+      "commanderLevelToJoin": 0,
+      "agentLevelToJoin": 0,
+      "emmissaryLevelToJoin": 0,
+      "mageLevelToJoin": 10,
+      "armiesToJoin": 0,
+      "maSizeToJoin": 0,
+      "arSizeToJoin": 0,
+      "liSizeToJoin": 0,
+      "hiSizeToJoin": 0,
+      "lcSizeToJoin": 0,
+      "hcSizeToJoin": 0,
+      "caSizeToJoin": 0,
+      "wsSizeToJoin": 0,
+      "commandersToJoin": 0,
+      "agentsToJoin": 0,
+      "emmissarysToJoin": 0,
+      "magesToJoin": 0,
+      "actionsAtCapital": [ "Wizard's Laugh" ],
       "actionsAnywhere": []
     }
   ]

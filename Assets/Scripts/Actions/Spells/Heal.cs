@@ -7,19 +7,21 @@ public class Heal: FreeNeutralSpell
     {
         var originalEffect = effect;
         var originalCondition = condition;
+
         effect = (c) => {
             int health = UnityEngine.Random.Range(0, 10) * c.GetMage();
+            Character selectedCharacter = FindFirstObjectByType<Board>().selectedCharacter;
             if (c.health < 100)
             {
                 c.Heal(health);
-                if(GameObject.FindFirstObjectByType<Board>().selectedCharacter == c) GameObject.FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(c);
+                if(selectedCharacter == c) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(c);
             } else
             {
                 Character target = c.hex.characters.Find(x => x.GetOwner() == c.GetOwner() && x.health < 100);
                 if(target != null)
                 {
                     target.Heal(health);
-                    if (GameObject.FindFirstObjectByType<Board>().selectedCharacter == target) GameObject.FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(target);
+                    if (selectedCharacter == target) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(target);
                 }
                 else
                 {
@@ -27,7 +29,7 @@ public class Heal: FreeNeutralSpell
                     if (target != null)
                     {
                         target.Heal(health);
-                        if (GameObject.FindFirstObjectByType<Board>().selectedCharacter == target) GameObject.FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(target);
+                        if (selectedCharacter == target) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(target);
                     }
                     else
                     {
@@ -38,7 +40,7 @@ public class Heal: FreeNeutralSpell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return  c.artifacts.Find(x => x.providesSpell == "Heal") != null && (originalCondition == null || originalCondition(c)); 
+            return c.hex.characters.Find(x => x.health < 100 && (x.GetOwner() == c.GetOwner() || x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)) &&  c.artifacts.Find(x => x.providesSpell == actionName) != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

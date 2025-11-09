@@ -23,7 +23,7 @@ public class ScryArea : Spell
             } else return false;
         };
         condition = (c) => {
-            return c.GetOwner() == FindFirstObjectByType<Game>().player && c.artifacts.Find(x => x.providesSpell == "ScryArea") != null && (originalCondition == null || originalCondition(c)); 
+            return c.GetOwner() == FindFirstObjectByType<Game>().player && c.artifacts.Find(x => x.providesSpell == actionName) != null && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

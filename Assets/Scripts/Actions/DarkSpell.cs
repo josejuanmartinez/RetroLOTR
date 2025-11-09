@@ -8,7 +8,7 @@ public class DarkSpell : Spell
         var originalCondition = condition;
         effect = (c) => { return originalEffect == null || originalEffect(c); };
         condition = (c) => {
-            return c.GetAlignment() == AlignmentEnum.darkServants && (originalCondition == null || originalCondition(c)); 
+            return c.GetAlignment() != AlignmentEnum.freePeople && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

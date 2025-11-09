@@ -97,7 +97,7 @@ public class Leader : Character
         }
         
         // Make all characters in nation act!
-        controlledCharacters.FindAll(c => !c.killed && !c.hasActionedThisTurn && !c.hasMovedThisTurn).ForEach(x => x.NewTurn());
+        controlledCharacters.FindAll(c => !c.killed).ForEach(x => x.NewTurn());
         StartCoroutine(WaitUntilEndOfTurn());
     }
 
@@ -108,8 +108,7 @@ public class Leader : Character
         // AI: Act if not player
         if (game.player != this)
         {
-            controlledCharacters.ForEach((x) => x.Pass());
-            yield return new WaitUntil(() => controlledCharacters.All(c => c.killed || c.hasActionedThisTurn || c.hasMovedThisTurn));
+            controlledCharacters.ForEach((x) => { x.Pass(); });
             FindFirstObjectByType<Game>().NextPlayer();
         }
         else

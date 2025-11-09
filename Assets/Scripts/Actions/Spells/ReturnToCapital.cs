@@ -16,7 +16,7 @@ public class ReturnToCapital: Spell
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.artifacts.Find(x => x.providesSpell == "ReturnToCapital") != null && !c.IsArmyCommander() && (originalCondition == null || originalCondition(c));
+            return c.artifacts.Find(x => x.providesSpell == actionName) != null && !c.IsArmyCommander() && (originalCondition == null || originalCondition(c));
         };
         base.Initialize(c, condition, effect);
     }

@@ -15,13 +15,13 @@ public class ScryArtifact: Spell
             if(randomHex == null) return false;
             if(randomHex.hiddenArtifacts.Count < 1) return false;
             Artifact artifact = randomHex.hiddenArtifacts[0];
-            randomHex.Reveal();
+            randomHex.Reveal(c.GetOwner());
             randomHex.LookAt();            
             MessageDisplay.ShowMessage($"You sense the power of {artifact.GetText()}", Color.green);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {
-            return c.GetOwner() == FindFirstObjectByType<Game>().player && remainingArtifactsHexes.Count > 0 && (originalCondition == null || originalCondition(c)); 
+            return c.artifacts.Find(x => x.providesSpell == actionName) != null && remainingArtifactsHexes.Count > 0 && (originalCondition == null || originalCondition(c)); 
         };
         base.Initialize(c, condition, effect);
     }

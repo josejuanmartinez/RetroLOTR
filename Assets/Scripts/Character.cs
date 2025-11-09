@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.TextCore.Text;
 
 public class Character : MonoBehaviour
 {
@@ -33,7 +32,6 @@ public class Character : MonoBehaviour
     public bool killed;
 
     [Header("Turn data")]
-    public bool hasMovedThisTurn;
     public bool hasActionedThisTurn;
     public bool isEmbarked;
     public List<Hex> reachableHexes = new();
@@ -50,6 +48,13 @@ public class Character : MonoBehaviour
 
     [Header("AI")]
     public bool isPlayerControlled = true;
+
+    [Header("Army")]
+    public RacesEnum race = RacesEnum.Common;
+
+    [Header("Statuses")]
+    [SerializeField] private bool isHalted = false;
+    [SerializeField] private int encouragedTurns = -1; // 0 means this turn is still encouraged
 
     private BiomeConfig characterBiome;
 
@@ -70,7 +75,7 @@ public class Character : MonoBehaviour
         if (!awaken) Awake();
         this.characterBiome = characterBiome;
         bool isLeader = characterBiome is LeaderBiomeConfig;
-        Initialize(leader, characterBiome.alignment, hex, characterBiome.characterName, characterBiome.commander, characterBiome.agent, characterBiome.emmissary, characterBiome.mage);
+        Initialize(leader, characterBiome.alignment, hex, characterBiome.characterName, characterBiome.commander, characterBiome.agent, characterBiome.emmissary, characterBiome.mage, characterBiome.race);
     }
 
     public void Initialize(
@@ -81,7 +86,8 @@ public class Character : MonoBehaviour
         int commander,
         int agent,
         int emmissary,
-        int mage)
+        int mage,
+        RacesEnum race)
     {
         if (!awaken) Awake();
 
@@ -95,12 +101,13 @@ public class Character : MonoBehaviour
         this.emmissary = emmissary;
         this.mage = mage;
         this.alignment = alignment;
+        this.race = race;
         this.startingCharacter = true;
 
         owner.GetOwner().controlledCharacters.Add(this);
         this.owner = owner.GetOwner();
         hasActionedThisTurn = false;
-        hasMovedThisTurn = false;
+        moved = 0;
         isEmbarked = false;
         army = null;
         this.hex = hex;
@@ -129,15 +136,38 @@ public class Character : MonoBehaviour
     public void Pass()
     {
         CharacterAction action = FindFirstObjectByType<ActionsManager>().DEFAULT;
+        action.Initialize(this);
         action.Execute();
+    }
+
+    public void Halt()
+    {
+        isHalted = true;
+    }
+
+    public void Encourage(int turns = 1)
+    {
+        encouragedTurns += turns;
+    }
+
+    public bool IsEncouraged()
+    {
+        return encouragedTurns > -1;
     }
 
     public void NewTurn()
     {
         Debug.Log($"New turn for {characterName} {(isPlayerControlled? "[PLAYER]": "[AI]")}");
-        moved = 0;
-        hasMovedThisTurn = false;
-        hasActionedThisTurn = false;
+        // STATUSES
+        // HALT
+        if (isHalted && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplay.ShowMessage("Halted", Color.red);
+        moved = isHalted ? GetMaxMovement() : 0;
+        hasActionedThisTurn = isHalted;
+        isHalted = false;
+        // COURAGE
+        encouragedTurns = Mathf.Max(encouragedTurns - 1, -1);
+        if (IsEncouraged() && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplay.ShowMessage("Encouraged", Color.green);
+        // STATUS EFFECTS (TODO)
         StoreReachableHexes();
         StoreRelevantHexes();
     }

@@ -7,19 +7,21 @@ public class WizardLaugh: FreeNeutralSpell
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            if (c.hex.GetPC() == null) return false;
-            if (c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral)
+            if (c.hex.GetPC() == null)
+            {
+                foreach(Character character in c.hex.characters)
+                {
+                    if ( character.GetOwner() == c.GetOwner() || (c.alignment == character.alignment && character.alignment != AlignmentEnum.neutral)) character.doubledBy.Clear();
+                }
+            } else if (c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral)
             {
                 c.hex.GetPC().DecreaseLoyalty(UnityEngine.Random.Range(0, 10) * c.GetMage(), c.GetOwner());
                 c.hex.GetPC().CheckLowLoyalty(c.GetOwner());
             }
-            else
-            {
-                return false;
-            }
+            else return false;
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return c.hex.GetPC() != null && ( c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral) && c.artifacts.Find(x => x.providesSpell == "WizardLaugh") != null && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => { return ((c.hex.characters.Find(x => x.GetOwner() == c.GetOwner() || (c.alignment == x.alignment && x.alignment != AlignmentEnum.neutral))!= null) ||  (c.hex.GetPC() != null && ( c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral))) && c.artifacts.Find(x => x.providesSpell == actionName) != null && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }

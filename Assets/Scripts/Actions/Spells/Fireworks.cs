@@ -7,19 +7,20 @@ public class Fireworks: FreeSpell
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            if (c.hex.GetPC() == null) return false;
-            if (c.hex.GetPC().owner == c.GetOwner() || (c.hex.GetPC().owner.alignment == c.GetAlignment() && c.hex.GetPC().owner.alignment != AlignmentEnum.neutral))
+            PC pc = c.hex.GetPC();
+            if (pc == null) return false;            
+            int loyalty = UnityEngine.Random.Range(0, 10) * c.GetMage();
+            if (pc.owner.GetAlignment() == c.GetAlignment())
             {
-                int loyalty = UnityEngine.Random.Range(0, 10) * c.GetMage();
                 c.hex.GetPC().IncreaseLoyalty(loyalty);
-            }
-            else
+            } else
             {
-                return false;
-            }
+                c.hex.GetPC().DecreaseLoyalty(loyalty, c.GetOwner());
+            }            
+            
             return originalEffect == null || originalEffect(c);
         };
-        condition = (c) => { return c.hex.GetPC() != null && (c.hex.GetPC().owner == c.GetOwner() || (c.hex.GetPC().owner.alignment == c.GetAlignment() && c.hex.GetPC().owner.alignment != AlignmentEnum.neutral)) && c.artifacts.Find(x => x.providesSpell == "Fireworks") != null && (originalCondition == null || originalCondition(c)); };
+        condition = (c) => { return c.hex.GetPC() != null && c.artifacts.Find(x => x.providesSpell == actionName) != null && (originalCondition == null || originalCondition(c)); };
         base.Initialize(c, condition, effect);
     }
 }

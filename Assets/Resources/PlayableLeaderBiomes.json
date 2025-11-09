@@ -4,15 +4,16 @@
       "characterName": "Gandalf",
       "alignment": 0,
       "commander": 1,
-      "agent": 0,
+      "agent": 1,
       "emmissary": 1,
       "mage": 3,
+      "race":  4,
       "artifacts": [
         {
           "artifactName": "Narya",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "RevealPC",
+          "providesSpell": "Reveal PC",
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
@@ -25,7 +26,20 @@
           "artifactName": "Wizard Staff",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "CastLight",
+          "providesSpell": "YouShallNotPass",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
+        },
+        {
+          "artifactName": "Glamdring",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Wizard's Fire",
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
@@ -51,14 +65,15 @@
           "artifactName": "Longpipe",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "WizardsLaugh",
+          "providesSpell": "Wizard's Laugh",
           "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "transferable": false
         },
         {
           "artifactName": "Shadowfax",
@@ -74,7 +89,7 @@
           "bonusDefense": 0
         }
       ],
-      "description": "<b>Gandalf</b><sprite name=\"commander\"><sprite name=\"emmissary\"><sprite name=\"mage\"><br>Starts with:<br>- Hobbiton <sprite name=\"pc\"/>[2]<br>- Frodo <sprite name=\"commander\"/><br>- Sam <sprite name=\"agent\"/><br>- Pippin <sprite name=\"emmissary\"/><br>- Merry <sprite name=\"agent\"/><br>- Spells <sprite name=\"spell\"/> and Artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty: <mark=#ff0000>Hard</mark></b><br>- Starting power: <mark=#ff0000>Bad</mark><br>- Recruitable allies: <mark=#00ff00>Good</mark><br>- Recruitable armies: <mark=#ff0000>Bad</mark><br>- Gameplay style: character play",
+      "description": "<b>Gandalf</b><sprite name=\"commander\">[1]<sprite name=\"agent\">[1]<sprite name=\"emmissary\">[1]<sprite name=\"mage\"><mark=#00ff00>[3]</mark><br><br><b>Starting Population Centers:</b><br>- Hobbiton <sprite name=\"pc\"/>[2]<sprite name=\"fort\"/><mark=#ff0000>[0]</mark><br><br><b>Starting Characters:</b><br>- Frodo <sprite name=\"commander\"/>[1]<br>- Sam <sprite name=\"agent\"/>[1]<br>- Pippin <sprite name=\"emmissary\"/>[1]<br>- Merry <sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- <mark=#ff0000>No</mark> armies<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#ff0000>Hard</mark><br><b>Starting power</b>: <mark=#ff0000>Small</mark><br><b>Recruitable allies</b>: <mark=#00ff00>Plenty</mark><br><b>Recruitable armies</b>: <mark=#ff0000>Scarce</mark><br><br><b>Gameplay style</b>:<br>- Characters and artifacts search",
       "joinedTitle": "The unexpected fate of the Ring",
       "joinedText": "Frodo… there’s something I never told you.<br><br>I always said I kept the ring with me. Every breath.<br><br>But there was one night when I took it off—just for a heartbeat. I needed silence. I meant to pick it up again immediately.<br><br>But something happened.<br><br>I must have closed my eyes. Then suddenly it was morning, and the ring was gone.<br>No sound. No trail. Just absence.<br><br>I searched. Days, maybe weeks. Time felt wrong. The harder I looked, the more it felt like the ring wasn’t lost — it had moved on.<br><br>And I’m sorry, Frodo… truly. I never meant for the burden to fall on you. But it has.<br><br>Gandalf will guide you now, my boy… where I could not.",
       "introActor1": "Bilbo",
@@ -96,6 +111,7 @@
           "agent": 0,
           "emmissary": 0,
           "mage": 0,
+          "race": 3,
           "artifacts": [
             {
               "artifactName": "Elvish Song",
@@ -108,7 +124,8 @@
               "mageBonus": 0,
               "oneShot": true,
               "bonusAttack": 0,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "transferable": false
             }
           ]
         },
@@ -119,6 +136,7 @@
           "agent": 1,
           "emmissary": 0,
           "mage": 0,
+          "race": 3,
           "artifacts": []
         },
         {
@@ -128,6 +146,7 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
+          "race": 3,
           "artifacts": []
         },
         {
@@ -137,6 +156,7 @@
           "agent": 1,
           "emmissary": 0,
           "mage": 0,
+          "race": 3,
           "artifacts": []
         }
       ]
@@ -147,13 +167,14 @@
       "commander": 0,
       "agent": 0,
       "emmissary": 2,
-      "mage": 4,
+      "mage": 3,
+      "race": 4,
       "artifacts": [
         {
           "artifactName": "Ring of Orthanc",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "CastDarkness",
+          "providesSpell": "WordsOfDispair",
           "commanderBonus": 1,
           "agentBonus": 0,
           "emmissaryBonus": 0,
@@ -163,7 +184,7 @@
           "bonusDefense": 0
         },
         {
-          "artifactName": "Banner of the White Hand",
+          "artifactName": "White Hand Banner",
           "artifactDescription": "",
           "hidden": false,
           "providesSpell": "SummonMA",
@@ -173,33 +194,36 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "transferable": false
         },
         {
           "artifactName": "Many-coloured robes",
           "artifactDescription": "",
           "hidden": false,
           "providesSpell": "CastLight",
-          "commanderBonus": 1,
+          "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
-          "mageBonus": 0,
+          "mageBonus": 1,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "transferable": false
         },
         {
           "artifactName": "Yellow teeth",
           "artifactDescription": "",
           "hidden": false,
-          "providesSpell": "WizardsLaugh",
-          "commanderBonus": 1,
+          "providesSpell": "Wizard's Laugh",
+          "commanderBonus": 0,
           "agentBonus": 0,
           "emmissaryBonus": 0,
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "transferable": false
         },
         {
           "artifactName": "Palantir of Orthanc",
@@ -213,9 +237,22 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0
+        },
+        {
+          "artifactName": "Saruman's Staff",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Ice Storm",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0
         }
       ],
-      "description": "<b>Saruman</b><sprite name=\"commander\"><sprite name=\"emmissary\"><sprite name=\"mage\"><br>Starts with:<br>- Orthanc <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/>[1]<br>- Grima<sprite name=\"agent\"/><sprite name=\"emmissary\"/><br>- Bill Ferny<sprite name=\"agent\"/><br>- A low-quality small <sprite name=\"neutral\"/>army<br>- Spells <sprite name=\"spell\"/> and Artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty: <mark=#ffff00>Average</mark></b><br>- Starting Power: <mark=#ffff00>Average</mark><br>- Recruitable allies: <mark=#ffff00>Average</mark><br>- Recruitable armies: <mark=#ffff00>Average</mark><br>- Gameplay style: balanced",
+      "description": "<b>Saruman</b><sprite name=\"commander\">[1]<sprite name=\"emmissary\"><mark=#ffff00>[2]</mark><sprite name=\"mage\"><mark=#00ff00>[4]</mark><br><br><b>Starting Population Centers:</b><br>- Orthanc <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/><mark=#ffff00>[1]</mark><br><br><b>Starting Characters:</b><br>- Grima<sprite name=\"agent\"/><mark=#ffff00>[2]</mark><sprite name=\"emmissary\"/>[1]<br>- Bill Ferny<sprite name=\"commander\"/>[1]<sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- A <mark=#ffff00>small</mark> <sprite name=\"neutral\"/>army<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#ffff00>Average</mark><br><b>Starting Power</b>: <mark=#ffff00>Average</mark><br><b>Recruitable allies</b>: <mark=#ff0000>Scarce</mark><br><b>Recruitable armies</b>: <mark=#ffff00>Average</mark><br><br><b>Gameplay style</b>:<br>- Characters and conquest",
       "joinedTitle": "Saruman not the white, but of Many Colours!",
       "joinedText": "Gríma… listen carefully.<br><br>For years, I have searched for the One Ring.<br><br>Others believe it vanished into myth — that time swallowed it. But I felt its echo.<br><br>There was a moment — in the deep archives of the ancient world — when I sensed its presence.<br><br>Like a whisper slipping behind my ear.<br><br>I followed it through ruins, storms, sleepless nights. And then… nothing.<br><br>I should have found it. I should have been the one to wield it.<br><br>They call me Saruman the White — but no, Gríma.<br><br>I pursue much more - power, dominion. I am Saruman, of Many Colours.",
       "introActor1": "Saruman",
@@ -237,7 +274,23 @@
           "agent": 2,
           "emmissary": 1,
           "mage": 0,
-          "artifacts": []
+          "race": 0,
+          "artifacts": [
+            {
+              "artifactName": "Wormtongue",
+              "artifactDescription": "",
+              "hidden": false,
+              "providesSpell": "Curse",
+              "commanderBonus": 0,
+              "agentBonus": 0,
+              "emmissaryBonus": 0,
+              "mageBonus": 0,
+              "oneShot": false,
+              "bonusAttack": 0,
+              "bonusDefense": 0,
+              "transferable": false
+            }
+          ]
         },
         {
           "characterName": "Bill Ferny",
@@ -246,6 +299,7 @@
           "agent": 1,
           "emmissary": 0,
           "mage": 0,
+          "race": 0,
           "artifacts": [
             {
               "artifactName": "Bill, the Pony",
@@ -269,11 +323,12 @@
       "alignment": 1,
       "commander": 3,
       "agent": 0,
-      "emmissary": 1,
-      "mage": 4,
+      "emmissary": 0,
+      "mage": 3,
+      "race": 4,
       "artifacts": [
         {
-          "artifactName": "The Burning Eye",
+          "artifactName": "Dark Lord Banner",
           "artifactDescription": "",
           "hidden": false,
           "providesSpell": "SummonMA",
@@ -283,20 +338,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
-        },
-        {
-          "artifactName": "Forbidden Book",
-          "artifactDescription": "",
-          "hidden": false,
-          "providesSpell": "RevealPC",
-          "commanderBonus": 0,
-          "agentBonus": 0,
-          "emmissaryBonus": 0,
-          "mageBonus": 0,
-          "oneShot": false,
-          "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "transferable": false
         },
         {
           "artifactName": "Palantir of Ithil",
@@ -310,10 +353,38 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0
+        },
+        {
+          "artifactName": "Morgul Veil",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "Cast Darkness",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0,
+          "transferable": false
+        },
+        {
+          "artifactName": "Lidless eye",
+          "artifactDescription": "",
+          "hidden": false,
+          "providesSpell": "RevealPC",
+          "commanderBonus": 0,
+          "agentBonus": 0,
+          "emmissaryBonus": 0,
+          "mageBonus": 0,
+          "oneShot": false,
+          "bonusAttack": 0,
+          "bonusDefense": 0,
+          "transferable": false
         }
       ],
-      "description": "<b>Sauron</b><sprite name=\"commander\"><sprite name=\"emmissary\"><sprite name=\"mage\"><br>Starts with:<br>- Barad-dur <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/>[1]<br>- Mouth of Sauron <sprite name=\"emmissary\"/><br>- Gollum <sprite name=\"agent\"/><br>- A low-quality <mark=#ffff00>Average</mark> <sprite name=\"darkServants\"/>army<br>- Spells <sprite name=\"spell\"/> and Artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty: <mark=#00ff00>Easy</mark></b><br>- Starting Power: <mark=#ffff00>Average</mark><br>- Recruitable characters: <mark=#00ff00>Good</mark><br>- Recruitable armies: <mark=#00ff00>Good</mark><br>- Gameplay style: conquest",
-      "joinedTitle": "Ssshire...Bagginz...",
+      "description": "<b>Sauron</b><sprite name=\"commander\"><mark=#00ff00>[3]</mark><sprite name=\"mage\"><mark=#00ff00>[3]</mark><br><br><b>Starting Population Centers:</b><br>- Barad-dur <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/><mark=#ffff00>[1]</mark><br><br><b>Starting Characters:</b><br>- Mouth of Sauron <sprite name=\"emmissary\"/><mark=#00ff00>[3]</mark><br>- Gollum <sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- An <mark=#00ff00>average</mark> <sprite name=\"darkServants\"/>army<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#00ff00>Easy</mark></b><br><b>Starting Power</b>: <mark=#ffff00>Average</mark><br><b>Recruitable characters</b>: <mark=#00ff00>Good</mark><br><b>Recruitable armies</b>: <mark=#00ff00>Plenty</mark><br><br><b>Gameplay style</b>:<br>- Characters, armies, artifact search",
+      "joinedTitle": "Shire. Baggins.",
       "joinedText": "Listen well, creature.<br><br>You think your trembling bought you mercy.<br><br>It did not. I kept you because you knew something.<br><br>A place. A name. A direction that others have failed to see.<br><br>A land of small folk and smaller courage.<br><br>A place so insignificant no map dares to mark it.<br><br>Now I know enough. You may scurry back to your holes and rivers. My servants are already on the road.<br><br>The Ring is there — I taste its shadow.<br><br>You are still bound to it, wretch. You will follow it, and I will find you.<br><br>Any creature that finds it will succumb to the Lord of the Rings.",
       "introActor1": "Sauron",
       "introActor2": "Gollum",
@@ -329,24 +400,40 @@
       "startingCharacters": [
         {
           "characterName": "Mouth of Sauron",
-          "alignment": 0,
+          "alignment": 1,
           "commander": 0,
           "agent": 0,
           "emmissary": 3,
           "mage": 0,
+          "race": 0,
           "artifacts": [
             {
               "artifactName": "Yellow teeth",
               "artifactDescription": "",
               "hidden": false,
-              "providesSpell": "WizardsLaugh",
+              "providesSpell": "Wizard's Laugh",
               "commanderBonus": 1,
               "agentBonus": 0,
               "emmissaryBonus": 1,
               "mageBonus": 0,
               "oneShot": false,
               "bonusAttack": 0,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "transferable": false
+            },
+            {
+              "artifactName": "Scroll of the Mouth",
+              "artifactDescription": "",
+              "hidden": false,
+              "providesSpell": "WordsOfDispair",
+              "commanderBonus": 0,
+              "agentBonus": 0,
+              "emmissaryBonus": 0,
+              "mageBonus": 0,
+              "oneShot": false,
+              "bonusAttack": 0,
+              "bonusDefense": 0,
+              "transferable": false
             }
           ]
         },
@@ -357,7 +444,23 @@
           "agent": 1,
           "emmissary": 0,
           "mage": 0,
-          "artifacts": []
+          "race": 3,
+          "artifacts": [
+            {
+              "artifactName": "Riddle",
+              "artifactDescription": "",
+              "hidden": false,
+              "providesSpell": "Halt",
+              "commanderBonus": 0,
+              "agentBonus": 0,
+              "emmissaryBonus": 0,
+              "mageBonus": 0,
+              "oneShot": false,
+              "bonusAttack": 0,
+              "bonusDefense": 0,
+              "transferable": false
+            }
+          ]
         }
       ]
     }

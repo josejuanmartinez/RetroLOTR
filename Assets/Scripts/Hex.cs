@@ -220,6 +220,8 @@ public class Hex : MonoBehaviour
         bool revealed = IsHexRevealed();
         bool pcRevealed = revealed && IsPCRevealed();
 
+        if(pcRevealed && pc.owner is NonPlayableLeader) FindFirstObjectByType<NonPlayableLeaderIcons>().RevealToPlayerIfNot(pc.owner as NonPlayableLeader);
+
         // city size visibility
         SetActiveFast(camp, pcRevealed && pc.citySize == PCSizeEnum.camp);
         SetActiveFast(village, pcRevealed && pc.citySize == PCSizeEnum.village);
@@ -246,9 +248,9 @@ public class Hex : MonoBehaviour
         // forts (note: keep tower/fortress visibility rules as in original)
         SetActiveFast(tower, revealed && pc != null && pc.fortSize == FortSizeEnum.tower);
         SetActiveFast(keep, revealed && pc != null && pc.fortSize == FortSizeEnum.keep);
-        SetActiveFast(fort, pcRevealed && pc.fortSize == FortSizeEnum.fort);
+        SetActiveFast(fort, revealed && pc != null && pc.fortSize == FortSizeEnum.fort);
         SetActiveFast(fortress, revealed && pc != null && pc.fortSize == FortSizeEnum.fortress);
-        SetActiveFast(citadel, pcRevealed && pc.fortSize == FortSizeEnum.citadel);
+        SetActiveFast(citadel, revealed && pc != null && pc.fortSize == FortSizeEnum.citadel);
 
         if (refreshHoverText) RefreshHoverText();
     }
@@ -256,34 +258,32 @@ public class Hex : MonoBehaviour
     {
         bool revealed = IsHexRevealed();
         bool pcRev = revealed && IsPCRevealed();
-        bool showPCName = IsScouted() || IsFriendlyPC();
 
         if (pcRev)
-        {
-            string nameOrQ = showPCName ? pc.pcName : Unknown;
+        {            
             if (camp && camp.activeSelf)
             {
-                campText.text = $"{nameOrQ}<sprite name=\"pc\">[1]";
+                campText.text = $"{pc.pcName}<sprite name=\"pc\">[1]";
                 campText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (village && village.activeSelf)
             {
-                villageText.text = $"{nameOrQ}<sprite name=\"pc\">[2]";
+                villageText.text = $"{pc.pcName}<sprite name=\"pc\">[2]";
                 villageText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (town && town.activeSelf)
             {
-                townText.text = $"{nameOrQ}<sprite name=\"pc\">[3]";
+                townText.text = $"{pc.pcName}<sprite name=\"pc\">[3]";
                 townText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (majorTown && majorTown.activeSelf)
             {
-                majorTownText.text = $"{nameOrQ}<sprite name=\"pc\">[4]";
+                majorTownText.text = $"{pc.pcName}<sprite name=\"pc\">[4]";
                 majorTownText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (city && city.activeSelf)
             {
-                cityText.text = $"{nameOrQ}<sprite name=\"pc\">[5]";
+                cityText.text = $"{pc.pcName}<sprite name=\"pc\">[5]";
                 cityText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
         }
@@ -362,7 +362,7 @@ public class Hex : MonoBehaviour
             Unhover();
             return;
         }
-        if (!IsHidden()) SetActiveFast(hoverHexFrame, true);
+        SetActiveFast(hoverHexFrame, true);
     }
 
     public void Unhover()
@@ -388,6 +388,7 @@ public class Hex : MonoBehaviour
 
     public void LookAt()
     {
+        if (FindFirstObjectByType<Game>().currentlyPlaying != FindFirstObjectByType<Game>().player) return;
         // Avoid GameObject.Find/string allocs; use our own transform
         if (navigator == null) navigator = FindFirstObjectByType<BoardNavigator>();
         if (navigator != null) navigator.LookAt(transform.position);
@@ -426,7 +427,31 @@ public class Hex : MonoBehaviour
     public void Reveal(Leader scoutedByPlayer = null)
     {
         if(scoutedByPlayer) scoutedBy.Add(scoutedByPlayer);
-        SetActiveFast(fow, false);
+        if (FindFirstObjectByType<Game>().currentlyPlaying == FindFirstObjectByType<Game>().player) SetActiveFast(fow, false);
+        RedrawArmies(false);
+        RedrawCharacters(false);
+        RedrawPC(false);
+        RefreshHoverText();
+    }
+
+    public void Unreveal(Leader unrevealedPlayer = null)
+    {
+        if(unrevealedPlayer)
+        {
+            AlignmentEnum unreleavedPlayerAlignment = unrevealedPlayer.GetAlignment();
+            foreach (var ch in scoutedBy)
+            {
+                if (ch.GetAlignment() != unreleavedPlayerAlignment)
+                {
+                    scoutedBy.Remove(ch.GetOwner());
+                }
+            }
+        }
+        if (FindFirstObjectByType<Game>().currentlyPlaying == FindFirstObjectByType<Game>().player && characters.Find(x => x.GetOwner() == FindFirstObjectByType<Game>().player) == null)
+        {
+            SetActiveFast(fow, true);
+        }
+        
         RedrawArmies(false);
         RedrawCharacters(false);
         RedrawPC(false);
@@ -470,6 +495,44 @@ public class Hex : MonoBehaviour
             currentRadius++;
         }
         if (lookAt) LookAt();
+    }
+
+    public void UnrevealArea(int radius = 1, bool lookAt = true, Leader unrevealedBy = null)
+    {
+        if (board == null) board = FindFirstObjectByType<Board>();
+
+        Unreveal(unrevealedBy);
+        if (radius <= 0 || board == null) { if (lookAt) LookAt(); return; }
+
+        var queue = new Queue<Vector2Int>(32);
+        var visited = new HashSet<Vector2Int>();
+        queue.Enqueue(v2);
+        visited.Add(v2);
+
+        int currentRadius = 0;
+        while (queue.Count > 0 && currentRadius < radius)
+        {
+            int hexCount = queue.Count;
+            for (int i = 0; i < hexCount; i++)
+            {
+                var currentHex = queue.Dequeue();
+                var neighbors = ((currentHex.x & 1) == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+
+                for (int j = 0; j < neighbors.Length; j++)
+                {
+                    var offset = neighbors[j];
+                    var neighborPos = new Vector2Int(currentHex.x + offset.x, currentHex.y + offset.y);
+                    if (!visited.Add(neighborPos)) continue;
+
+                    if (board.hexes.TryGetValue(neighborPos, out Hex neighborHex))
+                    {
+                        neighborHex.Unreveal(unrevealedBy);
+                        queue.Enqueue(neighborPos);
+                    }
+                }
+            }
+            currentRadius++;
+        }
     }
 
     public void Hide()

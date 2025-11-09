@@ -1,6 +1,7 @@
 using System;
 
-public class Spell : MageAction
+// It is not necessarily MageAction as you can have an artifact and not be a mage!
+public class Spell : CharacterAction
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
     {

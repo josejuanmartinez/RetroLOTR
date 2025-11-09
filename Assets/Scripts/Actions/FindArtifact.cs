@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Linq;
+using UnityEditor.Experimental;
 
 public class FindArtifact: MageAction
 {
@@ -14,15 +15,19 @@ public class FindArtifact: MageAction
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
                 MessageDisplay.ShowMessage($"Artifact found: {artifact.GetText()}", Color.green);
+
+                if (c.GetOwner() is PlayableLeader)
+                {
+                    FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != c.GetOwner()).ToList().ForEach(x =>
+                    {
+                        x.CheckArtifactConditions(c.GetOwner());
+                    });
+                }
+            } else
+            {
+                MessageDisplay.ShowMessage($"No artifact found in this hex", Color.red);
             }
 
-            if(c.GetOwner() is PlayableLeader)
-            {
-                FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != c.GetOwner()).ToList().ForEach(x =>
-                {
-                    x.CheckArtifactConditions(c.GetOwner());
-                });
-            }
 
             return originalEffect == null || originalEffect(c);
         };

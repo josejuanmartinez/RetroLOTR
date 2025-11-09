@@ -84,7 +84,7 @@ public class Game : MonoBehaviour
 
 
         soundPlayer.PlayOneShot(FindFirstObjectByType<Sounds>().GetSoundByName($"{currentlyPlaying.alignment}_intro"));
-        FindFirstObjectByType<PopupManager>().Initialize(
+        PopupManager.Show(
             currentlyPlaying.GetBiome().joinedTitle,
             FindFirstObjectByType<Illustrations>().GetIllustrationByName(currentlyPlaying.GetBiome().introActor1),
             FindFirstObjectByType<Illustrations>().GetIllustrationByName(currentlyPlaying.GetBiome().introActor2),
@@ -92,8 +92,6 @@ public class Game : MonoBehaviour
             true
         );
     }
-
-
 
     public bool MoveToNextCharacterToAction()
     {
@@ -188,12 +186,8 @@ public class Game : MonoBehaviour
         Debug.Log("Game Ended!");
     }
 
-    private void ResetForNewEpisode()
+    public bool IsPlayerCurrentlyPlaying()
     {
-        // Reset game state variables
-        turn = 0;
-
-        // Start a new game
-        StartGame();
+        return currentlyPlaying == player;
     }
 }
