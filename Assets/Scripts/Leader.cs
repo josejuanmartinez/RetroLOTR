@@ -164,62 +164,62 @@ public class Leader : Character
     public void AddLeather(int amount) 
     {
         leatherAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} leather", Color.green);
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"leather\">", Color.green);
     }
     public void AddTimber(int amount)
     {
         timberAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} timber", Color.green);
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"timber\">", Color.green);
     }
     public void AddMounts(int amount)
     {
         mountsAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} mounts", Color.green);
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"mounts\">", Color.green);
     }
     public void AddIron(int amount)
     {
         ironAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} iron", Color.green);
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"iron\">", Color.green);
     }
     public void AddMithril(int amount)
     {
         mithrilAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} mithril", Color.green);
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"mithril\">", Color.green);
     }
     public void AddGold(int amount)
     {
         goldAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} gold", Color.green);
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"gold\">", Color.green);
     }
     public void RemoveLeather(int leatherCost)
     {
         leatherAmount -= leatherCost;
-        if (leatherCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{leatherCost} leather", Color.red);
+        if (leatherCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{leatherCost} <sprite name=\"leather\">", Color.red);
     }
     public void RemoveTimber(int timberCost)
     {
         timberAmount -= timberCost;
-        if (timberCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{timberCost} timber", Color.red);
+        if (timberCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{timberCost} <sprite name=\"timber\">", Color.red);
     }
     public void RemoveMounts(int mountsCost)
     {
         mountsAmount -= mountsCost;
-        if (mountsCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mountsCost} mounts", Color.red);
+        if (mountsCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mountsCost} <sprite name=\"mounts\">", Color.red);
     }
     public void RemoveIron(int ironCost)
     {
         ironAmount -= ironCost;
-        if (ironCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{ironCost} iron", Color.red);
+        if (ironCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{ironCost} <sprite name=\"iron\">", Color.red);
     }
     public void RemoveMithril(int mithrilCost)
     {
         mithrilAmount -= mithrilCost;
-        if (mithrilCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mithrilCost} mithril", Color.red);
+        if (mithrilCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mithrilCost} <sprite name=\"mithril\">", Color.red);
     }
     public void RemoveGold(int goldCost)
     {
         goldAmount -= goldCost;
-        if (goldCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{goldCost} gold", Color.red);
+        if (goldCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{goldCost} <sprite name=\"gold\">", Color.red);
     }
 
     public int GetCharacterPoints()
@@ -262,10 +262,10 @@ public class Leader : Character
     {
         if(killedBy == this)
         {
-            MessageDisplay.ShowMessage($"{name}'s realm collapsed!", Color.red);
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{name}'s realm collapsed!", Color.red);
         } else
         {
-            MessageDisplay.ShowMessage($"{name} was killed by {killedBy.characterName}", Color.red);
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{name} was killed by {killedBy.characterName}", Color.red);
         }
 
         controlledCharacters.ForEach(x =>
@@ -290,7 +290,7 @@ public class Leader : Character
             {
                 pc.owner = killedBy;
                 killedBy.controlledPcs.Add(pc);
-                killedBy.visibleHexes.Add(pc.hex);
+                killedBy.visibleHexes.Add(hex);
             }
         }
         else
@@ -298,8 +298,8 @@ public class Leader : Character
             foreach (PC pc in GetOwner().controlledPcs)
             {
                 pc.owner = null;
-                pc.hex.SetPC(null);
-                pc.hex.RedrawPC();
+                hex.SetPC(null);
+                hex.RedrawPC();
             }
         }
 

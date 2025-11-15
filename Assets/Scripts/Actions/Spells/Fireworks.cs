@@ -12,10 +12,10 @@ public class Fireworks: FreeSpell
             int loyalty = UnityEngine.Random.Range(0, 10) * c.GetMage();
             if (pc.owner.GetAlignment() == c.GetAlignment())
             {
-                c.hex.GetPC().IncreaseLoyalty(loyalty);
+                c.hex.GetPC().IncreaseLoyalty(loyalty, c);
             } else
             {
-                c.hex.GetPC().DecreaseLoyalty(loyalty, c.GetOwner());
+                c.hex.GetPC().DecreaseLoyalty(loyalty, c);
             }            
             
             return originalEffect == null || originalEffect(c);

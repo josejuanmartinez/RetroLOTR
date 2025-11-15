@@ -3,9 +3,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
-// using System.Linq; // ⚠️ Avoid in hot paths to prevent hidden allocs
 using UnityEngine.Pool;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 #region Small helper to time-slice work per frame
 
@@ -51,37 +49,70 @@ public class BoardGenerator : MonoBehaviour
 
     public Board board;
 
+    // Chance parameters
+    [Header("Generation Parameters")]
+    [Range(1, 5)] public int minIslands = 1;
+    [Range(1, 5)] public int maxIslands = 5;
+    [Range(0.1f, 0.3f)] public float waterPercentage = 0.15f;
+    [Range(0.1f, 1f)] public float deepWaterProportion = 0.85f;
+    [Range(0.1f, 0.3f)] public float desertPercentage = 0.1395f;
+    [Range(0.1f, 0.9f)] public float grasslandsProbability = 0.5f; // Chance of plains becoming grasslands
+    [Range(0.1f, 0.5f)] public float coastDepth = 0.15f;
+
+    [Header("Mountain Parameters")]
+    [Range(1, 5)] public int mountainChainCount = 3;
+    [Range(0.5f, 2.0f)] public float mountainChainLengthMultiplier = 1.5f;
+
+    [Header("Forest Parameters")]
+    [Range(1, 3)] public int majorForestCount = 2;
+    [Range(2, 6)] public int minorForestCount = 5;
+
+    [Header("Swamp Parameters")]
+    [Range(1, 3)] public int swampCount = 2;
+    [Range(4, 7)] public int swampSize = 4;
+
+    [Header("Wastelands Parameters")]
+    [Range(1, 2)] public int majorWastelandCount = 1;
+    [Range(0, 3)] public int minorWastelandCount = 2;
+
+    [Header("River and Lakes Parameters")]
+    [Range(2, 5)] public int rivers = 2;
+    [Range(2, 5)] public int lakes = 2;
+
     // Array to store the terrain types
     private TerrainEnum[,] terrainGrid;
+    private int seaBorder;
     private Dictionary<Vector2Int, GameObject> hexes;
     private ObjectPool<GameObject> hexPool;
     private Dictionary<TerrainEnum, Color> terrainColors;
     private Dictionary<TerrainEnum, Sprite> terrainTextures;
+
+    // Hexes adjacent to rivers (shallowWater cells that are part of rivers)
+    public HashSet<Vector2Int> riverCoastHexes = new HashSet<Vector2Int>();
+
+    // Hexes adjacent to lakes (shallowWater clusters generated as lakes)
+    public HashSet<Vector2Int> lakeCoastHexes = new HashSet<Vector2Int>();
+
+    // Internally used to mark which shallowWater are rivers vs lakes
+    private HashSet<Vector2Int> riverCells = new HashSet<Vector2Int>();
+    private HashSet<Vector2Int> lakeCells = new HashSet<Vector2Int>();
 
     // Delegate for progress reporting
     public delegate void GenerationProgressDelegate(float progress, string stage);
     public event GenerationProgressDelegate OnGenerationProgress;
 
     // For tracking progress
-    private float totalSteps = 8; // Total generation steps
+    private float totalSteps = 10; // Total generation steps
     private float currentStep = 0;
-    private float[] stepWeights = new float[] { 0.1f, 0.1f, 0.2f, 0.1f, 0.1f, 0.1f, 0.1f, 0.2f }; // Weights for each step
 
     private float GetStepProgress(float stepProgress)
     {
-        float totalWeight = 0f;
-        for (int i = 0; i < currentStep; i++)
-        {
-            totalWeight += stepWeights[i];
-        }
-
         // If we're at the last step or beyond, just return 1.0f
-        if (currentStep >= stepWeights.Length)
-        {
-            return 1.0f;
-        }
+        if (currentStep >= totalSteps) return 1.0f; 
+        
+        float totalWeight = currentStep * 0.1f;
 
-        return Mathf.Clamp01(totalWeight + (stepProgress * stepWeights[(int)currentStep]));
+        return Mathf.Clamp01(totalWeight);
     }
 
     private void Awake()
@@ -196,7 +227,7 @@ public class BoardGenerator : MonoBehaviour
         yield return StartCoroutine(ConvertPlainsToGrasslandsCoroutine());
 
         // Determine the sea border (0=North, 1=East, 2=South, 3=West)
-        int seaBorder = Random.Range(0, 4);
+        seaBorder = Random.Range(0, 4);
 
         // Generate water (sea) with more natural coastlines
         yield return StartCoroutine(GenerateWaterWithNaturalCoastlineCoroutine(seaBorder));
@@ -213,6 +244,12 @@ public class BoardGenerator : MonoBehaviour
 
         // Generate mountain chains
         yield return StartCoroutine(GenerateMountainChainsCoroutine());
+
+        // Generate rivers and lakes (uses shallowWater only, 1-hex wide rivers, 3–6-hex lakes)
+        yield return StartCoroutine(GenerateRiversAndLakesCoroutine());
+
+        // Identify which land hexes are coastal to rivers/lakes
+        yield return StartCoroutine(ComputeRiverAndLakeCoastsCoroutine());
 
         // Generate forests
         yield return StartCoroutine(GenerateForestsCoroutine());
@@ -374,7 +411,7 @@ public class BoardGenerator : MonoBehaviour
 
     private Vector3 GetPosition(int row, int col)
     {
-        float hexWidth = board.hexSize.x * board.hexPrefab.transform.localScale.x;
+        /*float hexWidth = board.hexSize.x * board.hexPrefab.transform.localScale.x;
         float hexHeight = board.hexSize.y * board.hexPrefab.transform.localScale.y;
 
         float xOffset = col * hexWidth;  // Default spacing
@@ -384,7 +421,11 @@ public class BoardGenerator : MonoBehaviour
         if (row % 2 == 1)
         {
             xOffset += hexWidth * 0.5f; // Half of a hex board.GetWidth()
-        }
+        }*/
+
+        float xOffset = col * board.hexSize.x;
+        if(row % 2 == 1) xOffset += board.hexSize.x * 0.5f; // Half of a hex board.GetWidth()
+        float yOffset = row * board.hexSize.y;
 
         return new Vector3(xOffset, yOffset, 0);
     }
@@ -432,7 +473,7 @@ public class BoardGenerator : MonoBehaviour
         {
             for (int col = 0; col < board.GetWidth(); col++)
             {
-                if (terrainGrid[row, col] == TerrainEnum.plains && Random.value < board.grasslandsProbability)
+                if (terrainGrid[row, col] == TerrainEnum.plains && Random.value < grasslandsProbability)
                 {
                     terrainGrid[row, col] = TerrainEnum.grasslands;
                 }
@@ -456,9 +497,9 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateWaterWithNaturalCoastlineCoroutine(int seaBorder)
     {
-        int waterWidth = Mathf.FloorToInt(board.GetWidth() * board.waterPercentage);
-        int waterHeight = Mathf.FloorToInt(board.GetHeight() * board.waterPercentage);
-        int coastlineDepth = Mathf.FloorToInt(Mathf.Min(board.GetWidth(), board.GetHeight()) * board.coastDepth);
+        int waterWidth = Mathf.FloorToInt(board.GetWidth() * waterPercentage);
+        int waterHeight = Mathf.FloorToInt(board.GetHeight() * waterPercentage);
+        int coastlineDepth = Mathf.FloorToInt(Mathf.Min(board.GetWidth(), board.GetHeight()) * coastDepth);
 
         // Create a noise-based coastline
         int seedX = Random.Range(0, 10000);
@@ -497,7 +538,7 @@ public class BoardGenerator : MonoBehaviour
                         float noise = Mathf.PerlinNoise((col + seedX) * 0.1f, seedY * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
-                        int deepWaterBoundary = Mathf.FloorToInt(waterHeight * board.deepWaterProportion);
+                        int deepWaterBoundary = Mathf.FloorToInt(waterHeight * deepWaterProportion);
 
                         if (row < deepWaterBoundary - noiseOffset)
                         {
@@ -530,7 +571,7 @@ public class BoardGenerator : MonoBehaviour
                         float noise = Mathf.PerlinNoise(seedX * 0.1f, (row + seedY) * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
-                        int deepWaterStart = board.GetWidth() - Mathf.FloorToInt(waterWidth * board.deepWaterProportion);
+                        int deepWaterStart = board.GetWidth() - Mathf.FloorToInt(waterWidth * deepWaterProportion);
 
                         if (col > deepWaterStart + noiseOffset)
                         {
@@ -563,7 +604,7 @@ public class BoardGenerator : MonoBehaviour
                         float noise = Mathf.PerlinNoise((col + seedX) * 0.1f, seedY * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
-                        int deepWaterStart = board.GetHeight() - Mathf.FloorToInt(waterHeight * board.deepWaterProportion);
+                        int deepWaterStart = board.GetHeight() - Mathf.FloorToInt(waterHeight * deepWaterProportion);
 
                         if (row > deepWaterStart + noiseOffset)
                         {
@@ -596,7 +637,7 @@ public class BoardGenerator : MonoBehaviour
                         float noise = Mathf.PerlinNoise(seedX * 0.1f, (row + seedY) * 0.1f);
                         int noiseOffset = Mathf.FloorToInt(noise * coastlineDepth);
 
-                        int deepWaterBoundary = Mathf.FloorToInt(waterWidth * board.deepWaterProportion);
+                        int deepWaterBoundary = Mathf.FloorToInt(waterWidth * deepWaterProportion);
 
                         if (col < deepWaterBoundary - noiseOffset)
                         {
@@ -827,7 +868,7 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateIslandsCoroutine(int seaBorder, int waterWidth, int waterHeight)
     {
-        int numIslands = Random.Range(board.minIslands, board.maxIslands);
+        int numIslands = Random.Range(minIslands, maxIslands);
         int totalIslands = numIslands;
         int islandsProcessed = 0;
 
@@ -933,13 +974,13 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateMountainChainsCoroutine()
     {
-        int maxChainLength = Mathf.FloorToInt(Mathf.Max(board.GetWidth(), board.GetHeight()) * 0.4f * board.mountainChainLengthMultiplier);
-        int totalChains = board.mountainChainCount;
+        int maxChainLength = Mathf.FloorToInt(Mathf.Max(board.GetWidth(), board.GetHeight()) * 0.4f * mountainChainLengthMultiplier);
+        int totalChains = mountainChainCount;
         int chainsProcessed = 0;
 
         var budget = new FrameBudget(generationFrameBudgetSeconds);
 
-        for (int i = 0; i < board.mountainChainCount; i++)
+        for (int i = 0; i < mountainChainCount; i++)
         {
             int startRow, startCol;
             bool validStart = false;
@@ -1012,6 +1053,267 @@ public class BoardGenerator : MonoBehaviour
         currentStep++;
     }
 
+    private IEnumerator GenerateLakesCoroutine()
+    {
+        int lakesCreated = 0;
+        int attempts = 0;
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
+        while (lakesCreated < lakes && attempts < lakes * 20)
+        {
+            attempts++;
+
+            int row = Random.Range(0, board.GetHeight());
+            int col = Random.Range(0, board.GetWidth());
+
+            if (!CanPlaceLakeCenter(row, col))
+                continue;
+
+            int targetSize = Random.Range(4, 8); // 5–10 inclusive
+
+            // Collect potential cells in radius 1–2 to get a roundish cluster
+            int radius = 1;
+            List<Vector2Int> candidates = GetNeighborsInRadius(row, col, radius);
+            List<Vector2Int> validNeighbors = new List<Vector2Int>();
+
+            foreach (var c in candidates)
+            {
+                if (CanPlaceLakeCell(c.x, c.y))
+                    validNeighbors.Add(c);
+            }
+
+            // Need at least 2 neighbors: center + 2 = 3 tiles minimum
+            if (validNeighbors.Count < 2)
+                continue;
+
+            ShuffleList(validNeighbors);
+
+            Vector2Int center = new Vector2Int(row, col);
+            lakeCells.Add(center);
+
+            int extra = Mathf.Min(targetSize - 1, validNeighbors.Count);
+            for (int i = 0; i < extra; i++)
+            {
+                lakeCells.Add(validNeighbors[i]);
+            }
+
+            // Paint all selected cells as shallowWater
+            foreach (var c in lakeCells)
+            {
+                terrainGrid[c.x, c.y] = TerrainEnum.shallowWater;
+            }
+
+            lakesCreated++;
+
+            if (budget.Spent())
+            {
+                float stepProgress = GetStepProgress((float)lakesCreated / Mathf.Max(1, lakes));
+                OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Lakes");
+                budget.Reset();
+                yield return null;
+            }
+        }
+    }
+
+    private IEnumerator GenerateRiversCoroutine()
+    {
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
+        // 1. Collect possible starting cells: land adjacent to mountains
+        List<Vector2Int> potentialStarts = new List<Vector2Int>();
+
+        for (int row = 0; row < board.GetHeight(); row++)
+        {
+            for (int col = 0; col < board.GetWidth(); col++)
+            {
+                if (terrainGrid[row, col] != TerrainEnum.mountains)
+                    continue;
+
+                Vector2Int[] neighbors = (row % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+
+                foreach (Vector2Int dir in neighbors)
+                {
+                    int nr = row + dir.x;
+                    int nc = col + dir.y;
+                    if (!IsInside(nr, nc)) continue;
+
+                    if (IsLandForRiver(nr, nc))
+                        potentialStarts.Add(new Vector2Int(nr, nc));
+                }
+            }
+        }
+
+        // No suitable sources, nothing to do
+        if (potentialStarts.Count == 0)
+            yield break;
+
+        int riversCreated = 0;
+        int safety = 0;
+
+        while (riversCreated < rivers && safety < rivers * 4)
+        {
+            safety++;
+
+            Vector2Int start = potentialStarts[Random.Range(0, potentialStarts.Count)];
+            if (!IsLandForRiver(start.x, start.y))
+                continue;
+
+            HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+            Vector2Int current = start;
+
+            // Reasonable upper bound: map perimeter-ish
+            int maxLength = board.GetWidth() + board.GetHeight();
+
+            for (int step = 0; step < maxLength; step++)
+            {
+                if (!IsInside(current.x, current.y))
+                    break;
+
+                TerrainEnum t = terrainGrid[current.x, current.y];
+
+                if (t == TerrainEnum.deepWater)
+                    break; // reached sea
+                if (t == TerrainEnum.shallowWater && step > 0)
+                    break; // reached another river / lake / ocean
+
+                // 1-wide river: mark current cell as shallowWater
+                terrainGrid[current.x, current.y] = TerrainEnum.shallowWater;
+                riverCells.Add(current);  // track river water
+                visited.Add(current);
+
+                Vector2Int[] neighbors = (current.x % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+
+                List<Vector2Int> candidates = new List<Vector2Int>();
+                foreach (Vector2Int dir in neighbors)
+                {
+                    int nr = current.x + dir.x;
+                    int nc = current.y + dir.y;
+                    Vector2Int next = new Vector2Int(nr, nc);
+
+                    if (!IsInside(nr, nc))
+                        continue;
+                    if (visited.Contains(next))
+                        continue;
+
+                    TerrainEnum nt = terrainGrid[nr, nc];
+
+                    // Don't climb mountains; rivers go around them
+                    if (nt == TerrainEnum.mountains)
+                        continue;
+
+                    candidates.Add(next);
+                }
+
+                if (candidates.Count == 0)
+                    break;
+
+                // Bias: choose neighbors that move generally toward the seaBorder
+                List<Vector2Int> forward = new List<Vector2Int>();
+                foreach (var c in candidates)
+                {
+                    switch (seaBorder)
+                    {
+                        case 0: // sea to the north – flow northward (row decreasing)
+                            if (c.x < current.x) forward.Add(c);
+                            break;
+                        case 1: // sea to the east – flow eastward (col increasing)
+                            if (c.y > current.y) forward.Add(c);
+                            break;
+                        case 2: // sea to the south – flow southward (row increasing)
+                            if (c.x > current.x) forward.Add(c);
+                            break;
+                        case 3: // sea to the west – flow westward (col decreasing)
+                            if (c.y < current.y) forward.Add(c);
+                            break;
+                    }
+                }
+
+                List<Vector2Int> choicePool = forward.Count > 0 ? forward : candidates;
+                current = choicePool[Random.Range(0, choicePool.Count)];
+
+                if ((step % 8 == 0) || budget.Spent())
+                {
+                    float riverProgress = (float)riversCreated / Mathf.Max(1, rivers);
+                    float stepProgress = GetStepProgress(riverProgress);
+                    OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Rivers");
+                    budget.Reset();
+                    yield return null;
+                }
+            }
+
+            riversCreated++;
+        }
+    }
+
+    private IEnumerator ComputeRiverAndLakeCoastsCoroutine()
+    {
+        riverCoastHexes.Clear();
+        lakeCoastHexes.Clear();
+
+        int height = board.GetHeight();
+        int width = board.GetWidth();
+
+        var budget = new FrameBudget(generationFrameBudgetSeconds);
+
+        for (int row = 0; row < height; row++)
+        {
+            for (int col = 0; col < width; col++)
+            {
+                Vector2Int pos = new Vector2Int(row, col);
+                TerrainEnum t = terrainGrid[row, col];
+
+                // Only land can be a coast
+                if (t == TerrainEnum.deepWater || t == TerrainEnum.shallowWater)
+                    continue;
+
+                Vector2Int[] neighbors = (row % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+
+                bool riverAdj = false;
+                bool lakeAdj = false;
+
+                foreach (var dir in neighbors)
+                {
+                    int nr = row + dir.x;
+                    int nc = col + dir.y;
+                    Vector2Int nPos = new Vector2Int(nr, nc);
+
+                    if (!IsInside(nr, nc))
+                        continue;
+
+                    if (riverCells.Contains(nPos))
+                        riverAdj = true;
+
+                    if (lakeCells.Contains(nPos))
+                        lakeAdj = true;
+                }
+
+                if (riverAdj)
+                    riverCoastHexes.Add(pos);
+
+                if (lakeAdj)
+                    lakeCoastHexes.Add(pos);
+
+                if (budget.Spent())
+                {
+                    budget.Reset();
+                    yield return null;
+                }
+            }
+        }
+
+        yield break;
+    }
+
+    private IEnumerator GenerateRiversAndLakesCoroutine()
+    {
+        // Lakes first, then rivers
+        yield return StartCoroutine(GenerateLakesCoroutine());
+        yield return StartCoroutine(GenerateRiversCoroutine());
+
+        OnGenerationProgress?.Invoke(currentStep / totalSteps, "Rivers & Lakes Created");
+        currentStep++;
+    }
+
     private IEnumerator AddHillsAroundMountainsCoroutine()
     {
         TerrainEnum[,] terrainCopy = new TerrainEnum[board.GetHeight(), board.GetWidth()];
@@ -1061,13 +1363,13 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateForestsCoroutine()
     {
-        for (int i = 0; i < board.majorForestCount; i++)
+        for (int i = 0; i < majorForestCount; i++)
         {
             int forestSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.08f); // 8%
             yield return StartCoroutine(GenerateForestPatchCoroutine(forestSize, "Major Forest"));
         }
 
-        for (int i = 0; i < board.minorForestCount; i++)
+        for (int i = 0; i < minorForestCount; i++)
         {
             int forestSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.02f); // 2%
             yield return StartCoroutine(GenerateForestPatchCoroutine(forestSize, "Minor Forest"));
@@ -1158,12 +1460,12 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateSwampsCoroutine()
     {
-        int totalSwamps = board.swampCount;
+        int totalSwamps = swampCount;
         int swampsProcessed = 0;
 
         var budget = new FrameBudget(generationFrameBudgetSeconds);
 
-        for (int i = 0; i < board.swampCount; i++)
+        for (int i = 0; i < swampCount; i++)
         {
             int startRow, startCol;
             bool validStart = false;
@@ -1228,7 +1530,7 @@ public class BoardGenerator : MonoBehaviour
             int swampTiles = 1;
             foreach (Vector2Int dir in swampNeighbors)
             {
-                if (swampTiles >= board.swampSize)
+                if (swampTiles >= swampSize)
                     break;
 
                 int newRow = startRow + dir.x;
@@ -1260,13 +1562,13 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateWastelandsCoroutine()
     {
-        for (int i = 0; i < board.majorWastelandCount; i++)
+        for (int i = 0; i < majorWastelandCount; i++)
         {
             int wastelandSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.07f);
             yield return StartCoroutine(GenerateWastelandPatchCoroutine(wastelandSize, true, "Major Wasteland"));
         }
 
-        for (int i = 0; i < board.minorWastelandCount; i++)
+        for (int i = 0; i < minorWastelandCount; i++)
         {
             int wastelandSize = Mathf.FloorToInt(board.GetWidth() * board.GetHeight() * 0.02f);
             yield return StartCoroutine(GenerateWastelandPatchCoroutine(wastelandSize, false, "Minor Wasteland"));
@@ -1416,15 +1718,23 @@ public class BoardGenerator : MonoBehaviour
                         int newRow = row + dir.x;
                         int newCol = col + dir.y;
 
-                        if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth() &&
-                            terrainCopy[newRow, newCol] == TerrainEnum.shallowWater)
+                        if (newRow >= 0 && newRow < board.GetHeight() && newCol >= 0 && newCol < board.GetWidth())
                         {
-                            adjacentToWater = true;
-                            break;
+                            if (terrainCopy[newRow, newCol] == TerrainEnum.shallowWater)
+                            {
+                                Vector2Int waterPos = new Vector2Int(newRow, newCol);
+
+                                // Only mark as "sea coast" if this shallowWater is NOT river or lake
+                                if (!riverCells.Contains(waterPos) && !lakeCells.Contains(waterPos) && !riverCoastHexes.Contains(waterPos) && !lakeCoastHexes.Contains(waterPos))
+                                {
+                                    adjacentToWater = true;
+                                    break;
+                                }
+                            }
                         }
                     }
 
-                    if (adjacentToWater &&
+                    if (adjacentToWater && 
                         terrainCopy[row, col] != TerrainEnum.mountains &&
                         terrainCopy[row, col] != TerrainEnum.hills &&
                         terrainCopy[row, col] != TerrainEnum.swamp)
@@ -1454,8 +1764,8 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateDesertCoroutine(int desertBorder)
     {
-        int desertWidth = Mathf.FloorToInt(board.GetWidth() * board.desertPercentage);
-        int desertHeight = Mathf.FloorToInt(board.GetHeight() * board.desertPercentage);
+        int desertWidth = Mathf.FloorToInt(board.GetWidth() * desertPercentage);
+        int desertHeight = Mathf.FloorToInt(board.GetHeight() * desertPercentage);
         int desertDepth = Mathf.FloorToInt(Mathf.Min(board.GetWidth(), board.GetHeight()) * 0.12f);
 
         int seedX = Random.Range(0, 10000);
@@ -1609,6 +1919,62 @@ public class BoardGenerator : MonoBehaviour
         OnGenerationProgress?.Invoke(currentStep / totalSteps, "Desert Created");
         currentStep++;
     }
+
+    private bool IsInside(int row, int col)
+    {
+        return row >= 0 && row < board.GetHeight() && col >= 0 && col < board.GetWidth();
+    }
+
+    private bool IsLandForRiver(int row, int col)
+    {
+        TerrainEnum t = terrainGrid[row, col];
+
+        // Rivers cannot start on or flow over deep water, other shallow water, or mountains
+        return t != TerrainEnum.deepWater &&
+               t != TerrainEnum.shallowWater &&
+               t != TerrainEnum.mountains;
+    }
+
+    private bool CanPlaceLakeCenter(int row, int col)
+    {
+        if (!IsInside(row, col)) return false;
+
+        TerrainEnum t = terrainGrid[row, col];
+
+        // Don’t start lakes on existing water or very steep terrain
+        if (t == TerrainEnum.deepWater ||
+            t == TerrainEnum.shallowWater ||
+            t == TerrainEnum.mountains ||
+            t == TerrainEnum.hills)
+            return false;
+
+        return true;
+    }
+
+    private bool CanPlaceLakeCell(int row, int col)
+    {
+        if (!CanPlaceLakeCenter(row, col))
+            return false;
+
+        // Avoid lakes that directly touch deep ocean
+        foreach (var n in GetNeighbors(row, col))
+        {
+            if (terrainGrid[n.x, n.y] == TerrainEnum.deepWater)
+                return false;
+        }
+
+        return true;
+    }
+
+    private void ShuffleList<T>(List<T> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            int j = Random.Range(i, list.Count);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
+    }
+
 
     // A utility method to get all neighbors of a given hex
     private List<Vector2Int> GetNeighbors(int row, int col)

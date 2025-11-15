@@ -14,7 +14,7 @@ public class UndoubleCharacter : AgentAction
             if (doubled == null) return false;
             
             doubled.Undouble(c.GetOwner());
-            MessageDisplay.ShowMessage($"{c.characterName} will not reveal secrets anymore", Color.green);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"{c.characterName} will not reveal secrets anymore", Color.green);
 
             return originalEffect == null || originalEffect(c); 
         };

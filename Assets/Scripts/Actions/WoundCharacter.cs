@@ -16,13 +16,15 @@ public class WoundCharacter : AgentCharacterAction
             if (capitalHex == null) return false;
             int random = UnityEngine.Random.Range(0, 5);
             string message = $"Agent returned to capital";
+            Color color = Color.green;
             if (random > c.GetAgent())
             {
                 message += " wounded";
                 c.Wounded(c.hex.GetPC().owner, random * 10);
+                color = Color.red;
             }
             FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
-            MessageDisplay.ShowMessage(message, Color.green);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, message, color);
 
             enemy.Wounded(c.GetOwner(), wound);
             return originalEffect == null || originalEffect(c); 

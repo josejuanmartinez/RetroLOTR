@@ -9,7 +9,10 @@ public class InfluenceUpPC : EmmissaryPCAction
         var originalCondition = condition;
         effect = (c) => {
             if (c.hex.GetPC() == null) return false;
-            c.hex.GetPC().IncreaseLoyalty(UnityEngine.Random.Range(1, 10) * c.GetEmmissary());
+            PC pc = c.hex.GetPC();
+            int loyalty = UnityEngine.Random.Range(1, 10) * c.GetEmmissary();
+            pc.IncreaseLoyalty(loyalty, c);
+            // MessageDisplayNoUI.ShowMessage(pc.hex, c, $"{pc.pcName} +{loyalty} loyalty!", Color.green);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => { return c.hex.GetPC() != null && c.hex.GetPC().loyalty < 100 && (originalCondition == null || originalCondition(c)); };

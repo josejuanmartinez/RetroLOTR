@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 [Serializable]
@@ -77,46 +78,15 @@ public class Army
     }
     public void Recruit(TroopsTypeEnum troopsType, int amount)
     {
-        if (troopsType == TroopsTypeEnum.ma)
-        {
-            MessageDisplay.ShowMessage($"+{amount} Men-at-arms were hired", Color.green);
-            ma += amount;
-        }
-        if (troopsType == TroopsTypeEnum.ar)
-        {
-            MessageDisplay.ShowMessage($"+{amount} Archers were hired", Color.green);
-            ar += amount;
-        }
-        if (troopsType == TroopsTypeEnum.li)
-        {
-            MessageDisplay.ShowMessage($"+{amount} Light Infrantry was hired", Color.green);
-            li += amount;
-        }
-        if (troopsType == TroopsTypeEnum.hi)
-        {
-            MessageDisplay.ShowMessage($"+{amount} Heavy Infantry was hired", Color.green);
-            hi += amount;
-        }
-        if (troopsType == TroopsTypeEnum.lc)
-        {
-            MessageDisplay.ShowMessage($"+{amount} Light Cavalry was hired", Color.green);
-            lc += amount;
-        }
-        if (troopsType == TroopsTypeEnum.hc)
-        {
-            MessageDisplay.ShowMessage($"+{amount} Heavy Cavalry was hired", Color.green);
-            hc += amount;
-        }
-        if (troopsType == TroopsTypeEnum.ca)
-        {
-            MessageDisplay.ShowMessage($"+{amount} Catapults were built", Color.green);
-            ca += amount;
-        }
-        if (troopsType == TroopsTypeEnum.ws)
-        {
-            MessageDisplay.ShowMessage($"+{amount} Warships were built", Color.green);
-            ws += amount;
-        }
+        MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\"/>", Color.green);
+        if (troopsType == TroopsTypeEnum.ma) ma += amount;
+        if (troopsType == TroopsTypeEnum.ar) ar += amount;
+        if (troopsType == TroopsTypeEnum.li) li += amount;
+        if (troopsType == TroopsTypeEnum.hi) hi += amount;
+        if (troopsType == TroopsTypeEnum.lc) lc += amount;
+        if (troopsType == TroopsTypeEnum.hc) hc += amount;
+        if (troopsType == TroopsTypeEnum.ca) ca += amount;
+        if (troopsType == TroopsTypeEnum.ws) ws += amount;
     }
 
     public int GetSize(bool withoutWs = false)
@@ -164,7 +134,7 @@ public class Army
         if (killed) return;
         killed = true;
         int wound = UnityEngine.Random.Range(0, 100);
-        MessageDisplay.ShowMessage($"{commander.characterName} army was killed and {commander.characterName} wounded by {wound}", Color.red);
+        MessageDisplayNoUI.ShowMessage(commander.hex,commander, $"{commander.characterName} army was killed and {commander.characterName} wounded by {wound}", Color.red);
         if(!onlyMark && commander.hex.armies.Contains(this)) commander.hex.armies.Remove(this);
         commander.hex.RedrawArmies();
         commander = null;
@@ -439,7 +409,7 @@ public class Army
             {
                 // Reduce fort size first
                 targetHex.GetPC().DecreaseFort();
-                MessageDisplay.ShowMessage($"Defenses at {targetHex.GetPC().pcName} were damaged", Color.yellow);
+                MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"Defenses at {targetHex.GetPC().pcName} were damaged", Color.yellow);
             }
             else
             {
@@ -448,7 +418,7 @@ public class Army
         }
         else
         {
-            MessageDisplay.ShowMessage($"{targetHex.GetPC().pcName} defenses resisted the attack", Color.red);
+            MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"{targetHex.GetPC().pcName} defenses resisted the attack", Color.red);
         }
 
         // Check if attacker army was eliminated
@@ -628,7 +598,16 @@ public class Army
                 hiCasualties > 0 || lcCasualties > 0 || hcCasualties > 0 ||
                 caCasualties > 0 || wsCasualties > 0)
         {
-            MessageDisplay.ShowMessage($"{commander.characterName} army receives casualties", Color.red);
+            StringBuilder casualties = new StringBuilder();
+            if (maCasualties > 0) casualties.Append($"<sprite name=\"ma\"/>[{maCasualties}]");
+            if (arCasualties > 0) casualties.Append($"<sprite name=\"ar\"/>[{arCasualties}]");
+            if (liCasualties > 0) casualties.Append($"<sprite name=\"li\"/>[{liCasualties}]");
+            if (hiCasualties > 0) casualties.Append($"<sprite name=\"hi\"/>[{hiCasualties}]");
+            if (lcCasualties > 0) casualties.Append($"<sprite name=\"lc\"/>[{lcCasualties}]");
+            if (hcCasualties > 0) casualties.Append($"<sprite name=\"hc\"/>[{hcCasualties}]");
+            if (caCasualties > 0) casualties.Append($"<sprite name=\"ca\"/>[{caCasualties}]");
+            if (wsCasualties > 0) casualties.Append($"<sprite name=\"ws\"/>[{wsCasualties}]");
+            MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"{commander.characterName} army casualties: {casualties}", Color.red);
         }
     }
 

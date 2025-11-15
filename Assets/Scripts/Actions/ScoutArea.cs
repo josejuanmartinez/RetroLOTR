@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class ScoutArea : AgentAction
 {
@@ -8,6 +9,7 @@ public class ScoutArea : AgentAction
         var originalCondition = condition;
         effect = (c) => {
             c.hex.RevealArea(1, true, c.GetOwner());
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area scouted", Color.green);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

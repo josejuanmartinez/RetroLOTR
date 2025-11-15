@@ -8,8 +8,8 @@ public class KeyManager : MonoBehaviour
 
     private void Start()
     {
-        board = FindFirstObjectByType<Board>();
-        pathRenderer = FindFirstObjectByType<HexPathRenderer>();
+        if(!board) board = FindFirstObjectByType<Board>();
+        if(!pathRenderer) pathRenderer = FindFirstObjectByType<HexPathRenderer>();
     }
     void Update()
     {

@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class StealLeather : AgentPCAction
 {
@@ -7,13 +8,16 @@ public class StealLeather : AgentPCAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            if (c.hex.GetPC() == null) return false;
-            int toSteal = Math.Min(c.hex.GetPC().owner.leatherAmount, UnityEngine.Random.Range(1, c.GetAgent()));
+            PC pc = c.hex.GetPC();
+            if (pc == null) return false;
+            int toSteal = Math.Min(pc.owner.leatherAmount, UnityEngine.Random.Range(1, c.GetAgent()));
             if (toSteal < 1) return false;
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
             playable.AddLeather(toSteal);
-            c.hex.GetPC().owner.RemoveLeather(toSteal);
+            pc.owner.RemoveLeather(toSteal);
+            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"leather\"/> stolen!", Color.red);
+            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"leather\"/> stolen!", Color.green);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };

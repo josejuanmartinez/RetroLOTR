@@ -114,6 +114,12 @@ public class Hex : MonoBehaviour
 
     public bool IsHexRevealed() => !fow.activeSelf;
 
+    public string GetText()
+    {
+        if (v2.x < 0 || v2.y < 0) return "";
+        return $" @[{v2.x}, {v2.y}]";
+    }
+
     public PlayableLeader GetPlayer()
     {
         if (leader != null) return leader;
@@ -186,7 +192,7 @@ public class Hex : MonoBehaviour
     {
         this.terrainType = terrainType;
         this.terrainTexture.sprite = terrainTexture;
-        this.terrainTexture.color = terrainColor;
+        // this.terrainTexture.color = terrainColor;
     }
 
     public void RedrawArmies(bool refreshHoverText = true)
@@ -231,7 +237,7 @@ public class Hex : MonoBehaviour
         SetActiveFast(port, pcRevealed && pc.hasPort);
 
         // color once
-        if (pcRevealed && colors != null)
+        /*if (pcRevealed && colors != null)
         {
             var a = pc.owner.GetAlignment();
             var c = a == AlignmentEnum.freePeople ? colors.freePeople
@@ -243,7 +249,7 @@ public class Hex : MonoBehaviour
             if (town && town.activeSelf && townSR) townSR.color = c;
             if (majorTown && majorTown.activeSelf && majorTownSR) majorTownSR.color = c;
             if (city && city.activeSelf && citySR) citySR.color = c;
-        }
+        }*/
 
         // forts (note: keep tower/fortress visibility rules as in original)
         SetActiveFast(tower, revealed && pc != null && pc.fortSize == FortSizeEnum.tower);

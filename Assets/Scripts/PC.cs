@@ -131,7 +131,7 @@ public class PC
 
         if (owner.controlledPcs.Count < 1) owner.Killed(leader);
 
-        MessageDisplay.ShowMessage($"{pcName} was captured!", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, owner,  $"{pcName} was captured!", Color.red);
     }
 
     public void CheckHighLoyalty()
@@ -157,7 +157,7 @@ public class PC
         // Reduce a little the loyalty
         loyalty = 70;
 
-        MessageDisplay.ShowMessage($"Population in {pcName} grow!", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, owner,  $"Population in {pcName} grow!", Color.green);
 
         owner.hex.RedrawPC();
     }
@@ -169,7 +169,7 @@ public class PC
         // This will also increase gold per turn
         fortSize++;
 
-        MessageDisplay.ShowMessage($"{pcName} fort was upgraded", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, owner,  $"{pcName} fort was upgraded", Color.green);
 
         owner.hex.RedrawPC();
     }
@@ -182,16 +182,21 @@ public class PC
         // This will also increase gold per turn
         fortSize--;
 
-        MessageDisplay.ShowMessage($"{pcName} fort was downgraded", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, owner,  $"{pcName} fort was downgraded", Color.red);
 
         owner.hex.RedrawPC();
+    }
+
+    public int GetFortSize()
+    {
+        return (int) fortSize;
     }
 
     public void CheckLowLoyalty(Leader leader)
     {
         if (loyalty >= 50) return;
 
-        MessageDisplay.ShowMessage($"{pcName} suffers the effects of an unhappy population!", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, owner,  $"{pcName} suffers the effects of an unhappy population!", Color.red);
 
         if ( UnityEngine.Random.Range(0, 50) > loyalty)
         {
@@ -228,21 +233,21 @@ public class PC
 
         owner.hex.RedrawPC();
         
-        MessageDisplay.ShowMessage($"{pcName} population flee!", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, owner,  $"{pcName} population flee!", Color.red);
 
     }
 
-    public void IncreaseLoyalty(int loyalty)
+    public void IncreaseLoyalty(int loyalty, Character c)
     {
         this.loyalty = Math.Min(100, this.loyalty + loyalty);
-        MessageDisplay.ShowMessage($"{pcName} population is happier now", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, c,  $"{pcName} loyalty increased by {loyalty}", Color.green);
     }
 
-    public void DecreaseLoyalty(int loyalty, Leader decreasedBy)
+    public void DecreaseLoyalty(int loyalty, Character decreasedBy)
     {
         this.loyalty = Math.Max(0, this.loyalty - loyalty);
-        MessageDisplay.ShowMessage($"{pcName} population discontent grows", Color.red);
-        CheckLowLoyalty(decreasedBy);
+        MessageDisplayNoUI.ShowMessage(hex, decreasedBy,  $"{pcName} loyalty decreased by {loyalty}", Color.red);
+        CheckLowLoyalty(decreasedBy.GetOwner());
     }
 
     public int GetDefense()

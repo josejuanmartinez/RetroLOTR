@@ -16,15 +16,18 @@ public class AssassinateCharacter : AgentCharacterAction
             if (capitalHex == null) return false;
             int random = UnityEngine.Random.Range(0, 5);
             string message = $"Agent returned to capital";
+            Color color = Color.green;
             if (random > c.GetAgent())
             {
                 message += " wounded";
                 c.Wounded(c.hex.GetPC().owner, random * 10);
+                color = Color.red;
             }
             FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
-            MessageDisplay.ShowMessage(message, Color.green);
+            MessageDisplay.ShowMessage(message, color);
 
             enemy.Killed(c.GetOwner());
+            MessageDisplayNoUI.ShowMessage(enemy.hex, c, $"{enemy.characterName} assassinated!", Color.green);
 
             return originalEffect == null || originalEffect(c); 
         };

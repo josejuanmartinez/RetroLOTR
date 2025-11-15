@@ -13,6 +13,7 @@ public class PopupManager : MonoBehaviour
     public TextMeshProUGUI textWidget;
     public TextMeshProUGUI titleWidget;
     public TypewriterEffect typeWriterEffect;
+    public int referenceHeight = 600;
 
     private void Awake()
     {
@@ -27,7 +28,7 @@ public class PopupManager : MonoBehaviour
         DontDestroyOnLoad(gameObject); // optional: persists across scenes
     }
 
-    public void Initialize(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite)
+    public void Initialize(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0)
     {
         container.SetActive(true);
 
@@ -48,6 +49,14 @@ public class PopupManager : MonoBehaviour
         titleWidget.text = title;
         actor1.sprite = spriteActor1;
         actor2.sprite = spriteActor2;
+
+        if (restrictHeight > 0)
+        {
+            RectTransform rt = container.GetComponent<RectTransform>();
+            Vector2 size = rt.sizeDelta;
+            size.y = referenceHeight - restrictHeight;
+            rt.sizeDelta = size;
+        }
     }
 
     public void Hide()

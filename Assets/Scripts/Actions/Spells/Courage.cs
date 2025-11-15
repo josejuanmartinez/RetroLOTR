@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class Courage : FreeSpell
 {
@@ -9,7 +10,9 @@ public class Courage : FreeSpell
         effect = (c) => {
             Army army = FindFriendlyArmyAtHex(c);
             if (army == null) return false;
-            army.commander.Encourage();
+            int turns = 1 + c.GetMage() * Mathf.FloorToInt(UnityEngine.Random.Range(0.0f, 0.5f));
+            army.commander.Encourage(turns);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Courage for ${turns} turns!", Color.green);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

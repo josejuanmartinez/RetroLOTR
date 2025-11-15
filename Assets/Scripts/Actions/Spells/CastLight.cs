@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class CastLight: FreeNeutralSpell
 {
@@ -8,7 +9,8 @@ public class CastLight: FreeNeutralSpell
         var originalCondition = condition;
         effect = (c) => {
             Hex hex = c.hex;
-            hex.RevealArea(1, true, c.owner);            
+            hex.RevealArea(1, true, c.owner);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area secrets revealed!", Color.green);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

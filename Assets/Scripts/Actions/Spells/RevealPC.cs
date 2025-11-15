@@ -10,7 +10,7 @@ public class RevealPC: Spell
         effect = (c) => {
             if (c.hex.GetPC() == null) return false;
             c.hex.GetPC().hiddenButRevealed = true; 
-            MessageDisplay.ShowMessage($"The spell hiding {c.hex.GetPC()} has been lifted", Color.green);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"{c.hex.GetPC()} revealed!", Color.green);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

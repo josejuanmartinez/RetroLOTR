@@ -11,6 +11,8 @@ public class DoubleCharacter : AgentCharacterAction
             Character enemy = FindEnemyCharacterTargetAtHex(c);
             if (enemy == null) return false;
             enemy.Doubled(c.GetOwner());
+            // Message show in Doubled()
+            // MessageDisplayNoUI.ShowMessage(enemy.hex, $"{enemy.characterName} doubled", Color.green);
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => { return FindEnemyCharacterTargetAtHex(c) != null && (originalCondition == null || originalCondition(c)); };

@@ -1,10 +1,12 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TypewriterEffect : MonoBehaviour
 {
     public TMP_Text textMeshPro;
+    public AutoScroll autoScroll;
     
     [TextArea] public string fullText;
     
@@ -40,6 +42,7 @@ public class TypewriterEffect : MonoBehaviour
         {
             textMeshPro.text = text.Substring(0, i);
             yield return new WaitForSeconds(typingSpeed);
+            autoScroll.Refresh();
         }
     }
 }

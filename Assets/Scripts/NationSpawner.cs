@@ -14,6 +14,7 @@ public class NationSpawner : MonoBehaviour
     private List<Vector2Int> placedPositions;
     private CharacterInstantiator characterInstantiator;
     private Dictionary<TerrainEnum, List<Vector2Int>> terrainHexCache;
+    private Dictionary<FeaturesEnum, List<Vector2Int>> featuresHexCache;
     private Dictionary<Vector2Int, Vector3Int> cubeCoordinateCache;
     private bool isInitialized = false;
 
@@ -28,6 +29,7 @@ public class NationSpawner : MonoBehaviour
         this.board = board;
         placedPositions = new List<Vector2Int>(20); // Pre-allocate for typical number of leaders
         terrainHexCache = new Dictionary<TerrainEnum, List<Vector2Int>>();
+        featuresHexCache = new Dictionary<FeaturesEnum, List<Vector2Int>>();
         cubeCoordinateCache = new Dictionary<Vector2Int, Vector3Int>();
 
         characterInstantiator = FindFirstObjectByType<CharacterInstantiator>();
@@ -58,6 +60,9 @@ public class NationSpawner : MonoBehaviour
 
     public void BuildTerrainHexCache(TerrainEnum[,] terrainGrid)
     {
+        featuresHexCache[FeaturesEnum.river] = board.boardGenerator.riverCoastHexes.ToList();
+        featuresHexCache[FeaturesEnum.lake] = board.boardGenerator.lakeCoastHexes.ToList();
+
         if (terrainGrid == null)
         {
             Debug.LogError("terrainGrid is null in BuildTerrainHexCache!");
@@ -120,11 +125,11 @@ public class NationSpawner : MonoBehaviour
             Debug.LogWarning("Max leaders reached. Skipping leader instantiation.");
             return;
         }*/
-        List<Vector2Int> suitableHexes = GetCachedHexesWithTerrain(leaderBiomeConfig.terrain);
+        List<Vector2Int> suitableHexes = GetCachedHexesWithTerrain(leaderBiomeConfig.terrain, leaderBiomeConfig.feature);
 
         if (suitableHexes.Count == 0)
         {
-            throw new Exception($"No suitable hexes found with terrain {leaderBiomeConfig.terrain}. Skipping.");
+            throw new Exception($"No suitable hexes found with terrain {leaderBiomeConfig.terrain}.");
         }
 
         Vector2Int bestPosition = FindFarthestPosition(suitableHexes, placedPositions);
@@ -157,13 +162,26 @@ public class NationSpawner : MonoBehaviour
         hex.SetPC(pc);
     }
 
-    private List<Vector2Int> GetCachedHexesWithTerrain(TerrainEnum terrain)
+    private List<Vector2Int> GetCachedHexesWithTerrain(TerrainEnum terrain, FeaturesEnum feature)
     {
-        if (terrainHexCache.TryGetValue(terrain, out var hexes))
+        List<Vector2Int> suitableTerrain = terrainHexCache[terrain];
+        List<Vector2Int> suitableFeature = suitableTerrain;
+        switch (feature)
         {
-            return hexes;
+            case FeaturesEnum.river:
+            case FeaturesEnum.lake:
+                suitableFeature = featuresHexCache[feature];
+                break;
         }
-        return new List<Vector2Int>();
+
+        List<Vector2Int> union = suitableTerrain.Intersect(suitableFeature).ToList();
+        if (union.Count < 1)
+        {
+            Debug.LogWarning($"Could not get hexes that have both {terrain.ToString()} and {feature.ToString()}. Ignoring terrain restriction.");
+            union = suitableFeature;
+        }
+
+        return union;
     }
 
     private Vector2Int FindFarthestPosition(List<Vector2Int> candidates, List<Vector2Int> existingPositions)

@@ -11,6 +11,7 @@ public class Block : CommanderArmyAction
             Army army = FindEnemyArmyAtHex(c);
             if (army == null) return false;
             army.commander.Halt();
+            MessageDisplayNoUI.ShowMessage(c.hex, c, "Movement blocked from this hex", Color.green);
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => { return FindEnemyArmyAtHex(c) != null && (originalCondition == null || originalCondition(c));};

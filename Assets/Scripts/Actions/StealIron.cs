@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class StealIron : AgentPCAction
 {
@@ -7,13 +8,16 @@ public class StealIron : AgentPCAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            if (c.hex.GetPC() == null) return false;
-            int toSteal = Math.Min(c.hex.GetPC().owner.ironAmount, UnityEngine.Random.Range(1, c.GetAgent()));
+            PC pc = c.hex.GetPC();
+            if (pc == null) return false;
+            int toSteal = Math.Min(pc.owner.ironAmount, UnityEngine.Random.Range(1, c.GetAgent()));
             if (toSteal < 1) return false;
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
             playable.AddIron(toSteal);
-            c.hex.GetPC().owner.RemoveIron(toSteal);
+            pc.owner.RemoveIron(toSteal);
+            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"iron\"/> stolen!", Color.red);
+            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"iron\"/> stolen!", Color.green);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };

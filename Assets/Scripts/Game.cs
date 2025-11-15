@@ -106,7 +106,7 @@ public class Game : MonoBehaviour
         if (currentlyPlaying == player)
         {
             
-            if (MoveToNextCharacterToAction()) return;
+            // if (MoveToNextCharacterToAction()) return;
 
             // Find the first non-killed competitor
             currentlyPlaying = FindNextAliveCompetitor(0);

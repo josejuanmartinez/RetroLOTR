@@ -16,6 +16,7 @@ public class LeaderBiomeConfig: BiomeConfig
     public string introActor1;
     public string introActor2;
     public TerrainEnum terrain;
+    public FeaturesEnum feature = FeaturesEnum.noFeature;
     public string startingCityName;
     public PCSizeEnum startingCitySize;
     public FortSizeEnum startingCityFortSize;

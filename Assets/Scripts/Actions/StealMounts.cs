@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class StealMounts : AgentPCAction
 {
@@ -7,13 +8,16 @@ public class StealMounts : AgentPCAction
         var originalEffect = effect;
         var originalCondition = condition;
         effect = (c) => {
-            if (c.hex.GetPC() == null) return false;
-            int toSteal = Math.Min(c.hex.GetPC().owner.mountsAmount, UnityEngine.Random.Range(1, c.GetAgent()));
+            PC pc = c.hex.GetPC();
+            if (pc == null) return false;
+            int toSteal = Math.Min(pc.owner.mountsAmount, UnityEngine.Random.Range(1, c.GetAgent()));
             if (toSteal < 1) return false;
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
             playable.AddMounts(toSteal);
-            c.hex.GetPC().owner.RemoveMounts(toSteal);
+            pc.owner.RemoveMounts(toSteal);
+            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"mounts\"/> stolen!", Color.red);
+            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"mounts\"/> stolen!", Color.green);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return originalEffect == null || originalEffect(c); 
         };

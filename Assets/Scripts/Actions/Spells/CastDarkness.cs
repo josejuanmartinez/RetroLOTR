@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class CastDarkness: DarkNeutralSpell
 {
@@ -9,6 +10,7 @@ public class CastDarkness: DarkNeutralSpell
         effect = (c) => {
             Hex hex = c.hex;
             hex.UnrevealArea(1, true, c.owner);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area obscured!", Color.red);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

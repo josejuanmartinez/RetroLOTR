@@ -22,32 +22,6 @@ public class Board : MonoBehaviour
     public TextMeshProUGUI statusText;
     public bool drawMark = false;
 
-    // Chance parameters
-    [Header("Generation Parameters")]
-    [Range(1, 5)] public int minIslands = 1;
-    [Range(1, 5)] public int maxIslands = 5;
-    [Range(0.1f, 0.3f)] public float waterPercentage = 0.2f;
-    [Range(0.1f, 1f)] public float deepWaterProportion = 0.7f;
-    [Range(0.1f, 0.3f)] public float desertPercentage = 0.1f;
-    [Range(0.1f, 0.9f)] public float grasslandsProbability = 0.5f; // Chance of plains becoming grasslands
-    [Range(0.1f, 0.5f)] public float coastDepth = 0.15f;
-
-    [Header("Mountain Parameters")]
-    [Range(1, 5)] public int mountainChainCount = 3;
-    [Range(0.5f, 2.0f)] public float mountainChainLengthMultiplier = 1.2f;
-
-    [Header("Forest Parameters")]
-    [Range(1, 3)] public int majorForestCount = 1;
-    [Range(2, 6)] public int minorForestCount = 4;
-
-    [Header("Swamp Parameters")]
-    [Range(1, 3)] public int swampCount = 1;
-    [Range(4, 7)] public int swampSize = 5;
-
-    [Header("Wastelands Parameters")]
-    [Range(1, 2)] public int majorWastelandCount = 1;
-    [Range(0, 3)] public int minorWastelandCount = 2;
-
     [Header("Selection")]
     public Vector2Int selectedHex = Vector2Int.one * -1;
     public Character selectedCharacter = null;
@@ -87,20 +61,20 @@ public class Board : MonoBehaviour
     // Direction vectors for hex neighbors (flat-top)
     public readonly Vector2Int[] evenRowNeighbors = new[] {
         new Vector2Int(1, 0),   // Northeast
+        new Vector2Int(0, 1),   // East
         new Vector2Int(-1, 0),   // Southeast
-        new Vector2Int(-2, 0),   // South
         new Vector2Int(-1, -1),  // Southwest
-        new Vector2Int(1, -1),  // NorthWest
-        new Vector2Int(+2, 0)   // Top
+        new Vector2Int(0, -1),  // West
+        new Vector2Int(1, -1)   // Northwest
     };
 
     public readonly Vector2Int[] oddRowNeighbors = new[] {
         new Vector2Int(1,1),   // Northeast
+        new Vector2Int(0, 1),   // East
         new Vector2Int(-1, 1),   // Southeast
-        new Vector2Int(-2, 0),   // South
         new Vector2Int(-1, 0),  // Southwest
-        new Vector2Int(1, 0),  // NorthWest
-        new Vector2Int(2, 0)   // Top
+        new Vector2Int(0, -1),  // West
+        new Vector2Int(1, 0)   // Northwest
     };
 
     private bool initialized = false;

@@ -108,7 +108,7 @@ public class NonPlayableLeader : Leader
 
     public void Joined(Leader joinedTo)
     {
-        MessageDisplay.ShowMessage($"{name} has joined {joinedTo.characterName}", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{name} has joined {joinedTo.characterName}", Color.green);
         
         // Create temporary lists to avoid modifying collections during iteration
         List<Character> charactersToTransfer = new (GetOwner().controlledCharacters);

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using UnityEngine;
 
 public class ScryArea : Spell
 {
@@ -19,6 +20,7 @@ public class ScryArea : Spell
                 Hex randomHex = eligibleHexes[randomIndex];
                 randomHex.RevealArea(c.GetMage());
                 randomHex.LookAt();
+                MessageDisplayNoUI.ShowMessage(randomHex, c, $"Area scried!", Color.green);
                 return originalEffect == null || originalEffect(c);
             } else return false;
         };

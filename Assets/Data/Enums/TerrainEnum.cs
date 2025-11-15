@@ -2,17 +2,17 @@ using System.Collections.Generic;
 
 public enum TerrainEnum
 {
-    mountains,
-    hills,
-    plains,
-    grasslands,
-    shore,
-    forest,
-    shallowWater,
-    deepWater,
-    swamp,
-    desert,
-    wastelands,
+    mountains = 0,
+    hills = 1,
+    plains = 2,
+    grasslands = 3,
+    shore = 4,
+    forest = 5,
+    shallowWater = 6,
+    deepWater = 7,
+    swamp = 8,
+    desert = 9,
+    wastelands = 10,
     MAX
 }
 

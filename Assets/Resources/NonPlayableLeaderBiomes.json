@@ -632,7 +632,7 @@
           "transferable": false
         },
         {
-          "artifactName": "Akhorahil's Ring",
+          "artifactName": "Akhôrahil's Ring",
           "artifactDescription": "",
           "hidden": false,
           "providesSpell": "Scry Artifact",
@@ -660,6 +660,7 @@
         }
       ],
       "terrain": 10,
+      "feature": 2,
       "startingCityName": "Luglûrak",
       "startingCitySize": 4,
       "startingCityFortSize": 2,
@@ -766,7 +767,7 @@
       "startingArmySize": 1,
       "preferedTroopType": 0,
       "startingCityIsHidden": false,
-      "startsWithPort": true,
+      "startsWithPort": false,
       "startingWarships": 1,
       "startingCharacters": [],
       "artifactsToJoin": [ "OneRing" ],
@@ -846,6 +847,7 @@
         }
       ],
       "terrain": 4,
+      "feature": 2,
       "startingCityName": "Tol Burûth",
       "startingCitySize": 1,
       "startingCityFortSize": 4,
@@ -957,6 +959,7 @@
         }
       ],
       "terrain": 9,
+      "feature": 1,
       "startingCityName": "Lugarlûr",
       "startingCitySize": 4,
       "startingCityFortSize": 3,
@@ -1745,6 +1748,7 @@
         }
       ],
       "terrain": 4,
+      "feature":  2,
       "startingCityName": "Esgaroth",
       "startingCitySize": 3,
       "startingCityFortSize": 2,
@@ -1843,7 +1847,7 @@
       "startingArmySize": 1,
       "preferedTroopType": 5,
       "startingCityIsHidden": false,
-      "startsWithPort": true,
+      "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
       "artifactsToJoin": [ "OneRing" ],
@@ -1882,7 +1886,7 @@
       "mage": 0,
       "race": 0,
       "artifacts": [],
-      "terrain": 9,
+      "terrain": 4,
       "startingCityName": "Havens of Umbar",
       "startingCitySize": 5,
       "startingCityFortSize": 3,
@@ -1942,7 +1946,7 @@
           "bonusDefense": 0
         }
       ],
-      "terrain": 0,
+      "terrain": 4,
       "startingCityName": "The Grey Havens",
       "startingCitySize": 3,
       "startingCityFortSize": 3,
@@ -2885,6 +2889,7 @@
       "race": 0,
       "artifacts": [],
       "terrain": 4,
+      "feature":  1,
       "startingCityName": "Sarn Lothduin",
       "startingCitySize": 2,
       "startingCityFortSize": 0,
@@ -2959,6 +2964,7 @@
         }
       ],
       "terrain": 4,
+      "feature": 2,
       "startingCityName": "Shrel-Kain",
       "startingCitySize": 4,
       "startingCityFortSize": 2,

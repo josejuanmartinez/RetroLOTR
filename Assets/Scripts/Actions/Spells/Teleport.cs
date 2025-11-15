@@ -12,6 +12,7 @@ public class Teleport: Spell
             if (randomHex == null) return false;
             randomHex.RevealArea(c.GetMage());
             FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, randomHex, true);
+            randomHex.LookAt();
             MessageDisplay.ShowMessage($"{c.characterName} warped to an unkown place", Color.green);
             if (FindFirstObjectByType<Game>().currentlyPlaying == FindFirstObjectByType<Game>().player) FindFirstObjectByType<Board>().SelectCharacter(c);
             return originalEffect == null || originalEffect(c);

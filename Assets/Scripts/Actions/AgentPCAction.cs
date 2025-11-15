@@ -19,7 +19,7 @@ public class AgentPCAction : AgentAction
                 c.Wounded(c.hex.GetPC().owner, random * 10);
             }
             FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
-            MessageDisplay.ShowMessage(message, Color.green);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, message, Color.green);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

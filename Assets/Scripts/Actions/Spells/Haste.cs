@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class Haste: Spell
 {
@@ -9,6 +10,7 @@ public class Haste: Spell
         effect = (c) => {
             int boost = (int) Math.Clamp(Math.Round(c.GetMage() * UnityEngine.Random.Range(0.1f, 0.3f)), 0, 3);
             c.moved = Math.Max(c.moved - 2 - boost, 0);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"+{boost} <sprite name=\"movement\"/>", Color.green);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

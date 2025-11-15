@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class FortifyPC : CommanderPCAction
 {
@@ -11,6 +12,7 @@ public class FortifyPC : CommanderPCAction
             PC pc = c.hex.GetPC();
             if (pc.owner != c.GetOwner()) return false;
             pc.IncreaseFort();
+            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"{pc.pcName} <sprite name=\"fort\"> {pc.GetFortSize()}", Color.green);
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {

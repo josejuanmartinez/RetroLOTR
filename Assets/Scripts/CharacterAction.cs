@@ -148,6 +148,16 @@ public class CharacterAction : SearcherByName
 
         return true;
     }
+
+    public void Fail(bool isAI)
+    {
+        string message = $"{actionName} failed";
+        Debug.Log(message);
+        if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  message, Color.red);
+        if (!isAI) game.MoveToNextCharacterToAction();
+        return;
+    }
+
     public void Execute()
     {
         bool isAI = !character.isPlayerControlled;
@@ -157,46 +167,50 @@ public class CharacterAction : SearcherByName
             character.hasActionedThisTurn = true;
             if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
 
-            if (UnityEngine.Random.Range(0, 100) < difficulty || !effect(character))
+            bool failed = false;
+            if (UnityEngine.Random.Range(0, 100) < difficulty) failed = true;
+            if (failed)
             {
-                string message = $"{actionName} failed";
-                Debug.Log(message);
-                if (!isAI) MessageDisplay.ShowMessage(message, Color.red);
-                if (!isAI) game.MoveToNextCharacterToAction();
+                Fail(isAI);
                 return;
-            } else
-            {
-                string message = actionName;
-                Debug.Log($"{character.characterName} succeeds on {message}");
-                if (!isAI) MessageDisplay.ShowMessage(message, Color.green);
             }
 
+            failed = !effect(character);
+            if (failed)
+            {
+                Fail(isAI);
+                return;
+            }
+            
+            string message = actionName;
+            Debug.Log($"{character.characterName} succeeds on {message}");
+            
             if(UnityEngine.Random.Range(0, 100) < commanderXP)
             {
                 character.AddCommander(1);
                 Debug.Log($"{character.characterName} gets +1 to commander XP");
-                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"commander\"/> +1", Color.green);
+                if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  "<sprite name=\"commander\"/> +1", Color.green);
             }
 
             if (UnityEngine.Random.Range(0, 100) < agentXP)
             {
                 character.AddAgent(1);
                 Debug.Log($"{character.characterName} gets +1 to agent XP");
-                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"agent\"/> +1", Color.green);
+                if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  "<sprite name=\"agent\"/> +1", Color.green);
             }
 
             if (UnityEngine.Random.Range(0, 100) < emmissaryXP)
             {
                 character.AddEmmissary(1);
                 Debug.Log($"{character.characterName} gets +1 to emmissary XP");
-                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"emmissary\"/> +1", Color.green);
+                if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  "<sprite name=\"emmissary\"/> +1", Color.green);
             }
 
             if (UnityEngine.Random.Range(0, 100) < mageXP)
             {
                 character.AddMage(1);
                 Debug.Log($"{character.characterName} gets +1 to commander XP");
-                if (!isAI) MessageDisplay.ShowMessage("<sprite name=\"mage\"/> +1", Color.green);
+                if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  "<sprite name=\"mage\"/> +1", Color.green);
             }
 
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);

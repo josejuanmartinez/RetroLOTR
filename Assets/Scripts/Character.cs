@@ -94,7 +94,7 @@ public class Character : MonoBehaviour
         string ownerName = "";
         if (owner != null && owner.characterName != null) ownerName = owner.characterName;
         if (ownerName.Trim() == "") ownerName = "themselves";
-        MessageDisplay.ShowMessage($"Character {characterName} starts serving {ownerName}", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"Character {characterName} starts serving {ownerName}", Color.green);
         this.characterName = characterName;
         this.commander = commander;
         this.agent = agent;
@@ -143,6 +143,7 @@ public class Character : MonoBehaviour
     public void Halt()
     {
         isHalted = true;
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"Halted for next turn!", Color.red);
     }
 
     public void Encourage(int turns = 1)
@@ -160,13 +161,13 @@ public class Character : MonoBehaviour
         Debug.Log($"New turn for {characterName} {(isPlayerControlled? "[PLAYER]": "[AI]")}");
         // STATUSES
         // HALT
-        if (isHalted && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplay.ShowMessage("Halted", Color.red);
+        if (isHalted && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this,  "Halted", Color.red);
         moved = isHalted ? GetMaxMovement() : 0;
         hasActionedThisTurn = isHalted;
         isHalted = false;
         // COURAGE
         encouragedTurns = Mathf.Max(encouragedTurns - 1, -1);
-        if (IsEncouraged() && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplay.ShowMessage("Encouraged", Color.green);
+        if (IsEncouraged() && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this,  "Encouraged", Color.green);
         // STATUS EFFECTS (TODO)
         StoreReachableHexes();
         StoreRelevantHexes();
@@ -241,7 +242,7 @@ public class Character : MonoBehaviour
             });
         }
 
-        MessageDisplay.ShowMessage($"{characterName} just hired an army", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\"/>[{amount}]", Color.green);
     }
 
     public Army GetArmy()
@@ -261,25 +262,25 @@ public class Character : MonoBehaviour
         }
         health = 0;
         killed = true;
-        MessageDisplay.ShowMessage($"{characterName} was eliminated", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} eliminated", Color.red);
     }
 
     public void Wounded(Leader woundedBy, int damage)
     {
         health -= damage;
-        MessageDisplay.ShowMessage($"{characterName} was wounded by {damage}", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} wounded by {damage}", Color.red);
         if (health < 1) Killed(woundedBy);
     }
 
     public void Doubled(Leader doubledBy)
     {
         this.doubledBy.Add(doubledBy);
-        MessageDisplay.ShowMessage($"{characterName} will share secrets with {doubledBy.characterName}", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} doubled by {doubledBy.characterName}", Color.green);
     }
     public void Undouble(Leader doubledBy)
     {
         this.doubledBy.Remove(doubledBy);
-        MessageDisplay.ShowMessage($"{characterName} will no longer share secrets with {doubledBy.characterName}", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} undoubled by {doubledBy.characterName}", Color.green);
     }
 
     public int GetCommander()
@@ -346,7 +347,7 @@ public class Character : MonoBehaviour
     public void Heal(int health)
     {
         this.health = Mathf.Min(100, this.health + health);
-        MessageDisplay.ShowMessage($"{characterName} heals by {health}", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} heals by {health}", Color.green);
     }
 
     public void StoreReachableHexes()

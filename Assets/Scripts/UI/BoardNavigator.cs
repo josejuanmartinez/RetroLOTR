@@ -3,41 +3,55 @@ using UnityEngine;
 
 public class BoardNavigator : MonoBehaviour
 {
+    [Header("Move")]
     public float moveSpeed = 5.0f;
+
+    [Header("Zoom")]
     public float zoomSpeed = 10.0f;
+    public float smoothTime = 10f;
+
+    [Tooltip("Minimum orthographic size (prevents camera from going flat)")]
+    public float minZoom = 0.5f;
+
+    [Tooltip("Maximum orthographic size (prevents excessive zoom-out)")]
+    public float maxZoom = 20f;
+
     private bool isMouseWheelHeld = false;
-
     private Camera boardCamera;
-
     private Coroutine lookAtCoroutine;
+    private float targetZoom;
 
     private void Awake()
     {
         boardCamera = GetComponent<Camera>();
+
+        if (boardCamera != null && boardCamera.orthographic)
+        {
+            // Initialize the target zoom so it matches the current camera size
+            targetZoom = Mathf.Clamp(boardCamera.orthographicSize, minZoom, maxZoom);
+        }
     }
 
     void Update()
     {
-        // Check if the right mouse button is held
+        // Middle mouse button (wheel) pans the board
         if (Input.GetMouseButtonDown(2))
         {
             isMouseWheelHeld = true;
-            Cursor.lockState = CursorLockMode.Locked; // Hide and lock cursor
+            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         else if (Input.GetMouseButtonUp(2))
         {
             isMouseWheelHeld = false;
-            Cursor.lockState = CursorLockMode.None; // Unlock cursor
+            Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
 
         if (isMouseWheelHeld)
-        {
             HandleMovement();
-        }
-
-        HandleZoom();
+        else
+            HandleZoom();
     }
 
     void HandleMovement()
@@ -52,30 +66,40 @@ public class BoardNavigator : MonoBehaviour
     void HandleZoom()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
+
         if (boardCamera != null && boardCamera.orthographic)
         {
-            boardCamera.orthographicSize -= scroll * zoomSpeed;
-            boardCamera.orthographicSize = Mathf.Clamp(boardCamera.orthographicSize, 1f, 20f);
+            if (Mathf.Abs(scroll) > 0.001f)
+            {
+                targetZoom -= scroll * zoomSpeed;
+                targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
+            }
+
+            boardCamera.orthographicSize = Mathf.Lerp(
+                boardCamera.orthographicSize,
+                targetZoom,
+                Time.deltaTime * smoothTime
+            );
+
+            // Absolute safeguard
+            boardCamera.orthographicSize = Mathf.Clamp(boardCamera.orthographicSize, minZoom, maxZoom);
         }
     }
 
     public void LookAt(Vector3 targetPosition)
     {
-        // If there's already a LookAt coroutine running, stop it
-        if (lookAtCoroutine != null) StopCoroutine(lookAtCoroutine);
+        if (lookAtCoroutine != null)
+            StopCoroutine(lookAtCoroutine);
 
-        // Start a new coroutine to smoothly move to the target position
         lookAtCoroutine = StartCoroutine(SmoothLookAt(targetPosition));
     }
 
     private IEnumerator SmoothLookAt(Vector3 targetPosition)
     {
         Vector3 startPosition = transform.position;
-
         targetPosition.z = startPosition.z;
         float journeyLength = Vector3.Distance(startPosition, targetPosition);
 
-        // Check if we're already at the target position
         if (journeyLength < 0.001f)
         {
             lookAtCoroutine = null;
@@ -83,29 +107,20 @@ public class BoardNavigator : MonoBehaviour
         }
 
         float startTime = Time.time;
-        float duration = 1.0f; // 1 second for the transition
+        float duration = 1.0f;
 
         while (Time.time - startTime < duration)
         {
             float timeElapsed = Time.time - startTime;
-            float fractionOfJourney = Mathf.Clamp01(timeElapsed / duration);
+            float t = Mathf.SmoothStep(0, 1, timeElapsed / duration);
 
-            // Use smoothstep interpolation for a more natural movement
-            float t = Mathf.SmoothStep(0, 1, fractionOfJourney);
-
-            // Ensure we're calculating a valid position
             Vector3 newPosition = Vector3.Lerp(startPosition, targetPosition, t);
-
-            // Safety check before assigning position
             if (!float.IsNaN(newPosition.x) && !float.IsNaN(newPosition.y) && !float.IsNaN(newPosition.z))
-            {
                 transform.position = newPosition;
-            }
 
             yield return null;
         }
 
-        // Ensure we end exactly at the target position
         transform.position = targetPosition;
         lookAtCoroutine = null;
     }
@@ -113,13 +128,9 @@ public class BoardNavigator : MonoBehaviour
     public void LookAtSelected()
     {
         Board board = FindAnyObjectByType<Board>();
-        if(board != null)
+        if (board != null && board.selectedCharacter != null && board.selectedCharacter.hex != null)
         {
-             if(board.selectedCharacter != null && board.selectedCharacter.hex != null)
-            {
-                LookAt(board.selectedCharacter.hex.transform.position);
-            }
+            LookAt(board.selectedCharacter.hex.transform.position);
         }
-        
     }
 }
