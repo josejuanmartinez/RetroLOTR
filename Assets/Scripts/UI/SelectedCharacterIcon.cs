@@ -5,7 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class SelectedCharacterIcon : MonoBehaviour
 {
-    [Header("Game Obejcts")]
+    [Header("Game Objects")]
     public GameObject actionsGameObject;
     public GameObject moved;
     public GameObject actioned;
@@ -29,9 +29,8 @@ public class SelectedCharacterIcon : MonoBehaviour
     public TextMeshProUGUI movementLeft;
 
     [Header("Artifacts")]
-    public GridLayoutGroup artifactsGrid;
-    public GameObject artifactPrefab;
-
+    public TextMeshProUGUI artifactsText;
+    public TextMeshProUGUI artifactsHoverText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -60,19 +59,16 @@ public class SelectedCharacterIcon : MonoBehaviour
         health.gameObject.SetActive(true);
         health.fillAmount = c.health / 100;
 
-        foreach (Transform child in artifactsGrid.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        artifactsText.text = "";
+        artifactsHoverText.text = "";
 
         c.artifacts.ForEach(x =>
         {
-            GameObject artifact = Instantiate(artifactPrefab, artifactsGrid.transform);
-            artifact.name = x.artifactName;
-            artifact.GetComponentInChildren<Hover>().Initialize($"{x.artifactName}( {x.artifactDescription} )", Vector2.one * -25, 35, TextAlignmentOptions.Left);
-            //artifact.GetComponent<Image>().sprite = FindFirstObjectByType<IllustrationsSmall>().GetIllustrationByName(x.artifactName);
+            string spriteText = $"<sprite name=\"{x.GetSpriteString()}\">";
+            artifactsText.text += spriteText;
+            artifactsHoverText.text += $"{spriteText}{x.artifactName}{x.artifactDescription}<br>";
         });
-
+        
         RefreshMovementLeft(c);
     }
 

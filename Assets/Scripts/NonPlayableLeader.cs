@@ -9,10 +9,10 @@ public class NonPlayableLeader : Leader
 
 	NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome;
 
-	public void Initialize(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome)
+    public void Initialize(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome, bool showSpawnMessage = true)
 	{
 		this.nonPlayableLeaderBiome = nonPlayableLeaderBiome;
-        base.Initialize(hex, nonPlayableLeaderBiome);
+        base.Initialize(hex, nonPlayableLeaderBiome, showSpawnMessage);
         PlayableLeaderIcon alignmentPlayableLeader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First((x => x.alignment == nonPlayableLeaderBiome.alignment));
         if (!alignmentPlayableLeader)
         {

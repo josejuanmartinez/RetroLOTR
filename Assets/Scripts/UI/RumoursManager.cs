@@ -1,7 +1,15 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+
+public struct Rumour
+{
+    public Leader leader;
+    public string rumour;
+    public Vector2Int v2;
+}
 
 public class RumoursManager : MonoBehaviour
 {
@@ -14,8 +22,10 @@ public class RumoursManager : MonoBehaviour
     public TextMeshProUGUI textWidget;
     public ScrollRect scrollRect;
 
-    private List<string> rumours = new();
-    private List<string> privateRumours = new();
+    private List<Rumour> rumours = new();
+    private List<Rumour> privateRumours = new();
+    
+    private Game game;
 
     private void Awake()
     {
@@ -28,10 +38,14 @@ public class RumoursManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject); // optional: persists across scenes
+        game = FindFirstObjectByType<Game>();
     }
 
-    public static void AddRumour(string rumour, bool isPublic)
+    public static void AddRumour(Rumour rumour, bool isPublic)
     {
+        if (!EnsureInstance(nameof(AddRumour)))
+            return;
+
         if (isPublic)
         {
             Instance.rumours.Add(rumour);
@@ -43,22 +57,58 @@ public class RumoursManager : MonoBehaviour
         }
     }
 
+
     /// <summary>
     /// Moves the last `qty` private rumours into the public list,
     /// then updates the UI.
     /// </summary>
-    public static void GetRumours(int qty)
+    public static void GetRumours(AlignmentEnum alignment, int enemyRumoursQty, int friendlyRumoursQty)
     {
-        if (qty <= 0 || Instance.privateRumours.Count == 0)
+        if (!EnsureInstance(nameof(GetRumours)))
             return;
 
+        if (enemyRumoursQty + friendlyRumoursQty <= 0 || Instance.privateRumours.Count == 0)
+            return;
+
+        int enemyAvailable = 0;
+        int friendlyAvailable = 0;
+        foreach (Rumour rumour in Instance.privateRumours)
+        {
+            bool isFriendly = rumour.leader.alignment == alignment && rumour.leader.alignment != AlignmentEnum.neutral;
+            if (isFriendly)
+            {
+                friendlyAvailable++;
+            }
+            else
+            {
+                enemyAvailable++;
+            }
+        }
+
         // Clamp qty so we don't ask for more than exist
-        qty = Mathf.Clamp(qty, 0, Instance.privateRumours.Count);
+        enemyRumoursQty = Mathf.Clamp(enemyRumoursQty, 0, enemyAvailable);
+        friendlyRumoursQty = Mathf.Clamp(friendlyRumoursQty, 0, friendlyAvailable);
 
-        int startIndex = Instance.privateRumours.Count - qty;
-
-        // Safe GetRange: startIndex is >= 0 and qty <= Count
-        Instance.rumours.AddRange(Instance.privateRumours.GetRange(startIndex, qty));
+        List<int> toRemove = new();
+        for(int i=Instance.privateRumours.Count-1; i>=0;i--)
+        {
+            if(enemyRumoursQty + friendlyRumoursQty <= 0) break;
+            Rumour rumour = Instance.privateRumours[i];
+            if(enemyRumoursQty > 0 && (rumour.leader.alignment != alignment || rumour.leader.alignment == AlignmentEnum.neutral))
+            {
+                AddRumour(rumour, true);
+                toRemove.Add(i);
+                enemyRumoursQty--;
+            }
+            if(friendlyRumoursQty > 0 && rumour.leader.alignment == alignment && rumour.leader.alignment != AlignmentEnum.neutral)
+            {
+                AddRumour(rumour, true);
+                toRemove.Add(i);
+                friendlyRumoursQty--;
+            }
+        }
+        
+        toRemove.ForEach(x => Instance.privateRumours.RemoveAt(x));
 
         UpdateRumourText();
     }
@@ -68,6 +118,11 @@ public class RumoursManager : MonoBehaviour
     /// </summary>
     private static void UpdateRumourText()
     {
+        if (!EnsureInstance(nameof(UpdateRumourText)))
+            return;
+
+        if (!Instance.game.IsPlayerCurrentlyPlaying()) return;
+        
         if (Instance.textWidget == null)
             return;
 
@@ -84,8 +139,17 @@ public class RumoursManager : MonoBehaviour
         int startIndex = Instance.rumours.Count - toShow;
 
         // Safe GetRange: startIndex >= 0, count == toShow, and startIndex + toShow <= Count
-        List<string> recentRumours = Instance.rumours.GetRange(startIndex, toShow);
+        List<Rumour> recentRumours = Instance.rumours.GetRange(startIndex, toShow);
 
-        Instance.textWidget.text = string.Join("\n", recentRumours);
+        Instance.textWidget.text = string.Join("\n", recentRumours.ConvertAll(r => r.rumour));
+    }
+
+    private static bool EnsureInstance(string caller)
+    {
+        if (Instance != null)
+            return true;
+
+        Debug.LogWarning($"RumoursManager.{caller} called before the singleton instance was initialized.");
+        return false;
     }
 }

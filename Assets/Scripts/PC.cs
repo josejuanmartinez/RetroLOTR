@@ -110,11 +110,11 @@ public class PC
     {
         string result = "";
         
-        if (leather > 0) result += $"<sprite name=\"leather\"/>{leather}";
-        if (mounts > 0) result += $"<sprite name=\"mounts\"/>{mounts}";
-        if (timber > 0) result += $"<sprite name=\"timber\"/>{timber}";
-        if (iron > 0) result += $"<sprite name=\"iron\"/>{iron}";
-        if (mithril > 0) result += $"<sprite name=\"mithril\"/>{mithril}";
+        if (leather > 0) result += $"<sprite name=\"leather\"/>[{leather}]";
+        if (mounts > 0) result += $"<sprite name=\"mounts\"/>[{mounts}]";
+        if (timber > 0) result += $"<sprite name=\"timber\"/>[{timber}]";
+        if (iron > 0) result += $"<sprite name=\"iron\"/>[{iron}]";
+        if (mithril > 0) result += $"<sprite name=\"mithril\"/>[{mithril}]";
 
         return result;
     }

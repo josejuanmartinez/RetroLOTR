@@ -11,7 +11,7 @@ public class Attack : CommanderEnemyArmyAction
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {
-            return (originalCondition == null || originalCondition(c)); 
+            return originalCondition == null || originalCondition(c); 
         };
         base.Initialize(c, condition, effect);
     }

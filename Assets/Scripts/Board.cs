@@ -172,19 +172,15 @@ public class Board : MonoBehaviour
         nationSpawner.BuildTerrainHexCache(terrainGrid);
     }
 
-    private void OnHexesInstantiated(Dictionary<Vector2Int, GameObject> hexesGameObjects)
+    private void OnHexesInstantiated(Dictionary<Vector2Int, Hex> spawnedHexes)
     {
-        if (hexesGameObjects == null)
+        if (spawnedHexes == null)
         {
             Debug.LogError("Hexes instantiation failed!");
             return;
         }
 
-        hexes = hexesGameObjects
-            .ToDictionary(
-                kvp => kvp.Key,
-                kvp => kvp.Value.GetComponent<Hex>()
-            );
+        hexes = spawnedHexes;
 
         if (hexes == null || hexes.Count == 0)
         {

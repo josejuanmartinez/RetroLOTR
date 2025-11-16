@@ -40,6 +40,11 @@ MonoBehaviour:
   m_SpriteCharacterTable:
   - m_ElementType: 2
     m_Unicode: 65534
+    m_GlyphIndex: 309
+    m_Scale: 1
+    m_Name: flower
+  - m_ElementType: 2
+    m_Unicode: 65534
     m_GlyphIndex: 0
     m_Scale: 1
     m_Name: dead
@@ -47,7 +52,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 1
     m_Scale: 1
-    m_Name: common_spritesheet_1
+    m_Name: common_spritesheet_2
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 2
@@ -597,7 +602,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 111
     m_Scale: 1
-    m_Name: common_spritesheet_111
+    m_Name: fireworks
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 112
@@ -627,7 +632,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 117
     m_Scale: 1
-    m_Name: music
+    m_Name: song
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 118
@@ -637,7 +642,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 119
     m_Scale: 1
-    m_Name: common_spritesheet_119
+    m_Name: veil
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 120
@@ -692,7 +697,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 130
     m_Scale: 1
-    m_Name: common_spritesheet_130
+    m_Name: fire_sword
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 131
@@ -742,7 +747,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 140
     m_Scale: 1
-    m_Name: common_spritesheet_140
+    m_Name: axe
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 141
@@ -757,7 +762,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 143
     m_Scale: 1
-    m_Name: common_spritesheet_143
+    m_Name: sword
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 144
@@ -807,7 +812,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 153
     m_Scale: 1
-    m_Name: common_spritesheet_153
+    m_Name: whip
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 154
@@ -822,7 +827,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 156
     m_Scale: 1
-    m_Name: common_spritesheet_156
+    m_Name: banner
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 157
@@ -842,7 +847,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 160
     m_Scale: 1
-    m_Name: common_spritesheet_160
+    m_Name: hc
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 161
@@ -872,7 +877,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 166
     m_Scale: 1
-    m_Name: common_spritesheet_166
+    m_Name: armor
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 167
@@ -887,7 +892,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 169
     m_Scale: 1
-    m_Name: common_spritesheet_169
+    m_Name: boots
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 170
@@ -912,22 +917,22 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 174
     m_Scale: 1
-    m_Name: common_spritesheet_174
+    m_Name: bracelet
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 175
     m_Scale: 1
-    m_Name: common_spritesheet_175
+    m_Name: brooch
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 176
     m_Scale: 1
-    m_Name: common_spritesheet_176
+    m_Name: pendant
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 177
     m_Scale: 1
-    m_Name: common_spritesheet_177
+    m_Name: belt
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 178
@@ -937,7 +942,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 179
     m_Scale: 1
-    m_Name: common_spritesheet_179
+    m_Name: cloak
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 180
@@ -982,7 +987,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 188
     m_Scale: 1
-    m_Name: common_spritesheet_188
+    m_Name: potion
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 189
@@ -997,7 +1002,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 191
     m_Scale: 1
-    m_Name: common_spritesheet_191
+    m_Name: poison
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 192
@@ -1042,12 +1047,12 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 200
     m_Scale: 1
-    m_Name: common_spritesheet_200
+    m_Name: flower
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 201
     m_Scale: 1
-    m_Name: common_spritesheet_201
+    m_Name: flower
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 202
@@ -1097,7 +1102,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 211
     m_Scale: 1
-    m_Name: common_spritesheet_211
+    m_Name: flask
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 212
@@ -1147,7 +1152,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 221
     m_Scale: 1
-    m_Name: common_spritesheet_221
+    m_Name: book
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 222
@@ -1182,7 +1187,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 228
     m_Scale: 1
-    m_Name: common_spritesheet_228
+    m_Name: scroll
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 229
@@ -1232,7 +1237,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 238
     m_Scale: 1
-    m_Name: common_spritesheet_238
+    m_Name: key
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 239
@@ -1262,7 +1267,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 244
     m_Scale: 1
-    m_Name: common_spritesheet_244
+    m_Name: harp
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 245
@@ -1282,7 +1287,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 248
     m_Scale: 1
-    m_Name: lc
+    m_Name: mounts
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 249
@@ -1332,7 +1337,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 258
     m_Scale: 1
-    m_Name: common_spritesheet_258
+    m_Name: gold
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 259
@@ -1387,7 +1392,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 269
     m_Scale: 1
-    m_Name: common_spritesheet_269
+    m_Name: club
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 270
@@ -1397,7 +1402,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 271
     m_Scale: 1
-    m_Name: common_spritesheet_271
+    m_Name: rope
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 272
@@ -1432,7 +1437,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 278
     m_Scale: 1
-    m_Name: common_spritesheet_278
+    m_Name: mirror
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 279
@@ -1452,7 +1457,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 282
     m_Scale: 1
-    m_Name: common_spritesheet_282
+    m_Name: broken_sword
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 283
@@ -1477,7 +1482,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 287
     m_Scale: 1
-    m_Name: common_spritesheet_287
+    m_Name: bread
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 288
@@ -1487,7 +1492,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 289
     m_Scale: 1
-    m_Name: common_spritesheet_289
+    m_Name: mushroom
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 290
@@ -1502,7 +1507,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 292
     m_Scale: 1
-    m_Name: common_spritesheet_292
+    m_Name: grapes
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 293
@@ -1562,12 +1567,12 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 304
     m_Scale: 1
-    m_Name: common_spritesheet_304
+    m_Name: wine
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 305
     m_Scale: 1
-    m_Name: common_spritesheet_305
+    m_Name: tobacco
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 306
@@ -1585,14 +1590,9 @@ MonoBehaviour:
     m_Name: common_spritesheet_308
   - m_ElementType: 2
     m_Unicode: 65534
-    m_GlyphIndex: 309
-    m_Scale: 1
-    m_Name: common_spritesheet_309
-  - m_ElementType: 2
-    m_Unicode: 65534
     m_GlyphIndex: 310
     m_Scale: 1
-    m_Name: common_spritesheet_310
+    m_Name: herb
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 311
@@ -1612,7 +1612,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 314
     m_Scale: 1
-    m_Name: common_spritesheet_314
+    m_Name: tail
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 315
@@ -1627,17 +1627,17 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 317
     m_Scale: 1
-    m_Name: common_spritesheet_317
+    m_Name: cotton
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 318
     m_Scale: 1
-    m_Name: common_spritesheet_318
+    m_Name: wool
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 319
     m_Scale: 1
-    m_Name: common_spritesheet_319
+    m_Name: bird
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 320
@@ -1652,12 +1652,12 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 322
     m_Scale: 1
-    m_Name: common_spritesheet_322
+    m_Name: tooth
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 323
     m_Scale: 1
-    m_Name: common_spritesheet_323
+    m_Name: wing
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 324
@@ -1677,7 +1677,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 327
     m_Scale: 1
-    m_Name: common_spritesheet_327
+    m_Name: timber
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 328
@@ -1687,17 +1687,17 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 329
     m_Scale: 1
-    m_Name: common_spritesheet_329
+    m_Name: leather
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 330
     m_Scale: 1
-    m_Name: common_spritesheet_330
+    m_Name: bone
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 331
     m_Scale: 1
-    m_Name: common_spritesheet_331
+    m_Name: horn
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 332
@@ -1712,12 +1712,12 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 334
     m_Scale: 1
-    m_Name: common_spritesheet_334
+    m_Name: feather
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 335
     m_Scale: 1
-    m_Name: common_spritesheet_335
+    m_Name: skull
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 336
@@ -1727,12 +1727,12 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 337
     m_Scale: 1
-    m_Name: common_spritesheet_337
+    m_Name: jewel
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 338
     m_Scale: 1
-    m_Name: common_spritesheet_338
+    m_Name: mithril
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 339
@@ -1757,7 +1757,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 343
     m_Scale: 1
-    m_Name: common_spritesheet_343
+    m_Name: crystal
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 344
@@ -1782,7 +1782,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 348
     m_Scale: 1
-    m_Name: common_spritesheet_348
+    m_Name: palantir
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 349
@@ -1822,12 +1822,12 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 356
     m_Scale: 1
-    m_Name: common_spritesheet_356
+    m_Name: iron
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 357
     m_Scale: 1
-    m_Name: common_spritesheet_357
+    m_Name: coin
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 358
@@ -1922,7 +1922,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 376
     m_Scale: 1
-    m_Name: common_spritesheet_376
+    m_Name: plant
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 377
@@ -1947,7 +1947,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 381
     m_Scale: 1
-    m_Name: common_spritesheet_381
+    m_Name: dagger
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 382
@@ -1997,7 +1997,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 391
     m_Scale: 1
-    m_Name: common_spritesheet_391
+    m_Name: scimitar
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 392
@@ -2042,7 +2042,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 400
     m_Scale: 1
-    m_Name: common_spritesheet_400
+    m_Name: scythe
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 401
@@ -2082,7 +2082,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 408
     m_Scale: 1
-    m_Name: common_spritesheet_408
+    m_Name: long_axe
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 409
@@ -2112,7 +2112,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 414
     m_Scale: 1
-    m_Name: common_spritesheet_414
+    m_Name: staff
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 415
@@ -2147,12 +2147,12 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 421
     m_Scale: 1
-    m_Name: common_spritesheet_421
+    m_Name: morning_star
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 422
     m_Scale: 1
-    m_Name: common_spritesheet_422
+    m_Name: mace
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 423
@@ -2162,7 +2162,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 424
     m_Scale: 1
-    m_Name: common_spritesheet_424
+    m_Name: bow
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 425
@@ -2185,14 +2185,14 @@ MonoBehaviour:
     m_Name: common_spritesheet_428
   - m_ElementType: 2
     m_Unicode: 65534
-    m_GlyphIndex: 429
-    m_Scale: 1
-    m_Name: common_spritesheet_429
-  - m_ElementType: 2
-    m_Unicode: 65534
     m_GlyphIndex: 430
     m_Scale: 1
     m_Name: common_spritesheet_430
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 421
+    m_Scale: 1
+    m_Name: common_spritesheet_429
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 431
@@ -2287,7 +2287,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 449
     m_Scale: 1
-    m_Name: common_spritesheet_449
+    m_Name: cape
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 450
@@ -2307,7 +2307,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 453
     m_Scale: 1
-    m_Name: common_spritesheet_453
+    m_Name: hat
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 454
@@ -2335,14 +2335,14 @@ MonoBehaviour:
     m_Name: common_spritesheet_458
   - m_ElementType: 2
     m_Unicode: 65534
+    m_GlyphIndex: 460
+    m_Scale: 1
+    m_Name: hood
+  - m_ElementType: 2
+    m_Unicode: 65534
     m_GlyphIndex: 459
     m_Scale: 1
     m_Name: common_spritesheet_459
-  - m_ElementType: 2
-    m_Unicode: 65534
-    m_GlyphIndex: 460
-    m_Scale: 1
-    m_Name: common_spritesheet_460
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 461
@@ -2387,7 +2387,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 469
     m_Scale: 1
-    m_Name: common_spritesheet_469
+    m_Name: common_spritesshet_469
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 470
@@ -2432,7 +2432,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 478
     m_Scale: 1
-    m_Name: common_spritesheet_478
+    m_Name: gloves
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 479
@@ -2462,7 +2462,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 484
     m_Scale: 1
-    m_Name: common_spritesheet_484
+    m_Name: skeleton_arm
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 485
@@ -2507,7 +2507,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 493
     m_Scale: 1
-    m_Name: common_spritesheet_493
+    m_Name: shield
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 494
@@ -2582,12 +2582,12 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 508
     m_Scale: 1
-    m_Name: common_spritesheet_508
+    m_Name: ring2
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 509
     m_Scale: 1
-    m_Name: common_spritesheet_509
+    m_Name: ring3
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 510
@@ -2637,7 +2637,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 519
     m_Scale: 1
-    m_Name: common_spritesheet_519
+    m_Name: crown
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 520

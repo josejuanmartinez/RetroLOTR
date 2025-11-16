@@ -7,6 +7,6 @@ public class HexNumberManager : MonoBehaviour
     private TextMeshProUGUI textWidget;
     public void Show(Vector2Int v2)
     {
-        textWidget.text = $"<mark=#ffffff>{v2}</mark>";
+        textWidget.text = $"{v2}";
     }
 }

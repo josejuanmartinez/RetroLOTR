@@ -14,16 +14,27 @@ public struct FrameBudget
 {
     private float _start;
     private readonly float _maxSeconds; // e.g., 0.002f = 2ms
+    private readonly Func<float> _maxSecondsProvider;
 
     public FrameBudget(float maxSeconds)
     {
         _start = Time.realtimeSinceStartup;
         _maxSeconds = maxSeconds;
+        _maxSecondsProvider = null;
     }
+
+    public FrameBudget(Func<float> maxSecondsProvider)
+    {
+        _start = Time.realtimeSinceStartup;
+        _maxSeconds = 0f;
+        _maxSecondsProvider = maxSecondsProvider;
+    }
+
+    private float CurrentBudget => _maxSecondsProvider != null ? Mathf.Max(0f, _maxSecondsProvider()) : _maxSeconds;
 
     public bool Spent()
     {
-        return Time.realtimeSinceStartup - _start >= _maxSeconds;
+        return Time.realtimeSinceStartup - _start >= CurrentBudget;
     }
 
     public void Reset()
@@ -46,6 +57,7 @@ public class BoardGenerator : MonoBehaviour
     [Header("Time-slicing (seconds)")]
     [Tooltip("Max main-thread time per frame that generation may use. Tighten this while video plays (e.g., 0.0015–0.003).")]
     [SerializeField] private float generationFrameBudgetSeconds = 0.002f;
+    [SerializeField] private float maximumGenerationBuget = 2000;
 
     public Board board;
 
@@ -82,7 +94,7 @@ public class BoardGenerator : MonoBehaviour
     // Array to store the terrain types
     private TerrainEnum[,] terrainGrid;
     private int seaBorder;
-    private Dictionary<Vector2Int, GameObject> hexes;
+    private Dictionary<Vector2Int, Hex> hexes;
     private ObjectPool<GameObject> hexPool;
     private Dictionary<TerrainEnum, Color> terrainColors;
     private Dictionary<TerrainEnum, Sprite> terrainTextures;
@@ -148,7 +160,7 @@ public class BoardGenerator : MonoBehaviour
     {
         if(!playing)
         {
-            generationFrameBudgetSeconds *= 100;
+            generationFrameBudgetSeconds = maximumGenerationBuget;
             Application.backgroundLoadingPriority = ThreadPriority.Normal;
         }
     }
@@ -267,112 +279,65 @@ public class BoardGenerator : MonoBehaviour
         onComplete?.Invoke(terrainGrid);
     }
 
-    public IEnumerator InstantiateHexesCoroutine(Action<Dictionary<Vector2Int, GameObject>> onComplete)
+    public IEnumerator InstantiateHexesCoroutine(Action<Dictionary<Vector2Int, Hex>> onComplete)
     {
-        hexes = new Dictionary<Vector2Int, GameObject>(board.GetHeight() * board.GetWidth());
+        int height = board.GetHeight();
+        int width = board.GetWidth();
+        int totalHexes = height * width;
+
+        hexes = new Dictionary<Vector2Int, Hex>(totalHexes);
 
         // Clear existing children safely and time-sliced
         yield return StartCoroutine(ClearChildrenCoroutine());
 
-        int totalHexes = board.GetHeight() * board.GetWidth();
-        int hexesProcessed = 0;
-
-        // Pre-allocate batch buffers
-        var positions = new Vector3[hexesPerBatch];
-        var hexObjects = new GameObject[hexesPerBatch];
-        var rowsBuf = new int[hexesPerBatch];
-        var colsBuf = new int[hexesPerBatch];
-        int batchIndex = 0;
-
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
-
         // Safety: make sure terrainGrid exists and matches board dims
         if (terrainGrid == null ||
-            terrainGrid.GetLength(0) != board.GetHeight() ||
-            terrainGrid.GetLength(1) != board.GetWidth())
+            terrainGrid.GetLength(0) != height ||
+            terrainGrid.GetLength(1) != width)
         {
             Debug.LogError("InstantiateHexesCoroutine: terrainGrid is null or has wrong size.");
             onComplete?.Invoke(hexes);
             yield break;
         }
 
-        for (int row = 0; row < board.GetHeight(); row++)
+        var grid = terrainGrid;
+        var colors = terrainColors;
+        var textures = terrainTextures;
+        var parentTransform = transform;
+
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        int hexesProcessed = 0;
+        int batchCount = 0;
+
+        for (int row = 0; row < height; row++)
         {
-            for (int col = 0; col < board.GetWidth(); col++)
+            for (int col = 0; col < width; col++)
             {
                 GameObject hexGo = hexPool.Get();
-                hexGo.GetComponent<Hex>().Initialize(row, col);
-                hexGo.transform.SetParent(transform, false);
+                var hex = hexGo.GetComponent<Hex>();
+                hex.Initialize(row, col);
+
+                var tr = hexGo.transform;
+                tr.SetParent(parentTransform, false);
+                tr.position = GetPosition(row, col);
                 hexGo.name = $"{row},{col}";
 
-                positions[batchIndex] = GetPosition(row, col);
-                hexObjects[batchIndex] = hexGo;
-                rowsBuf[batchIndex] = row;   // << store exact row
-                colsBuf[batchIndex] = col;   // << store exact col
-                batchIndex++;
+                var terrainType = grid[row, col];
+                var color = colors[terrainType];
 
-                // Flush if batch full OR time budget spent
-                if (batchIndex >= hexesPerBatch || budget.Spent())
+                hex.SetTerrain(terrainType, textures[terrainType], color);
+                hexes[new Vector2Int(row, col)] = hex;
+
+                hexesProcessed++;
+                batchCount++;
+
+                if (batchCount >= hexesPerBatch || budget.Spent())
                 {
-                    for (int i = 0; i < batchIndex; i++)
-                    {
-                        var go = hexObjects[i];
-                        var r = rowsBuf[i];
-                        var c = colsBuf[i];
-
-                        // bounds guard (paranoia)
-                        if ((uint)r >= (uint)board.GetHeight() || (uint)c >= (uint)board.GetWidth())
-                            continue;
-
-                        go.transform.position = positions[i];
-
-                        var hex = go.GetComponent<Hex>();
-                        var sr = go.GetComponent<SpriteRenderer>();
-                        var terrainType = terrainGrid[r, c];
-
-                        sr.color = terrainColors[terrainType];
-                        hex.SetTerrain(terrainType, terrainTextures[terrainType], terrainColors[terrainType]);
-                        // hex.RefreshHoverText();
-
-                        hexes[new Vector2Int(r, c)] = go;
-                    }
-
-                    hexesProcessed += batchIndex;
-                    float progress = (float)hexesProcessed / totalHexes;
-                    OnGenerationProgress?.Invoke(Mathf.Min(progress, 1.0f), "Configuring Board");
-
-                    // reset batch and yield
-                    batchIndex = 0;
+                    OnGenerationProgress?.Invoke(Mathf.Min((float)hexesProcessed / totalHexes, 1.0f), "Configuring Board");
+                    batchCount = 0;
                     budget.Reset();
                     yield return null;
                 }
-            }
-        }
-
-        // Flush remainder
-        if (batchIndex > 0)
-        {
-            for (int i = 0; i < batchIndex; i++)
-            {
-                var go = hexObjects[i];
-                var r = rowsBuf[i];
-                var c = colsBuf[i];
-
-                if ((uint)r >= (uint)board.GetHeight() || (uint)c >= (uint)board.GetWidth())
-                    continue;
-
-                go.transform.position = positions[i];
-
-                var hex = go.GetComponent<Hex>();
-                hex.Initialize(r, c);
-                var sr = go.GetComponent<SpriteRenderer>();
-                var terrainType = terrainGrid[r, c];
-
-                sr.color = terrainColors[terrainType];
-                hex.SetTerrain(terrainType, terrainTextures[terrainType], terrainColors[terrainType]);
-                //hex.RefreshHoverText();
-
-                hexes[new Vector2Int(r, c)] = go;
             }
         }
 
@@ -385,7 +350,7 @@ public class BoardGenerator : MonoBehaviour
     {
         // Release pooled children if they belong to the pool, otherwise Destroy().
         // Time-sliced to avoid spikes.
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         // Snapshot because we're modifying the hierarchy
         int count = transform.childCount;
@@ -435,7 +400,7 @@ public class BoardGenerator : MonoBehaviour
         int totalCells = board.GetHeight() * board.GetWidth();
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
@@ -467,7 +432,7 @@ public class BoardGenerator : MonoBehaviour
         int cellsPerBatchLocal = 500;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
@@ -524,7 +489,7 @@ public class BoardGenerator : MonoBehaviour
         int cellsPerBatchLocal = 300;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         switch (seaBorder)
         {
@@ -668,7 +633,7 @@ public class BoardGenerator : MonoBehaviour
         int totalFingers = numFingers;
         int fingersProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         switch (seaBorder)
         {
@@ -872,7 +837,7 @@ public class BoardGenerator : MonoBehaviour
         int totalIslands = numIslands;
         int islandsProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         for (int i = 0; i < numIslands; i++)
         {
@@ -978,7 +943,7 @@ public class BoardGenerator : MonoBehaviour
         int totalChains = mountainChainCount;
         int chainsProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         for (int i = 0; i < mountainChainCount; i++)
         {
@@ -1057,7 +1022,7 @@ public class BoardGenerator : MonoBehaviour
     {
         int lakesCreated = 0;
         int attempts = 0;
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         while (lakesCreated < lakes && attempts < lakes * 20)
         {
@@ -1117,7 +1082,7 @@ public class BoardGenerator : MonoBehaviour
 
     private IEnumerator GenerateRiversCoroutine()
     {
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         // 1. Collect possible starting cells: land adjacent to mountains
         List<Vector2Int> potentialStarts = new List<Vector2Int>();
@@ -1253,7 +1218,7 @@ public class BoardGenerator : MonoBehaviour
         int height = board.GetHeight();
         int width = board.GetWidth();
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         for (int row = 0; row < height; row++)
         {
@@ -1323,7 +1288,7 @@ public class BoardGenerator : MonoBehaviour
         int cellsPerBatchLocal = 300;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
@@ -1385,7 +1350,7 @@ public class BoardGenerator : MonoBehaviour
         bool validStart = false;
         int attempts = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         do
         {
@@ -1463,7 +1428,7 @@ public class BoardGenerator : MonoBehaviour
         int totalSwamps = swampCount;
         int swampsProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         for (int i = 0; i < swampCount; i++)
         {
@@ -1584,7 +1549,7 @@ public class BoardGenerator : MonoBehaviour
         bool validStart = false;
         int attempts = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         if (isMajor)
         {
@@ -1700,7 +1665,7 @@ public class BoardGenerator : MonoBehaviour
         int cellsPerBatchLocal = 300;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
@@ -1775,7 +1740,7 @@ public class BoardGenerator : MonoBehaviour
         int totalCells;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
 
         switch (desertBorder)
         {

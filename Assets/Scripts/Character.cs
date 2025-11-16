@@ -70,12 +70,22 @@ public class Character : MonoBehaviour
         awaken = true;
         colors = FindFirstObjectByType<Colors>();
     }
-    public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome)
+    public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome, bool showSpawnMessage = true)
     {
         if (!awaken) Awake();
         this.characterBiome = characterBiome;
-        bool isLeader = characterBiome is LeaderBiomeConfig;
-        Initialize(leader, characterBiome.alignment, hex, characterBiome.characterName, characterBiome.commander, characterBiome.agent, characterBiome.emmissary, characterBiome.mage, characterBiome.race);
+        Initialize(
+            leader, 
+            characterBiome.alignment, 
+            hex, 
+            characterBiome.characterName, 
+            characterBiome.commander, 
+            characterBiome.agent, 
+            characterBiome.emmissary, 
+            characterBiome.mage, 
+            characterBiome.race, 
+            characterBiome.artifacts,
+            showSpawnMessage);
     }
 
     public void Initialize(
@@ -87,14 +97,20 @@ public class Character : MonoBehaviour
         int agent,
         int emmissary,
         int mage,
-        RacesEnum race)
+        RacesEnum race,
+        List<Artifact> artifacts,
+        bool showSpawnMessage = true)
     {
         if (!awaken) Awake();
 
-        string ownerName = "";
-        if (owner != null && owner.characterName != null) ownerName = owner.characterName;
-        if (ownerName.Trim() == "") ownerName = "themselves";
-        MessageDisplayNoUI.ShowMessage(hex, this,  $"Character {characterName} starts serving {ownerName}", Color.green);
+        if (showSpawnMessage)
+        {
+            string ownerName = "";
+            if (owner != null && owner.characterName != null) ownerName = owner.characterName;
+            if (ownerName.Trim() == "") ownerName = "themselves";
+            MessageDisplayNoUI.ShowMessage(hex, this, $"Character {characterName} starts serving {ownerName}", Color.green);
+        }
+
         this.characterName = characterName;
         this.commander = commander;
         this.agent = agent;
@@ -103,6 +119,7 @@ public class Character : MonoBehaviour
         this.alignment = alignment;
         this.race = race;
         this.startingCharacter = true;
+        this.artifacts = artifacts;
 
         owner.GetOwner().controlledCharacters.Add(this);
         this.owner = owner.GetOwner();
@@ -188,10 +205,10 @@ public class Character : MonoBehaviour
         result.Add($"{characterName}");
         if (withCharInfo)
         {
-            if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? "[" + commander.ToString() + "]" : "")}");
-            if (agent > 0) result.Add($"<sprite name=\"agent\">{(withLevels ? "[" + agent.ToString() + "]" : "")}");
-            if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">{(withLevels ? "[" + emmissary.ToString() + "]" : "")}");
-            if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? "[" + mage.ToString() + "]" : "")}");
+            if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? "[" + GetCommander().ToString() + "]" : "")}");
+            if (agent > 0) result.Add($"<sprite name=\"agent\">{(withLevels ? "[" + GetAgent().ToString() + "]" : "")}");
+            if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">{(withLevels ? "[" + GetEmmissary().ToString() + "]" : "")}");
+            if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? "[" + GetMage().ToString() + "]" : "")}");
         }
 
         if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText());
@@ -222,12 +239,12 @@ public class Character : MonoBehaviour
 
     public bool IsArmyCommander()
     {
-        return army != null && army.commander != null && !army.commander.killed && army.GetSize() > 0;
+        return army != null && army.commander == this && !killed && army.GetSize() > 0;
     }
 
     public int GetMovementLeft()
     {
-        return Mathf.Max(0, (GetMaxMovement() - moved));
+        return Mathf.Max(0, GetMaxMovement() - moved);
     }
 
     public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0)

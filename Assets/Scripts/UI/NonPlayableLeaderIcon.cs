@@ -1,17 +1,14 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using UnityEngine.EventSystems;
 using System.Linq;
-using UnityEngine.InputSystem;
 
 public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    public CanvasGroup canvasGroup;
     public Image image;
     public CanvasGroup deadCanvasGroup;
     public Image border;
-    public CanvasGroup unrevealedImage;
     
     [HideInInspector]
     public NonPlayableLeader nonPlayableLeader;
@@ -22,11 +19,13 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
 
     private Game game;
 
+    private Sprite leaderSprite;
+
     public void Initialize(NonPlayableLeader leader)
     {
         game = FindFirstObjectByType<Game>();
         nonPlayableLeader = leader;
-        image.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(leader.characterName);
+        leaderSprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(leader.characterName);
         alignment = leader.alignment;
         text = $"<mark=#ffffff>{leader.characterName}</mark>";
     }
@@ -56,8 +55,9 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
     {
         if (!isUnrevealed || !game.IsPlayerCurrentlyPlaying()) return;
         PlayableLeader player = game.player;
-        isUnrevealed = false;
-        unrevealedImage.alpha = 0;
+        canvasGroup.alpha = 1;
+        image.sprite = leaderSprite;
+        image.color = Color.white;
         string alignment = nonPlayableLeader.alignment == AlignmentEnum.freePeople ? "a free people" : nonPlayableLeader.alignment == AlignmentEnum.darkServants ? "a dark servant" : "a neutral";
         PopupManager.Show(
             $"{nonPlayableLeader.characterName} reveals themselves!",
@@ -66,5 +66,6 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
             $"You discovered {nonPlayableLeader.characterName}, {alignment} nation",
             true
         );
+        isUnrevealed = false;
     }
 }

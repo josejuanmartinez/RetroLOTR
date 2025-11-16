@@ -17,9 +17,6 @@ public class NonPlayableLeaderIcons : MonoBehaviour
     public void RevealToPlayerIfNot(NonPlayableLeader leader)
     {
         NonPlayableLeaderIcon npli = nonPlayableLeaderIcons.Find(x => x.nonPlayableLeader == leader);
-        if (npli != null)
-        {
-            npli.RevealToPlayer();
-        }
+        if (npli != null) npli.RevealToPlayer();
     }
 }

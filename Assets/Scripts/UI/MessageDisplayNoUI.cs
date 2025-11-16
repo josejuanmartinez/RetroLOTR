@@ -83,7 +83,8 @@ public class MessageDisplayNoUI : MonoBehaviour
             instance.EnqueueMessage(message, worldPos, color ?? Color.white);
         }
 
-        RumoursManager.AddRumour(textMessage, publicRumour);
+        Rumour rumour = new Rumour {leader = character.GetOwner(), rumour = textMessage, v2 = hex.v2};
+        RumoursManager.AddRumour(rumour, publicRumour);
     }
 
     // -------------------------------------------------------------------------

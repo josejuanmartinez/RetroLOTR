@@ -21,11 +21,11 @@ public class Leader : Character
     private Game game;
     private LeaderBiomeConfig leaderBiome;
 
-    public void Initialize(Hex hex, LeaderBiomeConfig leaderBiome)
+    public void Initialize(Hex hex, LeaderBiomeConfig leaderBiome, bool showSpawnMessage = true)
     {
         game = FindFirstObjectByType<Game>();
         this.leaderBiome = leaderBiome;
-		InitializeFromBiome(this, hex, leaderBiome);
+		InitializeFromBiome(this, hex, leaderBiome, showSpawnMessage);
     }
 
     public LeaderBiomeConfig GetBiome()

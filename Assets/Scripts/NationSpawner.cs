@@ -16,6 +16,8 @@ public class NationSpawner : MonoBehaviour
     private Dictionary<TerrainEnum, List<Vector2Int>> terrainHexCache;
     private Dictionary<FeaturesEnum, List<Vector2Int>> featuresHexCache;
     private Dictionary<Vector2Int, Vector3Int> cubeCoordinateCache;
+    private int currentCharacterCount;
+    private int currentPcCount;
     private bool isInitialized = false;
 
     public void Initialize(Board board)
@@ -84,6 +86,42 @@ public class NationSpawner : MonoBehaviour
         }
     }
 
+    private void RecountExistingEntities()
+    {
+        currentCharacterCount = 0;
+        currentPcCount = 0;
+
+        if (board?.hexes == null)
+            return;
+
+        foreach (var hex in board.hexes.Values)
+        {
+            if (hex == null) continue;
+            currentCharacterCount += hex.characters?.Count ?? 0;
+            if (hex.GetPC() != null) currentPcCount++;
+        }
+    }
+
+    private bool EnsureCharacterCapacity(string context)
+    {
+        if (currentCharacterCount >= Game.MAX_CHARACTERS)
+        {
+            Debug.LogWarning($"Max characters reached. {context}");
+            return false;
+        }
+        return true;
+    }
+
+    private bool EnsurePcCapacity()
+    {
+        if (currentPcCount >= Game.MAX_PCS)
+        {
+            Debug.LogWarning("Max PCs reached. Skipping PC instantiation.");
+            return false;
+        }
+        return true;
+    }
+
     public void Spawn()
     {
         if (!isInitialized)
@@ -97,6 +135,8 @@ public class NationSpawner : MonoBehaviour
             Debug.LogError("terrainGrid is not initialized!");
             return;
         }
+
+        RecountExistingEntities();
 
         InstantiateLeadersAndCharacters(playableLeaders.playableLeaders.biomes, placedPositions);
         InstantiateLeadersAndCharacters(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
@@ -137,29 +177,42 @@ public class NationSpawner : MonoBehaviour
 
         Vector2Int v2 = new(bestPosition.x, bestPosition.y);
         Hex hex = board.hexes[v2];
-        
-        Leader leader = leaderBiomeConfig is NonPlayableLeaderBiomeConfig? 
-            characterInstantiator.InstantiateNonPlayableLeader(hex, leaderBiomeConfig as NonPlayableLeaderBiomeConfig) : 
-            characterInstantiator.InstantiatePlayableLeader(hex, leaderBiomeConfig);
 
-        foreach (var character in leader.GetBiome().startingCharacters)
+        if (!EnsureCharacterCapacity("Skipping leader instantiation."))
+            return;
+
+        Leader leader;
+        if (isPlayable)
         {
-            if (FindObjectsByType<Character>(FindObjectsSortMode.None).Length >= Game.MAX_CHARACTERS)
-            {
-                Debug.LogWarning("Max characters reached. Skipping leader instantiation.");
-                return;
-            }
-            characterInstantiator.InstantiateCharacter(leader, hex, character);
+            leader = characterInstantiator.InstantiatePlayableLeader(hex, leaderBiomeConfig);
         }
-
-        if(board.GetHexes().Count(x => x.GetPC() != null) >= Game.MAX_PCS)
+        else if (leaderBiomeConfig is NonPlayableLeaderBiomeConfig nonPlayableConfig)
         {
-            Debug.LogWarning("Max PCs reached. Skipping PC instantiation.");
+            leader = characterInstantiator.InstantiateNonPlayableLeader(hex, nonPlayableConfig);
+        }
+        else
+        {
+            Debug.LogError("Non playable leader biome config expected but not provided.");
             return;
         }
 
-        PC pc = new (leader, hex);
+        currentCharacterCount++;
+
+        foreach (var character in leader.GetBiome().startingCharacters)
+        {
+            if (!EnsureCharacterCapacity("Skipping leader instantiation."))
+                return;
+
+            characterInstantiator.InstantiateCharacter(leader, hex, character);
+            currentCharacterCount++;
+        }
+
+        if (!EnsurePcCapacity())
+            return;
+
+        PC pc = new(leader, hex);
         hex.SetPC(pc);
+        currentPcCount++;
     }
 
     private List<Vector2Int> GetCachedHexesWithTerrain(TerrainEnum terrain, FeaturesEnum feature)

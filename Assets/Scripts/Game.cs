@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using NUnit.Framework.Constraints;
+using System.Threading.Tasks;
 
 
 public class Game : MonoBehaviour
@@ -101,12 +102,18 @@ public class Game : MonoBehaviour
         return stillNotActioned != null;
     }
 
-    public void NextPlayer()
+    public async void NextPlayer()
     {
         if (currentlyPlaying == player)
         {
             
-            // if (MoveToNextCharacterToAction()) return;
+            if (MoveToNextCharacterToAction())
+            {
+                if(await ConfirmationDialog.AskYesNo("Some characters have not actioned this turn. Finish the turn anyway?")==false)
+                {
+                    return;
+                }
+            }
 
             // Find the first non-killed competitor
             currentlyPlaying = FindNextAliveCompetitor(0);

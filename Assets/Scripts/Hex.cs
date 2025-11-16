@@ -6,13 +6,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(SpriteRenderer))]
 public class Hex : MonoBehaviour
 {
     public Vector2Int v2;
 
     [Header("Rendering")]
-    public SpriteRenderer sprite;
 
     public GameObject camp;
     public GameObject village;
@@ -92,6 +90,8 @@ public class Hex : MonoBehaviour
     private static readonly StringBuilder sbNeutral = new(256);
     private static readonly StringBuilder sbDark = new(256);
     private static readonly List<RaycastResult> raycastResults = new(16);
+    private static readonly Queue<Vector2Int> areaQueue = new(64);
+    private static readonly HashSet<Vector2Int> areaVisited = new();
     private static PointerEventData sharedPED;
 
     private const string Unknown = "?";
@@ -123,7 +123,7 @@ public class Hex : MonoBehaviour
     public PlayableLeader GetPlayer()
     {
         if (leader != null) return leader;
-        leader = FindFirstObjectByType<Game>().player;
+        leader = game.player;
         return leader;
     }
 
@@ -223,10 +223,11 @@ public class Hex : MonoBehaviour
 
     public void RedrawPC(bool refreshHoverText = true)
     {
+        if(pc == null) return;
         bool revealed = IsHexRevealed();
         bool pcRevealed = revealed && IsPCRevealed();
 
-        if(pcRevealed && pc.owner is NonPlayableLeader) FindFirstObjectByType<NonPlayableLeaderIcons>().RevealToPlayerIfNot(pc.owner as NonPlayableLeader);
+        if(pc.owner is NonPlayableLeader) FindFirstObjectByType<NonPlayableLeaderIcons>().RevealToPlayerIfNot(pc.owner as NonPlayableLeader);
 
         // city size visibility
         SetActiveFast(camp, pcRevealed && pc.citySize == PCSizeEnum.camp);
@@ -235,21 +236,6 @@ public class Hex : MonoBehaviour
         SetActiveFast(majorTown, pcRevealed && pc.citySize == PCSizeEnum.majorTown);
         SetActiveFast(city, pcRevealed && pc.citySize == PCSizeEnum.city);
         SetActiveFast(port, pcRevealed && pc.hasPort);
-
-        // color once
-        /*if (pcRevealed && colors != null)
-        {
-            var a = pc.owner.GetAlignment();
-            var c = a == AlignmentEnum.freePeople ? colors.freePeople
-                    : a == AlignmentEnum.darkServants ? colors.darkServants
-                    : colors.neutral;
-
-            if (camp && camp.activeSelf && campSR) campSR.color = c;
-            if (village && village.activeSelf && villageSR) villageSR.color = c;
-            if (town && town.activeSelf && townSR) townSR.color = c;
-            if (majorTown && majorTown.activeSelf && majorTownSR) majorTownSR.color = c;
-            if (city && city.activeSelf && citySR) citySR.color = c;
-        }*/
 
         // forts (note: keep tower/fortress visibility rules as in original)
         SetActiveFast(tower, revealed && pc != null && pc.fortSize == FortSizeEnum.tower);
@@ -260,6 +246,15 @@ public class Hex : MonoBehaviour
 
         if (refreshHoverText) RefreshHoverText();
     }
+
+    public string GetProduction()
+    {
+        if (pc != null && (pc.owner == game.player || (pc.owner.alignment == game.player.alignment && pc.owner.alignment != AlignmentEnum.neutral) || scoutedBy.Contains(game.player))) {
+            return pc.GetProducesHoverText();
+        }
+        return "";
+    }
+
     public void RefreshHoverText()
     {
         bool revealed = IsHexRevealed();
@@ -269,27 +264,27 @@ public class Hex : MonoBehaviour
         {            
             if (camp && camp.activeSelf)
             {
-                campText.text = $"{pc.pcName}<sprite name=\"pc\">[1]";
+                campText.text = $"{pc.pcName}<sprite name=\"pc\">[1] {GetProduction()}";
                 campText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (village && village.activeSelf)
             {
-                villageText.text = $"{pc.pcName}<sprite name=\"pc\">[2]";
+                villageText.text = $"{pc.pcName}<sprite name=\"pc\">[2] {GetProduction()}";
                 villageText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (town && town.activeSelf)
             {
-                townText.text = $"{pc.pcName}<sprite name=\"pc\">[3]";
+                townText.text = $"{pc.pcName}<sprite name=\"pc\">[3] {GetProduction()}";
                 townText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (majorTown && majorTown.activeSelf)
             {
-                majorTownText.text = $"{pc.pcName}<sprite name=\"pc\">[4]";
+                majorTownText.text = $"{pc.pcName}<sprite name=\"pc\">[4] {GetProduction()}";
                 majorTownText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (city && city.activeSelf)
             {
-                cityText.text = $"{pc.pcName}<sprite name=\"pc\">[5]";
+                cityText.text = $"{pc.pcName}<sprite name=\"pc\">[5] {GetProduction()}";
                 cityText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
         }
@@ -394,7 +389,7 @@ public class Hex : MonoBehaviour
 
     public void LookAt()
     {
-        if (FindFirstObjectByType<Game>().currentlyPlaying != FindFirstObjectByType<Game>().player) return;
+        if (!game.IsPlayerCurrentlyPlaying()) return;
         // Avoid GameObject.Find/string allocs; use our own transform
         if (navigator == null) navigator = FindFirstObjectByType<BoardNavigator>();
         if (navigator != null) navigator.LookAt(transform.position);
@@ -432,12 +427,7 @@ public class Hex : MonoBehaviour
 
     public void Reveal(Leader scoutedByPlayer = null)
     {
-        if(scoutedByPlayer) scoutedBy.Add(scoutedByPlayer);
-        if (FindFirstObjectByType<Game>().currentlyPlaying == FindFirstObjectByType<Game>().player) SetActiveFast(fow, false);
-        RedrawArmies(false);
-        RedrawCharacters(false);
-        RedrawPC(false);
-        RefreshHoverText();
+        RevealInternal(scoutedByPlayer, IsPlayerTurn());
     }
 
     public void Unreveal(Leader unrevealedPlayer = null)
@@ -453,7 +443,7 @@ public class Hex : MonoBehaviour
                 }
             }
         }
-        if (FindFirstObjectByType<Game>().currentlyPlaying == FindFirstObjectByType<Game>().player && characters.Find(x => x.GetOwner() == FindFirstObjectByType<Game>().player) == null)
+        if (game.currentlyPlaying == game.player && characters.Find(x => x.GetOwner() == game.player) == null)
         {
             SetActiveFast(fow, true);
         }
@@ -468,11 +458,14 @@ public class Hex : MonoBehaviour
     {
         if (board == null) board = FindFirstObjectByType<Board>();
 
-        Reveal(scoutedByPlayer);
+        bool isPlayerTurn = IsPlayerTurn();
+        RevealInternal(scoutedByPlayer, isPlayerTurn);
         if (radius <= 0 || board == null) { if (lookAt) LookAt(); return; }
 
-        var queue = new Queue<Vector2Int>(32);
-        var visited = new HashSet<Vector2Int>();
+        var queue = areaQueue;
+        var visited = areaVisited;
+        queue.Clear();
+        visited.Clear();
         queue.Enqueue(v2);
         visited.Add(v2);
 
@@ -493,7 +486,7 @@ public class Hex : MonoBehaviour
 
                     if (board.hexes.TryGetValue(neighborPos, out Hex neighborHex))
                     {
-                        neighborHex.Reveal(scoutedByPlayer);
+                        neighborHex.RevealInternal(scoutedByPlayer, isPlayerTurn);
                         queue.Enqueue(neighborPos);
                     }
                 }
@@ -501,6 +494,28 @@ public class Hex : MonoBehaviour
             currentRadius++;
         }
         if (lookAt) LookAt();
+    }
+
+    private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
+    {
+        if (scoutedByPlayer) scoutedBy.Add(scoutedByPlayer);
+        if (isPlayerTurn) SetActiveFast(fow, false);
+        RedrawArmies(false);
+        RedrawCharacters(false);
+        RedrawPC(false);
+        RefreshHoverText();
+    }
+
+    private bool IsPlayerTurn()
+    {
+        var g = GetGameInstance();
+        return g != null && g.currentlyPlaying == g.player;
+    }
+
+    private Game GetGameInstance()
+    {
+        if (game == null) game = FindFirstObjectByType<Game>();
+        return game;
     }
 
     public void UnrevealArea(int radius = 1, bool lookAt = true, Leader unrevealedBy = null)

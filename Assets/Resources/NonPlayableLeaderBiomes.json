@@ -20,7 +20,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Lembas",
@@ -33,7 +34,8 @@
           "mageBonus": 0,
           "oneShot": true,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "bread"
         }
       ],
       "terrain": 5,
@@ -114,7 +116,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "potion"
         },
         {
           "artifactName": "Vilya",
@@ -127,7 +130,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Andúril",
@@ -140,7 +144,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 2,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "sword"
         }
       ],
       "terrain": 5,
@@ -193,7 +198,8 @@
               "mageBonus": 0,
               "oneShot": false,
               "bonusAttack": 1,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "spriteString": "dagger"
             },
             {
               "artifactName": "Mithril coat",
@@ -206,7 +212,8 @@
               "mageBonus": 0,
               "oneShot": false,
               "bonusAttack": 0,
-              "bonusDefense": 1
+              "bonusDefense": 1,
+              "spriteString": "armor"
             },
             {
               "artifactName": "Elven song",
@@ -219,7 +226,8 @@
               "mageBonus": 0,
               "oneShot": true,
               "bonusAttack": 0,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "spriteString": "song"
             },
             {
               "artifactName": "Riddle",
@@ -233,7 +241,8 @@
               "oneShot": false,
               "bonusAttack": 0,
               "bonusDefense": 0,
-              "transferable": false
+              "transferable": false,
+              "spriteString": "scroll"
             }
           ]
         }
@@ -285,7 +294,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "pendant"
         },
         {
           "artifactName": "Wooden Crown",
@@ -298,7 +308,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "crown"
         }
       ],
       "terrain": 5,
@@ -331,7 +342,8 @@
               "mageBonus": 0,
               "oneShot": true,
               "bonusAttack": 0,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "spriteString": "bread"
             },
             {
               "artifactName": "Legolas' Bow",
@@ -344,7 +356,8 @@
               "mageBonus": 0,
               "oneShot": false,
               "bonusAttack": 0,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "spriteString": "bow"
             }
           ]
         }
@@ -396,7 +409,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         },
         {
           "artifactName": "Iron Crown",
@@ -409,7 +423,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "crown"
         },
         {
           "artifactName": "Murazor's Ring",
@@ -422,7 +437,8 @@
           "mageBonus": 1,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Morgul's Blade",
@@ -435,7 +451,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "dagger"
         }
       ],
       "terrain": 0,
@@ -495,7 +512,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         },
         {
           "artifactName": "Khamul's Ring",
@@ -508,7 +526,8 @@
           "mageBonus": 1,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Easterling Helmet",
@@ -521,7 +540,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 2
+          "bonusDefense": 2,
+          "spriteString": "helmet"
         },
         {
           "artifactName": "Morgul's Blade",
@@ -534,7 +554,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "dagger"
         }
       ],
       "terrain": 5,
@@ -615,7 +636,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         },
         {
           "artifactName": "Gem eyes",
@@ -629,7 +651,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "transferable": false
+          "transferable": false,
+          "spriteString": "jewel"
         },
         {
           "artifactName": "Akhôrahil's Ring",
@@ -642,7 +665,8 @@
           "mageBonus": 1,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
 
         },
         {
@@ -656,7 +680,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "dagger"
         }
       ],
       "terrain": 10,
@@ -717,7 +742,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         },
         {
           "artifactName": "Mûmak helmet",
@@ -730,7 +756,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 1,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "helmet"
         },
         {
           "artifactName": "Indur's Ring",
@@ -743,7 +770,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
 
         },
         {
@@ -757,7 +785,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "dagger"
         }
       ],
       "terrain": 10,
@@ -817,7 +846,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         },
         {
           "artifactName": "Ôvatha's Ring",
@@ -830,7 +860,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Morgul's Blade",
@@ -843,7 +874,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "dagger"
         }
       ],
       "terrain": 4,
@@ -877,7 +909,8 @@
               "mageBonus": 0,
               "oneShot": true,
               "bonusAttack": 0,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "spriteString": "hc"
             }
           ]
         }
@@ -929,7 +962,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         },
         {
           "artifactName": "Adûnaphel's Ring",
@@ -942,7 +976,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Morgul's Blade",
@@ -955,7 +990,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "dagger"
         }
       ],
       "terrain": 9,
@@ -1016,7 +1052,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         },
         {
           "artifactName": "Ren's Ring",
@@ -1029,7 +1066,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Morgul's Blade",
@@ -1042,7 +1080,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "dagger"
         }
       ],
       "terrain": 9,
@@ -1102,7 +1141,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         },
         {
           "artifactName": "Hoarmûrath's Ring",
@@ -1115,7 +1155,8 @@
           "mageBonus": 1,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Morgul's Blade",
@@ -1128,7 +1169,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "dagger"
         }
       ],
       "terrain": 0,
@@ -1188,7 +1230,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         },
         {
           "artifactName": "Dwar's Ring",
@@ -1201,7 +1244,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Warg's Helmet",
@@ -1214,7 +1258,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 1,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "helmet"
         },
         {
           "artifactName": "Morgul's Blade",
@@ -1227,7 +1272,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "dagger"
         }
       ],
       "terrain": 10,
@@ -1287,7 +1333,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "ring"
         },
         {
           "artifactName": "Shards of Narsil",
@@ -1300,7 +1347,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "broken_sword"
         },
         {
           "artifactName": "Athelas",
@@ -1313,7 +1361,8 @@
           "mageBonus": 0,
           "oneShot": true,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "herb"
         }
       ],
       "terrain": 2,
@@ -1441,7 +1490,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "transferable": false
+          "transferable": false,
+          "spriteString": "gold"
         }
       ],
       "terrain": 1,
@@ -1537,7 +1587,7 @@
       "race": 8,
       "artifacts": [
         {
-          "artifactName": "Stinger",
+          "artifactName": "Poison",
           "artifactDescription": "",
           "hidden": false,
           "providesSpell": "Curse",
@@ -1548,7 +1598,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "transferable": false
+          "transferable": false,
+          "spriteString": "poison"
         }
       ],
       "terrain": 0,
@@ -1609,7 +1660,8 @@
           "oneShot": false,
           "bonusAttack": 1,
           "bonusDefense": 0,
-          "transferable": false
+          "transferable": false,
+          "spriteString": "fire_sword"
         },
         {
           "artifactName": "Fire Whip",
@@ -1623,7 +1675,8 @@
           "oneShot": false,
           "bonusAttack": 1,
           "bonusDefense": 0,
-          "transferable": false
+          "transferable": false,
+          "spriteString": "whip"
         }
       ],
       "terrain": 0,
@@ -1684,7 +1737,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "transferable": false
+          "transferable": false,
+          "spriteString": "wing"
         }
       ],
       "terrain": 0,
@@ -1734,7 +1788,7 @@
       "race": 0,
       "artifacts": [
         {
-          "artifactName": "Black Arrow",
+          "artifactName": "Black Bow",
           "artifactDescription": "",
           "hidden": false,
           "providesSpell": "",
@@ -1744,7 +1798,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 1,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "bow"
         }
       ],
       "terrain": 4,
@@ -1943,7 +1998,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "palantir"
         }
       ],
       "terrain": 4,
@@ -2004,7 +2060,8 @@
           "oneShot": false,
           "bonusAttack": 1,
           "bonusDefense": 0,
-          "transferable": false
+          "transferable": false,
+          "spriteString": "plant"
         },
         {
           "artifactName": "Palantir of Minas Tirith",
@@ -2017,7 +2074,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "palantir"
         }
       ],
       "terrain": 3,
@@ -2050,7 +2108,8 @@
               "mageBonus": 0,
               "oneShot": false,
               "bonusAttack": 0,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "spriteString": "mounts"
             }
           ]
         }
@@ -2148,7 +2207,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 1,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "sword"
         },
         {
           "artifactName": "Golden Armor of Rohan",
@@ -2161,7 +2221,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 1
+          "bonusDefense": 1,
+          "spriteString": "armor"
         },
         {
           "artifactName": "Snowmane",
@@ -2174,7 +2235,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hc"
         }
       ],
       "terrain": 2,
@@ -2217,7 +2279,8 @@
               "mageBonus": 0,
               "oneShot": false,
               "bonusAttack": 0,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "spriteString": "hc"
             }
           ]
         }
@@ -2334,7 +2397,8 @@
               "mageBonus": 0,
               "oneShot": false,
               "bonusAttack": 0,
-              "bonusDefense": 0
+              "bonusDefense": 0,
+              "spriteString": "axe"
             }
           ]
         }
@@ -2387,7 +2451,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "transferable": false
+          "transferable": false,
+          "spriteString": "tail"
         },
         {
           "artifactName": "Birds of Mirkwood",
@@ -2401,7 +2466,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "transferable": false
+          "transferable": false,
+          "spriteString": "bird"
         }
 
       ],
@@ -2508,7 +2574,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 1,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "scimitar"
         }
       ],
       "terrain": 0,
@@ -2568,7 +2635,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "boots"
         },
         {
           "artifactName": "River lilies",
@@ -2581,7 +2649,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "flower"
         }
       ],
       "terrain": 5,
@@ -2689,7 +2758,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "cloak"
         },
         {
           "artifactName": "Hood of Stars",
@@ -2702,7 +2772,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "hood"
         }
       ],
       "terrain": 2,
@@ -2763,7 +2834,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 2,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "bow"
         },
         {
           "artifactName": "Robes of Aman",
@@ -2776,7 +2848,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "cloak"
         }
 
       ],
@@ -2838,7 +2911,8 @@
           "mageBonus": 0,
           "oneShot": true,
           "bonusAttack": 0,
-          "bonusDefense": 1
+          "bonusDefense": 1,
+          "spriteString": "potion"
         }
       ],
       "terrain": 5,
@@ -2947,7 +3021,8 @@
           "mageBonus": 0,
           "oneShot": true,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "wine"
         },
         {
           "artifactName": "Dorwinion Grapes",
@@ -2960,7 +3035,8 @@
           "mageBonus": 0,
           "oneShot": true,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "grapes"
         }
       ],
       "terrain": 4,
@@ -3022,7 +3098,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "sword"
         },
         {
           "artifactName": "Crown-shard of Cardolan",
@@ -3035,7 +3112,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "jewel"
         },
         {
           "artifactName": "Gripping Bone",
@@ -3048,7 +3126,8 @@
           "mageBonus": 0,
           "oneShot": false,
           "bonusAttack": 0,
-          "bonusDefense": 0
+          "bonusDefense": 0,
+          "spriteString": "skeleton_arm"
         }
       ],
       "terrain": 1,

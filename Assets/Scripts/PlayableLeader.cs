@@ -1,9 +1,9 @@
 
 public class PlayableLeader : Leader
 {
-    new public void Initialize(Hex hex, LeaderBiomeConfig playableLeaderBiome)
+    new public void Initialize(Hex hex, LeaderBiomeConfig playableLeaderBiome, bool showSpawnMessage = true)
     {
-        base.Initialize(hex, playableLeaderBiome);
+        base.Initialize(hex, playableLeaderBiome, showSpawnMessage);
         FindFirstObjectByType<PlayableLeaderIcons>().Instantiate(this);
     }
 
