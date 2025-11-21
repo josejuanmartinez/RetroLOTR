@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Google.Protobuf.WellKnownTypes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -253,17 +254,17 @@ public class Board : MonoBehaviour
         hexesWithCharacters = GetHexes().FindAll(x => x.characters.Count > 0);
     }
 
-    public void SelectCharacter(Character character, bool lookAt = true)
+    public void SelectCharacter(Character character, bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
     {
-        SelectHex(character.hex, lookAt);
+        SelectHex(character.hex, lookAt, duration, delay);
     }
 
-    public void SelectHex(Hex hex, bool lookAt = true)
+    public void SelectHex(Hex hex, bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
     {
-        SelectHex(hex.v2, lookAt);
+        SelectHex(hex.v2, lookAt, duration, delay);
     }
 
-    public void SelectHex(Vector2Int selection, bool lookAt = true)
+    public void SelectHex(Vector2Int selection, bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
     {
         try
         {
@@ -275,7 +276,7 @@ public class Board : MonoBehaviour
                 {
                     UnselectHex();
                     selectedHex = selection;
-                    hexes[selection].Select(lookAt);
+                    hexes[selection].Select(lookAt, duration, delay);
                 }
 
                 // If same hex, I loop through characters
@@ -292,7 +293,7 @@ public class Board : MonoBehaviour
                 {
                     UnselectHex();
                     selectedHex = selection;
-                    hexes[selection].Select(lookAt);
+                    hexes[selection].Select(lookAt, duration, delay);
 
                     selectedCharacter = myCharacters[0];
                     FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(selectedCharacter);
@@ -324,6 +325,7 @@ public class Board : MonoBehaviour
             FindFirstObjectByType<Layout>().GetActionsManager().Hide();
             return;
         }
+        if(selectedCharacter) FindFirstObjectByType<ActionsManager>().Refresh(selectedCharacter);
     }
 
     public void UnselectHex()
@@ -444,8 +446,8 @@ public class Board : MonoBehaviour
     IEnumerator MoveCoroutine(Character character, List<Vector2Int> path)
     {
         FindFirstObjectByType<HexPathRenderer>().HidePath();
-        SelectedCharacterIcon selected = null;
-        ActionsManager actionsManager = null;
+        SelectedCharacterIcon selected;
+        ActionsManager actionsManager;
         Hex currentHex = character.hex; // Store initial hex
 
         try
@@ -462,17 +464,17 @@ public class Board : MonoBehaviour
         }
 
 
-        SpriteRenderer moverImage = characterMoverImage;
+        SpriteRenderer moverSR = characterMoverImage;
         if (character.IsArmyCommander())
         {
             switch (character.alignment)
             {
                 case AlignmentEnum.freePeople:
-                    moverImage = freeArmyMoverImage; break;
+                    moverSR = freeArmyMoverImage; break;
                 case AlignmentEnum.darkServants:
-                    moverImage = darkServantsMoverImage; break;
+                    moverSR = darkServantsMoverImage; break;
                 case AlignmentEnum.neutral:
-                    moverImage = neutralMoverImage; break;
+                    moverSR = neutralMoverImage; break;
             }
         }
 
@@ -481,18 +483,6 @@ public class Board : MonoBehaviour
             Hex previousHex = hexes[path[i]];
             Hex newHex = hexes[path[i + 1]];
             currentHex = previousHex;
-
-            // Pick the mover sprite to use (you already do this)
-            SpriteRenderer moverSR = characterMoverImage;
-            if (character.IsArmyCommander())
-            {
-                switch (character.alignment)
-                {
-                    case AlignmentEnum.freePeople: moverSR = freeArmyMoverImage; break;
-                    case AlignmentEnum.darkServants: moverSR = darkServantsMoverImage; break;
-                    case AlignmentEnum.neutral: moverSR = neutralMoverImage; break;
-                }
-            }
 
             // Get the visible sprites on each hex
             SpriteRenderer fromSR = previousHex.GetCharacterSpriteRendererOnHex(character);
@@ -503,7 +493,7 @@ public class Board : MonoBehaviour
             Vector3 endPos = (toSR != null) ? toSR.transform.position : newHex.transform.position;
 
             IEnumerator tween = null; 
-            bool canAnimate = (moverSR != null && fromSR != null); // need at least fromSR for look/size
+            bool canAnimate = moverSR != null && fromSR != null; // need at least fromSR for look/size
 
             try
             {
@@ -522,7 +512,8 @@ public class Board : MonoBehaviour
             try
             {
                 // Commit logic AFTER the tween so Redraw snaps to the new hex cleanly
-                MoveCharacterOneHex(character, previousHex, newHex, false, false);
+                bool lastHex = i == path.Count -1;
+                MoveCharacterOneHex(character, previousHex, newHex, lastHex, lastHex);
                 currentHex = newHex;
                 selected.RefreshMovementLeft(character);
             }
@@ -579,9 +570,11 @@ public class Board : MonoBehaviour
             if (character.GetOwner() == FindFirstObjectByType<Game>().player)
             {
                 if (lookAt) newHex.LookAt();
-                character.hex.RevealArea(1, lookAt);
-                UnselectHex();
-                SelectHex(newHex, lookAt);
+                character.hex.RevealArea(1, lookAt);                
+                if(finishMovement) {
+                    UnselectHex();
+                    SelectHex(newHex, lookAt);
+                }
             }            
 
             if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
@@ -631,9 +624,11 @@ public class Board : MonoBehaviour
             // Redraw
             currentHex.RedrawCharacters();
             currentHex.RedrawArmies();
-            if (lookAt) currentHex.LookAt();
-            SelectHex(currentHex.v2, lookAt);
-
+            if (finishMovement)
+            {
+              currentHex.LookAt();  
+              SelectHex(currentHex.v2, lookAt);
+            }
         }
     }
 

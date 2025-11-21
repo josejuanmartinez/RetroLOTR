@@ -106,6 +106,12 @@ public class PC
         
     }
 
+    public string GetLoyaltyText()
+    {
+        string color = loyalty <= 25? "#ff0000" : loyalty <= 50? "#ffff00" : loyalty <= 65? "#00ff00" : "#005500";
+        return $"Loyalty [<color={color}>{Math.Max(0, loyalty)}</color>]";
+    }
+
     public string GetProducesHoverText()
     {
         string result = "";

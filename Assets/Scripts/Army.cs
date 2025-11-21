@@ -131,11 +131,11 @@ public class Army
 
     public void Killed(Leader killedBy, bool onlyMark = false)
     {
-        if (killed) return;
         killed = true;
         int wound = UnityEngine.Random.Range(0, 100);
         MessageDisplayNoUI.ShowMessage(commander.hex,commander, $"{commander.characterName} army was killed and {commander.characterName} wounded by {wound}", Color.red);
-        if(!onlyMark && commander.hex.armies.Contains(this)) commander.hex.armies.Remove(this);
+        if(!onlyMark && commander.hex.armies.Contains(this)) commander.hex.armies.Remove(this);        
+        commander.hex.RedrawCharacters();
         commander.hex.RedrawArmies();
         commander = null;
         ma = 0;
@@ -295,10 +295,12 @@ public class Army
             }
         }
 
+
         // Redraw visuals
-        commander.hex.RedrawArmies();
+        targetHex.RedrawCharacters();
         targetHex.RedrawArmies();
-        targetHex.RedrawPC();
+        // Not needed: if captured or decreased or something, it will refresh automatically
+        // targetHex.RedrawPC();
     }
 
     // Helper method to process combat between attacker and a specific defender

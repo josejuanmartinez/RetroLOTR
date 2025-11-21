@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,18 +92,16 @@ public class NonPlayableLeader : Leader
 
     override public void Killed(Leader killedBy, bool onlyMask = false)
     {
-        if (killed) return;
-
-        if(!joined && killedBy.GetAlignment() == alignment && killedBy != this)
-        {
-            health = 1;
-            controlledCharacters.ForEach(x => x.health = 1);
-            controlledPcs.ForEach(x => x.DecreaseSize());
-            controlledPcs.ForEach(x => x.DecreaseFort());
-            Joined(killedBy);
-        } else
-        {
+        bool realmCollapsed = killedBy == this;
+        if(realmCollapsed || joined || killedBy.GetAlignment() != alignment)
+        {            
+            NonPlayableLeaderIcon npli = FindObjectsByType<NonPlayableLeaderIcon>(FindObjectsSortMode.None).FirstOrDefault(x => x.nonPlayableLeader == this);
+            if(npli != null) npli.SetDead();
             base.Killed(killedBy);
+        } 
+        else
+        {         
+            Joined(killedBy);
         }
     }
 
@@ -117,6 +116,7 @@ public class NonPlayableLeader : Leader
         // Transfer characters
         foreach (Character character in charactersToTransfer)
         {
+            character.health = Math.Min(character.health, 50);
             character.owner = joinedTo;
             character.alignment = joinedTo.alignment;
             character.startingCharacter = false;
@@ -128,6 +128,8 @@ public class NonPlayableLeader : Leader
         foreach (PC pc in pcsToTransfer)
         {
             pc.owner = joinedTo;
+            pc.DecreaseSize();
+            pc.DecreaseFort();            
             joinedTo.controlledPcs.Add(pc);
             joinedTo.visibleHexes.Add(pc.hex);
             if(joinedTo == FindAnyObjectByType<Game>().player) pc.hex.RevealArea(1);
@@ -154,9 +156,12 @@ public class NonPlayableLeader : Leader
         mithrilAmount = 0;
         goldAmount = 0;
 
+        health = Math.Min(health, 50);
         // Mark as killed and remove from NPCs list safely
         joined = true;
 
+        NonPlayableLeaderIcon npli = FindObjectsByType<NonPlayableLeaderIcon>(FindObjectsSortMode.None).FirstOrDefault(x => x.nonPlayableLeader == this);
+        if(npli != null) npli.SetHired();
         // Schedule the removal for after the current iteration completes
         StartCoroutine(RemoveFromNPCsNextFrame());
     }

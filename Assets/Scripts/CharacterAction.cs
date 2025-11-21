@@ -154,7 +154,9 @@ public class CharacterAction : SearcherByName
         string message = $"{actionName} failed";
         Debug.Log(message);
         if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  message, Color.red);
-        if (!isAI) game.MoveToNextCharacterToAction();
+        if (!isAI) game.PointToCharacterWithMissingActions();
+        if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
+        if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
         return;
     }
 
@@ -165,10 +167,13 @@ public class CharacterAction : SearcherByName
         {
             // All characters
             character.hasActionedThisTurn = true;
-            if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
 
             bool failed = false;
             if (UnityEngine.Random.Range(0, 100) < difficulty) failed = true;
+
+            // Should be impossible as the button will show not show up but just in case
+            if(!ResourcesAvailable()) failed = true;
+
             if (failed)
             {
                 Fail(isAI);
@@ -213,6 +218,7 @@ public class CharacterAction : SearcherByName
                 if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  "<sprite name=\"mage\"/> +1", Color.green);
             }
 
+            if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
 
             if(leatherCost > 0)
@@ -257,7 +263,7 @@ public class CharacterAction : SearcherByName
 
             if (!isAI) FindFirstObjectByType<StoresManager>().RefreshStores();
 
-            if (!isAI) game.MoveToNextCharacterToAction();
+            if (!isAI) game.PointToCharacterWithMissingActions();
 
             if (character.GetOwner() is not PlayableLeader) return;
 
@@ -277,6 +283,9 @@ public class CharacterAction : SearcherByName
         }
         catch (Exception e)
         {
+            if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
+            if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
+
             Debug.LogError($"{character.characterName} was unable to Execute action {actionName} {actionId} {actionInitials} {e}");
             character.hasActionedThisTurn = true;
             return;

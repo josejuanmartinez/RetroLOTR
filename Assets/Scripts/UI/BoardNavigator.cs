@@ -1,4 +1,5 @@
 using System.Collections;
+using Google.Protobuf.WellKnownTypes;
 using UnityEngine;
 
 public class BoardNavigator : MonoBehaviour
@@ -86,15 +87,15 @@ public class BoardNavigator : MonoBehaviour
         }
     }
 
-    public void LookAt(Vector3 targetPosition)
+    public void LookAt(Vector3 targetPosition, float duration = 1.0f, float delay = 0.0f)
     {
         if (lookAtCoroutine != null)
             StopCoroutine(lookAtCoroutine);
 
-        lookAtCoroutine = StartCoroutine(SmoothLookAt(targetPosition));
+        lookAtCoroutine = StartCoroutine(SmoothLookAt(targetPosition, duration, delay));
     }
 
-    private IEnumerator SmoothLookAt(Vector3 targetPosition)
+    private IEnumerator SmoothLookAt(Vector3 targetPosition, float duration = 1.0f, float delay = 0.0f)
     {
         Vector3 startPosition = transform.position;
         targetPosition.z = startPosition.z;
@@ -107,7 +108,8 @@ public class BoardNavigator : MonoBehaviour
         }
 
         float startTime = Time.time;
-        float duration = 1.0f;
+
+        yield return new WaitForSeconds(delay);
 
         while (Time.time - startTime < duration)
         {
@@ -130,7 +132,51 @@ public class BoardNavigator : MonoBehaviour
         Board board = FindAnyObjectByType<Board>();
         if (board != null && board.selectedCharacter != null && board.selectedCharacter.hex != null)
         {
-            LookAt(board.selectedCharacter.hex.transform.position);
+            LookAt(board.selectedCharacter.hex.transform.position, 1.0f, 0.0f);
         }
+    }
+
+    public void ClampToLastValidPosition(Vector3 lastValidPosition, Vector2Int lastHitHexCoords)
+    {
+        var desiredPosition = transform.position;
+        var attemptedDelta = desiredPosition - lastValidPosition;
+        const float epsilon = 0.0001f;
+        bool clamped = false;
+
+        if (attemptedDelta.x > epsilon)
+        {
+            desiredPosition.x = lastValidPosition.x;
+            clamped = true;
+        }
+        else if (attemptedDelta.x < -epsilon)
+        {
+            desiredPosition.x = lastValidPosition.x;
+            clamped = true;
+        }
+
+        if (attemptedDelta.y > epsilon)
+        {
+            desiredPosition.y = lastValidPosition.y;
+            clamped = true;
+        }
+        else if (attemptedDelta.y < -epsilon)
+        {
+            desiredPosition.y = lastValidPosition.y;
+            clamped = true;
+        }
+
+        if (!clamped) return;
+
+        transform.position = desiredPosition;
+
+        /*if (lastHitHexCoords.x >= 0 && lastHitHexCoords.y >= 0)
+        {
+            Debug.Log($"Cannot move past hex {lastHitHexCoords.x},{lastHitHexCoords.y}; movement clamped to board bounds.");
+        }
+        else
+        {
+            Debug.Log("Cannot move further in that direction; movement clamped to board bounds.");
+        }
+        */
     }
 }

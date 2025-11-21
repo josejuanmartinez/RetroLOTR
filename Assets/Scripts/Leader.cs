@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Google.Protobuf.WellKnownTypes;
 using UnityEngine;
 
 public class Leader : Character
@@ -109,17 +110,21 @@ public class Leader : Character
         if (game.player != this)
         {
             controlledCharacters.ForEach((x) => { x.Pass(); });
-            FindFirstObjectByType<Game>().NextPlayer();
+            game.NextPlayer();
         }
         else
         {
+            if(this.killed) {
+                game.EndGame(false);
+                yield break;
+            }
             // Refresh UI
             FindFirstObjectByType<StoresManager>().RefreshStores();
             // Refresh hexes
             StartCoroutine(RevealVisibleHexesAsync(() =>
             {
                 // Prompt for action to the player
-                FindFirstObjectByType<Board>().SelectCharacter(this);
+                FindFirstObjectByType<Board>().SelectCharacter(this, true, 1.0f, 0.0f);
             }
             ));
         }
@@ -260,7 +265,8 @@ public class Leader : Character
 
     public override void Killed(Leader killedBy, bool onlyMask = false)
     {
-        if(killedBy == this)
+        bool realmCollapsed = killedBy == this;
+        if(realmCollapsed)
         {
             MessageDisplayNoUI.ShowMessage(hex, this, $"{name}'s realm collapsed!", Color.red);
         } else
@@ -268,12 +274,13 @@ public class Leader : Character
             MessageDisplayNoUI.ShowMessage(hex, this, $"{name} was killed by {killedBy.characterName}", Color.red);
         }
 
+        // We just mark them (, true) as if we kill them, they will be removed from controlledCharacters array and change the size dynamically
+        // Throwing an error
         controlledCharacters.ForEach(x =>
         {
             x.hex.characters.Remove(x);
             x.hex.armies.Remove(x.GetArmy());
-            x.hex.RedrawCharacters();
-            x.hex.RedrawArmies();
+            // Redraw in x.Killed
             if (x != this) x.Killed(killedBy, true);
         });
 
@@ -283,23 +290,24 @@ public class Leader : Character
             if (controlledCharacters.Contains(marked) && marked != this) marked.Killed(killedBy);
         }
 
-        // Not autokilled (like bankrupt)
-        if (killedBy != this)
+        if (realmCollapsed)
+        {
+            // Autokilled (like bankrupt)
+            foreach (PC pc in GetOwner().controlledPcs)
+            {
+                pc.owner = null;
+                hex.SetPC(null);
+                hex.RedrawPC();
+            }
+        }
+        else        
         {
             foreach (PC pc in GetOwner().controlledPcs)
             {
                 pc.owner = killedBy;
                 killedBy.controlledPcs.Add(pc);
                 killedBy.visibleHexes.Add(hex);
-            }
-        }
-        else
-        {
-            foreach (PC pc in GetOwner().controlledPcs)
-            {
-                pc.owner = null;
-                hex.SetPC(null);
-                hex.RedrawPC();
+                pc.hex.RedrawPC();
             }
         }
 

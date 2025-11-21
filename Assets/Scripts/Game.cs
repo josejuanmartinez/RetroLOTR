@@ -41,9 +41,10 @@ public class Game : MonoBehaviour
     public int turn = 0;
     public bool started = false;
 
+    private Board board;
     void Awake()
     {
-
+        if (!board) board = FindAnyObjectByType<Board>();
     }
 
     private void AssignAIandHumans()
@@ -79,10 +80,9 @@ public class Game : MonoBehaviour
 
         currentlyPlaying = player;
 
-        FindFirstObjectByType<Board>().StartGame();
+        board.StartGame();
         AssignAIandHumans();
         currentlyPlaying.NewTurn();
-
 
         soundPlayer.PlayOneShot(FindFirstObjectByType<Sounds>().GetSoundByName($"{currentlyPlaying.alignment}_intro"));
         PopupManager.Show(
@@ -94,11 +94,11 @@ public class Game : MonoBehaviour
         );
     }
 
-    public bool MoveToNextCharacterToAction()
+    public bool PointToCharacterWithMissingActions()
     {
         // Make sure all characters have actioned
-        Character stillNotActioned = player.controlledCharacters.Find(x => !x.hasActionedThisTurn && !x.killed && FindFirstObjectByType<Board>().selectedCharacter != x);
-        if (stillNotActioned != null) FindFirstObjectByType<Board>().SelectCharacter(stillNotActioned);
+        Character stillNotActioned = player.controlledCharacters.Find(x => !x.hasActionedThisTurn && !x.killed && board.selectedCharacter != x);
+        if ( stillNotActioned != null) board.SelectCharacter(stillNotActioned, true, 1.0f, 2.0f);
         return stillNotActioned != null;
     }
 
@@ -107,7 +107,7 @@ public class Game : MonoBehaviour
         if (currentlyPlaying == player)
         {
             
-            if (MoveToNextCharacterToAction())
+            if (PointToCharacterWithMissingActions())
             {
                 if(await ConfirmationDialog.AskYesNo("Some characters have not actioned this turn. Finish the turn anyway?")==false)
                 {
@@ -136,7 +136,7 @@ public class Game : MonoBehaviour
 
         if (currentlyPlaying == null)
         {
-            EndGame(player.killed);
+            EndGame(player != null && !player.killed);
             return;
         }
 
@@ -150,7 +150,7 @@ public class Game : MonoBehaviour
             }
             MessageDisplay.ShowMessage($"Turn {turn++}", Color.green);
         }
-        FindFirstObjectByType<Board>().RefreshRelevantHexes();
+        board.RefreshRelevantHexes();
         currentlyPlaying.NewTurn();
     }
 

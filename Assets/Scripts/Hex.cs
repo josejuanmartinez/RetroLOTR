@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Google.Protobuf.WellKnownTypes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -68,8 +69,6 @@ public class Hex : MonoBehaviour
     public List<Character> characters = new();
     public List<Artifact> hiddenArtifacts = new();
 
-    private Illustrations illustrations;
-
     // Use HashSet for O(1) contains
     private HashSet<Leader> scoutedBy = new();
 
@@ -99,7 +98,6 @@ public class Hex : MonoBehaviour
     void Awake()
     {
         pc = null;
-        illustrations = FindFirstObjectByType<Illustrations>();
 
         // Cache singletons once
         game = FindFirstObjectByType<Game>();
@@ -247,6 +245,13 @@ public class Hex : MonoBehaviour
         if (refreshHoverText) RefreshHoverText();
     }
 
+    public string GetLoyalty()
+    {
+        if (pc != null && (pc.owner == game.player || (pc.owner.alignment == game.player.alignment && pc.owner.alignment != AlignmentEnum.neutral) || scoutedBy.Contains(game.player))) {
+            return pc.GetLoyaltyText();
+        }
+        return "";
+    }
     public string GetProduction()
     {
         if (pc != null && (pc.owner == game.player || (pc.owner.alignment == game.player.alignment && pc.owner.alignment != AlignmentEnum.neutral) || scoutedBy.Contains(game.player))) {
@@ -264,27 +269,27 @@ public class Hex : MonoBehaviour
         {            
             if (camp && camp.activeSelf)
             {
-                campText.text = $"{pc.pcName}<sprite name=\"pc\">[1] {GetProduction()}";
+                campText.text = $"{pc.pcName}<sprite name=\"pc\">[1] {GetLoyalty()}{GetProduction()}";
                 campText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (village && village.activeSelf)
             {
-                villageText.text = $"{pc.pcName}<sprite name=\"pc\">[2] {GetProduction()}";
+                villageText.text = $"{pc.pcName}<sprite name=\"pc\">[2] {GetLoyalty()}{GetProduction()}";
                 villageText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (town && town.activeSelf)
             {
-                townText.text = $"{pc.pcName}<sprite name=\"pc\">[3] {GetProduction()}";
+                townText.text = $"{pc.pcName}<sprite name=\"pc\">[3] {GetLoyalty()}{GetProduction()}";
                 townText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (majorTown && majorTown.activeSelf)
             {
-                majorTownText.text = $"{pc.pcName}<sprite name=\"pc\">[4] {GetProduction()}";
+                majorTownText.text = $"{pc.pcName}<sprite name=\"pc\">[4] {GetLoyalty()}{GetProduction()}";
                 majorTownText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
             if (city && city.activeSelf)
             {
-                cityText.text = $"{pc.pcName}<sprite name=\"pc\">[5] {GetProduction()}";
+                cityText.text = $"{pc.pcName}<sprite name=\"pc\">[5] {GetLoyalty()}{GetProduction()}";
                 cityText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
             }
         }
@@ -371,13 +376,13 @@ public class Hex : MonoBehaviour
         if (!isSelected) SetActiveFast(hoverHexFrame, false);
     }
 
-    public void Select(bool lookAt = true)
+    public void Select(bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
     {
         if (!IsHidden())
         {
             SetActiveFast(hoverHexFrame, true);
             isSelected = true;
-            if (lookAt) LookAt();
+            if (lookAt) LookAt(duration, delay);
         }
     }
 
@@ -387,12 +392,12 @@ public class Hex : MonoBehaviour
         SetActiveFast(hoverHexFrame, false);
     }
 
-    public void LookAt()
+    public void LookAt(float duration = 1.0f, float delay = 0.0f)
     {
         if (!game.IsPlayerCurrentlyPlaying()) return;
         // Avoid GameObject.Find/string allocs; use our own transform
         if (navigator == null) navigator = FindFirstObjectByType<BoardNavigator>();
-        if (navigator != null) navigator.LookAt(transform.position);
+        if (navigator != null) navigator.LookAt(transform.position, duration, delay);
     }
 
     public bool HasCharacter(Character c) => characters.Contains(c);
@@ -427,7 +432,7 @@ public class Hex : MonoBehaviour
 
     public void Reveal(Leader scoutedByPlayer = null)
     {
-        RevealInternal(scoutedByPlayer, IsPlayerTurn());
+        RevealInternal(scoutedByPlayer, game.IsPlayerCurrentlyPlaying());
     }
 
     public void Unreveal(Leader unrevealedPlayer = null)
@@ -458,9 +463,9 @@ public class Hex : MonoBehaviour
     {
         if (board == null) board = FindFirstObjectByType<Board>();
 
-        bool isPlayerTurn = IsPlayerTurn();
+        bool isPlayerTurn = game.IsPlayerCurrentlyPlaying();
         RevealInternal(scoutedByPlayer, isPlayerTurn);
-        if (radius <= 0 || board == null) { if (lookAt) LookAt(); return; }
+        if (radius <= 0 || board == null) { if (isPlayerTurn && lookAt) LookAt(); return; }
 
         var queue = areaQueue;
         var visited = areaVisited;
@@ -493,7 +498,11 @@ public class Hex : MonoBehaviour
             }
             currentRadius++;
         }
-        if (lookAt) LookAt();
+        
+        if(game.IsPlayerCurrentlyPlaying()) {
+            if (lookAt) LookAt();
+            MinimapManager.RefreshMinimap();
+        }
     }
 
     private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
@@ -504,12 +513,6 @@ public class Hex : MonoBehaviour
         RedrawCharacters(false);
         RedrawPC(false);
         RefreshHoverText();
-    }
-
-    private bool IsPlayerTurn()
-    {
-        var g = GetGameInstance();
-        return g != null && g.currentlyPlaying == g.player;
     }
 
     private Game GetGameInstance()

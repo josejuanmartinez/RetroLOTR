@@ -37,7 +37,6 @@ public class RumoursManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject); // optional: persists across scenes
         game = FindFirstObjectByType<Game>();
     }
 
@@ -62,18 +61,19 @@ public class RumoursManager : MonoBehaviour
     /// Moves the last `qty` private rumours into the public list,
     /// then updates the UI.
     /// </summary>
-    public static void GetRumours(AlignmentEnum alignment, int enemyRumoursQty, int friendlyRumoursQty)
+    public static int GetRumours(AlignmentEnum alignment, int enemyRumoursQty, int friendlyRumoursQty)
     {
         if (!EnsureInstance(nameof(GetRumours)))
-            return;
+            return 0;
 
         if (enemyRumoursQty + friendlyRumoursQty <= 0 || Instance.privateRumours.Count == 0)
-            return;
+            return 0;
 
         int enemyAvailable = 0;
         int friendlyAvailable = 0;
         foreach (Rumour rumour in Instance.privateRumours)
         {
+            if (rumour.leader == Instance.game.player) continue;
             bool isFriendly = rumour.leader.alignment == alignment && rumour.leader.alignment != AlignmentEnum.neutral;
             if (isFriendly)
             {
@@ -88,6 +88,8 @@ public class RumoursManager : MonoBehaviour
         // Clamp qty so we don't ask for more than exist
         enemyRumoursQty = Mathf.Clamp(enemyRumoursQty, 0, enemyAvailable);
         friendlyRumoursQty = Mathf.Clamp(friendlyRumoursQty, 0, friendlyAvailable);
+
+        int totalRumours = enemyRumoursQty + friendlyRumoursQty;
 
         List<int> toRemove = new();
         for(int i=Instance.privateRumours.Count-1; i>=0;i--)
@@ -111,6 +113,7 @@ public class RumoursManager : MonoBehaviour
         toRemove.ForEach(x => Instance.privateRumours.RemoveAt(x));
 
         UpdateRumourText();
+        return totalRumours;
     }
 
     /// <summary>

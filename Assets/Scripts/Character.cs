@@ -160,7 +160,7 @@ public class Character : MonoBehaviour
     public void Halt()
     {
         isHalted = true;
-        MessageDisplayNoUI.ShowMessage(hex, this,  $"Halted for next turn!", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} halted for next turn!", Color.red);
     }
 
     public void Encourage(int turns = 1)
@@ -188,6 +188,8 @@ public class Character : MonoBehaviour
         // STATUS EFFECTS (TODO)
         StoreReachableHexes();
         StoreRelevantHexes();
+        RefreshSelectedCharacterIconIfSelected();
+        RefreshActionsIfSelected();
     }
 
     public virtual Leader GetOwner()
@@ -260,6 +262,9 @@ public class Character : MonoBehaviour
         }
 
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\"/>[{amount}]", Color.green);
+        hex.RedrawCharacters();
+        hex.RedrawArmies();
+        RefreshSelectedCharacterIconIfSelected();
     }
 
     public Army GetArmy()
@@ -270,22 +275,42 @@ public class Character : MonoBehaviour
 
     virtual public void Killed(Leader killedBy, bool onlyMark=false)
     {
-        if (IsArmyCommander() && !army.killed) army.Killed(killedBy, onlyMark);
+        bool redrawArmies = false;
+        if (IsArmyCommander() && !army.killed) {
+            army.Killed(killedBy, onlyMark);
+            redrawArmies = true;
+        }
         if(!onlyMark)
         {
             if(GetOwner().controlledCharacters.Contains(this)) GetOwner().controlledCharacters.Remove(this);
             if(hex.characters.Contains(this)) hex.characters.Remove(this);
-            hex.RedrawCharacters();
         }
         health = 0;
         killed = true;
-        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} eliminated", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} eliminated", Color.red);        
+        hex.RedrawCharacters();
+        RefreshSelectedCharacterIconIfSelected();
+        if(redrawArmies) hex.RedrawArmies();
+    }
+
+    public void RefreshSelectedCharacterIconIfSelected()
+    {        
+        Game game = FindAnyObjectByType<Game>();
+        Board board = FindAnyObjectByType<Board>();
+        if(game.IsPlayerCurrentlyPlaying() && board.selectedCharacter == this) FindFirstObjectByType<SelectedCharacterIcon>().Refresh(this);
+    }
+    public void RefreshActionsIfSelected()
+    {        
+        Game game = FindAnyObjectByType<Game>();
+        Board board = FindAnyObjectByType<Board>();
+        if(game.IsPlayerCurrentlyPlaying() && board.selectedCharacter == this) FindFirstObjectByType<ActionsManager>().Refresh(this);
     }
 
     public void Wounded(Leader woundedBy, int damage)
     {
         health -= damage;
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} wounded by {damage}", Color.red);
+        RefreshSelectedCharacterIconIfSelected();
         if (health < 1) Killed(woundedBy);
     }
 
@@ -365,6 +390,7 @@ public class Character : MonoBehaviour
     {
         this.health = Mathf.Min(100, this.health + health);
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} heals by {health}", Color.green);
+        RefreshSelectedCharacterIconIfSelected();
     }
 
     public void StoreReachableHexes()
@@ -406,10 +432,5 @@ public class Character : MonoBehaviour
 
         Assert.IsTrue(relevantHexes.Count == MAX_RELEVANT_HEXES, "Relevant hexes list size mismatch!");
         this.relevantHexes = relevantHexes;
-    }
-
-    public void MoveTo(Hex newHex)
-    {
-
     }
 }
