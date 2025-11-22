@@ -85,6 +85,9 @@ public class Character : MonoBehaviour
             characterBiome.mage, 
             characterBiome.race, 
             characterBiome.artifacts,
+            characterBiome.startingArmySize,
+            characterBiome.preferedTroopType,
+            characterBiome.startingWarships,
             showSpawnMessage);
     }
 
@@ -99,6 +102,9 @@ public class Character : MonoBehaviour
         int mage,
         RacesEnum race,
         List<Artifact> artifacts,
+        int startingArmySize = 0,
+        TroopsTypeEnum preferedTroopType = TroopsTypeEnum.ma,
+        int startingWarships = 0,
         bool showSpawnMessage = true)
     {
         if (!awaken) Awake();
@@ -130,9 +136,9 @@ public class Character : MonoBehaviour
         this.hex = hex;
         hex.characters.Add(this);
 
-        if (this == owner && (owner.GetBiome().startingArmySize > 0 || owner.GetBiome().startingWarships > 0))
+        if (startingArmySize > 0 || startingWarships > 0)
         {
-            CreateArmy(owner.GetBiome().preferedTroopType, owner.GetBiome().startingArmySize, startingCharacter, owner.GetBiome().startingWarships);
+            CreateArmy(preferedTroopType, startingArmySize, startingCharacter, startingWarships);
         }
         else
         {

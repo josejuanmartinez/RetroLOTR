@@ -274,12 +274,24 @@
       "startingCityName": "Orthanc",
       "startingCitySize": 1,
       "startingCityFortSize": 1,
-      "startingArmySize": 3,
+      "startingArmySize": 0,
       "preferedTroopType": 0,
       "startingCityIsHidden": false,
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [
+        {
+          "characterName": "Uglúk",
+          "alignment": 2,
+          "commander": 2,
+          "agent": 0,
+          "emmissary": 0,
+          "mage": 0,
+          "race": 5,
+          "artifacts": [],          
+          "startingArmySize": 3,
+          "preferedTroopType": 0
+        },
         {
           "characterName": "Grima",
           "alignment": 2,
@@ -411,12 +423,24 @@
       "startingCityName": "Barad-dur",
       "startingCitySize": 1,
       "startingCityFortSize": 1,
-      "startingArmySize": 5,
+      "startingArmySize": 0,
       "preferedTroopType": 0,
       "startingCityIsHidden": false,
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [
+        {
+          "characterName": "Gothmog",
+          "alignment": 1,
+          "commander": 2,
+          "agent": 0,
+          "emmissary": 0,
+          "mage": 0,
+          "race": 6,
+          "artifacts": [ ],
+          "startingArmySize": 5,
+          "preferedTroopType": 0
+        },
         {
           "characterName": "Mouth of Sauron",
           "alignment": 1,

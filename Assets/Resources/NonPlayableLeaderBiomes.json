@@ -42,8 +42,8 @@
       "startingCityName": "Caras Galadhon",
       "startingCitySize": 3,
       "startingCityFortSize": 0,
-      "startingArmySize": 1,
-      "preferedTroopType": 1,
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
       "startingCityIsHidden": true,
       "startsWithPort": false,
       "startingWarships": 0,
@@ -66,7 +66,9 @@
           "emmissary": 0,
           "mage": 0,
           "race": 1,
-          "artifacts": []
+          "artifacts": [],          
+          "startingArmySize": 1,
+          "preferedTroopType": 1
         }
       ],
       "artifactsToJoin": [ "OneRing" ],
@@ -152,8 +154,8 @@
       "startingCityName": "Imladris",
       "startingCitySize": 4,
       "startingCityFortSize": 0,
-      "startingArmySize": 1,
-      "preferedTroopType": 1,
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
       "startingCityIsHidden": true,
       "startsWithPort": false,
       "startingWarships": 0,
@@ -176,7 +178,9 @@
           "emmissary": 1,
           "mage": 0,
           "race": 1,
-          "artifacts": []
+          "artifacts": [],          
+          "startingArmySize": 1,
+          "preferedTroopType": 1
         },
         {
           "characterName": "Bilbo",
@@ -562,8 +566,8 @@
       "startingCityName": "Dol Guldur",
       "startingCitySize": 4,
       "startingCityFortSize": 4,
-      "startingArmySize": 2,
-      "preferedTroopType": 1,
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
       "startingCityIsHidden": true,
       "startsWithPort": false,
       "startingWarships": 0,
@@ -586,7 +590,9 @@
           "emmissary": 1,
           "mage": 0,
           "race": 5,
-          "artifacts": []
+          "artifacts": [],          
+          "startingArmySize": 2,
+          "preferedTroopType": 1
         }
       ],
       "artifactsToJoin": [ "OneRing" ],
@@ -883,11 +889,11 @@
       "startingCityName": "Tol Burûth",
       "startingCitySize": 1,
       "startingCityFortSize": 4,
-      "startingArmySize": 4,
+      "startingArmySize": 0,
       "preferedTroopType": 0,
       "startingCityIsHidden": true,
       "startsWithPort": true,
-      "startingWarships": 1,
+      "startingWarships": 0,
       "startingCharacters": [
         {
           "characterName": "Dîn Ohtar",
@@ -896,7 +902,10 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
-          "race": 0,
+          "race": 0,          
+          "startingArmySize": 4,
+          "preferedTroopType": 0,
+          "startingWarships": 1,
           "artifacts": [
             {
               "artifactName": "Black Horse",
@@ -2082,8 +2091,8 @@
       "startingCityName": "Minas Tirith",
       "startingCitySize": 5,
       "startingCityFortSize": 5,
-      "startingArmySize": 3,
-      "preferedTroopType": 3,
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
       "startingCityIsHidden": false,
       "startsWithPort": false,
       "startingWarships": 0,
@@ -2095,7 +2104,9 @@
           "agent": 0,
           "emmissary": 0,
           "mage": 0,
-          "race": 0,
+          "race": 0,          
+          "startingArmySize": 3,
+          "preferedTroopType": 3,
           "artifacts": [
             {
               "artifactName": "Horn of Gondor",
@@ -2243,8 +2254,8 @@
       "startingCityName": "Edoras",
       "startingCitySize": 4,
       "startingCityFortSize": 3,
-      "startingArmySize": 2,
-      "preferedTroopType": 5,
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
       "startingCityIsHidden": false,
       "startsWithPort": false,
       "startingWarships": 0,
@@ -2266,7 +2277,9 @@
           "agent": 0,
           "emmissary": 0,
           "mage": 0,
-          "race": 0,
+          "race": 0,          
+          "startingArmySize": 2,
+          "preferedTroopType": 5,
           "artifacts": [
             {
               "artifactName": "Firefoot",
@@ -2313,7 +2326,7 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Thrain",
+      "characterName": "Dain",
       "alignment": 0,
       "commander": 3,
       "agent": 0,
