@@ -20,11 +20,11 @@ public class LeaderBiomeConfig: BiomeConfig
     public string startingCityName;
     public PCSizeEnum startingCitySize;
     public FortSizeEnum startingCityFortSize;
-    public int startingArmySize;
-    public TroopsTypeEnum preferedTroopType;
     public bool startingCityIsHidden;
     public bool startsWithPort;
     public int startingWarships;
+    public int startingArmySize;
+    public TroopsTypeEnum preferedTroopType;
 
     public List<BiomeConfig> startingCharacters = new();
 }
