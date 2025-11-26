@@ -42,30 +42,23 @@ public class KeyManager : MonoBehaviour
                 Character nextCharacter = null;
 
                 if (characters != null && characters.Count > 0)
-                {
+                {   
                     int startIndex = characters.IndexOf(current);
-                    if (startIndex < 0) startIndex = -1; // if current not in list
-
+                    if (startIndex < 0) startIndex = -1; // if current not in list                    
                     // Check everyone once, wrapping with modulo
                     for (int offset = 1; offset <= characters.Count; offset++)
                     {
                         int i = (startIndex + offset) % characters.Count;
-                        var c = characters[i];
-
+                        var c = characters[i];                        
                         if (c != null && !c.killed && !c.hasActionedThisTurn)
-                        {
+                        {                            
                             nextCharacter = c;
                             break;
                         }
                     }
                 }
 
-                if (nextCharacter != null)
-                {
-                    board.SelectHex(nextCharacter.hex);
-                    FindFirstObjectByType<BoardNavigator>()
-                    .LookAt(nextCharacter.hex.transform.position, 1.0f, 0.0f);
-                }
+                if (nextCharacter != null) board.SelectCharacter(nextCharacter);
 
                 return;
             }

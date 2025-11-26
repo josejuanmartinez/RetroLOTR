@@ -256,15 +256,15 @@ public class Board : MonoBehaviour
 
     public void SelectCharacter(Character character, bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
     {
-        SelectHex(character.hex, lookAt, duration, delay);
+        SelectHex(character.hex, lookAt, duration, delay, character);
     }
 
-    public void SelectHex(Hex hex, bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
+    public void SelectHex(Hex hex, bool lookAt = true, float duration = 1.0f, float delay = 0.0f, Character characterToSelect = null)
     {
-        SelectHex(hex.v2, lookAt, duration, delay);
+        SelectHex(hex.v2, lookAt, duration, delay, characterToSelect);
     }
 
-    public void SelectHex(Vector2Int selection, bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
+    public void SelectHex(Vector2Int selection, bool lookAt = true, float duration = 1.0f, float delay = 0.0f, Character characterToSelect = null)
     {
         try
         {
@@ -300,16 +300,17 @@ public class Board : MonoBehaviour
                 }
                 else
                 {
-                    var currentIndex = myCharacters.IndexOf(selectedCharacter);
-                    if(currentIndex == -1)
+                    var toSelectIndex = 0;
+                    if (characterToSelect != null)
                     {
-                        selectedCharacter = myCharacters[0];
-                    } else
+                        toSelectIndex = myCharacters.IndexOf(characterToSelect);
+                    } else if (selectedCharacter != null)
                     {
-                        var nextIndex = (currentIndex + 1) % myCharacters.Count;
-                        selectedCharacter = myCharacters[nextIndex];
+                        toSelectIndex = (myCharacters.IndexOf(selectedCharacter) + 1) % myCharacters.Count;
                     }
-
+                    
+                    selectedCharacter = myCharacters[toSelectIndex];
+                    
                     FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(selectedCharacter);
                 }
 
@@ -585,7 +586,9 @@ public class Board : MonoBehaviour
 
             if ((!wasWater && isWater) || (wasWater && !isWater) || finishMovement)
             {
-                character.moved = character.GetMaxMovement();                
+                character.moved = character.GetMaxMovement();
+                if(!wasWater && isWater) MessageDisplayNoUI.ShowMessage(newHex, character, "Embarked", Color.cyan);
+                if(wasWater && !isWater) MessageDisplayNoUI.ShowMessage(newHex, character, "Disembarked", Color.cyan);
             }
             else
             {

@@ -87,6 +87,32 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         initialized = true;
     }
 
+    public void Initialize(string text, int fontSize)
+    {
+        this.offset = Vector2.zero;
+        textWidget.text = CreateTextWithBackground(text);
+        textWidget.fontSize = fontSize;
+        textWidget.alignment = TextAlignmentOptions.MidlineLeft;
+        
+        // Force layout rebuild to ensure correct size calculation
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tooltipRectTransform);
+
+        initialized = true;
+    }
+    
+    public void Initialize(string text)
+    {
+        this.offset = Vector2.zero;
+        textWidget.text = CreateTextWithBackground(text);
+        textWidget.fontSize = 12;
+        textWidget.alignment = TextAlignmentOptions.MidlineGeoAligned;
+        
+        // Force layout rebuild to ensure correct size calculation
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tooltipRectTransform);
+
+        initialized = true;
+    }
+
     public string CreateTextWithBackground(string text)
     {
         return $"<mark=#ffffff>{text}</mark>";

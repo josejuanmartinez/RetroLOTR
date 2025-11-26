@@ -8,6 +8,8 @@ public class NonPlayableLeader : Leader
 {
 	public bool joined = false;
 
+    public List<PlayableLeader> revealedTo = new();
+
 	NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome;
 
     public void Initialize(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome, bool showSpawnMessage = true)
@@ -172,6 +174,17 @@ public class NonPlayableLeader : Leader
         yield return null;
         Game game = FindFirstObjectByType<Game>();
         if (game != null && game.npcs.Contains(this)) game.npcs.Remove(this);
+    }
+
+    public void RevealToPlayer()
+    {
+        revealedTo.Add(FindFirstObjectByType<Game>().player);
+        FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None).ToList().ForEach(x => x.RevealToPlayerIfNot(this));  
+    }
+
+    public bool IsRevealedToPlayer()
+    {
+        return revealedTo.Contains(FindFirstObjectByType<Game>().player);
     }
 
     new public void NewTurn()

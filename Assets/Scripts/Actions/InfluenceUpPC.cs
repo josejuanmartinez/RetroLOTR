@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 public class InfluenceUpPC : EmmissaryPCAction
 {
@@ -10,7 +9,7 @@ public class InfluenceUpPC : EmmissaryPCAction
         effect = (c) => {
             if (c.hex.GetPC() == null) return false;
             PC pc = c.hex.GetPC();
-            int loyalty = UnityEngine.Random.Range(1, 10) * c.GetEmmissary();
+            int loyalty = UnityEngine.Random.Range(1, 3) * c.GetEmmissary();
             pc.IncreaseLoyalty(loyalty, c);
             // MessageDisplayNoUI.ShowMessage(pc.hex, c, $"{pc.pcName} +{loyalty} loyalty!", Color.green);
             return originalEffect == null || originalEffect(c);

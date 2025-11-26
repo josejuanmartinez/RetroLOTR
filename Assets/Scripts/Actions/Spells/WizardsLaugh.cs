@@ -15,7 +15,7 @@ public class WizardLaugh: FreeNeutralSpell
                 }
             } else if (c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral)
             {
-                c.hex.GetPC().DecreaseLoyalty(UnityEngine.Random.Range(0, 10) * c.GetMage(), c);
+                c.hex.GetPC().DecreaseLoyalty(UnityEngine.Random.Range(0, 3) * c.GetMage(), c);
             }
             else return false;
             return originalEffect == null || originalEffect(c);

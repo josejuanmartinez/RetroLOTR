@@ -29,8 +29,8 @@ public class SelectedCharacterIcon : MonoBehaviour
     public TextMeshProUGUI movementLeft;
 
     [Header("Artifacts")]
-    public TextMeshProUGUI artifactsText;
-    public TextMeshProUGUI artifactsHoverText;
+    public GameObject artifactPrefab;
+    public Transform artifactsGridLayoutTransform;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -59,14 +59,16 @@ public class SelectedCharacterIcon : MonoBehaviour
         health.gameObject.SetActive(true);
         health.fillAmount = c.health / 100;
 
-        artifactsText.text = "";
-        artifactsHoverText.text = "";
+        foreach (Transform artifactChild in artifactsGridLayoutTransform)
+        {
+            Destroy(artifactChild.gameObject);
+        }
 
         c.artifacts.ForEach(x =>
         {
-            string spriteText = $"<sprite name=\"{x.GetSpriteString()}\">";
-            artifactsText.text += spriteText;
-            artifactsHoverText.text += $"{spriteText}{x.artifactName}{x.artifactDescription}<br>";
+            GameObject artifactGO = Instantiate(artifactPrefab, artifactsGridLayoutTransform);
+            artifactGO.name = x.artifactName;
+            artifactGO.GetComponent<ArtifactRenderer>().Initialize(x);
         });
         
         RefreshMovementLeft(c);

@@ -17,7 +17,7 @@ public class ScryArtifact: Spell
             Artifact artifact = randomHex.hiddenArtifacts[0];
             randomHex.Reveal(c.GetOwner());
             randomHex.LookAt();            
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetText()}", Color.green);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()}", Color.green);
             return originalEffect == null || originalEffect(c);
         };
         condition = (c) => {

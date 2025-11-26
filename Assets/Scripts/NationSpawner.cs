@@ -211,7 +211,7 @@ public class NationSpawner : MonoBehaviour
             return;
 
         PC pc = new(leader, hex);
-        hex.SetPC(pc);
+        hex.SetPC(pc, leaderBiomeConfig.pcFeature, leaderBiomeConfig.fortFeature);
         currentPcCount++;
     }
 

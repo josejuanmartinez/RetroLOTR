@@ -107,10 +107,9 @@ public class BoardNavigator : MonoBehaviour
             yield break;
         }
 
-        float startTime = Time.time;
-
         yield return new WaitForSeconds(delay);
 
+        float startTime = Time.time;
         while (Time.time - startTime < duration)
         {
             float timeElapsed = Time.time - startTime;

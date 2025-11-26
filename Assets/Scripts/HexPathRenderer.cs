@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -16,14 +17,12 @@ public class HexPathRenderer : MonoBehaviour
 
     private LineRenderer lineRenderer;
     private Board board;
-    private Game game;
     private Dictionary<(Character, int), HashSet<Vector2Int>> rangeCache = new();
     private Dictionary<Vector2Int, bool> waterTerrainCache = new();
     private Dictionary<(Vector2Int, Character), float> terrainCostCache = new();
 
     void Start()
     {
-        game = FindFirstObjectByType<Game>();
         board = GetComponent<Board>();
         lineRenderer = GetComponent<LineRenderer>();
         if (board == null)
@@ -56,18 +55,30 @@ public class HexPathRenderer : MonoBehaviour
         // Set the line renderer positions
         lineRenderer.positionCount = path.Count;
 
+        bool wasInWater = IsWaterTerrain(from);
+
         // Convert hex coordinates to world positions
         for (int i = 0; i < path.Count; i++)
         {
             Vector2Int hexPos = path[i];
+            bool isInWater = IsWaterTerrain(hexPos);
             if (board.hexes.TryGetValue(hexPos, out Hex hexObj))
             {
                 // Get the world position of the hex center
                 Vector3 worldPos = hexObj.transform.position;
                 lineRenderer.SetPosition(i, worldPos);
-                int terrainCost = i == 0? 0 : hexObj.GetTerrainCost(character);
-                movementLeft -= terrainCost;
-                hexObj.ShowMovementLeft(movementLeft, character);
+                if(i != 0)
+                {
+                    if(wasInWater != isInWater)
+                    { 
+                        movementLeft -= movementLeft;
+                    } else
+                    {
+                        movementLeft -= hexObj.GetTerrainCost(character);
+                    }
+                }
+                
+                hexObj.ShowMovementLeft(Math.Max(0, movementLeft), character);
             }
             else
             {
@@ -96,9 +107,6 @@ public class HexPathRenderer : MonoBehaviour
         gScore[startPos] = 0;
         fScore[startPos] = HexDistance(startPos, goalPos);
         hasTransition[startPos] = false;
-
-        // Determine if the start position is water
-        bool isStartWater = IsWaterTerrain(startPos);
 
         // Track the best path so far
         Vector2Int bestEnd = startPos;
@@ -362,8 +370,6 @@ public class HexPathRenderer : MonoBehaviour
         openSet.Add(startPos);
         reachableHexes.Add(startPos);
         gScore[startPos] = 0;
-
-        bool isStartWater = IsWaterTerrain(startPos);
 
         while (openSet.Count > 0)
         {

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 [Serializable]
@@ -24,8 +26,23 @@ public class Artifact
         return spriteString != "" ? spriteString : "artifact";
     }
 
-    public string GetText()
+    public string GetHoverText()
     {
-        return $"<sprite name=\"{GetSpriteString()}\"> {artifactName}( {artifactDescription} )";
+        List<string> sb = new() {$"<sprite name=\"{GetSpriteString()}\"><u>{artifactName}</u>"};
+        if(artifactDescription.Trim().Length>0) sb.Add($"({artifactDescription})");  
+        
+        List<string> sbDetails = new();
+        if(providesSpell.Trim().Length>0) sbDetails.Add($"Enables <i>{providesSpell}</i> action");
+        if(commanderBonus>0) sbDetails.Add($"+{commanderBonus}<sprite name=\"commander\">");
+        if(agentBonus>0) sbDetails.Add($"+{agentBonus}<sprite name=\"agent\">");
+        if(emmissaryBonus>0) sbDetails.Add($"+{emmissaryBonus}<sprite name=\"emmissary\">");
+        if(mageBonus>0) sbDetails.Add($"+{mageBonus}<sprite name=\"mage\">");
+        if(bonusAttack>0) sbDetails.Add($"+{bonusAttack} to attack");
+        if(bonusDefense>0) sbDetails.Add($"+{bonusDefense} to defense");
+        if(oneShot) sbDetails.Add("consumable");
+        if(!transferable) sbDetails.Add("non-transferable");
+        string sbDetailStr = string.Join(", ", sbDetails);
+        if(sbDetailStr.Length > 0) sb.Add($": {sbDetailStr}");
+        return string.Join("", sb);
     }
 }

@@ -14,7 +14,7 @@ public class FindArtifact: MageAction
                 Artifact artifact = c.hex.hiddenArtifacts[0];
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
-                MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetText()} found", Color.green);
+                MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} found", Color.green);
 
                 if (c.GetOwner() is PlayableLeader)
                 {

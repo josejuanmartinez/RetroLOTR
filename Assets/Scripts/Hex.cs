@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Google.Protobuf.WellKnownTypes;
 using TMPro;
@@ -19,6 +20,12 @@ public class Hex : MonoBehaviour
     public GameObject majorTown;
     public GameObject city;
 
+    public SpriteRenderer campSprite;
+    public SpriteRenderer villageSprite;
+    public SpriteRenderer townSprite;
+    public SpriteRenderer majorTownSprite;
+    public SpriteRenderer citySprite;
+
     public TextMeshPro campText;
     public TextMeshPro villageText;
     public TextMeshPro townText;
@@ -30,6 +37,12 @@ public class Hex : MonoBehaviour
     public GameObject fort;
     public GameObject fortress;
     public GameObject citadel;
+    
+    public SpriteRenderer towerSprite;
+    public SpriteRenderer keepSprite;
+    public SpriteRenderer fortSprite;
+    public SpriteRenderer fortressSprite;
+    public SpriteRenderer citadelSprite;
 
     public GameObject characterIcon;
 
@@ -83,6 +96,8 @@ public class Hex : MonoBehaviour
     private BoardNavigator navigator;
     private Game game;
 
+    private Features features;
+
     // Reused buffers to avoid GC in UI building / raycasts
     private static readonly StringBuilder sbChars = new(256);
     private static readonly StringBuilder sbFree = new(256);
@@ -101,6 +116,7 @@ public class Hex : MonoBehaviour
 
         // Cache singletons once
         game = FindFirstObjectByType<Game>();
+        features = FindFirstObjectByType<Features>();
         colors = FindFirstObjectByType<Colors>();
         board = FindFirstObjectByType<Board>();
         navigator = FindFirstObjectByType<BoardNavigator>();
@@ -225,7 +241,11 @@ public class Hex : MonoBehaviour
         bool revealed = IsHexRevealed();
         bool pcRevealed = revealed && IsPCRevealed();
 
-        if(pc.owner is NonPlayableLeader) FindFirstObjectByType<NonPlayableLeaderIcons>().RevealToPlayerIfNot(pc.owner as NonPlayableLeader);
+        if(game.IsPlayerCurrentlyPlaying() && pc.owner is NonPlayableLeader && !(pc.owner as NonPlayableLeader).IsRevealedToPlayer() && pcRevealed)
+        {
+            NonPlayableLeader npl = pc.owner as NonPlayableLeader;
+            npl.RevealToPlayer();
+        } 
 
         // city size visibility
         SetActiveFast(camp, pcRevealed && pc.citySize == PCSizeEnum.camp);
@@ -312,6 +332,13 @@ public class Hex : MonoBehaviour
 
             if (canSee)
             {
+                
+                if(game.IsPlayerCurrentlyPlaying() && ch.GetOwner() is NonPlayableLeader && !(ch.GetOwner() as NonPlayableLeader).IsRevealedToPlayer())
+                {
+                    NonPlayableLeader npl = ch.GetOwner() as NonPlayableLeader;
+                    npl.RevealToPlayer();
+                } 
+                
                 var charName = ch.GetHoverText(true, true, true, false, true);
                 if (ch.IsArmyCommander())
                 {
@@ -515,12 +542,6 @@ public class Hex : MonoBehaviour
         RefreshHoverText();
     }
 
-    private Game GetGameInstance()
-    {
-        if (game == null) game = FindFirstObjectByType<Game>();
-        return game;
-    }
-
     public void UnrevealArea(int radius = 1, bool lookAt = true, Leader unrevealedBy = null)
     {
         if (board == null) board = FindFirstObjectByType<Board>();
@@ -609,16 +630,34 @@ public class Hex : MonoBehaviour
         return null;
     }
 
-    public void SetPC(PC pc)
+    public void SetPC(PC pc, string pcFeature = "", string fortFeature = "")
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
         this.pc = pc;
+        if(pcFeature != "")
+        {
+            Sprite pcFeatureSprite = features.GetFeatureByName(pcFeature);
+            campSprite.sprite = pcFeatureSprite;
+            villageSprite.sprite = pcFeatureSprite;
+            townSprite.sprite = pcFeatureSprite;
+            majorTownSprite.sprite = pcFeatureSprite;
+            citySprite.sprite = pcFeatureSprite;
+        }
+        if(fortFeature != "")
+        {
+            Sprite fortFeatureSprite = features.GetFeatureByName(fortFeature);
+            towerSprite.sprite = fortFeatureSprite;
+            fortSprite.sprite = fortFeatureSprite;
+            keepSprite.sprite = fortFeatureSprite;
+            fortressSprite.sprite = fortFeatureSprite;
+            citadelSprite.sprite = fortFeatureSprite;
+        }
     }
 
     public void ShowMovementLeft(int movementLeft, Character character)
     {
         SetActiveFast(movement, true);
-        movementCostManager.ShowMovementLeft(movementLeft, character);
+        movementCostManager.ShowMovementLeft(Math.Max(0, movementLeft), character);
     }
 
     // Safe SetActive that avoids redundant calls/dirtying the obj

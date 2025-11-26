@@ -19,6 +19,9 @@ public class LeaderBiomeConfig: BiomeConfig
     public FeaturesEnum feature = FeaturesEnum.noFeature;
     public string startingCityName;
     public PCSizeEnum startingCitySize;
+
+    public string pcFeature = "";
+    public string fortFeature = "";
     public FortSizeEnum startingCityFortSize;
     public bool startingCityIsHidden;
     public bool startsWithPort;
