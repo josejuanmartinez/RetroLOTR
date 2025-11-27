@@ -27,4 +27,14 @@ public class LeaderBiomeConfig: BiomeConfig
     public bool startsWithPort;
 
     public List<BiomeConfig> startingCharacters = new();
+
+    public string hcDescription = "Heavy Cavalry";
+    public string lcDescription = "Light Cavalry";
+    public string hiDescription = "Heavy Infantry";
+    public string liDescription = "Light Infantry";
+    public string arDescription = "Archers";
+    public string maDescription = "Men-at-arms";
+    public string wsDescription = "War ships";
+    public string caDescription = "Catapults";
+
 }

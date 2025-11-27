@@ -78,7 +78,7 @@ public class HexPathRenderer : MonoBehaviour
                     }
                 }
                 
-                hexObj.ShowMovementLeft(Math.Max(0, movementLeft), character);
+                hexObj.ShowMovementLeft(movementLeft, character);
             }
             else
             {

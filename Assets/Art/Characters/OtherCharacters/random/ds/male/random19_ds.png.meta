@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: eded88492dc846e43864ad3e15e92b43
+guid: c7110303d0327224fb4edc6a1b84105c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4466691585877813790
-    second: ramdom5_ds_0
+      213: -6418548540223911896
+    second: Huz_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ramdom5_ds_0
+      name: Huz_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 1024
-        height: 1024
+        height: 1044
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2e5d68e0baf1302c0800000000000000
-      internalID: -4466691585877813790
+      spriteID: 8280a5e0c1cbce6a0800000000000000
+      internalID: -6418548540223911896
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Huz_0: -6418548540223911896
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

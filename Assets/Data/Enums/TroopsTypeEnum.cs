@@ -2,14 +2,14 @@ using System.Collections.Generic;
 
 public enum TroopsTypeEnum 
 {
-    ma,
-    ar,
-    li,
-    hi,
-    lc,
-    hc,
-    ca,
-    ws
+    ma = 0,
+    ar = 1,
+    li = 2,
+    hi = 3,
+    lc = 4,
+    hc = 5,
+    ca = 6,
+    ws = 7
 }
 
 public static class ArmyData

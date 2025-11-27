@@ -98,18 +98,19 @@ public class Army
 
     public string GetHoverText()
     {
-        List<string> result = new() { " leading an army of " };
+        LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
+        List<string> result = new() { };
     
-        if (ma > 0) result.Add($"<sprite name=\"ma\">[{ma}]");
-        if (ar > 0) result.Add($"<sprite name=\"ar\">[{ar}]");
-        if (li > 0) result.Add($"<sprite name=\"li\">[{li}]");
-        if (hi > 0) result.Add($"<sprite name=\"hi\">[{hi}]");
-        if (lc > 0) result.Add($"<sprite name=\"lc\">[{lc}]");
-        if (hc > 0) result.Add($"<sprite name=\"hc\">[{hc}]");
-        if (ca > 0) result.Add($"<sprite name=\"ca\">[{ca}]");
-        if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}]");
+        if (ma > 0) result.Add($"{biomeConfig.maDescription}<sprite name=\"ma\">[{ma}]");
+        if (ar > 0) result.Add($"{biomeConfig.arDescription}<sprite name=\"ar\">[{ar}]");
+        if (li > 0) result.Add($"{biomeConfig.liDescription}<sprite name=\"li\">[{li}]");
+        if (hi > 0) result.Add($"{biomeConfig.hiDescription}<sprite name=\"hi\">[{hi}]");
+        if (lc > 0) result.Add($"{biomeConfig.lcDescription}<sprite name=\"lc\">[{lc}]");
+        if (hc > 0) result.Add($"{biomeConfig.hcDescription}<sprite name=\"hc\">[{hc}]");
+        if (ca > 0) result.Add($"{biomeConfig.caDescription}<sprite name=\"ca\">[{ca}]");
+        if (ws > 0) result.Add($"{biomeConfig.wsDescription}<sprite name=\"ws\">[{ws}]");
 
-        return string.Join("", result);
+        return $" leading an army of {string.Join(',', result)}";
     }
 
     public bool IsCavalryOnly()

@@ -1,6 +1,6 @@
 public enum AlignmentEnum
 {
-    freePeople,
-    darkServants,
-    neutral
+    freePeople = 0,
+    darkServants = 1,
+    neutral = 2
 }
