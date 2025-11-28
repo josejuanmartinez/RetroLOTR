@@ -101,16 +101,16 @@ public class Army
         LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
         List<string> result = new() { };
     
-        if (ma > 0) result.Add($"{biomeConfig.maDescription}<sprite name=\"ma\">[{ma}]");
-        if (ar > 0) result.Add($"{biomeConfig.arDescription}<sprite name=\"ar\">[{ar}]");
-        if (li > 0) result.Add($"{biomeConfig.liDescription}<sprite name=\"li\">[{li}]");
-        if (hi > 0) result.Add($"{biomeConfig.hiDescription}<sprite name=\"hi\">[{hi}]");
-        if (lc > 0) result.Add($"{biomeConfig.lcDescription}<sprite name=\"lc\">[{lc}]");
-        if (hc > 0) result.Add($"{biomeConfig.hcDescription}<sprite name=\"hc\">[{hc}]");
-        if (ca > 0) result.Add($"{biomeConfig.caDescription}<sprite name=\"ca\">[{ca}]");
-        if (ws > 0) result.Add($"{biomeConfig.wsDescription}<sprite name=\"ws\">[{ws}]");
+        if (ma > 0) result.Add($"<sprite name=\"ma\">[{ma}] {biomeConfig.maDescription}");
+        if (ar > 0) result.Add($"<sprite name=\"ar\">[{ar}] {biomeConfig.arDescription}");
+        if (li > 0) result.Add($"<sprite name=\"li\">[{li}] {biomeConfig.liDescription}");
+        if (hi > 0) result.Add($"<sprite name=\"hi\">[{hi}] {biomeConfig.hiDescription}");
+        if (lc > 0) result.Add($"<sprite name=\"lc\">[{lc}] {biomeConfig.lcDescription}");
+        if (hc > 0) result.Add($"<sprite name=\"hc\">[{hc}] {biomeConfig.hcDescription}");
+        if (ca > 0) result.Add($"<sprite name=\"ca\">[{ca}] {biomeConfig.caDescription}");
+        if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}] {biomeConfig.wsDescription}");
 
-        return $" leading an army of {string.Join(',', result)}";
+        return $" leading {string.Join(',', result)}";
     }
 
     public bool IsCavalryOnly()

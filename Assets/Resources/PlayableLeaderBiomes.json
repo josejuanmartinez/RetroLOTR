@@ -189,11 +189,11 @@
       "hcDescription": "Warg Riders",
       "lcDescription": "Wolves",
       "hiDescription": "Uruk-hai",
-      "liDescription": "Dunlending Axemen",
+      "liDescription": "White-hand Orcs",
       "arDescription": "Dunlending Slingers",
-      "maDescription": "Dunlending Militia",
+      "maDescription": "Dunlending Axemen",
       "wsDescription": "Dunlending Boats",
-      "caDescription": "Blasting Fire Machines",
+      "caDescription": "Blasting Fire",
       "artifacts": [
         {
           "artifactName": "Ring of Orthanc",
@@ -309,8 +309,8 @@
           "mage": 0,
           "race": 5,
           "artifacts": [],          
-          "startingArmySize": 3,
-          "preferedTroopType": 0
+          "startingArmySize": 2,
+          "preferedTroopType": 2
         },
         {
           "characterName": "Grima",
@@ -468,8 +468,8 @@
           "mage": 0,
           "race": 6,
           "artifacts": [ ],
-          "startingArmySize": 5,
-          "preferedTroopType": 0
+          "startingArmySize": 4,
+          "preferedTroopType": 2
         },
         {
           "characterName": "Mouth of Sauron",
