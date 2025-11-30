@@ -10,15 +10,10 @@ public class AssassinateCharacter : AgentCharacterAction
         var originalEffect = effect;
         var originalAsyncEffect = asyncEffect;
         var originalCondition = condition;
-        condition = (c) => {
-            if (originalCondition != null && !originalCondition(c)) return false;
-            return FindEnemyCharacterTargetAtHex(c) != null;
-        };
+        condition = (c) => { return FindEnemyCharacterTargetAtHex(c) != null && (originalCondition == null || originalCondition(c)); };
         effect = (c) => true;
-        Func<Character, System.Threading.Tasks.Task<bool>> assassinateAsync = async (c) => {
-            if (originalEffect != null && !originalEffect(c)) return false;
+        Func<Character, System.Threading.Tasks.Task<bool>> assassinateAsync = async (c) => {            
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
-
             List<Character> characters = c.hex.GetEnemyCharacters(c.GetOwner());
             if(characters.Count < 1) return false;
             bool isAI = FindFirstObjectByType<Game>().player == c.GetOwner();
