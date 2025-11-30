@@ -17,7 +17,8 @@ public class Block : CommanderArmyAction
             if (originalCondition != null && !originalCondition(c)) return false;
             return FindEnemyArmyAtHex(c) != null;
         };
-        Func<Character, System.Threading.Tasks.Task<bool>> blockAsync = async (c) => {            
+        async System.Threading.Tasks.Task<bool> blockAsync(Character c)
+        {            
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
             List<Character> characters = c.hex.GetEnemyArmies(c.GetOwner());
             if(characters.Count < 1) return false;
@@ -38,8 +39,7 @@ public class Block : CommanderArmyAction
             if (enemy == null) return false;
 
             return true;
-        };
+        }
         base.Initialize(c, condition, effect, blockAsync);
     }
 }
-

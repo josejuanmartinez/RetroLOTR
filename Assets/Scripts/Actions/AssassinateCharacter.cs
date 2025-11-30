@@ -10,26 +10,32 @@ public class AssassinateCharacter : AgentCharacterAction
         var originalEffect = effect;
         var originalAsyncEffect = asyncEffect;
         var originalCondition = condition;
-        condition = (c) => { return FindEnemyCharacterTargetAtHex(c) != null && (originalCondition == null || originalCondition(c)); };
+        condition = (c) =>
+        {
+            if (originalCondition != null && !originalCondition(c)) return false;
+            return FindEnemyCharacterTargetAtHex(c) != null;
+        };
         effect = (c) => true;
-        Func<Character, System.Threading.Tasks.Task<bool>> assassinateAsync = async (c) => {            
+        async System.Threading.Tasks.Task<bool> assassinateAsync(Character c)
+        {
+            if (originalEffect != null && !originalEffect(c)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
             List<Character> characters = c.hex.GetEnemyCharacters(c.GetOwner());
-            if(characters.Count < 1) return false;
+            if (characters.Count < 1) return false;
             bool isAI = FindFirstObjectByType<Game>().player == c.GetOwner();
             Character enemy = null;
-            if(!isAI)
+            if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select enemy character", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI);    
+                string targetCharacter = await SelectionDialog.Ask("Select enemy character", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI);
                 enemy = c.hex.characters.Find(x => x.characterName == targetCharacter);
-            } 
+            }
             else
             {
-                enemy = FindEnemyCharacterTargetAtHex(c);    
+                enemy = FindEnemyCharacterTargetAtHex(c);
             }
-            
+
             if (enemy == null) return false;
-            
+
             Hex capitalHex = FindFirstObjectByType<Board>().GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == c.GetOwner() && x.GetPC().isCapital);
             if (capitalHex == null) return false;
             int random = UnityEngine.Random.Range(0, 5);
@@ -47,8 +53,8 @@ public class AssassinateCharacter : AgentCharacterAction
             enemy.Killed(c.GetOwner());
             MessageDisplayNoUI.ShowMessage(enemy.hex, c, $"{enemy.characterName} assassinated!", Color.green);
 
-            return true; 
-        };
+            return true;
+        }
 
         base.Initialize(c, condition, effect, assassinateAsync);
     }
