@@ -2,20 +2,27 @@ using System;
 
 public class SellMounts : EmmissaryPCAction
 {
-    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
+    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
         effect = (c) => {
+            if (originalEffect != null && !originalEffect(c)) return false;
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
             playable.AddGold(10);
             if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
-            return originalEffect == null || originalEffect(c); 
+            return true; 
         };
         condition = (c) => {
             return (originalCondition == null || originalCondition(c));
         };
-        base.Initialize(c, condition, effect);
+        asyncEffect = async (c) => {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            return true;
+        };
+        base.Initialize(c, condition, effect, asyncEffect);
     }
 }
+

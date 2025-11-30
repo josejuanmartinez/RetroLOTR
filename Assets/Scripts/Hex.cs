@@ -143,17 +143,8 @@ public class Hex : MonoBehaviour
 
     public bool IsPCRevealed(PlayableLeader overrideLeader = null)
     {
-        var l = overrideLeader ? overrideLeader : GetPlayer();
-        if (l == null || pc == null) return false;
-
-        if (!pc.isHidden || pc.hiddenButRevealed) return true;
-
-        var pcOwner = pc.owner;
-        if (pcOwner == l) return true;
-
-        var pcAlign = pcOwner.GetAlignment();
-        var lAlign = l.GetAlignment();
-        return pcAlign != AlignmentEnum.neutral && pcAlign == lAlign;
+        if(pc == null) return false;
+        return pc.IsRevealed(overrideLeader);        
     }
 
     public bool IsScouted(PlayableLeader overrideLeader = null)
@@ -658,6 +649,29 @@ public class Hex : MonoBehaviour
     {
         SetActiveFast(movement, true);
         movementCostManager.ShowMovementLeft(Math.Max(0, movementLeft), character);
+    }
+
+    public List<Character> GetEnemyCharacters(Leader leader)
+    {
+        if(scoutedBy.Contains(leader)) return characters.FindAll(x => x.GetOwner() != leader && (x.GetAlignment() != leader.GetAlignment() || x.GetAlignment() == AlignmentEnum.neutral)).ToList();
+        return new(){};
+    }
+
+    public List<Character> GetFriendlyCharacters(Leader leader)
+    {
+        return characters.FindAll(x => x.GetOwner() == leader || (x.GetAlignment() == leader.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)).ToList();
+    }
+
+
+    public List<Character> GetEnemyArmies(Leader leader)
+    {
+        if(scoutedBy.Contains(leader)) return characters.FindAll(x => x.IsArmyCommander() && x.GetOwner() != leader && (x.GetAlignment() != leader.GetAlignment() || x.GetAlignment() == AlignmentEnum.neutral)).ToList();
+        return new(){};
+    }
+
+    public List<Character> GetFriendlyArmies(Leader leader)
+    {
+        return characters.FindAll(x => x.IsArmyCommander() && (x.GetOwner() == leader || (x.GetAlignment() == leader.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral))).ToList();
     }
 
     // Safe SetActive that avoids redundant calls/dirtying the obj

@@ -62,7 +62,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 3
     m_Scale: 1
-    m_Name: common_spritesheet_3
+    m_Name: speech
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 4
@@ -832,12 +832,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 157
     m_Scale: 1
-    m_Name: common_spritesheet_157
-  - m_ElementType: 2
-    m_Unicode: 65534
-    m_GlyphIndex: 158
-    m_Scale: 1
-    m_Name: common_spritesheet_158
+    m_Name: shield
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 159
@@ -1172,7 +1167,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 225
     m_Scale: 1
-    m_Name: common_spritesheet_225
+    m_Name: book
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 226
@@ -1182,7 +1177,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 227
     m_Scale: 1
-    m_Name: common_spritesheet_227
+    m_Name: map
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 228
@@ -1597,7 +1592,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 311
     m_Scale: 1
-    m_Name: common_spritesheet_311
+    m_Name: lillies
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 312
@@ -1762,7 +1757,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 344
     m_Scale: 1
-    m_Name: common_spritesheet_344
+    m_Name: powder
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 345
@@ -2102,7 +2097,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 412
     m_Scale: 1
-    m_Name: common_spritesheet_412
+    m_Name: staff
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 413
@@ -2262,7 +2257,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 444
     m_Scale: 1
-    m_Name: common_spritesheet_444
+    m_Name: mantle
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 445
@@ -2272,7 +2267,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 446
     m_Scale: 1
-    m_Name: common_spritesheet_446
+    m_Name: cloak
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 447

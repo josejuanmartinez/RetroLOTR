@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -136,19 +137,7 @@ public class Character : MonoBehaviour
         this.hex = hex;
         hex.characters.Add(this);
 
-        if (startingArmySize > 0 || startingWarships > 0)
-        {
-            CreateArmy(preferedTroopType, startingArmySize, startingCharacter, startingWarships);
-        }
-        else
-        {
-            if (GetOwner() is not PlayableLeader) return;
-            
-            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != GetOwner()).ToList().ForEach(x =>
-            {
-                x.CheckCharacterConditions(GetOwner());
-            });
-        }
+        if (startingArmySize > 0 || startingWarships > 0) CreateArmy(preferedTroopType, startingArmySize, startingCharacter, startingWarships);
     }
 
     public AlignmentEnum GetAlignment()
@@ -156,11 +145,11 @@ public class Character : MonoBehaviour
         return owner != null? owner.GetAlignment() : alignment;
     }
 
-    public void Pass()
+    public async Task Pass()
     {
         CharacterAction action = FindFirstObjectByType<ActionsManager>().DEFAULT;
         action.Initialize(this);
-        action.Execute();
+        await action.Execute();
     }
 
     public void Halt()
@@ -259,13 +248,6 @@ public class Character : MonoBehaviour
     {
         army = new Army(this, troopsType, amount, startingArmy, ws);
         hex.armies.Add(army);
-        if(!startingArmy && GetOwner() is PlayableLeader)
-        {
-            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != GetOwner()).ToList().ForEach(x =>
-            {
-                x.CheckArmiesConditions(GetOwner());
-            });
-        }
 
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\"/>[{amount}]", Color.green);
         hex.RedrawCharacters();
@@ -397,6 +379,11 @@ public class Character : MonoBehaviour
         this.health = Mathf.Min(100, this.health + health);
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} heals by {health}", Color.green);
         RefreshSelectedCharacterIconIfSelected();
+    }
+
+    public List<Artifact> GetTransferableArtifacts()
+    {
+        return artifacts.Where(x => x.transferable).ToList();
     }
 
     public void StoreReachableHexes()

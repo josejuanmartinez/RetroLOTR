@@ -106,6 +106,21 @@ public class PC
         
     }
 
+    public bool IsRevealed(PlayableLeader overrideLeader = null)
+    {
+        var l = overrideLeader ? overrideLeader : GameObject.FindFirstObjectByType<Game>().player;
+        if (l == null) return false;
+
+        if (isHidden || hiddenButRevealed) return true;
+
+        var pcOwner = owner;
+        if (pcOwner == l) return true;
+
+        var pcAlign = pcOwner.GetAlignment();
+        var lAlign = l.GetAlignment();
+        return pcAlign != AlignmentEnum.neutral && pcAlign == lAlign;
+    }
+
     public string GetLoyaltyText()
     {
         string color = loyalty <= 25? "#ff0000" : loyalty <= 50? "#ffff00" : loyalty <= 65? "#00ff00" : "#005500";

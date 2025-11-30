@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class WoundCharacter : AgentCharacterAction
 {
-    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
+    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
         effect = (c) => {
+            if (originalEffect != null && !originalEffect(c)) return false;
             Character enemy = FindEnemyCharacterTargetAtHex(c);
             if (enemy == null) return false;
 
@@ -27,9 +29,17 @@ public class WoundCharacter : AgentCharacterAction
             MessageDisplayNoUI.ShowMessage(c.hex, c, message, color);
 
             enemy.Wounded(c.GetOwner(), wound);
-            return originalEffect == null || originalEffect(c); 
+            return true; 
         };
-        condition = (c) => { return FindEnemyCharacterTargetAtHex(c) != null && (originalCondition == null || originalCondition(c));};
-        base.Initialize(c, condition, effect);
+        condition = (c) => {
+            if (originalCondition != null && !originalCondition(c)) return false;
+            return FindEnemyCharacterTargetAtHex(c) != null;
+        };
+        asyncEffect = async (c) => {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            return true;
+        };
+        base.Initialize(c, condition, effect, asyncEffect);
     }
 }
+

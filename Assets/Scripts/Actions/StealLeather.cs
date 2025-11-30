@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class StealLeather : AgentPCAction
 {
-    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
+    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
         effect = (c) => {
+            if (originalEffect != null && !originalEffect(c)) return false;
             PC pc = c.hex.GetPC();
             if (pc == null) return false;
             int toSteal = Math.Min(pc.owner.leatherAmount, UnityEngine.Random.Range(1, c.GetAgent()));
@@ -19,11 +21,17 @@ public class StealLeather : AgentPCAction
             MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"leather\"/> stolen!", Color.red);
             MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"leather\"/> stolen!", Color.green);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
-            return originalEffect == null || originalEffect(c); 
+            return true; 
         };
         condition = (c) => {
-            return (c.hex.GetPC() != null && c.hex.GetPC().leather > 0 && (originalCondition == null || originalCondition(c)));
+            if (originalCondition != null && !originalCondition(c)) return false;
+            return c.hex.GetPC() != null && c.hex.GetPC().leather > 0;
         };
-        base.Initialize(c, condition, effect);
+        asyncEffect = async (c) => {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            return true;
+        };
+        base.Initialize(c, condition, effect, asyncEffect);
     }
 }
+

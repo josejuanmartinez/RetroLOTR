@@ -1,7 +1,7 @@
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -61,6 +61,8 @@ public class CharacterAction : SearcherByName
     [Header("Effect")]
     // Function delegate that returns a bool to determine if action is available
     public Func<Character, bool> effect;
+    // Optional async effect for actions that require awaiting UI/input
+    public Func<Character, Task<bool>> asyncEffect;
     
     private Game game;
     private bool initialized = false;
@@ -70,7 +72,7 @@ public class CharacterAction : SearcherByName
     }
 
 
-    public virtual void Initialize(Character character, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
+    public virtual void Initialize(Character character, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
         try
         {
@@ -83,6 +85,7 @@ public class CharacterAction : SearcherByName
                 && (originalCondition == null || originalCondition(character)); 
             };
             this.effect = effect;
+            this.asyncEffect = asyncEffect;
 
             bool activate = this.condition(character);
             button.gameObject.SetActive(activate);
@@ -124,6 +127,7 @@ public class CharacterAction : SearcherByName
         character = null;
         condition = null;
         effect = null;
+        asyncEffect = null;
         button.gameObject.SetActive(false);
     }
 
@@ -160,7 +164,7 @@ public class CharacterAction : SearcherByName
         return;
     }
 
-    public void Execute()
+    public async Task Execute()
     {
         bool isAI = !character.isPlayerControlled;
         try
@@ -180,13 +184,16 @@ public class CharacterAction : SearcherByName
                 return;
             }
 
-            failed = !effect(character);
+            if (effect != null) failed = !effect(character);
+
+            if (!failed && asyncEffect != null) failed = !await asyncEffect(character);
+
             if (failed)
             {
                 Fail(isAI);
                 return;
             }
-            
+
             string message = actionName;
             Debug.Log($"{character.characterName} succeeds on {message}");
             
@@ -270,15 +277,9 @@ public class CharacterAction : SearcherByName
             // Now check influence in NPCs
             FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != character.GetOwner()).ToList().ForEach(x =>
             {
-                x.CheckActionConditionAnywhere(character.GetOwner(), this);
+                x.CheckJoiningCondition(character, this);
             });
 
-            if (character.hex.GetPC() != null && character.hex.GetPC().owner is NonPlayableLeader && character.hex.GetPC().owner != character.GetOwner())
-            {
-                NonPlayableLeader nonPlayableLeader = character.hex.GetPC().owner as NonPlayableLeader;
-                if (nonPlayableLeader == null) return;
-                nonPlayableLeader.CheckActionConditionAtCapital(character.GetOwner(), this);
-            }
             return;
         }
         catch (Exception e)

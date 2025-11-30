@@ -131,10 +131,7 @@ public class BoardGenerator : MonoBehaviour
     {
         Application.backgroundLoadingPriority = ThreadPriority.Low;
 
-        if (board == null)
-        {
-            board = GetComponent<Board>();
-        }
+        if (board == null) board = GetComponent<Board>();
 
         if (board != null && board.hexPrefab != null)
         {

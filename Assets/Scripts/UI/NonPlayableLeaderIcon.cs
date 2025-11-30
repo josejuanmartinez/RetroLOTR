@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System.Text;
 
 public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -59,11 +60,21 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         image.sprite = leaderSprite;
         image.color = Color.white;
         string alignment = nonPlayableLeader.alignment == AlignmentEnum.freePeople ? "a free people" : nonPlayableLeader.alignment == AlignmentEnum.darkServants ? "a dark servant" : "a neutral";
+        StringBuilder sb = new($"You discovered {nonPlayableLeader.characterName}, {alignment} nation");
+        sb.Append("<br><br>");
+        if(nonPlayableLeader.alignment == game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
+        {
+            sb.Append("They can join your side.<br><br>Cast `perceive allegiances` to know how to hire them.<br><br>");  
+        } 
+        if(nonPlayableLeader.alignment != game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
+        {
+            sb.Append("You can attack to weaken their forces.");
+        }
         PopupManager.Show(
             $"{nonPlayableLeader.characterName} reveals themselves!",
             FindFirstObjectByType<Illustrations>().GetIllustrationByName(player.characterName),
             FindFirstObjectByType<Illustrations>().GetIllustrationByName(nonPlayableLeader.characterName),
-            $"You discovered {nonPlayableLeader.characterName}, {alignment} nation",
+            sb.ToString(),
             true
         );
         isUnrevealed = false;

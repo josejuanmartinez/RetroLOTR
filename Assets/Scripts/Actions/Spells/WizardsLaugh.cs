@@ -2,11 +2,13 @@ using System;
 
 public class WizardLaugh: FreeNeutralSpell
 {
-    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
+    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
         effect = (c) => {
+            if (originalEffect != null && !originalEffect(c)) return false;
             if (c.hex.GetPC() == null)
             {
                 foreach(Character character in c.hex.characters)
@@ -18,9 +20,17 @@ public class WizardLaugh: FreeNeutralSpell
                 c.hex.GetPC().DecreaseLoyalty(UnityEngine.Random.Range(0, 3) * c.GetMage(), c);
             }
             else return false;
-            return originalEffect == null || originalEffect(c);
+            return true;
         };
-        condition = (c) => { return ((c.hex.characters.Find(x => x.GetOwner() == c.GetOwner() || (c.alignment == x.alignment && x.alignment != AlignmentEnum.neutral))!= null) ||  (c.hex.GetPC() != null && ( c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral))) && c.artifacts.Find(x => x.providesSpell == actionName) != null && (originalCondition == null || originalCondition(c)); };
-        base.Initialize(c, condition, effect);
+        condition = (c) => {
+            if (originalCondition != null && !originalCondition(c)) return false;
+            return ((c.hex.characters.Find(x => x.GetOwner() == c.GetOwner() || (c.alignment == x.alignment && x.alignment != AlignmentEnum.neutral))!= null) ||  (c.hex.GetPC() != null && ( c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral))) && c.artifacts.Find(x => x.providesSpell == actionName) != null;
+        };
+        asyncEffect = async (c) => {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            return true;
+        };
+        base.Initialize(c, condition, effect, asyncEffect);
     }
 }
+

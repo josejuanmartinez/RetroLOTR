@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class UndoubleCharacter : AgentAction
 {
-    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
+    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
         effect = (c) => {
+            if (originalEffect != null && !originalEffect(c)) return false;
             Character doubled = FindDoubledCharacters(c);
             
             if (doubled == null) return false;
@@ -16,10 +18,17 @@ public class UndoubleCharacter : AgentAction
             doubled.Undouble(c.GetOwner());
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"{c.characterName} will not reveal secrets anymore", Color.green);
 
-            return originalEffect == null || originalEffect(c); 
+            return true; 
         };
-        condition = (c) => { return FindDoubledCharacters(c) != null && (originalCondition == null || originalCondition(c)); };
-        base.Initialize(c, condition, effect);
+        condition = (c) => {
+            if (originalCondition != null && !originalCondition(c)) return false;
+            return FindDoubledCharacters(c) != null;
+        };
+        asyncEffect = async (c) => {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            return true;
+        };
+        base.Initialize(c, condition, effect, asyncEffect);
     }
     private Character FindDoubledCharacters(Character c)
     {
@@ -27,3 +36,4 @@ public class UndoubleCharacter : AgentAction
         return c.hex.characters.Find(x => x.doubledBy.Contains(c.GetOwner()));
     }
 }
+

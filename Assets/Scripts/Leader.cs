@@ -86,16 +86,6 @@ public class Leader : Character
         ironAmount += GetIronPerTurn();
         mithrilAmount += GetMithrilPerTurn();
         goldAmount += GetGoldPerTurn();
-
-
-        // Any NPC joins due to my new good stores?
-        if (this is PlayableLeader)
-        {
-            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != this).ToList().ForEach(x =>
-            {
-                x.CheckStoresConditions(this);
-            });
-        }
         
         // Make all characters in nation act!
         controlledCharacters.FindAll(c => !c.killed).ForEach(x => x.NewTurn());

@@ -1,39 +1,35 @@
 using System;
 using UnityEngine;
-using System.Linq;
-using UnityEditor.Experimental;
 
 public class FindArtifact: MageAction
 {
-    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
+    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
         effect = (c) => {
+            if (originalEffect != null && !originalEffect(c)) return false;
             if (c.hex.hiddenArtifacts.Count > 0) {
                 Artifact artifact = c.hex.hiddenArtifacts[0];
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
                 MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} found", Color.green);
-
-                if (c.GetOwner() is PlayableLeader)
-                {
-                    FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != c.GetOwner()).ToList().ForEach(x =>
-                    {
-                        x.CheckArtifactConditions(c.GetOwner());
-                    });
-                }
-            } else
+            } 
+            else
             {
                 MessageDisplayNoUI.ShowMessage(c.hex, c, $"No <sprite name=\"artifact\"> found", Color.red);
             }
 
 
-            return originalEffect == null || originalEffect(c);
+            return true;
         };
-        condition = (c) => {
-            return (originalCondition == null || originalCondition(c)); 
+        condition = (c) => { return originalCondition == null || originalCondition(c); };
+        asyncEffect = async (c) => {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            return true;
         };
-        base.Initialize(c, condition, effect);
+        base.Initialize(c, condition, effect, asyncEffect);
     }
 }
+

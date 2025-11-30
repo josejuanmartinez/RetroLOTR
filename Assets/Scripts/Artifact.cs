@@ -1,7 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+
+[Serializable]
+public class ArtifactCollection
+{
+	public List<Artifact> artifacts = new ();
+}
+
 
 [Serializable]
 public class Artifact

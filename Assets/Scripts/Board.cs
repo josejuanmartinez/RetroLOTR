@@ -216,14 +216,14 @@ public class Board : MonoBehaviour
         // Get all hexes
         List<Hex> hexes = GetHexes();
 
-        // Find all artifacts where hidden is true
-        Artifact[] hiddenArtifacts = FindFirstObjectByType<Game>().artifacts.Where(artifact => artifact.hidden == true).ToArray();
+        TextAsset jsonFile = Resources.Load<TextAsset>("Artifacts");
+        List<Artifact> hiddenArtifacts = JsonUtility.FromJson<ArtifactCollection>(jsonFile.text).artifacts;
 
         // Shuffle the hexes to randomize artifact placement
         List<Hex> shuffledHexes = hexes.OrderBy(hex => UnityEngine.Random.value).ToList();
 
         // Ensure we don't try to place more artifacts than we have hexes
-        int artifactsToPlace = Mathf.Min(hiddenArtifacts.Length, shuffledHexes.Count);
+        int artifactsToPlace = Mathf.Min(hiddenArtifacts.Count, shuffledHexes.Count);
 
         // Place artifacts in hexes (one per hex)
         for (int i = 0; i < artifactsToPlace; i++)
@@ -233,6 +233,8 @@ public class Board : MonoBehaviour
 
             // Add the artifact to the hex's hiddenArtifacts list
             targetHex.hiddenArtifacts.Add(artifact);
+
+            Debug.Log($"Artifact {artifact.artifactName} placed at {targetHex.v2}");
 
             // Optional: Set artifact position to hex position
             // artifact.transform.position = targetHex.transform.position;

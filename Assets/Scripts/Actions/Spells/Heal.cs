@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class Heal: FreeNeutralSpell
 {
-    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null)
+    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
 
         effect = (c) => {
+            if (originalEffect != null && !originalEffect(c)) return false;
             int health = UnityEngine.Random.Range(0, 10) * c.GetMage();
             Character selectedCharacter = FindFirstObjectByType<Board>().selectedCharacter;
             if (c.health < 100)
@@ -37,11 +39,17 @@ public class Heal: FreeNeutralSpell
                     }
                 }
             }
-            return originalEffect == null || originalEffect(c);
+            return true;
         };
         condition = (c) => {
-            return c.hex.characters.Find(x => x.health < 100 && (x.GetOwner() == c.GetOwner() || x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)) &&  c.artifacts.Find(x => x.providesSpell == actionName) != null && (originalCondition == null || originalCondition(c)); 
+            if (originalCondition != null && !originalCondition(c)) return false;
+            return c.hex.characters.Find(x => x.health < 100 && (x.GetOwner() == c.GetOwner() || x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)) &&  c.artifacts.Find(x => x.providesSpell == actionName) != null; 
         };
-        base.Initialize(c, condition, effect);
+        asyncEffect = async (c) => {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            return true;
+        };
+        base.Initialize(c, condition, effect, asyncEffect);
     }
 }
+

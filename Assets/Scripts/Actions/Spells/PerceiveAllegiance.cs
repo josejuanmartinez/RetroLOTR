@@ -1,7 +1,6 @@
 using System;
-using UnityEngine;
 
-public class StealGold : AgentPCAction
+public class PerceiveAllegiance : Spell
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -12,20 +11,20 @@ public class StealGold : AgentPCAction
             if (originalEffect != null && !originalEffect(c)) return false;
             PC pc = c.hex.GetPC();
             if (pc == null) return false;
-            int toSteal = Math.Min(pc.owner.goldAmount, UnityEngine.Random.Range(1, c.GetAgent()));
-            if (toSteal < 1) return false;
-            PlayableLeader playable = (c.GetOwner() as PlayableLeader);
-            if (playable == null) return false;
-            playable.AddGold(toSteal);
-            pc.owner.RemoveGold(toSteal);
-            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"gold\"/> stolen!", Color.red);
-            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"gold\"/> stolen!", Color.green);
-            if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
-            return true;
+            if (pc.owner is not NonPlayableLeader) return false;            
+            NonPlayableLeader leader = pc.owner as NonPlayableLeader;
+            PopupManager.Show(
+                "Revealed conditions", 
+                FindFirstObjectByType<Illustrations>().GetIllustrationByName(leader.characterName),
+                FindFirstObjectByType<Illustrations>().GetIllustrationByName(c.GetOwner().characterName),
+                leader.GetJoiningConditionsText(c.owner.GetAlignment()),
+                true);
+            return true; 
         };
-        condition = (c) => {
+        condition = (c) => { 
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.GetPC() != null;
+            PC pc = c.hex.GetPC();
+            return pc != null && pc.IsRevealed() && pc.owner is NonPlayableLeader;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
