@@ -111,7 +111,7 @@ public class PC
         var l = overrideLeader ? overrideLeader : GameObject.FindFirstObjectByType<Game>().player;
         if (l == null) return false;
 
-        if (isHidden || hiddenButRevealed) return true;
+        if (!isHidden || hiddenButRevealed) return true;
 
         var pcOwner = owner;
         if (pcOwner == l) return true;

@@ -17,12 +17,6 @@ public class SelectionDialog : MonoBehaviour
     [SerializeField] private TextMeshProUGUI noButtonText;
     [SerializeField] private TMP_Dropdown dropdown;
 
-    [Header("Defaults")]
-    [TextArea]
-    [SerializeField] private string fallbackMessage = "Select target";
-    [SerializeField] private string defaultYesLabel = "Ok";
-    [SerializeField] private string defaultNoLabel = "Cancel";
-
     private TaskCompletionSource<string> pendingRequest;
 
     private void Awake()
@@ -44,10 +38,7 @@ public class SelectionDialog : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (Instance == this)
-        {
-            Instance = null;
-        }
+        if (Instance == this) Instance = null;
     }
 
     /// <summary>

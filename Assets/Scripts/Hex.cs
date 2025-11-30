@@ -617,7 +617,7 @@ public class Hex : MonoBehaviour
     public PC GetPC()
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return null;
-        if (!pc.isHidden || pc.hiddenButRevealed) return pc;
+        if (pc.IsRevealed()) return pc;
         return null;
     }
 

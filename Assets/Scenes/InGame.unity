@@ -544,9 +544,6 @@ MonoBehaviour:
   noButton: {fileID: 1671942575}
   noButtonText: {fileID: 717082116}
   dropdown: {fileID: 1286885555}
-  fallbackMessage: Select target
-  defaultYesLabel: Ok
-  defaultNoLabel: Cancel
 --- !u!4 &248579007
 Transform:
   m_ObjectHideFlags: 0
@@ -4343,16 +4340,14 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ddab3179dc658234ba93f47f94da6f5d, type: 3}
   - {fileID: 21300000, guid: 3756c8f6c987af7488bb55e281039d34, type: 3}
   - {fileID: 21300000, guid: e5cf965c57656c643aa970f4ccfe0109, type: 3}
-  - {fileID: 2928672522625217851, guid: 691b41437b84e3741b96263c36e963c1, type: 3}
   - {fileID: 21300000, guid: 9464b0cc74248cd4aa0129d594713371, type: 3}
   - {fileID: 21300000, guid: f7394feb25662d747bc171067d7ce21e, type: 3}
   - {fileID: 21300000, guid: 8196b050657883240b212f3e9d49fa26, type: 3}
-  - {fileID: 1557702081903348322, guid: 86093cdae018a0e439c9180a56964095, type: 3}
   - {fileID: 21300000, guid: 49c9bbe44a81bec4bb700995705b2194, type: 3}
   - {fileID: 21300000, guid: cc4481d4d317463499656c893ed0d2da, type: 3}
   - {fileID: 21300000, guid: 7ed05a5e10e08534fa6f753d6f0a7fcc, type: 3}
-  - {fileID: 2928672522625217851, guid: 691b41437b84e3741b96263c36e963c1, type: 3}
-  - {fileID: 1557702081903348322, guid: 86093cdae018a0e439c9180a56964095, type: 3}
+  - {fileID: 21300000, guid: 691b41437b84e3741b96263c36e963c1, type: 3}
+  - {fileID: 21300000, guid: 86093cdae018a0e439c9180a56964095, type: 3}
   - {fileID: 21300000, guid: 244bc7524e30c3d4581043d5bb950773, type: 3}
 --- !u!4 &1793163770
 Transform:
@@ -7095,7 +7090,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1866956968511044095, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -104.825096
+      value: -104.82496
       objectReference: {fileID: 0}
     - target: {fileID: 1953368720258838695, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: mageXP
@@ -9085,7 +9080,7 @@ PrefabInstance:
       objectReference: {fileID: 1364867303}
     - target: {fileID: 6131498299001160954, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Execute
+      value: ExecuteFromButton
       objectReference: {fileID: 0}
     - target: {fileID: 6132863368089832970, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: mageXP
@@ -9479,6 +9474,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7307561863917212499, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: hoverPrefab
+      value: 
+      objectReference: {fileID: 2329783396477944536, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
     - target: {fileID: 7316197381379673812, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -10014,6 +10013,10 @@ PrefabInstance:
     - target: {fileID: 8496101135579586946, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: agentXP
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496101135579586946, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: requiresEnemyCharacter
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8515970898714966979, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchorMax.y

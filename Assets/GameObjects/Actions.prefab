@@ -403,11 +403,6 @@ MonoBehaviour:
   actionName: You Shall Not Pass!
   actionId: 161
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 1743314827532625018}
   actionSprite: {fileID: 4296160005423914860, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -602,7 +597,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6935197216220596055}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -812,7 +807,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5496783526782522667}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -955,11 +950,6 @@ MonoBehaviour:
   actionName: Attack
   actionId: 125
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 8345044131388582377}
   actionSprite: {fileID: 3938577023042913058, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -1079,7 +1069,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8004092352266250251}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1425,7 +1415,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5526006963563472499}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1921,7 +1911,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4919802944786478537}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2275,11 +2265,6 @@ MonoBehaviour:
   actionName: Perceive Allegiance
   actionId: 163
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 8039792402722625672}
   actionSprite: {fileID: -1665713712219771040, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -2407,11 +2392,6 @@ MonoBehaviour:
   actionName: Undouble Character
   actionId: 122
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: UC
   background: {fileID: 4262811378139056558}
   actionSprite: {fileID: -820901137, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -2606,7 +2586,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4139780231637988682}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2741,7 +2721,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5088493516123472638}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2876,7 +2856,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6905546885764205156}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3577,11 +3557,6 @@ MonoBehaviour:
   actionName: Buy 5 Leather
   actionId: 110
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: +5 LE
   background: {fileID: 78008994780072247}
   actionSprite: {fileID: -7266470381165634073, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -3709,11 +3684,6 @@ MonoBehaviour:
   actionName: Assassinate Character
   actionId: 119
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: AC
   background: {fileID: 2408199145338631694}
   actionSprite: {fileID: -6254909708316355958, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -3841,11 +3811,6 @@ MonoBehaviour:
   actionName: Steal Iron
   actionId: 147
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 1621828293112837017}
   actionSprite: {fileID: -1275236052350452446, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -3973,11 +3938,6 @@ MonoBehaviour:
   actionName: Buy 5 Mounts
   actionId: 112
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: +5 MO
   background: {fileID: 401018713629613026}
   actionSprite: {fileID: 7567372019645224993, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -4095,9 +4055,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 4523470641516856312}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4230,9 +4190,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 8768155580069867904}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4442,7 +4402,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6280986656689393154}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4545,11 +4505,6 @@ MonoBehaviour:
   actionName: Train Light Cavalry
   actionId: 104
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: LC
   background: {fileID: 4601183529661726380}
   actionSprite: {fileID: 7567372019645224993, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -4784,7 +4739,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3918812816839771497}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4919,7 +4874,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6591969398726573318}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5573,11 +5528,6 @@ MonoBehaviour:
   actionName: Sell 5 Mithril
   actionId: 117
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: -5 MI
   background: {fileID: 8444546147875116742}
   actionSprite: {fileID: 6783602617004939245, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -6148,11 +6098,6 @@ MonoBehaviour:
   actionName: Train Warships
   actionId: 107
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: WS
   background: {fileID: 1880835914986134185}
   actionSprite: {fileID: -1971852858, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -6448,7 +6393,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 777825619717128263}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6591,11 +6536,6 @@ MonoBehaviour:
   actionName: Haste
   actionId: 153
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 1012567648698067786}
   actionSprite: {fileID: 2485362361615674377, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -6723,11 +6663,6 @@ MonoBehaviour:
   actionName: Teleport
   actionId: 135
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 1517011490442217204}
   actionSprite: {fileID: -60278885945334418, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -7202,11 +7137,6 @@ MonoBehaviour:
   actionName: Scout Area
   actionId: 154
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 9095557356189777870}
   actionSprite: {fileID: 9031021974866704836, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -7334,11 +7264,6 @@ MonoBehaviour:
   actionName: Words of Dispair
   actionId: 160
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 6790102901354475500}
   actionSprite: {fileID: -8287066326496394212, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -7744,7 +7669,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7272677977283194608}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7879,7 +7804,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5321950164889791705}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8097,11 +8022,6 @@ MonoBehaviour:
   actionName: Hear Stories
   actionId: 162
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 8037160604796234720}
   actionSprite: {fileID: -6023314127178225891, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -8229,11 +8149,6 @@ MonoBehaviour:
   actionName: Cast Light
   actionId: 128
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 1836291692243604301}
   actionSprite: {fileID: 8598599108263520430, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -8353,7 +8268,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2976956548296929470}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8857,11 +8772,6 @@ MonoBehaviour:
   actionName: Reveal PC
   actionId: 133
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 168131590063793168}
   actionSprite: {fileID: -1220100672500014086, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -9117,7 +9027,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9195148141255734711}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9506,11 +9416,6 @@ MonoBehaviour:
   actionName: Train Archers
   actionId: 100
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: AR
   background: {fileID: 5859941750772230912}
   actionSprite: {fileID: -1537060967860149360, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -9849,11 +9754,6 @@ MonoBehaviour:
   actionName: Train Light Infantry
   actionId: 102
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: LI
   background: {fileID: 4521198906506753692}
   actionSprite: {fileID: -281044108, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -10504,11 +10404,6 @@ MonoBehaviour:
   actionName: Steal Timber
   actionId: 151
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 507190128800917046}
   actionSprite: {fileID: -8228016741354045918, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -10703,7 +10598,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4333249190959973130}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10838,7 +10733,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 566557757691744884}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11056,11 +10951,6 @@ MonoBehaviour:
   actionName: Block
   actionId: 155
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 4483400339849949869}
   actionSprite: {fileID: -1889344922, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -11399,11 +11289,6 @@ MonoBehaviour:
   actionName: Steal Mithril
   actionId: 149
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 4245904535787345348}
   actionSprite: {fileID: 6783602617004939245, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -11523,7 +11408,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3500830801791862289}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11877,11 +11762,6 @@ MonoBehaviour:
   actionName: Buy 5 Iron
   actionId: 114
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: +5 IR
   background: {fileID: 6640612341860389984}
   actionSprite: {fileID: -1275236052350452446, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -12009,11 +11889,6 @@ MonoBehaviour:
   actionName: Sell 5 Timber
   actionId: 115
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: -5 TI
   background: {fileID: 6294595247198218888}
   actionSprite: {fileID: -8228016741354045918, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -12780,7 +12655,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4194650095855979761}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12998,11 +12873,6 @@ MonoBehaviour:
   actionName: Pass
   actionId: 152
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 9118867130820466445}
   actionSprite: {fileID: 9033923478249958360, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -13197,7 +13067,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 69779879656469107}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13340,11 +13210,6 @@ MonoBehaviour:
   actionName: Wizard's Fire
   actionId: 159
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 8021649779196065713}
   actionSprite: {fileID: 8946491648079818562, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -13547,11 +13412,6 @@ MonoBehaviour:
   actionName: Steal Mounts
   actionId: 150
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 6500940206477826568}
   actionSprite: {fileID: 7567372019645224993, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -13671,7 +13531,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2077630111734970820}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13964,11 +13824,6 @@ MonoBehaviour:
   actionName: Ice Storm
   actionId: 158
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 4801139558754001551}
   actionSprite: {fileID: 7657510476668111210, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -14171,11 +14026,6 @@ MonoBehaviour:
   actionName: Courage
   actionId: 156
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 3770618334799427179}
   actionSprite: {fileID: -5057387584867465341, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -14303,11 +14153,6 @@ MonoBehaviour:
   actionName: Wound Character
   actionId: 120
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: WC
   background: {fileID: 195063852966690358}
   actionSprite: {fileID: -801270437, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -15023,7 +14868,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1113750221116989968}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -15302,11 +15147,6 @@ MonoBehaviour:
   actionName: Sell 5 Iron
   actionId: 113
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: -5 IR
   background: {fileID: 580314310861980281}
   actionSprite: {fileID: -1275236052350452446, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -15576,7 +15416,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4074072342416281108}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -15719,11 +15559,6 @@ MonoBehaviour:
   actionName: Increase Loyalty
   actionId: 123
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: IL
   background: {fileID: 6548123773846491240}
   actionSprite: {fileID: 6469717273354080794, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -16137,11 +15972,6 @@ MonoBehaviour:
   actionName: Scry Artifact
   actionId: 145
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 8909724550739408776}
   actionSprite: {fileID: 2514965882630484145, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -16691,11 +16521,6 @@ MonoBehaviour:
   actionName: Steal Leather
   actionId: 148
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 1228830956884940025}
   actionSprite: {fileID: -7266470381165634073, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -17184,11 +17009,6 @@ MonoBehaviour:
   actionName: Double Character
   actionId: 121
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: DC
   background: {fileID: 2168534940336078571}
   actionSprite: {fileID: 1212248915, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -17458,7 +17278,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3932702328602550104}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17593,7 +17413,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 651141632542692860}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17886,11 +17706,6 @@ MonoBehaviour:
   actionName: Increase Fortifications
   actionId: 126
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 3998101461439141311}
   actionSprite: {fileID: 6343509882597266344, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -18018,11 +17833,6 @@ MonoBehaviour:
   actionName: Fireworks
   actionId: 139
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 4298967619319085642}
   actionSprite: {fileID: 8598599108263520430, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -18150,11 +17960,6 @@ MonoBehaviour:
   actionName: Wizards Laugh
   actionId: 137
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 734266343462305562}
   actionSprite: {fileID: 7648160291687926670, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -18276,7 +18081,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3638596041084526505}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -18451,7 +18256,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5024954860941292641}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -18586,7 +18391,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4458051640962938712}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -18764,11 +18569,6 @@ MonoBehaviour:
   actionName: Train Heavy Infantry
   actionId: 103
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: HI
   background: {fileID: 4064063070343050962}
   actionSprite: {fileID: -117247783, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -19358,11 +19158,6 @@ MonoBehaviour:
   actionName: Return To Capital
   actionId: 132
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 1988792330551008907}
   actionSprite: {fileID: -1454448949, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -19557,7 +19352,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1820470018607395466}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19700,11 +19495,6 @@ MonoBehaviour:
   actionName: Halt
   actionId: 157
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 1302088224138634157}
   actionSprite: {fileID: 1263268051, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -19960,7 +19750,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3105825557350901976}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -20178,11 +19968,6 @@ MonoBehaviour:
   actionName: Conjure Mounts
   actionId: 129
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 3440158608701321160}
   actionSprite: {fileID: 3296832079489727915, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -20663,7 +20448,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3503786192159643049}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -20873,7 +20658,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8028445228068976203}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -21227,11 +21012,6 @@ MonoBehaviour:
   actionName: Scry Area
   actionId: 134
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 6216323891535766503}
   actionSprite: {fileID: 7824453691007195621, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -21351,7 +21131,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6801376731250859967}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -21569,11 +21349,6 @@ MonoBehaviour:
   actionName: Oh, Elbereth!
   actionId: 131
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 6648955761764947806}
   actionSprite: {fileID: -6023314127178225891, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -21987,11 +21762,6 @@ MonoBehaviour:
   actionName: Decrease Loyalty
   actionId: 124
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: DL
   background: {fileID: 4225690443733447931}
   actionSprite: {fileID: -5057387584867465341, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -22405,11 +22175,6 @@ MonoBehaviour:
   actionName: Summon Men-at-arms
   actionId: 136
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 4940721574796403965}
   actionSprite: {fileID: -1459461766, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -22529,7 +22294,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8666857499922653018}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -22808,11 +22573,6 @@ MonoBehaviour:
   actionName: Sell 5 Leather
   actionId: 109
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: -5 LE
   background: {fileID: 8306195376408072538}
   actionSprite: {fileID: -7266470381165634073, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -23015,11 +22775,6 @@ MonoBehaviour:
   actionName: Cast Darkness
   actionId: 127
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 7739566300829442451}
   actionSprite: {fileID: -1736798371911109138, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -23569,11 +23324,6 @@ MonoBehaviour:
   actionName: Curse
   actionId: 130
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 4173180683882441483}
   actionSprite: {fileID: 4048549830409109848, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -23693,7 +23443,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2768894197930552334}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -23836,11 +23586,6 @@ MonoBehaviour:
   actionName: Sell 5 Mounts
   actionId: 111
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: -5 MO
   background: {fileID: 4653386190061112350}
   actionSprite: {fileID: 7567372019645224993, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -23960,7 +23705,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6135568185557261513}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24095,7 +23840,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2406408539632720703}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24230,7 +23975,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6542357958489105958}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24937,7 +24682,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2937390858174917131}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25283,7 +25028,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8351634142676430070}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25461,11 +25206,6 @@ MonoBehaviour:
   actionName: Train Heavy Cavalry
   actionId: 105
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: HC
   background: {fileID: 3081024365505519985}
   actionSprite: {fileID: 3296832079489727915, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -25836,7 +25576,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9174551542347312329}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -26529,7 +26269,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7579317590264496977}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -26672,11 +26412,6 @@ MonoBehaviour:
   actionName: Buy 5 Timber
   actionId: 116
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: +5 TI
   background: {fileID: 2723441758914664626}
   actionSprite: {fileID: -8228016741354045918, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -27082,7 +26817,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7303370397773655036}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -27321,11 +27056,6 @@ MonoBehaviour:
   actionName: Train Met-at-arms
   actionId: 101
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: MA
   background: {fileID: 425343240042443665}
   actionSprite: {fileID: -1459461766, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -27493,11 +27223,6 @@ MonoBehaviour:
   actionName: Steal Gold
   actionId: 146
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 8585535968042912599}
   actionSprite: {fileID: -4349686380414322568, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -27585,11 +27310,6 @@ MonoBehaviour:
   actionName: Train Catapults
   actionId: 106
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: CA
   background: {fileID: 2480795397616841742}
   actionSprite: {fileID: 3652782030080281706, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -27749,7 +27469,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2879996753733511180}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -28042,11 +27762,6 @@ MonoBehaviour:
   actionName: Heal
   actionId: 138
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 9015719256337609256}
   actionSprite: {fileID: -4321310967237584976, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -28241,7 +27956,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6836800189044935926}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -28812,7 +28527,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6544445030645882601}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -28947,7 +28662,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1966934164835888526}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -29157,7 +28872,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3282037347762903215}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -29850,7 +29565,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6090600952897140752}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -29993,11 +29708,6 @@ MonoBehaviour:
   actionName: Find Artifact
   actionId: 144
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: 
   background: {fileID: 3257336268825704106}
   actionSprite: {fileID: 33416734096728266, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -30464,7 +30174,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4870195458668491798}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -30599,7 +30309,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 472059229905889776}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -31395,7 +31105,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2192062364209419119}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -31605,7 +31315,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 38978922699506364}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -32401,7 +32111,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2935418514103288921}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -32536,7 +32246,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3638141072117592361}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -32679,11 +32389,6 @@ MonoBehaviour:
   actionName: Buy 5 Mithril
   actionId: 118
   character: {fileID: 0}
-  requiresFriendlyCharacter: 0
-  requiresEnemyCharacter: 0
-  requiresArtifact: 0
-  requiresFriendlyArmy: 0
-  requiresEnemyArmy: 0
   actionInitials: +5 MI
   background: {fileID: 6964063650742536943}
   actionSprite: {fileID: 6783602617004939245, guid: f3c9605eb15e8b349b99a36555336e07, type: 3}
@@ -32803,7 +32508,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2413534346554895151}
         m_TargetAssemblyTypeName: CharacterAction, Assembly-CSharp
-        m_MethodName: Execute
+        m_MethodName: ExecuteFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

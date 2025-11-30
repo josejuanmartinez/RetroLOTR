@@ -99,7 +99,7 @@ public class Leader : Character
         // AI: Act if not player
         if (game.player != this)
         {
-            controlledCharacters.ForEach((x) => { x.Pass(); });
+            controlledCharacters.ForEach(async (x) => { await x.Pass(); });
             game.NextPlayer();
         }
         else

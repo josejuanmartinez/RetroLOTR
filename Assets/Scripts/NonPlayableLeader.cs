@@ -325,9 +325,9 @@ public class NonPlayableLeader : Leader
 
     public string GetJoiningConditionsText(AlignmentEnum playerAlignment)
     {        
-        if(playerAlignment != alignment && playerAlignment != AlignmentEnum.neutral)
+        if(playerAlignment != alignment && alignment != AlignmentEnum.neutral)
         {
-            return $"{characterName} follows another alignment and will not join your cause.<br/><br/>Unfriendly actions can weaken this nation.";
+            return $"{characterName} follows another alignment and will not join your cause.<br><br>Unfriendly actions can weaken this nation.";
         }
 
         StringBuilder sb = new ($"{characterName} will join you under the following conditions:");

@@ -26,7 +26,7 @@ public class CharacterAction : SearcherByName
     public Button button;
     public TextMeshProUGUI textUI;
 
-    [Header("Tooltip")]
+    [Header("Hover")]
     public GameObject hoverPrefab;
 
     [Header("Failure rate (0-100) %")]
@@ -194,8 +194,13 @@ public class CharacterAction : SearcherByName
                 return;
             }
 
-            string message = actionName;
-            Debug.Log($"{character.characterName} succeeds on {message}");
+            string message = actionName;            
+            string rumourMessage = $"{character.characterName} succeeds on {message}";
+            Debug.Log(rumourMessage);
+            if(character.doubledBy.Contains(game.player))
+            {
+                RumoursManager.AddRumour(new Rumour() {leader = character.GetOwner(), rumour = rumourMessage, v2 = character.hex.v2}, false);
+            }
             
             if(UnityEngine.Random.Range(0, 100) < commanderXP)
             {
@@ -294,15 +299,21 @@ public class CharacterAction : SearcherByName
         
     }
 
-    protected Character FindEnemyCharacterTargetAtHex(Character assassin)
+    // Wrapper so Unity UI Buttons (which require void return) can trigger this async action
+    public async void ExecuteFromButton()
     {
-        Character target = FindEnemyNonNeutralCharactersAtHexNoLeader(assassin);
+        await Execute();
+    }
+
+    protected Character FindEnemyCharacterTargetAtHex(Character c)
+    {
+        Character target = FindEnemyNonNeutralCharactersAtHexNoLeader(c);
         if (target) return target;
-        target = FindEnemyCharactersAtHexNoLeaders(assassin);
+        target = FindEnemyCharactersAtHexNoLeaders(c);
         if (target) return target;
-        target = FindEnemyNonNeutralCharactersAtHex(assassin);
+        target = FindEnemyNonNeutralCharactersAtHex(c);
         if (target) return target;
-        target = FindEnemyCharacterAtHex(assassin);
+        target = FindEnemyCharacterAtHex(c);
         return target;
     }
     protected Character FindEnemyNonNeutralCharactersAtHexNoLeader(Character c)
