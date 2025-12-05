@@ -199,6 +199,7 @@ public class Hex : MonoBehaviour
         this.terrainType = terrainType;
         this.terrainTexture.sprite = terrainTexture;
         // this.terrainTexture.color = terrainColor;
+        // if(terrainType == TerrainEnum.mountains) this.terrainTexture.sortingOrder += 1000;
     }
 
     public void RedrawArmies(bool refreshHoverText = true)
