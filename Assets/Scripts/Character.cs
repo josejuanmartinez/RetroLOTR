@@ -189,6 +189,7 @@ public class Character : MonoBehaviour
 
     public virtual Leader GetOwner()
     {
+        if(killed) return null;
         if (!owner && this is Leader) return this as Leader;
         
         return owner;
@@ -236,7 +237,7 @@ public class Character : MonoBehaviour
 
     public bool IsArmyCommander()
     {
-        return army != null && army.commander == this && !killed && army.GetSize() > 0;
+        return army != null && army.commander == this && !killed && army.GetSize() > 0 && !army.killed;
     }
 
     public int GetMovementLeft()

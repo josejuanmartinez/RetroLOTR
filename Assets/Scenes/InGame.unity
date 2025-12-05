@@ -7090,7 +7090,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1866956968511044095, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -104.82496
+      value: -104.82511
       objectReference: {fileID: 0}
     - target: {fileID: 1953368720258838695, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: mageXP
@@ -10618,6 +10618,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 86e315860ab1bd744b69b4165ca069b1, type: 3}
     - target: {fileID: 7756556735882998655, guid: 257b15f0c2ed3a8428c92544dd90faa0, type: 3}
+      propertyPath: island
+      value: 
+      objectReference: {fileID: 21300000, guid: 9e4e0cbbdd5658c46a7602daed1ac241, type: 3}
+    - target: {fileID: 7756556735882998655, guid: 257b15f0c2ed3a8428c92544dd90faa0, type: 3}
       propertyPath: plains
       value: 
       objectReference: {fileID: 21300000, guid: 97da489e5598cb94cbcdd9a9d67796a9, type: 3}
@@ -10680,7 +10684,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: hexSize.y
-      value: 1.25
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: swampSize
@@ -10785,6 +10789,14 @@ PrefabInstance:
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: hexesPerBatch
       value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
+      propertyPath: waterPercentage
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
+      propertyPath: shoreProbability
+      value: 0.86
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: maximumGenerationBuget

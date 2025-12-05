@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 
 [Serializable]
@@ -291,5 +292,10 @@ public class PC
     public int GetProductionPoints()
     {
         return leather + timber*2 + mithril*5 + iron*3 + mounts*2;
+    }
+
+    public void Reveal()
+    {
+        if(isHidden) hiddenButRevealed = true;
     }
 }

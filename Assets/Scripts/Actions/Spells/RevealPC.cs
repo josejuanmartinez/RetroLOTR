@@ -11,7 +11,7 @@ public class RevealPC: Spell
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c.hex.GetPC() == null) return false;
-            c.hex.GetPC().hiddenButRevealed = true; 
+            c.hex.GetPC().Reveal();
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"{c.hex.GetPC()} revealed!", Color.green);
             return true;
         };

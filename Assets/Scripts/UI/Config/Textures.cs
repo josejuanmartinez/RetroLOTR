@@ -13,5 +13,6 @@ public class Textures : MonoBehaviour
     public Sprite desert;
     public Sprite shore;
     public Sprite swamp;
+    public Sprite island;
     public Sprite MAX;
 }

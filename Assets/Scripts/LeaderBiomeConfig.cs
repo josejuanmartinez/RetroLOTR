@@ -17,6 +17,7 @@ public class LeaderBiomeConfig: BiomeConfig
     public string introActor2;
     public TerrainEnum terrain;
     public FeaturesEnum feature = FeaturesEnum.noFeature;
+    public bool isIsland = false;
     public string startingCityName;
     public PCSizeEnum startingCitySize;
 

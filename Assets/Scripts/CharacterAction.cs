@@ -80,7 +80,8 @@ public class CharacterAction : SearcherByName
             this.character = character;
 
             this.condition = (character) => { return 
-                (!character.hasActionedThisTurn || this.actionName == FindFirstObjectByType<ActionsManager>().DEFAULT.actionName) 
+                character != null && !character.killed
+                && (!character.hasActionedThisTurn || this.actionName == FindFirstObjectByType<ActionsManager>().DEFAULT.actionName) 
                 &&  ResourcesAvailable() 
                 && (originalCondition == null || originalCondition(character)); 
             };

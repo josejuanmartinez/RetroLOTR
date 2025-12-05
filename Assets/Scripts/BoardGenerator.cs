@@ -70,6 +70,7 @@ public class BoardGenerator : MonoBehaviour
     [Range(0.1f, 0.3f)] public float desertPercentage = 0.1395f;
     [Range(0.1f, 0.9f)] public float grasslandsProbability = 0.5f; // Chance of plains becoming grasslands
     [Range(0.1f, 0.5f)] public float coastDepth = 0.15f;
+    [Range(0.5f, 1.0f)] public float shoreProbability = 0.85f; // Chance a coastal tile is shore (lakes and rivers excluded)
 
     [Header("Mountain Parameters")]
     [Range(1, 5)] public int mountainChainCount = 3;
@@ -1701,7 +1702,7 @@ public class BoardGenerator : MonoBehaviour
                         terrainCopy[row, col] != TerrainEnum.hills &&
                         terrainCopy[row, col] != TerrainEnum.swamp)
                     {
-                        if (Random.value < 0.8f)
+                        if (Random.value < shoreProbability)
                         {
                             terrainGrid[row, col] = TerrainEnum.shore;
                         }

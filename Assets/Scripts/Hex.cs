@@ -176,6 +176,7 @@ public class Hex : MonoBehaviour
     {
         v2 = new Vector2Int(row, col);
         if (game == null) game = FindFirstObjectByType<Game>();
+        terrainTexture.sortingOrder = row * board.GetWidth() + col;
     }
 
     public SpriteRenderer GetCharacterSpriteRendererOnHex(Character character)
@@ -274,7 +275,7 @@ public class Hex : MonoBehaviour
     public void RefreshHoverText()
     {
         bool revealed = IsHexRevealed();
-        bool pcRev = revealed && IsPCRevealed();
+        bool pcRev = revealed && pc != null && IsPCRevealed();
 
         if (pcRev)
         {            
@@ -453,6 +454,12 @@ public class Hex : MonoBehaviour
         RevealInternal(scoutedByPlayer, game.IsPlayerCurrentlyPlaying());
     }
 
+    public void RevealPC()
+    {
+        if (pc == null || pc.IsRevealed()) return;
+        pc.Reveal();
+    }
+
     public void Unreveal(Leader unrevealedPlayer = null)
     {
         if(unrevealedPlayer)
@@ -614,6 +621,11 @@ public class Hex : MonoBehaviour
         return terrainType == TerrainEnum.shallowWater || terrainType == TerrainEnum.deepWater;
     }
 
+    public bool HasAnyPC()
+    {
+        return pc != null && pc.citySize != PCSizeEnum.NONE;
+    }
+
     public PC GetPC()
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return null;
@@ -621,7 +633,7 @@ public class Hex : MonoBehaviour
         return null;
     }
 
-    public void SetPC(PC pc, string pcFeature = "", string fortFeature = "")
+    public void SetPC(PC pc, string pcFeature = "", string fortFeature = "", bool isIsland = false)
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
         this.pc = pc;
@@ -642,6 +654,10 @@ public class Hex : MonoBehaviour
             keepSprite.sprite = fortFeatureSprite;
             fortressSprite.sprite = fortFeatureSprite;
             citadelSprite.sprite = fortFeatureSprite;
+        }
+        if(isIsland)
+        {
+            terrainTexture.sprite = FindFirstObjectByType<Textures>().island;
         }
     }
 
@@ -672,6 +688,11 @@ public class Hex : MonoBehaviour
     public List<Character> GetFriendlyArmies(Leader leader)
     {
         return characters.FindAll(x => x.IsArmyCommander() && (x.GetOwner() == leader || (x.GetAlignment() == leader.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral))).ToList();
+    }
+
+    public string GetHoverV2()
+    {
+        return $"@{v2.x},{v2.y}";
     }
 
     // Safe SetActive that avoids redundant calls/dirtying the obj

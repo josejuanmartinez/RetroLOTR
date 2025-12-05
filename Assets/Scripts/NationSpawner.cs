@@ -165,11 +165,28 @@ public class NationSpawner : MonoBehaviour
             Debug.LogWarning("Max leaders reached. Skipping leader instantiation.");
             return;
         }*/
-        List<Vector2Int> suitableHexes = GetCachedHexesWithTerrain(leaderBiomeConfig.terrain, leaderBiomeConfig.feature);
+        TerrainEnum chosenTerrain = leaderBiomeConfig.terrain;
+        List<Vector2Int> suitableHexes = GetAvailableHexes(chosenTerrain, leaderBiomeConfig.feature);
 
         if (suitableHexes.Count == 0)
         {
-            throw new Exception($"No suitable hexes found with terrain {leaderBiomeConfig.terrain}.");
+            TerrainEnum[] fallbackTerrains = { TerrainEnum.plains, TerrainEnum.grasslands, TerrainEnum.hills, TerrainEnum.shore };
+            foreach (var fallbackTerrain in fallbackTerrains)
+            {
+                if (fallbackTerrain == leaderBiomeConfig.terrain) continue;
+                suitableHexes = GetAvailableHexes(fallbackTerrain, leaderBiomeConfig.feature);
+                if (suitableHexes.Count > 0)
+                {
+                    chosenTerrain = fallbackTerrain;
+                    Debug.LogWarning($"Falling back to terrain {fallbackTerrain} because all {leaderBiomeConfig.terrain} hexes already have PCs.");
+                    break;
+                }
+            }
+        }
+
+        if (suitableHexes.Count == 0)
+        {
+            throw new Exception($"No suitable hexes found for leader with terrain {leaderBiomeConfig.terrain} (including fallbacks).");
         }
 
         Vector2Int bestPosition = FindFarthestPosition(suitableHexes, placedPositions);
@@ -211,13 +228,39 @@ public class NationSpawner : MonoBehaviour
             return;
 
         PC pc = new(leader, hex);
-        hex.SetPC(pc, leaderBiomeConfig.pcFeature, leaderBiomeConfig.fortFeature);
+        hex.SetPC(pc, leaderBiomeConfig.pcFeature, leaderBiomeConfig.fortFeature, leaderBiomeConfig.isIsland);
+
+        // If we fell back from a shore start and the PC was meant to have a port, strip the port on non-shore terrain.
+        if (leaderBiomeConfig.startsWithPort && leaderBiomeConfig.terrain == TerrainEnum.shore && chosenTerrain != TerrainEnum.shore)
+        {
+            pc.hasPort = false;
+            hex.RedrawPC();
+        }
+
         currentPcCount++;
+    }
+
+    private List<Vector2Int> GetAvailableHexes(TerrainEnum terrain, FeaturesEnum feature)
+    {
+        List<Vector2Int> suitableHexes = GetCachedHexesWithTerrain(terrain, feature);
+
+        if (suitableHexes.Count == 0)
+        {
+            return new List<Vector2Int>();
+        }
+
+        return suitableHexes
+            .Where(pos => board.hexes.TryGetValue(pos, out Hex h) && !h.HasAnyPC())
+            .ToList();
     }
 
     private List<Vector2Int> GetCachedHexesWithTerrain(TerrainEnum terrain, FeaturesEnum feature)
     {
-        List<Vector2Int> suitableTerrain = terrainHexCache[terrain];
+        if (!terrainHexCache.TryGetValue(terrain, out List<Vector2Int> suitableTerrain))
+        {
+            return new List<Vector2Int>();
+        }
+
         List<Vector2Int> suitableFeature = suitableTerrain;
         switch (feature)
         {

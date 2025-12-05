@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.Playables;
 
 public class PlayableLeaderIcon : MonoBehaviour
 {
@@ -54,7 +55,7 @@ public class PlayableLeaderIcon : MonoBehaviour
 
     public void AddNonPlayableLeader(NonPlayableLeader nonPlayableLeader)
     {
-        nonPlayableLeaderIcons.Instantiate(nonPlayableLeader);
+        nonPlayableLeaderIcons.Instantiate(nonPlayableLeader, playableLeader);
     }
 
     public void HighlighNonPlayableLeader(Sprite leader, string leaderText)

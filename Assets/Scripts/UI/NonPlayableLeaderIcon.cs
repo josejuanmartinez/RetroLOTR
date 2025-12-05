@@ -64,7 +64,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         sb.Append("<br><br>");
         if(nonPlayableLeader.alignment == game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
         {
-            sb.Append("They can join your side.<br><br>Cast `perceive allegiances` to know how to hire them.<br><br>");  
+            sb.Append("They can join your side.<br><br>Issue `perceive allegiances` to know how to hire them.<br><br>");  
         } 
         if(nonPlayableLeader.alignment != game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
         {

@@ -113,20 +113,32 @@ public class NonPlayableLeader : Leader
     {
         bool realmCollapsed = killedBy == this;
         bool enemyAlignment = alignment != AlignmentEnum.neutral && killedBy.GetAlignment() != alignment;
-        if(realmCollapsed || enemyAlignment || joined)
-        {            
+
+        bool kill = false;
+        if(realmCollapsed || enemyAlignment || joined) kill = true; else kill = !Joined(killedBy);
+
+        if(kill)
+        {
             NonPlayableLeaderIcon npli = FindObjectsByType<NonPlayableLeaderIcon>(FindObjectsSortMode.None).FirstOrDefault(x => x.nonPlayableLeader == this);
             if(npli != null) npli.SetDead();
             base.Killed(killedBy);
-        } 
-        else
-        {         
-            Joined(killedBy);
         }
     }
 
     public bool Joined(Leader joinedTo)
     {
+        short max_it = 10;
+        while(true)
+        {
+            if(max_it-- < 0) break;
+            if(joinedTo == null) break;
+            if(joinedTo is PlayableLeader) break;
+            if(joinedTo is not PlayableLeader) joinedTo = joinedTo.GetOwner();
+        }
+        if(joinedTo == null || joinedTo is not PlayableLeader) return false;
+
+        PlayableLeader playableLeaderJoinedTo = joinedTo as PlayableLeader;
+        
         Leader owner = GetOwner();
 
         // Snapshot current state so we can roll back on failure
@@ -140,24 +152,24 @@ public class NonPlayableLeader : Leader
         var characterSnapshots = originalCharacters.Select(character => new
         {
             character,
-            owner = character.owner,
-            alignment = character.alignment,
-            startingCharacter = character.startingCharacter,
-            health = character.health
+            character.owner,
+            character.alignment,
+            character.startingCharacter,
+            character.health
         }).ToList();
 
         var pcSnapshots = originalPcs.Select(pc => new
         {
             pc,
-            owner = pc.owner,
-            citySize = pc.citySize,
-            fortSize = pc.fortSize,
-            loyalty = pc.loyalty,
-            leather = pc.leather,
-            mounts = pc.mounts,
-            timber = pc.timber,
-            iron = pc.iron,
-            mithril = pc.mithril
+            pc.owner,
+            pc.citySize,
+            pc.fortSize,
+            pc.loyalty,
+            pc.leather,
+            pc.mounts,
+            pc.timber,
+            pc.iron,
+            pc.mithril
         }).ToList();
 
         int originalHealth = health;
@@ -176,7 +188,13 @@ public class NonPlayableLeader : Leader
         int targetMithrilAmount = joinedTo.mithrilAmount;
         int targetGoldAmount = joinedTo.goldAmount;
 
+
+        NonPlayableLeaderIcons npls = FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None).FirstOrDefault(x => x.playableLeader = playableLeaderJoinedTo);
+        if(!npls) return false;
         NonPlayableLeaderIcon npli = FindObjectsByType<NonPlayableLeaderIcon>(FindObjectsSortMode.None).FirstOrDefault(x => x.nonPlayableLeader == this);
+        if(!npli) return false;
+        npli.transform.parent = npls.transform;
+
         Color? npliBorderColor = npli != null ? npli.border.color : null;
 
         try
@@ -330,14 +348,14 @@ public class NonPlayableLeader : Leader
             return $"{characterName} follows another alignment and will not join your cause.<br><br>Unfriendly actions can weaken this nation.";
         }
 
-        StringBuilder sb = new ($"{characterName} will join you under the following conditions:");
+        StringBuilder sb = new ($"{characterName} will join you if you fullfill one of the following conditions:");
         sb.Append("<br><br>");
         if (nonPlayableLeaderBiome.artifactsToJoin != null && nonPlayableLeaderBiome.artifactsToJoin.Count > 0)
         {
-            sb.Append($"- Artifacts: {string.Join(", ", nonPlayableLeaderBiome.artifactsToJoin)}<br>");
+            sb.Append($"- Possess artifacts: any of {string.Join(", ", nonPlayableLeaderBiome.artifactsToJoin)}<br>");
         }
 
-        if (nonPlayableLeaderBiome.artifactsQtyToJoin > 0) sb.Append($"- Possess {nonPlayableLeaderBiome.artifactsQtyToJoin} artifacts<br>");
+        if (nonPlayableLeaderBiome.artifactsQtyToJoin > 0) sb.Append($"- Accumulate {nonPlayableLeaderBiome.artifactsQtyToJoin} artifacts<br>");
 
         if (nonPlayableLeaderBiome.leatherToJoin > 0) sb.Append($"- <sprite name=\"leather\">[{nonPlayableLeaderBiome.leatherToJoin}]<br>");
 
@@ -347,43 +365,43 @@ public class NonPlayableLeader : Leader
 
         if (nonPlayableLeaderBiome.ironToJoin > 0) sb.Append($"- <sprite name=\"iron\">[{nonPlayableLeaderBiome.ironToJoin}]<br>");
 
-        if (nonPlayableLeaderBiome.mithrilToJoin > 0) sb.Append($"- <sprite name=\"mithril\">[{nonPlayableLeaderBiome.mithrilToJoin}]");
+        if (nonPlayableLeaderBiome.mithrilToJoin > 0) sb.Append($"- <sprite name=\"mithril\">[{nonPlayableLeaderBiome.mithrilToJoin}]<br>");
 
-        if (nonPlayableLeaderBiome.goldToJoin > 0) sb.Append($"- <sprite name=\"gold\">[{nonPlayableLeaderBiome.goldToJoin}]");
+        if (nonPlayableLeaderBiome.goldToJoin > 0) sb.Append($"- <sprite name=\"gold\">[{nonPlayableLeaderBiome.goldToJoin}]<br>");
         
-        if (nonPlayableLeaderBiome.commanderLevelToJoin > 0) sb.Append($"- Have a <sprite name=\"commander\"> of level [{nonPlayableLeaderBiome.commanderLevelToJoin}]");
+        if (nonPlayableLeaderBiome.commanderLevelToJoin > 0) sb.Append($"- Have a <sprite name=\"commander\"> of level [{nonPlayableLeaderBiome.commanderLevelToJoin}]<br>");
 
-        if (nonPlayableLeaderBiome.agentLevelToJoin > 0) sb.Append($"- Have an <sprite name=\"agent\"> of level [{nonPlayableLeaderBiome.agentLevelToJoin}]");
+        if (nonPlayableLeaderBiome.agentLevelToJoin > 0) sb.Append($"- Have an <sprite name=\"agent\"> of level [{nonPlayableLeaderBiome.agentLevelToJoin}]<br>");
         
-        if (nonPlayableLeaderBiome.emmissaryLevelToJoin > 0) sb.Append($"- Have an <sprite name=\"emmissary\"> of level [{nonPlayableLeaderBiome.emmissaryLevelToJoin}]");
+        if (nonPlayableLeaderBiome.emmissaryLevelToJoin > 0) sb.Append($"- Have an <sprite name=\"emmissary\"> of level [{nonPlayableLeaderBiome.emmissaryLevelToJoin}]<br>");
         
-        if (nonPlayableLeaderBiome.mageLevelToJoin > 0) sb.Append($"- Have a <sprite name=\"mage\"> of level [{nonPlayableLeaderBiome.mageLevelToJoin}]");
+        if (nonPlayableLeaderBiome.mageLevelToJoin > 0) sb.Append($"- Have a <sprite name=\"mage\"> of level [{nonPlayableLeaderBiome.mageLevelToJoin}]<br>");
         
-        if (nonPlayableLeaderBiome.armiesToJoin > 0) sb.Append($"- Have at least {nonPlayableLeaderBiome.armiesToJoin} armies");
+        if (nonPlayableLeaderBiome.armiesToJoin > 0) sb.Append($"- Have at least {nonPlayableLeaderBiome.armiesToJoin} armies<br>");
 
-        if (nonPlayableLeaderBiome.maSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ma\">{nonPlayableLeaderBiome.maSizeToJoin}");
+        if (nonPlayableLeaderBiome.maSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ma\">{nonPlayableLeaderBiome.maSizeToJoin}<br>");
 
-        if (nonPlayableLeaderBiome.arSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ar\">{nonPlayableLeaderBiome.arSizeToJoin}");
+        if (nonPlayableLeaderBiome.arSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ar\">{nonPlayableLeaderBiome.arSizeToJoin}<br>");
         
-        if (nonPlayableLeaderBiome.liSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"li\">{nonPlayableLeaderBiome.liSizeToJoin}");
+        if (nonPlayableLeaderBiome.liSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"li\">{nonPlayableLeaderBiome.liSizeToJoin}<br>");
 
-        if (nonPlayableLeaderBiome.hiSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"hi\">{nonPlayableLeaderBiome.hiSizeToJoin}");
+        if (nonPlayableLeaderBiome.hiSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"hi\">{nonPlayableLeaderBiome.hiSizeToJoin}<br>");
 
-        if (nonPlayableLeaderBiome.lcSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"lc\">{nonPlayableLeaderBiome.lcSizeToJoin}");
+        if (nonPlayableLeaderBiome.lcSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"lc\">{nonPlayableLeaderBiome.lcSizeToJoin}<br>");
 
-        if (nonPlayableLeaderBiome.hcSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"hc\">{nonPlayableLeaderBiome.hcSizeToJoin}");
+        if (nonPlayableLeaderBiome.hcSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"hc\">{nonPlayableLeaderBiome.hcSizeToJoin}<br>");
 
-        if (nonPlayableLeaderBiome.caSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ca\">{nonPlayableLeaderBiome.caSizeToJoin}");
+        if (nonPlayableLeaderBiome.caSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ca\">{nonPlayableLeaderBiome.caSizeToJoin}<br>");
 
-        if (nonPlayableLeaderBiome.wsSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ws\">{nonPlayableLeaderBiome.wsSizeToJoin}");
+        if (nonPlayableLeaderBiome.wsSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ws\">{nonPlayableLeaderBiome.wsSizeToJoin}<br>");
 
-        if (nonPlayableLeaderBiome.commandersToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.commanderLevelToJoin} <sprite name=\"commander\">");
+        if (nonPlayableLeaderBiome.commandersToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.commanderLevelToJoin} <sprite name=\"commander\"><br>");
 
-        if (nonPlayableLeaderBiome.agentsToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.agentsToJoin} <sprite name=\"agent\">");
+        if (nonPlayableLeaderBiome.agentsToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.agentsToJoin} <sprite name=\"agent\"><br>");
 
-        if (nonPlayableLeaderBiome.emmissarysToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.emmissarysToJoin} <sprite name=\"emmissary\">");
+        if (nonPlayableLeaderBiome.emmissarysToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.emmissarysToJoin} <sprite name=\"emmissary\"><br>");
         
-        if (nonPlayableLeaderBiome.magesToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.magesToJoin} <sprite name=\"mage\">");
+        if (nonPlayableLeaderBiome.magesToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.magesToJoin} <sprite name=\"mage\"><br>");
 
         sb.Append($"The final action to hire them should be run at capital and was not revealed.");      
 
