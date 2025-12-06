@@ -7,6 +7,11 @@ using UnityEngine;
 public class AIContext
 {
     private readonly Board board;
+    private readonly List<AIScoredAction> scoredActions = new();
+    private readonly List<ArtifactTransferCandidate> artifactTransferCandidates = new();
+    private readonly HashSet<string> scoredActionKeys = new();
+    private readonly AIContextPrecomputedData? _precomputed;
+    private ResourceSnapshot preSnapshot;
 
     public PlayableLeader Leader { get; }
     public Character Character { get; }
@@ -26,18 +31,17 @@ public class AIContext
     public CharacterAction LastChosenAction { get; private set; }
     public AdvisorType LastAdvisor { get; private set; }
 
-    public AIContext(PlayableLeader leader, Character character, List<CharacterAction> availableActions)
+    public AIContext(PlayableLeader leader, Character character, List<CharacterAction> availableActions, AIContextPrecomputedData? precomputed = null)
     {
         Leader = leader;
         Character = character;
         AvailableActions = availableActions ?? new List<CharacterAction>();
         board = UnityEngine.Object.FindFirstObjectByType<Board>();
         EconomyStatus = EvaluateEconomy();
-        goldPerTurn = leader != null ? leader.GetGoldPerTurn() : 0;
-        goldBuffer = leader != null ? leader.goldAmount : 0;
-        nationPercentageArtifacts = CalculateNationArtifacts();
-        CacheEnemyTargets();
-        CacheNpcTargets();
+
+        _precomputed = precomputed;
+        ApplyPrecomputedData(precomputed ?? AIContextDataBuilder.Build(leader, character));
+        preSnapshot = CaptureSnapshot();
     }
 
     public bool NeedsEconomicHelp => EconomyStatus == EconomyStatus.Critical || EconomyStatus == EconomyStatus.Weak;
@@ -47,6 +51,7 @@ public class AIContext
 
     public async Task<bool> TryExecuteAdvisorActionAsync(AdvisorType advisor)
     {
+        ResetScoringData();
         CharacterAction action = PickBestActionForAdvisor(advisor);
         if (action == null) return false;
 
@@ -57,6 +62,7 @@ public class AIContext
 
     public async Task<bool> TryExecuteBestAvailableActionAsync()
     {
+        ResetScoringData();
         CharacterAction action = AvailableActions
             .OrderByDescending(a => ScoreAction(a, a.GetAdvisorType()))
             .FirstOrDefault();
@@ -73,6 +79,26 @@ public class AIContext
         RecordAction(null, AdvisorType.None);
         await Character.Pass();
         return true;
+    }
+
+    private void ApplyPrecomputedData(AIContextPrecomputedData data)
+    {
+        goldPerTurn = data.GoldPerTurn;
+        goldBuffer = data.GoldBuffer;
+        nationPercentageArtifacts = data.NationPercentageArtifacts;
+        closestEnemy = data.ClosestEnemy;
+        closestNonNeutralEnemy = data.ClosestNonNeutralEnemy;
+        nearestUnrevealedNpcDistance = data.NearestUnrevealedNpcDistance;
+        nearestUnrevealedNpcHex = data.NearestUnrevealedNpcHex;
+        nearestEnemyCharacterDistance = data.NearestEnemyCharacterDistance;
+        nearestEnemyCharacterHex = data.NearestEnemyCharacterHex;
+        needsIndirectApproach = data.NeedsIndirectApproach;
+
+        if (data.ArtifactTransferCandidates != null && data.ArtifactTransferCandidates.Count > 0)
+        {
+            artifactTransferCandidates.Clear();
+            artifactTransferCandidates.AddRange(data.ArtifactTransferCandidates);
+        }
     }
 
     private CharacterAction PickBestActionForAdvisor(AdvisorType advisor)
@@ -114,6 +140,7 @@ public class AIContext
             case AdvisorType.Magic:
                 score += (1f - nationPercentageArtifacts)*2f;
                 score += GetDistanceScore(true);
+                score += GetArtifactTransferScore();
                 break;
             case AdvisorType.Diplomatic:
                 score += GetDiplomaticScore();
@@ -128,6 +155,7 @@ public class AIContext
                 break;
         }
 
+        RecordScoredAction(action, advisor, score);
         return score;
     }
 
@@ -238,9 +266,121 @@ public class AIContext
         return Mathf.Max(0f, 8f - distance * 2f);
     }
 
+    private float GetArtifactTransferScore()
+    {
+        if (Character == null || Character.hex == null) return 0f;
+
+        // If we have precomputed candidates, reuse them and simply adjust by availability
+        if (_precomputed.HasValue && _precomputed.Value.ArtifactTransferCandidates != null && _precomputed.Value.ArtifactTransferCandidates.Count > 0)
+        {
+            artifactTransferCandidates.Clear();
+            artifactTransferCandidates.AddRange(_precomputed.Value.ArtifactTransferCandidates);
+            bool canTransferCached = AvailableActions.Any(a => a is TransferArtifact);
+            return canTransferCached ? Mathf.Max(0f, _precomputed.Value.BestArtifactTransferScore) : 0f;
+        }
+
+        bool canTransfer = AvailableActions.Any(a => a is TransferArtifact);
+        if (!canTransfer) return 0f;
+
+        List<Artifact> transferable = Character.artifacts.Where(a => a != null && a.transferable).ToList();
+        if (transferable.Count == 0) return 0f;
+
+        if (board == null || board.hexes == null) return 0f;
+
+        List<Character> friendlies = board.hexes.Values
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && ch.hex != null && ch != Character &&
+                         (ch.GetOwner() == Character.GetOwner() ||
+                          (ch.GetAlignment() == Character.GetAlignment() && ch.GetAlignment() != AlignmentEnum.neutral)))
+            .ToList();
+        if (friendlies.Count == 0) return 0f;
+
+        artifactTransferCandidates.Clear();
+        float bestScore = 0f;
+        foreach (Artifact art in transferable)
+        {
+            foreach (Character target in friendlies)
+            {
+                float score = 0f;
+                float distance = Character.hex != null && target.hex != null
+                    ? Vector2.Distance(Character.hex.v2, target.hex.v2)
+                    : float.MaxValue;
+
+                // Prefer sharing spells with non-mages
+                if (!string.IsNullOrEmpty(art.providesSpell))
+                {
+                    score += target.GetMage() == 0 ? 6f : 3f;
+                }
+
+                // Skill boosts help low-skill targets more
+                score += art.commanderBonus > 0 ? art.commanderBonus * 2f + Mathf.Max(0, 5 - target.GetCommander()) : 0f;
+                score += art.agentBonus > 0 ? art.agentBonus * 2f + Mathf.Max(0, 5 - target.GetAgent()) : 0f;
+                score += art.emmissaryBonus > 0 ? art.emmissaryBonus * 2f + Mathf.Max(0, 5 - target.GetEmmissary()) : 0f;
+                score += art.mageBonus > 0 ? art.mageBonus * 2f + Mathf.Max(0, 5 - target.GetMage()) : 0f;
+
+                // Combat bonuses are more valuable on army commanders
+                if (target.IsArmyCommander())
+                {
+                    score += art.bonusAttack * 3f;
+                    score += art.bonusDefense * 2f;
+                }
+
+                // Small penalty if target already excels in the boosted area
+                if (art.commanderBonus > 0 && target.GetCommander() > 3) score -= 2f;
+                if (art.agentBonus > 0 && target.GetAgent() > 3) score -= 2f;
+                if (art.emmissaryBonus > 0 && target.GetEmmissary() > 3) score -= 2f;
+                if (art.mageBonus > 0 && target.GetMage() > 3) score -= 2f;
+
+                // Distance penalty so nearer recipients are favored
+                if (distance < float.MaxValue)
+                {
+                    score -= distance * 2f;
+                }
+                else
+                {
+                    score -= 5f;
+                }
+
+                artifactTransferCandidates.Add(new ArtifactTransferCandidate(art.artifactName, target.characterName, score, distance));
+                bestScore = Mathf.Max(bestScore, score);
+            }
+        }
+
+        // Reward scenarios where at least one good transfer exists
+        return Mathf.Max(0f, bestScore / 3f);
+    }
+
+    private void RecordScoredAction(CharacterAction action, AdvisorType advisor, float score)
+    {
+        if (action == null) return;
+        string key = $"{action.actionName}|{advisor}";
+        if (scoredActionKeys.Contains(key)) return;
+        scoredActionKeys.Add(key);
+        float targetDistance = -1f;
+        Hex preferred = GetPreferredMovementTarget();
+        if (preferred != null && Character != null && Character.hex != null)
+        {
+            targetDistance = Vector2.Distance(Character.hex.v2, preferred.v2);
+        }
+        scoredActions.Add(new AIScoredAction(action.actionName, advisor.ToString(), score, targetDistance));
+    }
+
+    private void ResetScoringData()
+    {
+        scoredActions.Clear();
+        scoredActionKeys.Clear();
+        artifactTransferCandidates.Clear();
+    }
+
     public AIActionLogEntry BuildLogEntry()
     {
+        // Refresh enemy target cache after action for post-state measurements
+        CacheEnemyTargets();
+        ResourceSnapshot post = CaptureSnapshot();
         Hex preferred = GetPreferredMovementTarget();
+        Leader owner = Character != null ? Character.GetOwner() : null;
+        Army army = Character != null ? Character.GetArmy() : null;
+        TargetInfo targetInfo = GetTargetInfo(preferred);
         return new AIActionLogEntry
         {
             timestamp = DateTime.UtcNow.ToString("o"),
@@ -254,8 +394,59 @@ public class AIContext
             agent = Character?.GetAgent() ?? 0,
             emmissary = Character?.GetEmmissary() ?? 0,
             mage = Character?.GetMage() ?? 0,
-            goldBuffer = goldBuffer,
-            goldPerTurn = goldPerTurn,
+            armyOffence = army != null ? army.GetOffence() : 0,
+            armyDefence = army != null ? army.GetDefence() : 0,
+            health = Character?.health ?? 0,
+            preCommander = preSnapshot.commander,
+            preAgent = preSnapshot.agent,
+            preEmmissary = preSnapshot.emmissary,
+            preMage = preSnapshot.mage,
+            preArmyOffence = preSnapshot.armyOffence,
+            preArmyDefence = preSnapshot.armyDefence,
+            preHealth = preSnapshot.health,
+            commanderDelta = (Character?.GetCommander() ?? 0) - preSnapshot.commander,
+            agentDelta = (Character?.GetAgent() ?? 0) - preSnapshot.agent,
+            emmissaryDelta = (Character?.GetEmmissary() ?? 0) - preSnapshot.emmissary,
+            mageDelta = (Character?.GetMage() ?? 0) - preSnapshot.mage,
+            armyOffenceDelta = (army != null ? army.GetOffence() : 0) - preSnapshot.armyOffence,
+            armyDefenceDelta = (army != null ? army.GetDefence() : 0) - preSnapshot.armyDefence,
+            healthDelta = (Character?.health ?? 0) - preSnapshot.health,
+            goldBuffer = owner != null ? owner.goldAmount : 0,
+            goldPerTurn = owner != null ? owner.GetGoldPerTurn() : 0,
+            leather = owner != null ? owner.leatherAmount : 0,
+            timber = owner != null ? owner.timberAmount : 0,
+            iron = owner != null ? owner.ironAmount : 0,
+            mounts = owner != null ? owner.mountsAmount : 0,
+            mithril = owner != null ? owner.mithrilAmount : 0,
+            leatherPerTurn = owner != null ? owner.GetLeatherPerTurn() : 0,
+            timberPerTurn = owner != null ? owner.GetTimberPerTurn() : 0,
+            ironPerTurn = owner != null ? owner.GetIronPerTurn() : 0,
+            mountsPerTurn = owner != null ? owner.GetMountsPerTurn() : 0,
+            mithrilPerTurn = owner != null ? owner.GetMithrilPerTurn() : 0,
+            preGoldBuffer = preSnapshot.gold,
+            preGoldPerTurn = preSnapshot.goldPerTurn,
+            preLeather = preSnapshot.leather,
+            preTimber = preSnapshot.timber,
+            preIron = preSnapshot.iron,
+            preMounts = preSnapshot.mounts,
+            preMithril = preSnapshot.mithril,
+            preLeatherPerTurn = preSnapshot.leatherPerTurn,
+            preTimberPerTurn = preSnapshot.timberPerTurn,
+            preIronPerTurn = preSnapshot.ironPerTurn,
+            preMountsPerTurn = preSnapshot.mountsPerTurn,
+            preMithrilPerTurn = preSnapshot.mithrilPerTurn,
+            goldDelta = (owner != null ? owner.goldAmount : 0) - preSnapshot.gold,
+            leatherDelta = (owner != null ? owner.leatherAmount : 0) - preSnapshot.leather,
+            timberDelta = (owner != null ? owner.timberAmount : 0) - preSnapshot.timber,
+            ironDelta = (owner != null ? owner.ironAmount : 0) - preSnapshot.iron,
+            mountsDelta = (owner != null ? owner.mountsAmount : 0) - preSnapshot.mounts,
+            mithrilDelta = (owner != null ? owner.mithrilAmount : 0) - preSnapshot.mithril,
+            goldPerTurnDelta = (owner != null ? owner.GetGoldPerTurn() : 0) - preSnapshot.goldPerTurn,
+            leatherPerTurnDelta = (owner != null ? owner.GetLeatherPerTurn() : 0) - preSnapshot.leatherPerTurn,
+            timberPerTurnDelta = (owner != null ? owner.GetTimberPerTurn() : 0) - preSnapshot.timberPerTurn,
+            ironPerTurnDelta = (owner != null ? owner.GetIronPerTurn() : 0) - preSnapshot.ironPerTurn,
+            mountsPerTurnDelta = (owner != null ? owner.GetMountsPerTurn() : 0) - preSnapshot.mountsPerTurn,
+            mithrilPerTurnDelta = (owner != null ? owner.GetMithrilPerTurn() : 0) - preSnapshot.mithrilPerTurn,
             economyStatus = EconomyStatus.ToString(),
             needsIndirect = needsIndirectApproach,
             nationArtifactsShare = nationPercentageArtifacts,
@@ -263,12 +454,22 @@ public class AIContext
             nearestEnemyCharacterDistance = nearestEnemyCharacterDistance,
             nearestEnemyStrength = closestEnemy.Strength,
             nearestNonNeutralStrength = closestNonNeutralEnemy.Strength,
+            preNearestEnemyStrength = preSnapshot.nearestEnemyStrength,
+            preNearestNonNeutralStrength = preSnapshot.nearestNonNeutralStrength,
+            nearestEnemyStrengthDelta = closestEnemy.Strength - preSnapshot.nearestEnemyStrength,
+            nearestNonNeutralStrengthDelta = closestNonNeutralEnemy.Strength - preSnapshot.nearestNonNeutralStrength,
+            targetOwnerName = targetInfo.name,
+            targetOwnerAlignment = targetInfo.alignment,
+            targetOwnerType = targetInfo.type,
             preferredTargetType = preferred != null ? preferred.GetPC() != null ? "PC" : "Hex" : "None",
             preferredTarget = preferred != null ? preferred.v2 : Vector2Int.one * -1,
+            preferredTargetDistance = preferred != null && Character != null && Character.hex != null ? Vector2.Distance(Character.hex.v2, preferred.v2) : -1f,
             actionName = LastChosenAction != null ? LastChosenAction.actionName : "Pass",
             advisorType = LastAdvisor.ToString(),
             actionDifficulty = LastChosenAction != null ? LastChosenAction.difficulty : 0,
-            actionGoldCost = LastChosenAction != null ? LastChosenAction.GetGoldCost() : 0
+            actionGoldCost = LastChosenAction != null ? LastChosenAction.GetGoldCost() : 0,
+            scoredActions = scoredActions.Select(sa => $"{sa.actionName}|{sa.advisor}|{sa.score:0.00}|{sa.targetDistance:0.00}").ToList(),
+            artifactTransferCandidates = artifactTransferCandidates.Select(c => $"{c.artifactName}->{c.targetName}|{c.score:0.00}|{c.distance:0.00}").ToList()
         };
     }
 
@@ -412,7 +613,23 @@ public class AIContext
         return source != null && source.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
-    private readonly struct EnemyTarget
+    public struct AIContextPrecomputedData
+    {
+        public EnemyTarget ClosestEnemy;
+        public EnemyTarget ClosestNonNeutralEnemy;
+        public float NearestUnrevealedNpcDistance;
+        public Hex NearestUnrevealedNpcHex;
+        public float NearestEnemyCharacterDistance;
+        public Hex NearestEnemyCharacterHex;
+        public bool NeedsIndirectApproach;
+        public int GoldPerTurn;
+        public int GoldBuffer;
+        public float NationPercentageArtifacts;
+        public List<ArtifactTransferCandidate> ArtifactTransferCandidates;
+        public float BestArtifactTransferScore;
+    }
+
+    public readonly struct EnemyTarget
     {
         public Hex Hex { get; }
         public float Distance { get; }
@@ -427,5 +644,123 @@ public class AIContext
             IsNeutral = isNeutral;
             Strength = strength;
         }
+    }
+
+    private readonly struct AIScoredAction
+    {
+        public readonly string actionName;
+        public readonly string advisor;
+        public readonly float score;
+        public readonly float targetDistance;
+
+        public AIScoredAction(string actionName, string advisor, float score, float targetDistance)
+        {
+            this.actionName = actionName;
+            this.advisor = advisor;
+            this.score = score;
+            this.targetDistance = targetDistance;
+        }
+    }
+
+    public readonly struct ArtifactTransferCandidate
+    {
+        public readonly string artifactName;
+        public readonly string targetName;
+        public readonly float score;
+        public readonly float distance;
+
+        public ArtifactTransferCandidate(string artifactName, string targetName, float score, float distance)
+        {
+            this.artifactName = artifactName;
+            this.targetName = targetName;
+            this.score = score;
+            this.distance = distance;
+        }
+    }
+
+    private TargetInfo GetTargetInfo(Hex targetHex)
+    {
+        if (targetHex == null) return new TargetInfo(null, null, null);
+        Leader rawLeader = GetEnemyLeaderOnHex(targetHex);
+        if (rawLeader == null) return new TargetInfo(null, null, null);
+
+        // If NPC has joined, prefer the joined owner
+        Leader effective = rawLeader;
+        if (rawLeader is NonPlayableLeader npc && npc.joined && npc.GetOwner() != null)
+        {
+            effective = npc.GetOwner();
+        }
+
+        string type = effective is NonPlayableLeader ? "NonPlayableLeader" : "Leader";
+        return new TargetInfo(effective.characterName, effective.GetAlignment().ToString(), type);
+    }
+
+    private readonly struct TargetInfo
+    {
+        public readonly string name;
+        public readonly string alignment;
+        public readonly string type;
+
+        public TargetInfo(string name, string alignment, string type)
+        {
+            this.name = name;
+            this.alignment = alignment;
+            this.type = type;
+        }
+    }
+
+    private ResourceSnapshot CaptureSnapshot()
+    {
+        Leader owner = Character != null ? Character.GetOwner() : null;
+        Army army = Character != null ? Character.GetArmy() : null;
+        return new ResourceSnapshot
+        {
+            gold = owner != null ? owner.goldAmount : 0,
+            goldPerTurn = owner != null ? owner.GetGoldPerTurn() : 0,
+            leather = owner != null ? owner.leatherAmount : 0,
+            timber = owner != null ? owner.timberAmount : 0,
+            iron = owner != null ? owner.ironAmount : 0,
+            mounts = owner != null ? owner.mountsAmount : 0,
+            mithril = owner != null ? owner.mithrilAmount : 0,
+            leatherPerTurn = owner != null ? owner.GetLeatherPerTurn() : 0,
+            timberPerTurn = owner != null ? owner.GetTimberPerTurn() : 0,
+            ironPerTurn = owner != null ? owner.GetIronPerTurn() : 0,
+            mountsPerTurn = owner != null ? owner.GetMountsPerTurn() : 0,
+            mithrilPerTurn = owner != null ? owner.GetMithrilPerTurn() : 0,
+            armyOffence = army != null ? army.GetOffence() : 0,
+            armyDefence = army != null ? army.GetDefence() : 0,
+            commander = Character?.GetCommander() ?? 0,
+            agent = Character?.GetAgent() ?? 0,
+            emmissary = Character?.GetEmmissary() ?? 0,
+            mage = Character?.GetMage() ?? 0,
+            health = Character?.health ?? 0,
+            nearestEnemyStrength = closestEnemy.Strength,
+            nearestNonNeutralStrength = closestNonNeutralEnemy.Strength
+        };
+    }
+
+    private struct ResourceSnapshot
+    {
+        public int gold;
+        public int goldPerTurn;
+        public int leather;
+        public int timber;
+        public int iron;
+        public int mounts;
+        public int mithril;
+        public int leatherPerTurn;
+        public int timberPerTurn;
+        public int ironPerTurn;
+        public int mountsPerTurn;
+        public int mithrilPerTurn;
+        public int armyOffence;
+        public int armyDefence;
+        public int commander;
+        public int agent;
+        public int emmissary;
+        public int mage;
+        public int health;
+        public float nearestEnemyStrength;
+        public float nearestNonNeutralStrength;
     }
 }

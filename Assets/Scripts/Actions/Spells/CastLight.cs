@@ -12,7 +12,8 @@ public class CastLight: FreeNeutralSpell
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             Hex hex = c.hex;
-            hex.RevealArea(1, true, c.owner);
+            int radius = Math.Max(1, ApplySpellEffectMultiplier(c, 1));
+            hex.RevealArea(radius, true, c.owner);
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area secrets revealed!", Color.green);
             return true;
         };

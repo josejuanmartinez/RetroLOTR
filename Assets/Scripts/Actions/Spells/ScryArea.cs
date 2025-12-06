@@ -20,7 +20,8 @@ public class ScryArea : Spell
                 // Select a random hex from the list
                 int randomIndex = UnityEngine.Random.Range(0, eligibleHexes.Count);
                 Hex randomHex = eligibleHexes[randomIndex];
-                randomHex.RevealArea(Math.Max(1, c.GetMage() / 2));
+                int radius = Math.Max(1, ApplySpellEffectMultiplier(c, Math.Max(1, c.GetMage() / 2)));
+                randomHex.RevealArea(radius);
                 randomHex.LookAt();
                 MessageDisplayNoUI.ShowMessage(randomHex, c, $"Area scried!", Color.green);
                 return true;

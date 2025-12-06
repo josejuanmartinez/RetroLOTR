@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Google.Protobuf.WellKnownTypes;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class Hex : MonoBehaviour
 {
@@ -103,10 +100,8 @@ public class Hex : MonoBehaviour
     private static readonly StringBuilder sbFree = new(256);
     private static readonly StringBuilder sbNeutral = new(256);
     private static readonly StringBuilder sbDark = new(256);
-    private static readonly List<RaycastResult> raycastResults = new(16);
     private static readonly Queue<Vector2Int> areaQueue = new(64);
     private static readonly HashSet<Vector2Int> areaVisited = new();
-    private static PointerEventData sharedPED;
 
     private const string Unknown = "?";
 
@@ -122,8 +117,6 @@ public class Hex : MonoBehaviour
         navigator = FindFirstObjectByType<BoardNavigator>();
 
         darkArmySR = darkArmy ? darkArmy.GetComponent<SpriteRenderer>() : null;
-
-        if (EventSystem.current && sharedPED == null) sharedPED = new PointerEventData(EventSystem.current);
     }
 
     public bool IsHexRevealed() => !fow.activeSelf;
@@ -231,23 +224,29 @@ public class Hex : MonoBehaviour
     public void RedrawPC(bool refreshHoverText = true)
     {
         if(pc == null) return;
-        bool revealed = IsHexRevealed();
-        bool pcRevealed = revealed && IsPCRevealed();
+        if (game == null) game = FindFirstObjectByType<Game>();
 
-        if(pc.owner is NonPlayableLeader && !(pc.owner as NonPlayableLeader).IsRevealedToLeader(game.currentlyPlaying) && pcRevealed)
-        {
-            NonPlayableLeader npl = pc.owner as NonPlayableLeader;
-            bool isHuman = game != null && game.currentlyPlaying == game.player;
-            npl.RevealToLeader(game.currentlyPlaying, isHuman);
-        }
+        bool revealed = IsHexRevealed();
+        PlayableLeader viewingLeader = game != null ? game.currentlyPlaying : null;
+        bool isHuman = viewingLeader != null && game != null && viewingLeader == game.player;
+
+        RevealNonPlayableLeadersOnHex(viewingLeader, isHuman);
+
+        bool pcRevealed = revealed && IsPCRevealed();
+        bool ownerIsNonPlayableLeader = pc.owner is NonPlayableLeader;
+        bool nplKnownByViewer = ownerIsNonPlayableLeader && viewingLeader != null && (pc.owner as NonPlayableLeader).IsRevealedToLeader(viewingLeader);
+        bool shouldShowPc = revealed && (pcRevealed || (ownerIsNonPlayableLeader && nplKnownByViewer));
+        bool isHiddenAndNotRevealed = pc.isHidden && !pc.hiddenButRevealed;
+        float pcAlpha = isHiddenAndNotRevealed ? 0.75f : 1f;
+        SetPcSpriteAlpha(pcAlpha);
 
         // city size visibility
-        SetActiveFast(camp, pcRevealed && pc.citySize == PCSizeEnum.camp);
-        SetActiveFast(village, pcRevealed && pc.citySize == PCSizeEnum.village);
-        SetActiveFast(town, pcRevealed && pc.citySize == PCSizeEnum.town);
-        SetActiveFast(majorTown, pcRevealed && pc.citySize == PCSizeEnum.majorTown);
-        SetActiveFast(city, pcRevealed && pc.citySize == PCSizeEnum.city);
-        SetActiveFast(port, pcRevealed && pc.hasPort);
+        SetActiveFast(camp, shouldShowPc && pc.citySize == PCSizeEnum.camp);
+        SetActiveFast(village, shouldShowPc && pc.citySize == PCSizeEnum.village);
+        SetActiveFast(town, shouldShowPc && pc.citySize == PCSizeEnum.town);
+        SetActiveFast(majorTown, shouldShowPc && pc.citySize == PCSizeEnum.majorTown);
+        SetActiveFast(city, shouldShowPc && pc.citySize == PCSizeEnum.city);
+        SetActiveFast(port, shouldShowPc && pc.hasPort);
 
         // forts (note: keep tower/fortress visibility rules as in original)
         SetActiveFast(tower, revealed && pc != null && pc.fortSize == FortSizeEnum.tower);
@@ -390,7 +389,7 @@ public class Hex : MonoBehaviour
 
     public void Hover()
     {
-        if (IsPointerOverVisibleUIElement())
+        if (BoardNavigator.IsPointerOverVisibleUIElement())
         {
             Unhover();
             return;
@@ -538,10 +537,58 @@ public class Hex : MonoBehaviour
         }
     }
 
+    private void RevealNonPlayableLeadersOnHex(PlayableLeader leader, bool showPopup)
+    {
+        if (leader == null) return;
+        if (game == null) game = FindFirstObjectByType<Game>();
+
+        NonPlayableLeader npl = null;
+
+        if (pc != null && pc.owner is NonPlayableLeader pcOwner && !pcOwner.IsRevealedToLeader(leader))
+        {
+            npl = pcOwner;
+        }
+
+        if (npl == null)
+        {
+            npl = characters.Select(ch => ch.GetOwner() as NonPlayableLeader)
+                             .FirstOrDefault(owner => owner != null && !owner.IsRevealedToLeader(leader));
+        }
+
+        if (npl != null)
+        {
+            bool shouldPopup = showPopup && leader == game.player && game.currentlyPlaying == leader;
+            npl.RevealToLeader(leader, shouldPopup);
+        }
+    }
+
+    private void SetPcSpriteAlpha(float alpha)
+    {
+        SetSpriteAlpha(campSprite, alpha);
+        SetSpriteAlpha(villageSprite, alpha);
+        SetSpriteAlpha(townSprite, alpha);
+        SetSpriteAlpha(majorTownSprite, alpha);
+        SetSpriteAlpha(citySprite, alpha);
+        if (port != null && port.TryGetComponent<SpriteRenderer>(out var portSprite)) SetSpriteAlpha(portSprite, alpha);
+    }
+
+    private static void SetSpriteAlpha(SpriteRenderer sr, float alpha)
+    {
+        if (!sr) return;
+        var c = sr.color;
+        c.a = alpha;
+        sr.color = c;
+    }
+
     private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
     {
         if (scoutedByPlayer) scoutedBy.Add(scoutedByPlayer);
         if (isPlayerTurn) SetActiveFast(fow, false);
+        PlayableLeader viewer = scoutedByPlayer as PlayableLeader;
+        if (viewer == null && game != null) viewer = game.currentlyPlaying;
+        var g = game ?? FindFirstObjectByType<Game>();
+        bool showPopup = viewer != null && g != null && viewer == g.player && isPlayerTurn;
+        RevealNonPlayableLeadersOnHex(viewer, showPopup);
         RedrawArmies(false);
         RedrawCharacters(false);
         RedrawPC(false);
@@ -598,30 +645,6 @@ public class Hex : MonoBehaviour
     public int GetTerrainCost(Character character)
     {
         return character.IsArmyCommander() ? TerrainData.terrainCosts[terrainType] : 1;
-    }
-
-    private static bool IsPointerOverVisibleUIElement()
-    {
-        if (EventSystem.current == null) return false;
-
-        if (sharedPED == null) sharedPED = new PointerEventData(EventSystem.current);
-        sharedPED.position = Input.mousePosition;
-
-        raycastResults.Clear();
-        EventSystem.current.RaycastAll(sharedPED, raycastResults);
-
-        for (int i = 0, n = raycastResults.Count; i < n; i++)
-        {
-            var go = raycastResults[i].gameObject;
-            if (go.TryGetComponent<Canvas>(out _)) continue;
-
-            if (go.TryGetComponent<Image>(out var img))
-                if (img.raycastTarget && img.color.a > 0.01f) return true;
-
-            if (go.TryGetComponent<TextMeshProUGUI>(out var tmp) && tmp.color.a > 0.01f)
-                return true;
-        }
-        return false;
     }
 
     public bool IsWaterTerrain()

@@ -10,13 +10,14 @@ public class SummonMA: DarkSpell
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             Character commander = c.hex.characters.Find(x => x.owner == c.owner && x.GetCommander() > 0);
+            int troops = Math.Max(1, ApplySpellEffectMultiplier(c, 1));
             if (!commander.IsArmyCommander())
             {
-                commander.CreateArmy(TroopsTypeEnum.ma, 1, false);
+                commander.CreateArmy(TroopsTypeEnum.ma, troops, false);
             }
             else
             {
-                commander.GetArmy().Recruit(TroopsTypeEnum.ma, 1);
+                commander.GetArmy().Recruit(TroopsTypeEnum.ma, troops);
             }
             c.hex.RedrawCharacters();
             c.hex.RedrawArmies();

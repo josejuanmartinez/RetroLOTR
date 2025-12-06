@@ -12,6 +12,7 @@ public class ConjureMounts: DarkNeutralSpell
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             int mounts = Math.Clamp(UnityEngine.Random.Range(0, 1 * c.GetMage()), 1, 3);
+            mounts = Math.Max(1, ApplySpellEffectMultiplier(c, mounts));
             c.GetOwner().AddMounts(mounts);
             return true;
         };
@@ -29,4 +30,3 @@ public class ConjureMounts: DarkNeutralSpell
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
-

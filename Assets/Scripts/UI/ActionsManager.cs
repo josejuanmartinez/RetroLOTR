@@ -21,7 +21,7 @@ public class ActionsManager : MonoBehaviour
         // Store each component by its type for easy access
         foreach (CharacterAction component in characterActions)
         {
-            Debug.Log($"Registering action {component.actionName}");
+            // Debug.Log($"Registering action {component.actionName}");
             Type componentType = component.GetType();
             actionComponents[componentType] = component;
         }

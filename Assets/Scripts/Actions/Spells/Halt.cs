@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Halt : Spell
 {
@@ -8,22 +9,37 @@ public class Halt : Spell
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
-        effect = (c) => {
-            if (originalEffect != null && !originalEffect(c)) return false;
-            List<Character> chars = FindEnemyCharactersNotArmyCommandersAtHex(c);
-            if (chars == null || chars.Count < 1) return false;
-            chars.ForEach(x => x.Halt());
-            return true; 
-        };
+        effect = (c) => true;
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
             return FindEnemyCharactersNotArmyCommandersAtHex(c).Count > 0;
         };
-        asyncEffect = async (c) => {
+        async System.Threading.Tasks.Task<bool> haltAsync(Character c)
+        {
+            if (originalEffect != null && !originalEffect(c)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
-            return true;
-        };
-        base.Initialize(c, condition, effect, asyncEffect);
+
+            List<Character> targets = FindEnemyCharactersNotArmyCommandersAtHex(c);
+            if (targets.Count < 1) return false;
+
+            bool isAI = !c.isPlayerControlled;
+            Character target = null;
+            if (!isAI)
+            {
+                string targetCharacter = await SelectionDialog.Ask("Select character to halt", "Ok", "Cancel", targets.Select(x => x.characterName).ToList(), isAI);
+                if (string.IsNullOrEmpty(targetCharacter)) return false;
+                target = targets.Find(x => x.characterName == targetCharacter);
+            }
+            else
+            {
+                target = targets[UnityEngine.Random.Range(0, targets.Count)];
+            }
+
+            if (target == null) return false;
+
+            target.Halt();
+            return true; 
+        }
+        base.Initialize(c, condition, effect, haltAsync);
     }
 }
-

@@ -170,7 +170,7 @@ public class Army
         }
         if (commander.GetOwner().GetBiome().terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
 
-        return strength;
+        return ApplyCommanderBonus(strength);
     }
 
     public int GetOffence()
@@ -200,7 +200,15 @@ public class Army
         }
         if (commander.GetOwner().GetBiome().terrain == commander.hex.terrainType) defence *= ArmyData.biomeTerrainMultiplier;
 
-        return defence;
+        return ApplyCommanderBonus(defence);
+    }
+
+    private int ApplyCommanderBonus(int value)
+    {
+        int commanderLevel = commander != null ? commander.GetCommander() : 0;
+        // Each commander level adds 10% to both offence and defence for this army.
+        float bonusMultiplier = 1f + Mathf.Clamp(commanderLevel, 0, 10) * 0.1f;
+        return Mathf.Max(0, Mathf.RoundToInt(value * bonusMultiplier));
     }
 
     public void Attack(Hex targetHex)
@@ -215,6 +223,9 @@ public class Army
 
         // Calculate attacker's defense for counter-attack
         int attackerDefence = GetDefence();
+        int attackerAlliesJoined = 0;
+        int attackerAlliesStrength = 0;
+        int attackerAlliesDefence = 0;
 
         // Add strength of allied armies in the same hex
         if (commander != null && commander.hex != null)
@@ -229,8 +240,13 @@ public class Army
                     if ((attackerAlignment != AlignmentEnum.neutral && ally.GetAlignment() == attackerAlignment) ||
                         (attackerAlignment == AlignmentEnum.neutral && ally.GetAlignment() == AlignmentEnum.neutral && ally.commander.GetOwner() == commander.GetOwner()))
                     {
-                        attackerStrength += ally.GetStrength();
-                        attackerDefence += ally.GetDefence();
+                        int allyStrength = ally.GetStrength();
+                        int allyDefence = ally.GetDefence();
+                        attackerStrength += allyStrength;
+                        attackerDefence += allyDefence;
+                        attackerAlliesJoined++;
+                        attackerAlliesStrength += allyStrength;
+                        attackerAlliesDefence += allyDefence;
                     }
                 }
             }
@@ -239,8 +255,9 @@ public class Army
         // Check if there are any armies to attack in the target hex
         bool foundDefenders = false;
 
-        // First, handle all enemy armies in the hex
-        foreach (Army defenderArmy in targetHex.armies)
+        // First, handle all enemy armies in the hex using a snapshot to avoid collection modification issues
+        List<Army> defenderSnapshot = new List<Army>(targetHex.armies);
+        foreach (Army defenderArmy in defenderSnapshot)
         {
             if(defenderArmy == null || defenderArmy.commander == null || defenderArmy.killed || defenderArmy.commander.killed || defenderArmy.killed) continue;
             // Don't attack your own armies (check ownership)
@@ -254,7 +271,7 @@ public class Army
                 defenderArmy.GetAlignment() == AlignmentEnum.neutral))
             {
                 // Process combat against this defender
-                ProcessCombat(targetHex, defenderArmy, attackerStrength, attackerDefence, attackerLeader);
+                ProcessCombat(targetHex, defenderArmy, attackerStrength, attackerDefence, attackerLeader, attackerAlliesJoined, attackerAlliesStrength, attackerAlliesDefence);
                 foundDefenders = true;
             }
         }
@@ -290,7 +307,7 @@ public class Army
     }
 
     // Helper method to process combat between attacker and a specific defender
-    private void ProcessCombat(Hex targetHex, Army defenderArmy, int attackerStrength, int attackerDefence, Leader attackerLeader)
+    private void ProcessCombat(Hex targetHex, Army defenderArmy, int attackerStrength, int attackerDefence, Leader attackerLeader, int attackerAlliesJoined, int attackerAlliesStrength, int attackerAlliesDefence)
     {
         if(defenderArmy == null || defenderArmy.commander == null || defenderArmy.killed || defenderArmy.commander.killed || attackerLeader == null || attackerLeader.killed) return;
         AlignmentEnum attackerAlignment = commander.GetAlignment();
@@ -301,6 +318,10 @@ public class Army
         // Calculate defender's total defense and strength
         int defenderDefense = defenderArmy.GetDefence();
         int defenderStrength = defenderArmy.GetStrength();
+        int defenderAlliesJoined = 0;
+        int defenderAlliesStrength = 0;
+        int defenderAlliesDefence = 0;
+        int pcDefenseContribution = 0;
 
         // Add defense from allied armies in the defender's hex
         foreach (Army ally in targetHex.armies)
@@ -313,8 +334,13 @@ public class Army
                 if ((defenderAlignment != AlignmentEnum.neutral && ally.GetAlignment() == defenderAlignment) ||
                     (defenderAlignment == AlignmentEnum.neutral && ally.GetAlignment() == AlignmentEnum.neutral && ally.commander.GetOwner() == defenderArmy.commander.GetOwner()))
                 {
-                    defenderDefense += ally.GetDefence();
-                    defenderStrength += ally.GetStrength();
+                    int allyDefence = ally.GetDefence();
+                    int allyStrength = ally.GetStrength();
+                    defenderDefense += allyDefence;
+                    defenderStrength += allyStrength;
+                    defenderAlliesJoined++;
+                    defenderAlliesStrength += allyStrength;
+                    defenderAlliesDefence += allyDefence;
                 }
             }
         }
@@ -322,9 +348,15 @@ public class Army
         // Add defense from Population Center if it exists and is aligned with defender
         if (targetHex.GetPC() != null && targetHex.GetPC().owner.GetAlignment() == defenderAlignment)
         {
-            defenderDefense += targetHex.GetPC().GetDefense();
-            defenderStrength += targetHex.GetPC().GetDefense(); // PC contributes to counter-attack
+            pcDefenseContribution = targetHex.GetPC().GetDefense();
+            defenderDefense += pcDefenseContribution;
+            defenderStrength += pcDefenseContribution; // PC contributes to counter-attack
         }
+
+        int attackerCommanderLevel = commander != null ? commander.GetCommander() : 0;
+        int defenderCommanderLevel = defenderArmy.commander != null ? defenderArmy.commander.GetCommander() : 0;
+        int attackerBonusPercent = Mathf.RoundToInt(Mathf.Clamp(attackerCommanderLevel, 0, 10) * 10f);
+        int defenderBonusPercent = Mathf.RoundToInt(Mathf.Clamp(defenderCommanderLevel, 0, 10) * 10f);
 
         // Calculate raw damage values
         float attackerDamage = Math.Max(0, attackerStrength - defenderDefense);
@@ -376,10 +408,13 @@ public class Army
         StringBuilder textBuilder = new StringBuilder();
         textBuilder.AppendLine($"{attackerLeader.characterName} attacks {defenderArmy.GetCommander().characterName}.");
         textBuilder.AppendLine($"Attack {attackerStrength} vs defense {defenderDefense}; counter {defenderStrength} vs {attackerDefence}.");
-        if (targetHex.GetPC() != null && targetHex.GetPC().owner.GetAlignment() == defenderAlignment)
+        textBuilder.AppendLine($"Allied attackers joined: {attackerAlliesJoined} (+{attackerAlliesStrength} STR / +{attackerAlliesDefence} DEF).");
+        textBuilder.AppendLine($"Allied defenders joined: {defenderAlliesJoined} (+{defenderAlliesStrength} STR / +{defenderAlliesDefence} DEF).");
+        if (pcDefenseContribution > 0)
         {
-            textBuilder.AppendLine($"{targetHex.GetPC().pcName} militia joins the defense.");
+            textBuilder.AppendLine($"{targetHex.GetPC().pcName} militia/fortifications add {pcDefenseContribution} to defense and counter.");
         }
+        textBuilder.AppendLine($"Commander bonuses applied: {attackerLeader.characterName} +{attackerBonusPercent}%, {defenderArmy.GetCommander().characterName} +{defenderBonusPercent}%.");
         textBuilder.AppendLine($"Losses - {attackerLeader.characterName}: {attackerReportedLosses} ({attackerPercent}%), {defenderArmy.GetCommander().characterName}: {defenderReportedLosses} ({defenderPercent}%).");
         if (!string.IsNullOrEmpty(stalemateNote))
         {
@@ -679,6 +714,7 @@ public class Army
 
     public int GetMaintenanceCost()
     {
+        if (startingArmy) return 0;
         float cost = 0f;
         cost += ma / 4;
         cost += ar / 4;

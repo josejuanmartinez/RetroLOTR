@@ -13,6 +13,7 @@ public class Fireworks: FreeSpell
             PC pc = c.hex.GetPC();
             if (pc == null) return false;            
             int loyalty = UnityEngine.Random.Range(0, 10) * c.GetMage();
+            loyalty = Math.Max(0, ApplySpellEffectMultiplier(c, loyalty));
             if (pc.owner.GetAlignment() == c.GetAlignment())
             {
                 c.hex.GetPC().IncreaseLoyalty(loyalty, c);

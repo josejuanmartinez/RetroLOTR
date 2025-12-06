@@ -203,6 +203,10 @@ PrefabInstance:
       propertyPath: m_renderer
       value: 
       objectReference: {fileID: 342059383328378635}
+    - target: {fileID: 6589297286871856275, guid: 3337d10d2c7b0ca46a1c5099dc3377c4, type: 3}
+      propertyPath: m_spriteAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 47d87ce6ab8189a438043aaf823ca844, type: 2}
     m_RemovedComponents:
     - {fileID: 2389901357818704694, guid: 3337d10d2c7b0ca46a1c5099dc3377c4, type: 3}
     m_RemovedGameObjects: []

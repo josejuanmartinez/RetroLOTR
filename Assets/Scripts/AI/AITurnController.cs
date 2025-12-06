@@ -34,7 +34,8 @@ public static class AITurnController
     private static async Task ExecuteCharacterAsync(PlayableLeader leader, Character character, ActionsManager actionsManager)
     {
         List<CharacterAction> availableActions = GetAvailableActions(character, actionsManager);
-        AIContext context = new AIContext(leader, character, availableActions);
+        AIContext.AIContextPrecomputedData? precomputed = AIContextCacheManager.Instance != null ? AIContextCacheManager.Instance.GetCached(leader, character) : null;
+        AIContext context = new AIContext(leader, character, availableActions, precomputed);
         IBehaviourNode behaviour = AIBehaviourTreeBuilder.BuildDefault();
 
         BehaviourTreeStatus status = await behaviour.Tick(context);

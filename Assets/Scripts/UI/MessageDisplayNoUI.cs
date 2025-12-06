@@ -67,7 +67,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         if(!game || !game.currentlyPlaying || !game.started)
         {
 
-            Debug.Log(message);
+            // Debug.Log(message);
             return;
         }
 

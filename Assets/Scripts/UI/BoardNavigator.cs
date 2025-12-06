@@ -1,6 +1,9 @@
 using System.Collections;
-using Google.Protobuf.WellKnownTypes;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class BoardNavigator : MonoBehaviour
 {
@@ -21,6 +24,8 @@ public class BoardNavigator : MonoBehaviour
     private Camera boardCamera;
     private Coroutine lookAtCoroutine;
     private float targetZoom;
+    private static readonly List<RaycastResult> raycastResults = new(16);
+    private static PointerEventData sharedPED;
 
     private void Awake()
     {
@@ -35,6 +40,8 @@ public class BoardNavigator : MonoBehaviour
 
     void Update()
     {
+        if (IsPointerOverVisibleUIElement()) return;
+
         // Middle mouse button (wheel) pans the board
         if (Input.GetMouseButtonDown(2))
         {
@@ -177,5 +184,29 @@ public class BoardNavigator : MonoBehaviour
             Debug.Log("Cannot move further in that direction; movement clamped to board bounds.");
         }
         */
+    }
+
+    public static bool IsPointerOverVisibleUIElement()
+    {
+        if (EventSystem.current == null) return false;
+
+        if (sharedPED == null) sharedPED = new PointerEventData(EventSystem.current);
+        sharedPED.position = Input.mousePosition;
+
+        raycastResults.Clear();
+        EventSystem.current.RaycastAll(sharedPED, raycastResults);
+
+        for (int i = 0, n = raycastResults.Count; i < n; i++)
+        {
+            var go = raycastResults[i].gameObject;
+            if (go.TryGetComponent<Canvas>(out _)) continue;
+
+            if (go.TryGetComponent<Image>(out var img))
+                if (img.raycastTarget && img.color.a > 0.01f) return true;
+
+            if (go.TryGetComponent<TextMeshProUGUI>(out var tmp) && tmp.color.a > 0.01f)
+                return true;
+        }
+        return false;
     }
 }

@@ -23,7 +23,7 @@ public class PerceiveDanger : Spell
 
             if (target == null) return false;
 
-            int radius = Mathf.Max(1, c.GetMage() / 3);
+            int radius = Mathf.Max(1, ApplySpellEffectMultiplier(c, Mathf.Max(1, c.GetMage() / 3)));
             target.RevealArea(radius, true, c.GetOwner());
             target.LookAt();
             MessageDisplayNoUI.ShowMessage(target, c, $"Danger perceived nearby!", Color.cyan);

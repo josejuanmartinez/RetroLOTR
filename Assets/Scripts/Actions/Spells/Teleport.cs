@@ -11,13 +11,18 @@ public class Teleport: Spell
         var originalAsyncEffect = asyncEffect;
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
-            Hex randomHex = FindFirstObjectByType<Board>().GetHexes().Find(x => !c.GetOwner().visibleHexes.Contains(x));
-            if (randomHex == null) return false;
-            randomHex.RevealArea(c.GetMage());
-            FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, randomHex, true);
+
+            var board = FindFirstObjectByType<Board>();
+            var unseenHexes = board.GetHexes().Where(x => c.GetOwner().visibleHexes.Contains(x)).ToList();
+            if (unseenHexes.Count == 0) return false;
+
+            Hex randomHex = unseenHexes[UnityEngine.Random.Range(0, unseenHexes.Count)];
+            int radius = Math.Max(0, ApplySpellEffectMultiplier(c, c.GetMage()));
+            randomHex.RevealArea(radius);
+            board.MoveCharacterOneHex(c, c.hex, randomHex, true);
             randomHex.LookAt();
             MessageDisplay.ShowMessage($"{c.characterName} warped to an unknown place", Color.green);
-            if (FindFirstObjectByType<Game>().currentlyPlaying == FindFirstObjectByType<Game>().player) FindFirstObjectByType<Board>().SelectCharacter(c);
+            if (FindFirstObjectByType<Game>().currentlyPlaying == FindFirstObjectByType<Game>().player) board.SelectCharacter(c);
             return true;
         };
         condition = (c) => {
@@ -31,4 +36,3 @@ public class Teleport: Spell
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
-

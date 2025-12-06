@@ -62,9 +62,14 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         string alignment = nonPlayableLeader.alignment == AlignmentEnum.freePeople ? "a free people" : nonPlayableLeader.alignment == AlignmentEnum.darkServants ? "a dark servant" : "a neutral";
         StringBuilder sb = new($"You discovered {nonPlayableLeader.characterName}, {alignment} nation");
         sb.Append("<br><br>");
+        bool hasHiddenCapital = nonPlayableLeader.controlledPcs.Any(pc => pc.isHidden && !pc.hiddenButRevealed);
+        if (hasHiddenCapital)
+        {
+            sb.Append("We found their nation but cannot find a way into their capital. Issue `Reveal PC` to possibly reveal a path.<br><br>");
+        }
         if(nonPlayableLeader.alignment == game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
         {
-            sb.Append("They can join your side.<br><br>Issue `perceive allegiances` to know how to hire them.<br><br>");  
+            sb.Append("They can join your side.<br><br>Issue `Perceive Allegiances` to know how to hire them.<br><br>");  
         } 
         if(nonPlayableLeader.alignment != game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
         {

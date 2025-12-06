@@ -124,7 +124,8 @@ public class PC
 
     public string GetLoyaltyText()
     {
-        string color = loyalty <= 25? "#ff0000" : loyalty <= 50? "#ffff00" : loyalty <= 65? "#00ff00" : "#005500";
+        // Brighter palette for readability in hover
+        string color = loyalty <= 25 ? "#ff4d4d" : loyalty <= 50 ? "#ffb347" : loyalty <= 65 ? "#8fd14f" : "#00c853";
         return $"Loyalty [<color={color}>{Math.Max(0, loyalty)}</color>]";
     }
 
@@ -263,24 +264,35 @@ public class PC
     {
         this.loyalty = Math.Min(100, this.loyalty + loyalty);
         MessageDisplayNoUI.ShowMessage(hex, c,  $"{pcName} loyalty increased by {loyalty}", Color.green);
+        hex.RedrawPC();
     }
 
     public void DecreaseLoyalty(int loyalty, Character decreasedBy)
     {
         this.loyalty = Math.Max(0, this.loyalty - loyalty);
         MessageDisplayNoUI.ShowMessage(hex, decreasedBy,  $"{pcName} loyalty decreased by {loyalty}", Color.red);
+        hex.RedrawPC();
         CheckLowLoyalty(decreasedBy.GetOwner());
     }
 
     public int GetDefense()
     {
-        int defense = 0;
-        defense += (int)citySize;
-        defense += (int)fortSize * FortSizeData.defensePerFortSizeLevel;
-        defense += (int)loyalty / 10;
-        defense += (hasPort ? 1 : 0);
-        defense += (isCapital ? 1 : 0);
-        hex.armies.ForEach(army => defense += army.commander != null && army.commander.GetAlignment() == owner.GetAlignment() && owner.GetAlignment() != AlignmentEnum.neutral ? army.GetDefence() : 0);
+        // Core PC defense is scaled by loyalty: low loyalty = weaker defensive contribution.
+        int staticDefense = (int)citySize
+            + (int)fortSize * FortSizeData.defensePerFortSizeLevel
+            + (hasPort ? 1 : 0)
+            + (isCapital ? 1 : 0);
+
+        float loyaltyFactor = Mathf.Clamp01(loyalty / 100f);
+        int defense = Mathf.RoundToInt(staticDefense * loyaltyFactor);
+
+        // Armies stationed in the PC defend at full strength if aligned.
+        hex.armies.ForEach(army =>
+        {
+            bool aligned = army.commander != null && army.commander.GetAlignment() == owner.GetAlignment() && owner.GetAlignment() != AlignmentEnum.neutral;
+            if (aligned) defense += army.GetDefence();
+        });
+
         return defense;
     }
 

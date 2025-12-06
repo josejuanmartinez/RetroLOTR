@@ -42,9 +42,11 @@ public class Game : MonoBehaviour
     public bool started = false;
 
     private Board board;
+    private bool skipNextTurnPrompt = false;
     void Awake()
     {
         if (!board) board = FindAnyObjectByType<Board>();
+        if (AIContextCacheManager.Instance == null) gameObject.AddComponent<AIContextCacheManager>();
     }
 
     private void AssignAIandHumans()
@@ -79,9 +81,11 @@ public class Game : MonoBehaviour
         started = true;
 
         currentlyPlaying = player;
+        MessageDisplay.ClearPersistent();
 
         board.StartGame();
         AssignAIandHumans();
+        AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         currentlyPlaying.NewTurn();
 
         soundPlayer.PlayOneShot(FindFirstObjectByType<Sounds>().GetSoundByName($"{currentlyPlaying.alignment}_intro"));
@@ -102,16 +106,74 @@ public class Game : MonoBehaviour
         return stillNotActioned != null;
     }
 
+    public async void SelectNextCharacterOrFinishTurnPrompt()
+    {
+        if (!IsPlayerCurrentlyPlaying() || player == null || board == null) return;
+
+        List<Character> characters = player.controlledCharacters;
+        if (characters == null || characters.Count == 0) return;
+
+        Character current = board.selectedCharacter;
+        Character nextCharacter = null;
+
+        // Try to find the next character without an action, cycling from current selection
+        int startIndex = characters.IndexOf(current);
+        if (startIndex < 0) startIndex = -1;
+        for (int offset = 1; offset <= characters.Count; offset++)
+        {
+            int i = (startIndex + offset) % characters.Count;
+            var c = characters[i];
+            if (c != null && !c.killed && !c.hasActionedThisTurn)
+            {
+                nextCharacter = c;
+                break;
+            }
+        }
+
+        if (nextCharacter != null)
+        {
+            board.SelectCharacter(nextCharacter);
+            return;
+        }
+
+        // No characters with free actions; offer to finish turn
+        bool finish = await ConfirmationDialog.Ask(
+            "No more characters with free actions are available. You may still have movement left. Finish the turn?",
+            "Finish Turn",
+            "Cancel");
+        if (finish)
+        {
+            skipNextTurnPrompt = true;
+            NextPlayer();
+        }
+    }
+
     public async void NextPlayer()
     {
-        if (currentlyPlaying == player)
+        bool shouldPrompt = currentlyPlaying == player && !skipNextTurnPrompt;
+        skipNextTurnPrompt = false;
+
+        if (shouldPrompt)
         {
-            if (PointToCharacterWithMissingActions())
+            bool hasPendingActions = player.controlledCharacters.Any(x => !x.killed && !x.hasActionedThisTurn);
+            string message = hasPendingActions
+                ? "Some characters have not actioned yet. End turn?"
+                : "End turn?";
+
+            bool finishTurn = await ConfirmationDialog.Ask(message, "Finish Turn", "Cancel");
+            if (!finishTurn)
             {
-                if(await ConfirmationDialog.AskYesNo("Some characters have not actioned this turn. Finish the turn anyway?")==false)
+                Character nextCharacter = player.controlledCharacters.Find(x => !x.killed && !x.hasActionedThisTurn);
+                if (nextCharacter != null)
                 {
-                    return;
+                    board.SelectCharacter(nextCharacter, true, 1.0f, 0.0f);
                 }
+                else
+                {
+                    Character firstAlive = player.controlledCharacters.Find(x => !x.killed);
+                    if (firstAlive != null) board.SelectCharacter(firstAlive, true, 1.0f, 0.0f);
+                }
+                return;
             }
         }
 
@@ -135,6 +197,7 @@ public class Game : MonoBehaviour
 
         if (currentlyPlaying == player)
         {
+            MessageDisplay.ClearPersistent();
             turn++;
             if (turn >= MAX_TURNS)
             {
@@ -142,6 +205,11 @@ public class Game : MonoBehaviour
                 return;
             }
             MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
+            AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        }
+        else
+        {
+            MessageDisplay.ShowPersistent($"{currentlyPlaying.characterName} is playing", Color.yellow);
         }
         board.RefreshRelevantHexes();
         currentlyPlaying.NewTurn();

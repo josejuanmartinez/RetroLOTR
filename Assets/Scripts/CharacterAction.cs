@@ -106,7 +106,7 @@ public class CharacterAction : SearcherByName
             if (activate && !initialized)
             {
                 GameObject hoverInstance = Instantiate(hoverPrefab, button.transform);
-                hoverInstance.GetComponent<Hover>().Initialize(actionName, Vector2.one * 40, 35, TextAlignmentOptions.Center);
+                hoverInstance.GetComponent<Hover>().Initialize(BuildHoverText(), Vector2.one * 40, 18, TextAlignmentOptions.Center);
 
                 actionInitials = gameObject.name.ToUpper();
                 spriteImage.color = actionColor;
@@ -117,7 +117,7 @@ public class CharacterAction : SearcherByName
                 }
                 else
                 {
-                    Debug.LogWarning($"Action {actionName} does not have action sprite or the spriteImage reference is not set");
+                    // Debug.LogWarning($"Action {actionName} does not have action sprite or the spriteImage reference is not set");
                     textUI.text = actionInitials.ToUpper();
                 }
                 initialized = true;
@@ -125,8 +125,8 @@ public class CharacterAction : SearcherByName
         }
         catch (Exception e)
         {
-            Debug.LogError($"Unable to Initialize CharacterAction {actionName}");
-            Debug.LogError(e.ToString());
+            // Debug.LogError($"Unable to Initialize CharacterAction {actionName}");
+            // Debug.LogError(e.ToString());
         }        
     }
 
@@ -169,7 +169,6 @@ public class CharacterAction : SearcherByName
     public void Fail(bool isAI)
     {
         string message = $"{actionName} failed";
-        Debug.Log(message);
         if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  message, Color.red);
         if (!isAI) game.PointToCharacterWithMissingActions();
         if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
@@ -182,6 +181,7 @@ public class CharacterAction : SearcherByName
             bool isAI = !character.isPlayerControlled;
         try
         {
+            bool providedByArtifact = IsProvidedByArtifact();
             // All characters
             character.hasActionedThisTurn = true;
 
@@ -209,7 +209,7 @@ public class CharacterAction : SearcherByName
 
             string message = actionName;            
             string rumourMessage = $"{character.characterName} succeeds on {message}";
-            Debug.Log(rumourMessage);
+            // Debug.Log(rumourMessage);
             bool isDoubledByPlayer = character.doubledBy.Contains(game.player);
             if (isAI)
             {
@@ -222,31 +222,31 @@ public class CharacterAction : SearcherByName
                 }
             }
             
-            if(UnityEngine.Random.Range(0, 100) < commanderXP)
+            if(!providedByArtifact && UnityEngine.Random.Range(0, 100) < commanderXP)
             {
                 character.AddCommander(1);
-                Debug.Log($"{character.characterName} gets +1 to commander XP");
+                // Debug.Log($"{character.characterName} gets +1 to commander XP");
                 if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  "<sprite name=\"commander\"/> +1", Color.green);
             }
 
-            if (UnityEngine.Random.Range(0, 100) < agentXP)
+            if (!providedByArtifact && UnityEngine.Random.Range(0, 100) < agentXP)
             {
                 character.AddAgent(1);
-                Debug.Log($"{character.characterName} gets +1 to agent XP");
+                // Debug.Log($"{character.characterName} gets +1 to agent XP");
                 if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  "<sprite name=\"agent\"/> +1", Color.green);
             }
 
-            if (UnityEngine.Random.Range(0, 100) < emmissaryXP)
+            if (!providedByArtifact && UnityEngine.Random.Range(0, 100) < emmissaryXP)
             {
                 character.AddEmmissary(1);
-                Debug.Log($"{character.characterName} gets +1 to emmissary XP");
+                // Debug.Log($"{character.characterName} gets +1 to emmissary XP");
                 if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  "<sprite name=\"emmissary\"/> +1", Color.green);
             }
 
-            if (UnityEngine.Random.Range(0, 100) < mageXP)
+            if (!providedByArtifact && UnityEngine.Random.Range(0, 100) < mageXP)
             {
                 character.AddMage(1);
-                Debug.Log($"{character.characterName} gets +1 to commander XP");
+                // Debug.Log($"{character.characterName} gets +1 to commander XP");
                 if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  "<sprite name=\"mage\"/> +1", Color.green);
             }
 
@@ -256,40 +256,40 @@ public class CharacterAction : SearcherByName
             if(leatherCost > 0)
             {
                 character.GetOwner().RemoveLeather(leatherCost);
-                Debug.Log($"{character.characterName} spends {leatherCost} leather");
+                // Debug.Log($"{character.characterName} spends {leatherCost} leather");
                 if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"leather\"/> -{leatherCost}", Color.red);
             }
             if (timberCost > 0)
             {
                 character.GetOwner().RemoveTimber(timberCost);
-                Debug.Log($"{character.characterName} spends {timberCost} timberCost");
+                // Debug.Log($"{character.characterName} spends {timberCost} timberCost");
                 if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"timber\"/> -{timberCost}", Color.red);
             }
             if (mountsCost > 0)
             {
                 character.GetOwner().RemoveMounts(mountsCost);
-                Debug.Log($"{character.characterName} spends {mountsCost} mounts");
+                // Debug.Log($"{character.characterName} spends {mountsCost} mounts");
                 if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mounts\"/> -{mountsCost}", Color.red);
             }
 
             if (ironCost > 0)
             {
                 character.GetOwner().RemoveIron(ironCost);
-                Debug.Log($"{character.characterName} spends {ironCost} iron");
+                // Debug.Log($"{character.characterName} spends {ironCost} iron");
                 if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{ironCost}", Color.red);
             }
 
             if (mithrilCost > 0)
             {
                 character.GetOwner().RemoveMithril(mithrilCost);
-                Debug.Log($"{character.characterName} spends {mithrilCost} mithril");
+                // Debug.Log($"{character.characterName} spends {mithrilCost} mithril");
                 if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mithril\"/> -{mithrilCost}", Color.red);
             }
 
             if (goldCost > 0)
             {
-                character.GetOwner().RemoveLeather(goldCost);
-                Debug.Log($"{character.characterName} spends {goldCost} gold");
+                character.GetOwner().RemoveGold(goldCost);
+                // Debug.Log($"{character.characterName} spends {goldCost} gold");
                 if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"gold\"/> -{goldCost}", Color.red);
             }
 
@@ -299,11 +299,29 @@ public class CharacterAction : SearcherByName
 
             if (character.GetOwner() is not PlayableLeader) return;
 
-            // Now check influence in NPCs
-            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None).Where(x => x != character.GetOwner()).ToList().ForEach(x =>
-            {
-                x.CheckJoiningCondition(character, this);
-            });
+            // Now check influence in NPCs (no auto-join; only notify player if applicable)
+            PlayableLeader humanPlayer = game != null ? game.player : null;
+            Illustrations illustrations = FindFirstObjectByType<Illustrations>();
+            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None)
+                .Where(x => x != character.GetOwner())
+                .ToList()
+                .ForEach(npl =>
+                {
+                    bool wouldJoin = npl.CheckJoiningCondition(character, this, false);
+                    if (!wouldJoin || humanPlayer == null) return;
+                    AlignmentEnum nplAlignment = npl.GetAlignment();
+                    if (nplAlignment != AlignmentEnum.neutral && nplAlignment != humanPlayer.GetAlignment()) return;
+                    if (npl.ReadyToJoinNotified) return;
+
+                    Sprite actor1 = illustrations != null ? illustrations.GetIllustrationByName(npl.characterName) : null;
+                    Sprite actor2 = illustrations != null ? illustrations.GetIllustrationByName(humanPlayer.characterName) : null;
+                    string title = $"{npl.characterName} Awaits";
+                    string text = $"{npl.characterName}'s nation is ready to join your forces. Visit their capital and issue some secret order to convince them.";
+                    PopupManager.Show(title, actor1, actor2, text, false);
+                    npl.MarkReadyToJoinNotified();
+                });
+
+            if (!isAI) game.SelectNextCharacterOrFinishTurnPrompt();
 
             return;
         }
@@ -312,7 +330,7 @@ public class CharacterAction : SearcherByName
             if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
 
-            Debug.LogError($"{character.characterName} was unable to Execute action {actionName} {actionId} {actionInitials} {e}");
+            // Debug.LogError($"{character.characterName} was unable to Execute action {actionName} {actionId} {actionInitials} {e}");
             character.hasActionedThisTurn = true;
             return;
         }
@@ -994,5 +1012,35 @@ public class CharacterAction : SearcherByName
         + timberCost*StoresManager.TimberSellValue
         + mithrilCost*StoresManager.MithrilSellValue
         + leatherCost*StoresManager.LeatherSellValue;
+    }
+
+    protected virtual string GetDescription()
+    {
+        return ActionDescriptionProvider.Get(actionName);
+    }
+
+    private string BuildCostText()
+    {
+        List<string> costs = new();
+        if (leatherCost > 0) costs.Add($"<sprite name=\"leather\"/>[{leatherCost}]");
+        if (timberCost > 0) costs.Add($"<sprite name=\"timber\"/>[{timberCost}]");
+        if (mountsCost > 0) costs.Add($"<sprite name=\"mounts\"/>[{mountsCost}]");
+        if (ironCost > 0) costs.Add($"<sprite name=\"iron\"/>[{ironCost}]");
+        if (mithrilCost > 0) costs.Add($"<sprite name=\"mithril\"/>[{mithrilCost}]");
+        if (goldCost > 0) costs.Add($"<sprite name=\"gold\"/>[{goldCost}]");
+        return string.Join(" ", costs);
+    }
+
+    protected virtual string BuildHoverText()
+    {
+        string title = actionName;
+        string costText = BuildCostText();
+        if (!string.IsNullOrWhiteSpace(costText)) title = $"{title} {costText}";
+
+        List<string> parts = new() { title };
+        string desc = GetDescription();
+        if (!string.IsNullOrWhiteSpace(desc)) parts.Add($"<br><size=80%>{desc}</size>");
+
+        return string.Join("", parts);
     }
 }

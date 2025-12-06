@@ -234,7 +234,7 @@ public class Board : MonoBehaviour
             // Add the artifact to the hex's hiddenArtifacts list
             targetHex.hiddenArtifacts.Add(artifact);
 
-            Debug.Log($"Artifact {artifact.artifactName} placed at {targetHex.v2}");
+            // Debug.Log($"Artifact {artifact.artifactName} placed at {targetHex.v2}");
 
             // Optional: Set artifact position to hex position
             // artifact.transform.position = targetHex.transform.position;

@@ -18,7 +18,9 @@ public class WizardLaugh: Spell
                 }
             } else if (c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral)
             {
-                c.hex.GetPC().DecreaseLoyalty(UnityEngine.Random.Range(0, 3) * c.GetMage(), c);
+                int loyaltyLoss = UnityEngine.Random.Range(0, 3) * c.GetMage();
+                loyaltyLoss = Math.Max(0, ApplySpellEffectMultiplier(c, loyaltyLoss));
+                c.hex.GetPC().DecreaseLoyalty(loyaltyLoss, c);
             }
             else return false;
             return true;

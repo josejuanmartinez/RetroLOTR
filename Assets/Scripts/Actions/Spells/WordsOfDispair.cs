@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public class WordsOfDispair : DarkNeutralSpell
@@ -8,23 +9,41 @@ public class WordsOfDispair : DarkNeutralSpell
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
-        effect = (c) => {            
-            if (originalEffect != null && !originalEffect(c)) return false;
-            Army army = FindEnemyArmyNotNeutralAtHex(c);
-            if (army == null) army = FindEnemyArmyAtHex(c);
-            if (army == null) return false;
-            army.ReceiveCasualties(Math.Clamp(UnityEngine.Random.Range(0.05f, 0.25f) * c.GetMage(), 0.1f, 1f), c.GetOwner());
-            return true;
-        };
+        effect = (c) => true;            
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
             return FindEnemyArmyAtHex(c) != null;
         };
-        asyncEffect = async (c) => {
+        async System.Threading.Tasks.Task<bool> wordsOfDispairAsync(Character c)
+        {
+            if (originalEffect != null && !originalEffect(c)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+
+            List<Character> enemyCommanders = c.hex.GetEnemyArmies(c.GetOwner());
+            if (enemyCommanders.Count < 1) return false;
+
+            bool isAI = !c.isPlayerControlled;
+            Character selectedCommander = null;
+            if (!isAI)
+            {
+                string targetCharacter = await SelectionDialog.Ask("Select enemy army", "Ok", "Cancel", enemyCommanders.Select(x => x.characterName).ToList(), isAI);
+                if (string.IsNullOrEmpty(targetCharacter)) return false;
+                selectedCommander = enemyCommanders.Find(x => x.characterName == targetCharacter);
+            }
+            else
+            {
+                Army priority = FindEnemyArmyNotNeutralAtHex(c);
+                selectedCommander = priority != null ? priority.commander : enemyCommanders.First();
+            }
+
+            Army army = selectedCommander != null ? selectedCommander.GetArmy() : null;
+            if (army == null) return false;
+
+            float casualties = Math.Clamp(UnityEngine.Random.Range(0.05f, 0.25f) * c.GetMage(), 0.1f, 1f);
+            casualties = Math.Clamp(ApplySpellEffectMultiplier(c, casualties), 0.1f, 1f);
+            army.ReceiveCasualties(casualties, c.GetOwner());
             return true;
-        };
-        base.Initialize(c, condition, effect, asyncEffect);
+        }
+        base.Initialize(c, condition, effect, wordsOfDispairAsync);
     }
 }
-

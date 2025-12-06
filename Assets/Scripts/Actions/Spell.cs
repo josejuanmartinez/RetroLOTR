@@ -1,9 +1,12 @@
 using System;
 using System.Linq;
+using UnityEngine;
 
 // It is not necessarily MageAction as you can have an artifact and not be a mage!
 public class Spell : CharacterAction
 {
+    protected int mageLevelRequirementWithoutArtifact;
+
     protected override AdvisorType DefaultAdvisorType => AdvisorType.Magic;
 
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -11,6 +14,7 @@ public class Spell : CharacterAction
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
+        mageLevelRequirementWithoutArtifact = Math.Max(1, mageSkillRequired);
         effect = (c) => {
             return originalEffect == null || originalEffect(c); };
         condition = (c) => {
@@ -24,12 +28,29 @@ public class Spell : CharacterAction
         };
         // Require at least mage level 1 unless provided by artifact
         bool providedByArtifact = HasSpellArtifact(c);
-        mageSkillRequired = providedByArtifact ? 0 : Math.Max(1, mageSkillRequired);
+        mageSkillRequired = providedByArtifact ? 0 : mageLevelRequirementWithoutArtifact;
         base.Initialize(c, condition, effect, asyncEffect);
     }
 
     protected bool HasSpellArtifact(Character c)
     {
         return c.artifacts.Any(a => a != null && !string.IsNullOrEmpty(a.providesSpell) && a.providesSpell.Equals(actionName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    protected float GetSpellEffectMultiplier(Character character)
+    {
+        bool hasArtifact = HasSpellArtifact(character);
+        bool canCastAsMage = character.GetMage() >= mageLevelRequirementWithoutArtifact;
+        return hasArtifact && canCastAsMage ? 1.5f : 1f;
+    }
+
+    protected int ApplySpellEffectMultiplier(Character character, int baseValue)
+    {
+        return Mathf.RoundToInt(baseValue * GetSpellEffectMultiplier(character));
+    }
+
+    protected float ApplySpellEffectMultiplier(Character character, float baseValue)
+    {
+        return baseValue * GetSpellEffectMultiplier(character);
     }
 }

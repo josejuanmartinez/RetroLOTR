@@ -6,6 +6,8 @@ public class KeyManager : MonoBehaviour
 {
     public Board board;
     public HexPathRenderer pathRenderer;
+    public BoardNavigator boardNavigator;
+    public float keyboardMoveSpeed = 10f;
 
     private Game game;
 
@@ -14,6 +16,7 @@ public class KeyManager : MonoBehaviour
         if(!board) board = FindFirstObjectByType<Board>();
         if(!game) game = FindFirstObjectByType<Game>();
         if(!pathRenderer) pathRenderer = FindFirstObjectByType<HexPathRenderer>();
+        if(!boardNavigator) boardNavigator = FindFirstObjectByType<BoardNavigator>();
     }
     void Update()
     {
@@ -68,31 +71,9 @@ public class KeyManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (board != null)
+            if (board != null && game != null)
             {
-                List<Character> characters = game.player.controlledCharacters;
-                Character current = board.selectedCharacter;
-                Character nextCharacter = null;
-
-                if (characters != null && characters.Count > 0)
-                {   
-                    int startIndex = characters.IndexOf(current);
-                    if (startIndex < 0) startIndex = -1; // if current not in list                    
-                    // Check everyone once, wrapping with modulo
-                    for (int offset = 1; offset <= characters.Count; offset++)
-                    {
-                        int i = (startIndex + offset) % characters.Count;
-                        var c = characters[i];                        
-                        if (c != null && !c.killed && !c.hasActionedThisTurn)
-                        {                            
-                            nextCharacter = c;
-                            break;
-                        }
-                    }
-                }
-
-                if (nextCharacter != null) board.SelectCharacter(nextCharacter);
-
+                game.SelectNextCharacterOrFinishTurnPrompt();
                 return;
             }
 
@@ -100,6 +81,7 @@ public class KeyManager : MonoBehaviour
                 pathRenderer.HidePath();
         }
 
+        HandleKeyboardCameraMovement();
     }
 
     private void RevealEntireMap()
@@ -205,6 +187,24 @@ public class KeyManager : MonoBehaviour
         else
         {
             Debug.Log("CTRL+Shift+A -> Artifacts:\n" + string.Join("\n", entries));
+        }
+    }
+
+    private void HandleKeyboardCameraMovement()
+    {
+        if (boardNavigator == null) return;
+        if (BoardNavigator.IsPointerOverVisibleUIElement()) return;
+
+        Vector3 move = Vector3.zero;
+        if (Input.GetKey(KeyCode.W)) move += Vector3.up;
+        if (Input.GetKey(KeyCode.S)) move += Vector3.down;
+        if (Input.GetKey(KeyCode.A)) move += Vector3.left;
+        if (Input.GetKey(KeyCode.D)) move += Vector3.right;
+
+        if (move.sqrMagnitude > 0f)
+        {
+            move.Normalize();
+            boardNavigator.transform.position += move * keyboardMoveSpeed * Time.deltaTime;
         }
     }
 }

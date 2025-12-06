@@ -14,6 +14,7 @@ public class MessageDisplay : MonoBehaviour
 
     private Queue<MessageData> messageQueue = new Queue<MessageData>();
     private bool isDisplayingMessage = false;
+    private bool persistentActive = false;
 
     private void Awake()
     {
@@ -41,12 +42,26 @@ public class MessageDisplay : MonoBehaviour
     {
         Game game = FindFirstObjectByType<Game>();
         if (game == null) return;
-        if (!game.started || game.currentlyPlaying != game.player)
-        {
-            Debug.Log("Other player message: " + message);
-            return;
-        }
+        if (!game.started || game.currentlyPlaying != game.player) return;
         instance.EnqueueMessage(message, color ?? Color.white);
+    }
+
+    /// <summary>
+    /// Show a persistent message (no fade, stays until cleared). Used for turn banners.
+    /// </summary>
+    public static void ShowPersistent(string message, Color? color = null)
+    {
+        if (instance == null) return;
+        instance.SetPersistent(message, color ?? Color.white);
+    }
+
+    /// <summary>
+    /// Clear any persistent message.
+    /// </summary>
+    public static void ClearPersistent()
+    {
+        if (instance == null) return;
+        instance.RemovePersistent();
     }
 
     /// <summary>
@@ -72,6 +87,7 @@ public class MessageDisplay : MonoBehaviour
     /// </summary>
     private void ProcessNextMessage()
     {
+        if (persistentActive) { isDisplayingMessage = false; return; }
         if (messageQueue.Count > 0)
         {
             MessageData nextMessage = messageQueue.Dequeue();
@@ -140,5 +156,26 @@ public class MessageDisplay : MonoBehaviour
             Message = message;
             TextColor = textColor;
         }
+    }
+
+    private void SetPersistent(string message, Color textColor)
+    {
+        StopAllCoroutines();
+        messageQueue.Clear();
+        isDisplayingMessage = false;
+        persistentActive = true;
+
+        messageText.enabled = true;
+        messageText.text = message;
+        messageText.color = textColor;
+        canvasGroup.alpha = 1f;
+    }
+
+    private void RemovePersistent()
+    {
+        persistentActive = false;
+        messageText.text = "";
+        messageText.enabled = false;
+        canvasGroup.alpha = 0f;
     }
 }

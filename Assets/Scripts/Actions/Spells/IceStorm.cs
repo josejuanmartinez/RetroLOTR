@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class IceStorm : DarkNeutralSpell
 {
@@ -8,22 +9,38 @@ public class IceStorm : DarkNeutralSpell
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
-        effect = (c) => {
-            if (originalEffect != null && !originalEffect(c)) return false;
-            Army army = FindEnemyArmyAtHex(c);
-            if (army == null) return false;
-            army.commander.Halt();
-            return true;
-        };
+        effect = (c) => true;
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
             return FindEnemyArmyAtHex(c) != null;
         };
-        asyncEffect = async (c) => {
+        async System.Threading.Tasks.Task<bool> iceStormAsync(Character c)
+        {
+            if (originalEffect != null && !originalEffect(c)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+
+            List<Character> enemyCommanders = c.hex.GetEnemyArmies(c.GetOwner());
+            if (enemyCommanders.Count < 1) return false;
+
+            bool isAI = !c.isPlayerControlled;
+            Character selectedCommander = null;
+            if (!isAI)
+            {
+                string targetCharacter = await SelectionDialog.Ask("Select enemy army", "Ok", "Cancel", enemyCommanders.Select(x => x.characterName).ToList(), isAI);
+                if (string.IsNullOrEmpty(targetCharacter)) return false;
+                selectedCommander = enemyCommanders.Find(x => x.characterName == targetCharacter);
+            }
+            else
+            {
+                selectedCommander = enemyCommanders[UnityEngine.Random.Range(0, enemyCommanders.Count)];
+            }
+
+            Army army = selectedCommander != null ? selectedCommander.GetArmy() : null;
+            if (army == null) return false;
+
+            army.commander.Halt();
             return true;
-        };
-        base.Initialize(c, condition, effect, asyncEffect);
+        }
+        base.Initialize(c, condition, effect, iceStormAsync);
     }
 }
-
