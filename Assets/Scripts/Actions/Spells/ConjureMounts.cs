@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class ConjureMounts: DarkNeutralSpell
@@ -16,7 +17,10 @@ public class ConjureMounts: DarkNeutralSpell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.artifacts.Find(x => x.providesSpell == actionName) != null; 
+            if (c.hex == null) return false;
+            PC pc = c.hex.GetPC();
+            if (pc == null) return false;
+            return pc.owner.GetAlignment() == c.GetOwner().GetAlignment() && (c.GetOwner() == pc.owner || pc.owner.GetAlignment() != AlignmentEnum.neutral);
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

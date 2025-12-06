@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class Teleport: Spell
@@ -15,13 +16,13 @@ public class Teleport: Spell
             randomHex.RevealArea(c.GetMage());
             FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, randomHex, true);
             randomHex.LookAt();
-            MessageDisplay.ShowMessage($"{c.characterName} warped to an unkown place", Color.green);
+            MessageDisplay.ShowMessage($"{c.characterName} warped to an unknown place", Color.green);
             if (FindFirstObjectByType<Game>().currentlyPlaying == FindFirstObjectByType<Game>().player) FindFirstObjectByType<Board>().SelectCharacter(c);
             return true;
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.artifacts.Find(x => x.providesSpell == actionName) != null && !c.IsArmyCommander();
+            return !c.IsArmyCommander();
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

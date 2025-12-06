@@ -2,6 +2,8 @@ using System;
 
 public class AgentAction : CharacterAction
 {
+    protected override AdvisorType DefaultAdvisorType => AdvisorType.Intelligence;
+
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

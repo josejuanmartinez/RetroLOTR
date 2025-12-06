@@ -2,6 +2,8 @@ using System;
 
 public class SellTimber : EmmissaryPCAction
 {
+    protected override AdvisorType DefaultAdvisorType => AdvisorType.Economic;
+
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -11,7 +13,7 @@ public class SellTimber : EmmissaryPCAction
             if (originalEffect != null && !originalEffect(c)) return false;
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
-            playable.AddGold(5);
+            playable.AddGold(StoresManager.TimberSellValue);
             if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 
         };

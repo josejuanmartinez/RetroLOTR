@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class ReturnToCapital: Spell
@@ -19,7 +20,7 @@ public class ReturnToCapital: Spell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.artifacts.Find(x => x.providesSpell == actionName) != null && !c.IsArmyCommander();
+            return !c.IsArmyCommander();
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

@@ -175,7 +175,13 @@ public class HexPathRenderer : MonoBehaviour
                 float tentativeGScore = gScore[current] + terrainCost;
 
                 // Check if this would exceed movement
-                if (tentativeGScore > movementLeft) continue;
+                bool isFirstStep = current == startPos;
+                if (tentativeGScore > movementLeft && !isFirstStep) continue;
+                if (tentativeGScore > movementLeft && isFirstStep)
+                {
+                    // Allow one costly step by spending all remaining movement
+                    tentativeGScore = movementLeft;
+                }
 
                 // Special case: Allow transition if neighbor is the goal position
                 bool isGoalPosition = neighbor == goalPos;
@@ -406,6 +412,12 @@ public class HexPathRenderer : MonoBehaviour
                 float tentativeGScore = gScore[current] + terrainCost;
 
                 if (tentativeGScore > maxMovement) continue;
+                bool isFirstStep = current == startPos;
+                if (tentativeGScore > maxMovement && !isFirstStep) continue;
+                if (tentativeGScore > maxMovement && isFirstStep)
+                {
+                    tentativeGScore = maxMovement;
+                }
 
                 if (isTerrainTransition)
                 {

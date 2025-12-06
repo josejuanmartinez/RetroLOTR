@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class CastDarkness: DarkNeutralSpell
@@ -17,7 +18,7 @@ public class CastDarkness: DarkNeutralSpell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.artifacts.Find(x => x.providesSpell == actionName) != null; 
+            return true; 
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

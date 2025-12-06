@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class Courage : FreeSpell
@@ -19,7 +20,7 @@ public class Courage : FreeSpell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return FindFriendlyArmyAtHex(c) != null && c.artifacts.Find(x => x.providesSpell == actionName) != null;
+            return FindFriendlyArmyAtHex(c) != null;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

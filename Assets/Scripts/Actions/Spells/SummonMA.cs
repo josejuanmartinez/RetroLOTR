@@ -24,7 +24,8 @@ public class SummonMA: DarkSpell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.GetPC() != null && c.hex.GetPC().owner == c.GetOwner() && c.artifacts.Find(x => x.providesSpell == "SummonMA") != null;
+            // Can summon in owned PC if the spell is available (handled in base Spell)
+            return c.hex.GetPC() != null && c.hex.GetPC().owner == c.GetOwner();
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

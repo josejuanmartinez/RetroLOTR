@@ -9,9 +9,12 @@ public class ActionsManager : MonoBehaviour
     public CharacterAction[] characterActions;
     // Dictionary to store all the action components
     private Dictionary<Type, CharacterAction> actionComponents = new ();
+    private CanvasGroup canvasGroup;
 
     public void Start()
     {
+        canvasGroup = GetComponent<CanvasGroup>();
+
         // Get all components that might be actions (all MonoBehaviours in children)
         characterActions = GetComponentsInChildren<CharacterAction>();
 
@@ -37,15 +40,29 @@ public class ActionsManager : MonoBehaviour
     public void Refresh(Character character)
     {
         actionComponents.Values.ToList().ForEach(component => component.Initialize(character, null, null));
+        UpdateInteractableState();
     }
 
     public void Hide()
     {
         actionComponents.Values.ToList().ForEach(component => component.Reset());
+        UpdateInteractableState();
     }
 
     public int GetDefault()
     {
         return DEFAULT.actionId;
+    }
+
+    private void UpdateInteractableState()
+    {
+        if (canvasGroup == null) return;
+
+        Game game = FindFirstObjectByType<Game>();
+        bool isPlayerTurn = game != null && game.IsPlayerCurrentlyPlaying();
+
+        canvasGroup.alpha = isPlayerTurn ? 1f : 0f;
+        canvasGroup.interactable = isPlayerTurn;
+        canvasGroup.blocksRaycasts = isPlayerTurn;
     }
 }

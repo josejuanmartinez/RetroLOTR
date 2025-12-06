@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class RevealPC: Spell
@@ -17,7 +18,7 @@ public class RevealPC: Spell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.GetPC() != null && c.hex.GetPC().owner != c.GetOwner() && (c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral) && c.hex.GetPC().isHidden && !c.hex.GetPC().hiddenButRevealed && c.artifacts.Find(x => x.providesSpell == actionName) != null; 
+            return c.hex.GetPC() != null && c.hex.GetPC().owner != c.GetOwner() && (c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral) && c.hex.GetPC().isHidden && !c.hex.GetPC().hiddenButRevealed; 
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
@@ -26,4 +27,3 @@ public class RevealPC: Spell
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
-

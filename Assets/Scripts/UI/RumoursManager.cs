@@ -56,6 +56,36 @@ public class RumoursManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Promote a rumour from the private pool into the public list, avoiding duplicates.
+    /// Used for "doubled" characters that should always leak their actions.
+    /// </summary>
+    public static void PromoteRumourToPublic(Rumour rumour)
+    {
+        if (!EnsureInstance(nameof(PromoteRumourToPublic)))
+            return;
+
+        // Remove one matching private copy so we don't double-count later reveals
+        int privateIndex = Instance.privateRumours.FindIndex(r =>
+            r.leader == rumour.leader &&
+            r.rumour == rumour.rumour &&
+            r.v2 == rumour.v2);
+        if (privateIndex >= 0)
+        {
+            Instance.privateRumours.RemoveAt(privateIndex);
+        }
+
+        // Skip if already public
+        bool alreadyPublic = Instance.rumours.Exists(r =>
+            r.leader == rumour.leader &&
+            r.rumour == rumour.rumour &&
+            r.v2 == rumour.v2);
+        if (alreadyPublic) return;
+
+        Instance.rumours.Add(rumour);
+        UpdateRumourText();
+    }
+
 
     /// <summary>
     /// Moves the last `qty` private rumours into the public list,

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 public class WizardLaugh: Spell
 {
@@ -24,7 +25,7 @@ public class WizardLaugh: Spell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return ((c.hex.characters.Find(x => x.GetOwner() == c.GetOwner() || (c.alignment == x.alignment && x.alignment != AlignmentEnum.neutral))!= null) ||  (c.hex.GetPC() != null && ( c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral))) && c.artifacts.Find(x => x.providesSpell == actionName) != null;
+            return ((c.hex.characters.Find(x => x.GetOwner() == c.GetOwner() || (c.alignment == x.alignment && x.alignment != AlignmentEnum.neutral))!= null) ||  (c.hex.GetPC() != null && ( c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral)));
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
@@ -33,4 +34,3 @@ public class WizardLaugh: Spell
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
-

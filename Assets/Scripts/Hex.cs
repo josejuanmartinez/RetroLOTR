@@ -234,11 +234,12 @@ public class Hex : MonoBehaviour
         bool revealed = IsHexRevealed();
         bool pcRevealed = revealed && IsPCRevealed();
 
-        if(game.IsPlayerCurrentlyPlaying() && pc.owner is NonPlayableLeader && !(pc.owner as NonPlayableLeader).IsRevealedToPlayer() && pcRevealed)
+        if(pc.owner is NonPlayableLeader && !(pc.owner as NonPlayableLeader).IsRevealedToLeader(game.currentlyPlaying) && pcRevealed)
         {
             NonPlayableLeader npl = pc.owner as NonPlayableLeader;
-            npl.RevealToPlayer();
-        } 
+            bool isHuman = game != null && game.currentlyPlaying == game.player;
+            npl.RevealToLeader(game.currentlyPlaying, isHuman);
+        }
 
         // city size visibility
         SetActiveFast(camp, pcRevealed && pc.citySize == PCSizeEnum.camp);
@@ -330,7 +331,13 @@ public class Hex : MonoBehaviour
                 {
                     NonPlayableLeader npl = ch.GetOwner() as NonPlayableLeader;
                     npl.RevealToPlayer();
-                } 
+                } else if(ch.GetOwner() is NonPlayableLeader && !(ch.GetOwner() as NonPlayableLeader).IsRevealedToLeader(FindAnyObjectByType<Game>().currentlyPlaying))
+                {
+                    NonPlayableLeader npl = ch.GetOwner() as NonPlayableLeader;
+                    Game g = FindAnyObjectByType<Game>();
+                    bool isHuman = g != null && g.currentlyPlaying == g.player;
+                    npl.RevealToLeader(g.currentlyPlaying, isHuman);
+                }
                 
                 var charName = ch.GetHoverText(true, true, true, false, true);
                 if (ch.IsArmyCommander())

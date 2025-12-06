@@ -106,7 +106,6 @@ public class Game : MonoBehaviour
     {
         if (currentlyPlaying == player)
         {
-            
             if (PointToCharacterWithMissingActions())
             {
                 if(await ConfirmationDialog.AskYesNo("Some characters have not actioned this turn. Finish the turn anyway?")==false)
@@ -114,31 +113,25 @@ public class Game : MonoBehaviour
                     return;
                 }
             }
-
-            // Find the first non-killed competitor
-            currentlyPlaying = FindNextAliveCompetitor(0);
-            if (currentlyPlaying == null)
-            {
-                EndGame(true);
-                return;
-            }
-            
-        }
-        else
-        {
-            int currentIndex = competitors.IndexOf(currentlyPlaying);
-
-            // Find the next non-killed competitor
-            currentlyPlaying = FindNextAliveCompetitor(currentIndex + 1);
-            if (currentlyPlaying == null && !player.killed) currentlyPlaying = player;
         }
 
+        PlayableLeader next = FindNextTurnLeader(currentlyPlaying);
 
-        if (currentlyPlaying == null)
+        // If no one else alive and player alive, victory; otherwise defeat
+        if (next == null)
         {
             EndGame(player != null && !player.killed);
             return;
         }
+
+        // If the only remaining leader is the player and there are no competitors left, end game as win
+        if (next == player && !player.killed && competitors.All(c => c == null || c.killed))
+        {
+            EndGame(true);
+            return;
+        }
+
+        currentlyPlaying = next;
 
         if (currentlyPlaying == player)
         {
@@ -148,24 +141,24 @@ public class Game : MonoBehaviour
                 EndGame(false);
                 return;
             }
-            MessageDisplay.ShowMessage($"Turn {turn++}", Color.green);
+            MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
         }
         board.RefreshRelevantHexes();
         currentlyPlaying.NewTurn();
     }
 
-    // Helper method to find the next alive competitor
-    private PlayableLeader FindNextAliveCompetitor(int startIndex)
+    // Helper method to find the next alive leader in turn order
+    private PlayableLeader FindNextTurnLeader(PlayableLeader current)
     {
-        for (int i = startIndex; i < competitors.Count; i++)
-        {
-            if (!competitors[i].killed)
-            {
-                return competitors[i];
-            }
-        }
+        List<PlayableLeader> order = new();
+        if (player != null && !player.killed) order.Add(player);
+        if (competitors != null) order.AddRange(competitors.Where(c => c != null && !c.killed));
 
-        return null;
+        if (order.Count == 0) return null;
+
+        int currentIndex = order.IndexOf(current);
+        int nextIndex = currentIndex >= 0 ? (currentIndex + 1) % order.Count : 0;
+        return order[nextIndex];
     }
 
     // Add this method to handle game ending

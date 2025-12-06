@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class Heal: FreeNeutralSpell
@@ -43,7 +44,7 @@ public class Heal: FreeNeutralSpell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.characters.Find(x => x.health < 100 && (x.GetOwner() == c.GetOwner() || x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)) &&  c.artifacts.Find(x => x.providesSpell == actionName) != null; 
+            return c.hex.characters.Find(x => x.health < 100 && (x.GetOwner() == c.GetOwner() || x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)) != null; 
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

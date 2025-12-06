@@ -99,8 +99,9 @@ public class Leader : Character
         // AI: Act if not player
         if (game.player != this)
         {
-            controlledCharacters.ForEach(async (x) => { await x.Pass(); });
+            yield return AITurnController.ExecuteLeaderTurn(this as PlayableLeader);
             game.NextPlayer();
+            yield break;
         }
         else
         {

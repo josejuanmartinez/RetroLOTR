@@ -1,6 +1,7 @@
 using System;
+using System.Linq;
 
-public class PerceiveAllegiance : Spell
+public class PerceiveAllegiance : EmmissaryAction
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -33,4 +34,3 @@ public class PerceiveAllegiance : Spell
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
-

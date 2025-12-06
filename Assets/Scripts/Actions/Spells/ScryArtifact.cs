@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ public class ScryArtifact: Spell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.artifacts.Find(x => x.providesSpell == actionName) != null && remainingArtifactsHexes.Count > 0; 
+            return remainingArtifactsHexes.Count > 0; 
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

@@ -13,12 +13,13 @@ public class RevealRumours : EmmissaryAction
             int enemyRumours = (int) Math.Max(1, Math.Floor(c.GetEmmissary() * UnityEngine.Random.Range(0.1f, 0.5f)));
             int friendlyRumours = (int) Math.Max(2, Math.Floor(c.GetEmmissary() * UnityEngine.Random.Range(0.25f, 0.75f)));
             int totalRumours = RumoursManager.GetRumours(c.GetAlignment(), enemyRumours, friendlyRumours);
-            if(totalRumours > 0)
-            {
-                MessageDisplay.ShowMessage($"No new rumours available", Color.red);
-            } else
+            if (totalRumours > 0)
             {
                 MessageDisplay.ShowMessage($"New rumours available: {totalRumours}", Color.green);
+            }
+            else
+            {
+                MessageDisplay.ShowMessage($"No new rumours available", Color.red);
             }
             
             return true; 

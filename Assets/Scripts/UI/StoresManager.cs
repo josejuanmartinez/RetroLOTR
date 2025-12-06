@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class StoresManager : MonoBehaviour
 {
+    // Gold gained per unit when selling resources
+    public const int LeatherSellValue = 5;
+    public const int TimberSellValue = 5;
+    public const int IronSellValue = 10;
+    public const int MountsSellValue = 10;
+    public const int MithrilSellValue = 25;
+
     public TextMeshProUGUI leatherAmount;
     public TextMeshProUGUI mountsAmount;
     public TextMeshProUGUI timberAmount;

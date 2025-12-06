@@ -20,7 +20,7 @@ public class ScryArea : Spell
                 // Select a random hex from the list
                 int randomIndex = UnityEngine.Random.Range(0, eligibleHexes.Count);
                 Hex randomHex = eligibleHexes[randomIndex];
-                randomHex.RevealArea(c.GetMage());
+                randomHex.RevealArea(Math.Max(1, c.GetMage() / 2));
                 randomHex.LookAt();
                 MessageDisplayNoUI.ShowMessage(randomHex, c, $"Area scried!", Color.green);
                 return true;
@@ -28,7 +28,8 @@ public class ScryArea : Spell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.GetOwner() == FindFirstObjectByType<Game>().player && c.artifacts.Find(x => x.providesSpell == actionName) != null; 
+            // Only available to the human player; spell availability handled by base Spell
+            return c.GetOwner() == FindFirstObjectByType<Game>().player;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
@@ -37,4 +38,3 @@ public class ScryArea : Spell
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
-

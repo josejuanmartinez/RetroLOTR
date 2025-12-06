@@ -330,15 +330,41 @@ public class NonPlayableLeader : Leader
         if (game != null && game.npcs.Contains(this)) game.npcs.Remove(this);
     }
 
+    public void RevealToLeader(PlayableLeader leader, bool showPopup = true)
+    {
+        if (leader == null) return;
+
+        revealedTo.Add(leader);
+
+        // Always refresh the icon state for the leader that just met them
+        FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None)
+            .ToList()
+            .ForEach(x =>
+            {
+                if (x.playableLeader == leader) x.RevealToPlayerIfNot(this);
+            });
+
+        // Show popup only for the human player turn
+        if(showPopup && FindFirstObjectByType<Game>().currentlyPlaying == leader && leader == FindFirstObjectByType<Game>().player)
+        {
+            FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None).ToList().ForEach(x => x.RevealToPlayerIfNot(this));      
+        }
+    }
+
     public void RevealToPlayer()
     {
         revealedTo.Add(FindFirstObjectByType<Game>().player);
         FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None).ToList().ForEach(x => x.RevealToPlayerIfNot(this));  
     }
 
+    public bool IsRevealedToLeader(PlayableLeader leader)
+    {
+        return revealedTo.Contains(leader);
+    }
+    
     public bool IsRevealedToPlayer()
     {
-        return revealedTo.Contains(FindFirstObjectByType<Game>().player);
+        return revealedTo.Contains(FindFirstObjectByType<Game>().currentlyPlaying);
     }
 
     public string GetJoiningConditionsText(AlignmentEnum playerAlignment)

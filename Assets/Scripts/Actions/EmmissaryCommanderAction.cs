@@ -2,6 +2,8 @@ using System;
 
 public class EmmissaryCommanderAction : CharacterAction
 {
+    protected override AdvisorType DefaultAdvisorType => AdvisorType.Diplomatic;
+
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

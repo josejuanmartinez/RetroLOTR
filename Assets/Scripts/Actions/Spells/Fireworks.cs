@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 public class Fireworks: FreeSpell
 {
@@ -24,7 +25,7 @@ public class Fireworks: FreeSpell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.GetPC() != null && c.artifacts.Find(x => x.providesSpell == actionName) != null;
+            return c.hex.GetPC() != null;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

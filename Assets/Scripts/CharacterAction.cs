@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -58,6 +59,9 @@ public class CharacterAction : SearcherByName
     // Function delegate that returns a bool to determine if action is available
     public Func<Character, bool> condition;
 
+    [Header("AI")]
+    public AdvisorType advisorType = AdvisorType.None;
+
     [Header("Effect")]
     // Function delegate that returns a bool to determine if action is available
     public Func<Character, bool> effect;
@@ -71,6 +75,13 @@ public class CharacterAction : SearcherByName
         game = FindAnyObjectByType<Game>();
     }
 
+    protected virtual AdvisorType DefaultAdvisorType => AdvisorType.None;
+
+    public AdvisorType GetAdvisorType()
+    {
+        return advisorType == AdvisorType.None ? DefaultAdvisorType : advisorType;
+    }
+
 
     public virtual void Initialize(Character character, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
@@ -78,6 +89,7 @@ public class CharacterAction : SearcherByName
         {
             var originalCondition = condition;
             this.character = character;
+            if (advisorType == AdvisorType.None) advisorType = DefaultAdvisorType;
 
             this.condition = (character) => { return 
                 character != null && !character.killed
@@ -167,7 +179,7 @@ public class CharacterAction : SearcherByName
 
     public async Task Execute()
     {
-        bool isAI = !character.isPlayerControlled;
+            bool isAI = !character.isPlayerControlled;
         try
         {
             // All characters
@@ -198,9 +210,16 @@ public class CharacterAction : SearcherByName
             string message = actionName;            
             string rumourMessage = $"{character.characterName} succeeds on {message}";
             Debug.Log(rumourMessage);
-            if(character.doubledBy.Contains(game.player))
+            bool isDoubledByPlayer = character.doubledBy.Contains(game.player);
+            if (isAI)
             {
-                RumoursManager.AddRumour(new Rumour() {leader = character.GetOwner(), rumour = rumourMessage, v2 = character.hex.v2}, false);
+                // Always record AI actions privately; if doubled by the player, also promote to public immediately
+                Rumour rumour = new Rumour() { leader = character.GetOwner(), rumour = rumourMessage, v2 = character.hex.v2 };
+                RumoursManager.AddRumour(rumour, false);
+                if (isDoubledByPlayer)
+                {
+                    RumoursManager.PromoteRumourToPublic(rumour);
+                }
             }
             
             if(UnityEngine.Random.Range(0, 100) < commanderXP)
@@ -965,5 +984,15 @@ public class CharacterAction : SearcherByName
         }
 
         return null;
+    }
+
+    public int GetGoldCost()
+    {
+        return goldCost 
+        + ironCost*StoresManager.IronSellValue 
+        + mountsCost*StoresManager.MountsSellValue
+        + timberCost*StoresManager.TimberSellValue
+        + mithrilCost*StoresManager.MithrilSellValue
+        + leatherCost*StoresManager.LeatherSellValue;
     }
 }

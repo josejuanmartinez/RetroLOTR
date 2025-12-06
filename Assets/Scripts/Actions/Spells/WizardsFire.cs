@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 public class WizardsFire : FreeSpell
 {
@@ -17,7 +18,7 @@ public class WizardsFire : FreeSpell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return FindEnemyArmyAtHex(c) != null && c.artifacts.Find(x => x.providesSpell == actionName) != null;
+            return FindEnemyArmyAtHex(c) != null;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

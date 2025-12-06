@@ -222,17 +222,30 @@ public class Character : MonoBehaviour
     public int GetMaxMovement()
     {
         MovementType movementType = army == null ? MovementType.Character : army.GetMovementType();
+        bool isInWater = hex != null && hex.IsWaterTerrain();
         switch(movementType)
         {            
             case MovementType.ArmyCommander:
-                return FindFirstObjectByType<Game>().armyMovement;
+                return AdjustMovementByRace(FindFirstObjectByType<Game>().armyMovement, isInWater);
             case MovementType.ArmyCommanderCavalryOnly:
-                return FindFirstObjectByType<Game>().cavalryMovement;
+                return AdjustMovementByRace(FindFirstObjectByType<Game>().cavalryMovement, isInWater);
             case MovementType.Character:
             default:
-                return FindFirstObjectByType<Game>().characterMovement;            
+                return AdjustMovementByRace(FindFirstObjectByType<Game>().characterMovement, isInWater);            
         }
         
+    }
+
+    private int AdjustMovementByRace(int baseMovement, bool isInWater)
+    {
+        if (isInWater) return baseMovement;
+
+        return race switch
+        {
+            RacesEnum.Hobbit => Mathf.Min(baseMovement, 3),
+            RacesEnum.Dwarf => Mathf.Min(baseMovement, 4),
+            _ => baseMovement
+        };
     }
 
     public bool IsArmyCommander()
