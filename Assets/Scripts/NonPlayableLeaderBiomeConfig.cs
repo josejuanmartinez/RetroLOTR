@@ -18,6 +18,7 @@ public class NonPlayableLeaderBiomeConfig: LeaderBiomeConfig
     public int mountsToJoin = 0;
     public int timberToJoin = 0;
     public int ironToJoin = 0;
+    public int steelToJoin = 0;
     public int mithrilToJoin = 0;
     public int goldToJoin = 0;
 

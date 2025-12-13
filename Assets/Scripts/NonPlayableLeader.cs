@@ -86,6 +86,7 @@ public class NonPlayableLeader : Leader
         if (nonPlayableLeaderBiome.mountsToJoin > 0 && leader.mountsAmount > nonPlayableLeaderBiome.mountsToJoin) meets = true;
         if (nonPlayableLeaderBiome.timberToJoin > 0 && leader.timberAmount > nonPlayableLeaderBiome.timberToJoin) meets = true;
         if (nonPlayableLeaderBiome.ironToJoin > 0 && leader.ironAmount > nonPlayableLeaderBiome.ironToJoin) meets = true;
+        if (nonPlayableLeaderBiome.steelToJoin > 0 && leader.steelAmount > nonPlayableLeaderBiome.steelToJoin) meets = true;
         if (nonPlayableLeaderBiome.mithrilToJoin > 0 && leader.mithrilAmount > nonPlayableLeaderBiome.mithrilToJoin) meets = true;
         if (nonPlayableLeaderBiome.goldToJoin > 0 && leader.goldAmount > nonPlayableLeaderBiome.goldToJoin) meets = true;
 
@@ -205,6 +206,7 @@ public class NonPlayableLeader : Leader
             pc.mounts,
             pc.timber,
             pc.iron,
+            pc.steel,
             pc.mithril
         }).ToList();
 
@@ -214,6 +216,7 @@ public class NonPlayableLeader : Leader
         int originalMountsAmount = mountsAmount;
         int originalTimberAmount = timberAmount;
         int originalIronAmount = ironAmount;
+        int originalSteelAmount = steelAmount;
         int originalMithrilAmount = mithrilAmount;
         int originalGoldAmount = goldAmount;
 
@@ -221,6 +224,7 @@ public class NonPlayableLeader : Leader
         int targetMountsAmount = joinedTo.mountsAmount;
         int targetTimberAmount = joinedTo.timberAmount;
         int targetIronAmount = joinedTo.ironAmount;
+        int targetSteelAmount = joinedTo.steelAmount;
         int targetMithrilAmount = joinedTo.mithrilAmount;
         int targetGoldAmount = joinedTo.goldAmount;
 
@@ -320,6 +324,7 @@ public class NonPlayableLeader : Leader
                 snapshot.pc.mounts = snapshot.mounts;
                 snapshot.pc.timber = snapshot.timber;
                 snapshot.pc.iron = snapshot.iron;
+                snapshot.pc.steel = snapshot.steel;
                 snapshot.pc.mithril = snapshot.mithril;
                 snapshot.pc.hex.RedrawPC();
             }
@@ -342,6 +347,7 @@ public class NonPlayableLeader : Leader
             mountsAmount = originalMountsAmount;
             timberAmount = originalTimberAmount;
             ironAmount = originalIronAmount;
+            steelAmount = originalSteelAmount;
             mithrilAmount = originalMithrilAmount;
             goldAmount = originalGoldAmount;
 
@@ -349,6 +355,7 @@ public class NonPlayableLeader : Leader
             joinedTo.mountsAmount = targetMountsAmount;
             joinedTo.timberAmount = targetTimberAmount;
             joinedTo.ironAmount = targetIronAmount;
+            joinedTo.steelAmount = targetSteelAmount;
             joinedTo.mithrilAmount = targetMithrilAmount;
             joinedTo.goldAmount = targetGoldAmount;
 

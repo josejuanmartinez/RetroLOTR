@@ -6,6 +6,8 @@ public class SellLeather : EmmissaryPCAction
 
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
+        isSellCaravans = true;
+        isBuyCaravans = false;
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
@@ -13,7 +15,11 @@ public class SellLeather : EmmissaryPCAction
             if (originalEffect != null && !originalEffect(c)) return false;
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
-            playable.AddGold(StoresManager.LeatherSellValue);
+            StoresManager stores = FindFirstObjectByType<StoresManager>();
+            if (stores == null) return false;
+            int quantity = 5;
+            int payout = stores.GetSellPrice(ProducesEnum.leather, quantity);
+            stores.AdjustStock(ProducesEnum.leather, quantity);
             if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 
         };

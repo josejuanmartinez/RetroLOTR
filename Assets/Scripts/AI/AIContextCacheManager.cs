@@ -13,10 +13,15 @@ public class AIContextCacheManager : MonoBehaviour
     private Coroutine precomputeRoutine;
     private Game game;
     private bool rebuildRequested = false;
+    private int currentQueueTotal = 0;
+    private int currentQueueProcessed = 0;
+    private bool queueCompletionLogged = true;
+    private Stopwatch queueStopwatch = new();
+    private string lastQueueDetail = string.Empty;
 
     [SerializeField] private float playerFrameBudgetMs = 3f;
     [SerializeField] private float aiFrameBudgetMs = 6f;
-    [SerializeField] private int minimumPerFrame = 1;
+    [SerializeField] private int minimumPerFrame = 0;
 
     private void Awake()
     {
@@ -82,12 +87,27 @@ public class AIContextCacheManager : MonoBehaviour
 
             stopwatch.Restart();
             int processedThisFrame = 0;
-            while (workQueue.Count > 0 && (processedThisFrame < minimumPerFrame || stopwatch.Elapsed.TotalMilliseconds < budgetMs))
+            while (workQueue.Count > 0)
             {
+                if (processedThisFrame >= minimumPerFrame && stopwatch.Elapsed.TotalMilliseconds >= budgetMs)
+                {
+                    break;
+                }
+
                 (PlayableLeader leader, Character character) item = workQueue.Dequeue();
                 if (item.leader == null || item.character == null || item.leader.killed || item.character.killed) continue;
-                cache[BuildKey(item.leader, item.character)] = AIContextDataBuilder.Build(item.leader, item.character);
+                // Clamp per-item build time so a single heavy build cannot stall the frame.
+                float perItemBudget = Mathf.Max(0.5f, budgetMs);
+                cache[BuildKey(item.leader, item.character)] = AIContextDataBuilder.Build(item.leader, item.character, perItemBudget);
                 processedThisFrame++;
+                currentQueueProcessed++;
+            }
+
+            if (workQueue.Count == 0 && !queueCompletionLogged && currentQueueTotal > 0)
+            {
+                queueCompletionLogged = true;
+                queueStopwatch.Stop();
+                UnityEngine.Debug.Log($"[AIContextCache] Completed caching {currentQueueProcessed}/{currentQueueTotal} items in {queueStopwatch.Elapsed.TotalMilliseconds:F1} ms (turn {game?.turn}, active={game?.currentlyPlaying?.characterName ?? "?"}); items: {lastQueueDetail}");
             }
 
             yield return null;
@@ -102,13 +122,25 @@ public class AIContextCacheManager : MonoBehaviour
 
         if (game.competitors == null) return;
 
+        List<string> detailItems = new();
+
         foreach (PlayableLeader leader in game.competitors.Where(c => c != null && !c.killed))
         {
             foreach (Character character in leader.controlledCharacters.Where(c => c != null && !c.killed))
             {
                 workQueue.Enqueue((leader, character));
+                string leaderName = !string.IsNullOrEmpty(leader.characterName) ? leader.characterName : leader.name;
+                string charName = !string.IsNullOrEmpty(character.characterName) ? character.characterName : character.name;
+                detailItems.Add($"{leaderName}/{charName}");
             }
         }
+
+        currentQueueTotal = workQueue.Count;
+        currentQueueProcessed = 0;
+        queueCompletionLogged = false;
+        queueStopwatch.Restart();
+        lastQueueDetail = detailItems.Count > 0 ? string.Join(", ", detailItems) : "none";
+        UnityEngine.Debug.Log($"[AIContextCache] Queued {currentQueueTotal} items for caching (turn {game?.turn}, active={game?.currentlyPlaying?.characterName ?? "?"}); items: {lastQueueDetail}");
     }
 
     private int BuildKey(PlayableLeader leader, Character character)

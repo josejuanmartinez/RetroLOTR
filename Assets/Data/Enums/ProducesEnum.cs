@@ -4,5 +4,6 @@ public enum ProducesEnum
     mounts,
     timber,
     iron,
+    steel,
     mithril
 }

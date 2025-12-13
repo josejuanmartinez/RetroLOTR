@@ -20,6 +20,7 @@ public class ConfirmationDialog : MonoBehaviour
     [SerializeField] private string fallbackMessage = "Are you sure?";
     [SerializeField] private string defaultYesLabel = "Yes";
     [SerializeField] private string defaultNoLabel = "No";
+    [SerializeField] private string defaultOkLabel = "OK";
 
     private TaskCompletionSource<bool> pendingRequest;
 
@@ -90,7 +91,22 @@ public class ConfirmationDialog : MonoBehaviour
         return Instance.Show(message, Instance.defaultYesLabel, Instance.defaultNoLabel);
     }
 
-    private Task<bool> Show(string message, string yesString, string noString)
+    /// <summary>
+    /// Opens a single-button OK dialog.
+    /// </summary>
+    public static Task<bool> AskOk(string message)
+    {
+        if (Instance == null)
+        {
+            Debug.LogError("ConfirmationDialog was called before its instance was created.");
+            return Task.FromResult(false);
+        }
+
+        string okLabel = string.IsNullOrWhiteSpace(Instance.defaultOkLabel) ? "OK" : Instance.defaultOkLabel;
+        return Instance.Show(message, okLabel, string.Empty, true);
+    }
+
+    private Task<bool> Show(string message, string yesString, string noString, bool singleButton = false)
     {
         if (pendingRequest != null && !pendingRequest.Task.IsCompleted)
         {
@@ -104,7 +120,14 @@ public class ConfirmationDialog : MonoBehaviour
 
         messageLabel.text = message;
         yesButtonText.text = yesString;
-        noButtonText.text = noString;
+        yesButton.gameObject.SetActive(true);
+
+        bool showNo = !singleButton;
+        noButton.gameObject.SetActive(showNo);
+        if (showNo)
+        {
+            noButtonText.text = string.IsNullOrWhiteSpace(noString) ? defaultNoLabel : noString;
+        }
 
         return pendingRequest.Task;
     }

@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using NUnit.Framework.Constraints;
-using System.Threading.Tasks;
-
 
 public class Game : MonoBehaviour
 {
@@ -42,10 +39,12 @@ public class Game : MonoBehaviour
     public bool started = false;
 
     private Board board;
+    private StoresManager storesManager;
     private bool skipNextTurnPrompt = false;
     void Awake()
     {
         if (!board) board = FindAnyObjectByType<Board>();
+        if (!storesManager) storesManager = FindAnyObjectByType<StoresManager>();
         if (AIContextCacheManager.Instance == null) gameObject.AddComponent<AIContextCacheManager>();
     }
 
@@ -197,15 +196,7 @@ public class Game : MonoBehaviour
 
         if (currentlyPlaying == player)
         {
-            MessageDisplay.ClearPersistent();
-            turn++;
-            if (turn >= MAX_TURNS)
-            {
-                EndGame(false);
-                return;
-            }
-            MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
-            AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+            NewTurn();
         }
         else
         {
@@ -213,6 +204,20 @@ public class Game : MonoBehaviour
         }
         board.RefreshRelevantHexes();
         currentlyPlaying.NewTurn();
+    }
+
+    private void NewTurn()
+    {
+        MessageDisplay.ClearPersistent();
+        turn++;
+        if (turn >= MAX_TURNS)
+        {
+            EndGame(false);
+            return;
+        }
+        MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
+        AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        storesManager.AdvanceTurn();
     }
 
     // Helper method to find the next alive leader in turn order

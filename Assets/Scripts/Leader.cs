@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Google.Protobuf.WellKnownTypes;
 using UnityEngine;
 
 public class Leader : Character
@@ -16,6 +15,7 @@ public class Leader : Character
     public int mountsAmount = 0;
     public int timberAmount = 0;
     public int ironAmount = 0;
+    public int steelAmount = 0;
     public int mithrilAmount = 0;
     public int goldAmount = 0;
 
@@ -65,6 +65,12 @@ public class Leader : Character
     {
         return controlledPcs.Select(x => x.iron).Sum();
     }
+
+    public int GetSteelPerTurn()
+    {
+        return controlledPcs.Select(x => x.steel).Sum();
+    }
+
     public int GetMithrilPerTurn()
     {
         return controlledPcs.Select(x => x.mithril).Sum();
@@ -84,6 +90,7 @@ public class Leader : Character
         mountsAmount += GetMountsPerTurn();
         timberAmount += GetTimberPerTurn();
         ironAmount += GetIronPerTurn();
+        steelAmount += GetSteelPerTurn();
         mithrilAmount += GetMithrilPerTurn();
         goldAmount += GetGoldPerTurn();
         
@@ -177,6 +184,13 @@ public class Leader : Character
         ironAmount += amount;
         if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"iron\">", Color.green);
     }
+
+    public void AddSteel(int amount)
+    {
+        steelAmount += amount;
+        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"steel\">", Color.green);
+    }
+
     public void AddMithril(int amount)
     {
         mithrilAmount += amount;
@@ -207,6 +221,13 @@ public class Leader : Character
         ironAmount -= ironCost;
         if (ironCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{ironCost} <sprite name=\"iron\">", Color.red);
     }
+
+    public void RemoveSteel(int steelCost)
+    {
+        steelAmount -= steelCost;
+        if (steelCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{steelCost} <sprite name=\"steel\">", Color.red);
+    }
+
     public void RemoveMithril(int mithrilCost)
     {
         mithrilAmount -= mithrilCost;
@@ -241,12 +262,12 @@ public class Leader : Character
 
     public int GetStorePoints()
     {
-        return leatherAmount + timberAmount * 2 + mithrilAmount * 5 + ironAmount * 3 + mountsAmount * 2;
+        return leatherAmount + timberAmount * 2 + mithrilAmount * 5 + ironAmount * 3 + steelAmount * 4 + mountsAmount * 2;
     }
 
     public int GetResourceProductionPoints()
     {
-        return GetLeatherPerTurn() + GetTimberPerTurn() * 2 + GetMithrilPerTurn() * 5 + GetIronPerTurn() * 3 + GetMountsPerTurn() * 2;
+        return GetLeatherPerTurn() + GetTimberPerTurn() * 2 + GetMithrilPerTurn() * 5 + GetIronPerTurn() * 3 + GetSteelPerTurn() * 4 + GetMountsPerTurn() * 2;
     }
 
     public int GetAllPoints()
@@ -310,6 +331,7 @@ public class Leader : Character
         killedBy.mountsAmount += mountsAmount;
         killedBy.timberAmount += timberAmount;
         killedBy.ironAmount += ironAmount;
+        killedBy.steelAmount += steelAmount;
         killedBy.mithrilAmount += mithrilAmount;
         killedBy.goldAmount += goldAmount;
 
@@ -317,6 +339,7 @@ public class Leader : Character
         mountsAmount = 0;
         timberAmount = 0;
         ironAmount = 0;
+        steelAmount = 0;
         mithrilAmount = 0;
         goldAmount = 0;
 

@@ -135,6 +135,7 @@ public class KeyManager : MonoBehaviour
         player.mountsAmount += amount;
         player.timberAmount += amount;
         player.ironAmount += amount;
+        player.steelAmount += amount;
         player.mithrilAmount += amount;
         player.goldAmount += amount;
 

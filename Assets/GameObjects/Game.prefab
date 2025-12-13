@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3261100172023844959}
   - component: {fileID: 5794153034429842723}
+  - component: {fileID: 926176226331749262}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -44,12 +45,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ec5824c88e74e4458bfab182bc75364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundPlayer: {fileID: 0}
+  musicPlayer: {fileID: 0}
   player: {fileID: 0}
   competitors: []
   npcs: []
   currentlyPlaying: {fileID: 0}
   artifacts: []
-  normalMovement: 12
+  characterMovement: 5
+  armyMovement: 5
   cavalryMovement: 15
   turn: 0
   started: 0
+--- !u!114 &926176226331749262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4985763033077050972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5c0c5094397f7d4196172908b348891, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerFrameBudgetMs: 1
+  aiFrameBudgetMs: 6
+  minimumPerFrame: 1

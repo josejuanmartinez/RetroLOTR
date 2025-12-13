@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -43,8 +42,11 @@ public class CharacterAction : SearcherByName
     public int mountsCost;
     public int timberCost;
     public int ironCost;
+    public int steelCost;
     public int mithrilCost;
     public int goldCost;
+    public bool isBuyCaravans;
+    public bool isSellCaravans;
 
     [Header("XP Chance (0-100) %")]
     public int commanderXP;
@@ -69,6 +71,8 @@ public class CharacterAction : SearcherByName
     public Func<Character, Task<bool>> asyncEffect;
     
     private Game game;
+    private StoresManager cachedStoresManager;
+    private Hover hoverComponent;
     private bool initialized = false;
     void Awake()
     {
@@ -106,7 +110,8 @@ public class CharacterAction : SearcherByName
             if (activate && !initialized)
             {
                 GameObject hoverInstance = Instantiate(hoverPrefab, button.transform);
-                hoverInstance.GetComponent<Hover>().Initialize(BuildHoverText(), Vector2.one * 40, 18, TextAlignmentOptions.Center);
+                hoverComponent = hoverInstance.GetComponent<Hover>();
+                hoverComponent.Initialize(BuildHoverText(), Vector2.one * 40, 18, TextAlignmentOptions.Center);
 
                 actionInitials = gameObject.name.ToUpper();
                 spriteImage.color = actionColor;
@@ -121,6 +126,10 @@ public class CharacterAction : SearcherByName
                     textUI.text = actionInitials.ToUpper();
                 }
                 initialized = true;
+            }
+            else if (hoverComponent != null)
+            {
+                hoverComponent.Initialize(BuildHoverText(), Vector2.one * 40, 18, TextAlignmentOptions.Center);
             }
         }
         catch (Exception e)
@@ -156,10 +165,54 @@ public class CharacterAction : SearcherByName
         if (emissarySkillRequired > 0 && !IsProvidedByArtifact() && character.GetEmmissary() < emissarySkillRequired) return false;
         if (mageSkillRequired > 0 && !IsProvidedByArtifact() && character.GetMage() < mageSkillRequired) return false;
 
+        if (character == null || character.GetOwner() == null) return false;
+
+        ActionCostSnapshot snapshot = CalculateCostSnapshot();
+
+        if (isBuyCaravans)
+        {
+            if (!snapshot.hasRequiredStock) return false;
+            if (snapshot.goldDelta < 0 && character.GetOwner().goldAmount < -snapshot.goldDelta) return false;
+            return true;
+        }
+
+        if (isSellCaravans)
+        {
+            if (!snapshot.hasRequiredStock) return false;
+            foreach (var cost in snapshot.resourceCosts)
+            {
+                switch (cost.produce)
+                {
+                    case ProducesEnum.leather:
+                        if (character.GetOwner().leatherAmount < cost.amount) return false;
+                        break;
+                    case ProducesEnum.timber:
+                        if (character.GetOwner().timberAmount < cost.amount) return false;
+                        break;
+                    case ProducesEnum.mounts:
+                        if (character.GetOwner().mountsAmount < cost.amount) return false;
+                        break;
+                    case ProducesEnum.iron:
+                        if (character.GetOwner().ironAmount < cost.amount) return false;
+                        break;
+                    case ProducesEnum.steel:
+                        if (character.GetOwner().steelAmount < cost.amount) return false;
+                        break;
+                    case ProducesEnum.mithril:
+                        if (character.GetOwner().mithrilAmount < cost.amount) return false;
+                        break;
+                }
+            }
+
+            if (snapshot.goldDelta < 0 && character.GetOwner().goldAmount < -snapshot.goldDelta) return false;
+            return true;
+        }
+
         if (leatherCost > 0 && character.GetOwner().leatherAmount < leatherCost) return false;
         if (timberCost > 0 && character.GetOwner().timberAmount < timberCost) return false;
         if (mountsCost > 0 && character.GetOwner().mountsAmount < mountsCost) return false;
         if (ironCost > 0 && character.GetOwner().ironAmount < ironCost) return false;
+        if (steelCost > 0 && character.GetOwner().steelAmount < steelCost) return false;
         if (mithrilCost > 0 && character.GetOwner().mithrilAmount < mithrilCost) return false;
         if (goldCost > 0 && character.GetOwner().goldAmount < goldCost) return false;
 
@@ -178,9 +231,10 @@ public class CharacterAction : SearcherByName
 
     public async Task Execute()
     {
-            bool isAI = !character.isPlayerControlled;
+        bool isAI = !character.isPlayerControlled;
         try
         {
+            ActionCostSnapshot costSnapshot = CalculateCostSnapshot();
             bool providedByArtifact = IsProvidedByArtifact();
             // All characters
             character.hasActionedThisTurn = true;
@@ -253,47 +307,62 @@ public class CharacterAction : SearcherByName
             if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
 
-            if(leatherCost > 0)
+            if (costSnapshot.isCaravan)
             {
-                character.GetOwner().RemoveLeather(leatherCost);
-                // Debug.Log($"{character.characterName} spends {leatherCost} leather");
-                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"leather\"/> -{leatherCost}", Color.red);
+                ApplyCaravanPayments(costSnapshot);
             }
-            if (timberCost > 0)
+            else
             {
-                character.GetOwner().RemoveTimber(timberCost);
-                // Debug.Log($"{character.characterName} spends {timberCost} timberCost");
-                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"timber\"/> -{timberCost}", Color.red);
-            }
-            if (mountsCost > 0)
-            {
-                character.GetOwner().RemoveMounts(mountsCost);
-                // Debug.Log($"{character.characterName} spends {mountsCost} mounts");
-                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mounts\"/> -{mountsCost}", Color.red);
+                if(leatherCost > 0)
+                {
+                    character.GetOwner().RemoveLeather(leatherCost);
+                    // Debug.Log($"{character.characterName} spends {leatherCost} leather");
+                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"leather\"/> -{leatherCost}", Color.red);
+                }
+                if (timberCost > 0)
+                {
+                    character.GetOwner().RemoveTimber(timberCost);
+                    // Debug.Log($"{character.characterName} spends {timberCost} timberCost");
+                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"timber\"/> -{timberCost}", Color.red);
+                }
+                if (mountsCost > 0)
+                {
+                    character.GetOwner().RemoveMounts(mountsCost);
+                    // Debug.Log($"{character.characterName} spends {mountsCost} mounts");
+                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mounts\"/> -{mountsCost}", Color.red);
+                }
+
+                if (ironCost > 0)
+                {
+                    character.GetOwner().RemoveIron(ironCost);
+                    // Debug.Log($"{character.characterName} spends {ironCost} iron");
+                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{ironCost}", Color.red);
+                }
+
+                if (steelCost > 0)
+                {
+                    character.GetOwner().RemoveSteel(steelCost);
+                    // Debug.Log($"{character.characterName} spends {steelCost} steel");
+                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"steel\"/> -{steelCost}", Color.red);
+                }
+
+                if (mithrilCost > 0)
+                {
+                    character.GetOwner().RemoveMithril(mithrilCost);
+                    // Debug.Log($"{character.characterName} spends {mithrilCost} mithril");
+                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mithril\"/> -{mithrilCost}", Color.red);
+                }
+
+                if (goldCost > 0)
+                {
+                    character.GetOwner().RemoveGold(goldCost);
+                    // Debug.Log($"{character.characterName} spends {goldCost} gold");
+                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"gold\"/> -{goldCost}", Color.red);
+                }
             }
 
-            if (ironCost > 0)
-            {
-                character.GetOwner().RemoveIron(ironCost);
-                // Debug.Log($"{character.characterName} spends {ironCost} iron");
-                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{ironCost}", Color.red);
-            }
-
-            if (mithrilCost > 0)
-            {
-                character.GetOwner().RemoveMithril(mithrilCost);
-                // Debug.Log($"{character.characterName} spends {mithrilCost} mithril");
-                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mithril\"/> -{mithrilCost}", Color.red);
-            }
-
-            if (goldCost > 0)
-            {
-                character.GetOwner().RemoveGold(goldCost);
-                // Debug.Log($"{character.characterName} spends {goldCost} gold");
-                if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"gold\"/> -{goldCost}", Color.red);
-            }
-
-            if (!isAI) FindFirstObjectByType<StoresManager>().RefreshStores();
+            StoresManager storesManager = GetStoresManager();
+            if (!isAI && storesManager != null) storesManager.RefreshStores();
 
             if (!isAI) game.PointToCharacterWithMissingActions();
 
@@ -1021,26 +1090,231 @@ public class CharacterAction : SearcherByName
 
     private string BuildCostText()
     {
+        if (isBuyCaravans) return BuildBuyCaravanCostText();
+        if (isSellCaravans) return BuildSellCaravanCostText();
+        return BuildStandardCostText();
+    }
+
+    private string BuildStandardCostText()
+    {
         List<string> costs = new();
-        if (leatherCost > 0) costs.Add($"<sprite name=\"leather\"/>[{leatherCost}]");
-        if (timberCost > 0) costs.Add($"<sprite name=\"timber\"/>[{timberCost}]");
-        if (mountsCost > 0) costs.Add($"<sprite name=\"mounts\"/>[{mountsCost}]");
-        if (ironCost > 0) costs.Add($"<sprite name=\"iron\"/>[{ironCost}]");
-        if (mithrilCost > 0) costs.Add($"<sprite name=\"mithril\"/>[{mithrilCost}]");
-        if (goldCost > 0) costs.Add($"<sprite name=\"gold\"/>[{goldCost}]");
+        if (leatherCost > 0) costs.Add($"<color=red>-<sprite name=\"leather\"/>[{leatherCost}]</color>");
+        if (timberCost > 0) costs.Add($"<color=red>-<sprite name=\"timber\"/>[{timberCost}]</color>");
+        if (mountsCost > 0) costs.Add($"<color=red>-<sprite name=\"mounts\"/>[{mountsCost}]</color>");
+        if (ironCost > 0) costs.Add($"<color=red>-<sprite name=\"iron\"/>[{ironCost}]</color>");
+        if (mithrilCost > 0) costs.Add($"<color=red>-<sprite name=\"mithril\"/>[{mithrilCost}]</color>");
+        if (goldCost > 0) costs.Add($"<color=red>-<sprite name=\"gold\"/>[{goldCost}]</color>");
         return string.Join(" ", costs);
+    }
+
+    private IEnumerable<(int amount, string sprite, ProducesEnum produce)> GetResourceCosts()
+    {
+        if (leatherCost > 0) yield return (leatherCost, "leather", ProducesEnum.leather);
+        if (timberCost > 0) yield return (timberCost, "timber", ProducesEnum.timber);
+        if (mountsCost > 0) yield return (mountsCost, "mounts", ProducesEnum.mounts);
+        if (ironCost > 0) yield return (ironCost, "iron", ProducesEnum.iron);
+        if (steelCost > 0) yield return (steelCost, "steel", ProducesEnum.steel);
+        if (mithrilCost > 0) yield return (mithrilCost, "mithril", ProducesEnum.mithril);
+    }
+
+    private struct ActionCostSnapshot
+    {
+        public bool isCaravan;
+        public int goldDelta; // positive means gold gained, negative means gold spent
+        public List<(ProducesEnum produce, int amount)> resourceCosts;
+        public bool hasRequiredStock;
+    }
+
+    private ActionCostSnapshot CalculateCostSnapshot()
+    {
+        ActionCostSnapshot snapshot = new()
+        {
+            isCaravan = isBuyCaravans || isSellCaravans,
+            goldDelta = 0,
+            resourceCosts = new List<(ProducesEnum produce, int amount)>(),
+            hasRequiredStock = true
+        };
+
+        if (!snapshot.isCaravan) return snapshot;
+
+        StoresManager stores = GetStoresManager();
+        if (stores == null)
+        {
+            snapshot.hasRequiredStock = false;
+            return snapshot;
+        }
+
+        // goldCost is always treated as a spend (negative delta)
+        snapshot.goldDelta -= goldCost;
+
+        foreach (var cost in GetResourceCosts())
+        {
+            snapshot.resourceCosts.Add((cost.produce, cost.amount));
+            if (isBuyCaravans)
+            {
+                if (!stores.HasStock(cost.produce, cost.amount)) snapshot.hasRequiredStock = false;
+                snapshot.goldDelta -= stores.GetBuyPrice(cost.produce, cost.amount);
+            }
+            else if (isSellCaravans)
+            {
+                snapshot.goldDelta += stores.GetSellPrice(cost.produce, cost.amount);
+            }
+        }
+
+        return snapshot;
+    }
+
+    private string BuildBuyCaravanCostText()
+    {
+        StoresManager stores = GetStoresManager();
+        if (stores == null) return BuildStandardCostText();
+
+        int totalGold = goldCost;
+        foreach (var cost in GetResourceCosts())
+        {
+            totalGold += stores.GetBuyPrice(cost.produce, cost.amount);
+        }
+
+        if (totalGold <= 0) return string.Empty;
+        return $"<color=red>-<sprite name=\"gold\"/>[{totalGold}]</color>";
+    }
+
+    private string BuildSellCaravanCostText()
+    {
+        StoresManager stores = GetStoresManager();
+        if (stores == null) return BuildStandardCostText();
+
+        List<string> parts = new();
+        int totalGold = goldCost;
+
+        foreach (var cost in GetResourceCosts())
+        {
+            parts.Add($"<color=red>-<sprite name=\"{cost.sprite}\"/>[{cost.amount}]</color>");
+            totalGold += stores.GetSellPrice(cost.produce, cost.amount);
+        }
+
+        if (totalGold > 0)
+        {
+            parts.Add($"<color=green>+<sprite name=\"gold\"/>[{totalGold}]</color>");
+        }
+
+        return string.Join(" ", parts);
     }
 
     protected virtual string BuildHoverText()
     {
         string title = actionName;
-        string costText = BuildCostText();
-        if (!string.IsNullOrWhiteSpace(costText)) title = $"{title} {costText}";
 
         List<string> parts = new() { title };
         string desc = GetDescription();
         if (!string.IsNullOrWhiteSpace(desc)) parts.Add($"<br><size=80%>{desc}</size>");
 
+        string detail = BuildCaravanDetailText();
+        if (string.IsNullOrWhiteSpace(detail))
+        {
+            detail = BuildStandardDetailText();
+        }
+        if (!string.IsNullOrWhiteSpace(detail)) parts.Add($"<br><size=80%>{detail}</size>");
+
         return string.Join("", parts);
+    }
+
+    private string BuildCaravanDetailText()
+    {
+        ActionCostSnapshot snapshot = CalculateCostSnapshot();
+        if (!snapshot.isCaravan) return string.Empty;
+
+        List<string> parts = new();
+        if (isBuyCaravans)
+        {
+            if (snapshot.goldDelta < 0)
+            {
+                parts.Add($"<color=red>-<sprite name=\"gold\"/>[{Mathf.Abs(snapshot.goldDelta)}]</color>");
+            }
+        }
+        else if (isSellCaravans)
+        {
+            foreach (var cost in snapshot.resourceCosts)
+            {
+                parts.Add($"<color=red>-<sprite name=\"{cost.produce}\">[{cost.amount}]</color>");
+            }
+
+            if (snapshot.goldDelta > 0)
+            {
+                parts.Add($"<color=green>+<sprite name=\"gold\"/>[{snapshot.goldDelta}]</color>");
+            }
+            else if (snapshot.goldDelta < 0)
+            {
+                parts.Add($"<color=red>-<sprite name=\"gold\"/>[{Mathf.Abs(snapshot.goldDelta)}]</color>");
+            }
+        }
+
+        return string.Join(" ", parts);
+    }
+
+    private string BuildStandardDetailText()
+    {
+        List<string> parts = new();
+
+        foreach (var cost in GetResourceCosts())
+        {
+            parts.Add($"<color=red>-<sprite name=\"{cost.sprite}\"/>[{cost.amount}]</color>");
+        }
+
+        if (goldCost > 0)
+        {
+            parts.Add($"<color=red>-<sprite name=\"gold\"/>[{goldCost}]</color>");
+        }
+
+        return string.Join(" ", parts);
+    }
+
+    private void ApplyCaravanPayments(ActionCostSnapshot snapshot)
+    {
+        if (!snapshot.isCaravan) return;
+        if (character == null || character.GetOwner() == null) return;
+
+        Leader owner = character.GetOwner();
+
+        foreach (var cost in snapshot.resourceCosts)
+        {
+            switch (cost.produce)
+            {
+                case ProducesEnum.leather:
+                    owner.RemoveLeather(cost.amount);
+                    break;
+                case ProducesEnum.timber:
+                    owner.RemoveTimber(cost.amount);
+                    break;
+                case ProducesEnum.mounts:
+                    owner.RemoveMounts(cost.amount);
+                    break;
+                case ProducesEnum.iron:
+                    owner.RemoveIron(cost.amount);
+                    break;
+                case ProducesEnum.steel:
+                    owner.RemoveSteel(cost.amount);
+                    break;
+                case ProducesEnum.mithril:
+                    owner.RemoveMithril(cost.amount);
+                    break;
+            }
+        }
+
+        if (snapshot.goldDelta < 0)
+        {
+            owner.RemoveGold(-snapshot.goldDelta);
+        }
+        else if (snapshot.goldDelta > 0)
+        {
+            owner.AddGold(snapshot.goldDelta);
+        }
+    }
+
+    private StoresManager GetStoresManager()
+    {
+        if (cachedStoresManager != null) return cachedStoresManager;
+        cachedStoresManager = FindFirstObjectByType<StoresManager>();
+        return cachedStoresManager;
     }
 }

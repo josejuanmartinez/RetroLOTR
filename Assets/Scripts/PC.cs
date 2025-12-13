@@ -13,12 +13,14 @@ public class PC
     [SerializeField] public int mounts = 0;
     [SerializeField] public int timber = 0;
     [SerializeField] public int iron = 0;
+    [SerializeField] public int steel = 0;
     [SerializeField] public int mithril = 0;
 
     [SerializeField] public int initialLeather = 0;
     [SerializeField] public int initialMounts = 0;
     [SerializeField] public int initialTimber = 0;
     [SerializeField] public int initialIron = 0;
+    [SerializeField] public int initialSteel = 0;
     [SerializeField] public int initialMithril = 0;
 
     [SerializeField] public int loyalty = 100;
@@ -49,9 +51,11 @@ public class PC
         {
             case TerrainEnum.mountains:
                 mithril += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
+                steel += UnityEngine.Random.Range(2, Mathf.Max(3, ((PCSizeEnum.city) - citySize)));
                 iron += UnityEngine.Random.Range(2, Mathf.Max(2, ((PCSizeEnum.city) - citySize)));
                 break;
             case TerrainEnum.hills:
+                steel += UnityEngine.Random.Range(1, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
                 iron += UnityEngine.Random.Range(1, Mathf.Max(1,  ((PCSizeEnum.city) - citySize)));
                 timber += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
                 mounts += UnityEngine.Random.Range(0, Mathf.Max(1, ((PCSizeEnum.city) - citySize)));
@@ -91,6 +95,7 @@ public class PC
         initialMounts = mounts;
         initialTimber = timber;
         initialIron = iron;
+        initialSteel = steel;
         initialMithril = mithril;
 
         owner.controlledPcs.Add(this);
@@ -137,6 +142,7 @@ public class PC
         if (mounts > 0) result += $"<sprite name=\"mounts\"/>[{mounts}]";
         if (timber > 0) result += $"<sprite name=\"timber\"/>[{timber}]";
         if (iron > 0) result += $"<sprite name=\"iron\"/>[{iron}]";
+        if (steel > 0) result += $"<sprite name=\"steel\"/>[{steel}]";
         if (mithril > 0) result += $"<sprite name=\"mithril\"/>[{mithril}]";
 
         return result;
@@ -173,6 +179,7 @@ public class PC
         // But reduce produces
         if (leather > 1) leather -= 1;
         if (iron > 1) iron -= 1;
+        if (steel > 1) steel -= 1;
         if (timber > 1) timber -= 1;
         if (mounts > 1) mounts -= 1;
         if (mithril > 1) mithril -= 1;
@@ -247,6 +254,7 @@ public class PC
         // But increases produces
         if (initialLeather > 0) leather += leather < initialLeather ? 1 : 0;
         if (initialIron > 0) iron += iron < initialIron ? 1 : 0;
+        if (initialSteel > 0) steel += steel < initialSteel ? 1 : 0;
         if (initialTimber > 0) timber += timber < initialTimber ? 1 : 0;
         if (initialMounts > 0) mounts += mounts < initialMounts ? 1 : 0;
         if (initialMithril > 0) mithril += mithril < initialMithril ? 1 : 0;
@@ -298,12 +306,12 @@ public class PC
 
     public int GetProduction()
     {
-        return leather + timber + mithril + iron + mounts;
+        return leather + timber + steel + mithril + iron + mounts;
     }
 
     public int GetProductionPoints()
     {
-        return leather + timber*2 + mithril*5 + iron*3 + mounts*2;
+        return leather + timber*2 + steel*4 + mithril*5 + iron*3 + mounts*2;
     }
 
     public void Reveal()

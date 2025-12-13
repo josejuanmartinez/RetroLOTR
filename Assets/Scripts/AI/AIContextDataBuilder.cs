@@ -1,11 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 using UnityEngine;
 
 public static class AIContextDataBuilder
 {
-    public static AIContext.AIContextPrecomputedData Build(PlayableLeader leader, Character character)
+    public static AIContext.AIContextPrecomputedData Build(PlayableLeader leader, Character character, float maxMilliseconds = -1f)
     {
+        Stopwatch stopwatch = null;
+        if (maxMilliseconds > 0f)
+        {
+            stopwatch = Stopwatch.StartNew();
+        }
+
         Board board = Object.FindFirstObjectByType<Board>();
         var data = new AIContext.AIContextPrecomputedData
         {
@@ -21,21 +28,28 @@ public static class AIContextDataBuilder
         };
 
         if (board == null || character == null || character.hex == null) return data;
+        if (ShouldStop(stopwatch, maxMilliseconds)) return data;
 
-        CacheEnemyTargets(board, character, leader, ref data);
-        CacheNpcTargets(board, character, ref data);
-        BuildArtifactTransfers(board, leader, character, ref data);
+        CacheEnemyTargets(board, character, leader, ref data, stopwatch, maxMilliseconds);
+        if (ShouldStop(stopwatch, maxMilliseconds)) return data;
+
+        CacheNpcTargets(board, character, ref data, stopwatch, maxMilliseconds);
+        if (ShouldStop(stopwatch, maxMilliseconds)) return data;
+
+        BuildArtifactTransfers(board, leader, character, ref data, stopwatch, maxMilliseconds);
 
         return data;
     }
 
-    private static void CacheEnemyTargets(Board board, Character character, PlayableLeader leader, ref AIContext.AIContextPrecomputedData data)
+    private static void CacheEnemyTargets(Board board, Character character, PlayableLeader leader, ref AIContext.AIContextPrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
     {
         IEnumerable<Hex> hexes = board.hexes != null ? board.hexes.Values : Enumerable.Empty<Hex>();
         float myStrength = character.IsArmyCommander() && character.GetArmy() != null ? character.GetArmy().GetOffence() : 0f;
 
         foreach (Hex hex in hexes)
         {
+            if (ShouldStop(stopwatch, maxMilliseconds)) return;
+
             bool hasEnemyCharacter = hex.characters.Any(c => c != null && c.GetOwner() != null && IsEnemy(c.GetOwner(), leader));
             Leader enemyLeader = GetEnemyLeaderOnHex(hex, leader);
             if (enemyLeader == null) continue;
@@ -66,13 +80,15 @@ public static class AIContextDataBuilder
         if (best.Hex != null && best.Strength > myStrength * 1.1f) data.NeedsIndirectApproach = true;
     }
 
-    private static void CacheNpcTargets(Board board, Character character, ref AIContext.AIContextPrecomputedData data)
+    private static void CacheNpcTargets(Board board, Character character, ref AIContext.AIContextPrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
     {
         Game game = GameObject.FindFirstObjectByType<Game>();
         if (board == null || character == null || character.hex == null || game == null) return;
 
         foreach (Hex hex in board.hexes.Values)
         {
+            if (ShouldStop(stopwatch, maxMilliseconds)) return;
+
             PC pc = hex.GetPC();
             if (pc == null) continue;
             if (pc.owner is not NonPlayableLeader npc) continue;
@@ -87,7 +103,7 @@ public static class AIContextDataBuilder
         }
     }
 
-    private static void BuildArtifactTransfers(Board board, PlayableLeader leader, Character character, ref AIContext.AIContextPrecomputedData data)
+    private static void BuildArtifactTransfers(Board board, PlayableLeader leader, Character character, ref AIContext.AIContextPrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
     {
         if (board == null || character == null || character.hex == null || leader == null) return;
 
@@ -108,6 +124,8 @@ public static class AIContextDataBuilder
         {
             foreach (Character target in friendlies)
             {
+                if (ShouldStop(stopwatch, maxMilliseconds)) return;
+
                 float score = 0f;
                 float distance = character.hex != null && target.hex != null
                     ? Vector2.Distance(character.hex.v2, target.hex.v2)
@@ -208,5 +226,10 @@ public static class AIContextDataBuilder
         Game game = GameObject.FindFirstObjectByType<Game>();
         float totalArtifacts = game != null ? game.artifacts.Count * 1f : 1f;
         return leader.controlledCharacters.Sum(ch => ch != null ? ch.artifacts.Count * 1f : 0f) / Mathf.Max(1f, totalArtifacts);
+    }
+
+    private static bool ShouldStop(Stopwatch stopwatch, float maxMilliseconds)
+    {
+        return stopwatch != null && maxMilliseconds > 0f && stopwatch.Elapsed.TotalMilliseconds >= maxMilliseconds;
     }
 }

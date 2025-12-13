@@ -10,10 +10,10 @@ public static class ActionDescriptionProvider
         { "Attack", "Lead your army to attack enemy armies or population centers in this hex." },
         { "Perceive Allegiance", "At a revealed NPC population center, show what it needs to join you." },
         { "Undouble Character", "Withdraw your double agent from a character you previously doubled here." },
-        { "Buy 5 Leather", "Buy 5 <sprite name=\"leather\"/> from this population center." },
+        { "Buy 5 Leather", "Buy 5 <sprite name=\"leather\"/> from the caravans." },
         { "Assassinate Character", "Attempt to kill an enemy character in this hex; the agent returns to capital and may be wounded." },
         { "Steal Iron", "Steal up to your agent rating in <sprite name=\"iron\"/> from the current population center." },
-        { "Buy 5 Mounts", "Buy 5 <sprite name=\"mounts\"/> from this population center." },
+        { "Buy 5 Mounts", "Buy 5 <sprite name=\"mounts\"/> from the caravans." },
         { "Train Light Cavalry", "Add 1 <sprite name=\"lc\"/> to your army here (or form a new army)." },
         { "Perceive Danger", "Reveal the nearest enemy army and the nearby area." },
         { "Sell 5 Mithril", "Sell 5 <sprite name=\"mithril\"/> from your stores for gold." },
@@ -30,7 +30,7 @@ public static class ActionDescriptionProvider
         { "Steal Timber", "Steal <sprite name=\"timber\"/> from the current population center." },
         { "Block", "Engage a selected enemy army in this hex (no additional effect yet)." },
         { "Steal Mithril", "Steal <sprite name=\"mithril\"/> from the current population center." },
-        { "Buy 5 Iron", "Buy 5 <sprite name=\"iron\"/> from this population center." },
+        { "Buy 5 Iron", "Buy 5 <sprite name=\"iron\"/> from the caravans." },
         { "Sell 5 Timber", "Sell 5 <sprite name=\"timber\"/> from your stores for gold." },
         { "Pass", "End this character's turn without taking another action." },
         { "Wizard's Fire", "Burn an enemy army in your hex, causing casualties." },
@@ -39,6 +39,7 @@ public static class ActionDescriptionProvider
         { "Courage", "Encourage a friendly army here for several turns." },
         { "Wound Character", "Attempt to wound an enemy character here; the agent returns to capital." },
         { "Sell 5 Iron", "Sell 5 <sprite name=\"iron\"/> from your stores for gold." },
+        { "Sell 5 Steel", "Sell 5 <sprite name=\"steel\"/> from your stores for gold." },
         { "Increase Loyalty", "Raise the loyalty of the population center in this hex." },
         { "Scry Artifact", "Reveal a hidden artifact's location and show its details." },
         { "Steal Leather", "Steal <sprite name=\"leather\"/> from the current population center." },
@@ -61,13 +62,14 @@ public static class ActionDescriptionProvider
         { "Curse", "Damage an enemy character in your hex with dark magic." },
         { "Sell 5 Mounts", "Sell 5 <sprite name=\"mounts\"/> from your stores for gold." },
         { "Train Heavy Cavalry", "Add 1 <sprite name=\"hc\"/> to your army here (or form a new army)." },
-        { "Buy 5 Timber", "Buy 5 <sprite name=\"timber\"/> from this population center." },
+        { "Buy 5 Timber", "Buy 5 <sprite name=\"timber\"/> from the caravans." },
         { "Train Met-at-arms", "Add 1 <sprite name=\"ma\"/> to your army here (or form a new army)." },
         { "Steal Gold", "Steal gold from the current population center." },
         { "Train Catapults", "Add 1 <sprite name=\"ca\"/> to your army here (or form a new army)." },
         { "Heal", "Heal a wounded allied or aligned character in your hex." },
         { "Find Artifact", "Search this hex for hidden artifacts and claim one if found." },
-        { "Buy 5 Mithril", "Buy 5 <sprite name=\"mithril\"/> from this population center." }
+        { "Buy 5 Mithril", "Buy 5 <sprite name=\"mithril\"/> from the caravans." },
+        { "Buy 5 Steel", "Buy 5 <sprite name=\"steel\"/> from the caravans." }
     };
 
     public static string Get(string actionName)
