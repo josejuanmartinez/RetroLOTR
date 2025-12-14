@@ -42,4 +42,30 @@ public class PlayableLeaderIcons : MonoBehaviour
             }
         }
     }
+
+    public void RefreshVictoryPointsFor(PlayableLeader leader, int points)
+    {
+        if (leader == null) return;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            PlayableLeaderIcon icon = transform.GetChild(i).GetComponent<PlayableLeaderIcon>();
+            if (icon != null && icon.playableLeader == leader)
+            {
+                icon.RefreshVictoryPoints(points);
+                return;
+            }
+        }
+    }
+
+    public void RefreshVictoryPointsForAll()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            PlayableLeaderIcon icon = transform.GetChild(i).GetComponent<PlayableLeaderIcon>();
+            if (icon != null && icon.playableLeader != null && icon.playableLeader.victoryPoints != null)
+            {
+                icon.RefreshVictoryPoints(icon.playableLeader.victoryPoints.RelativeScore);
+            }
+        }
+    }
 }

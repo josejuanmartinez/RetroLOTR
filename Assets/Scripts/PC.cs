@@ -8,6 +8,9 @@ public class PC
     [SerializeField] public Leader owner;
     [SerializeField] public Hex hex;
     [SerializeField] public string pcName;
+    [SerializeField] public Leader initialOwner;
+    [SerializeField] public PCOriginType originType = PCOriginType.Unknown;
+    [SerializeField] public PCAcquisitionType acquisitionType = PCAcquisitionType.StartingOwned;
 
     [SerializeField] public int leather = 0;
     [SerializeField] public int mounts = 0;
@@ -36,6 +39,7 @@ public class PC
     public PC(Leader owner, string pcName, PCSizeEnum citySize, FortSizeEnum fortSize, bool hasPort, bool isHidden, Hex hex, bool isCapital = false, int loyalty = 75)
     {
         this.owner = owner;
+        initialOwner = owner;
         this.hex = hex;
         this.pcName = pcName;
         this.citySize = citySize;
@@ -45,6 +49,8 @@ public class PC
         this.loyalty = loyalty;
         this.isCapital = isCapital;
         hiddenButRevealed = false;
+        originType = GetOriginType(owner);
+        acquisitionType = PCAcquisitionType.StartingOwned;
 
         TerrainEnum terrain = hex.terrainType;
         switch (terrain)
@@ -104,6 +110,13 @@ public class PC
         hex.SetPC(this);
     }
 
+    private static PCOriginType GetOriginType(Leader leader)
+    {
+        if (leader is PlayableLeader) return PCOriginType.PlayableLeader;
+        if (leader is NonPlayableLeader) return PCOriginType.NonPlayableLeader;
+        return PCOriginType.Unknown;
+    }
+
     /**
      * This constructor is used to create a new PC in the starting city of a leader
      */
@@ -150,15 +163,21 @@ public class PC
 
     public void CapturePC(Leader leader)
     {
-        owner.controlledPcs.Remove(this);
-        owner.visibleHexes.Remove(hex);
+        Leader previousOwner = owner;
+        if (previousOwner != null)
+        {
+            previousOwner.controlledPcs.Remove(this);
+            previousOwner.visibleHexes.Remove(hex);
+        }
+
         owner = leader;
+        acquisitionType = PCAcquisitionType.CapturedByForce;
         owner.controlledPcs.Add(this);
         owner.visibleHexes.Add(hex);
         loyalty = UnityEngine.Random.Range(50, 75);
         owner.hex.RedrawPC();
 
-        if (owner.controlledPcs.Count < 1) owner.Killed(leader);
+        if (previousOwner != null && previousOwner.controlledPcs.Count < 1) previousOwner.Killed(leader);
 
         MessageDisplayNoUI.ShowMessage(hex, owner,  $"{pcName} was captured!", Color.red);
     }

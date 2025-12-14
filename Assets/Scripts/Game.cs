@@ -32,14 +32,16 @@ public class Game : MonoBehaviour
     public static int MAX_CHARACTERS = 100;
     public static int MAX_PCS = 50;
     public static int MAX_TURNS = 200;
+
+    [Header("References")]
+    public StoresManager storesManager;
+    public Board board;
     
 
     [Header("Starting info")]
     public int turn = 0;
     public bool started = false;
 
-    private Board board;
-    private StoresManager storesManager;
     private bool skipNextTurnPrompt = false;
     void Awake()
     {
@@ -84,6 +86,7 @@ public class Game : MonoBehaviour
 
         board.StartGame();
         AssignAIandHumans();
+        VictoryPoints.RecalculateAndAssign(this);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         currentlyPlaying.NewTurn();
 

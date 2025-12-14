@@ -60,9 +60,11 @@ public class ActionsManager : MonoBehaviour
 
         Game game = FindFirstObjectByType<Game>();
         bool isPlayerTurn = game != null && game.IsPlayerCurrentlyPlaying();
+        bool popupBlocking = PopupManager.IsShowing;
 
-        canvasGroup.alpha = isPlayerTurn ? 1f : 0f;
-        canvasGroup.interactable = isPlayerTurn;
-        canvasGroup.blocksRaycasts = isPlayerTurn;
+        bool enabled = isPlayerTurn && !popupBlocking;
+        canvasGroup.alpha = enabled ? 1f : 0f;
+        canvasGroup.interactable = enabled;
+        canvasGroup.blocksRaycasts = enabled;
     }
 }

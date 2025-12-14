@@ -14,14 +14,20 @@ public class UndoubleCharacter : AgentAction
         effect = (c) => true;
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return FindDoubledCharacters(c) != null;
+            Character doubled = FindDoubledCharacters(c);
+            if (doubled == null) return false;
+            bool isFriendlyAligned = doubled.GetAlignment() == c.GetAlignment() && doubled.GetAlignment() != AlignmentEnum.neutral;
+            bool sameOwner = doubled.GetOwner() == c.GetOwner();
+            return (sameOwner || isFriendlyAligned);
         };
         async System.Threading.Tasks.Task<bool> undoubleAsync(Character c)
         {
             if (originalEffect != null && !originalEffect(c)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
 
-            List<Character> doubledChars = c.hex.characters.FindAll(x => x.doubledBy.Contains(c.GetOwner()));
+            List<Character> doubledChars = c.hex.characters.FindAll(x =>
+                x.doubledBy.Contains(c.GetOwner()) &&
+                (x.GetOwner() == c.GetOwner() || (x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)));
             if (doubledChars.Count < 1) return false;
 
             bool isAI = !c.isPlayerControlled;
@@ -52,4 +58,3 @@ public class UndoubleCharacter : AgentAction
         return c.hex.characters.Find(x => x.doubledBy.Contains(c.GetOwner()));
     }
 }
-

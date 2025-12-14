@@ -120,6 +120,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (PopupManager.IsShowing) return;
         tooltipPanel.SetActive(true);
 
         // Force layout rebuild before positioning

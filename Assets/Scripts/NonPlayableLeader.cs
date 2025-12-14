@@ -32,7 +32,21 @@ public class NonPlayableLeader : Leader
 	public bool CheckArtifactConditions(Leader leader, bool triggerJoin = true)
     {
         if (!CanEvaluateJoin(leader)) return false;
-        bool meets = leader.controlledCharacters.SelectMany(x => x.artifacts).Select(x => x.artifactName).Intersect(nonPlayableLeaderBiome.artifactsToJoin).Any();
+
+        bool meets = false;
+        IEnumerable<Artifact> artifacts = leader.controlledCharacters.SelectMany(x => x.artifacts);
+        if (nonPlayableLeaderBiome.artifactsToJoin != null && nonPlayableLeaderBiome.artifactsToJoin.Any())
+        {
+            meets = artifacts.Select(x => x.artifactName)
+                             .Intersect(nonPlayableLeaderBiome.artifactsToJoin)
+                             .Any();
+        }
+
+        if (!meets && nonPlayableLeaderBiome.artifactsQtyToJoin > 0)
+        {
+            meets = artifacts.Count() >= nonPlayableLeaderBiome.artifactsQtyToJoin;
+        }
+
         if (!meets) return false;
         return triggerJoin ? Joined(leader) : true;
     }
@@ -94,40 +108,52 @@ public class NonPlayableLeader : Leader
         return triggerJoin ? Joined(leader) : true;
     }
 
-    public bool CheckActionConditionAtCapital(Leader leader, CharacterAction action, bool triggerJoin = true)
-    {
-        if (!CanEvaluateJoin(leader)) return false;
-
-        if (nonPlayableLeaderBiome.actionsAtCapital.Contains(action.actionName)) {
-            return CheckStoresConditions(leader, triggerJoin) || CheckCharacterConditions(leader, triggerJoin) || CheckArmiesConditions(leader, triggerJoin) || CheckArtifactConditions(leader, triggerJoin);
-        }
-        return false;
-    }
-
-    public bool CheckActionConditionAnywhere(Leader leader, CharacterAction action, bool triggerJoin = true)
-    {
-        if (!CanEvaluateJoin(leader)) return false;
-
-        if (nonPlayableLeaderBiome.actionsAnywhere.Contains(action.actionName)) {
-            return CheckStoresConditions(leader, triggerJoin) || CheckCharacterConditions(leader, triggerJoin) || CheckArmiesConditions(leader, triggerJoin) || CheckArtifactConditions(leader, triggerJoin);
-        }
-
-        return false;
-    }
-
     public bool CheckJoiningCondition(Character character, CharacterAction action, bool triggerJoin = true)
     {
         if (character == null || action == null) return false;
 
-        bool joinOrWouldJoin = false;
-        if (character.hex.GetPC() != null && character.hex.GetPC().owner == this) joinOrWouldJoin = CheckActionConditionAtCapital(character.GetOwner(), action, triggerJoin);
-        if(!joinOrWouldJoin) joinOrWouldJoin = CheckActionConditionAnywhere(character.GetOwner(), action, triggerJoin);
-        return joinOrWouldJoin;
+        if (!string.Equals(action.actionName, "State Allegiance", StringComparison.OrdinalIgnoreCase)) return false;
+
+        PC pc = character.hex.GetPC();
+        if (pc == null || pc.owner != this || !pc.isCapital) return false;
+
+        return triggerJoin ? AttemptJoin(character.GetOwner()) : MeetsJoiningRequirements(character.GetOwner());
     }
 
     private bool CanEvaluateJoin(Leader leader)
     {
         return !(killed || joined || leader == null || leader == this);
+    }
+
+    private bool AlignmentsCompatible(Leader leader)
+    {
+        if (leader == null) return false;
+        if (alignment == AlignmentEnum.neutral) return true;
+        return leader.GetAlignment() == alignment;
+    }
+
+    public bool IsAlignmentCompatibleWith(Leader leader)
+    {
+        return AlignmentsCompatible(leader);
+    }
+
+    private bool MeetsAnyJoinCondition(Leader leader)
+    {
+        return CheckStoresConditions(leader, false) ||
+               CheckCharacterConditions(leader, false) ||
+               CheckArmiesConditions(leader, false) ||
+               CheckArtifactConditions(leader, false);
+    }
+
+    public bool MeetsJoiningRequirements(Leader leader)
+    {
+        return CanEvaluateJoin(leader) && AlignmentsCompatible(leader) && MeetsAnyJoinCondition(leader);
+    }
+
+    public bool AttemptJoin(Leader leader)
+    {
+        if (!MeetsJoiningRequirements(leader)) return false;
+        return Joined(leader);
     }
 
     override public void Killed(Leader killedBy, bool onlyMask = false)
@@ -259,6 +285,7 @@ public class NonPlayableLeader : Leader
             foreach (PC pc in pcsToTransfer)
             {
                 pc.owner = joinedTo;
+                pc.acquisitionType = PCAcquisitionType.Joined;
                 pc.DecreaseSize();
                 pc.DecreaseFort();            
                 joinedTo.controlledPcs.Add(pc);
@@ -489,7 +516,7 @@ public class NonPlayableLeader : Leader
         
         if (nonPlayableLeaderBiome.magesToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.magesToJoin} <sprite name=\"mage\"><br>");
 
-        sb.Append($"The final action to hire them should be run at capital and was not revealed.");      
+        sb.Append("Once ready, send an aligned emissary to their capital and issue the State Allegiance order.");      
 
         return sb.ToString();
     }

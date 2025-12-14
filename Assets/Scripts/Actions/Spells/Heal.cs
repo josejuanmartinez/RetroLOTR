@@ -14,7 +14,9 @@ public class Heal: FreeNeutralSpell
         effect = (c) => true;
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.characters.Find(x => x.health < 100 && (x.GetOwner() == c.GetOwner() || x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)) != null; 
+            return c.hex != null && c.hex.characters.Any(x =>
+                x.health < 100 &&
+                (x.GetOwner() == c.GetOwner() || (x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)));
         };
         async System.Threading.Tasks.Task<bool> healAsync(Character c)
         {

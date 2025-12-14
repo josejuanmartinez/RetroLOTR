@@ -317,6 +317,7 @@ public class Leader : Character
             foreach (PC pc in GetOwner().controlledPcs)
             {
                 pc.owner = killedBy;
+                pc.acquisitionType = PCAcquisitionType.CapturedByForce;
                 killedBy.controlledPcs.Add(pc);
                 killedBy.visibleHexes.Add(hex);
                 pc.hex.RedrawPC();

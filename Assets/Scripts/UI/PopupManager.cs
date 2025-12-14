@@ -22,6 +22,7 @@ public class PopupManager : MonoBehaviour
     private int currentIndex = -1;
     private RectTransform rectTransform;
     private Vector2 initialSize;
+    public static bool IsShowing { get; private set; }
 
     private struct PopupData
     {
@@ -47,6 +48,7 @@ public class PopupManager : MonoBehaviour
 
         rectTransform = container.GetComponent<RectTransform>();
         initialSize = rectTransform != null ? rectTransform.sizeDelta : Vector2.zero;
+        IsShowing = false;
     }
 
     public void Initialize(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0)
@@ -77,6 +79,7 @@ public class PopupManager : MonoBehaviour
         container.SetActive(false);
         queue.Clear();
         currentIndex = -1;
+        IsShowing = false;
 
         if (rectTransform != null)
         {
@@ -126,6 +129,7 @@ public class PopupManager : MonoBehaviour
         currentIndex = index;
         PopupData data = queue[currentIndex];
         container.SetActive(true);
+        IsShowing = true;
 
         if (typeWriterEffect != null)
         {

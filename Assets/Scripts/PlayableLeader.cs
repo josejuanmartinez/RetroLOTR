@@ -1,10 +1,13 @@
 
 public class PlayableLeader : Leader
 {
+    public VictoryPoints victoryPoints;
+
     new public void Initialize(Hex hex, LeaderBiomeConfig playableLeaderBiome, bool showSpawnMessage = true)
     {
         base.Initialize(hex, playableLeaderBiome, showSpawnMessage);
         FindFirstObjectByType<PlayableLeaderIcons>().Instantiate(this);
+        victoryPoints = null;
     }
 
     override public void Killed(Leader killedBy, bool onlyMask = false)

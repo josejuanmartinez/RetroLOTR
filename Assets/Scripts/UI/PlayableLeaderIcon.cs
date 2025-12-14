@@ -13,6 +13,7 @@ public class PlayableLeaderIcon : MonoBehaviour
     public TextMeshProUGUI textWidget;
     public Image alignmentImage;
     public Image border;
+    public TextMeshProUGUI victoryPoints;
 
     [HideInInspector]
     public AlignmentEnum alignment;
@@ -34,6 +35,7 @@ public class PlayableLeaderIcon : MonoBehaviour
         // joinedText.text = $"<mark=#ffffff>{leader.GetBiome().joinedText}</mark>";
 
         alignmentImage.sprite = illustrations.GetIllustrationByName(leader.alignment.ToString());
+        RefreshVictoryPoints(leader.victoryPoints != null ? leader.victoryPoints.RelativeScore : 0);
 
         // Start the coroutine to hide the text after 6 seconds
         // StartCoroutine(HideJoinedTextAfterDelay(6f));
@@ -80,5 +82,10 @@ public class PlayableLeaderIcon : MonoBehaviour
     public void RemoveCurrentlyPlayingEffect()
     {
         border.color = Color.black;
+    }
+
+    public void RefreshVictoryPoints(int points)
+    {
+        if (victoryPoints != null) victoryPoints.text = $"<mark=#ffffff>{points}</mark>";
     }
 }

@@ -52,7 +52,10 @@ public class RumoursManager : MonoBehaviour
         }
         else
         {
-            Instance.privateRumours.Add(rumour);
+            // Strip location for private rumours from enemies so location isn't leaked
+            Rumour sanitized = rumour;
+            sanitized.v2 = default;
+            Instance.privateRumours.Add(sanitized);
         }
     }
 

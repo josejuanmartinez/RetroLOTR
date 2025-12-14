@@ -7,6 +7,7 @@ public class PediaManager : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (PopupManager.IsShowing) return;
         pedia.SetActive(true);
     }
 

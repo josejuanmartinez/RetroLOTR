@@ -12,6 +12,7 @@ public class AIContext
     private readonly HashSet<string> scoredActionKeys = new();
     private readonly AIContextPrecomputedData? _precomputed;
     private ResourceSnapshot preSnapshot;
+    private Dictionary<PlayableLeader, int> preVictoryPoints;
 
     public PlayableLeader Leader { get; }
     public Character Character { get; }
@@ -42,6 +43,7 @@ public class AIContext
         _precomputed = precomputed;
         ApplyPrecomputedData(precomputed ?? AIContextDataBuilder.Build(leader, character));
         preSnapshot = CaptureSnapshot();
+        preVictoryPoints = CaptureVictoryPointsSnapshot();
     }
 
     public bool NeedsEconomicHelp => EconomyStatus == EconomyStatus.Critical || EconomyStatus == EconomyStatus.Weak;
@@ -381,6 +383,9 @@ public class AIContext
         Leader owner = Character != null ? Character.GetOwner() : null;
         Army army = Character != null ? Character.GetArmy() : null;
         TargetInfo targetInfo = GetTargetInfo(preferred);
+        Dictionary<PlayableLeader, int> postVictoryPoints = CaptureVictoryPointsSnapshot();
+        int preVpSelf = GetVictoryPoints(preVictoryPoints, Leader);
+        int postVpSelf = GetVictoryPoints(postVictoryPoints, Leader);
         return new AIActionLogEntry
         {
             timestamp = DateTime.UtcNow.ToString("o"),
@@ -469,7 +474,11 @@ public class AIContext
             actionDifficulty = LastChosenAction != null ? LastChosenAction.difficulty : 0,
             actionGoldCost = LastChosenAction != null ? LastChosenAction.GetGoldCost() : 0,
             scoredActions = scoredActions.Select(sa => $"{sa.actionName}|{sa.advisor}|{sa.score:0.00}|{sa.targetDistance:0.00}").ToList(),
-            artifactTransferCandidates = artifactTransferCandidates.Select(c => $"{c.artifactName}->{c.targetName}|{c.score:0.00}|{c.distance:0.00}").ToList()
+            artifactTransferCandidates = artifactTransferCandidates.Select(c => $"{c.artifactName}->{c.targetName}|{c.score:0.00}|{c.distance:0.00}").ToList(),
+            victoryPointsSelfBefore = preVpSelf,
+            victoryPointsSelfAfter = postVpSelf,
+            victoryPointsSelfDelta = postVpSelf - preVpSelf,
+            victoryPointsOpponentDeltas = BuildOpponentVpDeltas(postVictoryPoints, preVictoryPoints, Leader)
         };
     }
 
@@ -762,5 +771,34 @@ public class AIContext
         public int health;
         public float nearestEnemyStrength;
         public float nearestNonNeutralStrength;
+    }
+
+    private Dictionary<PlayableLeader, int> CaptureVictoryPointsSnapshot()
+    {
+        Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+        if (game == null) return new();
+        return VictoryPoints.CalculateForAll(game)
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.RelativeScore);
+    }
+
+    private static int GetVictoryPoints(Dictionary<PlayableLeader, int> snapshot, PlayableLeader leader)
+    {
+        if (snapshot == null || leader == null) return 0;
+        return snapshot.TryGetValue(leader, out int value) ? value : 0;
+    }
+
+    private static List<string> BuildOpponentVpDeltas(Dictionary<PlayableLeader, int> post, Dictionary<PlayableLeader, int> pre, PlayableLeader self)
+    {
+        List<string> result = new();
+        if (post == null) return result;
+        foreach (var kvp in post)
+        {
+            PlayableLeader leader = kvp.Key;
+            if (leader == null || leader == self) continue;
+            int before = pre != null && pre.TryGetValue(leader, out int v) ? v : 0;
+            int delta = kvp.Value - before;
+            result.Add($"{leader.characterName}|{delta}");
+        }
+        return result;
     }
 }

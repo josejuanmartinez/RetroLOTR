@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -17,12 +18,13 @@ public class Army
     [SerializeField] public int hc = 0;
     [SerializeField] public int ca = 0;
     [SerializeField] public int ws = 0;
+    [SerializeField] public int xp = 25;
 
     [SerializeField] public bool startingArmy = false;
 
     public bool killed = false;
 
-    public Army(Character commander, bool startingArmy = false, int ma = 0, int ar = 0, int li = 0, int hi = 0, int lc = 0, int hc = 0, int ca = 0, int ws = 0)
+    public Army(Character commander, bool startingArmy = false, int ma = 0, int ar = 0, int li = 0, int hi = 0, int lc = 0, int hc = 0, int ca = 0, int ws = 0, int xp = 25)
     {
         this.commander = commander;
         this.startingArmy = startingArmy;
@@ -34,12 +36,14 @@ public class Army
         this.hc = hc;
         this.ca = ca;
         this.ws = ws;
+        this.xp = Mathf.Clamp(xp, 0, 100);
     }
 
-    public Army(Character commander, TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0)
+    public Army(Character commander, TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, int xp = 25)
     {
         this.commander = commander;
         this.startingArmy = startingArmy;
+        this.xp = Mathf.Clamp(xp, 0, 100);
 
         // Use reflection to set the field based on the enum value
         string fieldName = troopsType.ToString();
@@ -75,6 +79,11 @@ public class Army
         hc += otherArmy.hc;
         ca += otherArmy.ca;
         ws += otherArmy.ws;
+        int totalSize = GetSize() + otherArmy.GetSize();
+        if (totalSize > 0)
+        {
+            xp = Mathf.Clamp(Mathf.RoundToInt((xp * GetSize() + otherArmy.xp * otherArmy.GetSize()) / (float)totalSize), 0, 100);
+        }
     }
     public void Recruit(TroopsTypeEnum troopsType, int amount)
     {
@@ -110,7 +119,23 @@ public class Army
         if (ca > 0) result.Add($"<sprite name=\"ca\">[{ca}] {biomeConfig.caDescription}");
         if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}] {biomeConfig.wsDescription}");
 
-        return $" leading {string.Join(',', result)}";
+        string xpText = GetXpHoverText();
+
+        return $" leading {string.Join(',', result)}{xpText}";
+    }
+
+    private string GetXpHoverText()
+    {
+        string color = xp < 25 ? "#ff4d4d" : xp < 50 ? "#ffb347" : xp < 75 ? "#8fd14f" : "#00c853";
+        return $" XP[<color={color}>{xp}</color>]";
+    }
+
+    public string GetTrainingLabel()
+    {
+        if (xp < 25) return "low trained";
+        if (xp < 50) return "skilled";
+        if (xp < 75) return "well trained";
+        return "elite";
     }
 
     public bool IsCavalryOnly()
@@ -128,6 +153,21 @@ public class Army
     public MovementType GetMovementType()
     {
         return IsCavalryOnly() ? MovementType.ArmyCommanderCavalryOnly : MovementType.ArmyCommander;
+    }
+
+    public void AddXp(int amount, string reason = null)
+    {
+        int before = xp;
+        xp = Mathf.Clamp(xp + amount, 0, 100);
+        if (xp == before) return;
+
+        if (commander != null && commander.isPlayerControlled && commander.hex != null)
+        {
+            string text = $"Army XP {(xp > before ? "+" : "")}{xp - before}";
+            if (!string.IsNullOrWhiteSpace(reason)) text += $" ({reason})";
+            Color color = xp > before ? Color.green : Color.red;
+            MessageDisplayNoUI.ShowMessage(commander.hex, commander, text, color);
+        }
     }
 
     public void Killed(Leader killedBy, bool onlyMark = false)
@@ -166,11 +206,18 @@ public class Army
             strength += hi * ArmyData.troopsStrength[TroopsTypeEnum.hi];
             strength += lc * ArmyData.troopsStrength[TroopsTypeEnum.lc];
             strength += hc * ArmyData.troopsStrength[TroopsTypeEnum.hc];
-            strength += (commander.hex.GetPC() != null && commander.hex.GetPC().owner.GetAlignment() != GetAlignment()) ? ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] : ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] * ArmyData.catapultStrengthMultiplierInPC;
+            // Catapults hit harder when attacking an enemy PC
+            bool attackingEnemyPc = commander.hex.GetPC() != null && commander.hex.GetPC().owner.GetAlignment() != GetAlignment();
+            strength += attackingEnemyPc
+                ? ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] * ArmyData.catapultStrengthMultiplierInPC
+                : ca * ArmyData.troopsStrength[TroopsTypeEnum.ca];
         }
         if (commander.GetOwner().GetBiome().terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
 
-        return ApplyCommanderBonus(strength);
+        strength = ApplyCommanderBonus(strength);
+        strength = ApplyTrainingBonus(strength);
+        strength = ApplyArtifactAttackBonus(strength);
+        return strength;
     }
 
     public int GetOffence()
@@ -200,15 +247,59 @@ public class Army
         }
         if (commander.GetOwner().GetBiome().terrain == commander.hex.terrainType) defence *= ArmyData.biomeTerrainMultiplier;
 
-        return ApplyCommanderBonus(defence);
+        defence = ApplyCommanderBonus(defence);
+        defence = ApplyTrainingBonus(defence);
+        defence = ApplyArtifactDefenseBonus(defence);
+        return defence;
     }
 
     private int ApplyCommanderBonus(int value)
     {
         int commanderLevel = commander != null ? commander.GetCommander() : 0;
-        // Each commander level adds 10% to both offence and defence for this army.
-        float bonusMultiplier = 1f + Mathf.Clamp(commanderLevel, 0, 10) * 0.1f;
+        // Each commander level adds 5% to both offence and defence for this army (max +50%).
+        float bonusMultiplier = 1f + Mathf.Clamp(commanderLevel, 0, 10) * 0.05f;
         return Mathf.Max(0, Mathf.RoundToInt(value * bonusMultiplier));
+    }
+
+    private int ApplyTrainingBonus(int value)
+    {
+        // Training scales 0.75x at 0 XP to 1.25x at 100 XP
+        float trainingMultiplier = 0.75f + Mathf.Clamp(xp, 0, 100) / 200f;
+        return Mathf.Max(0, Mathf.RoundToInt(value * trainingMultiplier));
+    }
+
+    private int ApplyArtifactAttackBonus(int value)
+    {
+        if (commander == null) return value;
+        int bonus = commander.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
+        return Mathf.Max(0, value + bonus);
+    }
+
+    private int ApplyArtifactDefenseBonus(int value)
+    {
+        if (commander == null) return value;
+        int bonus = commander.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
+        return Mathf.Max(0, value + bonus);
+    }
+
+    public int GetArtifactAttackBonusTotal()
+    {
+        if (commander == null) return 0;
+        return commander.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
+    }
+
+    public int GetArtifactDefenseBonusTotal()
+    {
+        if (commander == null) return 0;
+        return commander.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
+    }
+
+    private void GrantCombatXp(Army army, string reason)
+    {
+        if (army == null || army.killed || army.GetSize(true) < 1) return;
+        int commanderLevel = army.commander != null ? army.commander.GetCommander() : 0;
+        int gain = Mathf.Clamp(UnityEngine.Random.Range(1, 6) + commanderLevel, 1, 10);
+        army.AddXp(gain, reason);
     }
 
     public void Attack(Hex targetHex)
@@ -318,6 +409,10 @@ public class Army
         // Calculate defender's total defense and strength
         int defenderDefense = defenderArmy.GetDefence();
         int defenderStrength = defenderArmy.GetStrength();
+        int attackerArtifactAttack = GetArtifactAttackBonusTotal();
+        int attackerArtifactDefense = GetArtifactDefenseBonusTotal();
+        int defenderArtifactAttack = defenderArmy.GetArtifactAttackBonusTotal();
+        int defenderArtifactDefense = defenderArmy.GetArtifactDefenseBonusTotal();
         int defenderAlliesJoined = 0;
         int defenderAlliesStrength = 0;
         int defenderAlliesDefence = 0;
@@ -405,22 +500,33 @@ public class Army
             }
         }
 
+        string battleLocation = targetHex.HasAnyPC() && targetHex.IsPCRevealed() ? targetHex.GetPC().pcName : targetHex.GetHoverV2();
         StringBuilder textBuilder = new StringBuilder();
-        textBuilder.AppendLine($"{attackerLeader.characterName} attacks {defenderArmy.GetCommander().characterName}.");
-        textBuilder.AppendLine($"Attack {attackerStrength} vs defense {defenderDefense}; counter {defenderStrength} vs {attackerDefence}.");
-        textBuilder.AppendLine($"Allied attackers joined: {attackerAlliesJoined} (+{attackerAlliesStrength} STR / +{attackerAlliesDefence} DEF).");
-        textBuilder.AppendLine($"Allied defenders joined: {defenderAlliesJoined} (+{defenderAlliesStrength} STR / +{defenderAlliesDefence} DEF).");
+        textBuilder.AppendLine($"Under {attackerLeader.characterName}'s banner the host surges toward {battleLocation}, where {defenderArmy.GetCommander().characterName} steels the line.");
+        if (attackerAlliesJoined > 0)
+        {
+            textBuilder.AppendLine($"Allied warbands sweep in ({attackerAlliesJoined} host(s), +{attackerAlliesStrength} STR / +{attackerAlliesDefence} DEF), turning the advance into a thunderous tide.");
+        }
+        if (defenderAlliesJoined > 0)
+        {
+            textBuilder.AppendLine($"{defenderAlliesJoined} contingent(s) rally to {defenderArmy.GetCommander().characterName}, lending +{defenderAlliesStrength} STR / +{defenderAlliesDefence} DEF to the shieldwall.");
+        }
         if (pcDefenseContribution > 0)
         {
-            textBuilder.AppendLine($"{targetHex.GetPC().pcName} militia/fortifications add {pcDefenseContribution} to defense and counter.");
+            textBuilder.AppendLine($"{targetHex.GetPC().pcName}'s walls and militia throw stones and arrows, adding {pcDefenseContribution} to the defense and the answering volley.");
         }
-        textBuilder.AppendLine($"Commander bonuses applied: {attackerLeader.characterName} +{attackerBonusPercent}%, {defenderArmy.GetCommander().characterName} +{defenderBonusPercent}%.");
-        textBuilder.AppendLine($"Losses - {attackerLeader.characterName}: {attackerReportedLosses} ({attackerPercent}%), {defenderArmy.GetCommander().characterName}: {defenderReportedLosses} ({defenderPercent}%).");
+        textBuilder.AppendLine($"Command is razor keen: {attackerLeader.characterName} drives a +{attackerBonusPercent}% edge with {GetTrainingLabel()} troops (XP {xp}), while {defenderArmy.GetCommander().characterName} answers with +{defenderBonusPercent}% and {defenderArmy.GetTrainingLabel()} veterans (XP {defenderArmy.xp}).");
+        if (attackerArtifactAttack + attackerArtifactDefense > 0 || defenderArtifactAttack + defenderArtifactDefense > 0)
+        {
+            textBuilder.AppendLine($"Ancient relics flare—attacker +{attackerArtifactAttack} ATK / +{attackerArtifactDefense} DEF, defender +{defenderArtifactAttack} ATK / +{defenderArtifactDefense} DEF.");
+        }
+        textBuilder.AppendLine($"Steel meets shield: {attackerStrength} attack slams into {defenderDefense} defense, while {defenderStrength} crashes back against {attackerDefence}.");
+        textBuilder.AppendLine($"Bodies fall in the dust—{attackerLeader.characterName} loses {attackerReportedLosses} ({attackerPercent}%), {defenderArmy.GetCommander().characterName} loses {defenderReportedLosses} ({defenderPercent}%).");
         if (!string.IsNullOrEmpty(stalemateNote))
         {
             textBuilder.AppendLine(stalemateNote);
         }
-        string title = $"Attack at {(targetHex.HasAnyPC() && targetHex.IsPCRevealed() ? targetHex.GetPC().pcName : targetHex.GetHoverV2())}";
+        string title = $"Attack at {battleLocation}";
         string text = textBuilder.ToString();
         Illustrations illustrations = GameObject.FindFirstObjectByType<Illustrations>();
         PopupManager.Show(
@@ -435,6 +541,9 @@ public class Army
 
         // Apply casualties to all defending armies based on their alignment
         ApplyCasualtiesToDefenders(targetHex, defenderCasualtyPercent, attackerAlignment, !anyDefenderCasualties && forceCasualtySide, attackerLeader);
+
+        GrantCombatXp(this, "Combat");
+        GrantCombatXp(defenderArmy, "Combat");
 
         // Check if attacker army was eliminated
         if (!killed && GetSize(true) < 1) Killed(defenderLeader);
@@ -455,6 +564,8 @@ public class Army
 
         int defenderDefense = targetHex.GetPC().GetDefense();
         int defenderStrength = defenderDefense; // PC defense is its strength for counter-attack
+        int attackerCommanderLevel = commander != null ? commander.GetCommander() : 0;
+        int attackerBonusPercent = Mathf.RoundToInt(Mathf.Clamp(attackerCommanderLevel, 0, 10) * 10f);
 
         // Calculate raw damage values
         float attackerDamage = Math.Max(0, attackerStrength - defenderDefense);
@@ -472,16 +583,23 @@ public class Army
 
         int attackerPercent = Mathf.RoundToInt(attackerCasualtyPercent * 100f);
         StringBuilder textBuilder = new StringBuilder();
-        textBuilder.AppendLine($"{attackerLeader.characterName} assaults {targetHex.GetPC().pcName}.");
-        textBuilder.AppendLine($"Attack {attackerStrength} vs defense {defenderDefense}; counter {defenderStrength} vs {attackerDefence}.");
-        textBuilder.AppendLine($"Losses - {attackerLeader.characterName}: {attackerTotalLosses} ({attackerPercent}%).");
+        textBuilder.AppendLine($"{attackerLeader.characterName} drives siege lines toward {targetHex.GetPC().pcName}, drums rolling as ladders rise.");
+        textBuilder.AppendLine($"The assault throws {attackerStrength} strength at defenses of {defenderDefense}; arrows and boiling oil bite back against {attackerDefence}.");
+        textBuilder.AppendLine($"Command and drill hold: {attackerLeader.characterName} pushes a +{attackerBonusPercent}% edge with {GetTrainingLabel()} troops (XP {xp}).");
+        int attackerArtifactAttack = GetArtifactAttackBonusTotal();
+        int attackerArtifactDefense = GetArtifactDefenseBonusTotal();
+        if (attackerArtifactAttack + attackerArtifactDefense > 0)
+        {
+            textBuilder.AppendLine($"Relics flare at the breach: +{attackerArtifactAttack} ATK / +{attackerArtifactDefense} DEF lend their might.");
+        }
+        textBuilder.AppendLine($"Losses bite hard—{attackerLeader.characterName} loses {attackerTotalLosses} ({attackerPercent}%).");
         if (attackerDamage > 0)
         {
-            textBuilder.AppendLine(targetHex.GetPC().fortSize > FortSizeEnum.NONE ? "Fortifications are damaged." : "The population center falls to the attackers.");
+            textBuilder.AppendLine(targetHex.GetPC().fortSize > FortSizeEnum.NONE ? "The walls splinter and the defenders fall back—fortifications crack and burn." : "Gates burst and the population center falls to the attackers.");
         }
         else
         {
-            textBuilder.AppendLine("The defenses hold.");
+            textBuilder.AppendLine("The gate holds; the attackers recoil beneath a storm of stones.");
         }
         string pcTitle = $"Siege of {targetHex.GetPC().pcName}";
         string pcText = textBuilder.ToString();
@@ -514,6 +632,8 @@ public class Army
         {
             MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"{targetHex.GetPC().pcName} defenses resisted the attack", Color.red);
         }
+
+        GrantCombatXp(this, attackerDamage > 0 ? "Siege success" : "Assault");
 
         // Check if attacker army was eliminated
         if (!killed && GetSize(true) < 1) Killed(defenderLeader);

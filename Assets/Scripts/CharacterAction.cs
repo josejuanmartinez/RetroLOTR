@@ -74,6 +74,11 @@ public class CharacterAction : SearcherByName
     private StoresManager cachedStoresManager;
     private Hover hoverComponent;
     private bool initialized = false;
+    private void RefreshVictoryPoints()
+    {
+        Game g = game != null ? game : FindFirstObjectByType<Game>();
+        VictoryPoints.RecalculateAndAssign(g);
+    }
     void Awake()
     {
         game = FindAnyObjectByType<Game>();
@@ -364,34 +369,13 @@ public class CharacterAction : SearcherByName
             StoresManager storesManager = GetStoresManager();
             if (!isAI && storesManager != null) storesManager.RefreshStores();
 
-            if (!isAI) game.PointToCharacterWithMissingActions();
+            if (!isAI && game != null)
+            {
+                game.PointToCharacterWithMissingActions();
+                game.SelectNextCharacterOrFinishTurnPrompt();
+            }
 
-            if (character.GetOwner() is not PlayableLeader) return;
-
-            // Now check influence in NPCs (no auto-join; only notify player if applicable)
-            PlayableLeader humanPlayer = game != null ? game.player : null;
-            Illustrations illustrations = FindFirstObjectByType<Illustrations>();
-            FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None)
-                .Where(x => x != character.GetOwner())
-                .ToList()
-                .ForEach(npl =>
-                {
-                    bool wouldJoin = npl.CheckJoiningCondition(character, this, false);
-                    if (!wouldJoin || humanPlayer == null) return;
-                    AlignmentEnum nplAlignment = npl.GetAlignment();
-                    if (nplAlignment != AlignmentEnum.neutral && nplAlignment != humanPlayer.GetAlignment()) return;
-                    if (npl.ReadyToJoinNotified) return;
-
-                    Sprite actor1 = illustrations != null ? illustrations.GetIllustrationByName(npl.characterName) : null;
-                    Sprite actor2 = illustrations != null ? illustrations.GetIllustrationByName(humanPlayer.characterName) : null;
-                    string title = $"{npl.characterName} Awaits";
-                    string text = $"{npl.characterName}'s nation is ready to join your forces. Visit their capital and issue some secret order to convince them.";
-                    PopupManager.Show(title, actor1, actor2, text, false);
-                    npl.MarkReadyToJoinNotified();
-                });
-
-            if (!isAI) game.SelectNextCharacterOrFinishTurnPrompt();
-
+            RefreshVictoryPoints();
             return;
         }
         catch (Exception e)

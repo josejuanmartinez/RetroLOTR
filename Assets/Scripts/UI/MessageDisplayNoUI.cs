@@ -72,12 +72,15 @@ public class MessageDisplayNoUI : MonoBehaviour
         }
 
         string author = $"[{game.currentlyPlaying.characterName}]";
-        string characterName = character != game.currentlyPlaying ? $"->[{character.characterName}]" : "";
+        string characterName = character != game.currentlyPlaying ? $"({character.characterName})" : "";
         string hexText = hex.GetText();
-        string textMessage = $"{author}{characterName} {hexText}: {message}";
+        string textMessage = $"{author}{characterName} {hexText}: \"{message}\"";
 
-        bool publicRumour = game.currentlyPlaying.visibleHexes.Contains(hex);
-        if (publicRumour)
+        bool playerCanSeeHex = game.player != null && game.player.visibleHexes.Contains(hex);
+        bool publicRumour = character != null && character.GetOwner() == game.player; // only publish our own actions
+
+        // Only show floating text when the human player can see the hex (prevents enemy leakage)
+        if (playerCanSeeHex)
         {
             Vector3 worldPos = hex.gameObject.transform.position;
             instance.EnqueueMessage(message, worldPos, color ?? Color.white);

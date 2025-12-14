@@ -8,7 +8,7 @@ public static class ActionDescriptionProvider
     {
         { "You Shall Not Pass!", "Halt an enemy character in this hex; Balrogs also take damage." },
         { "Attack", "Lead your army to attack enemy armies or population centers in this hex." },
-        { "Perceive Allegiance", "At a revealed NPC population center, show what it needs to join you." },
+        { "State Allegiance", "At an aligned NPC capital, swear allegiance to recruit them if their conditions are met." },
         { "Undouble Character", "Withdraw your double agent from a character you previously doubled here." },
         { "Buy 5 Leather", "Buy 5 <sprite name=\"leather\"/> from the caravans." },
         { "Assassinate Character", "Attempt to kill an enemy character in this hex; the agent returns to capital and may be wounded." },
@@ -55,6 +55,7 @@ public static class ActionDescriptionProvider
         { "Conjure Mounts", "Create 1-3 <sprite name=\"mounts\"/> at a friendly or aligned population center here." },
         { "Scry Area", "Reveal a random unseen hex and its surroundings." },
         { "Oh, Elbereth!", "Smite an enemy character here; Nazgul are also halted." },
+        { "Train Army", "Drill your troops, improving army XP up to elite levels based on commander skill." },
         { "Decrease Loyalty", "Lower the loyalty of the population center in this hex." },
         { "Summon Men-at-arms", "Add 1 <sprite name=\"ma\"/> to an owned population center here." },
         { "Sell 5 Leather", "Sell 5 <sprite name=\"leather\"/> from your stores for gold." },

@@ -429,7 +429,7 @@
       "agentBonus": 0,
       "emmissaryBonus": 0,
       "mageBonus": 1,
-      "oneShot": true,
+      "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
       "spriteString": "crown"
@@ -443,7 +443,7 @@
       "agentBonus": 0,
       "emmissaryBonus": 1,
       "mageBonus": 0,
-      "oneShot": true,
+      "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
       "spriteString": "crown"

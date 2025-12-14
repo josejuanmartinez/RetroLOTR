@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,9 @@ public class StoresManager : MonoBehaviour
     private readonly Dictionary<ProducesEnum, ResourceMarketState> market = new();
     private bool marketInitialized = false;
     private int turnCounter = 0;
+    private bool pricePopupShownThisFrame = false;
+
+    public event Action MarketChanged;
 
     private void Awake()
     {
@@ -114,7 +118,16 @@ public class StoresManager : MonoBehaviour
         EnsureMarketInitialized();
         if (!market.ContainsKey(resourceType)) return;
         if (market[resourceType].CurrentStock > 50) return;
+        int oldBuyPrice = GetBuyPricePerUnit(resourceType);
+        int oldSellPrice = GetSellPricePerUnit(resourceType);
+
         market[resourceType].CurrentStock += delta;
+
+        int newBuyPrice = GetBuyPricePerUnit(resourceType);
+        int newSellPrice = GetSellPricePerUnit(resourceType);
+
+        bool pricesChanged = oldBuyPrice != newBuyPrice || oldSellPrice != newSellPrice;
+        NotifyMarketChanged(pricesChanged);
     }
 
     public void RefreshStores()
@@ -144,15 +157,24 @@ public class StoresManager : MonoBehaviour
         EnsureMarketInitialized();
         turnCounter++;
 
-        AdjustStock(ProducesEnum.leather, 1);
-        AdjustStock(ProducesEnum.timber, 1);
-        AdjustStock(ProducesEnum.iron, 1);
-        AdjustStock(ProducesEnum.steel, 1);
-        AdjustStock(ProducesEnum.mounts, 1);
+        ReplenishIfLow(ProducesEnum.leather, 1);
+        ReplenishIfLow(ProducesEnum.timber, 1);
+        ReplenishIfLow(ProducesEnum.iron, 1);
+        ReplenishIfLow(ProducesEnum.steel, 1);
+        ReplenishIfLow(ProducesEnum.mounts, 1);
 
         if (turnCounter % 5 == 0)
         {
-            AdjustStock(ProducesEnum.mithril, 1);
+            ReplenishIfLow(ProducesEnum.mithril, 1);
+        }
+    }
+
+    private void ReplenishIfLow(ProducesEnum resourceType, int amount)
+    {
+        if (!market.TryGetValue(resourceType, out ResourceMarketState state)) return;
+        if (state.CurrentStock < 10)
+        {
+            AdjustStock(resourceType, amount);
         }
     }
 
@@ -187,5 +209,22 @@ public class StoresManager : MonoBehaviour
     public async void ShowMarketDialogFromUI()
     {
         await ShowMarketDialog();
+    }
+
+    private async void NotifyMarketChanged(bool pricesChanged)
+    {
+        MarketChanged?.Invoke();
+        if (!pricesChanged) return;
+
+        if (pricePopupShownThisFrame) return;
+        pricePopupShownThisFrame = true;
+        try
+        {
+            await ConfirmationDialog.AskOk("Prices in the caravans changed. Please check the <sprite name=\"caravans\"> icon above.");
+        }
+        finally
+        {
+            pricePopupShownThisFrame = false;
+        }
     }
 }

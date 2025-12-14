@@ -15,6 +15,7 @@ public class OnHoverLeader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (PopupManager.IsShowing) return;
         alignment.SetActive(true);
     }
 

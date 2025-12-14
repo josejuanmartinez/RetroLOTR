@@ -51,7 +51,7 @@ public class OnHoverTile : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (board == null) return;
+        if (board == null || PopupManager.IsShowing) return;
 
         if (FindFirstObjectByType<Layout>() != null)
         {
@@ -87,6 +87,7 @@ public class OnHoverTile : MonoBehaviour
 
     private void OnMouseExit()
     {
+        if (PopupManager.IsShowing) return;
         if (IsPointerOverVisibleUIElement())
         {
             if (hex != null) hex.Unhover();
@@ -112,6 +113,11 @@ public class OnHoverTile : MonoBehaviour
 
         if (IsPointerOverVisibleUIElement() || board.moving)
         {
+            if (PopupManager.IsShowing)
+            {
+                if(pathRenderer) pathRenderer.HidePath();
+                return;
+            }
             if(pathRenderer) pathRenderer.HidePath();
             if (board)
             {

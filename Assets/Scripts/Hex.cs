@@ -124,7 +124,7 @@ public class Hex : MonoBehaviour
     public string GetText()
     {
         if (v2.x < 0 || v2.y < 0) return "";
-        return $" @[{v2.x}, {v2.y}]";
+        return $" at {v2.x}, {v2.y}";
     }
 
     public PlayableLeader GetPlayer()

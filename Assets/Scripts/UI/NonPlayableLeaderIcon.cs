@@ -33,7 +33,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (isUnrevealed) return;
+        if (isUnrevealed || PopupManager.IsShowing) return;
         PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First((x => x.alignment == alignment));
         if (leader) leader.HighlighNonPlayableLeader(image.sprite, text);
     }
@@ -67,11 +67,12 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         {
             sb.Append("We found their nation but cannot find a way into their capital. Issue `Reveal PC` to possibly reveal a path.<br><br>");
         }
-        if(nonPlayableLeader.alignment == game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
+        if (nonPlayableLeader.alignment == game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
         {
-            sb.Append("They can join your side.<br><br>Issue `Perceive Allegiances` to know how to hire them.<br><br>");  
-        } 
-        if(nonPlayableLeader.alignment != game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
+            sb.Append("They can join your side; neutral nations will work with any alignment, others require a match.<br><br>");
+            sb.Append("Issue `State Allegiance` at their capital to learn their requirements and, once fulfilled, bring them into your nation.<br><br>");
+        }
+        if (nonPlayableLeader.alignment != game.currentlyPlaying.alignment && nonPlayableLeader.alignment != AlignmentEnum.neutral)
         {
             sb.Append("You can attack to weaken their forces.");
         }

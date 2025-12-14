@@ -93,6 +93,10 @@ public class AIActionLogEntry
     public int actionGoldCost;
     public List<string> scoredActions;
     public List<string> artifactTransferCandidates;
+    public int victoryPointsSelfBefore;
+    public int victoryPointsSelfAfter;
+    public int victoryPointsSelfDelta;
+    public List<string> victoryPointsOpponentDeltas;
 }
 
 public static class AIActionLogger
