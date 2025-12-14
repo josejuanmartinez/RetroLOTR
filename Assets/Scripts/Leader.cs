@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,8 @@ public class Leader : Character
     public int steelAmount = 0;
     public int mithrilAmount = 0;
     public int goldAmount = 0;
+
+    private readonly HashSet<string> completedActions = new(StringComparer.OrdinalIgnoreCase);
 
     private Game game;
     private LeaderBiomeConfig leaderBiome;
@@ -237,6 +240,27 @@ public class Leader : Character
     {
         goldAmount -= goldCost;
         if (goldCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{goldCost} <sprite name=\"gold\">", Color.red);
+    }
+
+    private static string NormalizeActionName(string actionName)
+    {
+        if (string.IsNullOrWhiteSpace(actionName)) return string.Empty;
+        string normalized = new string(actionName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+        return normalized;
+    }
+
+    public void RecordActionHistory(string actionName)
+    {
+        string normalized = NormalizeActionName(actionName);
+        if (string.IsNullOrEmpty(normalized)) return;
+        completedActions.Add(normalized);
+    }
+
+    public bool HasPerformedAction(string actionName)
+    {
+        string normalized = NormalizeActionName(actionName);
+        if (string.IsNullOrEmpty(normalized)) return false;
+        return completedActions.Contains(normalized);
     }
 
     public int GetCharacterPoints()

@@ -13,10 +13,13 @@ public class NonPlayableLeader : Leader
     public List<PlayableLeader> revealedTo = new();
 
 	NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome;
+    private readonly Dictionary<Leader, HashSet<string>> actionsAtCapitalByLeader = new();
 
-    public void Initialize(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome, bool showSpawnMessage = true)
+	public void Initialize(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome, bool showSpawnMessage = true)
 	{
 		this.nonPlayableLeaderBiome = nonPlayableLeaderBiome;
+        this.nonPlayableLeaderBiome.actionsAtCapital ??= new();
+        this.nonPlayableLeaderBiome.actionsAnywhere ??= new();
         base.Initialize(hex, nonPlayableLeaderBiome, showSpawnMessage);
         PlayableLeaderIcon alignmentPlayableLeader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First((x => x.alignment == nonPlayableLeaderBiome.alignment));
         if (!alignmentPlayableLeader)
@@ -29,83 +32,70 @@ public class NonPlayableLeader : Leader
     public bool ReadyToJoinNotified => readyToJoinNotified;
     public void MarkReadyToJoinNotified() => readyToJoinNotified = true;
 
+    private static string NormalizeActionName(string actionName)
+    {
+        if (string.IsNullOrWhiteSpace(actionName)) return string.Empty;
+        return new string(actionName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+    }
+
+    public static void RecordActionCompleted(Character actor, string actionName, Hex actionHex)
+    {
+        if (actor == null) return;
+        Leader owner = actor.GetOwner();
+        if (owner == null) return;
+
+        owner.RecordActionHistory(actionName);
+
+        PC pc = actionHex != null ? actionHex.GetPC() : null;
+        if (pc == null || pc.owner is not NonPlayableLeader npl || !pc.isCapital) return;
+
+        npl.RecordCapitalAction(owner, actionName);
+    }
+
+    private void RecordCapitalAction(Leader leader, string actionName)
+    {
+        string normalized = NormalizeActionName(actionName);
+        if (leader == null || string.IsNullOrEmpty(normalized)) return;
+        if (nonPlayableLeaderBiome.actionsAtCapital == null || !nonPlayableLeaderBiome.actionsAtCapital.Any()) return;
+        if (!nonPlayableLeaderBiome.actionsAtCapital.Any(req => NormalizeActionName(req) == normalized)) return;
+
+        if (!actionsAtCapitalByLeader.TryGetValue(leader, out HashSet<string> actions))
+        {
+            actions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            actionsAtCapitalByLeader[leader] = actions;
+        }
+        actions.Add(normalized);
+    }
+
 	public bool CheckArtifactConditions(Leader leader, bool triggerJoin = true)
     {
-        if (!CanEvaluateJoin(leader)) return false;
-
-        bool meets = false;
-        IEnumerable<Artifact> artifacts = leader.controlledCharacters.SelectMany(x => x.artifacts);
-        if (nonPlayableLeaderBiome.artifactsToJoin != null && nonPlayableLeaderBiome.artifactsToJoin.Any())
-        {
-            meets = artifacts.Select(x => x.artifactName)
-                             .Intersect(nonPlayableLeaderBiome.artifactsToJoin)
-                             .Any();
-        }
-
-        if (!meets && nonPlayableLeaderBiome.artifactsQtyToJoin > 0)
-        {
-            meets = artifacts.Count() >= nonPlayableLeaderBiome.artifactsQtyToJoin;
-        }
-
-        if (!meets) return false;
-        return triggerJoin ? Joined(leader) : true;
+        if (!CanEvaluateJoin(leader) || !IsAlignmentCompatibleWith(leader)) return false;
+        bool meets = HasRequiredJoinArtifact(leader) || MeetsArtifactCountRequirement(leader);
+        return meets && (!triggerJoin || Joined(leader));
     }
 
     public bool CheckArmiesConditions(Leader leader, bool triggerJoin = true)
     {
-        if (!CanEvaluateJoin(leader)) return false;
+        if (!CanEvaluateJoin(leader) || !IsAlignmentCompatibleWith(leader)) return false;
 
-        bool meets = false;
-        if (nonPlayableLeaderBiome.armiesToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Count() > nonPlayableLeaderBiome.armiesToJoin) meets = true;
-
-        if (nonPlayableLeaderBiome.maSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ma).Sum() > nonPlayableLeaderBiome.maSizeToJoin) meets = true;
-        if (nonPlayableLeaderBiome.arSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ar).Sum() > nonPlayableLeaderBiome.arSizeToJoin) meets = true;
-        if (nonPlayableLeaderBiome.liSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().li).Sum() > nonPlayableLeaderBiome.liSizeToJoin) meets = true;
-        if (nonPlayableLeaderBiome.hiSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().hi).Sum() > nonPlayableLeaderBiome.hiSizeToJoin) meets = true;
-        if (nonPlayableLeaderBiome.lcSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().lc).Sum() > nonPlayableLeaderBiome.lcSizeToJoin) meets = true;
-        if (nonPlayableLeaderBiome.hcSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().hc).Sum() > nonPlayableLeaderBiome.hcSizeToJoin) meets = true;
-        if (nonPlayableLeaderBiome.caSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ca).Sum() > nonPlayableLeaderBiome.caSizeToJoin) meets = true;
-        if (nonPlayableLeaderBiome.wsSizeToJoin > 0 && leader.controlledCharacters.FindAll(x => x.IsArmyCommander()).Select(x => x.GetArmy().ws).Sum() > nonPlayableLeaderBiome.wsSizeToJoin) meets = true;
-
-        if (!meets) return false;
-        return triggerJoin ? Joined(leader) : true;
+        bool meets = HasArmyRequirements(leader);
+        return meets && (!triggerJoin || Joined(leader));
     }
 
     public bool CheckCharacterConditions(Leader leader, bool triggerJoin = true)
     {
-        if (!CanEvaluateJoin(leader)) return false;
+        if (!CanEvaluateJoin(leader) || !IsAlignmentCompatibleWith(leader)) return false;
 
-        bool meets = false;
-
-        if (nonPlayableLeaderBiome.commanderLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetCommander()).Where(x => x > nonPlayableLeaderBiome.commanderLevelToJoin).Any()) meets = true;
-        if (nonPlayableLeaderBiome.agentLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetAgent()).Where(x => x > nonPlayableLeaderBiome.commanderLevelToJoin).Any()) meets = true;
-        if (nonPlayableLeaderBiome.emmissaryLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetEmmissary()).Where(x => x > nonPlayableLeaderBiome.commanderLevelToJoin).Any()) meets = true;
-        if (nonPlayableLeaderBiome.mageLevelToJoin > 0 && leader.controlledCharacters.Select(x => x.GetMage()).Where(x => x > nonPlayableLeaderBiome.commanderLevelToJoin).Any()) meets = true;
-
-        if (nonPlayableLeaderBiome.commandersToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= nonPlayableLeaderBiome.commandersToJoin) meets = true;
-        if (nonPlayableLeaderBiome.agentsToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= nonPlayableLeaderBiome.agentsToJoin) meets = true;
-        if (nonPlayableLeaderBiome.emmissarysToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= nonPlayableLeaderBiome.emmissarysToJoin) meets = true;
-        if (nonPlayableLeaderBiome.magesToJoin > 0 && leader.controlledCharacters.Where(x => x.GetCommander() > 0).Count() >= nonPlayableLeaderBiome.magesToJoin) meets = true;
-
-        if (!meets) return false;
-        return triggerJoin ? Joined(leader) : true;
+        bool meets = HasCharacterLevelRequirements(leader) && HasCharacterCountRequirements(leader);
+        return meets && (!triggerJoin || Joined(leader));
     }
 
     public bool CheckStoresConditions(Leader leader, bool triggerJoin = true)
     {
-        if (!CanEvaluateJoin(leader)) return false;
+        if (!CanEvaluateJoin(leader) || !IsAlignmentCompatibleWith(leader)) return false;
 
-        bool meets = false;
-        if (nonPlayableLeaderBiome.leatherToJoin > 0 && leader.leatherAmount > nonPlayableLeaderBiome.leatherToJoin) meets = true;
-        if (nonPlayableLeaderBiome.mountsToJoin > 0 && leader.mountsAmount > nonPlayableLeaderBiome.mountsToJoin) meets = true;
-        if (nonPlayableLeaderBiome.timberToJoin > 0 && leader.timberAmount > nonPlayableLeaderBiome.timberToJoin) meets = true;
-        if (nonPlayableLeaderBiome.ironToJoin > 0 && leader.ironAmount > nonPlayableLeaderBiome.ironToJoin) meets = true;
-        if (nonPlayableLeaderBiome.steelToJoin > 0 && leader.steelAmount > nonPlayableLeaderBiome.steelToJoin) meets = true;
-        if (nonPlayableLeaderBiome.mithrilToJoin > 0 && leader.mithrilAmount > nonPlayableLeaderBiome.mithrilToJoin) meets = true;
-        if (nonPlayableLeaderBiome.goldToJoin > 0 && leader.goldAmount > nonPlayableLeaderBiome.goldToJoin) meets = true;
-
-        if (!meets) return false;
-        return triggerJoin ? Joined(leader) : true;
+        bool meets = HasStoreRequirements(leader);
+        return meets && (!triggerJoin || Joined(leader));
     }
 
     public bool CheckJoiningCondition(Character character, CharacterAction action, bool triggerJoin = true)
@@ -128,8 +118,9 @@ public class NonPlayableLeader : Leader
     private bool AlignmentsCompatible(Leader leader)
     {
         if (leader == null) return false;
-        if (alignment == AlignmentEnum.neutral) return true;
-        return leader.GetAlignment() == alignment;
+        AlignmentEnum leaderAlignment = leader.GetAlignment();
+        if (alignment == AlignmentEnum.neutral || leaderAlignment == AlignmentEnum.neutral) return true;
+        return leaderAlignment == alignment;
     }
 
     public bool IsAlignmentCompatibleWith(Leader leader)
@@ -137,17 +128,113 @@ public class NonPlayableLeader : Leader
         return AlignmentsCompatible(leader);
     }
 
-    private bool MeetsAnyJoinCondition(Leader leader)
+    private IEnumerable<Character> GetLivingCharacters(Leader leader)
     {
-        return CheckStoresConditions(leader, false) ||
-               CheckCharacterConditions(leader, false) ||
-               CheckArmiesConditions(leader, false) ||
-               CheckArtifactConditions(leader, false);
+        if (leader == null) return Enumerable.Empty<Character>();
+        return leader.controlledCharacters.Where(x => x != null && !x.killed);
+    }
+
+    private bool HasRequiredJoinArtifact(Leader leader)
+    {
+        if (leader == null) return false;
+        if (nonPlayableLeaderBiome.artifactsToJoin == null || nonPlayableLeaderBiome.artifactsToJoin.Count == 0) return false;
+        HashSet<string> requiredArtifacts = new(nonPlayableLeaderBiome.artifactsToJoin.Select(NormalizeActionName), StringComparer.OrdinalIgnoreCase);
+        return GetLivingCharacters(leader)
+            .SelectMany(x => x.artifacts)
+            .Select(x => NormalizeActionName(x.artifactName))
+            .Any(x => requiredArtifacts.Contains(x));
+    }
+
+    private bool MeetsArtifactCountRequirement(Leader leader)
+    {
+        if (nonPlayableLeaderBiome.artifactsQtyToJoin <= 0) return true;
+        return GetLivingCharacters(leader).SelectMany(x => x.artifacts).Count() >= nonPlayableLeaderBiome.artifactsQtyToJoin;
+    }
+
+    private bool HasStoreRequirements(Leader leader)
+    {
+        if (leader == null) return false;
+
+        bool hasLeather = nonPlayableLeaderBiome.leatherToJoin <= 0 || leader.leatherAmount >= nonPlayableLeaderBiome.leatherToJoin;
+        bool hasMounts = nonPlayableLeaderBiome.mountsToJoin <= 0 || leader.mountsAmount >= nonPlayableLeaderBiome.mountsToJoin;
+        bool hasTimber = nonPlayableLeaderBiome.timberToJoin <= 0 || leader.timberAmount >= nonPlayableLeaderBiome.timberToJoin;
+        bool hasIron = nonPlayableLeaderBiome.ironToJoin <= 0 || leader.ironAmount >= nonPlayableLeaderBiome.ironToJoin;
+        bool hasSteel = nonPlayableLeaderBiome.steelToJoin <= 0 || leader.steelAmount >= nonPlayableLeaderBiome.steelToJoin;
+        bool hasMithril = nonPlayableLeaderBiome.mithrilToJoin <= 0 || leader.mithrilAmount >= nonPlayableLeaderBiome.mithrilToJoin;
+        bool hasGold = nonPlayableLeaderBiome.goldToJoin <= 0 || leader.goldAmount >= nonPlayableLeaderBiome.goldToJoin;
+
+        return hasLeather && hasMounts && hasTimber && hasIron && hasSteel && hasMithril && hasGold;
+    }
+
+    private bool HasCharacterLevelRequirements(Leader leader)
+    {
+        IEnumerable<Character> characters = GetLivingCharacters(leader);
+        bool hasCommander = nonPlayableLeaderBiome.commanderLevelToJoin <= 0 || characters.Any(x => x.GetCommander() >= nonPlayableLeaderBiome.commanderLevelToJoin);
+        bool hasAgent = nonPlayableLeaderBiome.agentLevelToJoin <= 0 || characters.Any(x => x.GetAgent() >= nonPlayableLeaderBiome.agentLevelToJoin);
+        bool hasEmmissary = nonPlayableLeaderBiome.emmissaryLevelToJoin <= 0 || characters.Any(x => x.GetEmmissary() >= nonPlayableLeaderBiome.emmissaryLevelToJoin);
+        bool hasMage = nonPlayableLeaderBiome.mageLevelToJoin <= 0 || characters.Any(x => x.GetMage() >= nonPlayableLeaderBiome.mageLevelToJoin);
+        return hasCommander && hasAgent && hasEmmissary && hasMage;
+    }
+
+    private bool HasCharacterCountRequirements(Leader leader)
+    {
+        IEnumerable<Character> characters = GetLivingCharacters(leader);
+        bool commanders = nonPlayableLeaderBiome.commandersToJoin <= 0 || characters.Count(x => x.GetCommander() > 0) >= nonPlayableLeaderBiome.commandersToJoin;
+        bool agents = nonPlayableLeaderBiome.agentsToJoin <= 0 || characters.Count(x => x.GetAgent() > 0) >= nonPlayableLeaderBiome.agentsToJoin;
+        bool emmissaries = nonPlayableLeaderBiome.emmissarysToJoin <= 0 || characters.Count(x => x.GetEmmissary() > 0) >= nonPlayableLeaderBiome.emmissarysToJoin;
+        bool mages = nonPlayableLeaderBiome.magesToJoin <= 0 || characters.Count(x => x.GetMage() > 0) >= nonPlayableLeaderBiome.magesToJoin;
+        return commanders && agents && emmissaries && mages;
+    }
+
+    private bool HasArmyRequirements(Leader leader)
+    {
+        IEnumerable<Army> armies = GetLivingCharacters(leader).Where(x => x.IsArmyCommander() && x.GetArmy() != null).Select(x => x.GetArmy());
+        bool armyCount = nonPlayableLeaderBiome.armiesToJoin <= 0 || armies.Count() >= nonPlayableLeaderBiome.armiesToJoin;
+        bool ma = nonPlayableLeaderBiome.maSizeToJoin <= 0 || armies.Sum(x => x.ma) >= nonPlayableLeaderBiome.maSizeToJoin;
+        bool ar = nonPlayableLeaderBiome.arSizeToJoin <= 0 || armies.Sum(x => x.ar) >= nonPlayableLeaderBiome.arSizeToJoin;
+        bool li = nonPlayableLeaderBiome.liSizeToJoin <= 0 || armies.Sum(x => x.li) >= nonPlayableLeaderBiome.liSizeToJoin;
+        bool hi = nonPlayableLeaderBiome.hiSizeToJoin <= 0 || armies.Sum(x => x.hi) >= nonPlayableLeaderBiome.hiSizeToJoin;
+        bool lc = nonPlayableLeaderBiome.lcSizeToJoin <= 0 || armies.Sum(x => x.lc) >= nonPlayableLeaderBiome.lcSizeToJoin;
+        bool hc = nonPlayableLeaderBiome.hcSizeToJoin <= 0 || armies.Sum(x => x.hc) >= nonPlayableLeaderBiome.hcSizeToJoin;
+        bool ca = nonPlayableLeaderBiome.caSizeToJoin <= 0 || armies.Sum(x => x.ca) >= nonPlayableLeaderBiome.caSizeToJoin;
+        bool ws = nonPlayableLeaderBiome.wsSizeToJoin <= 0 || armies.Sum(x => x.ws) >= nonPlayableLeaderBiome.wsSizeToJoin;
+
+        return armyCount && ma && ar && li && hi && lc && hc && ca && ws;
+    }
+
+    private bool HasCompletedCapitalActions(Leader leader)
+    {
+        if (nonPlayableLeaderBiome.actionsAtCapital == null || nonPlayableLeaderBiome.actionsAtCapital.Count == 0) return true;
+        if (!actionsAtCapitalByLeader.TryGetValue(leader, out HashSet<string> actions)) return false;
+        return nonPlayableLeaderBiome.actionsAtCapital.All(x => actions.Contains(NormalizeActionName(x)));
+    }
+
+    private bool HasCompletedAnywhereActions(Leader leader)
+    {
+        if (nonPlayableLeaderBiome.actionsAnywhere == null || nonPlayableLeaderBiome.actionsAnywhere.Count == 0) return true;
+        if (leader == null) return false;
+        return nonPlayableLeaderBiome.actionsAnywhere.All(action => leader.HasPerformedAction(action));
+    }
+
+    private bool MeetsAllJoinConditions(Leader leader)
+    {
+        return HasStoreRequirements(leader)
+            && HasCharacterLevelRequirements(leader)
+            && HasCharacterCountRequirements(leader)
+            && HasArmyRequirements(leader)
+            && MeetsArtifactCountRequirement(leader)
+            && HasCompletedAnywhereActions(leader)
+            && HasCompletedCapitalActions(leader);
     }
 
     public bool MeetsJoiningRequirements(Leader leader)
     {
-        return CanEvaluateJoin(leader) && AlignmentsCompatible(leader) && MeetsAnyJoinCondition(leader);
+        if (!CanEvaluateJoin(leader)) return false;
+        if (!IsAlignmentCompatibleWith(leader)) return false;
+
+        if (HasRequiredJoinArtifact(leader)) return true;
+
+        return MeetsAllJoinConditions(leader);
     }
 
     public bool AttemptJoin(Leader leader)
@@ -454,69 +541,104 @@ public class NonPlayableLeader : Leader
         return revealedTo.Contains(FindFirstObjectByType<Game>().currentlyPlaying);
     }
 
-    public string GetJoiningConditionsText(AlignmentEnum playerAlignment)
-    {        
-        if(playerAlignment != alignment && alignment != AlignmentEnum.neutral)
+    private string FormatRequirement(string description, bool met, string progress = "")
+    {
+        string status = met ? "<color=#00ff00>completed</color>" : "<color=#ff0000>pending</color>";
+        if (!string.IsNullOrWhiteSpace(progress)) description += $" ({progress})";
+        return $"- {description} [{status}]<br>";
+    }
+
+    public string GetJoiningConditionsText(Leader leader)
+    {
+        StringBuilder sb = new();
+        bool alignmentOk = IsAlignmentCompatibleWith(leader);
+
+        sb.Append($"<b>{characterName}</b> requires an aligned or neutral sponsor.<br>");
+        sb.Append(FormatRequirement("Alignment is the same side or neutral", alignmentOk));
+        if (!alignmentOk)
         {
-            return $"{characterName} follows another alignment and will not join your cause.<br><br>Unfriendly actions can weaken this nation.";
+            sb.Append("Unfriendly actions may still weaken this realm, but alliance is impossible while alignments differ.");
+            return sb.ToString();
         }
 
-        StringBuilder sb = new ($"{characterName} will join you if you fullfill one of the following conditions:");
-        sb.Append("<br><br>");
+        bool hasArtifactBypass = HasRequiredJoinArtifact(leader);
         if (nonPlayableLeaderBiome.artifactsToJoin != null && nonPlayableLeaderBiome.artifactsToJoin.Count > 0)
         {
-            sb.Append($"- Possess artifacts: any of {string.Join(", ", nonPlayableLeaderBiome.artifactsToJoin)}<br>");
+            sb.Append(FormatRequirement($"Hold any of: {string.Join(", ", nonPlayableLeaderBiome.artifactsToJoin)} (alternative to the tasks below)", hasArtifactBypass));
         }
 
-        if (nonPlayableLeaderBiome.artifactsQtyToJoin > 0) sb.Append($"- Accumulate {nonPlayableLeaderBiome.artifactsQtyToJoin} artifacts<br>");
+        sb.Append("Otherwise, complete every requirement, then issue State Allegiance in the capital:<br>");
 
-        if (nonPlayableLeaderBiome.leatherToJoin > 0) sb.Append($"- <sprite name=\"leather\">[{nonPlayableLeaderBiome.leatherToJoin}]<br>");
+        // Artifact count
+        if (nonPlayableLeaderBiome.artifactsQtyToJoin > 0)
+        {
+            int currentArtifacts = GetLivingCharacters(leader).SelectMany(x => x.artifacts).Count();
+            sb.Append(FormatRequirement($"Hold at least {nonPlayableLeaderBiome.artifactsQtyToJoin} artifacts", currentArtifacts >= nonPlayableLeaderBiome.artifactsQtyToJoin, $"{currentArtifacts}/{nonPlayableLeaderBiome.artifactsQtyToJoin}"));
+        }
 
-        if (nonPlayableLeaderBiome.mountsToJoin > 0) sb.Append($"- <sprite name=\"mounts\">[{nonPlayableLeaderBiome.mountsToJoin}]<br>");
+        // Stores
+        if (nonPlayableLeaderBiome.leatherToJoin > 0) sb.Append(FormatRequirement($"Stock <sprite name=\"leather\">[{nonPlayableLeaderBiome.leatherToJoin}]", leader != null && leader.leatherAmount >= nonPlayableLeaderBiome.leatherToJoin, $"{leader?.leatherAmount ?? 0}/{nonPlayableLeaderBiome.leatherToJoin}"));
+        if (nonPlayableLeaderBiome.mountsToJoin > 0) sb.Append(FormatRequirement($"Stock <sprite name=\"mounts\">[{nonPlayableLeaderBiome.mountsToJoin}]", leader != null && leader.mountsAmount >= nonPlayableLeaderBiome.mountsToJoin, $"{leader?.mountsAmount ?? 0}/{nonPlayableLeaderBiome.mountsToJoin}"));
+        if (nonPlayableLeaderBiome.timberToJoin > 0) sb.Append(FormatRequirement($"Stock <sprite name=\"timber\">[{nonPlayableLeaderBiome.timberToJoin}]", leader != null && leader.timberAmount >= nonPlayableLeaderBiome.timberToJoin, $"{leader?.timberAmount ?? 0}/{nonPlayableLeaderBiome.timberToJoin}"));
+        if (nonPlayableLeaderBiome.ironToJoin > 0) sb.Append(FormatRequirement($"Stock <sprite name=\"iron\">[{nonPlayableLeaderBiome.ironToJoin}]", leader != null && leader.ironAmount >= nonPlayableLeaderBiome.ironToJoin, $"{leader?.ironAmount ?? 0}/{nonPlayableLeaderBiome.ironToJoin}"));
+        if (nonPlayableLeaderBiome.steelToJoin > 0) sb.Append(FormatRequirement($"Stock <sprite name=\"steel\">[{nonPlayableLeaderBiome.steelToJoin}]", leader != null && leader.steelAmount >= nonPlayableLeaderBiome.steelToJoin, $"{leader?.steelAmount ?? 0}/{nonPlayableLeaderBiome.steelToJoin}"));
+        if (nonPlayableLeaderBiome.mithrilToJoin > 0) sb.Append(FormatRequirement($"Stock <sprite name=\"mithril\">[{nonPlayableLeaderBiome.mithrilToJoin}]", leader != null && leader.mithrilAmount >= nonPlayableLeaderBiome.mithrilToJoin, $"{leader?.mithrilAmount ?? 0}/{nonPlayableLeaderBiome.mithrilToJoin}"));
+        if (nonPlayableLeaderBiome.goldToJoin > 0) sb.Append(FormatRequirement($"Stock <sprite name=\"gold\">[{nonPlayableLeaderBiome.goldToJoin}]", leader != null && leader.goldAmount >= nonPlayableLeaderBiome.goldToJoin, $"{leader?.goldAmount ?? 0}/{nonPlayableLeaderBiome.goldToJoin}"));
 
-        if (nonPlayableLeaderBiome.timberToJoin > 0) sb.Append($"- <sprite name=\"timber\">[{nonPlayableLeaderBiome.timberToJoin}]<br>");
+        IEnumerable<Character> livingCharacters = GetLivingCharacters(leader);
+        int bestCommander = livingCharacters.Select(x => x.GetCommander()).DefaultIfEmpty(0).Max();
+        int bestAgent = livingCharacters.Select(x => x.GetAgent()).DefaultIfEmpty(0).Max();
+        int bestEmmissary = livingCharacters.Select(x => x.GetEmmissary()).DefaultIfEmpty(0).Max();
+        int bestMage = livingCharacters.Select(x => x.GetMage()).DefaultIfEmpty(0).Max();
 
-        if (nonPlayableLeaderBiome.ironToJoin > 0) sb.Append($"- <sprite name=\"iron\">[{nonPlayableLeaderBiome.ironToJoin}]<br>");
+        if (nonPlayableLeaderBiome.commanderLevelToJoin > 0) sb.Append(FormatRequirement($"One character with <sprite name=\"commander\"> at least {nonPlayableLeaderBiome.commanderLevelToJoin}", bestCommander >= nonPlayableLeaderBiome.commanderLevelToJoin, $"{bestCommander}/{nonPlayableLeaderBiome.commanderLevelToJoin}"));
+        if (nonPlayableLeaderBiome.agentLevelToJoin > 0) sb.Append(FormatRequirement($"One character with <sprite name=\"agent\"> at least {nonPlayableLeaderBiome.agentLevelToJoin}", bestAgent >= nonPlayableLeaderBiome.agentLevelToJoin, $"{bestAgent}/{nonPlayableLeaderBiome.agentLevelToJoin}"));
+        if (nonPlayableLeaderBiome.emmissaryLevelToJoin > 0) sb.Append(FormatRequirement($"One character with <sprite name=\"emmissary\"> at least {nonPlayableLeaderBiome.emmissaryLevelToJoin}", bestEmmissary >= nonPlayableLeaderBiome.emmissaryLevelToJoin, $"{bestEmmissary}/{nonPlayableLeaderBiome.emmissaryLevelToJoin}"));
+        if (nonPlayableLeaderBiome.mageLevelToJoin > 0) sb.Append(FormatRequirement($"One character with <sprite name=\"mage\"> at least {nonPlayableLeaderBiome.mageLevelToJoin}", bestMage >= nonPlayableLeaderBiome.mageLevelToJoin, $"{bestMage}/{nonPlayableLeaderBiome.mageLevelToJoin}"));
 
-        if (nonPlayableLeaderBiome.mithrilToJoin > 0) sb.Append($"- <sprite name=\"mithril\">[{nonPlayableLeaderBiome.mithrilToJoin}]<br>");
+        int commandersCount = livingCharacters.Count(x => x.GetCommander() > 0);
+        int agentsCount = livingCharacters.Count(x => x.GetAgent() > 0);
+        int emmissariesCount = livingCharacters.Count(x => x.GetEmmissary() > 0);
+        int magesCount = livingCharacters.Count(x => x.GetMage() > 0);
 
-        if (nonPlayableLeaderBiome.goldToJoin > 0) sb.Append($"- <sprite name=\"gold\">[{nonPlayableLeaderBiome.goldToJoin}]<br>");
-        
-        if (nonPlayableLeaderBiome.commanderLevelToJoin > 0) sb.Append($"- Have a <sprite name=\"commander\"> of level [{nonPlayableLeaderBiome.commanderLevelToJoin}]<br>");
+        if (nonPlayableLeaderBiome.commandersToJoin > 0) sb.Append(FormatRequirement($"Hire {nonPlayableLeaderBiome.commandersToJoin} <sprite name=\"commander\"> characters", commandersCount >= nonPlayableLeaderBiome.commandersToJoin, $"{commandersCount}/{nonPlayableLeaderBiome.commandersToJoin}"));
+        if (nonPlayableLeaderBiome.agentsToJoin > 0) sb.Append(FormatRequirement($"Hire {nonPlayableLeaderBiome.agentsToJoin} <sprite name=\"agent\"> characters", agentsCount >= nonPlayableLeaderBiome.agentsToJoin, $"{agentsCount}/{nonPlayableLeaderBiome.agentsToJoin}"));
+        if (nonPlayableLeaderBiome.emmissarysToJoin > 0) sb.Append(FormatRequirement($"Hire {nonPlayableLeaderBiome.emmissarysToJoin} <sprite name=\"emmissary\"> characters", emmissariesCount >= nonPlayableLeaderBiome.emmissarysToJoin, $"{emmissariesCount}/{nonPlayableLeaderBiome.emmissarysToJoin}"));
+        if (nonPlayableLeaderBiome.magesToJoin > 0) sb.Append(FormatRequirement($"Hire {nonPlayableLeaderBiome.magesToJoin} <sprite name=\"mage\"> characters", magesCount >= nonPlayableLeaderBiome.magesToJoin, $"{magesCount}/{nonPlayableLeaderBiome.magesToJoin}"));
 
-        if (nonPlayableLeaderBiome.agentLevelToJoin > 0) sb.Append($"- Have an <sprite name=\"agent\"> of level [{nonPlayableLeaderBiome.agentLevelToJoin}]<br>");
-        
-        if (nonPlayableLeaderBiome.emmissaryLevelToJoin > 0) sb.Append($"- Have an <sprite name=\"emmissary\"> of level [{nonPlayableLeaderBiome.emmissaryLevelToJoin}]<br>");
-        
-        if (nonPlayableLeaderBiome.mageLevelToJoin > 0) sb.Append($"- Have a <sprite name=\"mage\"> of level [{nonPlayableLeaderBiome.mageLevelToJoin}]<br>");
-        
-        if (nonPlayableLeaderBiome.armiesToJoin > 0) sb.Append($"- Have at least {nonPlayableLeaderBiome.armiesToJoin} armies<br>");
+        IEnumerable<Army> armies = livingCharacters.Where(x => x.IsArmyCommander() && x.GetArmy() != null).Select(x => x.GetArmy());
+        int armyCount = armies.Count();
+        int ma = armies.Sum(x => x.ma);
+        int ar = armies.Sum(x => x.ar);
+        int li = armies.Sum(x => x.li);
+        int hi = armies.Sum(x => x.hi);
+        int lc = armies.Sum(x => x.lc);
+        int hc = armies.Sum(x => x.hc);
+        int ca = armies.Sum(x => x.ca);
+        int ws = armies.Sum(x => x.ws);
 
-        if (nonPlayableLeaderBiome.maSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ma\">{nonPlayableLeaderBiome.maSizeToJoin}<br>");
+        if (nonPlayableLeaderBiome.armiesToJoin > 0) sb.Append(FormatRequirement($"Control {nonPlayableLeaderBiome.armiesToJoin} armies", armyCount >= nonPlayableLeaderBiome.armiesToJoin, $"{armyCount}/{nonPlayableLeaderBiome.armiesToJoin}"));
+        if (nonPlayableLeaderBiome.maSizeToJoin > 0) sb.Append(FormatRequirement($"Field <sprite name=\"ma\"> totaling {nonPlayableLeaderBiome.maSizeToJoin}", ma >= nonPlayableLeaderBiome.maSizeToJoin, $"{ma}/{nonPlayableLeaderBiome.maSizeToJoin}"));
+        if (nonPlayableLeaderBiome.arSizeToJoin > 0) sb.Append(FormatRequirement($"Field <sprite name=\"ar\"> totaling {nonPlayableLeaderBiome.arSizeToJoin}", ar >= nonPlayableLeaderBiome.arSizeToJoin, $"{ar}/{nonPlayableLeaderBiome.arSizeToJoin}"));
+        if (nonPlayableLeaderBiome.liSizeToJoin > 0) sb.Append(FormatRequirement($"Field <sprite name=\"li\"> totaling {nonPlayableLeaderBiome.liSizeToJoin}", li >= nonPlayableLeaderBiome.liSizeToJoin, $"{li}/{nonPlayableLeaderBiome.liSizeToJoin}"));
+        if (nonPlayableLeaderBiome.hiSizeToJoin > 0) sb.Append(FormatRequirement($"Field <sprite name=\"hi\"> totaling {nonPlayableLeaderBiome.hiSizeToJoin}", hi >= nonPlayableLeaderBiome.hiSizeToJoin, $"{hi}/{nonPlayableLeaderBiome.hiSizeToJoin}"));
+        if (nonPlayableLeaderBiome.lcSizeToJoin > 0) sb.Append(FormatRequirement($"Field <sprite name=\"lc\"> totaling {nonPlayableLeaderBiome.lcSizeToJoin}", lc >= nonPlayableLeaderBiome.lcSizeToJoin, $"{lc}/{nonPlayableLeaderBiome.lcSizeToJoin}"));
+        if (nonPlayableLeaderBiome.hcSizeToJoin > 0) sb.Append(FormatRequirement($"Field <sprite name=\"hc\"> totaling {nonPlayableLeaderBiome.hcSizeToJoin}", hc >= nonPlayableLeaderBiome.hcSizeToJoin, $"{hc}/{nonPlayableLeaderBiome.hcSizeToJoin}"));
+        if (nonPlayableLeaderBiome.caSizeToJoin > 0) sb.Append(FormatRequirement($"Field <sprite name=\"ca\"> totaling {nonPlayableLeaderBiome.caSizeToJoin}", ca >= nonPlayableLeaderBiome.caSizeToJoin, $"{ca}/{nonPlayableLeaderBiome.caSizeToJoin}"));
+        if (nonPlayableLeaderBiome.wsSizeToJoin > 0) sb.Append(FormatRequirement($"Field <sprite name=\"ws\"> totaling {nonPlayableLeaderBiome.wsSizeToJoin}", ws >= nonPlayableLeaderBiome.wsSizeToJoin, $"{ws}/{nonPlayableLeaderBiome.wsSizeToJoin}"));
 
-        if (nonPlayableLeaderBiome.arSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ar\">{nonPlayableLeaderBiome.arSizeToJoin}<br>");
-        
-        if (nonPlayableLeaderBiome.liSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"li\">{nonPlayableLeaderBiome.liSizeToJoin}<br>");
+        if (nonPlayableLeaderBiome.actionsAnywhere != null && nonPlayableLeaderBiome.actionsAnywhere.Count > 0)
+        {
+            sb.Append(FormatRequirement($"Execute: {string.Join(", ", nonPlayableLeaderBiome.actionsAnywhere)} (any location)", HasCompletedAnywhereActions(leader)));
+        }
 
-        if (nonPlayableLeaderBiome.hiSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"hi\">{nonPlayableLeaderBiome.hiSizeToJoin}<br>");
+        if (nonPlayableLeaderBiome.actionsAtCapital != null && nonPlayableLeaderBiome.actionsAtCapital.Count > 0)
+        {
+            string capitalName = string.IsNullOrWhiteSpace(nonPlayableLeaderBiome.startingCityName) ? "the capital" : nonPlayableLeaderBiome.startingCityName;
+            sb.Append(FormatRequirement($"Execute at {capitalName}: {string.Join(", ", nonPlayableLeaderBiome.actionsAtCapital)}", HasCompletedCapitalActions(leader)));
+        }
 
-        if (nonPlayableLeaderBiome.lcSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"lc\">{nonPlayableLeaderBiome.lcSizeToJoin}<br>");
-
-        if (nonPlayableLeaderBiome.hcSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"hc\">{nonPlayableLeaderBiome.hcSizeToJoin}<br>");
-
-        if (nonPlayableLeaderBiome.caSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ca\">{nonPlayableLeaderBiome.caSizeToJoin}<br>");
-
-        if (nonPlayableLeaderBiome.wsSizeToJoin > 0) sb.Append($"- Have at least an army with <sprite name=\"ws\">{nonPlayableLeaderBiome.wsSizeToJoin}<br>");
-
-        if (nonPlayableLeaderBiome.commandersToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.commanderLevelToJoin} <sprite name=\"commander\"><br>");
-
-        if (nonPlayableLeaderBiome.agentsToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.agentsToJoin} <sprite name=\"agent\"><br>");
-
-        if (nonPlayableLeaderBiome.emmissarysToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.emmissarysToJoin} <sprite name=\"emmissary\"><br>");
-        
-        if (nonPlayableLeaderBiome.magesToJoin > 0) sb.Append($"- Hire at least {nonPlayableLeaderBiome.magesToJoin} <sprite name=\"mage\"><br>");
-
-        sb.Append("Once ready, send an aligned emissary to their capital and issue the State Allegiance order.");      
+        sb.Append("All requirements persist across turns once completed. Send an aligned emissary to the capital and issue State Allegiance when ready.");
 
         return sb.ToString();
     }

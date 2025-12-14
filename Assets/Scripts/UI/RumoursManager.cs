@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public struct Rumour
 {
     public Leader leader;
+    public string characterName;
     public string rumour;
     public Vector2Int v2;
 }
@@ -71,8 +72,7 @@ public class RumoursManager : MonoBehaviour
         // Remove one matching private copy so we don't double-count later reveals
         int privateIndex = Instance.privateRumours.FindIndex(r =>
             r.leader == rumour.leader &&
-            r.rumour == rumour.rumour &&
-            r.v2 == rumour.v2);
+            r.rumour == rumour.rumour);
         if (privateIndex >= 0)
         {
             Instance.privateRumours.RemoveAt(privateIndex);
@@ -177,7 +177,16 @@ public class RumoursManager : MonoBehaviour
         // Safe GetRange: startIndex >= 0, count == toShow, and startIndex + toShow <= Count
         List<Rumour> recentRumours = Instance.rumours.GetRange(startIndex, toShow);
 
-        Instance.textWidget.text = string.Join("\n", recentRumours.ConvertAll(r => r.rumour));
+        Instance.textWidget.text = string.Join("\n", recentRumours.ConvertAll(FormatRumourText));
+    }
+
+    private static string FormatRumourText(Rumour rumour)
+    {
+        string leaderName = rumour.leader?.characterName ?? "Unknown";
+        string characterName = !string.IsNullOrWhiteSpace(rumour.characterName) ? rumour.characterName : leaderName;
+        string locationPart = rumour.v2 != default ? $" at ({rumour.v2.x},{rumour.v2.y})" : string.Empty;
+        string body = string.IsNullOrWhiteSpace(rumour.rumour) ? "No details" : rumour.rumour;
+        return $"[{leaderName}]({characterName}){locationPart}: {body}";
     }
 
     private static bool EnsureInstance(string caller)

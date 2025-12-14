@@ -7,7 +7,7 @@
       "agent": 0,
       "emmissary": 3,
       "mage": 3,
-      "race": 1,      
+      "race": 1,
       "hcDescription": "Galadhrim Riders",
       "lcDescription": "Mounted Dunlendings",
       "hiDescription": "Royal Guards of the Lady",
@@ -19,7 +19,7 @@
       "artifacts": [
         {
           "artifactName": "Nenya",
-          "artifactDescription": "",
+          "artifactDescription": "Scry a random unseen hex and reveal the area.",
           "hidden": false,
           "providesSpell": "Scry Area",
           "commanderBonus": 0,
@@ -33,7 +33,7 @@
         },
         {
           "artifactName": "Lembas",
-          "artifactDescription": "",
+          "artifactDescription": "Consumable Heal herb for a wounded ally sharing your hex.",
           "hidden": false,
           "providesSpell": "Heal",
           "commanderBonus": 0,
@@ -44,10 +44,10 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "spriteString": "bread"
-        },        
+        },
         {
           "artifactName": "Light of Eärendil",
-          "artifactDescription": "",
+          "artifactDescription": "Cast Light to reveal the nearby area.",
           "hidden": false,
           "providesSpell": "CastLight",
           "commanderBonus": 0,
@@ -90,12 +90,14 @@
           "emmissary": 0,
           "mage": 0,
           "race": 1,
-          "artifacts": [],          
+          "artifacts": [],
           "startingArmySize": 1,
           "preferedTroopType": 1
         }
       ],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -119,7 +121,9 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [
+        "Oh, Elbereth!"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -141,7 +145,7 @@
       "artifacts": [
         {
           "artifactName": "Miruvor",
-          "artifactDescription": "",
+          "artifactDescription": "Consumable Heal herb for a wounded ally sharing your hex.",
           "hidden": false,
           "providesSpell": "Heal",
           "commanderBonus": 0,
@@ -155,7 +159,7 @@
         },
         {
           "artifactName": "Vilya",
-          "artifactDescription": "",
+          "artifactDescription": "Scry Artifact to reveal a hidden artifact's location.",
           "hidden": false,
           "providesSpell": "Scry Artifact",
           "commanderBonus": 0,
@@ -166,20 +170,6 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "spriteString": "ring"
-        },
-        {
-          "artifactName": "Andúril",
-          "artifactDescription": "",
-          "hidden": false,
-          "providesSpell": "",
-          "commanderBonus": 0,
-          "agentBonus": 0,
-          "emmissaryBonus": 0,
-          "mageBonus": 0,
-          "oneShot": false,
-          "bonusAttack": 2,
-          "bonusDefense": 0,
-          "spriteString": "sword"
         }
       ],
       "terrain": 5,
@@ -212,7 +202,7 @@
           "emmissary": 1,
           "mage": 0,
           "race": 1,
-          "artifacts": [],          
+          "artifacts": [],
           "startingArmySize": 1,
           "preferedTroopType": 1
         },
@@ -227,7 +217,7 @@
           "artifacts": [
             {
               "artifactName": "Sting",
-              "artifactDescription": "",
+              "artifactDescription": "Grants +1 attack.",
               "hidden": false,
               "providesSpell": "",
               "commanderBonus": 0,
@@ -241,7 +231,7 @@
             },
             {
               "artifactName": "Mithril coat",
-              "artifactDescription": "",
+              "artifactDescription": "Grants +1 defense.",
               "hidden": false,
               "providesSpell": "",
               "commanderBonus": 0,
@@ -255,7 +245,7 @@
             },
             {
               "artifactName": "Elven song",
-              "artifactDescription": "",
+              "artifactDescription": "One-use Oh Elbereth! to damage an enemy character here (halts Nazgul).",
               "hidden": false,
               "providesSpell": "Oh, Elbereth!",
               "commanderBonus": 0,
@@ -269,7 +259,7 @@
             },
             {
               "artifactName": "Riddle",
-              "artifactDescription": "",
+              "artifactDescription": "Halt a target enemy character here for a turn.",
               "hidden": false,
               "providesSpell": "Halt",
               "commanderBonus": 0,
@@ -285,7 +275,9 @@
           ]
         }
       ],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -309,7 +301,9 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [
+        "Oh, Elbereth!"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -331,7 +325,7 @@
       "artifacts": [
         {
           "artifactName": "Lasgalen Gems",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 <sprite name=\"emmissary\"/>.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -345,7 +339,7 @@
         },
         {
           "artifactName": "Wooden Crown",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 <sprite name=\"commander\"/>.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 1,
@@ -381,7 +375,7 @@
           "artifacts": [
             {
               "artifactName": "Lembas",
-              "artifactDescription": "",
+              "artifactDescription": "Consumable Heal herb for a wounded ally sharing your hex.",
               "hidden": false,
               "providesSpell": "Heal",
               "commanderBonus": 0,
@@ -395,7 +389,7 @@
             },
             {
               "artifactName": "Legolas' Bow",
-              "artifactDescription": "",
+              "artifactDescription": "Consumable Heal herb for a wounded ally sharing your hex. Grants +1 <sprite name=\"commander\"/>.",
               "hidden": false,
               "providesSpell": "Heal",
               "commanderBonus": 1,
@@ -410,7 +404,9 @@
           ]
         }
       ],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -434,7 +430,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -456,7 +452,7 @@
       "artifacts": [
         {
           "artifactName": "Black Horse",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -470,7 +466,7 @@
         },
         {
           "artifactName": "Iron Crown",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 <sprite name=\"emmissary\"/>.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -484,7 +480,7 @@
         },
         {
           "artifactName": "Murazor's Ring",
-          "artifactDescription": "",
+          "artifactDescription": "Cast Darkness to unreveal nearby tiles. Grants +1 <sprite name=\"mage\"/>.",
           "hidden": false,
           "providesSpell": "CastDarkness",
           "commanderBonus": 0,
@@ -498,7 +494,7 @@
         },
         {
           "artifactName": "Morgul's Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -523,7 +519,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -547,7 +545,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 2,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -569,7 +567,7 @@
       "artifacts": [
         {
           "artifactName": "Black Horse",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -583,7 +581,7 @@
         },
         {
           "artifactName": "Khamûl's Ring",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 <sprite name=\"mage\"/>.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -597,7 +595,7 @@
         },
         {
           "artifactName": "Easterling Helmet",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +2 defense.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -611,7 +609,7 @@
         },
         {
           "artifactName": "Morgul's Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -635,8 +633,10 @@
       "startingCityIsHidden": true,
       "startsWithPort": false,
       "startingWarships": 0,
-      "startingCharacters": [ ],
-      "artifactsToJoin": [ "OneRing" ],
+      "startingCharacters": [],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 15,
@@ -660,7 +660,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -682,7 +682,7 @@
       "artifacts": [
         {
           "artifactName": "Black Horse",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -696,7 +696,7 @@
         },
         {
           "artifactName": "Gem eyes",
-          "artifactDescription": "",
+          "artifactDescription": "Scry a random unseen hex and reveal the area.",
           "hidden": false,
           "providesSpell": "Scry Area",
           "commanderBonus": 0,
@@ -711,7 +711,7 @@
         },
         {
           "artifactName": "Akhôrahil's Ring",
-          "artifactDescription": "",
+          "artifactDescription": "Scry Artifact to reveal a hidden artifact's location. Grants +1 <sprite name=\"mage\"/>.",
           "hidden": false,
           "providesSpell": "Scry Artifact",
           "commanderBonus": 0,
@@ -722,11 +722,10 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "spriteString": "ring"
-
         },
         {
           "artifactName": "Morgul's Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -743,7 +742,7 @@
       "feature": 2,
       "startingCityName": "Luglûrak",
       "startingCitySize": 4,
-      "startingCityFortSize": 2,      
+      "startingCityFortSize": 2,
       "pcFeature": "transparent",
       "fortFeature": "wizardTowerDark00B",
       "startingArmySize": 1,
@@ -752,7 +751,9 @@
       "startsWithPort": true,
       "startingWarships": 1,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -776,7 +777,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 5,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -798,7 +799,7 @@
       "artifacts": [
         {
           "artifactName": "Black Horse",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -812,7 +813,7 @@
         },
         {
           "artifactName": "Mûmak helmet",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 attack.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -826,7 +827,7 @@
         },
         {
           "artifactName": "Indur's Ring",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 <sprite name=\"agent\"/>.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -837,11 +838,10 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "spriteString": "ring"
-
         },
         {
           "artifactName": "Morgul's Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -866,7 +866,9 @@
       "startsWithPort": false,
       "startingWarships": 1,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -890,7 +892,7 @@
       "agentsToJoin": 5,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -912,7 +914,7 @@
       "artifacts": [
         {
           "artifactName": "Black Horse",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -940,7 +942,7 @@
         },
         {
           "artifactName": "Morgul's Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -954,12 +956,12 @@
         }
       ],
       "terrain": 4,
-      "feature": 2,      
+      "feature": 2,
       "isIsland": true,
       "startingCityName": "Tol Burûth",
       "startingCitySize": 1,
-      "startingCityFortSize": 4,      
-      "pcFeature": "hexIslandSandy01",
+      "startingCityFortSize": 4,
+      "pcFeature": "transparent",
       "fortFeature": "wizardTowerRuins00",
       "startingArmySize": 0,
       "preferedTroopType": 0,
@@ -974,14 +976,14 @@
           "agent": 0,
           "emmissary": 1,
           "mage": 0,
-          "race": 0,          
+          "race": 0,
           "startingArmySize": 4,
           "preferedTroopType": 0,
           "startingWarships": 1,
           "artifacts": [
             {
               "artifactName": "Black Horse",
-              "artifactDescription": "",
+              "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
               "hidden": false,
               "providesSpell": "Haste",
               "commanderBonus": 0,
@@ -996,7 +998,9 @@
           ]
         }
       ],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -1020,7 +1024,7 @@
       "agentsToJoin": 2,
       "emmissarysToJoin": 2,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1042,7 +1046,7 @@
       "artifacts": [
         {
           "artifactName": "Black Horse",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -1056,7 +1060,7 @@
         },
         {
           "artifactName": "Adûnaphel's Ring",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 <sprite name=\"emmissary\"/>.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -1070,7 +1074,7 @@
         },
         {
           "artifactName": "Morgul's Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -1096,7 +1100,9 @@
       "startsWithPort": true,
       "startingWarships": 1,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -1120,7 +1126,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 5,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1142,7 +1148,7 @@
       "artifacts": [
         {
           "artifactName": "Black Horse",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -1156,7 +1162,7 @@
         },
         {
           "artifactName": "Ren's Ring",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 <sprite name=\"commander\"/>.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 1,
@@ -1170,7 +1176,7 @@
         },
         {
           "artifactName": "Morgul's Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -1186,7 +1192,7 @@
       "terrain": 10,
       "startingCityName": "Barad Ungol",
       "startingCitySize": 4,
-      "startingCityFortSize": 4,      
+      "startingCityFortSize": 4,
       "pcFeature": "transparent",
       "fortFeature": "mountainFortress",
       "startingArmySize": 1,
@@ -1195,7 +1201,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -1219,7 +1227,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1241,7 +1249,7 @@
       "artifacts": [
         {
           "artifactName": "Black Horse",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -1255,7 +1263,7 @@
         },
         {
           "artifactName": "Hoarmûrath's Ring",
-          "artifactDescription": "",
+          "artifactDescription": "Ice Storm: halt a chosen enemy army in your hex. Grants +1 <sprite name=\"mage\"/>.",
           "hidden": false,
           "providesSpell": "Ice Storm",
           "commanderBonus": 0,
@@ -1269,7 +1277,7 @@
         },
         {
           "artifactName": "Morgul's Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -1294,7 +1302,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -1318,7 +1328,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1340,7 +1350,7 @@
       "artifacts": [
         {
           "artifactName": "Black Horse",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -1354,7 +1364,7 @@
         },
         {
           "artifactName": "Dwar's Ring",
-          "artifactDescription": "",
+          "artifactDescription": "Conjure Mounts: gain 1-3 <sprite name=\"mounts\"/> at a friendly/aligned PC.",
           "hidden": false,
           "providesSpell": "Conjure Mounts",
           "commanderBonus": 0,
@@ -1368,7 +1378,7 @@
         },
         {
           "artifactName": "Warg's Helmet",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 attack.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -1382,7 +1392,7 @@
         },
         {
           "artifactName": "Morgul's Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -1407,7 +1417,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 25,
       "timberToJoin": 0,
@@ -1431,7 +1443,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1453,7 +1465,7 @@
       "artifacts": [
         {
           "artifactName": "Ring of Barahir",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 <sprite name=\"emmissary\"/>.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -1467,7 +1479,7 @@
         },
         {
           "artifactName": "Shards of Narsil",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 <sprite name=\"commander\"/> and +1 <sprite name=\"emmissary\"/>.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 1,
@@ -1481,7 +1493,7 @@
         },
         {
           "artifactName": "Athelas",
-          "artifactDescription": "",
+          "artifactDescription": "Consumable Heal herb for a wounded ally sharing your hex.",
           "hidden": false,
           "providesSpell": "Heal",
           "commanderBonus": 0,
@@ -1527,7 +1539,10 @@
           "artifacts": []
         }
       ],
-      "artifactsToJoin": [ "Andúril", "OneRing" ],
+      "artifactsToJoin": [
+        "Andúril",
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -1551,7 +1566,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1581,19 +1596,22 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "Herugrim", "Golden Armor of Rohan" ],
+      "artifactsToJoin": [
+        "Herugrim",
+        "Golden Armor of Rohan"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
       "ironToJoin": 0,
       "mithrilToJoin": 0,
-      "goldToJoin": 40,
+      "goldToJoin": 20,
       "commanderLevelToJoin": 0,
       "agentLevelToJoin": 0,
       "emmissaryLevelToJoin": 0,
       "mageLevelToJoin": 0,
       "armiesToJoin": 0,
-      "maSizeToJoin": 0,
+      "maSizeToJoin": 5,
       "arSizeToJoin": 0,
       "liSizeToJoin": 0,
       "hiSizeToJoin": 0,
@@ -1605,7 +1623,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1627,7 +1645,7 @@
       "artifacts": [
         {
           "artifactName": "High Pass Toll",
-          "artifactDescription": "",
+          "artifactDescription": "Halt a target enemy character here for a turn.",
           "hidden": false,
           "providesSpell": "Halt",
           "commanderBonus": 0,
@@ -1644,7 +1662,7 @@
       "terrain": 2,
       "startingCityName": "The Carrock",
       "startingCitySize": 1,
-      "startingCityFortSize": 0,      
+      "startingCityFortSize": 0,
       "pcFeature": "redRock00",
       "fortFeature": "transparent",
       "startingArmySize": 1,
@@ -1653,7 +1671,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [],
+      "artifactsToJoin": [
+        "Goblin Cleaver"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -1677,7 +1697,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1731,7 +1751,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1753,7 +1773,7 @@
       "artifacts": [
         {
           "artifactName": "Poison",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -1779,7 +1799,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "Light of Eärendil" ],
+      "artifactsToJoin": [
+        "Light of Eärendil"
+      ],
       "artifactsQtyToJoin": 10,
       "leatherToJoin": 0,
       "mountsToJoin": 0,
@@ -1804,7 +1826,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1826,7 +1848,7 @@
       "artifacts": [
         {
           "artifactName": "Sword of Flame",
-          "artifactDescription": "",
+          "artifactDescription": "Cast Darkness to unreveal nearby tiles. Grants +1 attack.",
           "hidden": false,
           "providesSpell": "CastDarkness",
           "commanderBonus": 0,
@@ -1841,7 +1863,7 @@
         },
         {
           "artifactName": "Fire Whip",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 attack.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -1891,7 +1913,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1913,7 +1935,7 @@
       "artifacts": [
         {
           "artifactName": "Dragon Wings",
-          "artifactDescription": "",
+          "artifactDescription": "Scry a random unseen hex and reveal the area.",
           "hidden": false,
           "providesSpell": "Scry Area",
           "commanderBonus": 0,
@@ -1939,13 +1961,15 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing", "Vilya", "Nenya", "Narya", "Black Arrow" ],
+      "artifactsToJoin": [
+        "The Arkenstone"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
       "ironToJoin": 0,
       "mithrilToJoin": 0,
-      "goldToJoin": 0,
+      "goldToJoin": 50,
       "commanderLevelToJoin": 0,
       "agentLevelToJoin": 0,
       "emmissaryLevelToJoin": 0,
@@ -1963,7 +1987,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -1982,30 +2006,14 @@
       "maDescription": "Laketown Fishers",
       "wsDescription": "Esgaroth War-Barges",
       "caDescription": "Black Ballistae",
-      "artifacts": [
-        {
-          "artifactName": "Black Arrow",
-          "transferable": false,
-          "artifactDescription": "",
-          "hidden": false,
-          "providesSpell": "",
-          "commanderBonus": 0,
-          "agentBonus": 0,
-          "emmissaryBonus": 0,
-          "mageBonus": 0,
-          "oneShot": false,
-          "bonusAttack": 1,
-          "bonusDefense": 0,
-          "spriteString": "bow"
-        }
-      ],
+      "artifacts": [],
       "terrain": 4,
-      "feature":  2,
+      "feature": 2,
       "isIsland": true,
       "startingCityName": "Esgaroth",
       "startingCitySize": 3,
       "startingCityFortSize": 2,
-      "pcFeature": "hexIslandSandy01",
+      "pcFeature": "",
       "fortFeature": "cookhouse00",
       "startingArmySize": 1,
       "preferedTroopType": 1,
@@ -2013,13 +2021,15 @@
       "startsWithPort": true,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "Black Arrow"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
       "ironToJoin": 0,
       "mithrilToJoin": 0,
-      "goldToJoin": 20,
+      "goldToJoin": 0,
       "commanderLevelToJoin": 0,
       "agentLevelToJoin": 0,
       "emmissaryLevelToJoin": 0,
@@ -2037,7 +2047,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2069,13 +2079,15 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
       "ironToJoin": 0,
       "mithrilToJoin": 0,
-      "goldToJoin": 30,
+      "goldToJoin": 0,
       "commanderLevelToJoin": 0,
       "agentLevelToJoin": 0,
       "emmissaryLevelToJoin": 0,
@@ -2093,7 +2105,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2125,7 +2137,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -2149,7 +2163,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2179,7 +2193,9 @@
       "startsWithPort": true,
       "startingWarships": 2,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -2203,7 +2219,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2225,7 +2241,7 @@
       "artifacts": [
         {
           "artifactName": "Palantir of Elostirion",
-          "artifactDescription": "",
+          "artifactDescription": "Scry a random unseen hex and reveal the area.",
           "hidden": false,
           "providesSpell": "ScryArea",
           "commanderBonus": 0,
@@ -2250,7 +2266,9 @@
       "startsWithPort": true,
       "startingWarships": 2,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -2274,7 +2292,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2296,7 +2314,7 @@
       "artifacts": [
         {
           "artifactName": "The White Tree",
-          "artifactDescription": "",
+          "artifactDescription": "Courage: encourage a chosen friendly army in this hex for several turns. Grants +1 attack.",
           "hidden": false,
           "providesSpell": "Courage",
           "commanderBonus": 0,
@@ -2311,7 +2329,7 @@
         },
         {
           "artifactName": "Palantir of Minas Tirith",
-          "artifactDescription": "",
+          "artifactDescription": "Scry a random unseen hex and reveal the area.",
           "hidden": false,
           "providesSpell": "ScryArea",
           "commanderBonus": 0,
@@ -2343,13 +2361,13 @@
           "agent": 0,
           "emmissary": 0,
           "mage": 0,
-          "race": 0,          
+          "race": 0,
           "startingArmySize": 3,
           "preferedTroopType": 3,
           "artifacts": [
             {
               "artifactName": "Horn of Gondor",
-              "artifactDescription": "",
+              "artifactDescription": "Courage: encourage a chosen friendly army in this hex for several turns.",
               "hidden": false,
               "providesSpell": "Courage",
               "commanderBonus": 0,
@@ -2364,7 +2382,9 @@
           ]
         }
       ],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -2375,7 +2395,7 @@
       "agentLevelToJoin": 0,
       "emmissaryLevelToJoin": 0,
       "mageLevelToJoin": 0,
-      "armiesToJoin": 5,
+      "armiesToJoin": 0,
       "maSizeToJoin": 0,
       "arSizeToJoin": 0,
       "liSizeToJoin": 0,
@@ -2388,7 +2408,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2398,7 +2418,7 @@
       "agent": 2,
       "emmissary": 0,
       "mage": 0,
-      "race": 0,  
+      "race": 0,
       "hcDescription": "Gondor Knights",
       "lcDescription": "Patrol Riders",
       "hiDescription": "Border Guardians",
@@ -2419,7 +2439,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -2443,7 +2465,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2465,7 +2487,7 @@
       "artifacts": [
         {
           "artifactName": "Herugrim",
-          "artifactDescription": "",
+          "artifactDescription": "Courage: encourage a chosen friendly army in this hex for several turns. Grants +1 attack.",
           "hidden": false,
           "providesSpell": "Courage",
           "commanderBonus": 0,
@@ -2479,7 +2501,7 @@
         },
         {
           "artifactName": "Golden Armor of Rohan",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 defense.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -2493,7 +2515,7 @@
         },
         {
           "artifactName": "Snowmane",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -2535,13 +2557,13 @@
           "agent": 0,
           "emmissary": 0,
           "mage": 0,
-          "race": 0,          
+          "race": 0,
           "startingArmySize": 2,
           "preferedTroopType": 5,
           "artifacts": [
             {
               "artifactName": "Firefoot",
-              "artifactDescription": "",
+              "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
               "hidden": false,
               "providesSpell": "Haste",
               "commanderBonus": 0,
@@ -2556,7 +2578,9 @@
           ]
         }
       ],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 15,
       "timberToJoin": 0,
@@ -2580,7 +2604,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2612,7 +2636,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "The Arkenstone"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -2636,7 +2662,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2679,7 +2705,7 @@
           "artifacts": [
             {
               "artifactName": "Gimli's Axe",
-              "artifactDescription": "",
+              "artifactDescription": "Grants +1 <sprite name=\"commander\"/>.",
               "hidden": false,
               "providesSpell": "",
               "commanderBonus": 1,
@@ -2694,7 +2720,9 @@
           ]
         }
       ],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -2718,7 +2746,9 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [
+        "Increase Loyalty"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -2740,7 +2770,7 @@
       "artifacts": [
         {
           "artifactName": "Rabbits of Rhosgobel",
-          "artifactDescription": "",
+          "artifactDescription": "Return to Capital: blink home (non-army commanders).",
           "hidden": false,
           "providesSpell": "Return To Capital",
           "commanderBonus": 0,
@@ -2755,7 +2785,7 @@
         },
         {
           "artifactName": "Birds of Mirkwood",
-          "artifactDescription": "",
+          "artifactDescription": "Scry a random unseen hex and reveal the area.",
           "hidden": false,
           "providesSpell": "ScryArea",
           "commanderBonus": 0,
@@ -2768,7 +2798,6 @@
           "transferable": false,
           "spriteString": "bird"
         }
-
       ],
       "terrain": 5,
       "startingCityName": "Rhosgobel",
@@ -2782,7 +2811,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "Old Tobby"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -2806,7 +2837,9 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Wizard's Laugh" ],
+      "actionsAtCapital": [
+        "Reveal PC"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -2859,10 +2892,12 @@
       "caSizeToJoin": 0,
       "wsSizeToJoin": 0,
       "commandersToJoin": 0,
-      "agentsToJoin": 5,
+      "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [
+        "Reveal PC"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -2884,7 +2919,7 @@
       "artifacts": [
         {
           "artifactName": "Goblin Cleaver",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +1 attack.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -2909,7 +2944,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "Goblin Cleaver"
+      ],
       "leatherToJoin": 0,
       "mountsToJoin": 0,
       "timberToJoin": 0,
@@ -2933,7 +2970,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty", "Goblin Cleaver" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -2955,7 +2992,7 @@
       "artifacts": [
         {
           "artifactName": "Yellow boots",
-          "artifactDescription": "",
+          "artifactDescription": "Return to Capital: blink home (non-army commanders).",
           "hidden": false,
           "providesSpell": "Return To Capital",
           "commanderBonus": 0,
@@ -2968,8 +3005,8 @@
           "spriteString": "boots"
         },
         {
-          "artifactName": "River lilies",
-          "artifactDescription": "",
+          "artifactName": "Blue Jacket",
+          "artifactDescription": "One-use Oh Elbereth! to damage an enemy character here (halts Nazgul).",
           "hidden": false,
           "providesSpell": "Oh, Elbereth!",
           "commanderBonus": 0,
@@ -2994,7 +3031,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "Water Lillies"],
+      "artifactsToJoin": [
+        "River Lillies"
+      ],
       "artifactsQtyToJoin": 0,
       "leatherToJoin": 0,
       "mountsToJoin": 0,
@@ -3019,7 +3058,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Oh, Elbereth!" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -3051,7 +3090,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "Andúril" ],
+      "artifactsToJoin": [
+        "Andúril"
+      ],
       "artifactsQtyToJoin": 0,
       "leatherToJoin": 0,
       "mountsToJoin": 0,
@@ -3076,7 +3117,9 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [
+        "Reveal PC"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -3098,7 +3141,7 @@
       "artifacts": [
         {
           "artifactName": "Robes of Aman",
-          "artifactDescription": "",
+          "artifactDescription": "Reveal PC to expose a hidden population center here.",
           "hidden": false,
           "providesSpell": "Reveal PC",
           "commanderBonus": 0,
@@ -3112,7 +3155,7 @@
         },
         {
           "artifactName": "Hood of Stars",
-          "artifactDescription": "",
+          "artifactDescription": "Scry a random unseen hex and reveal the area.",
           "hidden": false,
           "providesSpell": "Scry Area",
           "commanderBonus": 0,
@@ -3137,7 +3180,7 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [],
       "artifactsQtyToJoin": 0,
       "leatherToJoin": 0,
       "mountsToJoin": 0,
@@ -3162,7 +3205,9 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 4,
       "magesToJoin": 3,
-      "actionsAtCapital": [ "Wizard's Laugh" ],
+      "actionsAtCapital": [
+        "Wizard's Laugh"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -3184,7 +3229,7 @@
       "artifacts": [
         {
           "artifactName": "Blue Bow",
-          "artifactDescription": "",
+          "artifactDescription": "Grants +2 attack.",
           "hidden": false,
           "providesSpell": "",
           "commanderBonus": 0,
@@ -3198,7 +3243,7 @@
         },
         {
           "artifactName": "Robes of Aman",
-          "artifactDescription": "",
+          "artifactDescription": "Reveal PC to expose a hidden population center here.",
           "hidden": false,
           "providesSpell": "Reveal PC",
           "commanderBonus": 0,
@@ -3210,7 +3255,6 @@
           "bonusDefense": 0,
           "spriteString": "cloak"
         }
-
       ],
       "terrain": 9,
       "startingCityName": "Laorki",
@@ -3224,7 +3268,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "OneRing"
+      ],
       "artifactsQtyToJoin": 0,
       "leatherToJoin": 0,
       "mountsToJoin": 0,
@@ -3249,7 +3295,9 @@
       "agentsToJoin": 3,
       "emmissarysToJoin": 4,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Wizard's Laugh" ],
+      "actionsAtCapital": [
+        "Wizard's Laugh"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -3271,7 +3319,7 @@
       "artifacts": [
         {
           "artifactName": "Ent-draught",
-          "artifactDescription": "",
+          "artifactDescription": "Consumable Heal herb for a wounded ally sharing your hex. Grants +1 defense.",
           "hidden": false,
           "providesSpell": "Heal",
           "commanderBonus": 0,
@@ -3296,7 +3344,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [],
+      "artifactsToJoin": [
+        "Mathom"
+      ],
       "artifactsQtyToJoin": 0,
       "leatherToJoin": 0,
       "mountsToJoin": 0,
@@ -3321,7 +3371,9 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 8,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Wizard's Laugh" ],
+      "actionsAtCapital": [
+        "Wizard's Laugh"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -3342,7 +3394,7 @@
       "caDescription": "Log-Raft Rams",
       "artifacts": [],
       "terrain": 4,
-      "feature":  1,
+      "feature": 1,
       "startingCityName": "Sarn Lothduin",
       "startingCitySize": 2,
       "startingCityFortSize": 0,
@@ -3379,7 +3431,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -3401,7 +3453,7 @@
       "artifacts": [
         {
           "artifactName": "Wine of Dorwinion",
-          "artifactDescription": "",
+          "artifactDescription": "Courage: encourage a chosen friendly army in this hex for several turns.",
           "hidden": false,
           "providesSpell": "Courage",
           "commanderBonus": 0,
@@ -3415,7 +3467,7 @@
         },
         {
           "artifactName": "Dorwinion Grapes",
-          "artifactDescription": "",
+          "artifactDescription": "Consumable Heal herb for a wounded ally sharing your hex.",
           "hidden": false,
           "providesSpell": "Heal",
           "commanderBonus": 0,
@@ -3466,7 +3518,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 4,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -3488,7 +3540,7 @@
       "artifacts": [
         {
           "artifactName": "Westernesse Blade",
-          "artifactDescription": "",
+          "artifactDescription": "Cast Darkness to unreveal nearby tiles.",
           "hidden": false,
           "providesSpell": "Cast Darkness",
           "commanderBonus": 0,
@@ -3501,22 +3553,8 @@
           "spriteString": "sword"
         },
         {
-          "artifactName": "Crown-shard of Cardolan",
-          "artifactDescription": "",
-          "hidden": false,
-          "providesSpell": "Words of Dispair",
-          "commanderBonus": 0,
-          "agentBonus": 0,
-          "emmissaryBonus": 0,
-          "mageBonus": 0,
-          "oneShot": false,
-          "bonusAttack": 0,
-          "bonusDefense": 0,
-          "spriteString": "jewel"
-        },
-        {
           "artifactName": "Gripping Bone",
-          "artifactDescription": "",
+          "artifactDescription": "Curse an enemy character in your hex.",
           "hidden": false,
           "providesSpell": "Curse",
           "commanderBonus": 0,
@@ -3541,7 +3579,9 @@
       "startsWithPort": false,
       "startingWarships": 0,
       "startingCharacters": [],
-      "artifactsToJoin": [ "OneRing" ],
+      "artifactsToJoin": [
+        "Crown of Cardolan"
+      ],
       "artifactsQtyToJoin": 8,
       "leatherToJoin": 0,
       "mountsToJoin": 0,
@@ -3566,7 +3606,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -3609,7 +3649,7 @@
       "commanderLevelToJoin": 0,
       "agentLevelToJoin": 0,
       "emmissaryLevelToJoin": 0,
-      "mageLevelToJoin": 10,
+      "mageLevelToJoin": 0,
       "armiesToJoin": 0,
       "maSizeToJoin": 0,
       "arSizeToJoin": 0,
@@ -3623,7 +3663,9 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Reveal PC" ],
+      "actionsAtCapital": [
+        "Teleport"
+      ],
       "actionsAnywhere": []
     },
     {
@@ -3658,7 +3700,7 @@
       "artifactsToJoin": [],
       "artifactsQtyToJoin": 0,
       "leatherToJoin": 0,
-      "mountsToJoin": 40,
+      "mountsToJoin": 30,
       "timberToJoin": 0,
       "ironToJoin": 0,
       "mithrilToJoin": 0,
@@ -3680,7 +3722,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     },
     {
@@ -3711,7 +3753,7 @@
       "startingCityIsHidden": false,
       "startsWithPort": false,
       "startingWarships": 0,
-      "startingCharacters": [        
+      "startingCharacters": [
         {
           "characterName": "Bolg",
           "alignment": 1,
@@ -3723,7 +3765,9 @@
           "artifacts": []
         }
       ],
-      "artifactsToJoin": [ "OneRing", "Oak Shield" ],
+      "artifactsToJoin": [
+        "Oak Shield"
+      ],
       "artifactsQtyToJoin": 0,
       "leatherToJoin": 0,
       "mountsToJoin": 0,
@@ -3748,7 +3792,7 @@
       "agentsToJoin": 0,
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
-      "actionsAtCapital": [ "Increase Loyalty" ],
+      "actionsAtCapital": [],
       "actionsAnywhere": []
     }
   ]

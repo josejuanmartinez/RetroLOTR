@@ -19,9 +19,7 @@ public class ConjureMounts: DarkNeutralSpell
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
             if (c.hex == null) return false;
-            PC pc = c.hex.GetPC();
-            if (pc == null) return false;
-            return pc.owner.GetAlignment() == c.GetOwner().GetAlignment() && (c.GetOwner() == pc.owner || pc.owner.GetAlignment() != AlignmentEnum.neutral);
+            return true;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

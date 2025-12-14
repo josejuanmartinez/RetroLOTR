@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -32,6 +33,7 @@ public class PopupManager : MonoBehaviour
         public string text;
         public bool typeWrite;
         public int restrictHeight;
+        public Action onClose;
     }
 
     private void Awake()
@@ -51,7 +53,7 @@ public class PopupManager : MonoBehaviour
         IsShowing = false;
     }
 
-    public void Initialize(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0)
+    public void Initialize(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
     {
         queue.Add(new PopupData
         {
@@ -60,7 +62,8 @@ public class PopupManager : MonoBehaviour
             spriteActor2 = spriteActor2,
             text = text,
             typeWrite = typeWrite,
-            restrictHeight = restrictHeight
+            restrictHeight = restrictHeight,
+            onClose = onClose
         });
 
         if (currentIndex == -1)
@@ -75,6 +78,12 @@ public class PopupManager : MonoBehaviour
 
     public void Hide()
     {
+        Action onClose = null;
+        if (currentIndex >= 0 && currentIndex < queue.Count)
+        {
+            onClose = queue[currentIndex].onClose;
+        }
+
         FindFirstObjectByType<Sounds>().StopAllSounds();
         container.SetActive(false);
         queue.Clear();
@@ -91,10 +100,12 @@ public class PopupManager : MonoBehaviour
             typeWriterEffect.enabled = false;
             typeWriterEffect.fullText = "";
         }
+
+        onClose?.Invoke();
     }
 
-    public static void Show(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite)
-    => Instance.Initialize(title, spriteActor1, spriteActor2, text, typeWrite);
+    public static void Show(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
+    => Instance.Initialize(title, spriteActor1, spriteActor2, text, typeWrite, restrictHeight, onClose);
 
     public static void HidePopup()
         => Instance.Hide();

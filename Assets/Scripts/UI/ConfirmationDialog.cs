@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -23,6 +24,7 @@ public class ConfirmationDialog : MonoBehaviour
     [SerializeField] private string defaultOkLabel = "OK";
 
     private TaskCompletionSource<bool> pendingRequest;
+    private Action pendingOnClose;
 
     private void Awake()
     {
@@ -52,7 +54,7 @@ public class ConfirmationDialog : MonoBehaviour
     /// <summary>
     /// Opens a confirmation dialog with a custom message and button labels.
     /// </summary>
-    public static Task<bool> Ask(string message, string yesString, string noString)
+    public static Task<bool> Ask(string message, string yesString, string noString, Action onClose = null)
     {
         if (Instance == null)
         {
@@ -60,13 +62,13 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(message, yesString, noString);
+        return Instance.Show(message, yesString, noString, false, onClose);
     }
 
     /// <summary>
     /// Opens a confirmation dialog that uses the configured fallback message.
     /// </summary>
-    public static Task<bool> Ask(string yesString, string noString)
+    public static Task<bool> Ask(string yesString, string noString, Action onClose = null)
     {
         if (Instance == null)
         {
@@ -74,13 +76,13 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(Instance.fallbackMessage, yesString, noString);
+        return Instance.Show(Instance.fallbackMessage, yesString, noString, false, onClose);
     }
 
     /// <summary>
     /// Opens a Yes/No dialog using the default button texts.
     /// </summary>
-    public static Task<bool> AskYesNo(string message)
+    public static Task<bool> AskYesNo(string message, Action onClose = null)
     {
         if (Instance == null)
         {
@@ -88,13 +90,13 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(message, Instance.defaultYesLabel, Instance.defaultNoLabel);
+        return Instance.Show(message, Instance.defaultYesLabel, Instance.defaultNoLabel, false, onClose);
     }
 
     /// <summary>
     /// Opens a single-button OK dialog.
     /// </summary>
-    public static Task<bool> AskOk(string message)
+    public static Task<bool> AskOk(string message, Action onClose = null)
     {
         if (Instance == null)
         {
@@ -103,18 +105,20 @@ public class ConfirmationDialog : MonoBehaviour
         }
 
         string okLabel = string.IsNullOrWhiteSpace(Instance.defaultOkLabel) ? "OK" : Instance.defaultOkLabel;
-        return Instance.Show(message, okLabel, string.Empty, true);
+        return Instance.Show(message, okLabel, string.Empty, true, onClose);
     }
 
-    private Task<bool> Show(string message, string yesString, string noString, bool singleButton = false)
+    private Task<bool> Show(string message, string yesString, string noString, bool singleButton = false, Action onClose = null)
     {
         if (pendingRequest != null && !pendingRequest.Task.IsCompleted)
         {
             Debug.LogWarning("Confirmation dialog already running. Previous request cancelled.");
             pendingRequest.TrySetResult(false);
+            pendingOnClose?.Invoke();
         }
 
         pendingRequest = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        pendingOnClose = onClose;
 
         content.SetActive(true);
 
@@ -136,7 +140,9 @@ public class ConfirmationDialog : MonoBehaviour
     {
         HideInstant();
         pendingRequest?.TrySetResult(answer);
+        pendingOnClose?.Invoke();
         pendingRequest = null;
+        pendingOnClose = null;
     }
 
     private void HideInstant()

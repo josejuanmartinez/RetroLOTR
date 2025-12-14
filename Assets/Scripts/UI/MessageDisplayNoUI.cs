@@ -86,7 +86,7 @@ public class MessageDisplayNoUI : MonoBehaviour
             instance.EnqueueMessage(message, worldPos, color ?? Color.white);
         }
 
-        Rumour rumour = new Rumour {leader = character.GetOwner(), rumour = textMessage, v2 = hex.v2};
+        Rumour rumour = new Rumour {leader = character.GetOwner(), characterName = character?.characterName, rumour = textMessage, v2 = hex.v2};
         RumoursManager.AddRumour(rumour, publicRumour);
     }
 

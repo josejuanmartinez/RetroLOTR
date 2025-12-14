@@ -7,7 +7,7 @@
       "agent": 1,
       "emmissary": 1,
       "mage": 3,
-      "race":  4,
+      "race": 4,
       "hcDescription": "Riders of Rohan",
       "lcDescription": "Elven Horsemen",
       "hiDescription": "Gondorian Infantry",
@@ -19,7 +19,7 @@
       "artifacts": [
         {
           "artifactName": "Narya",
-          "artifactDescription": "",
+          "artifactDescription": "Perceive Danger: reveal the nearest enemy army and surroundings.",
           "hidden": false,
           "providesSpell": "Perceive Danger",
           "commanderBonus": 0,
@@ -29,12 +29,12 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "spriteString":  "ring",
+          "spriteString": "ring",
           "transferable": false
         },
         {
           "artifactName": "Wizard Staff",
-          "artifactDescription": "",
+          "artifactDescription": "You Shall Not Pass: halt an enemy character here; harms Balrogs.",
           "hidden": false,
           "providesSpell": "YouShallNotPass",
           "commanderBonus": 0,
@@ -49,7 +49,7 @@
         },
         {
           "artifactName": "Glamdring",
-          "artifactDescription": "",
+          "artifactDescription": "Wizard's Fire: burn an enemy army in your hex (casualties).",
           "hidden": false,
           "providesSpell": "Wizard's Fire",
           "commanderBonus": 0,
@@ -63,7 +63,7 @@
         },
         {
           "artifactName": "Wizard's Cart",
-          "artifactDescription": "",
+          "artifactDescription": "Fireworks: shift PC loyalty toward your side (or away from foes).",
           "hidden": false,
           "providesSpell": "Fireworks",
           "commanderBonus": 0,
@@ -77,7 +77,7 @@
         },
         {
           "artifactName": "Longpipe",
-          "artifactDescription": "",
+          "artifactDescription": "Wizard's Laugh: clear doubles on allies or sap loyalty of hostile PCs here.",
           "hidden": false,
           "providesSpell": "Wizard's Laugh",
           "commanderBonus": 0,
@@ -92,7 +92,7 @@
         },
         {
           "artifactName": "Shadowfax",
-          "artifactDescription": "",
+          "artifactDescription": "Haste: refund movement to act again (not for army commanders).",
           "hidden": false,
           "providesSpell": "Haste",
           "commanderBonus": 0,
@@ -134,7 +134,7 @@
           "artifacts": [
             {
               "artifactName": "Elvish Song",
-              "artifactDescription": "",
+              "artifactDescription": "One-use Oh Elbereth! to damage an enemy character here (halts Nazgul).",
               "hidden": false,
               "providesSpell": "OhElbereth",
               "commanderBonus": 0,
@@ -200,7 +200,7 @@
       "artifacts": [
         {
           "artifactName": "Ring of Orthanc",
-          "artifactDescription": "",
+          "artifactDescription": "Words of Dispair: inflict casualties on an enemy army here. Grants +1 <sprite name=\"commander\"/>.",
           "hidden": false,
           "providesSpell": "WordsOfDispair",
           "commanderBonus": 1,
@@ -215,7 +215,7 @@
         },
         {
           "artifactName": "White Hand Banner",
-          "artifactDescription": "",
+          "artifactDescription": "One-use Summon Men-at-Arms: add 1 <sprite name=\"ma\"/> at an owned PC.",
           "hidden": false,
           "providesSpell": "SummonMA",
           "commanderBonus": 0,
@@ -229,7 +229,7 @@
         },
         {
           "artifactName": "Many-coloured robes",
-          "artifactDescription": "",
+          "artifactDescription": "Perceive Danger: reveal the nearest enemy army and surroundings. Grants +1 <sprite name=\"mage\"/>.",
           "hidden": false,
           "providesSpell": "Perceive Danger",
           "commanderBonus": 0,
@@ -244,7 +244,7 @@
         },
         {
           "artifactName": "Yellow teeth",
-          "artifactDescription": "",
+          "artifactDescription": "Wizard's Laugh: clear doubles on allies or sap loyalty of hostile PCs here.",
           "hidden": false,
           "providesSpell": "Wizard's Laugh",
           "commanderBonus": 0,
@@ -259,7 +259,7 @@
         },
         {
           "artifactName": "Palantir of Orthanc",
-          "artifactDescription": "",
+          "artifactDescription": "Scry a random unseen hex and reveal the area.",
           "hidden": false,
           "providesSpell": "ScryArea",
           "commanderBonus": 0,
@@ -273,7 +273,7 @@
         },
         {
           "artifactName": "Saruman's Staff",
-          "artifactDescription": "",
+          "artifactDescription": "Ice Storm: halt a chosen enemy army in your hex.",
           "hidden": false,
           "providesSpell": "Ice Storm",
           "commanderBonus": 0,
@@ -283,7 +283,7 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "spriteString": "staff",          
+          "spriteString": "staff",
           "transferable": false
         }
       ],
@@ -312,7 +312,7 @@
           "emmissary": 0,
           "mage": 0,
           "race": 5,
-          "artifacts": [],          
+          "artifacts": [],
           "startingArmySize": 2,
           "preferedTroopType": 2
         },
@@ -327,7 +327,7 @@
           "artifacts": [
             {
               "artifactName": "Poison",
-              "artifactDescription": "",
+              "artifactDescription": "Curse an enemy character in your hex.",
               "hidden": false,
               "providesSpell": "Curse",
               "commanderBonus": 0,
@@ -353,7 +353,7 @@
           "artifacts": [
             {
               "artifactName": "Bill, the Pony",
-              "artifactDescription": "",
+              "artifactDescription": "Return to Capital: blink home (non-army commanders).",
               "hidden": false,
               "providesSpell": "Return To Capital",
               "commanderBonus": 0,
@@ -388,7 +388,7 @@
       "artifacts": [
         {
           "artifactName": "Dark Lord Banner",
-          "artifactDescription": "",
+          "artifactDescription": "One-use Summon Men-at-Arms: add 1 <sprite name=\"ma\"/> at an owned PC.",
           "hidden": false,
           "providesSpell": "SummonMA",
           "commanderBonus": 0,
@@ -402,7 +402,7 @@
         },
         {
           "artifactName": "Palantir of Ithil",
-          "artifactDescription": "",
+          "artifactDescription": "Scry a random unseen hex and reveal the area.",
           "hidden": false,
           "providesSpell": "ScryArea",
           "commanderBonus": 0,
@@ -416,7 +416,7 @@
         },
         {
           "artifactName": "Morgul Veil",
-          "artifactDescription": "",
+          "artifactDescription": "Cast Darkness to unreveal nearby tiles.",
           "hidden": false,
           "providesSpell": "Cast Darkness",
           "commanderBonus": 0,
@@ -431,7 +431,7 @@
         },
         {
           "artifactName": "Lidless eye",
-          "artifactDescription": "",
+          "artifactDescription": "Reveal PC to expose a hidden population center here.",
           "hidden": false,
           "providesSpell": "RevealPC",
           "commanderBonus": 0,
@@ -443,10 +443,10 @@
           "bonusDefense": 0,
           "transferable": false,
           "spriteString": "darkServants"
-        },        
+        },
         {
           "artifactName": "Voice of the Dark Tower",
-          "artifactDescription": "",
+          "artifactDescription": "Words of Dispair: inflict casualties on an enemy army here.",
           "hidden": false,
           "providesSpell": "WordsOfDispair",
           "commanderBonus": 0,
@@ -485,7 +485,7 @@
           "emmissary": 0,
           "mage": 0,
           "race": 6,
-          "artifacts": [ ],
+          "artifacts": [],
           "startingArmySize": 4,
           "preferedTroopType": 2
         },
@@ -500,7 +500,7 @@
           "artifacts": [
             {
               "artifactName": "Yellow teeth",
-              "artifactDescription": "",
+              "artifactDescription": "Wizard's Laugh: clear doubles on allies or sap loyalty of hostile PCs here. Grants +1 <sprite name=\"commander\"/> and +1 <sprite name=\"emmissary\"/>.",
               "hidden": false,
               "providesSpell": "Wizard's Laugh",
               "commanderBonus": 1,
@@ -515,7 +515,7 @@
             },
             {
               "artifactName": "Scroll of the Mouth",
-              "artifactDescription": "",
+              "artifactDescription": "Perceive Danger: reveal the nearest enemy army and surroundings.",
               "hidden": false,
               "providesSpell": "Perceive Danger",
               "commanderBonus": 0,
@@ -541,7 +541,7 @@
           "artifacts": [
             {
               "artifactName": "Riddle",
-              "artifactDescription": "",
+              "artifactDescription": "Halt a target enemy character here for a turn.",
               "hidden": false,
               "providesSpell": "Halt",
               "commanderBonus": 0,

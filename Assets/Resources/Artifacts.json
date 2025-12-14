@@ -15,7 +15,7 @@
       "spriteString": "scimitar"
     },
     {
-      "artifactName": "Water Lillies",
+      "artifactName": "River Lillies",
       "artifactDescription": "Decorative bloom; Tom Bombadil may like them.",
       "hidden": true,
       "providesSpell": "",
@@ -811,6 +811,80 @@
       "bonusAttack": 0,
       "bonusDefense": 0,
       "spriteString": "powder"
+    },
+    {
+      "artifactName": "Andúril",
+      "artifactDescription": "Grants +2 attack.",
+      "hidden": true,
+      "transferable": true,
+      "providesSpell": "",
+      "commanderBonus": 0,
+      "agentBonus": 0,
+      "emmissaryBonus": 0,
+      "mageBonus": 0,
+      "oneShot": false,
+      "bonusAttack": 2,
+      "bonusDefense": 0,
+      "spriteString": "sword"
+    },
+    {
+      "artifactName": "Black Arrow",
+      "transferable": true,
+      "artifactDescription": "Grants +1 attack.",
+      "hidden": true,
+      "providesSpell": "",
+      "commanderBonus": 0,
+      "agentBonus": 0,
+      "emmissaryBonus": 0,
+      "mageBonus": 0,
+      "oneShot": false,
+      "bonusAttack": 1,
+      "bonusDefense": 0,
+      "spriteString": "bow"
+    },
+    {
+      "artifactName": "The Arkenstone",
+      "transferable": true,
+      "artifactDescription": "Perceive Danger: reveal the nearest enemy army and surroundings.",
+      "hidden": true,
+      "providesSpell": "Perceive Danger",
+      "commanderBonus": 0,
+      "agentBonus": 0,
+      "emmissaryBonus": 0,
+      "mageBonus": 0,
+      "oneShot": false,
+      "bonusAttack": 0,
+      "bonusDefense": 0,
+      "spriteString": "gems"
+    },
+    {
+      "artifactName": "Mathom",
+      "transferable": true,
+      "artifactDescription": "Mathom, a hobbit relic. Ents are curious about them.",
+      "hidden": true,
+      "providesSpell": "",
+      "commanderBonus": 0,
+      "agentBonus": 0,
+      "emmissaryBonus": 0,
+      "mageBonus": 0,
+      "oneShot": false,
+      "bonusAttack": 0,
+      "bonusDefense": 0,
+      "spriteString": "artifact"
+    },
+    {
+      "artifactName": "Crown of Cardolan",
+      "artifactDescription": "Words of Dispair: inflict casualties on an enemy army here.",
+      "hidden": true,
+      "providesSpell": "Words of Dispair",
+      "commanderBonus": 0,
+      "agentBonus": 0,
+      "emmissaryBonus": 0,
+      "mageBonus": 0,
+      "oneShot": false,
+      "bonusAttack": 0,
+      "bonusDefense": 0,
+      "spriteString": "jewel"
     }
   ]
 }

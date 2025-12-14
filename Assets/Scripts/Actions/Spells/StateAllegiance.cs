@@ -31,7 +31,7 @@ public class StateAllegiance : EmmissaryAction
                         "Allegiance Denied",
                         illustrations != null ? illustrations.GetIllustrationByName(nonPlayableLeader.characterName) : null,
                         illustrations != null ? illustrations.GetIllustrationByName(leader.characterName) : null,
-                        nonPlayableLeader.GetJoiningConditionsText(leader.GetAlignment()),
+                        nonPlayableLeader.GetJoiningConditionsText(leader),
                         true);
                 }
                 return false;

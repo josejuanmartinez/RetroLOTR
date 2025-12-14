@@ -402,6 +402,11 @@ public class Army
     {
         if(defenderArmy == null || defenderArmy.commander == null || defenderArmy.killed || defenderArmy.commander.killed || attackerLeader == null || attackerLeader.killed) return;
         AlignmentEnum attackerAlignment = commander.GetAlignment();
+        string attackerName = commander != null ? commander.characterName : attackerLeader.characterName;
+        string defenderName = defenderArmy.GetCommander().characterName;
+        int attackerXpBefore = xp;
+        int defenderXpBefore = defenderArmy.xp;
+        Character hudActor = commander;
 
         Leader defenderLeader = defenderArmy.commander.GetOwner();
         AlignmentEnum defenderAlignment = defenderArmy.GetAlignment();
@@ -496,45 +501,56 @@ public class Army
             else
             {
                 attackerReportedLosses = 1;
-                stalemateNote = $"{attackerLeader.characterName} suffers a token casualty after a stalemate.";
+                stalemateNote = $"{attackerName} suffers a token casualty after a stalemate.";
             }
         }
 
         string battleLocation = targetHex.HasAnyPC() && targetHex.IsPCRevealed() ? targetHex.GetPC().pcName : targetHex.GetHoverV2();
-        StringBuilder textBuilder = new StringBuilder();
-        textBuilder.AppendLine($"Under {attackerLeader.characterName}'s banner the host surges toward {battleLocation}, where {defenderArmy.GetCommander().characterName} steels the line.");
-        if (attackerAlliesJoined > 0)
-        {
-            textBuilder.AppendLine($"Allied warbands sweep in ({attackerAlliesJoined} host(s), +{attackerAlliesStrength} STR / +{attackerAlliesDefence} DEF), turning the advance into a thunderous tide.");
-        }
-        if (defenderAlliesJoined > 0)
-        {
-            textBuilder.AppendLine($"{defenderAlliesJoined} contingent(s) rally to {defenderArmy.GetCommander().characterName}, lending +{defenderAlliesStrength} STR / +{defenderAlliesDefence} DEF to the shieldwall.");
-        }
-        if (pcDefenseContribution > 0)
-        {
-            textBuilder.AppendLine($"{targetHex.GetPC().pcName}'s walls and militia throw stones and arrows, adding {pcDefenseContribution} to the defense and the answering volley.");
-        }
-        textBuilder.AppendLine($"Command is razor keen: {attackerLeader.characterName} drives a +{attackerBonusPercent}% edge with {GetTrainingLabel()} troops (XP {xp}), while {defenderArmy.GetCommander().characterName} answers with +{defenderBonusPercent}% and {defenderArmy.GetTrainingLabel()} veterans (XP {defenderArmy.xp}).");
-        if (attackerArtifactAttack + attackerArtifactDefense > 0 || defenderArtifactAttack + defenderArtifactDefense > 0)
-        {
-            textBuilder.AppendLine($"Ancient relics flare—attacker +{attackerArtifactAttack} ATK / +{attackerArtifactDefense} DEF, defender +{defenderArtifactAttack} ATK / +{defenderArtifactDefense} DEF.");
-        }
-        textBuilder.AppendLine($"Steel meets shield: {attackerStrength} attack slams into {defenderDefense} defense, while {defenderStrength} crashes back against {attackerDefence}.");
-        textBuilder.AppendLine($"Bodies fall in the dust—{attackerLeader.characterName} loses {attackerReportedLosses} ({attackerPercent}%), {defenderArmy.GetCommander().characterName} loses {defenderReportedLosses} ({defenderPercent}%).");
-        if (!string.IsNullOrEmpty(stalemateNote))
-        {
-            textBuilder.AppendLine(stalemateNote);
-        }
         string title = $"Attack at {battleLocation}";
-        string text = textBuilder.ToString();
+        string text = BuildBattleDescription(
+            battleLocation,
+            attackerName,
+            defenderArmy.GetCommander().characterName,
+            attackerAlliesJoined,
+            attackerAlliesStrength,
+            attackerAlliesDefence,
+            defenderAlliesJoined,
+            defenderAlliesStrength,
+            defenderAlliesDefence,
+            pcDefenseContribution,
+            attackerBonusPercent,
+            defenderBonusPercent,
+            GetTrainingLabel(),
+            defenderArmy.GetTrainingLabel(),
+            xp,
+            defenderArmy.xp,
+            attackerArtifactAttack,
+            attackerArtifactDefense,
+            defenderArtifactAttack,
+            defenderArtifactDefense,
+            attackerStrength,
+            defenderDefense,
+            defenderStrength,
+            attackerDefence,
+            attackerReportedLosses,
+            attackerPercent,
+            defenderReportedLosses,
+            defenderPercent,
+            stalemateNote);
         Illustrations illustrations = GameObject.FindFirstObjectByType<Illustrations>();
+        List<(string message, Color color)> hudMessages = new()
+        {
+            ($"{attackerName} loses {attackerReportedLosses} ({attackerPercent}%).", Color.red),
+            ($"{defenderName} loses {defenderReportedLosses} ({defenderPercent}%).", Color.red)
+        };
+        Action onPopupClose = () => ShowHudMessagesAfterPopup(targetHex, hudActor, hudMessages);
         PopupManager.Show(
             title,
-            illustrations.GetIllustrationByName(attackerLeader.characterName),
+            illustrations.GetIllustrationByName(attackerName),
             illustrations.GetIllustrationByName(defenderArmy.GetCommander().characterName),
             text,
-            false);
+            true,
+            onClose: onPopupClose);
 
         // Apply casualties to attacker troops
         ReceiveCasualties(attackerCasualtyPercent, defenderLeader, !anyAttackerCasualties && !forceCasualtySide);
@@ -547,9 +563,205 @@ public class Army
 
         // Check if attacker army was eliminated
         if (!killed && GetSize(true) < 1) Killed(defenderLeader);
+
+        bool attackerAlive = !killed && GetSize(true) > 0;
+        bool defendersRemain = AreDefendersStillAlive(targetHex, attackerAlignment, attackerLeader);
+        string outcome = attackerAlive && !defendersRemain
+            ? $"{attackerName} holds the field."
+            : (!attackerAlive && defendersRemain
+                ? $"{defenderName} repels the attack."
+                : "The battle grinds on with no clear victor.");
+        Color outcomeColor = attackerAlive && !defendersRemain ? Color.green : Color.yellow;
+        hudMessages.Add((outcome, outcomeColor));
+
+        int attackerXpDelta = xp - attackerXpBefore;
+        int defenderXpDelta = defenderArmy.xp - defenderXpBefore;
+        hudMessages.Add(($"XP gained: {attackerName} {FormatDelta(attackerXpDelta)}, {defenderName} {FormatDelta(defenderXpDelta)}", Color.cyan));
+    }
+
+
+    private string BuildBattleDescription(
+        string location,
+        string attackerName,
+        string defenderName,
+        int attackerAlliesJoined,
+        int attackerAlliesStrength,
+        int attackerAlliesDefence,
+        int defenderAlliesJoined,
+        int defenderAlliesStrength,
+        int defenderAlliesDefence,
+        int pcDefenseContribution,
+        int attackerBonusPercent,
+        int defenderBonusPercent,
+        string attackerTrainingLabel,
+        string defenderTrainingLabel,
+        int attackerXp,
+        int defenderXp,
+        int attackerArtifactAttack,
+        int attackerArtifactDefense,
+        int defenderArtifactAttack,
+        int defenderArtifactDefense,
+        int attackerStrength,
+        int defenderDefense,
+        int defenderStrength,
+        int attackerDefence,
+        int attackerReportedLosses,
+        int attackerPercent,
+        int defenderReportedLosses,
+        int defenderPercent,
+        string stalemateNote)
+    {
+        StringBuilder sb = new StringBuilder();
+        int template = UnityEngine.Random.Range(0, 5);
+
+        void Allies(bool attackerSide)
+        {
+            if (attackerSide && attackerAlliesJoined > 0)
+            {
+                sb.AppendLine($"Allies surge in: {attackerAlliesJoined} host(s) add +{attackerAlliesStrength} STR / +{attackerAlliesDefence} DEF to {attackerName}'s line.");
+            }
+            if (!attackerSide && defenderAlliesJoined > 0)
+            {
+                sb.AppendLine($"Reinforcements rally to {defenderName}: {defenderAlliesJoined} contingent(s) lend +{defenderAlliesStrength} STR / +{defenderAlliesDefence} DEF.");
+            }
+        }
+
+        void Artifacts()
+        {
+            if (attackerArtifactAttack + attackerArtifactDefense > 0 || defenderArtifactAttack + defenderArtifactDefense > 0)
+            {
+                sb.AppendLine($"Relics blaze: attacker +{attackerArtifactAttack} ATK / +{attackerArtifactDefense} DEF, defender +{defenderArtifactAttack} ATK / +{defenderArtifactDefense} DEF.");
+            }
+        }
+
+        void Casualties()
+        {
+            sb.AppendLine($"Casualties mount: {attackerName} loses {attackerReportedLosses} ({attackerPercent}%), {defenderName} loses {defenderReportedLosses} ({defenderPercent}%).");
+            if (!string.IsNullOrEmpty(stalemateNote)) sb.AppendLine(stalemateNote);
+        }
+
+        switch (template)
+        {
+            case 0:
+                sb.AppendLine($"Under {attackerName}'s banner the host marches on {location}, while {defenderName} braces the shieldwall.");
+                Allies(true);
+                Allies(false);
+                if (pcDefenseContribution > 0) sb.AppendLine($"Battlements thunder from {location}, adding {pcDefenseContribution} to defense and reply.");
+                sb.AppendLine($"Command bites: {attackerName} drives +{attackerBonusPercent}% with {attackerTrainingLabel} troops (XP {attackerXp}); {defenderName} counters with +{defenderBonusPercent}% and {defenderTrainingLabel} (XP {defenderXp}).");
+                Artifacts();
+                sb.AppendLine($"Steel and muscle: {attackerStrength} attack slams {defenderDefense} defense, while {defenderStrength} hammers back at {attackerDefence}.");
+                Casualties();
+                break;
+            case 1:
+                sb.AppendLine($"{location} erupts as {attackerName} advances; {defenderName} locks ranks and answers.");
+                if (pcDefenseContribution > 0) sb.AppendLine($"Stones and arrows rain from the walls (+{pcDefenseContribution} DEF).");
+                Allies(true);
+                Allies(false);
+                sb.AppendLine($"Veterans steady the lines: attacker {attackerTrainingLabel} (XP {attackerXp}) +{attackerBonusPercent}%, defender {defenderTrainingLabel} (XP {defenderXp}) +{defenderBonusPercent}%.");
+                Artifacts();
+                sb.AppendLine($"Clash of totals: {attackerStrength} vs {defenderDefense}; riposte {defenderStrength} vs {attackerDefence}.");
+                Casualties();
+                break;
+            case 2:
+                sb.AppendLine($"{attackerName} presses into {location}, horns sounding. {defenderName} signals to hold the line.");
+                Allies(true);
+                if (pcDefenseContribution > 0) sb.AppendLine($"The settlement stiffens the defense (+{pcDefenseContribution}).");
+                Allies(false);
+                sb.AppendLine($"Leadership weighs heavy: +{attackerBonusPercent}% for {attackerName}, +{defenderBonusPercent}% for {defenderName}.");
+                sb.AppendLine($"Training shows: {attackerTrainingLabel} (XP {attackerXp}) vs {defenderTrainingLabel} (XP {defenderXp}).");
+                Artifacts();
+                sb.AppendLine($"Totals collide: attack {attackerStrength} onto {defenderDefense}, counter {defenderStrength} into {attackerDefence}.");
+                Casualties();
+                break;
+            case 3:
+                sb.AppendLine($"{attackerName} drives a wedge toward {location}; {defenderName} pivots to meet the charge.");
+                Allies(true);
+                Allies(false);
+                if (pcDefenseContribution > 0) sb.AppendLine($"Walls and militia strain, adding {pcDefenseContribution} to the stand.");
+                sb.AppendLine($"Edge in command: attacker +{attackerBonusPercent}%, defender +{defenderBonusPercent}%.");
+                Artifacts();
+                sb.AppendLine($"Blades find gaps: attacker {attackerStrength} vs defense {defenderDefense}. Counterblow {defenderStrength} vs {attackerDefence}.");
+                Casualties();
+                break;
+            default:
+                sb.AppendLine($"Battle for {location}: {attackerName} leads the assault, {defenderName} anchors the defense.");
+                Allies(true);
+                Allies(false);
+                if (pcDefenseContribution > 0) sb.AppendLine($"Local defenses join the fray (+{pcDefenseContribution}).");
+                sb.AppendLine($"Morale and drill: {attackerTrainingLabel} (XP {attackerXp}) vs {defenderTrainingLabel} (XP {defenderXp}); commanders push +{attackerBonusPercent}% / +{defenderBonusPercent}%.");
+                Artifacts();
+                sb.AppendLine($"Numbers clash: {attackerStrength} onto {defenderDefense}; return strike {defenderStrength} into {attackerDefence}.");
+                Casualties();
+                break;
+        }
+
+        return sb.ToString();
+    }
+
+    private string BuildSiegeDescription(
+        string location,
+        string attackerName,
+        string defenderName,
+        int attackerStrength,
+        int defenderDefense,
+        int attackerDefence,
+        int attackerBonusPercent,
+        string attackerTrainingLabel,
+        int attackerXp,
+        int attackerArtifactAttack,
+        int attackerArtifactDefense,
+        int attackerTotalLosses,
+        int attackerPercent,
+        float attackerDamage,
+        bool fortStands)
+    {
+        StringBuilder sb = new StringBuilder();
+        int template = UnityEngine.Random.Range(0, 5);
+
+        switch (template)
+        {
+            case 0:
+                sb.AppendLine($"{attackerName} drives siege lines toward {location}, drums rolling as ladders rise.");
+                sb.AppendLine($"The assault throws {attackerStrength} strength at defenses of {defenderDefense}; arrows and oil bite back against {attackerDefence}.");
+                break;
+            case 1:
+                sb.AppendLine($"Siege of {location}: rams grind forward under {attackerName}'s shout while {defenderName} braces the parapet.");
+                sb.AppendLine($"Pressure: {attackerStrength} vs {defenderDefense}; missiles lash the attackers (DEF {attackerDefence}).");
+                break;
+            case 2:
+                sb.AppendLine($"{location} shakes as {attackerName} orders the climb. {defenderName} answers with volleys.");
+                sb.AppendLine($"Strength meets stone: {attackerStrength} attacking, {defenderDefense} resisting; defenders strike back into {attackerDefence}.");
+                break;
+            case 3:
+                sb.AppendLine($"{attackerName} hurls the host at {location}; mantlets and ladders grind ahead.");
+                sb.AppendLine($"Force on the walls: {attackerStrength} against {defenderDefense}. Counterfire tests {attackerDefence}.");
+                break;
+            default:
+                sb.AppendLine($"At {location}, {attackerName} raises a storm of iron while {defenderName} commands the ramparts.");
+                sb.AppendLine($"Numbers collide: {attackerStrength} vs {defenderDefense}; the defense punishes {attackerDefence}.");
+                break;
+        }
+
+        sb.AppendLine($"Command and drill hold: {attackerName} pushes a +{attackerBonusPercent}% edge with {attackerTrainingLabel} troops (XP {attackerXp}).");
+        if (attackerArtifactAttack + attackerArtifactDefense > 0)
+        {
+            sb.AppendLine($"Relics flare at the breach: +{attackerArtifactAttack} ATK / +{attackerArtifactDefense} DEF lend their might.");
+        }
+        sb.AppendLine($"Losses bite hard: {attackerName} loses {attackerTotalLosses} ({attackerPercent}%).");
+        if (attackerDamage > 0)
+        {
+            sb.AppendLine(fortStands ? "The walls crack and the defenders fall back a step." : "Gates burst and the population center falls to the attackers.");
+        }
+        else
+        {
+            sb.AppendLine("The gate holds; the attackers recoil beneath a storm of stones.");
+        }
+
+        return sb.ToString();
     }
 
     // Helper method to attack a Population Center
+
     private void AttackPopulationCenter(Hex targetHex, int attackerStrength, int attackerDefence, Leader attackerLeader)
     {
         if(targetHex.GetPC() == null) return;
@@ -557,6 +769,9 @@ public class Army
         Leader defenderLeader = targetHex.GetPC().owner;
         
         if(defenderLeader == null || defenderLeader.killed || attackerLeader == null || attackerLeader.killed) return;
+        string attackerName = commander != null ? commander.characterName : attackerLeader.characterName;
+        int attackerXpBefore = xp;
+        Character hudActor = commander;
         
         AlignmentEnum defenderAlignment = defenderLeader.GetAlignment();
 
@@ -582,34 +797,38 @@ public class Army
         bool anyAttackerCasualties = attackerTotalLosses > 0;
 
         int attackerPercent = Mathf.RoundToInt(attackerCasualtyPercent * 100f);
-        StringBuilder textBuilder = new StringBuilder();
-        textBuilder.AppendLine($"{attackerLeader.characterName} drives siege lines toward {targetHex.GetPC().pcName}, drums rolling as ladders rise.");
-        textBuilder.AppendLine($"The assault throws {attackerStrength} strength at defenses of {defenderDefense}; arrows and boiling oil bite back against {attackerDefence}.");
-        textBuilder.AppendLine($"Command and drill hold: {attackerLeader.characterName} pushes a +{attackerBonusPercent}% edge with {GetTrainingLabel()} troops (XP {xp}).");
         int attackerArtifactAttack = GetArtifactAttackBonusTotal();
         int attackerArtifactDefense = GetArtifactDefenseBonusTotal();
-        if (attackerArtifactAttack + attackerArtifactDefense > 0)
-        {
-            textBuilder.AppendLine($"Relics flare at the breach: +{attackerArtifactAttack} ATK / +{attackerArtifactDefense} DEF lend their might.");
-        }
-        textBuilder.AppendLine($"Losses bite hard—{attackerLeader.characterName} loses {attackerTotalLosses} ({attackerPercent}%).");
-        if (attackerDamage > 0)
-        {
-            textBuilder.AppendLine(targetHex.GetPC().fortSize > FortSizeEnum.NONE ? "The walls splinter and the defenders fall back—fortifications crack and burn." : "Gates burst and the population center falls to the attackers.");
-        }
-        else
-        {
-            textBuilder.AppendLine("The gate holds; the attackers recoil beneath a storm of stones.");
-        }
         string pcTitle = $"Siege of {targetHex.GetPC().pcName}";
-        string pcText = textBuilder.ToString();
+        string pcText = BuildSiegeDescription(
+            targetHex.GetPC().pcName,
+            attackerName,
+            defenderLeader.characterName,
+            attackerStrength,
+            defenderDefense,
+            attackerDefence,
+            attackerBonusPercent,
+            GetTrainingLabel(),
+            xp,
+            attackerArtifactAttack,
+            attackerArtifactDefense,
+            attackerTotalLosses,
+            attackerPercent,
+            attackerDamage,
+            targetHex.GetPC().fortSize > FortSizeEnum.NONE);
         Illustrations pcIllustrations = GameObject.FindFirstObjectByType<Illustrations>();
+        List<(string message, Color color)> hudMessages = new()
+        {
+            ($"{attackerName} loses {attackerTotalLosses} ({attackerPercent}%).", Color.red)
+        };
+        Action onPopupClose = () => ShowHudMessagesAfterPopup(targetHex, hudActor, hudMessages);
         PopupManager.Show(
             pcTitle,
-            pcIllustrations.GetIllustrationByName(attackerLeader.characterName),
+            pcIllustrations.GetIllustrationByName(attackerName),
             pcIllustrations.GetIllustrationByName(defenderLeader.characterName),
             pcText,
-            false);
+            true,
+            onClose: onPopupClose);
 
         // Apply casualties to attacker
         ReceiveCasualties(attackerCasualtyPercent, defenderLeader, !anyAttackerCasualties);
@@ -637,9 +856,14 @@ public class Army
 
         // Check if attacker army was eliminated
         if (!killed && GetSize(true) < 1) Killed(defenderLeader);
+
+        string outcome = attackerDamage > 0 ? $"{attackerName} seizes the walls." : $"{targetHex.GetPC().pcName} holds fast.";
+        hudMessages.Add((outcome, attackerDamage > 0 ? Color.green : Color.yellow));
+
+        int attackerXpDelta = xp - attackerXpBefore;
+        hudMessages.Add(($"XP gained: {attackerName} {FormatDelta(attackerXpDelta)}", Color.cyan));
     }
 
-    // Helper method to apply casualties to all defending armies in a hex
     public void ApplyCasualtiesToDefenders(Hex targetHex, float casualtyPercent, AlignmentEnum attackerAlignment, bool forceOneUnitCasualty, Leader attacker)
     {
         // If we need to force one unit casualty, find the primary defender
@@ -824,6 +1048,33 @@ public class Army
             if (wsCasualties > 0) casualties.Append($"<sprite name=\"ws\"/>[{wsCasualties}]");
             MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"{commander.characterName} army casualties: {casualties}", Color.red);
         }
+    }
+
+    private void ShowHudMessagesAfterPopup(Hex hex, Character actor, List<(string message, Color color)> messages)
+    {
+        if (hex == null || actor == null || messages == null) return;
+        foreach (var entry in messages)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, actor, entry.message, entry.color);
+        }
+    }
+
+    private bool AreDefendersStillAlive(Hex targetHex, AlignmentEnum attackerAlignment, Leader attackerLeader)
+    {
+        return targetHex.armies.Any(army =>
+        {
+            if (army == null || army.killed || army.GetSize(true) < 1 || army.commander == null) return false;
+            bool isOwnArmy = army.commander.GetOwner() == attackerLeader;
+            if (isOwnArmy) return false;
+            return army.GetAlignment() != attackerAlignment || attackerAlignment == AlignmentEnum.neutral || army.GetAlignment() == AlignmentEnum.neutral;
+        });
+    }
+
+    private string FormatDelta(int delta)
+    {
+        if (delta > 0) return $"+{delta}";
+        if (delta < 0) return delta.ToString();
+        return "0";
     }
 
     public Character GetCommander()

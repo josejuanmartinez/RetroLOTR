@@ -89,6 +89,7 @@ public class Game : MonoBehaviour
         VictoryPoints.RecalculateAndAssign(this);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         currentlyPlaying.NewTurn();
+        SelectFirstPlayerCharacter();
 
         soundPlayer.PlayOneShot(FindFirstObjectByType<Sounds>().GetSoundByName($"{currentlyPlaying.alignment}_intro"));
         PopupManager.Show(
@@ -203,10 +204,16 @@ public class Game : MonoBehaviour
         }
         else
         {
+            HideSelectedCharacterIcon();
             MessageDisplay.ShowPersistent($"{currentlyPlaying.characterName} is playing", Color.yellow);
         }
         board.RefreshRelevantHexes();
         currentlyPlaying.NewTurn();
+
+        if (currentlyPlaying == player)
+        {
+            SelectFirstPlayerCharacter();
+        }
     }
 
     private void NewTurn()
@@ -221,6 +228,29 @@ public class Game : MonoBehaviour
         MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         storesManager.AdvanceTurn();
+    }
+
+    private void HideSelectedCharacterIcon()
+    {
+        SelectedCharacterIcon selected = FindFirstObjectByType<SelectedCharacterIcon>();
+        selected?.Hide();
+    }
+
+    private void SelectFirstPlayerCharacter()
+    {
+        if (player == null || board == null) return;
+
+        Character firstAlive = player.controlledCharacters
+            .FirstOrDefault(c => c != null && !c.killed);
+
+        if (firstAlive != null)
+        {
+            board.SelectCharacter(firstAlive, true, 1.0f, 0.0f);
+        }
+        else
+        {
+            HideSelectedCharacterIcon();
+        }
     }
 
     // Helper method to find the next alive leader in turn order

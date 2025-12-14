@@ -26,6 +26,8 @@ public class TrainArmy : CommanderAction
         condition = (character) =>
         {
             if (character == null || character.GetArmy() == null) return false;
+            PC pc = character.hex != null ? character.hex.GetPC() : null;
+            if (pc != null && pc.owner != null && pc.owner.GetAlignment() != character.GetAlignment()) return false;
             if (originalCondition != null && !originalCondition(character)) return false;
             return true;
         };

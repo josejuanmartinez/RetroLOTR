@@ -69,6 +69,8 @@ public class CharacterAction : SearcherByName
     public Func<Character, bool> effect;
     // Optional async effect for actions that require awaiting UI/input
     public Func<Character, Task<bool>> asyncEffect;
+
+    public bool LastExecutionSucceeded { get; private set; }
     
     private Game game;
     private StoresManager cachedStoresManager;
@@ -237,8 +239,10 @@ public class CharacterAction : SearcherByName
     public async Task Execute()
     {
         bool isAI = !character.isPlayerControlled;
+        LastExecutionSucceeded = false;
         try
         {
+            Hex actionHex = character.hex;
             ActionCostSnapshot costSnapshot = CalculateCostSnapshot();
             bool providedByArtifact = IsProvidedByArtifact();
             // All characters
@@ -266,14 +270,14 @@ public class CharacterAction : SearcherByName
                 return;
             }
 
+            NonPlayableLeader.RecordActionCompleted(character, actionName, actionHex);
             string message = actionName;            
-            string rumourMessage = $"{character.characterName} succeeds on {message}";
-            // Debug.Log(rumourMessage);
+            string rumourMessage = $"succeeds on {message}";
             bool isDoubledByPlayer = character.doubledBy.Contains(game.player);
             if (isAI)
             {
                 // Always record AI actions privately; if doubled by the player, also promote to public immediately
-                Rumour rumour = new Rumour() { leader = character.GetOwner(), rumour = rumourMessage, v2 = character.hex.v2 };
+                Rumour rumour = new Rumour() { leader = character.GetOwner(), characterName = character.characterName, rumour = rumourMessage, v2 = character.hex.v2 };
                 RumoursManager.AddRumour(rumour, false);
                 if (isDoubledByPlayer)
                 {
@@ -376,6 +380,7 @@ public class CharacterAction : SearcherByName
             }
 
             RefreshVictoryPoints();
+            LastExecutionSucceeded = true;
             return;
         }
         catch (Exception e)

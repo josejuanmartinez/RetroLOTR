@@ -44,7 +44,11 @@ public static class AITurnController
             await context.PassAsync();
         }
 
-        AIActionLogger.Log(context.BuildLogEntry());
+        bool shouldLog = context.LastChosenAction == null || context.LastChosenAction.LastExecutionSucceeded;
+        if (shouldLog)
+        {
+            AIActionLogger.Log(context.BuildLogEntry());
+        }
         await MoveTowardsTargetAsync(context);
 
         actionsManager.Hide();

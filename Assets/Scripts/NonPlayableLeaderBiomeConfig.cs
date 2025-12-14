@@ -42,7 +42,7 @@ public class NonPlayableLeaderBiomeConfig: LeaderBiomeConfig
     public int emmissarysToJoin = 0;
     public int magesToJoin = 0;
 
-    public List<string> actionsAtCapital;
+    public List<string> actionsAtCapital = new();
 
-    public List<string> actionsAnywhere;
+    public List<string> actionsAnywhere = new();
 }

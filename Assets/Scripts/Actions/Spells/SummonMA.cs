@@ -9,7 +9,8 @@ public class SummonMA: DarkSpell
         var originalAsyncEffect = asyncEffect;
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
-            Character commander = c.hex.characters.Find(x => x.owner == c.owner && x.GetCommander() > 0);
+            Character commander = c.hex.characters.Find(x => x != null && x.owner == c.owner && x.GetCommander() > 0);
+            if (commander == null) return false;
             int troops = Math.Max(1, ApplySpellEffectMultiplier(c, 1));
             if (!commander.IsArmyCommander())
             {
@@ -25,8 +26,9 @@ public class SummonMA: DarkSpell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            // Can summon in owned PC if the spell is available (handled in base Spell)
-            return c.hex.GetPC() != null && c.hex.GetPC().owner == c.GetOwner();
+            if (c == null || c.hex == null) return false;
+            Character commander = c.hex.characters.Find(x => x != null && x.owner == c.owner && x.GetCommander() > 0);
+            return commander != null;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
@@ -35,4 +37,3 @@ public class SummonMA: DarkSpell
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
-
