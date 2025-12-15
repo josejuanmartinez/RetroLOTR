@@ -42,6 +42,7 @@ public class NameCommander : CommanderAction
             newCharacter.hasActionedThisTurn = true; // prevent double actions on spawn turn
 
             MessageDisplayNoUI.ShowMessage(character.hex, character, $"{newName} joins as a commander.", Color.green);
+            CharacterIcons.RefreshForHumanPlayerOf(owner);
             return true;
         };
 

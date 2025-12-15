@@ -37,6 +37,7 @@ public class Game : MonoBehaviour
     [Header("References")]
     public StoresManager storesManager;
     public Board board;
+    public CharacterIcons icons;
 
 
     [Header("Starting info")]
@@ -93,6 +94,7 @@ public class Game : MonoBehaviour
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         NewTurnStarted?.Invoke(turn);
         currentlyPlaying.NewTurn();
+        BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
 
         soundPlayer.PlayOneShot(FindFirstObjectByType<Sounds>().GetSoundByName($"{currentlyPlaying.alignment}_intro"));
@@ -240,6 +242,12 @@ public class Game : MonoBehaviour
     {
         SelectedCharacterIcon selected = FindFirstObjectByType<SelectedCharacterIcon>();
         selected?.Hide();
+    }
+
+    private void BuildPlayerCharacterIcons()
+    {
+        if (player == null) return;
+        icons?.BuildIconsForPlayer(player);
     }
 
     private void SelectFirstPlayerCharacter()

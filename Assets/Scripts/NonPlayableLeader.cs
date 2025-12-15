@@ -411,6 +411,7 @@ public class NonPlayableLeader : Leader
 
             MessageDisplayNoUI.ShowMessage(hex, this, $"{name} has joined {joinedTo.characterName}", Color.green);
             ShowJoinPopup(joinedTo);
+            CharacterIcons.RefreshForHumanPlayerOf(joinedTo);
             return true;    
         } catch(Exception e)
         {

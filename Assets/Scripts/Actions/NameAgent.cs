@@ -42,6 +42,7 @@ public class NameAgent : AgentAction
             newCharacter.hasActionedThisTurn = true;
 
             MessageDisplayNoUI.ShowMessage(character.hex, character, $"{newName} joins as an agent.", Color.green);
+            CharacterIcons.RefreshForHumanPlayerOf(owner);
             return true;
         };
 

@@ -300,6 +300,8 @@ public class Character : MonoBehaviour
         hex.RedrawCharacters();
         RefreshSelectedCharacterIconIfSelected();
         if(redrawArmies) hex.RedrawArmies();
+        Leader owner = GetOwner();
+        if (owner != null) CharacterIcons.RefreshForHumanPlayerOf(owner);
     }
 
     public void RefreshSelectedCharacterIconIfSelected()
@@ -320,6 +322,7 @@ public class Character : MonoBehaviour
         health -= damage;
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} wounded by {damage}", Color.red);
         RefreshSelectedCharacterIconIfSelected();
+        CharacterIcons.RefreshForHumanPlayerCharacter(this);
         if (health < 1) Killed(woundedBy);
     }
 
@@ -400,6 +403,7 @@ public class Character : MonoBehaviour
         this.health = Mathf.Min(100, this.health + health);
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} heals by {health}", Color.green);
         RefreshSelectedCharacterIconIfSelected();
+        CharacterIcons.RefreshForHumanPlayerCharacter(this);
     }
 
     public List<Artifact> GetTransferableArtifacts()

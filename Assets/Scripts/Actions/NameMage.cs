@@ -42,6 +42,7 @@ public class NameMage : MageAction
             newCharacter.hasActionedThisTurn = true;
 
             MessageDisplayNoUI.ShowMessage(character.hex, character, $"{newName} joins as a mage.", Color.green);
+            CharacterIcons.RefreshForHumanPlayerOf(owner);
             return true;
         };
 
