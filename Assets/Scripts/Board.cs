@@ -255,6 +255,15 @@ public class Board : MonoBehaviour
         hexesWithCharacters = GetHexes().FindAll(x => x.characters.Count > 0);
     }
 
+    public void ClearAllScouting()
+    {
+        if (hexes == null) return;
+        foreach (var hex in hexes.Values)
+        {
+            hex?.ClearScouting();
+        }
+    }
+
     public void SelectCharacter(Character character, bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
     {
         SelectHex(character.hex, lookAt, duration, delay, character);

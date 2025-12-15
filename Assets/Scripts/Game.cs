@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -36,11 +37,13 @@ public class Game : MonoBehaviour
     [Header("References")]
     public StoresManager storesManager;
     public Board board;
-    
+
 
     [Header("Starting info")]
     public int turn = 0;
     public bool started = false;
+
+    public event Action<int> NewTurnStarted;
 
     private bool skipNextTurnPrompt = false;
     void Awake()
@@ -88,6 +91,7 @@ public class Game : MonoBehaviour
         AssignAIandHumans();
         VictoryPoints.RecalculateAndAssign(this);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        NewTurnStarted?.Invoke(turn);
         currentlyPlaying.NewTurn();
         SelectFirstPlayerCharacter();
 
@@ -225,7 +229,9 @@ public class Game : MonoBehaviour
             EndGame(false);
             return;
         }
+        board?.ClearAllScouting();
         MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
+        NewTurnStarted?.Invoke(turn);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         storesManager.AdvanceTurn();
     }

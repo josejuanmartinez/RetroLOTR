@@ -195,7 +195,7 @@ public class Character : MonoBehaviour
         return owner;
     }
 
-    public string GetHoverText(bool withAlignment, bool withCharInfo, bool withLevels, bool withArmy, bool withColor)
+    public string GetHoverText(bool withAlignment, bool withCharInfo, bool withLevels, bool withArmy, bool withColor, bool withHealth = true)
     {
         List<string> result = new() { };
         if (withColor) result.Add($"<color={colors.GetHexColorByName(alignment.ToString())}>");
@@ -209,9 +209,16 @@ public class Character : MonoBehaviour
             if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? "[" + GetMage().ToString() + "]" : "")}");
         }
 
-        if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText());
+        if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText(withHealth));
+        if (withHealth) result.Add(GetHealthHoverText());
         if (withColor) result.Add("</color>");
         return string.Join("", result);
+    }
+
+    public string GetHealthHoverText()
+    {
+        string color = health < 25 ? "#ff4d4d" : health < 50 ? "#ffb347" : health < 75 ? "#8fd14f" : "#00c853";
+        return $" HP[<color={color}>{Mathf.Max(0, health)}</color>]";
     }
 
     public MovementType GetMovementType()

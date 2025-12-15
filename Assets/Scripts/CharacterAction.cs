@@ -401,6 +401,20 @@ public class CharacterAction : SearcherByName
         await Execute();
     }
 
+    protected bool IsCharacterKnownAtHex(Character actor, Character target)
+    {
+        if (actor == null || target == null || actor.hex == null) return false;
+        Leader actorOwner = actor.GetOwner();
+        if (actorOwner == null) return false;
+
+        if (target.GetOwner() == actorOwner) return true;
+
+        AlignmentEnum actorAlignment = actor.GetAlignment();
+        if (actorAlignment != AlignmentEnum.neutral && target.GetAlignment() == actorAlignment) return true;
+
+        return actor.hex.IsScoutedBy(actorOwner);
+    }
+
     protected Character FindEnemyCharacterTargetAtHex(Character c)
     {
         Character target = FindEnemyNonNeutralCharactersAtHexNoLeader(c);
@@ -416,7 +430,8 @@ public class CharacterAction : SearcherByName
     {
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.Find(
-            x => x.GetOwner() != c.GetOwner() &&
+            x => IsCharacterKnownAtHex(c, x) &&
+            x.GetOwner() != c.GetOwner() &&
             x.GetAlignment() != c.GetAlignment() &&
             x.GetAlignment() != AlignmentEnum.neutral &&
             x is not PlayableLeader
@@ -426,7 +441,8 @@ public class CharacterAction : SearcherByName
     {
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.Find(
-            x => x.GetOwner() != c.GetOwner() &&
+            x => IsCharacterKnownAtHex(c, x) &&
+            x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment()) && (x is not PlayableLeader)
         );
     }
@@ -435,7 +451,8 @@ public class CharacterAction : SearcherByName
     {
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.Find(
-            x => x.GetOwner() != c.GetOwner() &&
+            x => IsCharacterKnownAtHex(c, x) &&
+            x.GetOwner() != c.GetOwner() &&
             x.GetAlignment() != c.GetAlignment() &&
             x.GetAlignment() != AlignmentEnum.neutral
         );
@@ -445,7 +462,8 @@ public class CharacterAction : SearcherByName
     {
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.Find(
-            x => x.GetOwner() != c.GetOwner() &&
+            x => IsCharacterKnownAtHex(c, x) &&
+            x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
         );
     }
@@ -453,7 +471,8 @@ public class CharacterAction : SearcherByName
     {
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.FindAll(
-            x => x.GetOwner() != c.GetOwner() &&
+            x => IsCharacterKnownAtHex(c, x) &&
+            x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
         );
     }
@@ -461,7 +480,8 @@ public class CharacterAction : SearcherByName
     {
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.FindAll(
-            x => !x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
+            x => IsCharacterKnownAtHex(c, x) &&
+            !x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
         );
     }
@@ -469,7 +489,8 @@ public class CharacterAction : SearcherByName
     protected Army FindEnemyArmyNotNeutralAtHex(Character c)
     {
         Character commander = c.hex.characters.Find(
-            x => x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
+            x => IsCharacterKnownAtHex(c, x) &&
+            x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() != AlignmentEnum.neutral && x.GetAlignment() != c.GetAlignment())
         );
         if (commander != null && commander.GetArmy() != null) return commander.GetArmy();
@@ -478,7 +499,8 @@ public class CharacterAction : SearcherByName
     protected Army FindEnemyArmyAtHex(Character c)
     {
         Character commander = c.hex.characters.Find(
-            x => x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
+            x => IsCharacterKnownAtHex(c, x) &&
+            x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() != c.GetAlignment())
         );
         if (commander != null && commander.GetArmy() != null) return commander.GetArmy();
@@ -488,7 +510,8 @@ public class CharacterAction : SearcherByName
     protected Army FindFriendlyArmyAtHex(Character c)
     {
         Character commander = c.hex.characters.Find(
-            x => x.IsArmyCommander() && (x.GetOwner() == c.GetOwner() || (x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral))
+            x => IsCharacterKnownAtHex(c, x) &&
+            x.IsArmyCommander() && (x.GetOwner() == c.GetOwner() || (x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral))
         );
         if (commander != null && commander.GetArmy() != null) return commander.GetArmy();
         return null;

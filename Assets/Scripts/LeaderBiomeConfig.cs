@@ -38,4 +38,7 @@ public class LeaderBiomeConfig: BiomeConfig
     public string wsDescription = "War ships";
     public string caDescription = "Catapults";
 
+    public List<string> newCharacters = new();
+    public List<string> newPCs = new();
+
 }

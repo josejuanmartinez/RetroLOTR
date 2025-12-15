@@ -20,6 +20,14 @@ public class Leader : Character
     public int mithrilAmount = 0;
     public int goldAmount = 0;
 
+    [Header("Creation Slots")]
+    [SerializeField] private int characterSlotsAvailable = 0;
+    [SerializeField] private int pcSlotsAvailable = 0;
+    [SerializeField] private int createdCharacters = 0;
+    [SerializeField] private int createdPcs = 0;
+    [SerializeField] private int nextCharacterSlotTurn = 1;
+    [SerializeField] private int nextPcSlotTurn = 1;
+
     private readonly HashSet<string> completedActions = new(StringComparer.OrdinalIgnoreCase);
 
     private Game game;
@@ -35,6 +43,75 @@ public class Leader : Character
     public LeaderBiomeConfig GetBiome()
     {
         return leaderBiome;
+    }
+
+    private void EvaluateCreationSlots()
+    {
+        if (game == null) game = FindFirstObjectByType<Game>();
+        int currentTurn = game != null ? game.turn : 0;
+
+        bool characterSlotAdded = false;
+        bool pcSlotAdded = false;
+
+        if (createdCharacters < 5 && currentTurn >= nextCharacterSlotTurn)
+        {
+            characterSlotsAvailable = Math.Min(characterSlotsAvailable + 1, 5 - createdCharacters);
+            nextCharacterSlotTurn += 10;
+            characterSlotAdded = true;
+        }
+
+        if (createdPcs < 5 && currentTurn >= nextPcSlotTurn)
+        {
+            pcSlotsAvailable = Math.Min(pcSlotsAvailable + 1, 5 - createdPcs);
+            nextPcSlotTurn += 10;
+            pcSlotAdded = true;
+        }
+
+        if (game != null && game.IsPlayerCurrentlyPlaying() && (characterSlotAdded || pcSlotAdded))
+        {
+            string message = characterSlotAdded && pcSlotAdded
+                ? "A new character slot and a new pc slot are available."
+                : characterSlotAdded
+                    ? "A new character slot is available."
+                    : "A new pc slot is available.";
+            _ = ConfirmationDialog.AskOk(message);
+        }
+    }
+
+    public bool HasCharacterSlot() => characterSlotsAvailable > 0 && createdCharacters < 5;
+    public bool HasPcSlot() => pcSlotsAvailable > 0 && createdPcs < 5;
+
+    public bool TryConsumeCharacterSlot()
+    {
+        if (!HasCharacterSlot()) return false;
+        characterSlotsAvailable--;
+        createdCharacters++;
+        return true;
+    }
+
+    public bool TryConsumePcSlot()
+    {
+        if (!HasPcSlot()) return false;
+        pcSlotsAvailable--;
+        createdPcs++;
+        return true;
+    }
+
+    public int GetCreatedCharactersCount() => createdCharacters;
+    public int GetCreatedPcsCount() => createdPcs;
+
+    public string GetNextNewCharacterName()
+    {
+        if (leaderBiome?.newCharacters == null) return null;
+        if (createdCharacters >= leaderBiome.newCharacters.Count) return null;
+        return leaderBiome.newCharacters[createdCharacters];
+    }
+
+    public string GetNextNewPcName()
+    {
+        if (leaderBiome?.newPCs == null) return null;
+        if (createdPcs >= leaderBiome.newPCs.Count) return null;
+        return leaderBiome.newPCs[createdPcs];
     }
 
     public int GetGoldPerTurn()
@@ -88,6 +165,8 @@ public class Leader : Character
         if (!killed && goldAmount < -10) Killed(this);
 
         if (killed) return;
+
+        EvaluateCreationSlots();
 
         leatherAmount += GetLeatherPerTurn();
         mountsAmount += GetMountsPerTurn();

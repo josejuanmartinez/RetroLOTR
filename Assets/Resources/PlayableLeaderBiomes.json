@@ -108,7 +108,7 @@
       ],
       "description": "<b>Gandalf</b><sprite name=\"commander\">[1]<sprite name=\"agent\">[1]<sprite name=\"emmissary\">[1]<sprite name=\"mage\"><mark=#00ff00>[3]</mark><br><br><b>Starting Population Centers:</b><br>- Hobbiton <sprite name=\"pc\"/>[2]<sprite name=\"fort\"/><mark=#ff0000>[0]</mark><br><br><b>Starting Characters:</b><br>- Frodo <sprite name=\"commander\"/>[1]<br>- Sam <sprite name=\"agent\"/>[1]<br>- Pippin <sprite name=\"emmissary\"/>[1]<br>- Merry <sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- <mark=#ff0000>No</mark> armies<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#ff0000>Hard</mark><br><b>Starting power</b>: <mark=#ff0000>Small</mark><br><b>Recruitable allies</b>: <mark=#00ff00>Plenty</mark><br><b>Recruitable armies</b>: <mark=#ff0000>Scarce</mark><br><br><b>Gameplay style</b>:<br>- Characters and artifacts search",
       "joinedTitle": "The unexpected fate of the Ring",
-      "joinedText": "Frodo… there’s something I never told you.<br><br>I always said I kept the ring with me. Every breath.<br><br>But there was one night when I took it off—just for a heartbeat. I needed silence. I meant to pick it up again immediately.<br><br>But something happened.<br><br>I must have closed my eyes. Then suddenly it was morning, and the ring was gone.<br>No sound. No trail. Just absence.<br><br>I searched. Days, maybe weeks. Time felt wrong. The harder I looked, the more it felt like the ring wasn’t lost — it had moved on.<br><br>And I’m sorry, Frodo… truly. I never meant for the burden to fall on you. But it has.<br><br>Gandalf will guide you now, my boy… where I could not.",
+      "joinedText": "Frodo\u00e2\u20ac\u00a6 there\u00e2\u20ac\u2122s something I never told you.<br><br>I always said I kept the ring with me. Every breath.<br><br>But there was one night when I took it off\u00e2\u20ac\u201djust for a heartbeat. I needed silence. I meant to pick it up again immediately.<br><br>But something happened.<br><br>I must have closed my eyes. Then suddenly it was morning, and the ring was gone.<br>No sound. No trail. Just absence.<br><br>I searched. Days, maybe weeks. Time felt wrong. The harder I looked, the more it felt like the ring wasn\u00e2\u20ac\u2122t lost \u00e2\u20ac\u201d it had moved on.<br><br>And I\u00e2\u20ac\u2122m sorry, Frodo\u00e2\u20ac\u00a6 truly. I never meant for the burden to fall on you. But it has.<br><br>Gandalf will guide you now, my boy\u00e2\u20ac\u00a6 where I could not.",
       "introActor1": "Bilbo",
       "introActor2": "Frodo",
       "terrain": 3,
@@ -179,6 +179,20 @@
           "race": 3,
           "artifacts": []
         }
+      ],
+      "newCharacters": [
+        "Halbarad",
+        "Erestor",
+        "Galdor",
+        "Harry Goatleaf",
+        "Barliman Butterbur"
+      ],
+      "newPCs": [
+        "Amon Sûl",
+        "Michel Delving",
+        "Fornost Erain",
+        "Annúminas",
+        "Elostirion"
       ]
     },
     {
@@ -287,9 +301,9 @@
           "transferable": false
         }
       ],
-      "description": "<b>Saruman</b><sprite name=\"commander\">[1]<sprite name=\"emmissary\"><mark=#ffff00>[2]</mark><sprite name=\"mage\"><mark=#00ff00>[4]</mark><br><br><b>Starting Population Centers:</b><br>- Orthanc <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/><mark=#ffff00>[1]</mark><br><br><b>Starting Characters:</b><br>- Grima<sprite name=\"agent\"/><mark=#ffff00>[2]</mark><sprite name=\"emmissary\"/>[1]<br>- Bill Ferny<sprite name=\"commander\"/>[1]<sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- Uglúk<sprite name=\"commander\">[2], leading a <mark=#ffff00>small</mark> <sprite name=\"neutral\"/>army<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#ffff00>Average</mark><br><b>Starting Power</b>: <mark=#ffff00>Average</mark><br><b>Recruitable allies</b>: <mark=#ff0000>Scarce</mark><br><b>Recruitable armies</b>: <mark=#ffff00>Average</mark><br><br><b>Gameplay style</b>:<br>- Characters and conquest",
+      "description": "<b>Saruman</b><sprite name=\"commander\">[1]<sprite name=\"emmissary\"><mark=#ffff00>[2]</mark><sprite name=\"mage\"><mark=#00ff00>[4]</mark><br><br><b>Starting Population Centers:</b><br>- Orthanc <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/><mark=#ffff00>[1]</mark><br><br><b>Starting Characters:</b><br>- Grima<sprite name=\"agent\"/><mark=#ffff00>[2]</mark><sprite name=\"emmissary\"/>[1]<br>- Bill Ferny<sprite name=\"commander\"/>[1]<sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- Ugl\u00c3\u00bak<sprite name=\"commander\">[2], leading a <mark=#ffff00>small</mark> <sprite name=\"neutral\"/>army<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#ffff00>Average</mark><br><b>Starting Power</b>: <mark=#ffff00>Average</mark><br><b>Recruitable allies</b>: <mark=#ff0000>Scarce</mark><br><b>Recruitable armies</b>: <mark=#ffff00>Average</mark><br><br><b>Gameplay style</b>:<br>- Characters and conquest",
       "joinedTitle": "Saruman not the white, but of Many Colours!",
-      "joinedText": "Gríma… listen carefully.<br><br>For years, I have searched for the One Ring.<br><br>Others believe it vanished into myth — that time swallowed it. But I felt its echo.<br><br>There was a moment — in the deep archives of the ancient world — when I sensed its presence.<br><br>Like a whisper slipping behind my ear.<br><br>I followed it through ruins, storms, sleepless nights. And then… nothing.<br><br>I should have found it. I should have been the one to wield it.<br><br>They call me Saruman the White — but no, Gríma.<br><br>I pursue much more - power, dominion. I am Saruman, of Many Colours.",
+      "joinedText": "Gr\u00c3\u00adma\u00e2\u20ac\u00a6 listen carefully.<br><br>For years, I have searched for the One Ring.<br><br>Others believe it vanished into myth \u00e2\u20ac\u201d that time swallowed it. But I felt its echo.<br><br>There was a moment \u00e2\u20ac\u201d in the deep archives of the ancient world \u00e2\u20ac\u201d when I sensed its presence.<br><br>Like a whisper slipping behind my ear.<br><br>I followed it through ruins, storms, sleepless nights. And then\u00e2\u20ac\u00a6 nothing.<br><br>I should have found it. I should have been the one to wield it.<br><br>They call me Saruman the White \u00e2\u20ac\u201d but no, Gr\u00c3\u00adma.<br><br>I pursue much more - power, dominion. I am Saruman, of Many Colours.",
       "introActor1": "Saruman",
       "introActor2": "Grima",
       "terrain": 1,
@@ -305,7 +319,7 @@
       "startingWarships": 0,
       "startingCharacters": [
         {
-          "characterName": "Uglúk",
+          "characterName": "Ugl\u00c3\u00bak",
           "alignment": 2,
           "commander": 2,
           "agent": 0,
@@ -367,6 +381,20 @@
             }
           ]
         }
+      ],
+      "newCharacters": [
+        "Bugrug",
+        "Enion",
+        "Aonghas",
+        "Broggha",
+        "Mauhir"
+      ],
+      "newPCs": [
+        "Fangorn's camp",
+        "Treforn",
+        "Arailt",
+        "Angren",
+        "Enedhir"
       ]
     },
     {
@@ -462,7 +490,7 @@
       ],
       "description": "<b>Sauron</b><sprite name=\"commander\"><mark=#00ff00>[3]</mark><sprite name=\"mage\"><mark=#00ff00>[3]</mark><br><br><b>Starting Population Centers:</b><br>- Barad-dur <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/><mark=#ffff00>[1]</mark><br><br><b>Starting Characters:</b><br>- Mouth of Sauron <sprite name=\"emmissary\"/><mark=#00ff00>[3]</mark><br>- Gollum <sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- Gothmog<sprite name=\"commander\">[2], leading an <mark=#00ff00>average</mark> <sprite name=\"darkServants\"/>army<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#00ff00>Easy</mark></b><br><b>Starting Power</b>: <mark=#ffff00>Average</mark><br><b>Recruitable characters</b>: <mark=#00ff00>Good</mark><br><b>Recruitable armies</b>: <mark=#00ff00>Plenty</mark><br><br><b>Gameplay style</b>:<br>- Characters, armies, artifact search",
       "joinedTitle": "Shire. Baggins.",
-      "joinedText": "Listen well, creature.<br><br>You think your trembling bought you mercy.<br><br>It did not. I kept you because you knew something.<br><br>A place. A name. A direction that others have failed to see.<br><br>A land of small folk and smaller courage.<br><br>A place so insignificant no map dares to mark it.<br><br>Now I know enough. You may scurry back to your holes and rivers. My servants are already on the road.<br><br>The Ring is there — I taste its shadow.<br><br>You are still bound to it, wretch. You will follow it, and I will find you.<br><br>Any creature that finds it will succumb to the Lord of the Rings.",
+      "joinedText": "Listen well, creature.<br><br>You think your trembling bought you mercy.<br><br>It did not. I kept you because you knew something.<br><br>A place. A name. A direction that others have failed to see.<br><br>A land of small folk and smaller courage.<br><br>A place so insignificant no map dares to mark it.<br><br>Now I know enough. You may scurry back to your holes and rivers. My servants are already on the road.<br><br>The Ring is there \u00e2\u20ac\u201d I taste its shadow.<br><br>You are still bound to it, wretch. You will follow it, and I will find you.<br><br>Any creature that finds it will succumb to the Lord of the Rings.",
       "introActor1": "Sauron",
       "introActor2": "Gollum",
       "terrain": 10,
@@ -556,6 +584,20 @@
             }
           ]
         }
+      ],
+      "newCharacters": [
+        "Angulion",
+        "Maben",
+        "Lomelinde",
+        "Celedhring",
+        "Leardinoth"
+      ],
+      "newPCs": [
+        "Carn Dûm",
+        "Mt. Gram",
+        "Thuringwathost",
+        "Olbamarl",
+        "Barad-wath"
       ]
     }
   ]

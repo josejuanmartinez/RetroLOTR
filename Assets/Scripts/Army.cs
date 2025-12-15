@@ -105,7 +105,7 @@ public class Army
         return result;
     }
 
-    public string GetHoverText()
+    public string GetHoverText(bool withHealth = true)
     {
         LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
         List<string> result = new() { };
@@ -120,8 +120,9 @@ public class Army
         if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}] {biomeConfig.wsDescription}");
 
         string xpText = GetXpHoverText();
+        string healthText = withHealth && commander != null ? commander.GetHealthHoverText() : "";
 
-        return $" leading {string.Join(',', result)}{xpText}";
+        return $" leading {string.Join(',', result)}{xpText}{healthText}";
     }
 
     private string GetXpHoverText()
@@ -370,22 +371,20 @@ public class Army
         // If no enemy armies were found, check if there's a PC to attack
         if (!foundDefenders && targetHex.GetPC() != null){
             Leader defenderLeader = targetHex.GetPC().owner;
-            if(defenderLeader != null && defenderLeader.killed)
-            {                
-                AlignmentEnum pcAlignment = defenderLeader.GetAlignment();
+            AlignmentEnum pcAlignment = defenderLeader != null ? defenderLeader.GetAlignment() : AlignmentEnum.neutral;
 
-                // Don't attack your own PC (check both alignment and owner)
-                bool isOwnPC = commander && !commander.killed ? defenderLeader == commander.GetOwner() : false;
+            // Don't attack your own PC (check both alignment and owner)
+            bool isOwnPC = commander && !commander.killed ? defenderLeader == commander.GetOwner() : false;
 
-                // Attack PC if it has different alignment OR if attacker is neutral (attacks all)
-                // OR if PC is neutral (everyone attacks neutrals)
-                // BUT never attack your own PC
-                if (!isOwnPC && (pcAlignment != attackerAlignment ||
-                    attackerAlignment == AlignmentEnum.neutral ||
-                    pcAlignment == AlignmentEnum.neutral))
-                {
-                    AttackPopulationCenter(targetHex, attackerStrength, attackerDefence, attackerLeader);
-                }
+            // Attack PC if it has different alignment OR if attacker is neutral (attacks all)
+            // OR if PC is neutral (everyone attacks neutrals)
+            // BUT never attack your own PC
+            if (!isOwnPC && (defenderLeader == null || defenderLeader.killed ||
+                pcAlignment != attackerAlignment ||
+                attackerAlignment == AlignmentEnum.neutral ||
+                pcAlignment == AlignmentEnum.neutral))
+            {
+                AttackPopulationCenter(targetHex, attackerStrength, attackerDefence, attackerLeader);
             }
         }
 
@@ -767,12 +766,24 @@ public class Army
         if(targetHex.GetPC() == null) return;
         // No defending army, only a PC
         Leader defenderLeader = targetHex.GetPC().owner;
-        
-        if(defenderLeader == null || defenderLeader.killed || attackerLeader == null || attackerLeader.killed) return;
+        bool defenderDeadOrMissing = defenderLeader == null || defenderLeader.killed;
+        if(attackerLeader == null || attackerLeader.killed) return;
         string attackerName = commander != null ? commander.characterName : attackerLeader.characterName;
         int attackerXpBefore = xp;
         Character hudActor = commander;
-        
+
+        // Don't attack your own PC (check both alignment and owner)
+        bool isOwnPC = commander && !commander.killed ? defenderLeader == commander.GetOwner() : false;
+        if (isOwnPC) return;
+
+        // If the defending leader is gone (null or killed), capture immediately
+        if (defenderDeadOrMissing)
+        {
+            targetHex.GetPC().CapturePC(attackerLeader);
+            MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"{targetHex.GetPC().pcName} was captured", Color.green);
+            return;
+        }
+
         AlignmentEnum defenderAlignment = defenderLeader.GetAlignment();
 
         if(defenderAlignment == attackerLeader.GetAlignment()) return;

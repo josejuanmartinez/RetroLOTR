@@ -146,6 +146,11 @@ public class Hex : MonoBehaviour
         return l != null && scoutedBy.Contains(l);
     }
 
+    public bool IsScoutedBy(Leader leader)
+    {
+        return leader != null && scoutedBy.Contains(leader);
+    }
+
     public bool IsFriendlyPC(PlayableLeader overrideLeader = null)
     {
         var l = overrideLeader ? overrideLeader : GetPlayer();
@@ -592,6 +597,13 @@ public class Hex : MonoBehaviour
         RedrawArmies(false);
         RedrawCharacters(false);
         RedrawPC(false);
+        RefreshHoverText();
+    }
+
+    public void ClearScouting()
+    {
+        if (scoutedBy.Count == 0) return;
+        scoutedBy.Clear();
         RefreshHoverText();
     }
 

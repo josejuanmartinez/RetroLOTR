@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class ConfirmationDialog : MonoBehaviour
     [SerializeField] private Button noButton;
     [SerializeField] private TextMeshProUGUI yesButtonText;
     [SerializeField] private TextMeshProUGUI noButtonText;
+    [SerializeField] private Button previousButton;
+    [SerializeField] private Button nextButton;
 
     [Header("Defaults")]
     [TextArea]
@@ -25,6 +28,8 @@ public class ConfirmationDialog : MonoBehaviour
 
     private TaskCompletionSource<bool> pendingRequest;
     private Action pendingOnClose;
+    private readonly List<DialogRequest> queuedRequests = new();
+    private int activeIndex = -1;
 
     private void Awake()
     {
@@ -38,6 +43,8 @@ public class ConfirmationDialog : MonoBehaviour
 
         yesButton.onClick.AddListener(() => Resolve(true));
         noButton.onClick.AddListener(() => Resolve(false));
+        if (previousButton != null) previousButton.onClick.AddListener(ShowPrevious);
+        if (nextButton != null) nextButton.onClick.AddListener(ShowNext);
 
         DontDestroyOnLoad(gameObject);
         HideInstant();
@@ -110,30 +117,21 @@ public class ConfirmationDialog : MonoBehaviour
 
     private Task<bool> Show(string message, string yesString, string noString, bool singleButton = false, Action onClose = null)
     {
-        if (pendingRequest != null && !pendingRequest.Task.IsCompleted)
+        var request = new DialogRequest
         {
-            Debug.LogWarning("Confirmation dialog already running. Previous request cancelled.");
-            pendingRequest.TrySetResult(false);
-            pendingOnClose?.Invoke();
-        }
+            message = message,
+            yesString = yesString,
+            noString = noString,
+            singleButton = singleButton,
+            onClose = onClose,
+            tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously)
+        };
 
-        pendingRequest = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        pendingOnClose = onClose;
+        queuedRequests.Add(request);
+        if (activeIndex < 0) activeIndex = 0;
 
-        content.SetActive(true);
-
-        messageLabel.text = message;
-        yesButtonText.text = yesString;
-        yesButton.gameObject.SetActive(true);
-
-        bool showNo = !singleButton;
-        noButton.gameObject.SetActive(showNo);
-        if (showNo)
-        {
-            noButtonText.text = string.IsNullOrWhiteSpace(noString) ? defaultNoLabel : noString;
-        }
-
-        return pendingRequest.Task;
+        ShowActive();
+        return request.tcs.Task;
     }
 
     private void Resolve(bool answer)
@@ -143,10 +141,82 @@ public class ConfirmationDialog : MonoBehaviour
         pendingOnClose?.Invoke();
         pendingRequest = null;
         pendingOnClose = null;
+
+        if (activeIndex >= 0 && activeIndex < queuedRequests.Count)
+        {
+            queuedRequests.RemoveAt(activeIndex);
+            if (queuedRequests.Count == 0)
+            {
+                activeIndex = -1;
+            }
+            else
+            {
+                activeIndex = Mathf.Clamp(activeIndex, 0, queuedRequests.Count - 1);
+            }
+        }
+
+        ShowActive();
     }
 
     private void HideInstant()
     {
         content.SetActive(false);
+    }
+
+    private void ShowActive()
+    {
+        if (queuedRequests.Count == 0)
+        {
+            HideInstant();
+            return;
+        }
+
+        activeIndex = Mathf.Clamp(activeIndex, 0, queuedRequests.Count - 1);
+        var activeRequest = queuedRequests[activeIndex];
+
+        pendingRequest = activeRequest.tcs;
+        pendingOnClose = activeRequest.onClose;
+
+        content.SetActive(true);
+
+        messageLabel.text = string.IsNullOrWhiteSpace(activeRequest.message) ? fallbackMessage : activeRequest.message;
+        yesButtonText.text = string.IsNullOrWhiteSpace(activeRequest.yesString) ? defaultYesLabel : activeRequest.yesString;
+        yesButton.gameObject.SetActive(true);
+
+        bool showNo = !activeRequest.singleButton;
+        noButton.gameObject.SetActive(showNo);
+        if (showNo)
+        {
+            noButtonText.text = string.IsNullOrWhiteSpace(activeRequest.noString) ? defaultNoLabel : activeRequest.noString;
+        }
+
+        bool canPrev = activeIndex > 0;
+        bool canNext = activeIndex < queuedRequests.Count - 1;
+        if (previousButton != null) previousButton.gameObject.SetActive(canPrev);
+        if (nextButton != null) nextButton.gameObject.SetActive(canNext);
+    }
+
+    private void ShowPrevious()
+    {
+        if (queuedRequests.Count < 2) return;
+        activeIndex = Mathf.Max(0, activeIndex - 1);
+        ShowActive();
+    }
+
+    private void ShowNext()
+    {
+        if (queuedRequests.Count < 2) return;
+        activeIndex = Mathf.Min(queuedRequests.Count - 1, activeIndex + 1);
+        ShowActive();
+    }
+
+    private class DialogRequest
+    {
+        public string message;
+        public string yesString;
+        public string noString;
+        public bool singleButton;
+        public Action onClose;
+        public TaskCompletionSource<bool> tcs;
     }
 }
