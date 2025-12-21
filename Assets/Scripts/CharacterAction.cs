@@ -141,8 +141,8 @@ public class CharacterAction : SearcherByName
         }
         catch (Exception e)
         {
-            // Debug.LogError($"Unable to Initialize CharacterAction {actionName}");
-            // Debug.LogError(e.ToString());
+            Debug.LogError($"Unable to Initialize CharacterAction {actionName}");
+            Debug.LogError(e.ToString());
         }        
     }
 
@@ -385,6 +385,7 @@ public class CharacterAction : SearcherByName
         }
         catch (Exception e)
         {
+            Debug.Log(e);
             if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
 

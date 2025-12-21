@@ -46,7 +46,7 @@
           "spriteString": "bread"
         },
         {
-          "artifactName": "Light of Eärendil",
+          "artifactName": "Light of Earendil",
           "artifactDescription": "Cast Light to reveal the nearby area.",
           "hidden": false,
           "providesSpell": "CastLight",
@@ -549,20 +549,20 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Khamûl",
+      "characterName": "Khamul",
       "alignment": 1,
       "commander": 3,
       "agent": 0,
       "emmissary": 4,
       "mage": 0,
       "race": 7,
-      "hcDescription": "Cataphracts of Rhûn",
+      "hcDescription": "Cataphracts of Rhun",
       "lcDescription": "Easterling Horse-Archers",
       "hiDescription": "Black Serpent Guard",
       "liDescription": "Variag Skirmishers",
       "arDescription": "Rhunic Bowmen",
       "maDescription": "Easterling Halberdiers",
-      "wsDescription": "Sea of Rhûn War-Galleys",
+      "wsDescription": "Sea of Rhun War-Galleys",
       "caDescription": "Rhunic Siege Towers",
       "artifacts": [
         {
@@ -580,7 +580,7 @@
           "spriteString": "hc"
         },
         {
-          "artifactName": "Khamûl's Ring",
+          "artifactName": "Khamul's Ring",
           "artifactDescription": "Grants +1 <sprite name=\"mage\"/>.",
           "hidden": false,
           "providesSpell": "",
@@ -664,7 +664,7 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Akhôrahil",
+      "characterName": "Akhorahil",
       "alignment": 1,
       "commander": 1,
       "agent": 0,
@@ -673,7 +673,7 @@
       "race": 7,
       "hcDescription": "Black Lancers",
       "lcDescription": "Haradrim Raiders",
-      "hiDescription": "Luglûrak Guards",
+      "hiDescription": "Luglurak Guards",
       "liDescription": "Desert Skirmishers",
       "arDescription": "Sorcerers",
       "maDescription": "Umbar Spearmen",
@@ -710,7 +710,7 @@
           "spriteString": "jewel"
         },
         {
-          "artifactName": "Akhôrahil's Ring",
+          "artifactName": "Akhorahil's Ring",
           "artifactDescription": "Scry Artifact to reveal a hidden artifact's location. Grants +1 <sprite name=\"mage\"/>.",
           "hidden": false,
           "providesSpell": "Scry Artifact",
@@ -740,7 +740,7 @@
       ],
       "terrain": 10,
       "feature": 2,
-      "startingCityName": "Luglûrak",
+      "startingCityName": "Luglurak",
       "startingCitySize": 4,
       "startingCityFortSize": 2,
       "pcFeature": "transparent",
@@ -781,7 +781,7 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Jí Indûr",
+      "characterName": "Ji Indur",
       "alignment": 1,
       "commander": 1,
       "agent": 3,
@@ -812,7 +812,7 @@
           "spriteString": "hc"
         },
         {
-          "artifactName": "Mûmak helmet",
+          "artifactName": "Mumak helmet",
           "artifactDescription": "Grants +1 attack.",
           "hidden": false,
           "providesSpell": "",
@@ -855,7 +855,7 @@
         }
       ],
       "terrain": 10,
-      "startingCityName": "Kâl Nargil",
+      "startingCityName": "Kal Nargil",
       "startingCitySize": 3,
       "startingCityFortSize": 3,
       "pcFeature": "transparent",
@@ -896,7 +896,7 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Ôvatha",
+      "characterName": "Ovatha",
       "alignment": 1,
       "commander": 2,
       "agent": 2,
@@ -927,7 +927,7 @@
           "spriteString": "hc"
         },
         {
-          "artifactName": "Ôvatha's Ring",
+          "artifactName": "Ovatha's Ring",
           "artifactDescription": "Return To Capital",
           "hidden": false,
           "providesSpell": "",
@@ -958,7 +958,7 @@
       "terrain": 4,
       "feature": 2,
       "isIsland": true,
-      "startingCityName": "Tol Burûth",
+      "startingCityName": "Tol Buruth",
       "startingCitySize": 1,
       "startingCityFortSize": 4,
       "pcFeature": "transparent",
@@ -970,7 +970,7 @@
       "startingWarships": 0,
       "startingCharacters": [
         {
-          "characterName": "Dîn Ohtar",
+          "characterName": "Din Ohtar",
           "alignment": 2,
           "commander": 1,
           "agent": 0,
@@ -1028,7 +1028,7 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Adûnaphel",
+      "characterName": "Adunaphel",
       "alignment": 1,
       "commander": 1,
       "agent": 0,
@@ -1059,7 +1059,7 @@
           "spriteString": "hc"
         },
         {
-          "artifactName": "Adûnaphel's Ring",
+          "artifactName": "Adunaphel's Ring",
           "artifactDescription": "Grants +1 <sprite name=\"emmissary\"/>.",
           "hidden": false,
           "providesSpell": "",
@@ -1089,7 +1089,7 @@
       ],
       "terrain": 9,
       "feature": 1,
-      "startingCityName": "Lugarlûr",
+      "startingCityName": "Lugarlur",
       "startingCitySize": 4,
       "startingCityFortSize": 3,
       "pcFeature": "",
@@ -1231,7 +1231,7 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Hoarmûrath",
+      "characterName": "Hoarmurath",
       "alignment": 1,
       "commander": 3,
       "agent": 0,
@@ -1262,7 +1262,7 @@
           "spriteString": "hc"
         },
         {
-          "artifactName": "Hoarmûrath's Ring",
+          "artifactName": "Hoarmurath's Ring",
           "artifactDescription": "Ice Storm: halt a chosen enemy army in your hex. Grants +1 <sprite name=\"mage\"/>.",
           "hidden": false,
           "providesSpell": "Ice Storm",
@@ -1457,7 +1457,7 @@
       "hcDescription": "Knights of the North",
       "lcDescription": "Ranger Outriders",
       "hiDescription": "Guardians of Arnor",
-      "liDescription": "Dúnedain Rangers",
+      "liDescription": "Dunedain Rangers",
       "arDescription": "Northern Bowmen",
       "maDescription": "Men of Bree",
       "wsDescription": "Patrol Boats",
@@ -1540,7 +1540,7 @@
         }
       ],
       "artifactsToJoin": [
-        "Andúril",
+        "Anduril",
         "OneRing"
       ],
       "leatherToJoin": 0,
@@ -1800,7 +1800,7 @@
       "startingWarships": 0,
       "startingCharacters": [],
       "artifactsToJoin": [
-        "Light of Eärendil"
+        "Light of Earendil"
       ],
       "artifactsQtyToJoin": 10,
       "leatherToJoin": 0,
@@ -1840,7 +1840,7 @@
       "hcDescription": "Warg-Riders",
       "lcDescription": "Goblin Wolf-Riders",
       "hiDescription": "Cave Trolls",
-      "liDescription": "Khazad-Dûm Orcs",
+      "liDescription": "Khazad-Dum Orcs",
       "arDescription": "Goblin Archers",
       "maDescription": "Goblins",
       "wsDescription": "Darklake Boats",
@@ -1878,7 +1878,7 @@
         }
       ],
       "terrain": 0,
-      "startingCityName": "Khazad-Dûm",
+      "startingCityName": "Khazad-Dum",
       "startingCitySize": 4,
       "startingCityFortSize": 4,
       "pcFeature": "undergroundPassageClosed00",
@@ -2051,7 +2051,7 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Ûvatha",
+      "characterName": "Uvatha",
       "alignment": 2,
       "commander": 2,
       "agent": 0,
@@ -2060,7 +2060,7 @@
       "race": 0,
       "hcDescription": "Camel-riders",
       "lcDescription": "Khandish Horse-Archers",
-      "hiDescription": "Ûvatha’s Desert Guard",
+      "hiDescription": "Uvathas Desert Guard",
       "liDescription": "Steppe Spear-Militias",
       "arDescription": "Easterling Bowmen",
       "maDescription": "Variag Axemen",
@@ -2116,7 +2116,7 @@
       "emmissary": 0,
       "mage": 0,
       "race": 0,
-      "hcDescription": "Mûmak War-Riders",
+      "hcDescription": "Mumak War-Riders",
       "lcDescription": "Haradrim Raiders",
       "hiDescription": "Red Serpent Guard",
       "liDescription": "Desert Spearmen",
@@ -2176,7 +2176,7 @@
       "race": 0,
       "hcDescription": "Umbar Black Lancers",
       "lcDescription": "Corsair Raider-Cavalry",
-      "hiDescription": "Black Númenórean Guard",
+      "hiDescription": "Black Numenorean Guard",
       "liDescription": "Corsair Cutthroats",
       "arDescription": "Umbar Crossbowmen",
       "maDescription": "Harbor Spearmen",
@@ -2428,7 +2428,7 @@
       "wsDescription": "Anduin Patrol Boats",
       "caDescription": "Ranger Sapper Teams",
       "terrain": 5,
-      "startingCityName": "Henneth Annûn",
+      "startingCityName": "Henneth Annun",
       "startingCitySize": 1,
       "startingCityFortSize": 0,
       "pcFeature": "",
@@ -2469,7 +2469,7 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Théoden",
+      "characterName": "Theoden",
       "alignment": 0,
       "commander": 2,
       "agent": 0,
@@ -2541,7 +2541,7 @@
       "startingWarships": 0,
       "startingCharacters": [
         {
-          "characterName": "Éowyn",
+          "characterName": "Eowyn",
           "alignment": 0,
           "commander": 1,
           "agent": 0,
@@ -2551,7 +2551,7 @@
           "artifacts": []
         },
         {
-          "characterName": "Éomer",
+          "characterName": "Eomer",
           "alignment": 0,
           "commander": 3,
           "agent": 0,
@@ -2666,7 +2666,7 @@
       "actionsAnywhere": []
     },
     {
-      "characterName": "Glóin",
+      "characterName": "Gloin",
       "alignment": 0,
       "commander": 2,
       "agent": 0,
@@ -2851,7 +2851,7 @@
       "mage": 0,
       "race": 15,
       "hcDescription": "Bison Riders",
-      "lcDescription": "Drúadan Pathfinders",
+      "lcDescription": "Druadan Pathfinders",
       "hiDescription": "Stoneface Guardians",
       "liDescription": "Wose Hunters",
       "arDescription": "Poison-Dart Throwers",
@@ -2860,7 +2860,7 @@
       "caDescription": "Rolling Log Traps",
       "artifacts": [],
       "terrain": 5,
-      "startingCityName": "Drúadan Forest",
+      "startingCityName": "Druadan Forest",
       "startingCitySize": 1,
       "startingCityFortSize": 0,
       "pcFeature": "standingStones",
@@ -3091,7 +3091,7 @@
       "startingWarships": 0,
       "startingCharacters": [],
       "artifactsToJoin": [
-        "Andúril"
+        "Anduril"
       ],
       "artifactsQtyToJoin": 0,
       "leatherToJoin": 0,
@@ -3136,7 +3136,7 @@
       "liDescription": "Blue-Clad Wanderers",
       "arDescription": "Orocarni Archers",
       "maDescription": "Easterling Spearmen",
-      "wsDescription": "Rhûn Boats",
+      "wsDescription": "Rhun Boats",
       "caDescription": "Siege Engines",
       "artifacts": [
         {
@@ -3448,7 +3448,7 @@
       "liDescription": "Dorwinion Militia",
       "arDescription": "Winelands Archers",
       "maDescription": "Men of Rhovanion",
-      "wsDescription": "Rhûn Galleys",
+      "wsDescription": "Rhun Galleys",
       "caDescription": "Fortress Rams",
       "artifacts": [
         {
@@ -3676,13 +3676,13 @@
       "emmissary": 0,
       "mage": 0,
       "race": 0,
-      "hcDescription": "Rhûn Cataphracts",
+      "hcDescription": "Rhun Cataphracts",
       "lcDescription": "Horse-Archers",
       "hiDescription": "Royal Spear-Guard",
-      "liDescription": "Rhûnic Footmen",
-      "arDescription": "Bowmen of Rhûn",
+      "liDescription": "Rhunic Footmen",
+      "arDescription": "Bowmen of Rhun",
       "maDescription": "Warband Halberdiers",
-      "wsDescription": "Rhûn Bamboo-Galleys",
+      "wsDescription": "Rhun Bamboo-Galleys",
       "caDescription": "Siege Towers",
       "artifacts": [],
       "terrain": 2,
