@@ -83,6 +83,11 @@ public class TransferArtifact : CharacterAction
             }
             
             if (character == null || artifact == null) return false;
+            if (character.artifacts.Count >= Character.MAX_ARTIFACTS)
+            {
+                await ConfirmationDialog.AskOk($"{character.characterName} can't hold more artifacts");
+                return false;
+            }
 
             c.artifacts.Remove(artifact);
             character.artifacts.Add(artifact);

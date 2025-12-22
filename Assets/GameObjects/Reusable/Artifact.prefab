@@ -97,7 +97,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 1
+  m_fontSize: 8.3
   m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -257,6 +257,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hover
       objectReference: {fileID: 0}
+    - target: {fileID: 2329783396477944536, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3255782884132336503, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -347,11 +351,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5629601422605000548, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 18.490967
+      value: -42.7
       objectReference: {fileID: 0}
     - target: {fileID: 5629601422605000548, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.9758606
+      value: 9.4
       objectReference: {fileID: 0}
     - target: {fileID: 6454471472312217700, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
       propertyPath: m_fontSize

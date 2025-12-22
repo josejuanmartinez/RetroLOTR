@@ -11,6 +11,11 @@ public class FindArtifact: MageAction
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c.hex.hiddenArtifacts.Count > 0) {
+                if (c.artifacts.Count >= Character.MAX_ARTIFACTS)
+                {
+                    _ = ConfirmationDialog.AskOk($"{c.characterName} can't hold more artifacts");
+                    return false;
+                }
                 Artifact artifact = c.hex.hiddenArtifacts[0];
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);

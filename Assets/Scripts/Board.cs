@@ -191,7 +191,7 @@ public class Board : MonoBehaviour
         nationSpawner.Spawn();
         initialized = true;
         startButton.interactable = true;
-        startButton.GetComponentInChildren<TextMeshProUGUI>().text = $"> Start as this leader <";
+        startButton.GetComponentInChildren<TextMeshProUGUI>().text = "◊ Start as this leader ◊";
         
         var hexList = GetHexes();
         if (hexList != null)

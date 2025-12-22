@@ -75,8 +75,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47dcc057b48df3f488e4c30072d6c766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionButtonPrefab: {fileID: 0}
-  hoverPrefab: {fileID: 0}
+  actionButtonPrefab: {fileID: 5611059591278914332, guid: 217510c2528475d4e8b6b128959fc415, type: 3}
+  hoverPrefab: {fileID: 2329783396477944536, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
   DEFAULT: {fileID: 0}
   characterActions: []
 --- !u!222 &7654780917836058685

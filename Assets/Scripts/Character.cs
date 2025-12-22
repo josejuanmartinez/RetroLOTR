@@ -7,6 +7,8 @@ using UnityEngine.Assertions;
 public class Character : MonoBehaviour
 {
     public static int MAX_RELEVANT_HEXES = Game.MAX_CHARACTERS + Game.MAX_ARTIFACTS + Game.MAX_PCS;
+    public const int MAX_SKILL_LEVEL = 10;
+    public const int MAX_ARTIFACTS = 10;
 
     [Header("Metadata")]
     public bool startingCharacter;
@@ -119,10 +121,10 @@ public class Character : MonoBehaviour
         }
 
         this.characterName = characterName;
-        this.commander = commander;
-        this.agent = agent;
-        this.emmissary = emmissary;
-        this.mage = mage;
+        this.commander = Mathf.Clamp(commander, 0, MAX_SKILL_LEVEL);
+        this.agent = Mathf.Clamp(agent, 0, MAX_SKILL_LEVEL);
+        this.emmissary = Mathf.Clamp(emmissary, 0, MAX_SKILL_LEVEL);
+        this.mage = Mathf.Clamp(mage, 0, MAX_SKILL_LEVEL);
         this.alignment = alignment;
         this.race = race;
         this.startingCharacter = true;
@@ -339,63 +341,67 @@ public class Character : MonoBehaviour
 
     public int GetCommander()
     {
-        return commander + artifacts.FindAll(x => x.commanderBonus > 0).Sum(x => x.commanderBonus);
+        int total = commander + artifacts.FindAll(x => x.commanderBonus > 0).Sum(x => x.commanderBonus);
+        return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetAgent()
     {
-        return agent + artifacts.FindAll(x => x.agentBonus > 0).Sum(x => x.agentBonus);
+        int total = agent + artifacts.FindAll(x => x.agentBonus > 0).Sum(x => x.agentBonus);
+        return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetEmmissary()
     {
-        return emmissary + artifacts.FindAll(x => x.emmissaryBonus > 0).Sum(x => x.emmissaryBonus);
+        int total = emmissary + artifacts.FindAll(x => x.emmissaryBonus > 0).Sum(x => x.emmissaryBonus);
+        return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetMage()
     {
-        return mage + artifacts.FindAll(x => x.mageBonus > 0).Sum(x => x.mageBonus);
+        int total = mage + artifacts.FindAll(x => x.mageBonus > 0).Sum(x => x.mageBonus);
+        return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public void SetCommander(int level)
     {
-        commander = Mathf.Clamp(level, 0, 5);
+        commander = Mathf.Clamp(level, 0, MAX_SKILL_LEVEL);
     }
 
     public void SetAgent(int level)
     {
-        agent = Mathf.Clamp(level, 0, 5);
+        agent = Mathf.Clamp(level, 0, MAX_SKILL_LEVEL);
     }
 
     public void SetEmmissary(int level)
     {
-        emmissary = Mathf.Clamp(level, 0, 5);
+        emmissary = Mathf.Clamp(level, 0, MAX_SKILL_LEVEL);
     }
 
     public void SetMage(int level)
     {
-        mage = Mathf.Clamp(level, 0, 5);
+        mage = Mathf.Clamp(level, 0, MAX_SKILL_LEVEL);
     }
 
 
     public void AddCommander(int level)
     {
-        commander = Mathf.Clamp(commander + level, 0, 5);
+        commander = Mathf.Clamp(commander + level, 0, MAX_SKILL_LEVEL);
     }
 
     public void AddAgent(int level)
     {
-        agent = Mathf.Clamp(agent + level, 0, 5);
+        agent = Mathf.Clamp(agent + level, 0, MAX_SKILL_LEVEL);
     }
 
     public void AddEmmissary(int level)
     {
-        emmissary = Mathf.Clamp(emmissary + level, 0, 5);
+        emmissary = Mathf.Clamp(emmissary + level, 0, MAX_SKILL_LEVEL);
     }
 
     public void AddMage(int level)
     {
-        mage = Mathf.Clamp(mage + level, 0, 5);
+        mage = Mathf.Clamp(mage + level, 0, MAX_SKILL_LEVEL);
     }
 
     public void Heal(int health)

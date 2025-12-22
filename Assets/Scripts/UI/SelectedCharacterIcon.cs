@@ -45,7 +45,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         icon.enabled = true;
         alignmentIcon.enabled = true;
         alignmentIcon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c.GetAlignment().ToString());
-        textWidget.text = $"<mark=#ffffff>{c.GetHoverText(false, false, false, true, false)}</mark>";
+        textWidget.text = $"{c.GetHoverText(true, false, false, true, false, false)}";
         actionsGameObject.SetActive(true);
         actioned.SetActive(true);
         moved.SetActive(true);
