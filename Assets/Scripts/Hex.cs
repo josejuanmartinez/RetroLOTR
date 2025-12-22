@@ -55,6 +55,7 @@ public class Hex : MonoBehaviour
 
     public TerrainEnum terrainType;
     public SpriteRenderer terrainTexture;
+    public SpriteRenderer terrainOrNoneMinimapTexture;
 
     public GameObject fow;
     public GameObject movement;
@@ -117,6 +118,7 @@ public class Hex : MonoBehaviour
         navigator = FindFirstObjectByType<BoardNavigator>();
 
         darkArmySR = darkArmy ? darkArmy.GetComponent<SpriteRenderer>() : null;
+        UpdateMinimapTerrain(IsHexRevealed());
     }
 
     public bool IsHexRevealed() => !fow.activeSelf;
@@ -198,6 +200,7 @@ public class Hex : MonoBehaviour
         this.terrainTexture.sprite = terrainTexture;
         // this.terrainTexture.color = terrainColor;
         // if(terrainType == TerrainEnum.mountains) this.terrainTexture.sortingOrder += 1000;
+        UpdateMinimapTerrain(IsHexRevealed());
     }
 
     public void RedrawArmies(bool refreshHoverText = true)
@@ -489,6 +492,7 @@ public class Hex : MonoBehaviour
         {
             SetActiveFast(fow, true);
         }
+        UpdateMinimapTerrain(IsHexRevealed());
         
         RedrawArmies(false);
         RedrawCharacters(false);
@@ -585,10 +589,25 @@ public class Hex : MonoBehaviour
         sr.color = c;
     }
 
+    private void UpdateMinimapTerrain(bool revealed)
+    {
+        if (!terrainOrNoneMinimapTexture) return;
+        if (revealed)
+        {
+            terrainOrNoneMinimapTexture.sprite = terrainTexture ? terrainTexture.sprite : null;
+            SetSpriteAlpha(terrainOrNoneMinimapTexture, 1f);
+        }
+        else
+        {
+            SetSpriteAlpha(terrainOrNoneMinimapTexture, 0f);
+        }
+    }
+
     private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
     {
         if (scoutedByPlayer) scoutedBy.Add(scoutedByPlayer);
         if (isPlayerTurn) SetActiveFast(fow, false);
+        UpdateMinimapTerrain(IsHexRevealed());
         PlayableLeader viewer = scoutedByPlayer as PlayableLeader;
         if (viewer == null && game != null) viewer = game.currentlyPlaying;
         var g = game ?? FindFirstObjectByType<Game>();
@@ -648,6 +667,7 @@ public class Hex : MonoBehaviour
     public void Hide()
     {
         SetActiveFast(fow, true);
+        UpdateMinimapTerrain(IsHexRevealed());
         if (game == null) game = FindFirstObjectByType<Game>();
         if (game != null) scoutedBy.Remove(game.currentlyPlaying);
     }
@@ -702,6 +722,7 @@ public class Hex : MonoBehaviour
         {
             terrainTexture.sprite = FindFirstObjectByType<Textures>().island;
         }
+        UpdateMinimapTerrain(IsHexRevealed());
     }
 
     public void ShowMovementLeft(int movementLeft, Character character)

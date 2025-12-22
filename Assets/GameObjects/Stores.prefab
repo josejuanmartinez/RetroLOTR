@@ -1008,14 +1008,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 10
+    m_Left: 15
     m_Right: 10
-    m_Top: 5
+    m_Top: 40
     m_Bottom: 10
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 1
-  m_CellSize: {x: 50, y: 50}
+  m_CellSize: {x: 40, y: 40}
   m_Spacing: {x: 5, y: 5}
   m_Constraint: 2
   m_ConstraintCount: 1
@@ -1066,7 +1066,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 5175686555284297158, guid: a0800109b444db04f884f63e4334b796, type: 3}
+  m_Sprite: {fileID: -6538887605036519263, guid: 1358c73aa8426a541a7140e58b909038, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
