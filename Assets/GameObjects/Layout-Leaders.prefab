@@ -132,6 +132,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2483801704162641599}
     m_Modifications:
+    - target: {fileID: 1788058877106798731, guid: d948965d99176134ba1d679b3f04f9c4, type: 3}
+      propertyPath: m_CellSize.x
+      value: 70
+      objectReference: {fileID: 0}
     - target: {fileID: 5616813493633769187, guid: d948965d99176134ba1d679b3f04f9c4, type: 3}
       propertyPath: m_Name
       value: PlayableLeaderIcons
@@ -320,6 +324,14 @@ PrefabInstance:
     - target: {fileID: 4181293669788447730, guid: 240ecf9d757aca84b8bf2e29b9e16fdb, type: 3}
       propertyPath: m_Name
       value: PlayableLeaderIcon
+      objectReference: {fileID: 0}
+    - target: {fileID: 4687812502949268115, guid: 240ecf9d757aca84b8bf2e29b9e16fdb, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1843197933104017171, guid: 2197f162cb0e1204783beaeae655d21a, type: 3}
+    - target: {fileID: 6506552120216860036, guid: 240ecf9d757aca84b8bf2e29b9e16fdb, type: 3}
+      propertyPath: m_fontSize
+      value: 12.9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
