@@ -76,9 +76,10 @@ public static class ActionDescriptionProvider
     public static string Get(string actionName)
     {
         if (string.IsNullOrWhiteSpace(actionName)) return string.Empty;
-        if (Descriptions.TryGetValue(actionName, out string description)) return description;
+        string baseName = ActionNameUtils.StripShortcut(actionName);
+        if (Descriptions.TryGetValue(baseName, out string description)) return description;
 
-        string normalized = Normalize(actionName);
+        string normalized = Normalize(baseName);
         return NormalizedDescriptions.TryGetValue(normalized, out string normalizedDescription)
             ? normalizedDescription
             : string.Empty;

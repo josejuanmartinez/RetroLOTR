@@ -120,18 +120,8 @@ public class CharacterAction : SearcherByName
                 hoverComponent = hoverInstance.GetComponent<Hover>();
                 hoverComponent.Initialize(BuildHoverText(), Vector2.one * 40, 18, TextAlignmentOptions.Center);
 
-                actionInitials = gameObject.name.ToUpper();
-                spriteImage.color = actionColor;
-                if (actionSprite && spriteImage)
-                {
-                    spriteImage.sprite = actionSprite;
-                    textUI.text = "";
-                }
-                else
-                {
-                    // Debug.LogWarning($"Action {actionName} does not have action sprite or the spriteImage reference is not set");
-                    textUI.text = actionInitials.ToUpper();
-                }
+                actionInitials = ActionNameUtils.StripShortcut(actionName).ToUpperInvariant();
+                textUI.text = actionName;
                 initialized = true;
             }
             else if (hoverComponent != null)
@@ -162,7 +152,8 @@ public class CharacterAction : SearcherByName
 
     public bool IsProvidedByArtifact()
     {
-        return character.artifacts.Find(x => Normalize(x.providesSpell) == Normalize(actionName)) != null;
+        string baseName = ActionNameUtils.StripShortcut(actionName);
+        return character.artifacts.Find(x => Normalize(x.providesSpell) == Normalize(baseName)) != null;
     }
 
     public bool ResourcesAvailable()

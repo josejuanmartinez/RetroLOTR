@@ -35,7 +35,8 @@ public class NonPlayableLeader : Leader
     private static string NormalizeActionName(string actionName)
     {
         if (string.IsNullOrWhiteSpace(actionName)) return string.Empty;
-        return new string(actionName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+        string baseName = ActionNameUtils.StripShortcut(actionName);
+        return new string(baseName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
     }
 
     public static void RecordActionCompleted(Character actor, string actionName, Hex actionHex)
@@ -102,7 +103,7 @@ public class NonPlayableLeader : Leader
     {
         if (character == null || action == null) return false;
 
-        if (!string.Equals(action.actionName, "State Allegiance", StringComparison.OrdinalIgnoreCase)) return false;
+        if (!string.Equals(action.GetType().Name, "StateAllegiance", StringComparison.OrdinalIgnoreCase)) return false;
 
         PC pc = character.hex.GetPC();
         if (pc == null || pc.owner != this || !pc.isCapital) return false;

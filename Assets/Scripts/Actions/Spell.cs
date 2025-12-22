@@ -34,7 +34,8 @@ public class Spell : CharacterAction
 
     protected bool HasSpellArtifact(Character c)
     {
-        return c.artifacts.Any(a => a != null && !string.IsNullOrEmpty(a.providesSpell) && a.providesSpell.Equals(actionName, StringComparison.OrdinalIgnoreCase));
+        string baseName = ActionNameUtils.StripShortcut(actionName);
+        return c.artifacts.Any(a => a != null && !string.IsNullOrEmpty(a.providesSpell) && a.providesSpell.Equals(baseName, StringComparison.OrdinalIgnoreCase));
     }
 
     protected float GetSpellEffectMultiplier(Character character)

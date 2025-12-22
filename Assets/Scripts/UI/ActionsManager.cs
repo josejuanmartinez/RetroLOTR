@@ -29,11 +29,11 @@ public class ActionsManager : MonoBehaviour
             characterActions = GetComponentsInChildren<CharacterAction>(true);
         }
 
-        DEFAULT = characterActions.FirstOrDefault(a => NormalizeActionName(a.actionName) == "pass");
+        DEFAULT = characterActions.FirstOrDefault(a => string.Equals(a.GetType().Name, "Pass", StringComparison.OrdinalIgnoreCase));
         if (DEFAULT == null)
         {
             Debug.LogWarning("DEFAULT action not found. Expected action named 'Pass'.");
-            DEFAULT = characterActions.FirstOrDefault();
+            DEFAULT = characterActions.FirstOrDefault(a => NormalizeActionName(a.actionName) == "pass") ?? characterActions.FirstOrDefault();
         }
 
         // Store each component by its type for easy access
@@ -115,6 +115,10 @@ public class ActionsManager : MonoBehaviour
 
     private CharacterAction[] UpdateExistingActions(List<CharacterAction> prefabActions, ActionDefinitionCollection definitionCollection)
     {
+        Dictionary<string, CharacterAction> actionsByType = prefabActions
+            .GroupBy(a => a.GetType().Name, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First());
+
         Dictionary<string, CharacterAction> actionsByName = prefabActions
             .GroupBy(a => NormalizeActionName(a.actionName))
             .ToDictionary(g => g.Key, g => g.First());
@@ -122,10 +126,19 @@ public class ActionsManager : MonoBehaviour
         List<CharacterAction> ordered = new();
         foreach (ActionDefinition definition in definitionCollection.actions)
         {
-            string normalizedName = NormalizeActionName(definition.actionName);
-            if (!actionsByName.TryGetValue(normalizedName, out CharacterAction action))
+            CharacterAction action = null;
+            if (!string.IsNullOrWhiteSpace(definition.className))
             {
-                Debug.LogWarning($"Action '{definition.actionName}' in Actions.json does not exist in Actions.prefab");
+                actionsByType.TryGetValue(definition.className, out action);
+            }
+            if (action == null)
+            {
+                string normalizedName = NormalizeActionName(definition.actionName);
+                actionsByName.TryGetValue(normalizedName, out action);
+            }
+            if (action == null)
+            {
+                Debug.LogWarning($"Action '{definition.className}' in Actions.json does not exist in Actions.prefab");
                 continue;
             }
 
@@ -234,10 +247,6 @@ public class ActionsManager : MonoBehaviour
         action.button = go.GetComponent<Button>() ?? go.GetComponentInChildren<Button>(true);
         action.textUI = go.GetComponentInChildren<TextMeshProUGUI>(true);
 
-        Image[] images = go.GetComponentsInChildren<Image>(true);
-        action.background = images.FirstOrDefault(img => img != null && img.gameObject.name == "Border") ?? images.FirstOrDefault();
-        action.spriteImage = images.FirstOrDefault(img => img != null && img.gameObject.name == "Image") ?? images.FirstOrDefault(img => img != action.background);
-
         if (hoverPrefab != null)
         {
             action.hoverPrefab = hoverPrefab;
@@ -249,6 +258,7 @@ public class ActionsManager : MonoBehaviour
         if (action == null || definition == null) return;
 
         action.actionName = definition.actionName;
+        action.gameObject.name = definition.actionName;
         action.actionId = definition.actionId;
         action.difficulty = definition.difficulty;
         action.commanderSkillRequired = definition.commanderSkillRequired;
@@ -274,6 +284,7 @@ public class ActionsManager : MonoBehaviour
 
     private static string NormalizeActionName(string value)
     {
-        return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim().ToLowerInvariant();
+        string stripped = ActionNameUtils.StripShortcut(value);
+        return string.IsNullOrWhiteSpace(stripped) ? string.Empty : stripped.Trim().ToLowerInvariant();
     }
 }

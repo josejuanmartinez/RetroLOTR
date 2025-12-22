@@ -29,7 +29,7 @@ public class PlayableLeaderIcon : MonoBehaviour
         alignment = leader.alignment;
         Illustrations illustrations = FindFirstObjectByType<Illustrations>();
         sprite = illustrations.GetIllustrationByName(leader.characterName);
-        text = $"<mark=#ffffff>{leader.characterName}</mark>"; ;
+        text = leader.GetHoverText(true, false, false, false, false, false);
         image.sprite = sprite;
         textWidget.text = text;
         // joinedText.text = $"<mark=#ffffff>{leader.GetBiome().joinedText}</mark>";
@@ -86,6 +86,6 @@ public class PlayableLeaderIcon : MonoBehaviour
 
     public void RefreshVictoryPoints(int points)
     {
-        if (victoryPoints != null) victoryPoints.text = $"<mark=#ffffff>{points}</mark>";
+        if (victoryPoints != null) victoryPoints.text = points.ToString();
     }
 }

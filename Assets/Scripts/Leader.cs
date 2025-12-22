@@ -324,7 +324,8 @@ public class Leader : Character
     private static string NormalizeActionName(string actionName)
     {
         if (string.IsNullOrWhiteSpace(actionName)) return string.Empty;
-        string normalized = new string(actionName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+        string baseName = ActionNameUtils.StripShortcut(actionName);
+        string normalized = new string(baseName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
         return normalized;
     }
 
