@@ -13,17 +13,18 @@
       "mountsCost": 0,
       "timberCost": 0,
       "ironCost": 0,
-      "steelCost": 0,
+      "steelCost": 5,
       "mithrilCost": 0,
       "goldCost": 0,
       "isBuyCaravans": false,
-      "isSellCaravans": false,
+      "isSellCaravans": true,
       "commanderXP": 0,
       "agentXP": 0,
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Sell 5 <sprite name=\"steel\"/> from your stores for gold."
     },
     {
       "className": "BuySteel",
@@ -48,7 +49,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Buy 5 <sprite name=\"steel\"/> from the caravans."
     },
     {
       "className": "TrainArchers",
@@ -73,7 +75,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Add 1 <sprite name=\"ar\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainMetAtArms",
@@ -98,7 +101,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Add 1 <sprite name=\"ma\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainLightInfantry",
@@ -123,7 +127,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Add 1 <sprite name=\"li\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainHeavyInfantry",
@@ -148,7 +153,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Add 1 <sprite name=\"hi\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainLightCavalry",
@@ -173,7 +179,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Add 1 <sprite name=\"lc\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainHeavyCavalry",
@@ -198,7 +205,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Add 1 <sprite name=\"hc\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainCatapults",
@@ -223,7 +231,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Add 1 <sprite name=\"ca\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainWarships",
@@ -248,7 +257,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Add 1 <sprite name=\"ws\"/> at this port."
     },
     {
       "className": "SellLeather",
@@ -259,7 +269,7 @@
       "agentSkillRequired": 0,
       "emissarySkillRequired": 1,
       "mageSkillRequired": 0,
-      "leatherCost": 0,
+      "leatherCost": 5,
       "mountsCost": 0,
       "timberCost": 0,
       "ironCost": 0,
@@ -267,13 +277,14 @@
       "mithrilCost": 0,
       "goldCost": 0,
       "isBuyCaravans": false,
-      "isSellCaravans": false,
+      "isSellCaravans": true,
       "commanderXP": 0,
       "agentXP": 0,
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Sell 5 <sprite name=\"leather\"/> from your stores for gold."
     },
     {
       "className": "BuyLeather",
@@ -298,7 +309,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Buy 5 <sprite name=\"leather\"/> from the caravans."
     },
     {
       "className": "SellMounts",
@@ -310,20 +322,21 @@
       "emissarySkillRequired": 1,
       "mageSkillRequired": 0,
       "leatherCost": 0,
-      "mountsCost": 0,
+      "mountsCost": 5,
       "timberCost": 0,
       "ironCost": 0,
       "steelCost": 0,
       "mithrilCost": 0,
       "goldCost": 0,
       "isBuyCaravans": false,
-      "isSellCaravans": false,
+      "isSellCaravans": true,
       "commanderXP": 0,
       "agentXP": 0,
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Sell 5 <sprite name=\"mounts\"/> from your stores for gold."
     },
     {
       "className": "BuyMounts",
@@ -348,7 +361,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Buy 5 <sprite name=\"mounts\"/> from the caravans."
     },
     {
       "className": "SellIron",
@@ -362,18 +376,19 @@
       "leatherCost": 0,
       "mountsCost": 0,
       "timberCost": 0,
-      "ironCost": 0,
+      "ironCost": 5,
       "steelCost": 0,
       "mithrilCost": 0,
       "goldCost": 0,
       "isBuyCaravans": false,
-      "isSellCaravans": false,
+      "isSellCaravans": true,
       "commanderXP": 0,
       "agentXP": 0,
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Sell 5 <sprite name=\"iron\"/> from your stores for gold."
     },
     {
       "className": "BuyIron",
@@ -398,7 +413,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Buy 5 <sprite name=\"iron\"/> from the caravans."
     },
     {
       "className": "SellTimber",
@@ -417,13 +433,14 @@
       "mithrilCost": 0,
       "goldCost": 0,
       "isBuyCaravans": false,
-      "isSellCaravans": false,
+      "isSellCaravans": true,
       "commanderXP": 0,
       "agentXP": 0,
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Sell 5 <sprite name=\"timber\"/> from your stores for gold."
     },
     {
       "className": "BuyTimber",
@@ -448,7 +465,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Buy 5 <sprite name=\"timber\"/> from the caravans."
     },
     {
       "className": "SellMithril",
@@ -467,13 +485,14 @@
       "mithrilCost": 5,
       "goldCost": 0,
       "isBuyCaravans": false,
-      "isSellCaravans": false,
+      "isSellCaravans": true,
       "commanderXP": 0,
       "agentXP": 0,
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Sell 5 <sprite name=\"mithril\"/> from your stores for gold."
     },
     {
       "className": "BuyMithril",
@@ -498,7 +517,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Buy 5 <sprite name=\"mithril\"/> from the caravans."
     },
     {
       "className": "AssassinateCharacter",
@@ -523,7 +543,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 3,
-      "advisorType": 4
+      "advisorType": 4,
+      "description": "Attempt to kill an enemy character in this hex; the agent returns to capital and may be wounded."
     },
     {
       "className": "WoundCharacter",
@@ -548,7 +569,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 4
+      "advisorType": 4,
+      "description": "Attempt to wound an enemy character here; the agent returns to capital."
     },
     {
       "className": "DoubleCharacter",
@@ -573,7 +595,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 4
+      "advisorType": 4,
+      "description": "Turn an enemy character here into your double agent."
     },
     {
       "className": "UndoubleCharacter",
@@ -598,7 +621,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 4
+      "advisorType": 4,
+      "description": "Turn an enemy character here into your double agent."
     },
     {
       "className": "InfluenceUpPC",
@@ -623,7 +647,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 3
+      "advisorType": 3,
+      "description": "Raise the loyalty of the population center in this hex."
     },
     {
       "className": "InfluenceDownPC",
@@ -648,7 +673,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 2,
-      "advisorType": 3
+      "advisorType": 3,
+      "description": "Lower the loyalty of the population center in this hex."
     },
     {
       "className": "Attack",
@@ -673,7 +699,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 3,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Lead your army to attack enemy armies or population centers in this hex."
     },
     {
       "className": "FortifyPC",
@@ -698,7 +725,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Upgrade the fortification level of your population center here."
     },
     {
       "className": "CastDarkness",
@@ -723,7 +751,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 4
+      "advisorType": 4,
+      "description": "Obscure the area around your hex from enemy sight."
     },
     {
       "className": "CastLight",
@@ -748,7 +777,8 @@
       "emmissaryXP": 0,
       "mageXP": 10,
       "reward": 1,
-      "advisorType": 4
+      "advisorType": 4,
+      "description": "Reveal the area around your hex."
     },
     {
       "className": "ConjureMounts",
@@ -773,7 +803,8 @@
       "emmissaryXP": 0,
       "mageXP": 10,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Create 1-3 <sprite name=\"mounts\"/> at a friendly or aligned population center here."
     },
     {
       "className": "Curse",
@@ -798,7 +829,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 4
+      "advisorType": 4,
+      "description": "Damage an enemy character in your hex with dark magic."
     },
     {
       "className": "OhElbereth",
@@ -823,7 +855,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 4
+      "advisorType": 4,
+      "description": "Smite an enemy character here; Nazgul are also halted."
     },
     {
       "className": "ReturnToCapital",
@@ -848,7 +881,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Teleport this character back to your capital (not available to army commanders)."
     },
     {
       "className": "RevealPC",
@@ -873,7 +907,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 3,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Expose a hidden population center in this hex."
     },
     {
       "className": "ScryArea",
@@ -898,7 +933,8 @@
       "emmissaryXP": 0,
       "mageXP": 5,
       "reward": 0,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Reveal a random unseen hex and its surroundings."
     },
     {
       "className": "Teleport",
@@ -923,7 +959,8 @@
       "emmissaryXP": 0,
       "mageXP": 5,
       "reward": 0,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Blink to a random explored hex and reveal tiles based on mage skill."
     },
     {
       "className": "SummonMA",
@@ -948,7 +985,8 @@
       "emmissaryXP": 0,
       "mageXP": 15,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Add 1 <sprite name=\"ma\"/> to an owned population center here."
     },
     {
       "className": "WizardLaugh",
@@ -973,7 +1011,8 @@
       "emmissaryXP": 0,
       "mageXP": 10,
       "reward": 1,
-      "advisorType": 3
+      "advisorType": 3,
+      "description": "Clear doubles on allied characters here or reduce loyalty of a hostile/neutral PC."
     },
     {
       "className": "Heal",
@@ -998,7 +1037,8 @@
       "emmissaryXP": 0,
       "mageXP": 5,
       "reward": 1,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Heal a wounded allied or aligned character in your hex."
     },
     {
       "className": "Fireworks",
@@ -1023,7 +1063,8 @@
       "emmissaryXP": 0,
       "mageXP": 5,
       "reward": 0,
-      "advisorType": 3
+      "advisorType": 3,
+      "description": "Shift this PC's loyalty using fireworks (up if aligned, down if hostile)."
     },
     {
       "className": "FindArtifact",
@@ -1048,7 +1089,8 @@
       "emmissaryXP": 0,
       "mageXP": 40,
       "reward": 1,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Search this hex for hidden artifacts and claim one if found."
     },
     {
       "className": "ScryArtifact",
@@ -1073,7 +1115,8 @@
       "emmissaryXP": 0,
       "mageXP": 10,
       "reward": 0,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Reveal a hidden artifact's location and show its details."
     },
     {
       "className": "StealGold",
@@ -1098,7 +1141,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 2,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Steal gold from the current population center."
     },
     {
       "className": "StealIron",
@@ -1123,7 +1167,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Steal up to your agent rating in <sprite name=\"iron\"/> from the current population center."
     },
     {
       "className": "StealLeather",
@@ -1148,7 +1193,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Steal <sprite name=\"leather\"/> from the current population center."
     },
     {
       "className": "StealMithril",
@@ -1173,7 +1219,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Steal <sprite name=\"mithril\"/> from the current population center."
     },
     {
       "className": "StealMounts",
@@ -1198,7 +1245,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Steal <sprite name=\"mounts\"/> from the current population center."
     },
     {
       "className": "StealTimber",
@@ -1223,7 +1271,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 2
+      "advisorType": 2,
+      "description": "Steal <sprite name=\"timber\"/> from the current population center."
     },
     {
       "className": "Pass",
@@ -1248,7 +1297,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 0
+      "advisorType": 0,
+      "description": "End this character's turn without taking another action."
     },
     {
       "className": "Haste",
@@ -1273,7 +1323,8 @@
       "emmissaryXP": 0,
       "mageXP": 5,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Refund movement so this non-army commander can move farther this turn."
     },
     {
       "className": "ScoutArea",
@@ -1298,7 +1349,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 4
+      "advisorType": 4,
+      "description": "Reveal the surrounding hexes."
     },
     {
       "className": "Block",
@@ -1323,7 +1375,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Engage a selected enemy army in this hex (no additional effect yet)."
     },
     {
       "className": "Courage",
@@ -1348,7 +1401,8 @@
       "emmissaryXP": 0,
       "mageXP": 10,
       "reward": 1,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Encourage a friendly army here for several turns."
     },
     {
       "className": "Halt",
@@ -1373,7 +1427,8 @@
       "emmissaryXP": 0,
       "mageXP": 10,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Stop a non-army enemy character in this hex from acting or moving next turn."
     },
     {
       "className": "IceStorm",
@@ -1398,7 +1453,8 @@
       "emmissaryXP": 0,
       "mageXP": 25,
       "reward": 1,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Freeze an enemy army in this hex, halting it for a turn."
     },
     {
       "className": "WizardsFire",
@@ -1423,7 +1479,8 @@
       "emmissaryXP": 0,
       "mageXP": 10,
       "reward": 1,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Burn an enemy army in your hex, causing casualties."
     },
     {
       "className": "WordsOfDispair",
@@ -1448,7 +1505,8 @@
       "emmissaryXP": 0,
       "mageXP": 15,
       "reward": 1,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Inflict magical casualties on an enemy army sharing your hex."
     },
     {
       "className": "YouShallNotPass",
@@ -1473,7 +1531,8 @@
       "emmissaryXP": 0,
       "mageXP": 10,
       "reward": 1,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Halt an enemy character in this hex; Balrogs also take damage."
     },
     {
       "className": "RevealRumours",
@@ -1498,7 +1557,8 @@
       "emmissaryXP": 5,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 3
+      "advisorType": 3,
+      "description": "Gather rumours based on your emissary skill."
     },
     {
       "className": "StateAllegiance",
@@ -1523,7 +1583,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 3
+      "advisorType": 3,
+      "description": "At an aligned NPC capital, swear allegiance to recruit them if their conditions are met."
     },
     {
       "className": "PerceiveDanger",
@@ -1548,7 +1609,8 @@
       "emmissaryXP": 0,
       "mageXP": 10,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Reveal the nearest enemy army and the nearby area."
     },
     {
       "className": "TransferArtifact",
@@ -1573,7 +1635,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 5
+      "advisorType": 5,
+      "description": "Give a transferable artifact to a friendly character in this hex."
     },
     {
       "className": "TrainArmy",
@@ -1598,7 +1661,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 1
+      "advisorType": 1,
+      "description": "Drill your troops, improving army XP up to elite levels based on commander skill."
     },
     {
       "className": "NameCommander",

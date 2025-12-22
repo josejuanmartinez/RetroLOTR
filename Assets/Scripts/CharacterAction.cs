@@ -11,6 +11,7 @@ public class CharacterAction : SearcherByName
 {
     [Header("IDs")]
     public string actionName;
+    public string description;
     public int actionId;
     [HideInInspector] public Character character;
         
@@ -1089,7 +1090,7 @@ public class CharacterAction : SearcherByName
 
     protected virtual string GetDescription()
     {
-        return ActionDescriptionProvider.Get(actionName);
+        return string.IsNullOrWhiteSpace(description) ? string.Empty : description;
     }
 
     private string BuildCostText()
@@ -1207,7 +1208,8 @@ public class CharacterAction : SearcherByName
 
     protected virtual string BuildHoverText()
     {
-        string title = actionName;
+        string strippedTitle = ActionNameUtils.StripShortcut(actionName);
+        string title = string.IsNullOrWhiteSpace(strippedTitle) ? actionName : strippedTitle;
 
         List<string> parts = new() { title };
         string desc = GetDescription();

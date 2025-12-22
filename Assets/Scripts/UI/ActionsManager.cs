@@ -142,6 +142,7 @@ public class ActionsManager : MonoBehaviour
                 continue;
             }
 
+            WireUiReferences(action.gameObject, action);
             ApplyDefinition(action, definition);
             ordered.Add(action);
         }
@@ -149,6 +150,7 @@ public class ActionsManager : MonoBehaviour
         // Keep any prefab actions that were not present in the json at the end of the array
         foreach (CharacterAction leftover in prefabActions.Where(a => !ordered.Contains(a)))
         {
+            WireUiReferences(leftover.gameObject, leftover);
             ordered.Add(leftover);
         }
 
@@ -251,6 +253,12 @@ public class ActionsManager : MonoBehaviour
         {
             action.hoverPrefab = hoverPrefab;
         }
+
+        if (action.button != null)
+        {
+            action.button.onClick.RemoveListener(action.ExecuteFromButton);
+            action.button.onClick.AddListener(action.ExecuteFromButton);
+        }
     }
 
     private static void ApplyDefinition(CharacterAction action, ActionDefinition definition)
@@ -258,6 +266,7 @@ public class ActionsManager : MonoBehaviour
         if (action == null || definition == null) return;
 
         action.actionName = definition.actionName;
+        action.description = definition.description;
         action.gameObject.name = definition.actionName;
         action.actionId = definition.actionId;
         action.difficulty = definition.difficulty;

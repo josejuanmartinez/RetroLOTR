@@ -6,6 +6,7 @@ public class ActionDefinition
 {
     public string className;
     public string actionName;
+    public string description;
     public int actionId;
     public int difficulty;
     public int commanderSkillRequired;
