@@ -9,6 +9,7 @@ public class NonPlayableLeader : Leader
 {
 	public bool joined = false;
     private bool readyToJoinNotified = false;
+    private bool iconsInitialized = false;
 
     public List<PlayableLeader> revealedTo = new();
 
@@ -21,10 +22,25 @@ public class NonPlayableLeader : Leader
         this.nonPlayableLeaderBiome.actionsAtCapital ??= new();
         this.nonPlayableLeaderBiome.actionsAnywhere ??= new();
         base.Initialize(hex, nonPlayableLeaderBiome, showSpawnMessage);
-        PlayableLeaderIcon alignmentPlayableLeader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First((x => x.alignment == nonPlayableLeaderBiome.alignment));
+        Game game = FindFirstObjectByType<Game>();
+        if (game != null && game.started)
+        {
+            InitializeIcons();
+        }
+    }
+
+    public void InitializeIcons()
+    {
+        if (iconsInitialized) return;
+        iconsInitialized = true;
+        if (nonPlayableLeaderBiome == null) return;
+
+        PlayableLeaderIcon alignmentPlayableLeader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None)
+            .FirstOrDefault(x => x.alignment == nonPlayableLeaderBiome.alignment);
         if (!alignmentPlayableLeader)
         {
             Debug.LogWarning($"Could not find PlayableLeaderIcons for alignment {nonPlayableLeaderBiome.alignment}");
+            return;
         }
         alignmentPlayableLeader.AddNonPlayableLeader(this);
     }

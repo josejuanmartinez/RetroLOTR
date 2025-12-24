@@ -88,6 +88,8 @@ public class Game : MonoBehaviour
         currentlyPlaying = player;
         MessageDisplay.ClearPersistent();
 
+        InitializePlayableLeaderIcons();
+        InitializeNonPlayableLeaderIcons();
         board.StartGame();
         AssignAIandHumans();
         VictoryPoints.RecalculateAndAssign(this);
@@ -105,6 +107,28 @@ public class Game : MonoBehaviour
             currentlyPlaying.GetBiome().joinedText,
             true
         );
+    }
+
+    private void InitializePlayableLeaderIcons()
+    {
+        PlayableLeaderIcons leaderIcons = FindFirstObjectByType<PlayableLeaderIcons>();
+        if (leaderIcons == null) return;
+
+        if (player != null) leaderIcons.Instantiate(player);
+        if (competitors == null) return;
+
+        foreach (PlayableLeader competitor in competitors)
+        {
+            if (competitor != null) leaderIcons.Instantiate(competitor);
+        }
+    }
+
+    private void InitializeNonPlayableLeaderIcons()
+    {
+        foreach (NonPlayableLeader nonPlayableLeader in FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None))
+        {
+            if (nonPlayableLeader != null) nonPlayableLeader.InitializeIcons();
+        }
     }
 
     public bool PointToCharacterWithMissingActions()

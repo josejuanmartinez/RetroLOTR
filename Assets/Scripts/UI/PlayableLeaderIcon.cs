@@ -22,6 +22,7 @@ public class PlayableLeaderIcon : MonoBehaviour
 
     private Sprite sprite = null;
     private string text = string.Empty;
+    private bool initialized = false;
 
     public void Initialize(PlayableLeader leader)
     {
@@ -39,7 +40,11 @@ public class PlayableLeaderIcon : MonoBehaviour
 
         // Start the coroutine to hide the text after 6 seconds
         // StartCoroutine(HideJoinedTextAfterDelay(6f));
+        
+        initialized = true;
     }
+
+    public bool IsInitialized() => initialized;
 
     /*private IEnumerator HideJoinedTextAfterDelay(float delay)
     {

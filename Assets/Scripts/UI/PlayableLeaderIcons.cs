@@ -1,21 +1,49 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayableLeaderIcons : MonoBehaviour
 {
-    public GameObject playerLeaderIconPrefab;
+    // public GameObject playerLeaderIconPrefab;
+    public PlayableLeaderIcon currentPlayerPlayableIcon;
+    public PlayableLeaderIcon competitor1PlayableIcon;
+    public PlayableLeaderIcon competitor2PlayableIcon;
+
+    public List<PlayableLeaderIcon> playableLeaderIcons;
+    public Game game;
+    void Start()
+    {
+        if(game == null) game = FindFirstObjectByType<Game>();
+        playableLeaderIcons = new() {
+            currentPlayerPlayableIcon,
+            competitor1PlayableIcon,
+            competitor2PlayableIcon
+        };
+    }
 
     public void Instantiate(PlayableLeader leader)
     {
-        GameObject icon = Instantiate(playerLeaderIconPrefab, transform);
-        icon.name = leader.characterName;
-        icon.GetComponent<PlayableLeaderIcon>().Initialize(leader);
+        if(game.player == leader)
+        {            
+            currentPlayerPlayableIcon.Initialize(leader);    
+        } 
+        else
+        {
+            if(!competitor1PlayableIcon.IsInitialized())
+            {
+                competitor1PlayableIcon.Initialize(leader);    
+            } else
+            {
+                competitor2PlayableIcon.Initialize(leader);    
+            }
+        }
     }
 
     public void HighlightCurrentlyPlaying(PlayableLeader currentlyPlaying)
     {
-        for(int i=0;i<transform.childCount;i++)
+        for(int i=0;i<playableLeaderIcons.Count;i++)
         {
-            PlayableLeaderIcon playableLeaderIcon = transform.GetChild(i).GetComponent<PlayableLeaderIcon>();
+            PlayableLeaderIcon playableLeaderIcon = playableLeaderIcons[i];
             PlayableLeader playableLeader = playableLeaderIcon.playableLeader;
             if (playableLeader == currentlyPlaying)
             {
@@ -27,18 +55,15 @@ public class PlayableLeaderIcons : MonoBehaviour
         }
     }
 
-    public void AddDeadIcon(Leader currentlyPlaying)
+    public void AddDeadIcon(PlayableLeader deadPlayer)
     {
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < playableLeaderIcons.Count; i++)
         {
-            if (transform.GetChild(i).gameObject.name.ToLower() == currentlyPlaying.characterName.ToLower())
+            PlayableLeaderIcon playableLeaderIcon = playableLeaderIcons[i];
+            if (playableLeaderIcon != null && playableLeaderIcon.playableLeader != null && playableLeaderIcon.playableLeader == deadPlayer)
             {
-                transform.GetChild(i).localScale = new Vector3(1f, 1f, 1f);
-                transform.GetChild(i).GetComponent<PlayableLeaderIcon>().SetDead();
-            }
-            else
-            {
-                transform.GetChild(i).localScale = new Vector3(1f, 1f, 1f);
+                playableLeaderIcon.SetDead();
+                return;
             }
         }
     }
@@ -46,12 +71,12 @@ public class PlayableLeaderIcons : MonoBehaviour
     public void RefreshVictoryPointsFor(PlayableLeader leader, int points)
     {
         if (leader == null) return;
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < playableLeaderIcons.Count; i++)
         {
-            PlayableLeaderIcon icon = transform.GetChild(i).GetComponent<PlayableLeaderIcon>();
-            if (icon != null && icon.playableLeader == leader)
+            PlayableLeaderIcon playableLeaderIcon = playableLeaderIcons[i];
+            if (playableLeaderIcon != null && playableLeaderIcon.playableLeader != null && !playableLeaderIcon.playableLeader.killed && playableLeaderIcon.playableLeader == leader)
             {
-                icon.RefreshVictoryPoints(points);
+                playableLeaderIcon.RefreshVictoryPoints(points);
                 return;
             }
         }
@@ -59,10 +84,10 @@ public class PlayableLeaderIcons : MonoBehaviour
 
     public void RefreshVictoryPointsForAll()
     {
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < playableLeaderIcons.Count; i++)
         {
             PlayableLeaderIcon icon = transform.GetChild(i).GetComponent<PlayableLeaderIcon>();
-            if (icon != null && icon.playableLeader != null && icon.playableLeader.victoryPoints != null)
+            if (icon != null && icon.playableLeader != null && !icon.playableLeader.killed && icon.playableLeader.victoryPoints != null)
             {
                 icon.RefreshVictoryPoints(icon.playableLeader.victoryPoints.RelativeScore);
             }

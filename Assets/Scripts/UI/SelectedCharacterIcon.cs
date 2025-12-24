@@ -31,12 +31,6 @@ public class SelectedCharacterIcon : MonoBehaviour
     [Header("Artifacts")]
     public GameObject artifactPrefab;
     public Transform artifactsGridLayoutTransform;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        icon = GetComponent<Image>();
-        Hide();
-    }
 
     // Update is called once per frame
     public void Refresh(Character c)
