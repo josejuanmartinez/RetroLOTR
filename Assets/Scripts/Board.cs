@@ -29,6 +29,7 @@ public class Board : MonoBehaviour
     [Header("Movement over board")]
     public bool moving = false;
     [SerializeField] private SpriteRenderer characterMoverImage;
+    [SerializeField] private SpriteRenderer characterMoverBackground;
     [SerializeField] private SpriteRenderer freeArmyMoverImage;
     [SerializeField] private SpriteRenderer darkServantsMoverImage;
     [SerializeField] private SpriteRenderer neutralMoverImage;
@@ -377,8 +378,13 @@ public class Board : MonoBehaviour
     SpriteRenderer fromSR,
     SpriteRenderer toSR,
     SpriteRenderer moverSR,
+    SpriteRenderer fromBgSR,
+    SpriteRenderer toBgSR,
+    SpriteRenderer moverBgSR,
     Vector3 start,
     Vector3 end,
+    Vector3 startBg,
+    Vector3 endBg,
     float duration,
     Camera followCam = null,
     AnimationCurve ease = null)
@@ -389,22 +395,58 @@ public class Board : MonoBehaviour
         moverSR.flipX = fromSR.flipX;
         moverSR.flipY = fromSR.flipY;
         moverSR.sharedMaterial = fromSR.sharedMaterial;
+        CopyPropertyBlock(fromSR, moverSR);
+        if (moverBgSR != null && fromBgSR != null)
+        {
+            moverBgSR.sprite = fromBgSR.sprite;
+            moverBgSR.color = fromBgSR.color;
+            moverBgSR.flipX = fromBgSR.flipX;
+            moverBgSR.flipY = fromBgSR.flipY;
+            moverBgSR.sharedMaterial = fromBgSR.sharedMaterial;
+            CopyPropertyBlock(fromBgSR, moverBgSR);
+        }
 
         // Make sure mover appears above board
         moverSR.sortingLayerID = fromSR.sortingLayerID;
         moverSR.sortingOrder = fromSR.sortingOrder + 100;
+        if (moverBgSR != null && fromBgSR != null)
+        {
+            moverBgSR.sortingLayerID = fromBgSR.sortingLayerID;
+            moverBgSR.sortingOrder = fromBgSR.sortingOrder + 99;
+        }
 
-        moverSR.transform.localScale = fromSR.transform.lossyScale;
+        moverSR.transform.localScale = GetLocalScaleForWorldScale(moverSR.transform, GetDesiredWorldScale(fromSR, moverSR));
         moverSR.transform.rotation = fromSR.transform.rotation;
+        if (moverBgSR != null && fromBgSR != null)
+        {
+            moverBgSR.transform.localScale = GetLocalScaleForWorldScale(moverBgSR.transform, GetDesiredWorldScale(fromBgSR, moverBgSR));
+            moverBgSR.transform.rotation = fromBgSR.transform.rotation;
+        }
 
         // Hide the static icons during tween so you don't see the destination early
         bool fromPrevEnabled = fromSR != null && fromSR.enabled;
         bool toPrevEnabled = toSR != null && toSR.enabled;
+        bool fromBgPrevEnabled = fromBgSR != null && fromBgSR.enabled;
+        bool toBgPrevEnabled = toBgSR != null && toBgSR.enabled;
         if (fromSR != null) fromSR.enabled = false;
         if (toSR != null) toSR.enabled = false;
+        if (fromBgSR != null) fromBgSR.enabled = false;
+        if (toBgSR != null) toBgSR.enabled = false;
 
         moverSR.gameObject.SetActive(true);
         moverSR.transform.position = start;
+        if (moverBgSR != null)
+        {
+            if (fromBgSR != null)
+            {
+                moverBgSR.gameObject.SetActive(true);
+                moverBgSR.transform.position = startBg;
+            }
+            else
+            {
+                moverBgSR.gameObject.SetActive(false);
+            }
+        }
 
         // Camera follow setup
         Vector3 camOffset = Vector3.zero;
@@ -422,6 +464,11 @@ public class Board : MonoBehaviour
 
             Vector3 pos = Vector3.Lerp(start, end, e);
             moverSR.transform.position = pos;
+            if (moverBgSR != null && fromBgSR != null)
+            {
+                Vector3 bgPos = Vector3.Lerp(startBg, endBg, e);
+                moverBgSR.transform.position = bgPos;
+            }
 
             if (followCam != null)
             {
@@ -436,10 +483,17 @@ public class Board : MonoBehaviour
 
         moverSR.transform.position = end;
         moverSR.gameObject.SetActive(false);
+        if (moverBgSR != null && fromBgSR != null)
+        {
+            moverBgSR.transform.position = endBg;
+            moverBgSR.gameObject.SetActive(false);
+        }
 
         // Restore icon visibility (destination will be redrawn after MoveCharacterOneHex anyway)
         if (fromSR != null) fromSR.enabled = fromPrevEnabled;
         if (toSR != null) toSR.enabled = toPrevEnabled;
+        if (fromBgSR != null) fromBgSR.enabled = fromBgPrevEnabled;
+        if (toBgSR != null) toBgSR.enabled = toBgPrevEnabled;
     }
 
 
@@ -451,6 +505,80 @@ public class Board : MonoBehaviour
         // return h.WorldPosition;
         // return h.CenterWorld;
         return h.transform.position;
+    }
+
+    private static Vector3 GetLocalScaleForWorldScale(Transform target, Vector3 desiredWorldScale)
+    {
+        if (target == null) return desiredWorldScale;
+        Transform parent = target.parent;
+        if (parent == null) return desiredWorldScale;
+
+        Vector3 parentWorldScale = parent.lossyScale;
+        return new Vector3(
+            SafeDivide(desiredWorldScale.x, parentWorldScale.x),
+            SafeDivide(desiredWorldScale.y, parentWorldScale.y),
+            SafeDivide(desiredWorldScale.z, parentWorldScale.z)
+        );
+    }
+
+    private static Vector3 GetDesiredWorldScale(SpriteRenderer source, SpriteRenderer mover)
+    {
+        if (source == null || mover == null || source.sprite == null || mover.sprite == null)
+        {
+            return source != null ? source.transform.lossyScale : Vector3.one;
+        }
+
+        Vector3 sourceSize = source.bounds.size;
+        Vector3 moverSpriteSize = mover.sprite.bounds.size;
+        return new Vector3(
+            SafeDivide(sourceSize.x, moverSpriteSize.x),
+            SafeDivide(sourceSize.y, moverSpriteSize.y),
+            1f
+        );
+    }
+
+    private static void CopyPropertyBlock(SpriteRenderer source, SpriteRenderer target)
+    {
+        if (source == null || target == null) return;
+        var block = new MaterialPropertyBlock();
+        source.GetPropertyBlock(block);
+        target.SetPropertyBlock(block);
+    }
+
+    private static SpriteRenderer GetCharacterBackground(SpriteRenderer characterSprite)
+    {
+        if (characterSprite == null) return null;
+        Transform parent = characterSprite.transform.parent;
+        if (parent == null) return null;
+        return parent.GetComponent<SpriteRenderer>();
+    }
+
+    private SpriteRenderer EnsureMoverBackground(SpriteRenderer mover)
+    {
+        if (mover == null) return null;
+        if (characterMoverBackground != null) return characterMoverBackground;
+
+        Transform parent = mover.transform.parent;
+        if (parent != null)
+        {
+            Transform existing = parent.Find("characterBg");
+            if (existing != null)
+            {
+                characterMoverBackground = existing.GetComponent<SpriteRenderer>();
+                if (characterMoverBackground != null) return characterMoverBackground;
+            }
+        }
+
+        GameObject bg = new("characterBg");
+        bg.transform.SetParent(mover.transform.parent, false);
+        characterMoverBackground = bg.AddComponent<SpriteRenderer>();
+        characterMoverBackground.gameObject.SetActive(false);
+        return characterMoverBackground;
+    }
+
+    private static float SafeDivide(float numerator, float denominator)
+    {
+        return Mathf.Abs(denominator) < 0.0001f ? numerator : numerator / denominator;
     }
 
 
@@ -498,10 +626,15 @@ public class Board : MonoBehaviour
             // Get the visible sprites on each hex
             SpriteRenderer fromSR = previousHex.GetCharacterSpriteRendererOnHex(character);
             SpriteRenderer toSR = newHex.GetCharacterSpriteRendererOnHex(character);
+            SpriteRenderer fromBg = GetCharacterBackground(fromSR);
+            SpriteRenderer toBg = GetCharacterBackground(toSR);
+            SpriteRenderer moverBg = moverSR == characterMoverImage ? EnsureMoverBackground(moverSR) : null;
 
-            // Use the sprite transforms’ world positions (NOT RectTransform)
+            // Use the sprite transforms' world positions (NOT RectTransform)
             Vector3 startPos = (fromSR != null) ? fromSR.transform.position : previousHex.transform.position;
             Vector3 endPos = (toSR != null) ? toSR.transform.position : newHex.transform.position;
+            Vector3 startBgPos = fromBg != null ? fromBg.transform.position : startPos;
+            Vector3 endBgPos = toBg != null ? toBg.transform.position : endPos;
 
             IEnumerator tween = null; 
             bool canAnimate = moverSR != null && fromSR != null; // need at least fromSR for look/size
@@ -509,7 +642,7 @@ public class Board : MonoBehaviour
             try
             {
                 if (canAnimate)
-                    tween = AnimateSpriteBetween(fromSR, toSR, moverSR, startPos, endPos, 0.35f);
+                    tween = AnimateSpriteBetween(fromSR, toSR, moverSR, fromBg, toBg, moverBg, startPos, endPos, startBgPos, endBgPos, 0.35f);
             }
             catch (Exception e)
             {
@@ -590,6 +723,11 @@ public class Board : MonoBehaviour
 
             if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
             character.GetOwner().visibleHexes.Add(newHex);
+            Game g = FindFirstObjectByType<Game>();
+            if (g != null && g.IsPlayerCurrentlyPlaying() && g.player == character.GetOwner())
+            {
+                character.GetOwner().RefreshVisibleHexesImmediate();
+            }
 
             bool wasWater = previousHex.IsWaterTerrain();
             bool isWater = newHex.IsWaterTerrain();

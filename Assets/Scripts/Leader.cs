@@ -10,6 +10,7 @@ public class Leader : Character
     public List<Character> controlledCharacters = new();
     public List<PC> controlledPcs = new();
     public List<Hex> visibleHexes = new();
+    private readonly HashSet<Hex> tempSeenHexes = new();
 
     [Header("Stores")]
     public int leatherAmount = 0;
@@ -74,6 +75,8 @@ public class Leader : Character
                 : characterSlotAdded
                     ? "A new character slot is available."
                     : "A new pc slot is available.";
+            string costHint = BuildCreationCostHint(characterSlotAdded, pcSlotAdded);
+            if (!string.IsNullOrWhiteSpace(costHint)) message += $" {costHint}";
             _ = ConfirmationDialog.AskOk(message);
         }
     }
@@ -162,6 +165,7 @@ public class Leader : Character
     }
     new public void NewTurn()
     {
+        tempSeenHexes.Clear();
         if (!killed && goldAmount < -10) Killed(this);
 
         if (killed) return;
@@ -217,7 +221,7 @@ public class Leader : Character
 
         List<Hex> allHexes = FindFirstObjectByType<Board>().hexes.Values.ToList();
 
-        allHexes.FindAll(x => !visibleHexes.Contains(x)).ForEach(x => x.Hide());
+        allHexes.FindAll(x => !visibleHexes.Contains(x) && !tempSeenHexes.Contains(x)).ForEach(x => x.Hide());
         var hexesToReveal = visibleHexes.ToList();
         List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
         hexesToReveal.AddRange(spiedHexes);
@@ -231,7 +235,42 @@ public class Leader : Character
             yield return null;
         }
 
+        foreach (var hex in tempSeenHexes)
+        {
+            if (hex != null) hex.Reveal();
+        }
+
         onComplete?.Invoke();
+    }
+
+    public void RefreshVisibleHexesImmediate()
+    {
+        Game g = FindFirstObjectByType<Game>();
+        if (g == null || g.player != this) return;
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null || board.hexes == null) return;
+
+        List<Hex> allHexes = board.hexes.Values.ToList();
+        allHexes.FindAll(x => !visibleHexes.Contains(x) && !tempSeenHexes.Contains(x)).ForEach(x => x.Hide());
+        var hexesToReveal = visibleHexes.ToList();
+        List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
+        hexesToReveal.AddRange(spiedHexes);
+        hexesToReveal = hexesToReveal.Distinct().ToList();
+
+        for (int i = 0; i < hexesToReveal.Count; i++) hexesToReveal[i].RevealArea(1, false);
+        foreach (var hex in tempSeenHexes)
+        {
+            if (hex != null) hex.Reveal();
+        }
+    }
+
+    public void AddTemporarySeenHexes(IEnumerable<Hex> hexes)
+    {
+        if (hexes == null) return;
+        foreach (var hex in hexes)
+        {
+            if (hex != null) tempSeenHexes.Add(hex);
+        }
     }
 
     override public Leader GetOwner()
@@ -377,6 +416,64 @@ public class Leader : Character
     public int GetAllPoints()
     {
         return GetCharacterPoints() + GetPCPoints() + GetArmyPoints() + GetStorePoints();
+    }
+
+    private static ActionDefinitionCollection cachedActionDefinitions;
+
+    private static string BuildCreationCostHint(bool characterSlotAdded, bool pcSlotAdded)
+    {
+        List<string> parts = new();
+        if (pcSlotAdded)
+        {
+            int? campCost = GetActionGoldCost("PostCamp");
+            if (campCost.HasValue) parts.Add($"Posting a new camp costs {campCost.Value} gold.");
+        }
+        if (characterSlotAdded)
+        {
+            (int min, int max)? range = GetActionGoldCostRange("NameCommander", "NameAgent", "NameEmmissary", "NameMage");
+            if (range.HasValue)
+            {
+                string costText = range.Value.min == range.Value.max
+                    ? range.Value.min.ToString()
+                    : $"{range.Value.min}-{range.Value.max}";
+                parts.Add($"Creating a new character costs {costText} gold.");
+            }
+        }
+        return string.Join(" ", parts);
+    }
+
+    private static (int min, int max)? GetActionGoldCostRange(params string[] classNames)
+    {
+        if (classNames == null || classNames.Length == 0) return null;
+        List<int> costs = new();
+        for (int i = 0; i < classNames.Length; i++)
+        {
+            int? cost = GetActionGoldCost(classNames[i]);
+            if (cost.HasValue) costs.Add(cost.Value);
+        }
+
+        if (costs.Count == 0) return null;
+        int min = costs.Min();
+        int max = costs.Max();
+        return (min, max);
+    }
+
+    private static int? GetActionGoldCost(string className)
+    {
+        if (string.IsNullOrWhiteSpace(className)) return null;
+        ActionDefinitionCollection defs = GetActionDefinitions();
+        if (defs?.actions == null) return null;
+        ActionDefinition match = defs.actions.Find(a => string.Equals(a.className, className, StringComparison.OrdinalIgnoreCase));
+        return match != null ? match.goldCost : null;
+    }
+
+    private static ActionDefinitionCollection GetActionDefinitions()
+    {
+        if (cachedActionDefinitions != null) return cachedActionDefinitions;
+        TextAsset json = Resources.Load<TextAsset>("Actions");
+        if (json == null) return null;
+        cachedActionDefinitions = JsonUtility.FromJson<ActionDefinitionCollection>(json.text);
+        return cachedActionDefinitions;
     }
 
     public override void Killed(Leader killedBy, bool onlyMask = false)

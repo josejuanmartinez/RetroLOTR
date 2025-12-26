@@ -14,6 +14,7 @@ public class CastLight: FreeNeutralSpell
             Hex hex = c.hex;
             int radius = Math.Max(1, ApplySpellEffectMultiplier(c, 1));
             hex.RevealArea(radius, true, c.owner);
+            c.GetOwner()?.AddTemporarySeenHexes(hex.GetHexesInRadius(radius));
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area secrets revealed!", Color.green);
             return true;
         };

@@ -12,9 +12,9 @@ public class Haste: Spell
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             int boost = (int) Math.Clamp(Math.Round(c.GetMage() * UnityEngine.Random.Range(0.1f, 0.3f)), 0, 3);
-            int totalReduction = Math.Max(0, ApplySpellEffectMultiplier(c, 2 + boost));
-            int displayedBoost = Math.Max(0, totalReduction - 2);
-            c.moved = Math.Max(c.moved - totalReduction, 0);
+            int totalReduction = Math.Max(1, ApplySpellEffectMultiplier(c, 2 + boost));
+            int displayedBoost = Math.Max(1, totalReduction);
+            c.moved = c.moved - totalReduction;
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"+{displayedBoost} <sprite name=\"movement\"/>", Color.green);
             return true;
         };

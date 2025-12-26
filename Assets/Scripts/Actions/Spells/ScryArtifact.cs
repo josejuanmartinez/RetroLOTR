@@ -19,6 +19,7 @@ public class ScryArtifact: Spell
             if(randomHex.hiddenArtifacts.Count < 1) return false;
             Artifact artifact = randomHex.hiddenArtifacts[0];
             randomHex.Reveal(c.GetOwner());
+            c.GetOwner()?.AddTemporarySeenHexes(new[] { randomHex });
             randomHex.LookAt();            
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()}", Color.green);
             return true;

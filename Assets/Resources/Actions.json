@@ -3,6 +3,7 @@
     {
       "className": "SellSteel",
       "actionName": "Sell 5 Steel",
+      "iconName": "icons3_7",
       "actionId": 98,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -29,6 +30,7 @@
     {
       "className": "BuySteel",
       "actionName": "Buy 5 Steel",
+      "iconName": "icons3_7",
       "actionId": 99,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -55,6 +57,7 @@
     {
       "className": "TrainArchers",
       "actionName": "Train Archers",
+      "iconName": "icons3_28",
       "actionId": 100,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -81,6 +84,7 @@
     {
       "className": "TrainMetAtArms",
       "actionName": "Train Men-at-arms",
+      "iconName": "icons3_10",
       "actionId": 101,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -107,6 +111,7 @@
     {
       "className": "TrainLightInfantry",
       "actionName": "Train Light Infantry",
+      "iconName": "icons4_10",
       "actionId": 102,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -133,6 +138,7 @@
     {
       "className": "TrainHeavyInfantry",
       "actionName": "Train Heavy Infantry",
+      "iconName": "icons3_15",
       "actionId": 103,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -159,6 +165,7 @@
     {
       "className": "TrainLightCavalry",
       "actionName": "Train Light Cavalry",
+      "iconName": "icons3_3",
       "actionId": 104,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -185,6 +192,7 @@
     {
       "className": "TrainHeavyCavalry",
       "actionName": "Train Heavy Cavalry",
+      "iconName": "icons3_14",
       "actionId": 105,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -211,6 +219,7 @@
     {
       "className": "TrainCatapults",
       "actionName": "Train Catapults",
+      "iconName": "icons1_27",
       "actionId": 106,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -237,6 +246,7 @@
     {
       "className": "TrainWarships",
       "actionName": "Train Warships",
+      "iconName": "icons4_27",
       "actionId": 107,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -263,6 +273,7 @@
     {
       "className": "SellLeather",
       "actionName": "Sell 5 Leather",
+      "iconName": "icons3_0",
       "actionId": 109,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -289,6 +300,7 @@
     {
       "className": "BuyLeather",
       "actionName": "Buy 5 Leather",
+      "iconName": "icons3_0",
       "actionId": 110,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -315,6 +327,7 @@
     {
       "className": "SellMounts",
       "actionName": "Sell 5 Mounts",
+      "iconName": "icons3_3",
       "actionId": 111,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -341,6 +354,7 @@
     {
       "className": "BuyMounts",
       "actionName": "Buy 5 Mounts",
+      "iconName": "icons3_3",
       "actionId": 112,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -367,6 +381,7 @@
     {
       "className": "SellIron",
       "actionName": "Sell 5 Iron",
+      "iconName": "icons3_1",
       "actionId": 113,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -393,6 +408,7 @@
     {
       "className": "BuyIron",
       "actionName": "Buy 5 Iron",
+      "iconName": "icons3_1",
       "actionId": 114,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -419,6 +435,7 @@
     {
       "className": "SellTimber",
       "actionName": "Sell 5 Timber",
+      "iconName": "icons3_4",
       "actionId": 115,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -445,6 +462,7 @@
     {
       "className": "BuyTimber",
       "actionName": "Buy 5 Timber",
+      "iconName": "icons3_4",
       "actionId": 116,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -471,6 +489,7 @@
     {
       "className": "SellMithril",
       "actionName": "Sell 5 Mithril",
+      "iconName": "icons4_21",
       "actionId": 117,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -497,6 +516,7 @@
     {
       "className": "BuyMithril",
       "actionName": "Buy 5 Mithril",
+      "iconName": "icons4_21",
       "actionId": 118,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -523,6 +543,7 @@
     {
       "className": "AssassinateCharacter",
       "actionName": "Assassinate Character",
+      "iconName": "icons1_10",
       "actionId": 119,
       "difficulty": 80,
       "commanderSkillRequired": 0,
@@ -549,6 +570,7 @@
     {
       "className": "WoundCharacter",
       "actionName": "Wound Character",
+      "iconName": "icons5_18",
       "actionId": 120,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -575,6 +597,7 @@
     {
       "className": "DoubleCharacter",
       "actionName": "Double Character",
+      "iconName": "icons5_0",
       "actionId": 121,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -601,6 +624,7 @@
     {
       "className": "UndoubleCharacter",
       "actionName": "Undouble Character",
+      "iconName": "icons5_0",
       "actionId": 122,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -627,6 +651,7 @@
     {
       "className": "InfluenceUpPC",
       "actionName": "Increase Loyalty",
+      "iconName": "pcUp",
       "actionId": 123,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -653,6 +678,7 @@
     {
       "className": "InfluenceDownPC",
       "actionName": "Decrease Loyalty",
+      "iconName": "pcDown",
       "actionId": 124,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -679,6 +705,7 @@
     {
       "className": "Attack",
       "actionName": "Attack",
+      "iconName": "icons5_8",
       "actionId": 125,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -705,6 +732,7 @@
     {
       "className": "FortifyPC",
       "actionName": "Increase Fortifications",
+      "iconName": "fortUp",
       "actionId": 126,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -731,6 +759,7 @@
     {
       "className": "CastDarkness",
       "actionName": "Cast Darkness",
+      "iconName": "icons2_4",
       "actionId": 127,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -757,6 +786,7 @@
     {
       "className": "CastLight",
       "actionName": "Cast Light",
+      "iconName": "icons5_23",
       "actionId": 128,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -783,6 +813,7 @@
     {
       "className": "ConjureMounts",
       "actionName": "Conjure Mounts",
+      "iconName": "icons4_3",
       "actionId": 129,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -809,6 +840,7 @@
     {
       "className": "Curse",
       "actionName": "Curse",
+      "iconName": "icons4_19",
       "actionId": 130,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -835,6 +867,7 @@
     {
       "className": "OhElbereth",
       "actionName": "Oh, Elbereth!",
+      "iconName": "icons2_17",
       "actionId": 131,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -861,6 +894,7 @@
     {
       "className": "ReturnToCapital",
       "actionName": "Return To Capital",
+      "iconName": "icons5_14",
       "actionId": 132,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -887,6 +921,7 @@
     {
       "className": "RevealPC",
       "actionName": "Reveal Pc",
+      "iconName": "icons4_9",
       "actionId": 133,
       "difficulty": 75,
       "commanderSkillRequired": 0,
@@ -913,6 +948,7 @@
     {
       "className": "ScryArea",
       "actionName": "Scry Area",
+      "iconName": "icons5_5",
       "actionId": 134,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -939,6 +975,7 @@
     {
       "className": "Teleport",
       "actionName": "Teleport",
+      "iconName": "icons1_25",
       "actionId": 135,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -965,6 +1002,7 @@
     {
       "className": "SummonMA",
       "actionName": "Summon Men-at-arms",
+      "iconName": "icons2_21",
       "actionId": 136,
       "difficulty": 80,
       "commanderSkillRequired": 0,
@@ -991,6 +1029,7 @@
     {
       "className": "WizardLaugh",
       "actionName": "Wizards Laugh",
+      "iconName": "icons2_14",
       "actionId": 137,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -1017,6 +1056,7 @@
     {
       "className": "Heal",
       "actionName": "Heal",
+      "iconName": "icons3_25",
       "actionId": 138,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1043,6 +1083,7 @@
     {
       "className": "Fireworks",
       "actionName": "Fireworks",
+      "iconName": "icons1_27",
       "actionId": 139,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1069,6 +1110,7 @@
     {
       "className": "FindArtifact",
       "actionName": "Find Artifact",
+      "iconName": "icons1_20",
       "actionId": 144,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -1095,6 +1137,7 @@
     {
       "className": "ScryArtifact",
       "actionName": "Scry Artifact",
+      "iconName": "icons1_13",
       "actionId": 145,
       "difficulty": 75,
       "commanderSkillRequired": 0,
@@ -1121,6 +1164,7 @@
     {
       "className": "StealGold",
       "actionName": "Steal Gold",
+      "iconName": "icons5_6",
       "actionId": 146,
       "difficulty": 70,
       "commanderSkillRequired": 0,
@@ -1147,6 +1191,7 @@
     {
       "className": "StealIron",
       "actionName": "Steal Iron",
+      "iconName": "icons3_1",
       "actionId": 147,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1173,6 +1218,7 @@
     {
       "className": "StealLeather",
       "actionName": "Steal Leather",
+      "iconName": "icons3_0",
       "actionId": 148,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1199,6 +1245,7 @@
     {
       "className": "StealMithril",
       "actionName": "Steal Mithril",
+      "iconName": "icons4_21",
       "actionId": 149,
       "difficulty": 70,
       "commanderSkillRequired": 0,
@@ -1225,6 +1272,7 @@
     {
       "className": "StealMounts",
       "actionName": "Steal Mounts",
+      "iconName": "icons3_3",
       "actionId": 150,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1251,6 +1299,7 @@
     {
       "className": "StealTimber",
       "actionName": "Steal Timber",
+      "iconName": "icons3_4",
       "actionId": 151,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1277,6 +1326,7 @@
     {
       "className": "Pass",
       "actionName": "Pass",
+      "iconName": "icons5_11",
       "actionId": 152,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -1303,6 +1353,7 @@
     {
       "className": "Haste",
       "actionName": "Haste",
+      "iconName": "icons5_4",
       "actionId": 153,
       "difficulty": 40,
       "commanderSkillRequired": 0,
@@ -1329,6 +1380,7 @@
     {
       "className": "ScoutArea",
       "actionName": "Scout Area",
+      "iconName": "icons5_3",
       "actionId": 154,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1355,6 +1407,7 @@
     {
       "className": "Block",
       "actionName": "Block",
+      "iconName": "icons5_9",
       "actionId": 155,
       "difficulty": 50,
       "commanderSkillRequired": 2,
@@ -1381,6 +1434,7 @@
     {
       "className": "Courage",
       "actionName": "Courage",
+      "iconName": "icons5_15",
       "actionId": 156,
       "difficulty": 40,
       "commanderSkillRequired": 0,
@@ -1407,6 +1461,7 @@
     {
       "className": "Halt",
       "actionName": "Halt",
+      "iconName": "icons2_8",
       "actionId": 157,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1433,6 +1488,7 @@
     {
       "className": "IceStorm",
       "actionName": "Ice Storm",
+      "iconName": "icons2_13",
       "actionId": 158,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1459,6 +1515,7 @@
     {
       "className": "WizardsFire",
       "actionName": "Wizard's Fire",
+      "iconName": "icons4_4",
       "actionId": 159,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1485,6 +1542,7 @@
     {
       "className": "WordsOfDispair",
       "actionName": "Words Of Dispair",
+      "iconName": "icons5_13",
       "actionId": 160,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -1511,6 +1569,7 @@
     {
       "className": "YouShallNotPass",
       "actionName": "You Shall Not Pass!",
+      "iconName": "icons5_8",
       "actionId": 161,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1537,6 +1596,7 @@
     {
       "className": "RevealRumours",
       "actionName": "Hear Stories",
+      "iconName": "icons1_6",
       "actionId": 162,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1563,6 +1623,7 @@
     {
       "className": "StateAllegiance",
       "actionName": "State Allegiance",
+      "iconName": "icons2_16",
       "actionId": 163,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -1589,6 +1650,7 @@
     {
       "className": "PerceiveDanger",
       "actionName": "Perceive Danger",
+      "iconName": "icons4_30",
       "actionId": 164,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -1615,6 +1677,7 @@
     {
       "className": "TransferArtifact",
       "actionName": "Transfer Artifact",
+      "iconName": "icons5_10",
       "actionId": 165,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -1641,6 +1704,7 @@
     {
       "className": "TrainArmy",
       "actionName": "Train Army",
+      "iconName": "icons5_7",
       "actionId": 166,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -1667,6 +1731,7 @@
     {
       "className": "NameCommander",
       "actionName": "Name Commander",
+      "iconName": "icons2_26",
       "actionId": 167,
       "difficulty": 25,
       "commanderSkillRequired": 1,
@@ -1692,6 +1757,7 @@
     {
       "className": "NameAgent",
       "actionName": "Name Agent",
+      "iconName": "icons1_16",
       "actionId": 168,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1717,6 +1783,7 @@
     {
       "className": "NameEmmissary",
       "actionName": "Name Emmissary",
+      "iconName": "icons3_9",
       "actionId": 169,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1742,6 +1809,7 @@
     {
       "className": "NameMage",
       "actionName": "Name Mage",
+      "iconName": "icons2_5",
       "actionId": 170,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1767,6 +1835,7 @@
     {
       "className": "CreateCamp",
       "actionName": "Create Camp",
+      "iconName": "icons5_19",
       "actionId": 171,
       "difficulty": 40,
       "commanderSkillRequired": 0,
@@ -1792,6 +1861,7 @@
     {
       "className": "PostCamp",
       "actionName": "Post Camp",
+      "iconName": "icons5_19",
       "actionId": 172,
       "difficulty": 60,
       "commanderSkillRequired": 2,

@@ -11,6 +11,7 @@ public class ScoutArea : AgentAction
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             c.hex.RevealArea(1, true, c.GetOwner());
+            c.GetOwner()?.AddTemporarySeenHexes(c.hex.GetHexesInRadius(1));
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area scouted", Color.green);
             return true;
         };

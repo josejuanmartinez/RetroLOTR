@@ -111,6 +111,8 @@ public class PlayableLeaderIcon : MonoBehaviour
     public void RefreshVictoryPoints(int points)
     {
         if (victoryPoints != null) victoryPoints.text = points.ToString();
+        PlayableLeaderIcons icons = FindFirstObjectByType<PlayableLeaderIcons>();
+        if (icons != null) icons.UpdateVictoryPointColors();
     }
 
     private void SetLeaderVisuals(VideoClip clip, Sprite fallbackSprite)

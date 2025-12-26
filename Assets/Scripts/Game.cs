@@ -93,6 +93,7 @@ public class Game : MonoBehaviour
         board.StartGame();
         AssignAIandHumans();
         VictoryPoints.RecalculateAndAssign(this);
+        RefreshPlayableLeaderIconVictoryPoints();
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         NewTurnStarted?.Invoke(turn);
         currentlyPlaying.NewTurn();
@@ -129,6 +130,14 @@ public class Game : MonoBehaviour
         {
             if (nonPlayableLeader != null) nonPlayableLeader.InitializeIcons();
         }
+    }
+
+    private void RefreshPlayableLeaderIconVictoryPoints()
+    {
+        PlayableLeaderIcons leaderIcons = FindFirstObjectByType<PlayableLeaderIcons>();
+        if (leaderIcons == null) return;
+        leaderIcons.RefreshVictoryPointsForAll();
+        leaderIcons.UpdateVictoryPointColors();
     }
 
     public bool PointToCharacterWithMissingActions()

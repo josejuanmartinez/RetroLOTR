@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,14 +12,16 @@ public class PlayableLeaderIcons : MonoBehaviour
 
     public List<PlayableLeaderIcon> playableLeaderIcons;
     public Game game;
+
+    private void Awake()
+    {
+        EnsurePlayableLeaderIcons();
+    }
+
     void Start()
     {
         if(game == null) game = FindFirstObjectByType<Game>();
-        playableLeaderIcons = new() {
-            currentPlayerPlayableIcon,
-            competitor1PlayableIcon,
-            competitor2PlayableIcon
-        };
+        EnsurePlayableLeaderIcons();
         if (game != null && game.currentlyPlaying != null)
         {
             HighlightCurrentlyPlaying(game.currentlyPlaying);
@@ -50,6 +53,7 @@ public class PlayableLeaderIcons : MonoBehaviour
 
     public void HighlightCurrentlyPlaying(PlayableLeader currentlyPlaying)
     {
+        EnsurePlayableLeaderIcons();
         for(int i=0;i<playableLeaderIcons.Count;i++)
         {
             PlayableLeaderIcon playableLeaderIcon = playableLeaderIcons[i];
@@ -67,6 +71,7 @@ public class PlayableLeaderIcons : MonoBehaviour
 
     public void AddDeadIcon(PlayableLeader deadPlayer)
     {
+        EnsurePlayableLeaderIcons();
         for (int i = 0; i < playableLeaderIcons.Count; i++)
         {
             PlayableLeaderIcon playableLeaderIcon = playableLeaderIcons[i];
@@ -81,6 +86,7 @@ public class PlayableLeaderIcons : MonoBehaviour
     public void RefreshVictoryPointsFor(PlayableLeader leader, int points)
     {
         if (leader == null) return;
+        EnsurePlayableLeaderIcons();
         for (int i = 0; i < playableLeaderIcons.Count; i++)
         {
             PlayableLeaderIcon playableLeaderIcon = playableLeaderIcons[i];
@@ -94,13 +100,48 @@ public class PlayableLeaderIcons : MonoBehaviour
 
     public void RefreshVictoryPointsForAll()
     {
+        EnsurePlayableLeaderIcons();
         for (int i = 0; i < playableLeaderIcons.Count; i++)
         {
-            PlayableLeaderIcon icon = transform.GetChild(i).GetComponent<PlayableLeaderIcon>();
+            PlayableLeaderIcon icon = playableLeaderIcons[i];
             if (icon != null && icon.playableLeader != null && !icon.playableLeader.killed && icon.playableLeader.victoryPoints != null)
             {
                 icon.RefreshVictoryPoints(icon.playableLeader.victoryPoints.RelativeScore);
             }
         }
+    }
+
+    public void UpdateVictoryPointColors()
+    {
+        EnsurePlayableLeaderIcons();
+        if (playableLeaderIcons == null || playableLeaderIcons.Count == 0) return;
+
+        for (int i = 0; i < playableLeaderIcons.Count; i++)
+        {
+            PlayableLeaderIcon icon = playableLeaderIcons[i];
+            if (icon != null && icon.victoryPoints != null)
+            {
+                icon.victoryPoints.color = Color.white;
+            }
+        }
+
+        List<PlayableLeaderIcon> ranked = playableLeaderIcons
+            .Where(icon => icon != null && icon.playableLeader != null && !icon.playableLeader.killed && icon.victoryPoints != null)
+            .OrderByDescending(icon => icon.playableLeader.victoryPoints != null ? icon.playableLeader.victoryPoints.RelativeScore : int.MinValue)
+            .ToList();
+
+        if (ranked.Count > 0) ranked[0].victoryPoints.color = new Color(0.12f, 0.55f, 0.23f, 1f);
+        if (ranked.Count > 1) ranked[1].victoryPoints.color = new Color(1f, 0.6f, 0.2f, 1f);
+        if (ranked.Count > 2) ranked[2].victoryPoints.color = new Color(0.9f, 0.2f, 0.2f, 1f);
+    }
+
+    private void EnsurePlayableLeaderIcons()
+    {
+        if (playableLeaderIcons != null && playableLeaderIcons.Count > 0) return;
+        playableLeaderIcons = new() {
+            currentPlayerPlayableIcon,
+            competitor1PlayableIcon,
+            competitor2PlayableIcon
+        };
     }
 }

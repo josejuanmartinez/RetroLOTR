@@ -13,7 +13,7 @@ public class CastDarkness: DarkNeutralSpell
             if (originalEffect != null && !originalEffect(c)) return false;
             Hex hex = c.hex;
             int radius = Math.Max(1, ApplySpellEffectMultiplier(c, 1));
-            hex.UnrevealArea(radius, true, c.owner);
+            hex.ObscureArea(radius, true, c.owner);
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area obscured!", Color.red);
             return true;
         };

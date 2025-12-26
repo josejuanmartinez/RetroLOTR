@@ -26,10 +26,13 @@ public class ActionsManager : MonoBehaviour
     private readonly List<CharacterAction> availableActions = new();
     private int currentPageIndex;
     private Character currentCharacter;
-    public static readonly char[] ActionHotkeyLetters = "ABCDEFGHIJKLMOQRSTUVWXYZ".ToCharArray();
+    public static readonly char[] ActionHotkeyLetters = "BCEFGHIJKLMOQRTUVWYZ".ToCharArray();
 
+
+    private Illustrations illustrations;
     public void Start()
     {
+        if(illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         canvasGroup = GetComponent<CanvasGroup>();
 
         // Load definitions from json and sync them with instantiated buttons
@@ -372,7 +375,7 @@ public class ActionsManager : MonoBehaviour
         }
     }
 
-    private static string FormatActionLabel(int index, string actionName)
+    private string FormatActionLabel(int index, string actionName)
     {
         if (TryGetHotkeyLetter(index, out char letter))
         {
@@ -382,7 +385,7 @@ public class ActionsManager : MonoBehaviour
         return $"[{index}] {actionName ?? string.Empty}";
     }
 
-    private static bool TryGetHotkeyLetter(int index, out char letter)
+    private bool TryGetHotkeyLetter(int index, out char letter)
     {
         if (index >= 0 && index < ActionHotkeyLetters.Length)
         {
@@ -394,7 +397,7 @@ public class ActionsManager : MonoBehaviour
         return false;
     }
 
-    private static int GetHotkeyIndex(char letter)
+    private int GetHotkeyIndex(char letter)
     {
         char normalized = char.ToUpperInvariant(letter);
         for (int i = 0; i < ActionHotkeyLetters.Length; i++)
@@ -405,7 +408,7 @@ public class ActionsManager : MonoBehaviour
         return -1;
     }
 
-    private static Type ResolveActionType(string className)
+    private Type ResolveActionType(string className)
     {
         if (string.IsNullOrWhiteSpace(className)) return null;
 
@@ -453,6 +456,10 @@ public class ActionsManager : MonoBehaviour
 
         action.button = go.GetComponent<Button>() ?? go.GetComponentInChildren<Button>(true);
         action.textUI = go.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (action.spriteImage == null)
+        {
+            action.spriteImage = FindActionSpriteImage(go);
+        }
 
         if (hoverPrefab != null)
         {
@@ -466,7 +473,7 @@ public class ActionsManager : MonoBehaviour
         }
     }
 
-    private static void ApplyDefinition(CharacterAction action, ActionDefinition definition)
+    private void ApplyDefinition(CharacterAction action, ActionDefinition definition)
     {
         if (action == null || definition == null) return;
 
@@ -494,9 +501,33 @@ public class ActionsManager : MonoBehaviour
         action.mageXP = definition.mageXP;
         action.reward = definition.reward;
         action.advisorType = definition.advisorType;
+        ApplyIcon(action, definition.iconName);
     }
 
-    private static string NormalizeActionName(string value)
+    private Image FindActionSpriteImage(GameObject go)
+    {
+        Transform imageTransform = go.transform.Find("Image");
+        if (imageTransform != null)
+        {
+            return imageTransform.GetComponent<Image>();
+        }
+
+        return go.GetComponentInChildren<Image>(true);
+    }
+
+    private void ApplyIcon(CharacterAction action, string iconName)
+    {
+        if (action == null || action.spriteImage == null) return;
+        if (string.IsNullOrWhiteSpace(iconName)) return;
+
+        if (illustrations == null) return;
+
+        Sprite icon = illustrations.GetIllustrationByName(iconName);
+        action.spriteImage.sprite = icon;
+        action.spriteImage.enabled = icon != null;
+    }
+
+    private string NormalizeActionName(string value)
     {
         string stripped = ActionNameUtils.StripShortcut(value);
         return string.IsNullOrWhiteSpace(stripped) ? string.Empty : stripped.Trim().ToLowerInvariant();

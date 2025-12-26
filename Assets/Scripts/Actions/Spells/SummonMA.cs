@@ -27,6 +27,13 @@ public class SummonMA: DarkSpell
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
             if (c == null || c.hex == null) return false;
+            PC pc = c.hex.GetPC();
+            if (pc == null) return false;
+            if (pc.owner != c.GetOwner())
+            {
+                AlignmentEnum pcAlignment = pc.owner.GetAlignment();
+                if (pcAlignment == AlignmentEnum.neutral || pcAlignment != c.GetAlignment()) return false;
+            }
             Character commander = c.hex.characters.Find(x => x != null && x.owner == c.owner && x.GetCommander() > 0);
             return commander != null;
         };
