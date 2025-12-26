@@ -10,6 +10,12 @@ public class ActionsManager : MonoBehaviour
     [Header("Prefabs")]
     public GameObject actionButtonPrefab;
     public GameObject hoverPrefab;
+    public Transform gridLayoutTransform;
+
+    [Header("Pagination")]
+    public Button previousPageButton;
+    public Button nextPageButton;
+    [SerializeField] private int actionsPerPage = 5;
 
     [HideInInspector]
     public CharacterAction DEFAULT;
@@ -17,6 +23,10 @@ public class ActionsManager : MonoBehaviour
     // Dictionary to store all the action components
     private Dictionary<Type, CharacterAction> actionComponents = new ();
     private CanvasGroup canvasGroup;
+    private readonly List<CharacterAction> availableActions = new();
+    private int currentPageIndex;
+    private Character currentCharacter;
+    public static readonly char[] ActionHotkeyLetters = "ABCDEFGHIJKLMOQRSTUVWXYZ".ToCharArray();
 
     public void Start()
     {
@@ -43,6 +53,7 @@ public class ActionsManager : MonoBehaviour
             Type componentType = component.GetType();
             actionComponents[componentType] = component;
         }
+        SetupPaginationButtons();
         Hide();
     }
 
@@ -57,13 +68,23 @@ public class ActionsManager : MonoBehaviour
 
     public void Refresh(Character character)
     {
+        if (currentCharacter != character)
+        {
+            currentCharacter = character;
+            currentPageIndex = 0;
+        }
         actionComponents.Values.ToList().ForEach(component => component.Initialize(character, null, null));
+        BuildAvailableActions();
+        ApplyPagination();
         UpdateInteractableState();
     }
 
     public void Hide()
     {
         actionComponents.Values.ToList().ForEach(component => component.Reset());
+        availableActions.Clear();
+        currentPageIndex = 0;
+        UpdatePaginationButtons(0);
         UpdateInteractableState();
     }
 
@@ -84,6 +105,66 @@ public class ActionsManager : MonoBehaviour
         canvasGroup.alpha = enabled ? 1f : 0f;
         canvasGroup.interactable = enabled;
         canvasGroup.blocksRaycasts = enabled;
+    }
+
+    private void SetupPaginationButtons()
+    {
+        if (previousPageButton != null)
+        {
+            previousPageButton.onClick.RemoveListener(GoToPreviousPage);
+            previousPageButton.onClick.AddListener(GoToPreviousPage);
+        }
+        if (nextPageButton != null)
+        {
+            nextPageButton.onClick.RemoveListener(GoToNextPage);
+            nextPageButton.onClick.AddListener(GoToNextPage);
+        }
+    }
+
+    private void GoToPreviousPage()
+    {
+        if (currentPageIndex <= 0) return;
+        currentPageIndex--;
+        ApplyPagination();
+    }
+
+    private void GoToNextPage()
+    {
+        int totalPages = GetTotalPages();
+        if (currentPageIndex >= totalPages - 1) return;
+        currentPageIndex++;
+        ApplyPagination();
+    }
+
+    public void PreviousPage()
+    {
+        GoToPreviousPage();
+    }
+
+    public void NextPage()
+    {
+        GoToNextPage();
+    }
+
+    public void ExecuteActionAtPageIndex(int index)
+    {
+        if (index < 0 || index >= actionsPerPage) return;
+        if (availableActions.Count == 0) return;
+
+        int startIndex = currentPageIndex * actionsPerPage;
+        int targetIndex = startIndex + index;
+        if (targetIndex < 0 || targetIndex >= availableActions.Count) return;
+
+        CharacterAction action = availableActions[targetIndex];
+        if (action == null || !action.FulfillsConditions()) return;
+        action.ExecuteFromButton();
+    }
+
+    public void ExecuteActionByHotkey(char letter)
+    {
+        int index = GetHotkeyIndex(letter);
+        if (index < 0) return;
+        ExecuteActionAtPageIndex(index);
     }
 
     private CharacterAction[] LoadActionsFromJson()
@@ -200,6 +281,130 @@ public class ActionsManager : MonoBehaviour
         return created.ToArray();
     }
 
+    private void BuildAvailableActions()
+    {
+        availableActions.Clear();
+        if (characterActions == null) return;
+
+        foreach (CharacterAction action in characterActions)
+        {
+            if (action == null) continue;
+            if (action.FulfillsConditions())
+            {
+                availableActions.Add(action);
+            }
+        }
+
+        availableActions.Sort((a, b) => string.Compare(a?.actionName, b?.actionName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void ApplyPagination()
+    {
+        if (characterActions == null || characterActions.Length == 0)
+        {
+            UpdatePaginationButtons(0);
+            return;
+        }
+
+        foreach (CharacterAction action in characterActions)
+        {
+            if (action?.button != null)
+            {
+                action.button.gameObject.SetActive(false);
+            }
+        }
+
+        int totalActions = availableActions.Count;
+        int totalPages = GetTotalPages();
+        if (totalActions == 0 || totalPages == 0)
+        {
+            UpdatePaginationButtons(0);
+            return;
+        }
+
+        currentPageIndex = Mathf.Clamp(currentPageIndex, 0, totalPages - 1);
+        int startIndex = currentPageIndex * actionsPerPage;
+        int endIndex = Mathf.Min(startIndex + actionsPerPage, totalActions);
+
+        Transform targetParent = gridLayoutTransform != null ? gridLayoutTransform : transform;
+        for (int i = startIndex; i < endIndex; i++)
+        {
+            CharacterAction action = availableActions[i];
+            if (action == null) continue;
+            if (action.button != null)
+            {
+                action.button.gameObject.SetActive(true);
+            }
+            if (action.transform.parent != targetParent)
+            {
+                action.transform.SetParent(targetParent, false);
+            }
+            action.transform.SetSiblingIndex(i - startIndex);
+            if (action.textUI != null)
+            {
+                action.textUI.text = FormatActionLabel(i - startIndex, action.actionName);
+            }
+        }
+
+        UpdatePaginationButtons(totalPages);
+    }
+
+    private int GetTotalPages()
+    {
+        if (actionsPerPage <= 0) return 0;
+        return Mathf.CeilToInt(availableActions.Count / (float)actionsPerPage);
+    }
+
+    private void UpdatePaginationButtons(int totalPages)
+    {
+        bool hasPages = totalPages > 1;
+
+        if (previousPageButton != null)
+        {
+            previousPageButton.gameObject.SetActive(hasPages);
+            previousPageButton.interactable = hasPages && currentPageIndex > 0;
+        }
+
+        if (nextPageButton != null)
+        {
+            nextPageButton.gameObject.SetActive(hasPages);
+            nextPageButton.interactable = hasPages && currentPageIndex < totalPages - 1;
+        }
+    }
+
+    private static string FormatActionLabel(int index, string actionName)
+    {
+        if (TryGetHotkeyLetter(index, out char letter))
+        {
+            return $"[{letter}] {actionName ?? string.Empty}";
+        }
+
+        return $"[{index}] {actionName ?? string.Empty}";
+    }
+
+    private static bool TryGetHotkeyLetter(int index, out char letter)
+    {
+        if (index >= 0 && index < ActionHotkeyLetters.Length)
+        {
+            letter = ActionHotkeyLetters[index];
+            return true;
+        }
+
+        letter = '?';
+        return false;
+    }
+
+    private static int GetHotkeyIndex(char letter)
+    {
+        char normalized = char.ToUpperInvariant(letter);
+        for (int i = 0; i < ActionHotkeyLetters.Length; i++)
+        {
+            if (ActionHotkeyLetters[i] == normalized) return i;
+        }
+
+        return -1;
+    }
+
     private static Type ResolveActionType(string className)
     {
         if (string.IsNullOrWhiteSpace(className)) return null;
@@ -237,7 +442,7 @@ public class ActionsManager : MonoBehaviour
             return null;
         }
 
-        GameObject instance = Instantiate(prefab, transform);
+        GameObject instance = Instantiate(prefab, gridLayoutTransform);
         instance.name = actionName;
         return instance;
     }

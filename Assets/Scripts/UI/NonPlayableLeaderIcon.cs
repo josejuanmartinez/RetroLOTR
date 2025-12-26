@@ -35,13 +35,13 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
     {
         if (isUnrevealed || PopupManager.IsShowing) return;
         PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First((x => x.alignment == alignment));
-        if (leader) leader.HighlighNonPlayableLeader(image.sprite, text);
+        if (leader) leader.HighlighNonPlayableLeader(nonPlayableLeader.characterName, text);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First((x => x.alignment == alignment));
-        if (leader) leader.Restore(image.sprite);
+        if (leader) leader.Restore(nonPlayableLeader.characterName);
     }
 
     public void SetDead()

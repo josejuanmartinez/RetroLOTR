@@ -181,6 +181,27 @@ public class Game : MonoBehaviour
         }
     }
 
+    public void SelectNextCharacterInPriorityCycle()
+    {
+        if (!IsPlayerCurrentlyPlaying() || player == null || board == null) return;
+
+        List<Character> characters = player.controlledCharacters;
+        if (characters == null || characters.Count == 0) return;
+
+        List<Character> ordered = new();
+        ordered.AddRange(characters.Where(c => c != null && !c.killed && !c.hasActionedThisTurn));
+        ordered.AddRange(characters.Where(c => c != null && !c.killed && c.hasActionedThisTurn && c.moved < c.GetMaxMovement()));
+        ordered.AddRange(characters.Where(c => c != null && !c.killed && c.hasActionedThisTurn && c.moved >= c.GetMaxMovement()));
+
+        if (ordered.Count == 0) return;
+
+        Character current = board.selectedCharacter;
+        int currentIndex = ordered.IndexOf(current);
+        int nextIndex = currentIndex >= 0 ? (currentIndex + 1) % ordered.Count : 0;
+        Character next = ordered[nextIndex];
+        if (next != null) board.SelectCharacter(next);
+    }
+
     public async void NextPlayer()
     {
         bool shouldPrompt = currentlyPlaying == player && !skipNextTurnPrompt;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class KeyManager : MonoBehaviour
     public float keyboardMoveSpeed = 10f;
 
     private Game game;
+    private ActionsManager actionsManager;
+    private List<(KeyCode key, char letter)> actionHotkeys;
 
     private void Start()
     {
@@ -17,6 +20,8 @@ public class KeyManager : MonoBehaviour
         if(!game) game = FindFirstObjectByType<Game>();
         if(!pathRenderer) pathRenderer = FindFirstObjectByType<HexPathRenderer>();
         if(!boardNavigator) boardNavigator = FindFirstObjectByType<BoardNavigator>();
+        if(!actionsManager) actionsManager = FindFirstObjectByType<Layout>()?.GetActionsManager() ?? FindFirstObjectByType<ActionsManager>();
+        BuildActionHotkeys();
     }
     void Update()
     {
@@ -55,6 +60,12 @@ public class KeyManager : MonoBehaviour
         // Check if ESC key was pressed
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (PopupManager.IsShowing)
+            {
+                PopupManager.HidePopup();
+                return;
+            }
+
             if (board != null)
             {
                 board.UnselectHex();
@@ -73,7 +84,7 @@ public class KeyManager : MonoBehaviour
         {
             if (board != null && game != null)
             {
-                game.SelectNextCharacterOrFinishTurnPrompt();
+                game.SelectNextCharacterInPriorityCycle();
                 return;
             }
 
@@ -81,6 +92,8 @@ public class KeyManager : MonoBehaviour
                 pathRenderer.HidePath();
         }
 
+        HandleActionHotkeys(ctrlHeld, shiftHeld);
+        HandleCharacterMovementHotkeys(ctrlHeld, shiftHeld);
         HandleKeyboardCameraMovement();
     }
 
@@ -207,5 +220,160 @@ public class KeyManager : MonoBehaviour
             move.Normalize();
             boardNavigator.transform.position += move * keyboardMoveSpeed * Time.deltaTime;
         }
+    }
+
+    private void HandleActionHotkeys(bool ctrlHeld, bool shiftHeld)
+    {
+        if (ctrlHeld || shiftHeld) return;
+
+        if (actionsManager == null)
+        {
+            actionsManager = FindFirstObjectByType<Layout>()?.GetActionsManager() ?? FindFirstObjectByType<ActionsManager>();
+            if (actionsManager == null) return;
+            BuildActionHotkeys();
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            actionsManager.PreviousPage();
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            actionsManager.NextPage();
+            return;
+        }
+
+        foreach (var hotkey in actionHotkeys)
+        {
+            if (Input.GetKeyDown(hotkey.key))
+            {
+                actionsManager.ExecuteActionByHotkey(hotkey.letter);
+                return;
+            }
+        }
+    }
+
+    private void HandleCharacterMovementHotkeys(bool ctrlHeld, bool shiftHeld)
+    {
+        if (ctrlHeld || shiftHeld) return;
+        if (!board) board = FindFirstObjectByType<Board>();
+        if (board == null || board.selectedCharacter == null || board.selectedCharacter.hex == null) return;
+        if (board.moving) return;
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.Keypad4))
+        {
+            MoveSelectedCharacter(HexMoveDirection.Left);
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.Keypad6))
+        {
+            MoveSelectedCharacter(HexMoveDirection.Right);
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Keypad7))
+        {
+            MoveSelectedCharacter(HexMoveDirection.UpLeft);
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad9))
+        {
+            MoveSelectedCharacter(HexMoveDirection.UpRight);
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            MoveSelectedCharacter(HexMoveDirection.DownLeft);
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad3))
+        {
+            MoveSelectedCharacter(HexMoveDirection.DownRight);
+        }
+    }
+
+    private void BuildActionHotkeys()
+    {
+        actionHotkeys = new List<(KeyCode key, char letter)>();
+        if (ActionsManager.ActionHotkeyLetters == null) return;
+
+        foreach (char letter in ActionsManager.ActionHotkeyLetters)
+        {
+            if (Enum.TryParse(letter.ToString(), out KeyCode key))
+            {
+                actionHotkeys.Add((key, letter));
+            }
+        }
+    }
+
+    private enum HexMoveDirection
+    {
+        UpRight,
+        Right,
+        DownRight,
+        DownLeft,
+        Left,
+        UpLeft
+    }
+
+    private void MoveSelectedCharacter(HexMoveDirection direction)
+    {
+        Character character = board.selectedCharacter;
+        Hex currentHex = character != null ? character.hex : null;
+        if (currentHex == null) return;
+
+        Vector2 directionVector = GetDirectionVector(direction);
+        Vector2Int? target = GetNeighborInDirection(currentHex, directionVector);
+        if (!target.HasValue) return;
+
+        board.Move(character, target.Value);
+    }
+
+    private Vector2Int? GetNeighborInDirection(Hex currentHex, Vector2 directionVector)
+    {
+        if (board == null || board.hexes == null) return null;
+
+        Vector2Int[] neighbors = (currentHex.v2.x & 1) == 0 ? board.evenRowNeighbors : board.oddRowNeighbors;
+        Vector2 currentPos = currentHex.transform.position;
+        float bestDot = -1f;
+        Vector2Int? best = null;
+
+        foreach (Vector2Int offset in neighbors)
+        {
+            Vector2Int neighborPos = currentHex.v2 + offset;
+            if (!board.hexes.TryGetValue(neighborPos, out Hex neighborHex)) continue;
+
+            Vector2 delta = (Vector2)neighborHex.transform.position - currentPos;
+            if (delta.sqrMagnitude <= Mathf.Epsilon) continue;
+
+            float dot = Vector2.Dot(delta.normalized, directionVector);
+            if (dot > bestDot)
+            {
+                bestDot = dot;
+                best = neighborPos;
+            }
+        }
+
+        return bestDot >= 0.7f ? best : null;
+    }
+
+    private static Vector2 GetDirectionVector(HexMoveDirection direction)
+    {
+        return direction switch
+        {
+            HexMoveDirection.Left => Vector2.left,
+            HexMoveDirection.Right => Vector2.right,
+            HexMoveDirection.UpLeft => (Vector2.up + Vector2.left).normalized,
+            HexMoveDirection.UpRight => (Vector2.up + Vector2.right).normalized,
+            HexMoveDirection.DownLeft => (Vector2.down + Vector2.left).normalized,
+            HexMoveDirection.DownRight => (Vector2.down + Vector2.right).normalized,
+            _ => Vector2.zero
+        };
     }
 }

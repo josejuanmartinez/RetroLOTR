@@ -2,7 +2,7 @@
   "actions": [
     {
       "className": "SellSteel",
-      "actionName": "[S]ell 5 Steel",
+      "actionName": "Sell 5 Steel",
       "actionId": 98,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -28,7 +28,7 @@
     },
     {
       "className": "BuySteel",
-      "actionName": "[B]uy 5 Steel",
+      "actionName": "Buy 5 Steel",
       "actionId": 99,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -54,7 +54,7 @@
     },
     {
       "className": "TrainArchers",
-      "actionName": "[T]rain Archers",
+      "actionName": "Train Archers",
       "actionId": 100,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -80,7 +80,7 @@
     },
     {
       "className": "TrainMetAtArms",
-      "actionName": "T[R]ain Met-at-arms",
+      "actionName": "Train Men-at-arms",
       "actionId": 101,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -106,7 +106,7 @@
     },
     {
       "className": "TrainLightInfantry",
-      "actionName": "Tr[A]in Light Infantry",
+      "actionName": "Train Light Infantry",
       "actionId": 102,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -132,7 +132,7 @@
     },
     {
       "className": "TrainHeavyInfantry",
-      "actionName": "Tra[I]n Heavy Infantry",
+      "actionName": "Train Heavy Infantry",
       "actionId": 103,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -158,7 +158,7 @@
     },
     {
       "className": "TrainLightCavalry",
-      "actionName": "Trai[N] Light Cavalry",
+      "actionName": "Train Light Cavalry",
       "actionId": 104,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -184,7 +184,7 @@
     },
     {
       "className": "TrainHeavyCavalry",
-      "actionName": "Train [H]eavy Cavalry",
+      "actionName": "Train Heavy Cavalry",
       "actionId": 105,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -210,7 +210,7 @@
     },
     {
       "className": "TrainCatapults",
-      "actionName": "Train [C]atapults",
+      "actionName": "Train Catapults",
       "actionId": 106,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -236,7 +236,7 @@
     },
     {
       "className": "TrainWarships",
-      "actionName": "Train [W]arships",
+      "actionName": "Train Warships",
       "actionId": 107,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -262,7 +262,7 @@
     },
     {
       "className": "SellLeather",
-      "actionName": "S[E]ll 5 Leather",
+      "actionName": "Sell 5 Leather",
       "actionId": 109,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -288,7 +288,7 @@
     },
     {
       "className": "BuyLeather",
-      "actionName": "B[U]y 5 Leather",
+      "actionName": "Buy 5 Leather",
       "actionId": 110,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -314,7 +314,7 @@
     },
     {
       "className": "SellMounts",
-      "actionName": "Se[L]l 5 Mounts",
+      "actionName": "Sell 5 Mounts",
       "actionId": 111,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -340,7 +340,7 @@
     },
     {
       "className": "BuyMounts",
-      "actionName": "Bu[Y] 5 Mounts",
+      "actionName": "Buy 5 Mounts",
       "actionId": 112,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -366,7 +366,7 @@
     },
     {
       "className": "SellIron",
-      "actionName": "Sell 5 Ir[O]n",
+      "actionName": "Sell 5 Iron",
       "actionId": 113,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -392,7 +392,7 @@
     },
     {
       "className": "BuyIron",
-      "actionName": "[BU]y 5 Iron",
+      "actionName": "Buy 5 Iron",
       "actionId": 114,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -418,7 +418,7 @@
     },
     {
       "className": "SellTimber",
-      "actionName": "Sell 5 Ti[M]ber",
+      "actionName": "Sell 5 Timber",
       "actionId": 115,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -444,7 +444,7 @@
     },
     {
       "className": "BuyTimber",
-      "actionName": "B[UY] 5 Timber",
+      "actionName": "Buy 5 Timber",
       "actionId": 116,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -470,7 +470,7 @@
     },
     {
       "className": "SellMithril",
-      "actionName": "[SE]ll 5 Mithril",
+      "actionName": "Sell 5 Mithril",
       "actionId": 117,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -496,7 +496,7 @@
     },
     {
       "className": "BuyMithril",
-      "actionName": "Buy 5 [MI]thril",
+      "actionName": "Buy 5 Mithril",
       "actionId": 118,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -522,7 +522,7 @@
     },
     {
       "className": "AssassinateCharacter",
-      "actionName": "[AS]sassinate Character",
+      "actionName": "Assassinate Character",
       "actionId": 119,
       "difficulty": 80,
       "commanderSkillRequired": 0,
@@ -548,7 +548,7 @@
     },
     {
       "className": "WoundCharacter",
-      "actionName": "Woun[D] Character",
+      "actionName": "Wound Character",
       "actionId": 120,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -574,7 +574,7 @@
     },
     {
       "className": "DoubleCharacter",
-      "actionName": "[DO]uble Character",
+      "actionName": "Double Character",
       "actionId": 121,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -600,7 +600,7 @@
     },
     {
       "className": "UndoubleCharacter",
-      "actionName": "[UN]double Character",
+      "actionName": "Undouble Character",
       "actionId": 122,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -626,7 +626,7 @@
     },
     {
       "className": "InfluenceUpPC",
-      "actionName": "[IN]crease Loyalty",
+      "actionName": "Increase Loyalty",
       "actionId": 123,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -652,7 +652,7 @@
     },
     {
       "className": "InfluenceDownPC",
-      "actionName": "[DE]crease Loyalty",
+      "actionName": "Decrease Loyalty",
       "actionId": 124,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -678,7 +678,7 @@
     },
     {
       "className": "Attack",
-      "actionName": "Attac[K]",
+      "actionName": "Attack",
       "actionId": 125,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -704,7 +704,7 @@
     },
     {
       "className": "FortifyPC",
-      "actionName": "Increase [F]ortifications",
+      "actionName": "Increase Fortifications",
       "actionId": 126,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -730,7 +730,7 @@
     },
     {
       "className": "CastDarkness",
-      "actionName": "[CA]st Darkness",
+      "actionName": "Cast Darkness",
       "actionId": 127,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -756,7 +756,7 @@
     },
     {
       "className": "CastLight",
-      "actionName": "Cast Li[G]ht",
+      "actionName": "Cast Light",
       "actionId": 128,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -782,7 +782,7 @@
     },
     {
       "className": "ConjureMounts",
-      "actionName": "Con[J]ure Mounts",
+      "actionName": "Conjure Mounts",
       "actionId": 129,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -808,7 +808,7 @@
     },
     {
       "className": "Curse",
-      "actionName": "[CU]rse",
+      "actionName": "Curse",
       "actionId": 130,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -834,7 +834,7 @@
     },
     {
       "className": "OhElbereth",
-      "actionName": "[OH], Elbereth!",
+      "actionName": "Oh, Elbereth!",
       "actionId": 131,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -860,7 +860,7 @@
     },
     {
       "className": "ReturnToCapital",
-      "actionName": "Return To Ca[P]ital",
+      "actionName": "Return To Capital",
       "actionId": 132,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -886,7 +886,7 @@
     },
     {
       "className": "RevealPC",
-      "actionName": "Re[V]eal PC",
+      "actionName": "Reveal Pc",
       "actionId": 133,
       "difficulty": 75,
       "commanderSkillRequired": 0,
@@ -912,7 +912,7 @@
     },
     {
       "className": "ScryArea",
-      "actionName": "[SC]ry Area",
+      "actionName": "Scry Area",
       "actionId": 134,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -938,7 +938,7 @@
     },
     {
       "className": "Teleport",
-      "actionName": "[TE]leport",
+      "actionName": "Teleport",
       "actionId": 135,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -964,7 +964,7 @@
     },
     {
       "className": "SummonMA",
-      "actionName": "[SU]mmon Men-at-arms",
+      "actionName": "Summon Men-at-arms",
       "actionId": 136,
       "difficulty": 80,
       "commanderSkillRequired": 0,
@@ -990,7 +990,7 @@
     },
     {
       "className": "WizardLaugh",
-      "actionName": "Wi[Z]ards Laugh",
+      "actionName": "Wizards Laugh",
       "actionId": 137,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -1016,7 +1016,7 @@
     },
     {
       "className": "Heal",
-      "actionName": "[HE]al",
+      "actionName": "Heal",
       "actionId": 138,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1042,7 +1042,7 @@
     },
     {
       "className": "Fireworks",
-      "actionName": "[FI]reworks",
+      "actionName": "Fireworks",
       "actionId": 139,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1068,7 +1068,7 @@
     },
     {
       "className": "FindArtifact",
-      "actionName": "Fi[ND] Artifact",
+      "actionName": "Find Artifact",
       "actionId": 144,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -1094,7 +1094,7 @@
     },
     {
       "className": "ScryArtifact",
-      "actionName": "S[CR]y Artifact",
+      "actionName": "Scry Artifact",
       "actionId": 145,
       "difficulty": 75,
       "commanderSkillRequired": 0,
@@ -1120,7 +1120,7 @@
     },
     {
       "className": "StealGold",
-      "actionName": "[ST]eal Gold",
+      "actionName": "Steal Gold",
       "actionId": 146,
       "difficulty": 70,
       "commanderSkillRequired": 0,
@@ -1146,7 +1146,7 @@
     },
     {
       "className": "StealIron",
-      "actionName": "St[EA]l Iron",
+      "actionName": "Steal Iron",
       "actionId": 147,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1172,7 +1172,7 @@
     },
     {
       "className": "StealLeather",
-      "actionName": "Ste[AL] Leather",
+      "actionName": "Steal Leather",
       "actionId": 148,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1198,7 +1198,7 @@
     },
     {
       "className": "StealMithril",
-      "actionName": "Steal M[IT]hril",
+      "actionName": "Steal Mithril",
       "actionId": 149,
       "difficulty": 70,
       "commanderSkillRequired": 0,
@@ -1224,7 +1224,7 @@
     },
     {
       "className": "StealMounts",
-      "actionName": "Steal [MO]unts",
+      "actionName": "Steal Mounts",
       "actionId": 150,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1250,7 +1250,7 @@
     },
     {
       "className": "StealTimber",
-      "actionName": "Steal [TI]mber",
+      "actionName": "Steal Timber",
       "actionId": 151,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1276,7 +1276,7 @@
     },
     {
       "className": "Pass",
-      "actionName": "[PA]ss",
+      "actionName": "Pass",
       "actionId": 152,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -1302,7 +1302,7 @@
     },
     {
       "className": "Haste",
-      "actionName": "[HA]ste",
+      "actionName": "Haste",
       "actionId": 153,
       "difficulty": 40,
       "commanderSkillRequired": 0,
@@ -1328,7 +1328,7 @@
     },
     {
       "className": "ScoutArea",
-      "actionName": "S[CO]ut Area",
+      "actionName": "Scout Area",
       "actionId": 154,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1354,7 +1354,7 @@
     },
     {
       "className": "Block",
-      "actionName": "[BL]ock",
+      "actionName": "Block",
       "actionId": 155,
       "difficulty": 50,
       "commanderSkillRequired": 2,
@@ -1380,7 +1380,7 @@
     },
     {
       "className": "Courage",
-      "actionName": "C[OU]rage",
+      "actionName": "Courage",
       "actionId": 156,
       "difficulty": 40,
       "commanderSkillRequired": 0,
@@ -1406,7 +1406,7 @@
     },
     {
       "className": "Halt",
-      "actionName": "Ha[LT]",
+      "actionName": "Halt",
       "actionId": 157,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1432,7 +1432,7 @@
     },
     {
       "className": "IceStorm",
-      "actionName": "[IC]e Storm",
+      "actionName": "Ice Storm",
       "actionId": 158,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1458,7 +1458,7 @@
     },
     {
       "className": "WizardsFire",
-      "actionName": "[WI]zard's Fire",
+      "actionName": "Wizard's Fire",
       "actionId": 159,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1484,7 +1484,7 @@
     },
     {
       "className": "WordsOfDispair",
-      "actionName": "[WO]rds of Dispair",
+      "actionName": "Words Of Dispair",
       "actionId": 160,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -1510,7 +1510,7 @@
     },
     {
       "className": "YouShallNotPass",
-      "actionName": "[YO]u Shall Not Pass!",
+      "actionName": "You Shall Not Pass!",
       "actionId": 161,
       "difficulty": 50,
       "commanderSkillRequired": 0,
@@ -1536,7 +1536,7 @@
     },
     {
       "className": "RevealRumours",
-      "actionName": "He[AR] Stories",
+      "actionName": "Hear Stories",
       "actionId": 162,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1562,7 +1562,7 @@
     },
     {
       "className": "StateAllegiance",
-      "actionName": "S[TA]te Allegiance",
+      "actionName": "State Allegiance",
       "actionId": 163,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -1588,7 +1588,7 @@
     },
     {
       "className": "PerceiveDanger",
-      "actionName": "[PE]rceive Danger",
+      "actionName": "Perceive Danger",
       "actionId": 164,
       "difficulty": 60,
       "commanderSkillRequired": 0,
@@ -1614,7 +1614,7 @@
     },
     {
       "className": "TransferArtifact",
-      "actionName": "[TR]ansfer Artifact",
+      "actionName": "Transfer Artifact",
       "actionId": 165,
       "difficulty": 0,
       "commanderSkillRequired": 0,
@@ -1640,7 +1640,7 @@
     },
     {
       "className": "TrainArmy",
-      "actionName": "T[RA]in Army",
+      "actionName": "Train Army",
       "actionId": 166,
       "difficulty": 0,
       "commanderSkillRequired": 1,
@@ -1666,7 +1666,7 @@
     },
     {
       "className": "NameCommander",
-      "actionName": "[NA]me Commander",
+      "actionName": "Name Commander",
       "actionId": 167,
       "difficulty": 25,
       "commanderSkillRequired": 1,
@@ -1691,7 +1691,7 @@
     },
     {
       "className": "NameAgent",
-      "actionName": "N[AM]e Agent",
+      "actionName": "Name Agent",
       "actionId": 168,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1716,7 +1716,7 @@
     },
     {
       "className": "NameEmmissary",
-      "actionName": "Na[ME] Emmissary",
+      "actionName": "Name Emmissary",
       "actionId": 169,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1741,7 +1741,7 @@
     },
     {
       "className": "NameMage",
-      "actionName": "Name [MA]ge",
+      "actionName": "Name Mage",
       "actionId": 170,
       "difficulty": 25,
       "commanderSkillRequired": 0,
@@ -1766,7 +1766,7 @@
     },
     {
       "className": "CreateCamp",
-      "actionName": "C[RE]ate Camp",
+      "actionName": "Create Camp",
       "actionId": 171,
       "difficulty": 40,
       "commanderSkillRequired": 0,
@@ -1791,7 +1791,7 @@
     },
     {
       "className": "PostCamp",
-      "actionName": "[PO]st Camp",
+      "actionName": "Post Camp",
       "actionId": 172,
       "difficulty": 60,
       "commanderSkillRequired": 2,

@@ -194,6 +194,16 @@ public class RumoursManager : MonoBehaviour
         if (Instance != null)
             return true;
 
+        Instance = FindFirstObjectByType<RumoursManager>();
+        if (Instance != null)
+        {
+            if (Instance.game == null)
+            {
+                Instance.game = FindFirstObjectByType<Game>();
+            }
+            return true;
+        }
+
         Debug.LogWarning($"RumoursManager.{caller} called before the singleton instance was initialized.");
         return false;
     }

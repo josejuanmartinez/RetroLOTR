@@ -362,11 +362,11 @@ public class Board : MonoBehaviour
 
     public void Move(Character character, Vector2Int targetHexCoordinates)
     {
-        moving = true;
         if (!character) return;
         if (targetHexCoordinates == Vector2.one * -1) return;
         if (character.moved >= character.GetMaxMovement()) return;
 
+        moving = true;
         HexPathRenderer pathRenderer = FindFirstObjectByType<HexPathRenderer>();
         List<Vector2Int> path = pathRenderer.FindPath(character.hex.v2, targetHexCoordinates, character);
 

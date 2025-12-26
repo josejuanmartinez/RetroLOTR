@@ -3,10 +3,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Playables;
+using UnityEngine.Video;
 
 public class PlayableLeaderIcon : MonoBehaviour
 {
     public Image image;
+    public VideoPlayer video;
     public NonPlayableLeaderIcons nonPlayableLeaderIcons;
     public CanvasGroup deadCanvasGroup;
     // public TextMeshProUGUI joinedText;
@@ -20,23 +22,31 @@ public class PlayableLeaderIcon : MonoBehaviour
     [HideInInspector]
     public PlayableLeader playableLeader;
 
-    private Sprite sprite = null;
+    private VideoClip leaderClip = null;
+    private Sprite leaderSprite = null;
     private string text = string.Empty;
     private bool initialized = false;
+    private Videos videos;
+    private VideoClip highlightedClip;
+    private Illustrations illustrations;
+    private Sprite highlightedSprite;
 
     public void Initialize(PlayableLeader leader)
     {
         playableLeader = leader;
         alignment = leader.alignment;
-        Illustrations illustrations = FindFirstObjectByType<Illustrations>();
-        sprite = illustrations.GetIllustrationByName(leader.characterName);
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        if (videos == null) videos = FindFirstObjectByType<Videos>();
+        leaderClip = videos != null ? videos.GetVideoByName(leader.characterName) : null;
+        leaderSprite = illustrations != null ? illustrations.GetIllustrationByName(leader.characterName) : null;
         text = leader.GetHoverText(true, false, false, false, false, false);
-        image.sprite = sprite;
+        SetLeaderVisuals(leaderClip, leaderSprite);
         textWidget.text = text;
         // joinedText.text = $"<mark=#ffffff>{leader.GetBiome().joinedText}</mark>";
 
         alignmentImage.sprite = illustrations.GetIllustrationByName(leader.alignment.ToString());
         RefreshVictoryPoints(leader.victoryPoints != null ? leader.victoryPoints.RelativeScore : 0);
+        RemoveCurrentlyPlayingEffect();
 
         // Start the coroutine to hide the text after 6 seconds
         // StartCoroutine(HideJoinedTextAfterDelay(6f));
@@ -65,32 +75,65 @@ public class PlayableLeaderIcon : MonoBehaviour
         nonPlayableLeaderIcons.Instantiate(nonPlayableLeader, playableLeader);
     }
 
-    public void HighlighNonPlayableLeader(Sprite leader, string leaderText)
+    public void HighlighNonPlayableLeader(string leaderName, string leaderText)
     {
-        image.sprite = leader;
+        if (videos == null) videos = FindFirstObjectByType<Videos>();
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        highlightedClip = videos != null ? videos.GetVideoByName(leaderName) : null;
+        highlightedSprite = illustrations != null ? illustrations.GetIllustrationByName(leaderName) : null;
+        SetLeaderVisuals(highlightedClip, highlightedSprite);
         textWidget.text = leaderText;
     }
 
-    public void Restore(Sprite leader)
+    public void Restore(string leaderName)
     {
-        if (image.sprite == leader)
-        {
-            image.sprite = sprite;
-            textWidget.text = text;
-        }
+        if (videos == null) videos = FindFirstObjectByType<Videos>();
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        VideoClip expectedClip = videos != null ? videos.GetVideoByName(leaderName) : null;
+        Sprite expectedSprite = illustrations != null ? illustrations.GetIllustrationByName(leaderName) : null;
+        bool restoreFromVideo = expectedClip != null && video != null && video.clip == expectedClip;
+        bool restoreFromImage = expectedClip == null && image != null && image.sprite == expectedSprite;
+        if (!restoreFromVideo && !restoreFromImage) return;
+
+        SetLeaderVisuals(leaderClip, leaderSprite);
+        textWidget.text = text;
     }
 
     public void SetCurrentlyPlayingEffect()
     {
-        border.color = Color.white;
+        image.color = new Color(image.color.r, image.color.g, image.color.b, 1.0f);
     }
     public void RemoveCurrentlyPlayingEffect()
     {
-        border.color = Color.black;
+        image.color = new Color(image.color.r, image.color.g, image.color.b, 0.25f);
     }
 
     public void RefreshVictoryPoints(int points)
     {
         if (victoryPoints != null) victoryPoints.text = points.ToString();
+    }
+
+    private void SetLeaderVisuals(VideoClip clip, Sprite fallbackSprite)
+    {
+        bool hasClip = clip != null && video != null;
+
+        if (video != null)
+        {
+            video.enabled = hasClip;
+            if (hasClip)
+            {
+                video.clip = clip;
+                video.Play();
+            }
+        }
+
+        if (image != null)
+        {
+            image.enabled = !hasClip;
+            if (!hasClip)
+            {
+                image.sprite = fallbackSprite;
+            }
+        }
     }
 }

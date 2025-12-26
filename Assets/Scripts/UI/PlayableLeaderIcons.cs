@@ -19,6 +19,10 @@ public class PlayableLeaderIcons : MonoBehaviour
             competitor1PlayableIcon,
             competitor2PlayableIcon
         };
+        if (game != null && game.currentlyPlaying != null)
+        {
+            HighlightCurrentlyPlaying(game.currentlyPlaying);
+        }
     }
 
     public void Instantiate(PlayableLeader leader)
@@ -37,6 +41,11 @@ public class PlayableLeaderIcons : MonoBehaviour
                 competitor2PlayableIcon.Initialize(leader);    
             }
         }
+
+        if (game != null && game.currentlyPlaying != null)
+        {
+            HighlightCurrentlyPlaying(game.currentlyPlaying);
+        }
     }
 
     public void HighlightCurrentlyPlaying(PlayableLeader currentlyPlaying)
@@ -44,6 +53,7 @@ public class PlayableLeaderIcons : MonoBehaviour
         for(int i=0;i<playableLeaderIcons.Count;i++)
         {
             PlayableLeaderIcon playableLeaderIcon = playableLeaderIcons[i];
+            if (playableLeaderIcon == null) continue;
             PlayableLeader playableLeader = playableLeaderIcon.playableLeader;
             if (playableLeader == currentlyPlaying)
             {
