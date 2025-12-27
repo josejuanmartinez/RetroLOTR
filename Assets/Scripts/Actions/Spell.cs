@@ -34,8 +34,17 @@ public class Spell : CharacterAction
 
     protected bool HasSpellArtifact(Character c)
     {
+        return GetSpellArtifact(c) != null;
+    }
+
+    private Artifact GetSpellArtifact(Character c)
+    {
+        if (c == null) return null;
         string baseName = ActionNameUtils.StripShortcut(actionName);
-        return c.artifacts.Any(a => a != null && !string.IsNullOrEmpty(a.providesSpell) && a.providesSpell.Equals(baseName, StringComparison.OrdinalIgnoreCase));
+        return c.artifacts.FirstOrDefault(a =>
+            a != null &&
+            !string.IsNullOrEmpty(a.providesSpell) &&
+            a.providesSpell.Equals(baseName, StringComparison.OrdinalIgnoreCase));
     }
 
     protected float GetSpellEffectMultiplier(Character character)
@@ -53,5 +62,13 @@ public class Spell : CharacterAction
     protected float ApplySpellEffectMultiplier(Character character, float baseValue)
     {
         return baseValue * GetSpellEffectMultiplier(character);
+    }
+
+    protected override string BuildHoverText()
+    {
+        string text = base.BuildHoverText();
+        Artifact artifact = GetSpellArtifact(character);
+        if (artifact == null) return text;
+        return $"{text}<br><size=80%><color=red>This action is only available as long as you hold {artifact.artifactName}</color></size>";
     }
 }

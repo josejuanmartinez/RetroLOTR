@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class CharacterIcon : MonoBehaviour
+public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public CanvasGroup deadCanvasGroup;
     public Image image;
@@ -32,6 +33,42 @@ public class CharacterIcon : MonoBehaviour
         {
             if (selectedCharacterIcon == null) selectedCharacterIcon = FindFirstObjectByType<SelectedCharacterIcon>();
             selectedCharacterIcon?.Refresh(character);
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (character == null || character.killed) return;
+        board ??= FindFirstObjectByType<Board>();
+        if (board != null && board.selectedCharacter == character) return;
+
+        if (selectedCharacterIcon == null)
+        {
+            Layout layout = FindFirstObjectByType<Layout>();
+            selectedCharacterIcon = layout != null ? layout.GetSelectedCharacterIcon() : null;
+        }
+        if (selectedCharacterIcon == null) return;
+
+        selectedCharacterIcon.Refresh(character);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (selectedCharacterIcon == null)
+        {
+            Layout layout = FindFirstObjectByType<Layout>();
+            selectedCharacterIcon = layout != null ? layout.GetSelectedCharacterIcon() : null;
+        }
+        if (selectedCharacterIcon == null) return;
+
+        board ??= FindFirstObjectByType<Board>();
+        if (board != null && board.selectedCharacter != null)
+        {
+            selectedCharacterIcon.Refresh(board.selectedCharacter);
+        }
+        else
+        {
+            selectedCharacterIcon.Hide();
         }
     }
 

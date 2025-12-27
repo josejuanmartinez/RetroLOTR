@@ -220,6 +220,10 @@ public class CharacterAction : SearcherByName
 
     public void Fail(bool isAI)
     {
+        if (this is Spell)
+        {
+            ApplySpellFailurePenalty(isAI);
+        }
         string message = $"{actionName} failed";
         if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  message, Color.red);
         if (!isAI) game.PointToCharacterWithMissingActions();
@@ -1314,6 +1318,26 @@ public class CharacterAction : SearcherByName
         else if (snapshot.goldDelta > 0)
         {
             owner.AddGold(snapshot.goldDelta);
+        }
+    }
+
+    private void ApplySpellFailurePenalty(bool isAI)
+    {
+        if (character == null || character.killed) return;
+        int damage = UnityEngine.Random.Range(1, 6);
+        character.health = Mathf.Max(0, character.health - damage);
+        if (!isAI)
+        {
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{character.characterName} suffers {damage} damage", Color.red);
+        }
+        if (character.health < 1)
+        {
+            character.Killed(null);
+        }
+        else
+        {
+            character.RefreshSelectedCharacterIconIfSelected();
+            CharacterIcons.RefreshForHumanPlayerCharacter(character);
         }
     }
 

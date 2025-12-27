@@ -125,6 +125,24 @@ public class Army
         return $" leading {string.Join(',', result)}{xpText}{healthText}";
     }
 
+    public string GetHoverTextNoXp(bool withHealth = true)
+    {
+        LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
+        List<string> result = new() { };
+
+        if (ma > 0) result.Add($"<sprite name=\"ma\">[{ma}] {biomeConfig.maDescription}");
+        if (ar > 0) result.Add($"<sprite name=\"ar\">[{ar}] {biomeConfig.arDescription}");
+        if (li > 0) result.Add($"<sprite name=\"li\">[{li}] {biomeConfig.liDescription}");
+        if (hi > 0) result.Add($"<sprite name=\"hi\">[{hi}] {biomeConfig.hiDescription}");
+        if (lc > 0) result.Add($"<sprite name=\"lc\">[{lc}] {biomeConfig.lcDescription}");
+        if (hc > 0) result.Add($"<sprite name=\"hc\">[{hc}] {biomeConfig.hcDescription}");
+        if (ca > 0) result.Add($"<sprite name=\"ca\">[{ca}] {biomeConfig.caDescription}");
+        if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}] {biomeConfig.wsDescription}");
+
+        string healthText = withHealth && commander != null ? commander.GetHealthHoverText() : "";
+        return $" leading {string.Join(',', result)}{healthText}";
+    }
+
     private string GetXpHoverText()
     {
         string color = xp < 25 ? "#ff4d4d" : xp < 50 ? "#ffb347" : xp < 75 ? "#8fd14f" : "#00c853";

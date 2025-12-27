@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class SelectedCharacterIcon : MonoBehaviour
 {
     [Header("Game Objects")]
-    public GameObject actionsGameObject;
+    public GameObject levelsGameObject;
     public GameObject moved;
     public GameObject actioned;
     public GameObject unactionedIcon;
@@ -40,7 +40,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         alignmentIcon.enabled = true;
         alignmentIcon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c.GetAlignment().ToString());
         textWidget.text = $"{c.GetHoverText(true, false, false, true, false, false)}";
-        actionsGameObject.SetActive(true);
+        levelsGameObject.SetActive(true);
         actioned.SetActive(true);
         moved.SetActive(true);
         icon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c);
@@ -68,6 +68,51 @@ public class SelectedCharacterIcon : MonoBehaviour
         RefreshMovementLeft(c);
     }
 
+    public void RefreshHoverPreview(Character c, string hoverText, bool showHealth, bool showArtifacts)
+    {
+        if (c == null)
+        {
+            Hide();
+            return;
+        }
+
+        border.SetActive(true);
+        icon.enabled = true;
+        alignmentIcon.enabled = true;
+        alignmentIcon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c.GetAlignment().ToString());
+        icon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c);
+        textWidget.text = hoverText ?? "";
+
+        actioned.SetActive(false);
+        moved.SetActive(false);
+        actionedIcon.SetActive(false);
+        unactionedIcon.SetActive(false);
+
+        commander.text = c.GetCommander().ToString();
+        agent.text = c.GetAgent().ToString();
+        emmissary.text = c.GetEmmissary().ToString();
+        mage.text = c.GetMage().ToString();
+        movementLeft.text = "-";
+
+        health.gameObject.SetActive(showHealth);
+        if (showHealth) health.fillAmount = c.health / 100f;
+
+        foreach (Transform artifactChild in artifactsGridLayoutTransform)
+        {
+            Destroy(artifactChild.gameObject);
+        }
+
+        if (showArtifacts)
+        {
+            c.artifacts.ForEach(x =>
+            {
+                GameObject artifactGO = Instantiate(artifactPrefab, artifactsGridLayoutTransform);
+                artifactGO.name = x.artifactName;
+                artifactGO.GetComponent<ArtifactRenderer>().Initialize(x);
+            });
+        }
+    }
+
 
     // Update is called once per frame
     public void Hide()
@@ -76,7 +121,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         alignmentIcon.enabled = false;
         icon.enabled = false;
         textWidget.text = "";
-        actionsGameObject.SetActive(false);
+        levelsGameObject.SetActive(false);
         actioned.SetActive(false);
         moved.SetActive(false);
         health.gameObject.SetActive(false);

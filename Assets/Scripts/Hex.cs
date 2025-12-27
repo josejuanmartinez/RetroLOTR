@@ -143,8 +143,8 @@ public class Hex : MonoBehaviour
             }
         }
 
-        darkArmySR = darkArmy ? darkArmy.GetComponent<SpriteRenderer>() : null;
         UpdateMinimapTerrain(IsHexRevealed());
+        UpdateVisibilityForFog();
     }
 
     public bool IsHexRevealed() => !fow.activeSelf;
@@ -249,17 +249,86 @@ public class Hex : MonoBehaviour
 
     public SpriteRenderer GetCharacterSpriteRendererOnHex(Character character)
     {
+        return characterIcon != null ? characterIcon.GetComponent<SpriteRenderer>() : null;
+    }
+
+    public SpriteRenderer GetArmySpriteRendererOnHex(Character character)
+    {
+        if (character == null || !character.IsArmyCommander()) return null;
+        return character.alignment switch
+        {
+            AlignmentEnum.freePeople => freeArmySR,
+            AlignmentEnum.darkServants => darkArmySR,
+            AlignmentEnum.neutral => neutralArmySR,
+            _ => null
+        };
+    }
+
+    public SpriteRenderer GetPortSpriteRenderer()
+    {
+        return port != null ? port.GetComponent<SpriteRenderer>() : null;
+    }
+
+    public bool HasPcPort() => pc != null && pc.hasPort;
+
+    public bool ShouldShowWarshipPort()
+    {
+        if (!IsHexSeen() || !IsWaterTerrain()) return false;
+        for (int i = 0, n = characters.Count; i < n; i++)
+        {
+            var ch = characters[i];
+            if (ch == null || ch.killed || !ch.IsArmyCommander()) continue;
+            Army army = ch.GetArmy();
+            if (army != null && army.ws > 0) return true;
+        }
+        return false;
+    }
+
+    public bool TryGetKnownCharacterForIcon(out Character known)
+    {
+        known = null;
+        if (board == null) board = FindFirstObjectByType<Board>();
+
+        PlayableLeader player = GetPlayer();
+        bool isScouted = IsScouted(player);
+        Character selected = board != null ? board.selectedCharacter : null;
+
+        if (selected != null && selected.hex == this && (isScouted || IsFriendlyCharacter(selected, player)))
+        {
+            known = selected;
+            return true;
+        }
+
+        for (int i = 0, n = characters.Count; i < n; i++)
+        {
+            Character candidate = characters[i];
+            if (candidate == null || candidate.killed) continue;
+            if (isScouted || IsFriendlyCharacter(candidate, player))
+            {
+                known = candidate;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool TryGetPreviewTextForCharacter(Character character, out string text)
+    {
+        text = null;
+        if (character == null) return false;
+        if (!IsScouted() && !IsFriendlyCharacter(character)) return false;
+
+        text = character.characterName;
         if (character.IsArmyCommander())
         {
-            return character.alignment switch
+            Army army = character.GetArmy();
+            if (army != null)
             {
-                AlignmentEnum.freePeople => freeArmySR,
-                AlignmentEnum.darkServants => darkArmySR,
-                AlignmentEnum.neutral => neutralArmySR,
-                _ => characterIcon.GetComponent<SpriteRenderer>()
-            };
+                text += army.GetHoverTextNoXp(false);
+            }
         }
-        return characterIcon.GetComponent<SpriteRenderer>();
+        return true;
     }
 
     public void SetTerrain(TerrainEnum terrainType, Sprite terrainTexture, Color terrainColor)
@@ -288,6 +357,7 @@ public class Hex : MonoBehaviour
         SetActiveFast(freeArmy, seen && hasFree);
         SetActiveFast(neutralArmy, seen && hasNeutral);
         SetActiveFast(darkArmy, seen && hasDark);
+        UpdatePortIcon();
 
         if (refreshHoverText) RefreshHoverText();
     }
@@ -295,18 +365,19 @@ public class Hex : MonoBehaviour
     public void RedrawCharacters(bool refreshHoverText = true)
     {
         bool seen = IsHexSeen();
-        bool hasNonArmy = false;
+        bool hasCharacter = false;
         for (int i = 0, n = characters.Count; i < n; i++)
         {
-            if (characters[i] != null && !characters[i].IsArmyCommander())
+            if (characters[i] != null)
             {
-                hasNonArmy = true;
+                hasCharacter = true;
                 break;
             }
         }
 
-        SetActiveFast(characterIconPrefab, seen && hasNonArmy);
-        if (seen && hasNonArmy) UpdateCharacterIconSprite();
+        SetActiveFast(characterIconPrefab, seen && hasCharacter);
+        if (seen && hasCharacter) UpdateCharacterIconSprite();
+        UpdatePortIcon();
         if (refreshHoverText) RefreshHoverText();
     }
 
@@ -335,7 +406,7 @@ public class Hex : MonoBehaviour
         SetActiveFast(town, shouldShowPc && pc.citySize == PCSizeEnum.town);
         SetActiveFast(majorTown, shouldShowPc && pc.citySize == PCSizeEnum.majorTown);
         SetActiveFast(city, shouldShowPc && pc.citySize == PCSizeEnum.city);
-        SetActiveFast(port, shouldShowPc && pc.hasPort);
+        UpdatePortIcon(shouldShowPc);
 
         // forts (note: keep tower/fortress visibility rules as in original)
         SetActiveFast(tower, seen && pc != null && pc.fortSize == FortSizeEnum.tower);
@@ -588,6 +659,7 @@ public class Hex : MonoBehaviour
         Unreveal(obscuredBy);
         SetActiveFast(fow, true);
         SetActiveFast(unseen, true);
+        UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         RedrawArmies(false);
         RedrawCharacters(false);
@@ -698,6 +770,100 @@ public class Hex : MonoBehaviour
         }
     }
 
+    private void UpdateVisibilityForFog()
+    {
+        bool revealed = IsHexRevealed();
+        if (revealed)
+        {
+            if (isSelected)
+            {
+                SetActiveFast(hoverHexFrame, true);
+                SetActiveFast(selectedParticles, true);
+            }
+            if (campText) SetActiveFast(campText.gameObject, true);
+            if (villageText) SetActiveFast(villageText.gameObject, true);
+            if (townText) SetActiveFast(townText.gameObject, true);
+            if (majorTownText) SetActiveFast(majorTownText.gameObject, true);
+            if (cityText) SetActiveFast(cityText.gameObject, true);
+            if (freeArmiesAtHexText) SetActiveFast(freeArmiesAtHexText.gameObject, true);
+            if (neutralArmiesAtHexText) SetActiveFast(neutralArmiesAtHexText.gameObject, true);
+            if (darkServantArmiesAtHexText) SetActiveFast(darkServantArmiesAtHexText.gameObject, true);
+            if (charactersAtHexText) SetActiveFast(charactersAtHexText.gameObject, true);
+
+            if (decorPlaceholders != null)
+            {
+                for (int i = 0, n = decorPlaceholders.Count; i < n; i++)
+                {
+                    var placeholder = decorPlaceholders[i];
+                    if (placeholder != null) SetActiveFast(placeholder.gameObject, true);
+                }
+            }
+            return;
+        }
+
+        SetActiveFast(camp, false);
+        SetActiveFast(village, false);
+        SetActiveFast(town, false);
+        SetActiveFast(majorTown, false);
+        SetActiveFast(city, false);
+        SetActiveFast(port, false);
+
+        SetActiveFast(tower, false);
+        SetActiveFast(keep, false);
+        SetActiveFast(fort, false);
+        SetActiveFast(fortress, false);
+        SetActiveFast(citadel, false);
+
+        SetActiveFast(freeArmy, false);
+        SetActiveFast(neutralArmy, false);
+        SetActiveFast(darkArmy, false);
+        SetActiveFast(characterIconPrefab, false);
+
+        SetActiveFast(movement, false);
+        SetActiveFast(hoverHexFrame, false);
+        SetActiveFast(selectedParticles, false);
+
+        if (campText) { campText.text = ""; SetActiveFast(campText.gameObject, false); }
+        if (villageText) { villageText.text = ""; SetActiveFast(villageText.gameObject, false); }
+        if (townText) { townText.text = ""; SetActiveFast(townText.gameObject, false); }
+        if (majorTownText) { majorTownText.text = ""; SetActiveFast(majorTownText.gameObject, false); }
+        if (cityText) { cityText.text = ""; SetActiveFast(cityText.gameObject, false); }
+        if (freeArmiesAtHexText) { freeArmiesAtHexText.text = ""; SetActiveFast(freeArmiesAtHexText.gameObject, false); }
+        if (neutralArmiesAtHexText) { neutralArmiesAtHexText.text = ""; SetActiveFast(neutralArmiesAtHexText.gameObject, false); }
+        if (darkServantArmiesAtHexText) { darkServantArmiesAtHexText.text = ""; SetActiveFast(darkServantArmiesAtHexText.gameObject, false); }
+        if (charactersAtHexText) { charactersAtHexText.text = ""; SetActiveFast(charactersAtHexText.gameObject, false); }
+
+        if (decorPlaceholders != null)
+        {
+            for (int i = 0, n = decorPlaceholders.Count; i < n; i++)
+            {
+                var placeholder = decorPlaceholders[i];
+                if (placeholder != null) SetActiveFast(placeholder.gameObject, false);
+            }
+        }
+    }
+
+    private bool ShouldShowPcPort()
+    {
+        if (pc == null || !pc.hasPort) return false;
+        bool seen = IsHexSeen();
+        if (!seen) return false;
+        if (game == null) game = FindFirstObjectByType<Game>();
+
+        PlayableLeader viewingLeader = game != null ? game.currentlyPlaying : null;
+        bool ownerIsNonPlayableLeader = pc.owner is NonPlayableLeader;
+        bool nplKnownByViewer = ownerIsNonPlayableLeader && viewingLeader != null && (pc.owner as NonPlayableLeader).IsRevealedToLeader(viewingLeader);
+        bool pcRevealed = IsPCRevealed();
+        return pcRevealed || (ownerIsNonPlayableLeader && nplKnownByViewer);
+    }
+
+    private void UpdatePortIcon(bool? shouldShowPcOverride = null)
+    {
+        bool showPcPort = (shouldShowPcOverride ?? ShouldShowPcPort()) && pc != null && pc.hasPort;
+        bool showWarshipPort = ShouldShowWarshipPort();
+        SetActiveFast(port, showPcPort || showWarshipPort);
+    }
+
     private void UpdateCharacterIconSprite()
     {
         if (characterIcon == null) return;
@@ -708,7 +874,7 @@ public class Hex : MonoBehaviour
         bool isScouted = IsScouted(player);
         Character selected = board != null ? board.selectedCharacter : null;
 
-        if (selected != null && selected.hex == this && !selected.IsArmyCommander() && (isScouted || IsFriendlyCharacter(selected, player)))
+        if (selected != null && selected.hex == this && (isScouted || IsFriendlyCharacter(selected, player)))
         {
             sr.sprite = GetCharacterIllustrationOrDefault(selected);
             UpdateCharacterIconZoom(sr.sprite);
@@ -719,7 +885,7 @@ public class Hex : MonoBehaviour
         for (int i = 0, n = characters.Count; i < n; i++)
         {
             Character candidate = characters[i];
-            if (candidate == null || candidate.killed || candidate.IsArmyCommander()) continue;
+            if (candidate == null || candidate.killed) continue;
             if (isScouted || IsFriendlyCharacter(candidate, player))
             {
                 known = candidate;
@@ -822,6 +988,7 @@ public class Hex : MonoBehaviour
             SetActiveFast(fow, false);
             SetActiveFast(unseen, false);
         }
+        UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         PlayableLeader viewer = scoutedByPlayer as PlayableLeader;
         if (viewer == null && game != null) viewer = game.currentlyPlaying;
@@ -922,6 +1089,7 @@ public class Hex : MonoBehaviour
         bool shouldBeUnseen = IsHexRevealed();
         bool unseenChanged = unseen != null && unseen.activeSelf != shouldBeUnseen;
         if (unseenChanged) SetActiveFast(unseen, shouldBeUnseen);
+        UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         if (game == null) game = FindFirstObjectByType<Game>();
         if (game != null) scoutedBy.Remove(game.currentlyPlaying);

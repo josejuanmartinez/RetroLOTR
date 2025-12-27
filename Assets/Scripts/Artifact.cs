@@ -34,7 +34,7 @@ public class Artifact
     public string GetHoverText()
     {
         List<string> sb = new() {$"<sprite name=\"{GetSpriteString()}\"><u>{artifactName}</u>"};
-        if(artifactDescription.Trim().Length>0) sb.Add($"({artifactDescription})");  
+        if (artifactDescription.Trim().Length > 0) sb.Add($"<br>{artifactDescription}");  
         
         List<string> sbDetails = new();
         if(providesSpell.Trim().Length>0) sbDetails.Add($"Enables <i>{providesSpell}</i> action");
@@ -47,7 +47,7 @@ public class Artifact
         if(oneShot) sbDetails.Add("consumable");
         if(!transferable) sbDetails.Add("non-transferable");
         string sbDetailStr = string.Join(", ", sbDetails);
-        if(sbDetailStr.Length > 0) sb.Add($": {sbDetailStr}");
+        if(sbDetailStr.Length > 0) sb.Add($"<br>{sbDetailStr}");
         return string.Join("", sb);
     }
 }
