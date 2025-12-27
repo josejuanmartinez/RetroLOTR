@@ -296,6 +296,11 @@ public class Game : MonoBehaviour
     {
         SelectedCharacterIcon selected = FindFirstObjectByType<SelectedCharacterIcon>();
         selected?.Hide();
+        Layout layout = FindFirstObjectByType<Layout>();
+        if (layout != null)
+        {
+            layout.GetActionsManager()?.Hide();
+        }
     }
 
     private void BuildPlayerCharacterIcons()

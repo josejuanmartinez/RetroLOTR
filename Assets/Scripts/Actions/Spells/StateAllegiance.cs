@@ -22,20 +22,7 @@ public class StateAllegiance : EmmissaryAction
             if (pc == null || pc.owner is not NonPlayableLeader nonPlayableLeader || !pc.isCapital) return false;
 
             Leader leader = character.GetOwner();
-            if (!nonPlayableLeader.MeetsJoiningRequirements(leader))
-            {
-                if (character.isPlayerControlled)
-                {
-                    Illustrations illustrations = FindFirstObjectByType<Illustrations>();
-                    PopupManager.Show(
-                        "Allegiance Denied",
-                        illustrations != null ? illustrations.GetIllustrationByName(nonPlayableLeader.characterName) : null,
-                        illustrations != null ? illustrations.GetIllustrationByName(leader.characterName) : null,
-                        nonPlayableLeader.GetJoiningConditionsText(leader),
-                        true);
-                }
-                return false;
-            }
+            if (!nonPlayableLeader.MeetsJoiningRequirements(leader)) return false;
 
             return nonPlayableLeader.AttemptJoin(leader);
         };
@@ -48,7 +35,7 @@ public class StateAllegiance : EmmissaryAction
             if (pc == null || pc.owner is not NonPlayableLeader nonPlayableLeader || !pc.isCapital) return false;
             if (nonPlayableLeader.joined || nonPlayableLeader.killed) return false;
 
-            return nonPlayableLeader.IsAlignmentCompatibleWith(character.GetOwner());
+            return nonPlayableLeader.MeetsJoiningRequirements(character.GetOwner());
         };
 
         asyncEffect = async (character) =>

@@ -73,6 +73,8 @@ public class Hex : MonoBehaviour
 
     // Use HashSet for O(1) contains
     private HashSet<Leader> scoutedBy = new();
+    private readonly Dictionary<Leader, int> anchoredWarships = new();
+    private int anchoredWarshipsTotal = 0;
 
     public bool isSelected = false;
 
@@ -249,7 +251,10 @@ public class Hex : MonoBehaviour
 
     public bool ShouldShowWarshipPort()
     {
-        if (!IsHexSeen() || !IsWaterTerrain()) return false;
+        if (!IsHexSeen()) return false;
+        if (anchoredWarshipsTotal > 0) return true;
+        bool validWarshipHex = IsWaterTerrain() || terrainType == TerrainEnum.shore || HasPcPort();
+        if (!validWarshipHex) return false;
         for (int i = 0, n = characters.Count; i < n; i++)
         {
             var ch = characters[i];
@@ -800,6 +805,37 @@ public class Hex : MonoBehaviour
         bool showPort = showPcPort || showWarshipPort;
         SetActiveFast(port, showPort);
         if (portHover) SetActiveFast(portHover.gameObject, showPort);
+        UpdatePortHoverText(showPort);
+    }
+
+    private void UpdatePortHoverText(bool showPort)
+    {
+        if (portHover == null) return;
+        if (!showPort)
+        {
+            portHover.Initialize("", tooltipFontSize);
+            return;
+        }
+
+        string anchoredText = BuildAnchoredWarshipsTooltip();
+        portHover.Initialize(anchoredText, tooltipFontSize);
+    }
+
+    private string BuildAnchoredWarshipsTooltip()
+    {
+        if (anchoredWarshipsTotal <= 0) return "";
+        StringBuilder sb = new StringBuilder(64);
+        sb.Append("Anchored warships:");
+        foreach (var entry in anchoredWarships)
+        {
+            if (entry.Key == null || entry.Value <= 0) continue;
+            sb.Append('\n');
+            sb.Append("<sprite name=\"ws\">[");
+            sb.Append(entry.Value);
+            sb.Append("] ");
+            sb.Append(entry.Key.characterName);
+        }
+        return sb.ToString();
     }
 
     private void UpdateCharacterIconSprite()
@@ -941,8 +977,15 @@ public class Hex : MonoBehaviour
 
     public void ClearScouting()
     {
-        if (scoutedBy.Count == 0) return;
+        if (scoutedBy.Count == 0 && anchoredWarshipsTotal == 0) return;
         scoutedBy.Clear();
+        if (anchoredWarshipsTotal > 0)
+        {
+            foreach (var entry in anchoredWarships)
+            {
+                if (entry.Key != null) scoutedBy.Add(entry.Key);
+            }
+        }
         RefreshHoverText();
     }
 
@@ -1050,6 +1093,94 @@ public class Hex : MonoBehaviour
     public bool IsWaterTerrain()
     {
         return terrainType == TerrainEnum.shallowWater || terrainType == TerrainEnum.deepWater;
+    }
+
+    public bool HasAnchoredWarships() => anchoredWarshipsTotal > 0;
+
+    public bool HasAnchoredWarshipsForLeader(Leader leader)
+    {
+        return leader != null && anchoredWarships.TryGetValue(leader, out int count) && count > 0;
+    }
+
+    public int GetAnchoredWarshipsTotal() => anchoredWarshipsTotal;
+
+    public int GetAnchoredWarshipsForLeader(Leader leader)
+    {
+        if (leader == null) return 0;
+        return anchoredWarships.TryGetValue(leader, out int count) ? count : 0;
+    }
+
+    public int AddAnchoredWarships(Leader leader, int amount)
+    {
+        if (leader == null || amount <= 0) return 0;
+        if (anchoredWarships.TryGetValue(leader, out int current))
+        {
+            anchoredWarships[leader] = current + amount;
+        }
+        else
+        {
+            anchoredWarships.Add(leader, amount);
+        }
+        anchoredWarshipsTotal += amount;
+        EnsureAnchoredVisibility(leader);
+        UpdatePortIcon();
+        RefreshHoverText();
+        return amount;
+    }
+
+    public int RemoveAnchoredWarships(Leader leader, int amount)
+    {
+        if (leader == null || amount <= 0) return 0;
+        if (!anchoredWarships.TryGetValue(leader, out int current) || current <= 0) return 0;
+        int removed = Math.Min(amount, current);
+        int remaining = current - removed;
+        if (remaining > 0)
+        {
+            anchoredWarships[leader] = remaining;
+        }
+        else
+        {
+            anchoredWarships.Remove(leader);
+        }
+        anchoredWarshipsTotal -= removed;
+        UpdatePortIcon();
+        RefreshHoverText();
+        UpdateAnchoredVisibilityAfterRemoval(leader);
+        return removed;
+    }
+
+    public int TakeAnchoredWarships(Leader leader)
+    {
+        if (leader == null) return 0;
+        if (!anchoredWarships.TryGetValue(leader, out int current) || current <= 0) return 0;
+        anchoredWarships.Remove(leader);
+        anchoredWarshipsTotal -= current;
+        UpdatePortIcon();
+        RefreshHoverText();
+        UpdateAnchoredVisibilityAfterRemoval(leader);
+        return current;
+    }
+
+    private void EnsureAnchoredVisibility(Leader leader)
+    {
+        if (leader == null) return;
+        if (!leader.visibleHexes.Contains(this)) leader.visibleHexes.Add(this);
+        scoutedBy.Add(leader);
+        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game != null && game.player == leader && game.IsPlayerCurrentlyPlaying())
+        {
+            Reveal(leader);
+        }
+    }
+
+    private void UpdateAnchoredVisibilityAfterRemoval(Leader leader)
+    {
+        if (leader == null) return;
+        if (HasAnchoredWarshipsForLeader(leader)) return;
+        if (leader.visibleHexes.Contains(this) && !leader.LeaderSeesHex(this))
+        {
+            leader.visibleHexes.Remove(this);
+        }
     }
 
     public bool HasAnyPC()

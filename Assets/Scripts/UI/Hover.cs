@@ -16,8 +16,11 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     void Awake()
     {
-        tooltipRectTransform = tooltipPanel.GetComponent<RectTransform>();
-        tooltipPanel.SetActive(false);
+        if (tooltipPanel != null)
+        {
+            tooltipRectTransform = tooltipPanel.GetComponent<RectTransform>();
+            tooltipPanel.SetActive(false);
+        }
     }
 
     void Update()
@@ -42,6 +45,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void UpdateTooltipPosition()
     {
+        if (tooltipRectTransform == null || tooltipPanel == null) return;
         // Get mouse position in screen space
         Vector2 mousePosition = Input.mousePosition;
 
@@ -76,6 +80,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void Initialize(string text, Vector2 offset, int fontSize, TextAlignmentOptions textAlignment)
     {
+        if (textWidget == null || tooltipRectTransform == null) return;
         this.offset = offset;
         textWidget.text = CreateTextWithBackground(text);
         textWidget.fontSize = fontSize;
@@ -89,6 +94,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void Initialize(string text, int fontSize)
     {
+        if (textWidget == null || tooltipRectTransform == null) return;
         this.offset = Vector2.zero;
         textWidget.text = CreateTextWithBackground(text);
         textWidget.fontSize = fontSize;
@@ -102,6 +108,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     
     public void Initialize(string text)
     {
+        if (textWidget == null || tooltipRectTransform == null) return;
         this.offset = Vector2.zero;
         textWidget.text = CreateTextWithBackground(text);
         textWidget.fontSize = 12;
@@ -121,6 +128,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (PopupManager.IsShowing) return;
+        if (tooltipPanel == null || tooltipRectTransform == null) return;
         tooltipPanel.SetActive(true);
 
         // Force layout rebuild before positioning
@@ -131,7 +139,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        tooltipPanel.SetActive(false);
+        if (tooltipPanel != null) tooltipPanel.SetActive(false);
     }
 
     private bool IsPointOverUI()

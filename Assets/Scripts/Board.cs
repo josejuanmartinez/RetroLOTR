@@ -1018,8 +1018,11 @@ public class Board : MonoBehaviour
 
     public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true) {
         int movedBefore = character.moved;
+        bool wasWater = previousHex != null && previousHex.IsWaterTerrain();
+        bool isWater = newHex != null && newHex.IsWaterTerrain();
         try
         {
+            HandleWarshipAnchoring(character, previousHex, newHex, wasWater, isWater);
             if (previousHex.characters.Contains(character)) previousHex.characters.Remove(character);
             if (character.IsArmyCommander())
             {
@@ -1054,9 +1057,6 @@ public class Board : MonoBehaviour
             {
                 character.GetOwner().RefreshVisibleHexesImmediate();
             }
-
-            bool wasWater = previousHex.IsWaterTerrain();
-            bool isWater = newHex.IsWaterTerrain();
 
             if ((!wasWater && isWater) || (wasWater && !isWater) || finishMovement)
             {
@@ -1106,6 +1106,30 @@ public class Board : MonoBehaviour
               currentHex.LookAt();  
               SelectHex(currentHex.v2, lookAt);
             }
+        }
+    }
+
+    private static void HandleWarshipAnchoring(Character character, Hex previousHex, Hex newHex, bool wasWater, bool isWater)
+    {
+        if (character == null || previousHex == null || newHex == null || !character.IsArmyCommander()) return;
+        Army army = character.GetArmy();
+        if (army == null) return;
+        Leader owner = character.GetOwner();
+        if (owner == null) return;
+
+        if (!wasWater && isWater)
+        {
+            int pickedUp = previousHex.TakeAnchoredWarships(owner);
+            if (pickedUp > 0) army.ws += pickedUp;
+        }
+
+        bool previousIsShore = previousHex.terrainType == TerrainEnum.shore;
+        bool previousHasPort = previousHex.HasPcPort();
+        bool newIsLandWithoutPortOrShore = !isWater && newHex.terrainType != TerrainEnum.shore && !newHex.HasPcPort();
+        if (army.ws > 0 && (previousIsShore || previousHasPort) && newIsLandWithoutPortOrShore)
+        {
+            int anchored = previousHex.AddAnchoredWarships(owner, army.ws);
+            if (anchored > 0) army.ws -= anchored;
         }
     }
 

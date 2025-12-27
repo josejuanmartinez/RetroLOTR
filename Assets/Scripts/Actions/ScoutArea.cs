@@ -11,7 +11,26 @@ public class ScoutArea : AgentAction
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             c.hex.RevealArea(1, true, c.GetOwner());
-            c.GetOwner()?.AddTemporarySeenHexes(c.hex.GetHexesInRadius(1));
+            var radiusHexes = c.hex.GetHexesInRadius(1);
+            c.GetOwner()?.AddTemporarySeenHexes(radiusHexes);
+            bool hasArtifactsNearby = false;
+            for (int i = 0; i < radiusHexes.Count; i++)
+            {
+                Hex hex = radiusHexes[i];
+                if (hex != null && hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0)
+                {
+                    hasArtifactsNearby = true;
+                    break;
+                }
+            }
+            if (hasArtifactsNearby)
+            {
+                float chance = Mathf.Min(0.4f, 0.05f * c.GetAgent());
+                if (UnityEngine.Random.value < chance)
+                {
+                    MessageDisplayNoUI.ShowMessage(c.hex, c, "Something seems buried in the area", Color.yellow);
+                }
+            }
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area scouted", Color.green);
             return true;
         };

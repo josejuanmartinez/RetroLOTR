@@ -28,19 +28,19 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         nonPlayableLeader = leader;
         leaderSprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(leader.characterName);
         alignment = leader.alignment;
-        text = $"<mark=#ffffff>{leader.characterName}</mark>";
+        text = $"<sprite name=\"{alignment}\">{leader.characterName}";
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (isUnrevealed || PopupManager.IsShowing) return;
-        PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First((x => x.alignment == alignment));
+        PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First(x => x.alignment == alignment);
         if (leader) leader.HighlighNonPlayableLeader(nonPlayableLeader.characterName, text);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First((x => x.alignment == alignment));
+        PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First(x => x.alignment == alignment);
         if (leader) leader.Restore(nonPlayableLeader.characterName);
     }
 
@@ -70,7 +70,8 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         if (nonPlayableLeader.alignment == game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
         {
             sb.Append("They can join your side; neutral nations will work with any alignment, others require a match.<br><br>");
-            sb.Append("Issue `State Allegiance` at their capital to learn their requirements and, once fulfilled, bring them into your nation.<br><br>");
+            sb.Append(nonPlayableLeader.GetJoiningConditionsText(game.currentlyPlaying));
+            sb.Append("<br><br>");
         }
         if (nonPlayableLeader.alignment != game.currentlyPlaying.alignment && nonPlayableLeader.alignment != AlignmentEnum.neutral)
         {

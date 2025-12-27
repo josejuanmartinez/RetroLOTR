@@ -112,17 +112,20 @@ public class CharacterAction : SearcherByName
             this.effect = effect;
             this.asyncEffect = asyncEffect;
 
-            bool activate = this.condition(character);
-            button.gameObject.SetActive(activate);
-
-            if (activate && !initialized)
+            if (!initialized)
             {
-                GameObject hoverInstance = Instantiate(hoverPrefab, button.transform);
-                hoverComponent = hoverInstance.GetComponent<Hover>();
-                hoverComponent.Initialize(BuildHoverText(), Vector2.one * 40, 18, TextAlignmentOptions.Center);
+                if (hoverPrefab != null && button != null)
+                {
+                    GameObject hoverInstance = Instantiate(hoverPrefab, button.transform);
+                    hoverComponent = hoverInstance.GetComponent<Hover>();
+                    if (hoverComponent != null)
+                    {
+                        hoverComponent.Initialize(BuildHoverText(), Vector2.one * 40, 18, TextAlignmentOptions.Center);
+                    }
+                }
 
                 actionInitials = ActionNameUtils.StripShortcut(actionName).ToUpperInvariant();
-                textUI.text = actionName;
+                if (textUI != null) textUI.text = actionName;
                 initialized = true;
             }
             else if (hoverComponent != null)
@@ -140,6 +143,23 @@ public class CharacterAction : SearcherByName
     public bool FulfillsConditions()
     {
         return condition(character);
+    }
+
+    public virtual bool IsRoleEligible(Character character)
+    {
+        return true;
+    }
+
+    public virtual bool ShouldShowWhenUnavailable()
+    {
+        return true;
+    }
+
+    public void UpdateHoverText(bool isAvailable)
+    {
+        if (hoverComponent == null) return;
+        string text = isAvailable ? BuildHoverText() : BuildUnavailableHoverText();
+        hoverComponent.Initialize(text, Vector2.one * 40, 18, TextAlignmentOptions.Center);
     }
 
     public void Reset()
@@ -1227,6 +1247,111 @@ public class CharacterAction : SearcherByName
         if (!string.IsNullOrWhiteSpace(detail)) parts.Add($"<br><size=80%>{detail}</size>");
 
         return string.Join("", parts);
+    }
+
+    private string BuildUnavailableHoverText()
+    {
+        string baseText = BuildHoverText();
+        string missing = BuildMissingRequirementsText();
+        if (string.IsNullOrWhiteSpace(missing)) return baseText;
+        return $"{baseText}<br><size=80%><color=red>{missing}</color></size>";
+    }
+
+    private string BuildMissingRequirementsText()
+    {
+        if (character == null) return "No character selected.";
+
+        List<string> parts = new();
+        bool providedByArtifact = IsProvidedByArtifact();
+
+        if (character.killed) parts.Add("Character is dead.");
+        if (character.hasActionedThisTurn && actionName != FindFirstObjectByType<ActionsManager>().DEFAULT.actionName)
+        {
+            parts.Add("Already actioned this turn.");
+        }
+
+        if (!providedByArtifact)
+        {
+            if (commanderSkillRequired > 0 && character.GetCommander() < commanderSkillRequired)
+            {
+                parts.Add($"Need <sprite name=\"commander\">[{commanderSkillRequired}] (have {character.GetCommander()})");
+            }
+            if (agentSkillRequired > 0 && character.GetAgent() < agentSkillRequired)
+            {
+                parts.Add($"Need <sprite name=\"agent\">[{agentSkillRequired}] (have {character.GetAgent()})");
+            }
+            if (emissarySkillRequired > 0 && character.GetEmmissary() < emissarySkillRequired)
+            {
+                parts.Add($"Need <sprite name=\"emmissary\">[{emissarySkillRequired}] (have {character.GetEmmissary()})");
+            }
+            if (mageSkillRequired > 0 && character.GetMage() < mageSkillRequired)
+            {
+                parts.Add($"Need <sprite name=\"mage\">[{mageSkillRequired}] (have {character.GetMage()})");
+            }
+        }
+
+        Leader owner = character.GetOwner();
+        if (owner != null)
+        {
+            if (isBuyCaravans || isSellCaravans)
+            {
+                ActionCostSnapshot snapshot = CalculateCostSnapshot();
+                if (!snapshot.hasRequiredStock)
+                {
+                    parts.Add("Market lacks required stock.");
+                }
+
+                if (snapshot.goldDelta < 0 && owner.goldAmount < -snapshot.goldDelta)
+                {
+                    parts.Add($"Need <sprite name=\"gold\"/>[{Mathf.Abs(snapshot.goldDelta)}] (have {owner.goldAmount})");
+                }
+
+                if (isSellCaravans)
+                {
+                    foreach (var cost in snapshot.resourceCosts)
+                    {
+                        int available = cost.produce switch
+                        {
+                            ProducesEnum.leather => owner.leatherAmount,
+                            ProducesEnum.timber => owner.timberAmount,
+                            ProducesEnum.mounts => owner.mountsAmount,
+                            ProducesEnum.iron => owner.ironAmount,
+                            ProducesEnum.steel => owner.steelAmount,
+                            ProducesEnum.mithril => owner.mithrilAmount,
+                            _ => 0
+                        };
+                        if (available < cost.amount)
+                        {
+                            parts.Add($"Need <sprite name=\"{cost.produce}\">[{cost.amount}] (have {available})");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (leatherCost > 0 && owner.leatherAmount < leatherCost)
+                    parts.Add($"Need <sprite name=\"leather\"/>[{leatherCost}] (have {owner.leatherAmount})");
+                if (timberCost > 0 && owner.timberAmount < timberCost)
+                    parts.Add($"Need <sprite name=\"timber\"/>[{timberCost}] (have {owner.timberAmount})");
+                if (mountsCost > 0 && owner.mountsAmount < mountsCost)
+                    parts.Add($"Need <sprite name=\"mounts\"/>[{mountsCost}] (have {owner.mountsAmount})");
+                if (ironCost > 0 && owner.ironAmount < ironCost)
+                    parts.Add($"Need <sprite name=\"iron\"/>[{ironCost}] (have {owner.ironAmount})");
+                if (steelCost > 0 && owner.steelAmount < steelCost)
+                    parts.Add($"Need <sprite name=\"steel\"/>[{steelCost}] (have {owner.steelAmount})");
+                if (mithrilCost > 0 && owner.mithrilAmount < mithrilCost)
+                    parts.Add($"Need <sprite name=\"mithril\"/>[{mithrilCost}] (have {owner.mithrilAmount})");
+                if (goldCost > 0 && owner.goldAmount < goldCost)
+                    parts.Add($"Need <sprite name=\"gold\"/>[{goldCost}] (have {owner.goldAmount})");
+            }
+        }
+
+        if (parts.Count == 0 && !FulfillsConditions())
+        {
+            parts.Add("No valid targets or requirements not met.");
+        }
+
+        return string.Join("<br>", parts);
     }
 
     private string BuildCaravanDetailText()

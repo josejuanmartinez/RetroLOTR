@@ -585,7 +585,7 @@ public class NonPlayableLeader : Leader
             sb.Append(FormatRequirement($"Hold any of: {string.Join(", ", nonPlayableLeaderBiome.artifactsToJoin)} (alternative to the tasks below)", hasArtifactBypass));
         }
 
-        sb.Append("Otherwise, complete every requirement, then issue State Allegiance in the capital:<br>");
+        sb.Append("Otherwise, complete every requirement below:<br>");
 
         // Artifact count
         if (nonPlayableLeaderBiome.artifactsQtyToJoin > 0)
@@ -656,7 +656,7 @@ public class NonPlayableLeader : Leader
             sb.Append(FormatRequirement($"Execute at {capitalName}: {string.Join(", ", nonPlayableLeaderBiome.actionsAtCapital)}", HasCompletedCapitalActions(leader)));
         }
 
-        sb.Append("All requirements persist across turns once completed. Send an aligned emissary to the capital and issue State Allegiance when ready.");
+        sb.Append("All requirements persist across turns once completed. Send an aligned emissary to the capital and issue State Allegiance to pledge your alliance.");
 
         return sb.ToString();
     }

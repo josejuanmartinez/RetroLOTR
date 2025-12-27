@@ -9,6 +9,17 @@ public class Spell : CharacterAction
 
     protected override AdvisorType DefaultAdvisorType => AdvisorType.Magic;
 
+    public override bool IsRoleEligible(Character character)
+    {
+        if (character == null) return false;
+        return character.GetMage() > 0 || IsProvidedByArtifact();
+    }
+
+    public override bool ShouldShowWhenUnavailable()
+    {
+        return true;
+    }
+
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

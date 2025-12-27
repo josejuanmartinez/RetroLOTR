@@ -4,6 +4,16 @@ public class AgentAction : CharacterAction
 {
     protected override AdvisorType DefaultAdvisorType => AdvisorType.Intelligence;
 
+    public override bool IsRoleEligible(Character character)
+    {
+        return character != null && character.GetAgent() > 0;
+    }
+
+    public override bool ShouldShowWhenUnavailable()
+    {
+        return true;
+    }
+
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

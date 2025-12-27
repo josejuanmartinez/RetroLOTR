@@ -24,6 +24,7 @@ public class ActionsManager : MonoBehaviour
     private Dictionary<Type, CharacterAction> actionComponents = new ();
     private CanvasGroup canvasGroup;
     private readonly List<CharacterAction> availableActions = new();
+    private readonly List<CharacterAction> unavailableActions = new();
     private int currentPageIndex;
     private Character currentCharacter;
     public static readonly char[] ActionHotkeyLetters = "BCEFGHIJKLMOQRTUVWYZ".ToCharArray();
@@ -71,6 +72,11 @@ public class ActionsManager : MonoBehaviour
 
     public void Refresh(Character character)
     {
+        if (character == null)
+        {
+            Hide();
+            return;
+        }
         if (currentCharacter != character)
         {
             currentCharacter = character;
@@ -86,6 +92,7 @@ public class ActionsManager : MonoBehaviour
     {
         actionComponents.Values.ToList().ForEach(component => component.Reset());
         availableActions.Clear();
+        unavailableActions.Clear();
         currentPageIndex = 0;
         UpdatePaginationButtons(0);
         UpdateInteractableState();
@@ -124,14 +131,14 @@ public class ActionsManager : MonoBehaviour
         }
     }
 
-    private void GoToPreviousPage()
+    public void GoToPreviousPage()
     {
         if (currentPageIndex <= 0) return;
         currentPageIndex--;
         ApplyPagination();
     }
 
-    private void GoToNextPage()
+    public void GoToNextPage()
     {
         int totalPages = GetTotalPages();
         if (currentPageIndex >= totalPages - 1) return;
@@ -287,18 +294,25 @@ public class ActionsManager : MonoBehaviour
     private void BuildAvailableActions()
     {
         availableActions.Clear();
+        unavailableActions.Clear();
         if (characterActions == null) return;
 
         foreach (CharacterAction action in characterActions)
         {
             if (action == null) continue;
+            if (!action.IsRoleEligible(currentCharacter)) continue;
             if (action.FulfillsConditions())
             {
                 availableActions.Add(action);
             }
+            else if (action.ShouldShowWhenUnavailable())
+            {
+                unavailableActions.Add(action);
+            }
         }
 
         availableActions.Sort((a, b) => string.Compare(a?.actionName, b?.actionName, StringComparison.OrdinalIgnoreCase));
+        unavailableActions.Sort((a, b) => string.Compare(a?.actionName, b?.actionName, StringComparison.OrdinalIgnoreCase));
     }
 
     private void ApplyPagination()
@@ -317,7 +331,7 @@ public class ActionsManager : MonoBehaviour
             }
         }
 
-        int totalActions = availableActions.Count;
+        int totalActions = availableActions.Count + unavailableActions.Count;
         int totalPages = GetTotalPages();
         if (totalActions == 0 || totalPages == 0)
         {
@@ -332,11 +346,15 @@ public class ActionsManager : MonoBehaviour
         Transform targetParent = gridLayoutTransform != null ? gridLayoutTransform : transform;
         for (int i = startIndex; i < endIndex; i++)
         {
-            CharacterAction action = availableActions[i];
+            CharacterAction action = i < availableActions.Count
+                ? availableActions[i]
+                : unavailableActions[i - availableActions.Count];
             if (action == null) continue;
+            bool isAvailable = i < availableActions.Count;
             if (action.button != null)
             {
                 action.button.gameObject.SetActive(true);
+                action.button.interactable = isAvailable;
             }
             if (action.transform.parent != targetParent)
             {
@@ -345,8 +363,9 @@ public class ActionsManager : MonoBehaviour
             action.transform.SetSiblingIndex(i - startIndex);
             if (action.textUI != null)
             {
-                action.textUI.text = FormatActionLabel(i - startIndex, action.actionName);
+                action.textUI.text = FormatActionLabel(i - startIndex, action.actionName, isAvailable);
             }
+            action.UpdateHoverText(isAvailable);
         }
 
         UpdatePaginationButtons(totalPages);
@@ -355,7 +374,8 @@ public class ActionsManager : MonoBehaviour
     private int GetTotalPages()
     {
         if (actionsPerPage <= 0) return 0;
-        return Mathf.CeilToInt(availableActions.Count / (float)actionsPerPage);
+        int totalActions = availableActions.Count + unavailableActions.Count;
+        return Mathf.CeilToInt(totalActions / (float)actionsPerPage);
     }
 
     private void UpdatePaginationButtons(int totalPages)
@@ -375,14 +395,14 @@ public class ActionsManager : MonoBehaviour
         }
     }
 
-    private string FormatActionLabel(int index, string actionName)
+    private string FormatActionLabel(int index, string actionName, bool includeHotkey)
     {
-        if (TryGetHotkeyLetter(index, out char letter))
+        if (includeHotkey && TryGetHotkeyLetter(index, out char letter))
         {
             return $"[{letter}] {actionName ?? string.Empty}";
         }
 
-        return $"[{index}] {actionName ?? string.Empty}";
+        return actionName ?? string.Empty;
     }
 
     private bool TryGetHotkeyLetter(int index, out char letter)

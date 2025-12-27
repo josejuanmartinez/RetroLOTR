@@ -280,8 +280,10 @@ public class Leader : Character
 
     public bool LeaderSeesHex(Hex hex)
     {
+        if (hex == null) return false;
         if (hex.GetPC() != null && hex.GetPC().owner == GetOwner()) return true;
         if (hex.characters.Find(x => x.GetOwner() == GetOwner())) return true;
+        if (hex.HasAnchoredWarshipsForLeader(GetOwner())) return true;
         return false;
     }
 
