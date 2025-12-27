@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class PopupManager : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class PopupManager : MonoBehaviour
     public GameObject container;
     public Image actor1;
     public Image actor2;
+    public RawImage actor1RawImage;
+    public RawImage actor2RawImage;
+    public VideoPlayer actor1Video;
+    public VideoPlayer actor2Video;
     public GameObject leftArrow;
     public GameObject rightArrow;
     public TextMeshProUGUI textWidget;
@@ -24,6 +29,7 @@ public class PopupManager : MonoBehaviour
     private RectTransform rectTransform;
     private Vector2 initialSize;
     public static bool IsShowing { get; private set; }
+    private Videos videos;
 
     private struct PopupData
     {
@@ -101,6 +107,9 @@ public class PopupManager : MonoBehaviour
             typeWriterEffect.fullText = "";
         }
 
+        SetActorVisuals(actor1, actor1RawImage, actor1Video, null, null);
+        SetActorVisuals(actor2, actor2RawImage, actor2Video, null, null);
+
         onClose?.Invoke();
     }
 
@@ -164,8 +173,20 @@ public class PopupManager : MonoBehaviour
         }
 
         titleWidget.text = data.title;
-        actor1.sprite = data.spriteActor1;
-        actor2.sprite = data.spriteActor2;
+        SetActorVisuals(
+            actor1,
+            actor1RawImage,
+            actor1Video,
+            GetVideoByName(data.spriteActor1 != null ? data.spriteActor1.name : null),
+            data.spriteActor1
+        );
+        SetActorVisuals(
+            actor2,
+            actor2RawImage,
+            actor2Video,
+            GetVideoByName(data.spriteActor2 != null ? data.spriteActor2.name : null),
+            data.spriteActor2
+        );
 
         if (rectTransform != null)
         {
@@ -188,5 +209,43 @@ public class PopupManager : MonoBehaviour
 
         if (leftArrow != null) leftArrow.SetActive(hasQueue && currentIndex > 0);
         if (rightArrow != null) rightArrow.SetActive(hasQueue && currentIndex < queue.Count - 1);
+    }
+
+    private VideoClip GetVideoByName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return null;
+        if (videos == null) videos = FindFirstObjectByType<Videos>();
+        return videos != null ? videos.GetVideoByName(name) : null;
+    }
+
+    private static void SetActorVisuals(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
+    {
+        bool hasClip = clip != null && video != null;
+
+        if (video != null)
+        {
+            if (hasClip)
+            {
+                video.enabled = true;
+                video.clip = clip;
+                video.Play();
+            }
+            else
+            {
+                video.Stop();
+                video.enabled = false;
+            }
+        }
+
+        if (rawImage != null) rawImage.enabled = hasClip;
+
+        if (image != null)
+        {
+            image.enabled = !hasClip;
+            if (!hasClip)
+            {
+                image.sprite = fallbackSprite;
+            }
+        }
     }
 }

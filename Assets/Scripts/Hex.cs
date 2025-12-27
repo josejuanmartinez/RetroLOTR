@@ -21,41 +21,22 @@ public class Hex : MonoBehaviour
 
     [Header("Rendering")]
 
-    public GameObject camp;
-    public GameObject village;
-    public GameObject town;
-    public GameObject majorTown;
-    public GameObject city;
+    public GameObject pcObject;
+    public SpriteRenderer pcSprite;
+    public HoverNoUI pcHover;
 
-    public SpriteRenderer campSprite;
-    public SpriteRenderer villageSprite;
-    public SpriteRenderer townSprite;
-    public SpriteRenderer majorTownSprite;
-    public SpriteRenderer citySprite;
-
-    public TextMeshPro campText;
-    public TextMeshPro villageText;
-    public TextMeshPro townText;
-    public TextMeshPro majorTownText;
-    public TextMeshPro cityText;
-
-    public GameObject tower;
-    public GameObject keep;
-    public GameObject fort;
-    public GameObject fortress;
-    public GameObject citadel;
-    
-    public SpriteRenderer towerSprite;
-    public SpriteRenderer keepSprite;
+    public GameObject fortObject;
     public SpriteRenderer fortSprite;
-    public SpriteRenderer fortressSprite;
-    public SpriteRenderer citadelSprite;
 
-    public TextMeshPro freeArmiesAtHexText;
-    public TextMeshPro neutralArmiesAtHexText;
-    public TextMeshPro darkServantArmiesAtHexText;
-    public TextMeshPro charactersAtHexText;
+    [Header("Hover")]
+    [SerializeField] private float tooltipFontSize = 2f;
+
+    public HoverNoUI freeArmiesAtHexHover;
+    public HoverNoUI neutralArmiesAtHexHover;
+    public HoverNoUI darkServantArmiesAtHexHover;
+    public HoverNoUI charactersAtHexHover;
     public GameObject port;
+    public HoverNoUI portHover;
 
     public GameObject freeArmy;
     public GameObject darkArmy;
@@ -74,11 +55,6 @@ public class Hex : MonoBehaviour
     public List<Sprite> desertDecors = new();
     public List<Sprite> wastelandDecors = new();
 
-    public SpriteRenderer campSR;
-    public SpriteRenderer villageSR;
-    public SpriteRenderer townSR;
-    public SpriteRenderer majorTownSR;
-    public SpriteRenderer citySR;
     public SpriteRenderer freeArmySR;
     public SpriteRenderer neutralArmySR;
     public SpriteRenderer darkArmySR;
@@ -400,20 +376,12 @@ public class Hex : MonoBehaviour
         float pcAlpha = isHiddenAndNotRevealed ? 0.75f : 1f;
         SetPcSpriteAlpha(pcAlpha);
 
-        // city size visibility
-        SetActiveFast(camp, shouldShowPc && pc.citySize == PCSizeEnum.camp);
-        SetActiveFast(village, shouldShowPc && pc.citySize == PCSizeEnum.village);
-        SetActiveFast(town, shouldShowPc && pc.citySize == PCSizeEnum.town);
-        SetActiveFast(majorTown, shouldShowPc && pc.citySize == PCSizeEnum.majorTown);
-        SetActiveFast(city, shouldShowPc && pc.citySize == PCSizeEnum.city);
+        // PC visibility
+        SetActiveFast(pcObject, shouldShowPc && pc.citySize != PCSizeEnum.NONE);
         UpdatePortIcon(shouldShowPc);
 
-        // forts (note: keep tower/fortress visibility rules as in original)
-        SetActiveFast(tower, seen && pc != null && pc.fortSize == FortSizeEnum.tower);
-        SetActiveFast(keep, seen && pc != null && pc.fortSize == FortSizeEnum.keep);
-        SetActiveFast(fort, seen && pc != null && pc.fortSize == FortSizeEnum.fort);
-        SetActiveFast(fortress, seen && pc != null && pc.fortSize == FortSizeEnum.fortress);
-        SetActiveFast(citadel, seen && pc != null && pc.fortSize == FortSizeEnum.citadel);
+        // fort visibility
+        SetActiveFast(fortObject, seen && pc != null && pc.fortSize != FortSizeEnum.NONE);
 
         if (refreshHoverText) RefreshHoverText();
     }
@@ -438,32 +406,19 @@ public class Hex : MonoBehaviour
         bool seen = IsHexSeen();
         bool pcRev = seen && pc != null && IsPCRevealed();
 
-        if (pcRev)
-        {            
-            if (camp && camp.activeSelf)
+        if (pcHover != null)
+        {
+            if (pcRev && pc != null && pc.citySize != PCSizeEnum.NONE)
             {
-                campText.text = $"{pc.pcName}<sprite name=\"pc\">[1] {GetLoyalty()}{GetProduction()}";
-                campText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
+                int sizeValue = (int)pc.citySize;
+                int fortValue = (int)pc.fortSize;
+                string fortText = pc.fortSize != FortSizeEnum.NONE ? $" <sprite name=\"fort\">[{fortValue}]" : "";
+                string pcTooltip = $"{pc.pcName}<sprite name=\"pc\">[{sizeValue}]{fortText} {GetLoyalty()}{GetProduction()}";
+                pcHover.Initialize(pcTooltip, tooltipFontSize);
             }
-            if (village && village.activeSelf)
+            else
             {
-                villageText.text = $"{pc.pcName}<sprite name=\"pc\">[2] {GetLoyalty()}{GetProduction()}";
-                villageText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
-            }
-            if (town && town.activeSelf)
-            {
-                townText.text = $"{pc.pcName}<sprite name=\"pc\">[3] {GetLoyalty()}{GetProduction()}";
-                townText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
-            }
-            if (majorTown && majorTown.activeSelf)
-            {
-                majorTownText.text = $"{pc.pcName}<sprite name=\"pc\">[4] {GetLoyalty()}{GetProduction()}";
-                majorTownText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
-            }
-            if (city && city.activeSelf)
-            {
-                cityText.text = $"{pc.pcName}<sprite name=\"pc\">[5] {GetLoyalty()}{GetProduction()}";
-                cityText.color = colors.GetColorByName(pc.owner.GetAlignment().ToString());
+                pcHover.Initialize("", tooltipFontSize);
             }
         }
         
@@ -498,10 +453,10 @@ public class Hex : MonoBehaviour
                     npl.RevealToLeader(g.currentlyPlaying, isHuman);
                 }
                 
-                var charName = ch.GetHoverText(true, true, true, false, true);
+                var charName = ch.GetHoverText(true, true, true, false, false, true);
                 if (ch.IsArmyCommander())
                 {
-                    var text = ch.GetHoverText(false, true, true, true, true);
+                    var text = ch.GetHoverText(false, true, true, true, false, true);
                     switch (ch.alignment)
                     {
                         case AlignmentEnum.freePeople: sbFree.Append(text).Append('\n'); break;
@@ -539,10 +494,10 @@ public class Hex : MonoBehaviour
             
 
             // Trim a trailing newline if present
-            charactersAtHexText.text = sbChars.ToString().TrimEnd('\n');
-            freeArmiesAtHexText.text = sbFree.ToString().TrimEnd('\n');
-            darkServantArmiesAtHexText.text = sbDark.ToString().TrimEnd('\n');
-            neutralArmiesAtHexText.text = sbNeutral.ToString().TrimEnd('\n');
+            if (charactersAtHexHover != null) charactersAtHexHover.Initialize(sbChars.ToString().TrimEnd('\n'), tooltipFontSize);
+            if (freeArmiesAtHexHover != null) freeArmiesAtHexHover.Initialize(sbFree.ToString().TrimEnd('\n'), tooltipFontSize);
+            if (darkServantArmiesAtHexHover != null) darkServantArmiesAtHexHover.Initialize(sbDark.ToString().TrimEnd('\n'), tooltipFontSize);
+            if (neutralArmiesAtHexHover != null) neutralArmiesAtHexHover.Initialize(sbNeutral.ToString().TrimEnd('\n'), tooltipFontSize);
         }
     }
 
@@ -740,11 +695,7 @@ public class Hex : MonoBehaviour
 
     private void SetPcSpriteAlpha(float alpha)
     {
-        SetSpriteAlpha(campSprite, alpha);
-        SetSpriteAlpha(villageSprite, alpha);
-        SetSpriteAlpha(townSprite, alpha);
-        SetSpriteAlpha(majorTownSprite, alpha);
-        SetSpriteAlpha(citySprite, alpha);
+        SetSpriteAlpha(pcSprite, alpha);
         if (port != null && port.TryGetComponent<SpriteRenderer>(out var portSprite)) SetSpriteAlpha(portSprite, alpha);
     }
 
@@ -780,15 +731,11 @@ public class Hex : MonoBehaviour
                 SetActiveFast(hoverHexFrame, true);
                 SetActiveFast(selectedParticles, true);
             }
-            if (campText) SetActiveFast(campText.gameObject, true);
-            if (villageText) SetActiveFast(villageText.gameObject, true);
-            if (townText) SetActiveFast(townText.gameObject, true);
-            if (majorTownText) SetActiveFast(majorTownText.gameObject, true);
-            if (cityText) SetActiveFast(cityText.gameObject, true);
-            if (freeArmiesAtHexText) SetActiveFast(freeArmiesAtHexText.gameObject, true);
-            if (neutralArmiesAtHexText) SetActiveFast(neutralArmiesAtHexText.gameObject, true);
-            if (darkServantArmiesAtHexText) SetActiveFast(darkServantArmiesAtHexText.gameObject, true);
-            if (charactersAtHexText) SetActiveFast(charactersAtHexText.gameObject, true);
+            if (pcHover) SetActiveFast(pcHover.gameObject, true);
+            if (freeArmiesAtHexHover) SetActiveFast(freeArmiesAtHexHover.gameObject, true);
+            if (neutralArmiesAtHexHover) SetActiveFast(neutralArmiesAtHexHover.gameObject, true);
+            if (darkServantArmiesAtHexHover) SetActiveFast(darkServantArmiesAtHexHover.gameObject, true);
+            if (charactersAtHexHover) SetActiveFast(charactersAtHexHover.gameObject, true);
 
             if (decorPlaceholders != null)
             {
@@ -801,18 +748,11 @@ public class Hex : MonoBehaviour
             return;
         }
 
-        SetActiveFast(camp, false);
-        SetActiveFast(village, false);
-        SetActiveFast(town, false);
-        SetActiveFast(majorTown, false);
-        SetActiveFast(city, false);
+        SetActiveFast(pcObject, false);
         SetActiveFast(port, false);
+        if (portHover) SetActiveFast(portHover.gameObject, false);
 
-        SetActiveFast(tower, false);
-        SetActiveFast(keep, false);
-        SetActiveFast(fort, false);
-        SetActiveFast(fortress, false);
-        SetActiveFast(citadel, false);
+        SetActiveFast(fortObject, false);
 
         SetActiveFast(freeArmy, false);
         SetActiveFast(neutralArmy, false);
@@ -823,15 +763,11 @@ public class Hex : MonoBehaviour
         SetActiveFast(hoverHexFrame, false);
         SetActiveFast(selectedParticles, false);
 
-        if (campText) { campText.text = ""; SetActiveFast(campText.gameObject, false); }
-        if (villageText) { villageText.text = ""; SetActiveFast(villageText.gameObject, false); }
-        if (townText) { townText.text = ""; SetActiveFast(townText.gameObject, false); }
-        if (majorTownText) { majorTownText.text = ""; SetActiveFast(majorTownText.gameObject, false); }
-        if (cityText) { cityText.text = ""; SetActiveFast(cityText.gameObject, false); }
-        if (freeArmiesAtHexText) { freeArmiesAtHexText.text = ""; SetActiveFast(freeArmiesAtHexText.gameObject, false); }
-        if (neutralArmiesAtHexText) { neutralArmiesAtHexText.text = ""; SetActiveFast(neutralArmiesAtHexText.gameObject, false); }
-        if (darkServantArmiesAtHexText) { darkServantArmiesAtHexText.text = ""; SetActiveFast(darkServantArmiesAtHexText.gameObject, false); }
-        if (charactersAtHexText) { charactersAtHexText.text = ""; SetActiveFast(charactersAtHexText.gameObject, false); }
+        if (pcHover) { pcHover.Initialize("", tooltipFontSize); SetActiveFast(pcHover.gameObject, false); }
+        if (freeArmiesAtHexHover) { freeArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(freeArmiesAtHexHover.gameObject, false); }
+        if (neutralArmiesAtHexHover) { neutralArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(neutralArmiesAtHexHover.gameObject, false); }
+        if (darkServantArmiesAtHexHover) { darkServantArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(darkServantArmiesAtHexHover.gameObject, false); }
+        if (charactersAtHexHover) { charactersAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(charactersAtHexHover.gameObject, false); }
 
         if (decorPlaceholders != null)
         {
@@ -861,7 +797,9 @@ public class Hex : MonoBehaviour
     {
         bool showPcPort = (shouldShowPcOverride ?? ShouldShowPcPort()) && pc != null && pc.hasPort;
         bool showWarshipPort = ShouldShowWarshipPort();
-        SetActiveFast(port, showPcPort || showWarshipPort);
+        bool showPort = showPcPort || showWarshipPort;
+        SetActiveFast(port, showPort);
+        if (portHover) SetActiveFast(portHover.gameObject, showPort);
     }
 
     private void UpdateCharacterIconSprite()
@@ -1133,20 +1071,12 @@ public class Hex : MonoBehaviour
         if(pcFeature != "")
         {
             Sprite pcFeatureSprite = features.GetFeatureByName(pcFeature);
-            campSprite.sprite = pcFeatureSprite;
-            villageSprite.sprite = pcFeatureSprite;
-            townSprite.sprite = pcFeatureSprite;
-            majorTownSprite.sprite = pcFeatureSprite;
-            citySprite.sprite = pcFeatureSprite;
+            if (pcSprite != null) pcSprite.sprite = pcFeatureSprite;
         }
         if(fortFeature != "")
         {
             Sprite fortFeatureSprite = features.GetFeatureByName(fortFeature);
-            towerSprite.sprite = fortFeatureSprite;
-            fortSprite.sprite = fortFeatureSprite;
-            keepSprite.sprite = fortFeatureSprite;
-            fortressSprite.sprite = fortFeatureSprite;
-            citadelSprite.sprite = fortFeatureSprite;
+            if (fortSprite != null) fortSprite.sprite = fortFeatureSprite;
         }
         if(isIsland)
         {

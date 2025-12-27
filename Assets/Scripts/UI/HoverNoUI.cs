@@ -1,8 +1,6 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class HoverNoUI : MonoBehaviour
 {
@@ -10,13 +8,15 @@ public class HoverNoUI : MonoBehaviour
     public GameObject tooltipPanel;      // a normal GameObject, not UI
     public TextMeshPro textWidget;       // 3D TextMeshPro, not UGUI
     public Vector3 offset = new(0, 1.5f, 0);
+    public bool mark = true;
 
     [Header("Raycast")]
     public Camera rayCamera;             // defaults to Camera.main
     public LayerMask hoverMask = ~0;
 
     private bool wasHovering;
-
+    const string markStart = "<mark color=#ffffff>";
+    const string markEnd = "</mark>";
     void Awake()
     {
         if (rayCamera == null) rayCamera = Camera.main;
@@ -40,17 +40,19 @@ public class HoverNoUI : MonoBehaviour
         if (isHovering && tooltipPanel.activeSelf)
         {
             tooltipPanel.transform.position = transform.position + offset;
-            tooltipPanel.transform.rotation = Quaternion.LookRotation(
+            /*tooltipPanel.transform.rotation = Quaternion.LookRotation(
                 tooltipPanel.transform.position - rayCamera.transform.position
-            );
+            );*/
         }
 
         wasHovering = isHovering;
     }
 
-    public void Initialize(string text, float fontSize = 0.25f)
+    public void Initialize(string text, float fontSize = 2f)
     {
-        textWidget.text = text;
+        string markStartStr = mark? markStart:"";
+        string markEndStr = mark? markEnd:"";
+        textWidget.text = $"{markStartStr}{text}{markEndStr}";
         textWidget.fontSize = fontSize;
     }
 

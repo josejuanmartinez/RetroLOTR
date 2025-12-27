@@ -19,8 +19,11 @@ public class MessageDisplayNoUI : MonoBehaviour
     [SerializeField] private bool faceCamera = true;
 
     private readonly Queue<MessageData> messageQueue = new Queue<MessageData>();
+    private readonly Dictionary<Vector2Int, Queue<MessageData>> pendingByHex = new Dictionary<Vector2Int, Queue<MessageData>>();
+    private readonly List<Vector2Int> pendingKeysToRemove = new List<Vector2Int>();
     private bool isDisplayingMessage = false;
     private Camera mainCam;
+    private MapBorderDetector mapBorderDetector;
 
     private void Awake()
     {
@@ -34,6 +37,8 @@ public class MessageDisplayNoUI : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         mainCam = Camera.main;
+        if (mapBorderDetector == null)
+            mapBorderDetector = FindAnyObjectByType<MapBorderDetector>();
 
         if (textMesh != null)
         {
@@ -45,12 +50,16 @@ public class MessageDisplayNoUI : MonoBehaviour
 
     private void LateUpdate()
     {
+        EnsureCameraReferences();
+
         if (faceCamera && mainCam != null && textMesh != null)
         {
             // Billboard to camera
             transform.LookAt(transform.position + mainCam.transform.rotation * Vector3.forward,
                              mainCam.transform.rotation * Vector3.up);
         }
+
+        TryPromotePendingMessages();
     }
 
     // -------------------------------------------------------------------------
@@ -83,7 +92,13 @@ public class MessageDisplayNoUI : MonoBehaviour
         if (playerCanSeeHex)
         {
             Vector3 worldPos = hex.gameObject.transform.position;
-            instance.EnqueueMessage(message, worldPos, color ?? Color.white);
+            if (instance != null)
+            {
+                if (instance.CanDisplayNow(hex))
+                    instance.EnqueueMessage(hex, message, worldPos, color ?? Color.white);
+                else
+                    instance.EnqueueDeferred(hex, message, worldPos, color ?? Color.white);
+            }
         }
 
         Rumour rumour = new Rumour {leader = character.GetOwner(), characterName = character?.characterName, rumour = textMessage, v2 = hex.v2};
@@ -94,25 +109,47 @@ public class MessageDisplayNoUI : MonoBehaviour
     // Queue / Display Logic
     // -------------------------------------------------------------------------
 
-    private void EnqueueMessage(string message, Vector3 worldPos, Color textColor)
+    private void EnqueueMessage(Hex hex, string message, Vector3 worldPos, Color textColor)
     {
-        messageQueue.Enqueue(new MessageData(message, worldPos, textColor));
+        messageQueue.Enqueue(new MessageData(hex, message, worldPos, textColor));
 
         if (!isDisplayingMessage)
             ProcessNextMessage();
     }
 
+    private void EnqueueDeferred(Hex hex, string message, Vector3 worldPos, Color textColor)
+    {
+        if (hex == null) return;
+        var key = hex.v2;
+        if (!pendingByHex.TryGetValue(key, out var queue))
+        {
+            queue = new Queue<MessageData>();
+            pendingByHex.Add(key, queue);
+        }
+        queue.Enqueue(new MessageData(hex, message, worldPos, textColor));
+    }
+
+    private void EnqueueDeferred(MessageData data)
+    {
+        if (data == null || data.Hex == null) return;
+        EnqueueDeferred(data.Hex, data.Message, data.WorldPos, data.TextColor);
+    }
+
     private void ProcessNextMessage()
     {
-        if (messageQueue.Count > 0)
+        while (messageQueue.Count > 0)
         {
             var next = messageQueue.Dequeue();
-            StartCoroutine(DisplayCoroutine(next));
+            if (CanDisplayNow(next.Hex))
+            {
+                StartCoroutine(DisplayCoroutine(next));
+                return;
+            }
+
+            EnqueueDeferred(next);
         }
-        else
-        {
-            isDisplayingMessage = false;
-        }
+
+        isDisplayingMessage = false;
     }
 
     private IEnumerator DisplayCoroutine(MessageData data)
@@ -163,18 +200,84 @@ public class MessageDisplayNoUI : MonoBehaviour
         textMesh.color = new Color(c.r, c.g, c.b, a);
     }
 
+    private void EnsureCameraReferences()
+    {
+        if (mainCam == null)
+            mainCam = Camera.main;
+
+        if (mapBorderDetector == null)
+            mapBorderDetector = mainCam != null ? mainCam.GetComponentInChildren<MapBorderDetector>() : FindAnyObjectByType<MapBorderDetector>();
+    }
+
+    private bool CanDisplayNow(Hex hex)
+    {
+        if (hex == null || hex.gameObject == null) return false;
+        EnsureCameraReferences();
+
+        if (mainCam != null)
+        {
+            Vector3 viewportPos = mainCam.WorldToViewportPoint(hex.transform.position);
+            if (viewportPos.z <= 0f) return false;
+            return viewportPos.x >= 0f && viewportPos.x <= 1f && viewportPos.y >= 0f && viewportPos.y <= 1f;
+        }
+
+        if (mapBorderDetector != null && mapBorderDetector.HasRegisteredHit)
+            return mapBorderDetector.CurrentHexCoords == hex.v2;
+
+        return true;
+    }
+
+    private void TryPromotePendingMessages()
+    {
+        if (pendingByHex.Count == 0) return;
+
+        pendingKeysToRemove.Clear();
+        foreach (var entry in pendingByHex)
+        {
+            var queue = entry.Value;
+            if (queue.Count == 0)
+            {
+                pendingKeysToRemove.Add(entry.Key);
+                continue;
+            }
+
+            var next = queue.Peek();
+            if (next == null || next.Hex == null)
+            {
+                pendingKeysToRemove.Add(entry.Key);
+                continue;
+            }
+
+            if (CanDisplayNow(next.Hex))
+            {
+                while (queue.Count > 0)
+                    messageQueue.Enqueue(queue.Dequeue());
+
+                pendingKeysToRemove.Add(entry.Key);
+            }
+        }
+
+        for (int i = 0; i < pendingKeysToRemove.Count; i++)
+            pendingByHex.Remove(pendingKeysToRemove[i]);
+
+        if (!isDisplayingMessage && messageQueue.Count > 0)
+            ProcessNextMessage();
+    }
+
     // -------------------------------------------------------------------------
     // Data
     // -------------------------------------------------------------------------
 
     private class MessageData
     {
+        public Hex Hex { get; }
         public string Message { get; }
         public Vector3 WorldPos { get; }
         public Color TextColor { get; }
 
-        public MessageData(string message, Vector3 worldPos, Color textColor)
+        public MessageData(Hex hex, string message, Vector3 worldPos, Color textColor)
         {
+            Hex = hex;
             Message = message;
             WorldPos = worldPos;
             TextColor = textColor;

@@ -14,6 +14,9 @@ public class MapBorderDetector : MonoBehaviour
     private Vector2Int lastHitHexCoords = new(-1, -1);
     private bool hasRegisteredHit;
 
+    public Vector2Int CurrentHexCoords => lastHitHexCoords;
+    public bool HasRegisteredHit => hasRegisteredHit;
+
     void Awake()
     {
         if (boardNavigator == null)

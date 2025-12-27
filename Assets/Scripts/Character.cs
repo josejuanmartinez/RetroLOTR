@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -203,6 +205,7 @@ public class Character : MonoBehaviour
         if (withColor) result.Add($"<color={colors.GetHexColorByName(alignment.ToString())}>");
         if(withAlignment) result.Add($"<sprite name=\"{alignment}\">");
         result.Add($"{characterName}");
+        if (withHealth) result.Add(GetHealthHoverText());
         if (withCharInfo)
         {
             if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? "[" + GetCommander().ToString() + "]" : "")}");
@@ -212,15 +215,24 @@ public class Character : MonoBehaviour
         }
 
         if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText(withHealth));
-        if (withHealth) result.Add(GetHealthHoverText());
         if (withColor) result.Add("</color>");
         return string.Join("", result);
     }
 
     public string GetHealthHoverText()
     {
-        string color = health < 25 ? "#ff4d4d" : health < 50 ? "#ffb347" : health < 75 ? "#8fd14f" : "#00c853";
-        return $" HP[<color={color}>{Mathf.Max(0, health)}</color>]";
+        string healthColor = "#ff4d4d";
+        string noHealthColor = "#000000";
+        StringBuilder sb = new(" ");
+        const int bars = 4;
+        for(int i=0;i<bars;i++)
+        {
+            string color = noHealthColor;
+            if(health >= Mathf.FloorToInt(100 / (bars-i))) color = healthColor;
+            sb.Append($"<color={color}>|</color>");  
+        }
+
+        return sb.ToString();
     }
 
     public MovementType GetMovementType()

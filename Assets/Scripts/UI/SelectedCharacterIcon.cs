@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 [RequireComponent(typeof(Image))]
 public class SelectedCharacterIcon : MonoBehaviour
@@ -15,6 +16,8 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     [Header("Leader")]
     public Image icon;
+    public RawImage rawImage;
+    public VideoPlayer video;
     public TextMeshProUGUI textWidget;
     public Image alignmentIcon;
 
@@ -32,18 +35,23 @@ public class SelectedCharacterIcon : MonoBehaviour
     public GameObject artifactPrefab;
     public Transform artifactsGridLayoutTransform;
 
+    private Videos videos;
+    private Illustrations illustrations;
+
     // Update is called once per frame
     public void Refresh(Character c)
     {
         border.SetActive(true);
-        icon.enabled = true;
+        SetCharacterVisuals(
+            GetVideoByName(c.characterName),
+            GetIllustrationByName(c.characterName)
+        );
         alignmentIcon.enabled = true;
-        alignmentIcon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c.GetAlignment().ToString());
+        alignmentIcon.sprite = GetIllustrationByName(c.GetAlignment().ToString());
         textWidget.text = $"{c.GetHoverText(true, false, false, true, false, false)}";
         levelsGameObject.SetActive(true);
         actioned.SetActive(true);
         moved.SetActive(true);
-        icon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c);
         commander.text = c.GetCommander().ToString();
         agent.text = c.GetAgent().ToString();
         emmissary.text = c.GetEmmissary().ToString();
@@ -77,10 +85,12 @@ public class SelectedCharacterIcon : MonoBehaviour
         }
 
         border.SetActive(true);
-        icon.enabled = true;
+        SetCharacterVisuals(
+            GetVideoByName(c.characterName),
+            GetIllustrationByName(c.characterName)
+        );
         alignmentIcon.enabled = true;
-        alignmentIcon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c.GetAlignment().ToString());
-        icon.sprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(c);
+        alignmentIcon.sprite = GetIllustrationByName(c.GetAlignment().ToString());
         textWidget.text = hoverText ?? "";
 
         actioned.SetActive(false);
@@ -119,7 +129,14 @@ public class SelectedCharacterIcon : MonoBehaviour
     {
         border.SetActive(false);
         alignmentIcon.enabled = false;
-        icon.enabled = false;
+        if (video != null)
+        {
+            video.Stop();
+            video.enabled = false;
+        }
+        if (rawImage != null) rawImage.enabled = false;
+        Image targetImage = GetImageTarget();
+        if (targetImage != null) targetImage.enabled = false;
         textWidget.text = "";
         levelsGameObject.SetActive(false);
         actioned.SetActive(false);
@@ -130,5 +147,54 @@ public class SelectedCharacterIcon : MonoBehaviour
     public void RefreshMovementLeft(Character c)
     {
         movementLeft.text = c.GetMovementLeft().ToString();
+    }
+
+    private Sprite GetIllustrationByName(string name)
+    {
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        return illustrations != null ? illustrations.GetIllustrationByName(name) : null;
+    }
+
+    private VideoClip GetVideoByName(string name)
+    {
+        if (videos == null) videos = FindFirstObjectByType<Videos>();
+        return videos != null ? videos.GetVideoByName(name) : null;
+    }
+
+    private Image GetImageTarget()
+    {
+        return icon;
+    }
+
+    private void SetCharacterVisuals(VideoClip clip, Sprite fallbackSprite)
+    {
+        bool hasClip = clip != null && video != null;
+
+        if (video != null)
+        {
+            if (hasClip)
+            {
+                video.enabled = true;
+                video.clip = clip;
+                video.Play();
+            }
+            else
+            {
+                video.Stop();
+                video.enabled = false;
+            }
+        }
+
+        if (rawImage != null) rawImage.enabled = hasClip;
+
+        Image targetImage = GetImageTarget();
+        if (targetImage != null)
+        {
+            targetImage.enabled = !hasClip;
+            if (!hasClip)
+            {
+                targetImage.sprite = fallbackSprite;
+            }
+        }
     }
 }
