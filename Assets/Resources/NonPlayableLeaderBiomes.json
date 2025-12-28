@@ -83,7 +83,8 @@
           "emmissary": 1,
           "mage": 0,
           "race": 1,
-          "artifacts": []
+          "artifacts": [],
+          "sex": 0
         },
         {
           "characterName": "Haldir",
@@ -95,7 +96,8 @@
           "race": 1,
           "artifacts": [],
           "startingArmySize": 1,
-          "preferedTroopType": 1
+          "preferedTroopType": 1,
+          "sex": 0
         }
       ],
       "artifactsToJoin": [
@@ -127,7 +129,8 @@
       "actionsAtCapital": [
         "Oh, Elbereth!"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 1
     },
     {
       "characterName": "Elrond",
@@ -197,7 +200,8 @@
           "emmissary": 2,
           "mage": 0,
           "race": 1,
-          "artifacts": []
+          "artifacts": [],
+          "sex": 0
         },
         {
           "characterName": "Glorfindel",
@@ -209,7 +213,8 @@
           "race": 1,
           "artifacts": [],
           "startingArmySize": 1,
-          "preferedTroopType": 1
+          "preferedTroopType": 1,
+          "sex": 0
         },
         {
           "characterName": "Bilbo",
@@ -281,7 +286,8 @@
               "spriteString": "scroll",
               "alignment": 2
             }
-          ]
+          ],
+          "sex": 0
         }
       ],
       "artifactsToJoin": [
@@ -313,7 +319,8 @@
       "actionsAtCapital": [
         "Oh, Elbereth!"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Thranduil",
@@ -414,7 +421,8 @@
               "spriteString": "bow",
               "alignment": 0
             }
-          ]
+          ],
+          "sex": 0
         }
       ],
       "artifactsToJoin": [
@@ -444,7 +452,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Murazor",
@@ -563,7 +572,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 2,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Khamul",
@@ -682,7 +692,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Akhorahil",
@@ -803,7 +814,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 5,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Ji Indur",
@@ -922,7 +934,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Ovatha",
@@ -1028,7 +1041,8 @@
               "spriteString": "hc",
               "alignment": 2
             }
-          ]
+          ],
+          "sex": 0
         }
       ],
       "artifactsToJoin": [
@@ -1058,7 +1072,8 @@
       "emmissarysToJoin": 2,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Adunaphel",
@@ -1163,7 +1178,8 @@
       "emmissarysToJoin": 5,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 1
     },
     {
       "characterName": "Ren the Unclean",
@@ -1267,7 +1283,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Hoarmurath",
@@ -1371,7 +1388,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Dendra Dwar",
@@ -1490,7 +1508,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Aragorn",
@@ -1575,7 +1594,8 @@
           "emmissary": 1,
           "mage": 0,
           "race": 12,
-          "artifacts": []
+          "artifacts": [],
+          "sex": 0
         },
         {
           "characterName": "Elrohir",
@@ -1585,7 +1605,8 @@
           "emmissary": 2,
           "mage": 0,
           "race": 12,
-          "artifacts": []
+          "artifacts": [],
+          "sex": 0
         }
       ],
       "artifactsToJoin": [
@@ -1616,7 +1637,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Waulfa",
@@ -1673,7 +1695,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 1
     },
     {
       "characterName": "Beoraborn",
@@ -1748,7 +1771,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Ingomer",
@@ -1802,7 +1826,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Shelob",
@@ -1878,7 +1903,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 1
     },
     {
       "characterName": "Balrog",
@@ -1967,7 +1993,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Smaug",
@@ -2042,7 +2069,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Bard",
@@ -2102,7 +2130,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Uvatha",
@@ -2160,7 +2189,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Haruth Rammam",
@@ -2218,7 +2248,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Sangarunya",
@@ -2274,7 +2305,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Cirdan",
@@ -2348,7 +2380,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Denethor",
@@ -2437,7 +2470,8 @@
               "spriteString": "mounts",
               "alignment": 0
             }
-          ]
+          ],
+          "sex": 0
         }
       ],
       "artifactsToJoin": [
@@ -2467,7 +2501,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Faramir",
@@ -2524,7 +2559,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Theoden",
@@ -2609,7 +2645,8 @@
           "emmissary": 1,
           "mage": 0,
           "race": 0,
-          "artifacts": []
+          "artifacts": [],
+          "sex": 0
         },
         {
           "characterName": "Eomer",
@@ -2637,7 +2674,8 @@
               "spriteString": "hc",
               "alignment": 0
             }
-          ]
+          ],
+          "sex": 0
         }
       ],
       "artifactsToJoin": [
@@ -2667,7 +2705,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Dain",
@@ -2725,7 +2764,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Gloin",
@@ -2780,7 +2820,8 @@
               "spriteString": "axe",
               "alignment": 0
             }
-          ]
+          ],
+          "sex": 0
         }
       ],
       "artifactsToJoin": [
@@ -2812,7 +2853,8 @@
       "actionsAtCapital": [
         "Increase Loyalty"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Radagast",
@@ -2905,7 +2947,8 @@
       "actionsAtCapital": [
         "Reveal PC"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "GhanBuriGhan",
@@ -2963,7 +3006,8 @@
       "actionsAtCapital": [
         "Reveal PC"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Goblin King",
@@ -3037,7 +3081,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Tom Bombadil",
@@ -3127,7 +3172,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "The Undead King",
@@ -3188,7 +3234,8 @@
       "actionsAtCapital": [
         "Reveal PC"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Pallando",
@@ -3278,7 +3325,8 @@
       "actionsAtCapital": [
         "Wizard's Laugh"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Alatar",
@@ -3370,7 +3418,8 @@
       "actionsAtCapital": [
         "Wizard's Laugh"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Treebeard",
@@ -3447,7 +3496,8 @@
       "actionsAtCapital": [
         "Wizard's Laugh"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Celdacil",
@@ -3505,7 +3555,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Annatorion",
@@ -3594,7 +3645,8 @@
       "emmissarysToJoin": 4,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Barrow-wight",
@@ -3684,7 +3736,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Gwaihir",
@@ -3743,7 +3796,8 @@
       "actionsAtCapital": [
         "Teleport"
       ],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Huz",
@@ -3800,7 +3854,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     },
     {
       "characterName": "Azog",
@@ -3839,7 +3894,8 @@
           "emmissary": 0,
           "mage": 0,
           "race": 5,
-          "artifacts": []
+          "artifacts": [],
+          "sex": 0
         }
       ],
       "artifactsToJoin": [
@@ -3870,7 +3926,8 @@
       "emmissarysToJoin": 0,
       "magesToJoin": 0,
       "actionsAtCapital": [],
-      "actionsAnywhere": []
+      "actionsAnywhere": [],
+      "sex": 0
     }
   ]
 }

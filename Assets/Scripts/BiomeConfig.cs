@@ -8,6 +8,7 @@ public class BiomeConfig
 
     public AlignmentEnum alignment;
     public RacesEnum race;
+    public SexEnum sex = SexEnum.Male;
 
     public int commander = 0;
     public int agent = 0;

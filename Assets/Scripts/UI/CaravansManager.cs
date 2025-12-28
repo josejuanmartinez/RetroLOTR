@@ -41,12 +41,14 @@ public class CaravansManager : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (PopupManager.IsShowing) return;
+        Sounds.Instance?.PlayUiHover();
         caravans.SetActive(true);
     }
 
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        Sounds.Instance?.PlayUiExit();
         caravans.SetActive(false);
     }
 

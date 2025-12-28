@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections;
 using System.Linq;
 using System.Text;
 
@@ -23,6 +24,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
     private Game game;
 
     private Sprite leaderSprite;
+    private bool tempRevealQueued = false;
 
     public void Initialize(NonPlayableLeader leader)
     {
@@ -38,12 +40,14 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (isUnrevealed || PopupManager.IsShowing) return;
+        Sounds.Instance?.PlayUiHover();
         PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First(x => x.alignment == alignment);
         if (leader) leader.HighlighNonPlayableLeader(nonPlayableLeader.characterName, text);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        Sounds.Instance?.PlayUiExit();
         PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First(x => x.alignment == alignment);
         if (leader) leader.Restore(nonPlayableLeader.characterName);
     }
@@ -60,6 +64,23 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
     {
         if (!isUnrevealed || !game.IsPlayerCurrentlyPlaying()) return;
         PlayableLeader player = game.player;
+        if (player != null)
+        {
+            Hex capitalHex = nonPlayableLeader.controlledPcs.FirstOrDefault(pc => pc != null && pc.isCapital)?.hex;
+            if (capitalHex != null)
+            {
+                bool playerCanSee = player.visibleHexes.Contains(capitalHex) && capitalHex.IsHexSeen();
+                if (!playerCanSee)
+                {
+                    player.AddTemporarySeenHexes(new[] { capitalHex });
+                    if (!tempRevealQueued)
+                    {
+                        tempRevealQueued = true;
+                        StartCoroutine(RefreshVisibleNextFrame(player));
+                    }
+                }
+            }
+        }
         canvasGroup.alpha = 1;
         raycaster.enabled = true;
         image.sprite = leaderSprite;
@@ -90,5 +111,12 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
             true
         );
         isUnrevealed = false;
+    }
+
+    private IEnumerator RefreshVisibleNextFrame(PlayableLeader player)
+    {
+        yield return null;
+        if (player != null) player.RefreshVisibleHexesImmediate();
+        tempRevealQueued = false;
     }
 }

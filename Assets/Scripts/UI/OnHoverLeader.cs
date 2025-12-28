@@ -16,12 +16,14 @@ public class OnHoverLeader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (PopupManager.IsShowing) return;
+        Sounds.Instance?.PlayUiHover();
         alignment.SetActive(true);
     }
 
     // Called when the pointer exits the UI element
     public void OnPointerExit(PointerEventData eventData)
     {
+        Sounds.Instance?.PlayUiExit();
         alignment.SetActive(false);
     }
 }

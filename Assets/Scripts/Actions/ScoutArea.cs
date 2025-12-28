@@ -1,5 +1,7 @@
 using System;
+using Unity.Collections;
 using UnityEngine;
+using System.Linq;
 
 public class ScoutArea : AgentAction
 {
@@ -19,7 +21,7 @@ public class ScoutArea : AgentAction
                 {
                     Hex hex = radiusHexes[i];
                     if (hex == null) continue;
-                    if (!hex.IsScoutedBy(owner) && hex.characters != null && hex.characters.Count > 0)
+                    if (!hex.IsScoutedBy(owner) && hex.characters != null && hex.characters.Find(x => x.alignment != c.alignment) != null)
                     {
                         revealedCharacters = true;
                         break;

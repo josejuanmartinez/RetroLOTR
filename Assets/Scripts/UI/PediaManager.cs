@@ -8,12 +8,14 @@ public class PediaManager : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (PopupManager.IsShowing) return;
+        Sounds.Instance?.PlayUiHover();
         pedia.SetActive(true);
     }
 
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        Sounds.Instance?.PlayUiExit();
         pedia.SetActive(false);
     }
 

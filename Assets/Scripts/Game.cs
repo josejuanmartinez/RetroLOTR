@@ -107,7 +107,7 @@ public class Game : MonoBehaviour
         BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
 
-        soundPlayer.PlayOneShot(FindFirstObjectByType<Sounds>().GetSoundByName($"{currentlyPlaying.alignment}_intro"));
+        Sounds.Instance?.PlaySpeechIntro(currentlyPlaying.alignment);
         PopupManager.Show(
             currentlyPlaying.GetBiome().joinedTitle,
             FindFirstObjectByType<Illustrations>().GetIllustrationByName(currentlyPlaying.GetBiome().introActor1),

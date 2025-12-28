@@ -20,6 +20,7 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
         if (board == null) board = FindFirstObjectByType<Board>();
         if (board != null)
         {
+            Sounds.Instance?.PlayUiClick();
             if (character.hex != null)
             {
                 character.hex.LookAt();
@@ -32,6 +33,7 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
         if (character == null || character.killed) return;
         board ??= FindFirstObjectByType<Board>();
         if (board != null && board.selectedCharacter == character) return;
+        Sounds.Instance?.PlayUiHover();
 
         if (selectedCharacterIcon == null)
         {

@@ -43,7 +43,20 @@ public class MessageDisplay : MonoBehaviour
         Game game = FindFirstObjectByType<Game>();
         if (game == null) return;
         if (!game.started || game.currentlyPlaying != game.player) return;
-        instance.EnqueueMessage(message, color ?? Color.white);
+        Color resolved = color ?? Color.white;
+        if (IsNegativeColor(resolved))
+        {
+            Sounds.Instance?.PlayNegative();
+        }
+        else if (IsPositiveColor(resolved))
+        {
+            Sounds.Instance?.PlayPositive();
+        }
+        else
+        {
+            Sounds.Instance?.PlayMessage();
+        }
+        instance.EnqueueMessage(message, resolved);
     }
 
     public static bool IsBusy()
@@ -183,5 +196,15 @@ public class MessageDisplay : MonoBehaviour
         messageText.text = "";
         messageText.enabled = false;
         canvasGroup.alpha = 0f;
+    }
+
+    private static bool IsNegativeColor(Color color)
+    {
+        return color.r >= 0.7f && color.g <= 0.4f;
+    }
+
+    private static bool IsPositiveColor(Color color)
+    {
+        return color.g >= 0.6f && color.b <= 0.6f;
     }
 }

@@ -90,16 +90,40 @@ public class MessageDisplayNoUI : MonoBehaviour
             && hex.IsHexSeen();
         bool publicRumour = character != null && (character.GetOwner() == game.player || playerCanSeeHex);
 
+        Color resolved = color ?? Color.white;
+        string displayMessage = message;
+        if (character != null && character.GetOwner() != null && character.GetOwner() != game.player)
+        {
+            int totalLevel = character.GetCommander() + character.GetAgent() + character.GetEmmissary() + character.GetMage();
+            int threshold = Mathf.Max(totalLevel, character.GetAgent() * 10);
+            int roll = UnityEngine.Random.Range(0, 101);
+            bool spotted = roll < threshold;
+            string prefix = spotted ? $"{character.characterName}:" : "unspotted enemy:";
+            displayMessage = $"{prefix} {message}";
+        }
+
         // Only show floating text when the human player can see the hex (prevents enemy leakage)
         if (playerCanSeeHex)
         {
             Vector3 worldPos = hex.gameObject.transform.position;
             if (instance != null)
             {
-                if (instance.CanDisplayNow(hex))
-                    instance.EnqueueMessage(hex, message, worldPos, color ?? Color.white);
+                if (IsNegativeColor(resolved))
+                {
+                    Sounds.Instance?.PlayNegative();
+                }
+                else if (IsPositiveColor(resolved))
+                {
+                    Sounds.Instance?.PlayPositive();
+                }
                 else
-                    instance.EnqueueDeferred(hex, message, worldPos, color ?? Color.white);
+                {
+                    Sounds.Instance?.PlayMessage();
+                }
+                if (instance.CanDisplayNow(hex))
+                    instance.EnqueueMessage(hex, displayMessage, worldPos, resolved);
+                else
+                    instance.EnqueueDeferred(hex, displayMessage, worldPos, resolved);
             }
         }
 
@@ -199,6 +223,16 @@ public class MessageDisplayNoUI : MonoBehaviour
             yield return null;
         }
         SetTextAlpha(to, baseColor);
+    }
+
+    private static bool IsNegativeColor(Color color)
+    {
+        return color.r >= 0.7f && color.g <= 0.4f;
+    }
+
+    private static bool IsPositiveColor(Color color)
+    {
+        return color.g >= 0.6f && color.b <= 0.6f;
     }
 
     private void SetTextAlpha(float a, Color? baseColor = null)

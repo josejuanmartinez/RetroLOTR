@@ -32,9 +32,13 @@ public class HoverNoUI : MonoBehaviour
 
         // Handle show/hide transitions
         if (isHovering && !wasHovering)
+        {
             tooltipPanel.SetActive(true);
+        }
         else if (!isHovering && wasHovering)
+        {
             tooltipPanel.SetActive(false);
+        }
 
         // Update tooltip position/orientation
         if (isHovering && tooltipPanel.activeSelf)

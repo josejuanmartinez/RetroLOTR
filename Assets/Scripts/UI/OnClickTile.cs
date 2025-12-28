@@ -29,6 +29,7 @@ public class OnClickTile : MonoBehaviour
                 {
                     if (entry.Value.gameObject == gameObject)
                     {
+                        Sounds.Instance?.PlayUiClick();
                         Vector2Int hexPosition = entry.Key;
                         board.SelectHex(hexPosition);
                         return;

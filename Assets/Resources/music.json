@@ -1,0 +1,688 @@
+{
+  "music": [
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_1.mp3",
+      "suggestedUse": "Main music of the game, game soundtrack, title screen, main menu, or opening cinematic.",
+      "durationSeconds": 51.92,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_2.mp3",
+      "suggestedUse": "Main music of the game, game soundtrack, title screen, main menu, or opening cinematic.",
+      "durationSeconds": 51.92,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_3.mp3",
+      "suggestedUse": "Main music of the game, game soundtrack, title screen, main menu, or opening cinematic.",
+      "durationSeconds": 51.92,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_4.mp3",
+      "suggestedUse": "Main music of the game, game soundtrack, title screen, main menu, or opening cinematic.",
+      "durationSeconds": 51.92,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_5.mp3",
+      "suggestedUse": "Main music of the game, game soundtrack, title screen, main menu, or opening cinematic.",
+      "durationSeconds": 51.92,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_6.mp3",
+      "suggestedUse": "Main music of the game, game soundtrack, title screen, main menu, or opening cinematic.",
+      "durationSeconds": 51.92,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/01a Title Theme.wav",
+      "suggestedUse": "Title screen, main menu, or opening cinematic.",
+      "durationSeconds": 51.92,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/01b Title Theme.wav",
+      "suggestedUse": "Title screen, main menu, or opening cinematic.",
+      "durationSeconds": 51.92,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/02a Town Theme.wav",
+      "suggestedUse": "Town or city hub ambience, shops, and safe zones.",
+      "durationSeconds": 43.63,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/02b Town Theme.wav",
+      "suggestedUse": "Town or city hub ambience, shops, and safe zones.",
+      "durationSeconds": 43.63,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/03a World Map.wav",
+      "suggestedUse": "Overworld travel and exploration theme.",
+      "durationSeconds": 34.91,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/03b World Map.wav",
+      "suggestedUse": "Overworld travel and exploration theme.",
+      "durationSeconds": 34.91,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/04a Overworld 1.wav",
+      "suggestedUse": "Overworld travel and exploration theme.",
+      "durationSeconds": 38.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/04b Overworld 1.wav",
+      "suggestedUse": "Overworld travel and exploration theme.",
+      "durationSeconds": 38.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/05a Battle Theme.wav",
+      "suggestedUse": "Standard battle theme for regular encounters.",
+      "durationSeconds": 48.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/05b Battle Theme.wav",
+      "suggestedUse": "Standard battle theme for regular encounters.",
+      "durationSeconds": 48.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/06 Victory Fanfare (Intro).wav",
+      "suggestedUse": "Title screen, main menu, or opening cinematic.",
+      "durationSeconds": 1.86,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/06a Victory Fanfare.wav",
+      "suggestedUse": "Victory stinger after battles or quest completion.",
+      "durationSeconds": 6.86,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/06b Victory Fanfare.wav",
+      "suggestedUse": "Victory stinger after battles or quest completion.",
+      "durationSeconds": 6.86,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/07a Grand City Theme.wav",
+      "suggestedUse": "Town or city hub ambience, shops, and safe zones.",
+      "durationSeconds": 48.05,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/07b Grand City Theme.wav",
+      "suggestedUse": "Town or city hub ambience, shops, and safe zones.",
+      "durationSeconds": 48.05,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/08a Dungeon 1.wav",
+      "suggestedUse": "Dungeon or interior exploration theme.",
+      "durationSeconds": 36.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/08b Dungeon 1.wav",
+      "suggestedUse": "Dungeon or interior exploration theme.",
+      "durationSeconds": 36.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/09a Boss Battle Theme.wav",
+      "suggestedUse": "Boss encounter theme for climactic fights.",
+      "durationSeconds": 36.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/09b Boss Battle Theme.wav",
+      "suggestedUse": "Boss encounter theme for climactic fights.",
+      "durationSeconds": 36.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/10a Friendship and Love.wav",
+      "suggestedUse": "Quiet narrative beats, bonding, or rest scenes.",
+      "durationSeconds": 72.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/10b Friendship and Love.wav",
+      "suggestedUse": "Quiet narrative beats, bonding, or rest scenes.",
+      "durationSeconds": 72.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/11a Downtime.wav",
+      "suggestedUse": "Quiet narrative beats, bonding, or rest scenes.",
+      "durationSeconds": 42.67,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/11b Downtime.wav",
+      "suggestedUse": "Quiet narrative beats, bonding, or rest scenes.",
+      "durationSeconds": 42.67,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/12a Overworld 2.wav",
+      "suggestedUse": "Overworld travel and exploration theme.",
+      "durationSeconds": 50.5,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/12b Overworld 2.wav",
+      "suggestedUse": "Overworld travel and exploration theme.",
+      "durationSeconds": 50.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/13a Parting.wav",
+      "suggestedUse": "Quiet narrative beats, bonding, or rest scenes.",
+      "durationSeconds": 51.01,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/13b Parting.wav",
+      "suggestedUse": "Quiet narrative beats, bonding, or rest scenes.",
+      "durationSeconds": 51.01,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/14a Dungeon 2.wav",
+      "suggestedUse": "Dungeon or interior exploration theme.",
+      "durationSeconds": 57.58,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/14b Dungeon 2.wav",
+      "suggestedUse": "Dungeon or interior exploration theme.",
+      "durationSeconds": 57.58,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/15a Final Boss Battle.wav",
+      "suggestedUse": "Boss encounter theme for climactic fights.",
+      "durationSeconds": 52.19,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/15b Final Boss Battle.wav",
+      "suggestedUse": "Boss encounter theme for climactic fights.",
+      "durationSeconds": 52.19,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM00hero.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 60.2,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM01hero.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 55.55,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM02evil.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 67.91,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM03prairie.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 123.62,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM04town0.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 58.64,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM04Town1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 87.61,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM04town2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 61.25,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM04town3.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 80.84,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM04town4.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 110.06,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM04towngypsy5.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 73.42,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM05castle1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 56.68,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM06adventure1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 68.33,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM07battle1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 60.68,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM07battle2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 74.44,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM07battle3.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 82.87,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM07battle4.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 76.61,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM08boss1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 69.16,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM08boss2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 74.6,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM09credits.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 147.66,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM10desert1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 104.74,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM11bazaar.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 61.13,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM12dungeon1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 89.53,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM13dungeon2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 64.49,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM14chase.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 70.76,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM15shrine.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 42.16,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/BGM16jungle.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 81.2,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/Medieval City People Noise.wav",
+      "suggestedUse": "Town or city hub ambience, shops, and safe zones.",
+      "durationSeconds": 120.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM04town7.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 71.77,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM04town8.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 56.2,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM04townandean6.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 85.22,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM05castle2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 113.89,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM05castle3.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 85.08,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM06adventure2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 86.68,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM06adventure3.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 80.54,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM06sail1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 69.43,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM07battle6.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 88.97,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM10desert2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 75.26,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM16forest1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 87.84,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM16forest2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 56.96,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM16forest3.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 65.09,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM16forest5.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 61.43,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM16forest6.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 61.53,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM17cave1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 64.19,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM17cave3.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 65.94,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM17island1v1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 56.78,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM17island1v2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 57.74,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM17island2.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 50.77,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM18bar2NL.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 114.06,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM18store1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 69.64,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Ambiental Music/OLDBGM19minigame1.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 47.96,
+      "used": false
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_1.mp3",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 254.38,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_2.mp3",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 308.18,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_3.mp3",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 179.9,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_4.mp3",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 224.86,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_5.mp3",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 194.5,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Game Soundtrack/lord_of_the_rings_6.mp3",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 239.81,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Cave_Dark_Loop_Stereo.wav",
+      "suggestedUse": "Dungeon or interior exploration theme.",
+      "durationSeconds": 30.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Cave_Deep_Loop_Stereo.wav",
+      "suggestedUse": "Dungeon or interior exploration theme.",
+      "durationSeconds": 30.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Cave_Drips_Loop_Stereo.wav",
+      "suggestedUse": "Dungeon or interior exploration theme.",
+      "durationSeconds": 30.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Cicadas_Loop_Stereo.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 29.95,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Fire_Big_Loop_Mono.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 9.72,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Firecamp_Medium_Loop_Mono.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 10.01,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Firecamp_Small_Loop_Mono.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 9.72,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Forest_Birds_Loop_Stereo.wav",
+      "suggestedUse": "Biome exploration theme tuned to the environment.",
+      "durationSeconds": 29.07,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Night_Loop_Stereo.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 29.86,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Rain_Calm_Loop_Stereo.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 30.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Rain_Strong_Loop_Stereo.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 29.95,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_River_Moderate_Loop_Stereo.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 20.59,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Sea_Loop_Stereo.wav",
+      "suggestedUse": "Biome exploration theme tuned to the environment.",
+      "durationSeconds": 29.99,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Stream_Calm_Loop_Stereo.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 17.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Waterfall_Calm_Loop_Stereo.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 29.96,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Waterfall_Strong_Loop_Stereo.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 29.91,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Wind_Calm_Loop_Stereo.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 29.85,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ambiance_Wind_Forest_Loop_Stereo.wav",
+      "suggestedUse": "Biome exploration theme tuned to the environment.",
+      "durationSeconds": 29.92,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Cavern Atmosphere - Loop.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 32.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Forest 6 - Ice Forest.wav",
+      "suggestedUse": "Biome exploration theme tuned to the environment.",
+      "durationSeconds": 300.0,
+      "used": true
+    },
+    {
+      "path": "Assets/Music/Nature Sounds/Ice Cavern-Loop.wav",
+      "suggestedUse": "General exploration or ambient background.",
+      "durationSeconds": 92.0,
+      "used": true
+    }
+  ]
+}

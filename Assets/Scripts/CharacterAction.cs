@@ -253,6 +253,10 @@ public class CharacterAction : SearcherByName
         {
             ApplySpellFailurePenalty(isAI);
         }
+        if (!isAI)
+        {
+            Sounds.Instance?.PlayActionFail();
+        }
         string message = $"{actionName} failed";
         if (!isAI)
         {
@@ -275,6 +279,10 @@ public class CharacterAction : SearcherByName
         LastExecutionSucceeded = false;
         try
         {
+            if (!isAI)
+            {
+                Sounds.Instance?.PlayActionExecute();
+            }
             Hex actionHex = character.hex;
             ActionCostSnapshot costSnapshot = CalculateCostSnapshot();
             bool providedByArtifact = IsProvidedByArtifact();
@@ -419,6 +427,11 @@ public class CharacterAction : SearcherByName
 
             RefreshVictoryPoints();
             LastExecutionSucceeded = true;
+            if (!isAI)
+            {
+                Sounds.Instance?.PlayActionSuccess(actionName);
+                Sounds.Instance?.PlayVoiceForAction(character, actionName);
+            }
             return;
         }
         catch (Exception e)
@@ -1473,6 +1486,7 @@ public class CharacterAction : SearcherByName
         if (character == null || character.killed) return;
         int damage = UnityEngine.Random.Range(1, 6);
         character.health = Mathf.Max(0, character.health - damage);
+        Sounds.Instance?.PlayVoicePain(character);
         if (!isAI)
         {
             MessageDisplayNoUI.ShowMessage(character.hex, character, $"{character.characterName} suffers {damage} damage", Color.red);

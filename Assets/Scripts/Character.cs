@@ -56,6 +56,7 @@ public class Character : MonoBehaviour
 
     [Header("Army")]
     public RacesEnum race = RacesEnum.Common;
+    public SexEnum sex = SexEnum.Male;
 
     [Header("Statuses")]
     [SerializeField] private bool isHalted = false;
@@ -98,6 +99,7 @@ public class Character : MonoBehaviour
             characterBiome.emmissary, 
             characterBiome.mage, 
             characterBiome.race, 
+            characterBiome.sex,
             characterBiome.artifacts,
             characterBiome.startingArmySize,
             characterBiome.preferedTroopType,
@@ -115,6 +117,7 @@ public class Character : MonoBehaviour
         int emmissary,
         int mage,
         RacesEnum race,
+        SexEnum sex,
         List<Artifact> artifacts,
         int startingArmySize = 0,
         TroopsTypeEnum preferedTroopType = TroopsTypeEnum.ma,
@@ -138,6 +141,7 @@ public class Character : MonoBehaviour
         this.mage = Mathf.Clamp(mage, 0, MAX_SKILL_LEVEL);
         this.alignment = alignment;
         this.race = race;
+        this.sex = sex;
         this.startingCharacter = true;
         this.artifacts = artifacts;
 
@@ -389,6 +393,7 @@ public class Character : MonoBehaviour
     {
         health -= damage;
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} wounded by {damage}", Color.red);
+        Sounds.Instance?.PlayVoicePain(this);
         RefreshSelectedCharacterIconIfSelected();
         CharacterIcons.RefreshForHumanPlayerCharacter(this);
         if (health < 1) Killed(woundedBy);
@@ -400,6 +405,7 @@ public class Character : MonoBehaviour
         int damage = Artifact.OppositeAlignmentHealthPenalty;
         health = Mathf.Max(0, health - damage);
         MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} suffers {damage} damage from opposing relics", Color.red);
+        Sounds.Instance?.PlayVoicePain(this);
         RefreshSelectedCharacterIconIfSelected();
         CharacterIcons.RefreshForHumanPlayerCharacter(this);
         if (health < 1) Killed(null);

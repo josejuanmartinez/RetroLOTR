@@ -27,6 +27,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (board == null) board = FindFirstObjectByType<Board>();
         if (board != null)
         {
+            Sounds.Instance?.PlayUiClick();
             board.SelectCharacter(character);
         }
         else
@@ -41,6 +42,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (character == null || character.killed) return;
         board ??= FindFirstObjectByType<Board>();
         if (board != null && board.selectedCharacter == character) return;
+        Sounds.Instance?.PlayUiHover();
 
         if (selectedCharacterIcon == null)
         {

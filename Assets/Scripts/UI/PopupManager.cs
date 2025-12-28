@@ -100,6 +100,7 @@ public class PopupManager : MonoBehaviour
         }
 
         FindFirstObjectByType<Sounds>().StopAllSounds();
+        Music.Instance?.StopEventMusic();
         container.SetActive(false);
         queue.Clear();
         currentIndex = -1;
@@ -163,6 +164,8 @@ public class PopupManager : MonoBehaviour
 
         currentIndex = index;
         PopupData data = queue[currentIndex];
+        Sounds.Instance?.PlayMessage();
+        Music.Instance?.PlayEventMusic();
         container.SetActive(true);
         IsShowing = true;
 

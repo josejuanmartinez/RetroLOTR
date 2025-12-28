@@ -339,6 +339,10 @@ public class Board : MonoBehaviour
             FindFirstObjectByType<Layout>().GetActionsManager().Hide();
             return;
         }
+        if (hexes != null && hexes.TryGetValue(selection, out var selected))
+        {
+            Music.Instance?.UpdateForHex(selected);
+        }
         if(selectedCharacter) FindFirstObjectByType<ActionsManager>().Refresh(selectedCharacter);
     }
 
@@ -351,6 +355,7 @@ public class Board : MonoBehaviour
         FindFirstObjectByType<Layout>().GetActionsManager().Hide();
         FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Hide();
         SetSelectedCharacter(null);
+        Music.Instance?.StopAmbient();
     }
 
     public void UnselectCharacter()
@@ -1027,6 +1032,7 @@ public class Board : MonoBehaviour
         int movedBefore = character.moved;
         bool wasWater = previousHex != null && previousHex.IsWaterTerrain();
         bool isWater = newHex != null && newHex.IsWaterTerrain();
+        Game g = FindFirstObjectByType<Game>();
         try
         {
             HandleWarshipAnchoring(character, previousHex, newHex, wasWater, isWater);
@@ -1044,6 +1050,17 @@ public class Board : MonoBehaviour
                 if (!newHex.armies.Contains(character.GetArmy())) newHex.armies.Add(character.GetArmy());
             }
             character.hex = newHex;
+            if (g != null)
+            {
+                if (character.GetOwner() == g.player)
+                {
+                    Sounds.Instance?.PlayMovement(previousHex, newHex);
+                }
+                else if (g.player != null && g.player.visibleHexes.Contains(newHex) && newHex.IsHexSeen())
+                {
+                    Sounds.Instance?.PlayMovement(previousHex, newHex);
+                }
+            }
 
             newHex.RedrawCharacters();
             newHex.RedrawArmies();
@@ -1059,7 +1076,6 @@ public class Board : MonoBehaviour
 
             if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
             character.GetOwner().visibleHexes.Add(newHex);
-            Game g = FindFirstObjectByType<Game>();
             if (g != null && g.IsPlayerCurrentlyPlaying() && g.player == character.GetOwner())
             {
                 character.GetOwner().RefreshVisibleHexesImmediate();
@@ -1255,6 +1271,14 @@ public class Board : MonoBehaviour
         }
 
         SelectedCharacterChanged?.Invoke(previous, value);
+        if (value != null)
+        {
+            Game g = FindFirstObjectByType<Game>();
+            if (g != null && g.player == value.GetOwner())
+            {
+                Sounds.Instance?.PlayVoiceExpression(value);
+            }
+        }
     }
 
 }

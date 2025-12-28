@@ -154,7 +154,8 @@
               "spriteString": "song",
               "alignment": 0
             }
-          ]
+          ],
+          "sex": 0
         },
         {
           "characterName": "Sam",
@@ -164,7 +165,8 @@
           "emmissary": 0,
           "mage": 0,
           "race": 3,
-          "artifacts": []
+          "artifacts": [],
+          "sex": 0
         },
         {
           "characterName": "Pippin",
@@ -174,7 +176,8 @@
           "emmissary": 1,
           "mage": 0,
           "race": 3,
-          "artifacts": []
+          "artifacts": [],
+          "sex": 0
         },
         {
           "characterName": "Merry",
@@ -184,7 +187,8 @@
           "emmissary": 0,
           "mage": 0,
           "race": 3,
-          "artifacts": []
+          "artifacts": [],
+          "sex": 0
         }
       ],
       "newCharacters": [
@@ -200,7 +204,8 @@
         "Fornost Erain",
         "Annuminas",
         "Elostirion"
-      ]
+      ],
+      "sex": 0
     },
     {
       "characterName": "Saruman",
@@ -341,7 +346,8 @@
           "race": 5,
           "artifacts": [],
           "startingArmySize": 2,
-          "preferedTroopType": 2
+          "preferedTroopType": 2,
+          "sex": 0
         },
         {
           "characterName": "Grima",
@@ -368,7 +374,8 @@
               "spriteString": "poison",
               "alignment": 2
             }
-          ]
+          ],
+          "sex": 0
         },
         {
           "characterName": "Bill Ferny",
@@ -394,7 +401,8 @@
               "spriteString": "hc",
               "alignment": 2
             }
-          ]
+          ],
+          "sex": 0
         }
       ],
       "newCharacters": [
@@ -410,7 +418,8 @@
         "Arailt",
         "Angren",
         "Enedhir"
-      ]
+      ],
+      "sex": 0
     },
     {
       "characterName": "Sauron",
@@ -535,7 +544,8 @@
           "race": 6,
           "artifacts": [],
           "startingArmySize": 4,
-          "preferedTroopType": 2
+          "preferedTroopType": 2,
+          "sex": 0
         },
         {
           "characterName": "Mouth of Sauron",
@@ -578,7 +588,8 @@
               "spriteString": "scroll",
               "alignment": 1
             }
-          ]
+          ],
+          "sex": 0
         },
         {
           "characterName": "Gollum",
@@ -605,7 +616,8 @@
               "spriteString": "scroll",
               "alignment": 2
             }
-          ]
+          ],
+          "sex": 0
         }
       ],
       "newCharacters": [
@@ -621,7 +633,8 @@
         "Thuringwathost",
         "Olbamarl",
         "Barad-wath"
-      ]
+      ],
+      "sex": 0
     }
   ]
 }

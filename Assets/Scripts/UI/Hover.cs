@@ -129,6 +129,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (PopupManager.IsShowing) return;
         if (tooltipPanel == null || tooltipRectTransform == null) return;
+        Sounds.Instance?.PlayUiHover();
         tooltipPanel.SetActive(true);
 
         // Force layout rebuild before positioning
@@ -139,6 +140,7 @@ public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        Sounds.Instance?.PlayUiExit();
         if (tooltipPanel != null) tooltipPanel.SetActive(false);
     }
 
