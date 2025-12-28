@@ -30,7 +30,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "spriteString": "ring",
-          "transferable": false
+          "transferable": false,
+          "alignment": 0
         },
         {
           "artifactName": "Wizard Staff",
@@ -45,7 +46,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "spriteString": "staff",
-          "transferable": false
+          "transferable": false,
+          "alignment": 0
         },
         {
           "artifactName": "Glamdring",
@@ -59,7 +61,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "spriteString": "sword"
+          "spriteString": "sword",
+          "alignment": 0
         },
         {
           "artifactName": "Wizard's Cart",
@@ -73,7 +76,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "spriteString": "fireworks"
+          "spriteString": "fireworks",
+          "alignment": 0
         },
         {
           "artifactName": "Longpipe",
@@ -88,7 +92,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "transferable": false,
-          "spriteString": "tobacco"
+          "spriteString": "tobacco",
+          "alignment": 0
         },
         {
           "artifactName": "Shadowfax",
@@ -103,7 +108,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "spriteString": "hc",
-          "transferable": false
+          "transferable": false,
+          "alignment": 0
         }
       ],
       "description": "<b>Gandalf</b><sprite name=\"commander\">[1]<sprite name=\"agent\">[1]<sprite name=\"emmissary\">[1]<sprite name=\"mage\"><mark=#00ff00>[3]</mark><br><br><b>Starting Population Centers:</b><br>- Hobbiton <sprite name=\"pc\"/>[2]<sprite name=\"fort\"/><mark=#ff0000>[0]</mark><br><br><b>Starting Characters:</b><br>- Frodo <sprite name=\"commander\"/>[1]<br>- Sam <sprite name=\"agent\"/>[1]<br>- Pippin <sprite name=\"emmissary\"/>[1]<br>- Merry <sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- <mark=#ff0000>No</mark> armies<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#ff0000>Hard</mark><br><b>Starting power</b>: <mark=#ff0000>Small</mark><br><b>Recruitable allies</b>: <mark=#00ff00>Plenty</mark><br><b>Recruitable armies</b>: <mark=#ff0000>Scarce</mark><br><br><b>Gameplay style</b>:<br>- Characters and artifacts search",
@@ -145,7 +151,8 @@
               "bonusAttack": 0,
               "bonusDefense": 0,
               "transferable": false,
-              "spriteString": "song"
+              "spriteString": "song",
+              "alignment": 0
             }
           ]
         },
@@ -225,7 +232,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "spriteString": "ring",
-          "transferable": false
+          "transferable": false,
+          "alignment": 2
         },
         {
           "artifactName": "White Hand Banner",
@@ -239,7 +247,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "spriteString": "banner"
+          "spriteString": "banner",
+          "alignment": 2
         },
         {
           "artifactName": "Many-coloured robes",
@@ -254,7 +263,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "transferable": false,
-          "spriteString": "cloak"
+          "spriteString": "cloak",
+          "alignment": 2
         },
         {
           "artifactName": "Yellow teeth",
@@ -269,7 +279,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "transferable": false,
-          "spriteString": "tooth"
+          "spriteString": "tooth",
+          "alignment": 2
         },
         {
           "artifactName": "Palantir of Orthanc",
@@ -283,7 +294,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "spriteString": "palantir"
+          "spriteString": "palantir",
+          "alignment": 2
         },
         {
           "artifactName": "Saruman's Staff",
@@ -298,7 +310,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "spriteString": "staff",
-          "transferable": false
+          "transferable": false,
+          "alignment": 2
         }
       ],
       "description": "<b>Saruman</b><sprite name=\"commander\">[1]<sprite name=\"emmissary\"><mark=#ffff00>[2]</mark><sprite name=\"mage\"><mark=#00ff00>[4]</mark><br><br><b>Starting Population Centers:</b><br>- Orthanc <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/><mark=#ffff00>[1]</mark><br><br><b>Starting Characters:</b><br>- Grima<sprite name=\"agent\"/><mark=#ffff00>[2]</mark><sprite name=\"emmissary\"/>[1]<br>- Bill Ferny<sprite name=\"commander\"/>[1]<sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- UglAok<sprite name=\"commander\">[2], leading a <mark=#ffff00>small</mark> <sprite name=\"neutral\"/>army<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#ffff00>Average</mark><br><b>Starting Power</b>: <mark=#ffff00>Average</mark><br><b>Recruitable allies</b>: <mark=#ff0000>Scarce</mark><br><b>Recruitable armies</b>: <mark=#ffff00>Average</mark><br><br><b>Gameplay style</b>:<br>- Characters and conquest",
@@ -352,7 +365,8 @@
               "bonusAttack": 0,
               "bonusDefense": 0,
               "transferable": false,
-              "spriteString": "poison"
+              "spriteString": "poison",
+              "alignment": 2
             }
           ]
         },
@@ -377,7 +391,8 @@
               "oneShot": false,
               "bonusAttack": 0,
               "bonusDefense": 0,
-              "spriteString": "hc"
+              "spriteString": "hc",
+              "alignment": 2
             }
           ]
         }
@@ -426,7 +441,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "spriteString": "banner"
+          "spriteString": "banner",
+          "alignment": 1
         },
         {
           "artifactName": "Palantir of Ithil",
@@ -440,7 +456,8 @@
           "oneShot": false,
           "bonusAttack": 0,
           "bonusDefense": 0,
-          "spriteString": "palantir"
+          "spriteString": "palantir",
+          "alignment": 1
         },
         {
           "artifactName": "Morgul Veil",
@@ -455,7 +472,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "transferable": false,
-          "spriteString": "veil"
+          "spriteString": "veil",
+          "alignment": 1
         },
         {
           "artifactName": "Lidless eye",
@@ -470,7 +488,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "transferable": false,
-          "spriteString": "darkServants"
+          "spriteString": "darkServants",
+          "alignment": 1
         },
         {
           "artifactName": "Voice of the Dark Tower",
@@ -485,7 +504,8 @@
           "bonusAttack": 0,
           "bonusDefense": 0,
           "transferable": false,
-          "spriteString": "speech"
+          "spriteString": "speech",
+          "alignment": 1
         }
       ],
       "description": "<b>Sauron</b><sprite name=\"commander\"><mark=#00ff00>[3]</mark><sprite name=\"mage\"><mark=#00ff00>[3]</mark><br><br><b>Starting Population Centers:</b><br>- Barad-dur <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/><mark=#ffff00>[1]</mark><br><br><b>Starting Characters:</b><br>- Mouth of Sauron <sprite name=\"emmissary\"/><mark=#00ff00>[3]</mark><br>- Gollum <sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- Gothmog<sprite name=\"commander\">[2], leading an <mark=#00ff00>average</mark> <sprite name=\"darkServants\"/>army<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#00ff00>Easy</mark></b><br><b>Starting Power</b>: <mark=#ffff00>Average</mark><br><b>Recruitable characters</b>: <mark=#00ff00>Good</mark><br><b>Recruitable armies</b>: <mark=#00ff00>Plenty</mark><br><br><b>Gameplay style</b>:<br>- Characters, armies, artifact search",
@@ -539,7 +559,8 @@
               "bonusAttack": 0,
               "bonusDefense": 0,
               "transferable": false,
-              "spriteString": "tooth"
+              "spriteString": "tooth",
+              "alignment": 1
             },
             {
               "artifactName": "Scroll of the Mouth",
@@ -554,7 +575,8 @@
               "bonusAttack": 0,
               "bonusDefense": 0,
               "transferable": false,
-              "spriteString": "scroll"
+              "spriteString": "scroll",
+              "alignment": 1
             }
           ]
         },
@@ -580,7 +602,8 @@
               "bonusAttack": 0,
               "bonusDefense": 0,
               "transferable": false,
-              "spriteString": "scroll"
+              "spriteString": "scroll",
+              "alignment": 2
             }
           ]
         }

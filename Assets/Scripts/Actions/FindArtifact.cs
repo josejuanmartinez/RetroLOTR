@@ -63,11 +63,21 @@ public class FindArtifact: MageAction
             Artifact artifact = c.hex.hiddenArtifacts[0];
             bool isAI = !c.isPlayerControlled;
             Riddle riddle = GetRandomRiddle();
+            async System.Threading.Tasks.Task ApplyAlignmentPenaltyIfNeeded()
+            {
+                if (!artifact.ShouldApplyAlignmentPenalty(c.GetAlignment())) return;
+                if (!isAI)
+                {
+                    await ConfirmationDialog.AskOk("Artifacts of opposite alignment have health penalties for their bearers");
+                }
+                c.ApplyOppositeAlignmentArtifactPenalty(artifact);
+            }
 
             if (riddle == null || riddle.options == null || riddle.options.Count < 1)
             {
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
+                await ApplyAlignmentPenaltyIfNeeded();
                 MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} found", Color.green);
                 return true;
             }
@@ -77,6 +87,7 @@ public class FindArtifact: MageAction
             {
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
+                await ApplyAlignmentPenaltyIfNeeded();
                 MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} claimed", Color.green);
             }
             else

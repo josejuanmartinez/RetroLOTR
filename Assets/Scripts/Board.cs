@@ -1076,6 +1076,15 @@ public class Board : MonoBehaviour
                 character.moved += newHex.GetTerrainCost(character);                 
             }
 
+            if (g != null && g.player != null && character.GetOwner() != g.player)
+            {
+                bool playerCanSee = g.player.visibleHexes.Contains(newHex) && newHex.IsHexSeen();
+                if (playerCanSee)
+                {
+                    BoardNavigator.Instance?.EnqueueEnemyFocus(newHex);
+                }
+            }
+
         } catch (Exception e)
         {
             character.moved = movedBefore;

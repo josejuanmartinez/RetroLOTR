@@ -173,8 +173,17 @@ public class CharacterAction : SearcherByName
 
     public bool IsProvidedByArtifact()
     {
-        string baseName = ActionNameUtils.StripShortcut(actionName);
-        return character.artifacts.Find(x => Normalize(x.providesSpell) == Normalize(baseName)) != null;
+        if (character == null || character.artifacts == null) return false;
+        string baseName = NormalizeSpellName(ActionNameUtils.StripShortcut(actionName));
+        if (string.IsNullOrWhiteSpace(baseName)) return false;
+        return character.artifacts.Exists(x => x != null && NormalizeSpellName(x.providesSpell) == baseName);
+    }
+
+    protected static string NormalizeSpellName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return string.Empty;
+        string stripped = ActionNameUtils.StripShortcut(name);
+        return new string(stripped.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
     }
 
     public bool ResourcesAvailable()
@@ -245,7 +254,15 @@ public class CharacterAction : SearcherByName
             ApplySpellFailurePenalty(isAI);
         }
         string message = $"{actionName} failed";
-        if (!isAI) MessageDisplayNoUI.ShowMessage(character.hex, character,  message, Color.red);
+        if (!isAI)
+        {
+            MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.red);
+        }
+        else if (PlayerCanSeeHex(character != null ? character.hex : null))
+        {
+            MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.red);
+            BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex);
+        }
         if (!isAI) game.PointToCharacterWithMissingActions();
         if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
         if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
@@ -293,11 +310,16 @@ public class CharacterAction : SearcherByName
             if (isAI)
             {
                 // Always record AI actions privately; if doubled by the player, also promote to public immediately
-                Rumour rumour = new Rumour() { leader = character.GetOwner(), characterName = character.characterName, rumour = rumourMessage, v2 = character.hex.v2 };
+                Rumour rumour = new Rumour() { leader = character.GetOwner(), character = character, characterName = character.characterName, rumour = rumourMessage, v2 = character.hex.v2 };
                 RumoursManager.AddRumour(rumour, false);
                 if (isDoubledByPlayer)
                 {
                     RumoursManager.PromoteRumourToPublic(rumour);
+                }
+                if (PlayerCanSeeHex(character.hex))
+                {
+                    MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.yellow);
+                    BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex);
                 }
             }
             
@@ -1471,5 +1493,13 @@ public class CharacterAction : SearcherByName
         if (cachedStoresManager != null) return cachedStoresManager;
         cachedStoresManager = FindFirstObjectByType<StoresManager>();
         return cachedStoresManager;
+    }
+
+    private bool PlayerCanSeeHex(Hex hex)
+    {
+        if (hex == null) return false;
+        Game g = game != null ? game : FindFirstObjectByType<Game>();
+        if (g == null || g.player == null) return false;
+        return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }
 }

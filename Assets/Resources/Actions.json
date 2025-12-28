@@ -565,7 +565,8 @@
       "mageXP": 0,
       "reward": 3,
       "advisorType": 4,
-      "description": "Attempt to kill an enemy character in this hex; the agent returns to capital and may be wounded."
+      "description": "Attempt to kill an enemy character in this hex; the agent returns to capital and may be wounded.",
+      "isOffensive": true
     },
     {
       "className": "WoundCharacter",
@@ -592,7 +593,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 4,
-      "description": "Attempt to wound an enemy character here; the agent returns to capital."
+      "description": "Attempt to wound an enemy character here; the agent returns to capital.",
+      "isOffensive": true
     },
     {
       "className": "DoubleCharacter",
@@ -619,7 +621,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 4,
-      "description": "Turn an enemy character here into your double agent."
+      "description": "Turn an enemy character here into your double agent.",
+      "isOffensive": true
     },
     {
       "className": "UndoubleCharacter",
@@ -700,7 +703,8 @@
       "mageXP": 0,
       "reward": 2,
       "advisorType": 3,
-      "description": "Lower the loyalty of the population center in this hex."
+      "description": "Lower the loyalty of the population center in this hex.",
+      "isOffensive": true
     },
     {
       "className": "Attack",
@@ -727,7 +731,8 @@
       "mageXP": 0,
       "reward": 3,
       "advisorType": 1,
-      "description": "Lead your army to attack enemy armies or population centers in this hex."
+      "description": "Lead your army to attack enemy armies or population centers in this hex.",
+      "isOffensive": true
     },
     {
       "className": "FortifyPC",
@@ -781,7 +786,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 4,
-      "description": "Obscure the area around your hex from enemy sight."
+      "description": "Obscure the area around your hex from enemy sight.",
+      "isOffensive": true
     },
     {
       "className": "CastLight",
@@ -862,7 +868,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 4,
-      "description": "Damage an enemy character in your hex with dark magic."
+      "description": "Damage an enemy character in your hex with dark magic.",
+      "isOffensive": true
     },
     {
       "className": "OhElbereth",
@@ -889,7 +896,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 4,
-      "description": "Smite an enemy character here; Nazgul are also halted."
+      "description": "Smite an enemy character here; Nazgul are also halted.",
+      "isOffensive": true
     },
     {
       "className": "ReturnToCapital",
@@ -1051,7 +1059,8 @@
       "mageXP": 10,
       "reward": 1,
       "advisorType": 3,
-      "description": "Clear doubles on allied characters here or reduce loyalty of a hostile/neutral PC."
+      "description": "Clear doubles on allied characters here or reduce loyalty of a hostile/neutral PC.",
+      "isOffensive": true
     },
     {
       "className": "Heal",
@@ -1186,7 +1195,8 @@
       "mageXP": 0,
       "reward": 2,
       "advisorType": 2,
-      "description": "Steal gold from the current population center."
+      "description": "Steal gold from the current population center.",
+      "isOffensive": true
     },
     {
       "className": "StealIron",
@@ -1213,7 +1223,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 2,
-      "description": "Steal up to your agent rating in <sprite name=\"iron\"/> from the current population center."
+      "description": "Steal up to your agent rating in <sprite name=\"iron\"/> from the current population center.",
+      "isOffensive": true
     },
     {
       "className": "StealLeather",
@@ -1240,7 +1251,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 2,
-      "description": "Steal <sprite name=\"leather\"/> from the current population center."
+      "description": "Steal <sprite name=\"leather\"/> from the current population center.",
+      "isOffensive": true
     },
     {
       "className": "StealMithril",
@@ -1267,7 +1279,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 2,
-      "description": "Steal <sprite name=\"mithril\"/> from the current population center."
+      "description": "Steal <sprite name=\"mithril\"/> from the current population center.",
+      "isOffensive": true
     },
     {
       "className": "StealMounts",
@@ -1294,7 +1307,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 2,
-      "description": "Steal <sprite name=\"mounts\"/> from the current population center."
+      "description": "Steal <sprite name=\"mounts\"/> from the current population center.",
+      "isOffensive": true
     },
     {
       "className": "StealTimber",
@@ -1321,7 +1335,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 2,
-      "description": "Steal <sprite name=\"timber\"/> from the current population center."
+      "description": "Steal <sprite name=\"timber\"/> from the current population center.",
+      "isOffensive": true
     },
     {
       "className": "Pass",
@@ -1429,7 +1444,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Engage a selected enemy army in this hex (no additional effect yet)."
+      "description": "Engage a selected enemy army in this hex (no additional effect yet).",
+      "isOffensive": true
     },
     {
       "className": "Courage",
@@ -1483,7 +1499,8 @@
       "mageXP": 10,
       "reward": 1,
       "advisorType": 1,
-      "description": "Stop a non-army enemy character in this hex from acting or moving next turn."
+      "description": "Stop a non-army enemy character in this hex from acting or moving next turn.",
+      "isOffensive": true
     },
     {
       "className": "IceStorm",
@@ -1510,7 +1527,8 @@
       "mageXP": 25,
       "reward": 1,
       "advisorType": 5,
-      "description": "Freeze an enemy army in this hex, halting it for a turn."
+      "description": "Freeze an enemy army in this hex, halting it for a turn.",
+      "isOffensive": true
     },
     {
       "className": "WizardsFire",
@@ -1537,7 +1555,8 @@
       "mageXP": 10,
       "reward": 1,
       "advisorType": 5,
-      "description": "Burn an enemy army in your hex, causing casualties."
+      "description": "Burn an enemy army in your hex, causing casualties.",
+      "isOffensive": true
     },
     {
       "className": "WordsOfDispair",
@@ -1564,7 +1583,8 @@
       "mageXP": 15,
       "reward": 1,
       "advisorType": 5,
-      "description": "Inflict magical casualties on an enemy army sharing your hex."
+      "description": "Inflict magical casualties on an enemy army sharing your hex.",
+      "isOffensive": true
     },
     {
       "className": "YouShallNotPass",
@@ -1591,7 +1611,8 @@
       "mageXP": 10,
       "reward": 1,
       "advisorType": 5,
-      "description": "Halt an enemy character in this hex; Balrogs also take damage."
+      "description": "Halt an enemy character in this hex; Balrogs also take damage.",
+      "isOffensive": true
     },
     {
       "className": "RevealRumours",
@@ -1909,7 +1930,8 @@
       "mageXP": 0,
       "reward": 2,
       "advisorType": 4,
-      "description": "Attempt to steal a transferable artifact from an enemy character in this hex."
+      "description": "Attempt to steal a transferable artifact from an enemy character in this hex.",
+      "isOffensive": true
     },
     {
       "className": "SabotageStorage",
@@ -1936,7 +1958,8 @@
       "mageXP": 0,
       "reward": 2,
       "advisorType": 4,
-      "description": "Sabotage two different types of stores in the target population center."
+      "description": "Sabotage two different types of stores in the target population center.",
+      "isOffensive": true
     },
     {
       "className": "SabotagePort",
@@ -1963,7 +1986,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 4,
-      "description": "Sabotage the port in the target population center (requires agent 4)."
+      "description": "Sabotage the port in the target population center (requires agent 4).",
+      "isOffensive": true
     },
     {
       "className": "DestroyPort",
@@ -1990,7 +2014,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 1,
-      "description": "Destroy the port in the target population center (requires commander 3)."
+      "description": "Destroy the port in the target population center (requires commander 3).",
+      "isOffensive": true
     },
     {
       "className": "RemovePort",
@@ -2044,7 +2069,8 @@
       "mageXP": 0,
       "reward": 2,
       "advisorType": 1,
-      "description": "Attempt to reduce the fortifications of an enemy population center by one level."
+      "description": "Attempt to reduce the fortifications of an enemy population center by one level.",
+      "isOffensive": true
     },
     {
       "className": "RemoveFortifications",
@@ -2098,7 +2124,8 @@
       "mageXP": 0,
       "reward": 3,
       "advisorType": 1,
-      "description": "Lay siege to an enemy population center to reduce its population. Catapults improve success."
+      "description": "Lay siege to an enemy population center to reduce its population. Catapults improve success.",
+      "isOffensive": true
     }
   ]
 }

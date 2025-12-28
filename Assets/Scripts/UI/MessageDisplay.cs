@@ -46,6 +46,12 @@ public class MessageDisplay : MonoBehaviour
         instance.EnqueueMessage(message, color ?? Color.white);
     }
 
+    public static bool IsBusy()
+    {
+        if (instance == null) return false;
+        return instance.persistentActive || instance.isDisplayingMessage || instance.messageQueue.Count > 0;
+    }
+
     /// <summary>
     /// Show a persistent message (no fade, stays until cleared). Used for turn banners.
     /// </summary>

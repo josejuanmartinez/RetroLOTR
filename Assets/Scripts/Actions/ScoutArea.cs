@@ -10,8 +10,24 @@ public class ScoutArea : AgentAction
         var originalAsyncEffect = asyncEffect;
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
-            c.hex.RevealArea(1, true, c.GetOwner());
             var radiusHexes = c.hex.GetHexesInRadius(1);
+            Leader owner = c.GetOwner();
+            bool revealedCharacters = false;
+            if (owner != null)
+            {
+                for (int i = 0; i < radiusHexes.Count; i++)
+                {
+                    Hex hex = radiusHexes[i];
+                    if (hex == null) continue;
+                    if (!hex.IsScoutedBy(owner) && hex.characters != null && hex.characters.Count > 0)
+                    {
+                        revealedCharacters = true;
+                        break;
+                    }
+                }
+            }
+
+            c.hex.RevealArea(1, true, owner);
             c.GetOwner()?.AddTemporarySeenHexes(radiusHexes);
             bool hasArtifactsNearby = false;
             for (int i = 0; i < radiusHexes.Count; i++)
@@ -31,7 +47,8 @@ public class ScoutArea : AgentAction
                     MessageDisplayNoUI.ShowMessage(c.hex, c, "Something seems buried in the area", Color.yellow);
                 }
             }
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area scouted", Color.green);
+            string scoutMessage = revealedCharacters ? "Presence detected in the surroundings" : "Area scouted";
+            MessageDisplayNoUI.ShowMessage(c.hex, c, scoutMessage, Color.green);
             return true;
         };
         condition = (c) => {

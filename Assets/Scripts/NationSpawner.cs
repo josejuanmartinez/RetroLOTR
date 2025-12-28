@@ -165,6 +165,12 @@ public class NationSpawner : MonoBehaviour
             Debug.LogWarning("Max leaders reached. Skipping leader instantiation.");
             return;
         }*/
+        if (!isPlayable && !EnsurePcCapacity())
+        {
+            string leaderName = string.IsNullOrWhiteSpace(leaderBiomeConfig.characterName) ? "Unknown" : leaderBiomeConfig.characterName;
+            Debug.LogError($"Skipping non-playable leader instantiation for {leaderName} because max PCs reached.");
+            return;
+        }
         TerrainEnum chosenTerrain = leaderBiomeConfig.terrain;
         List<Vector2Int> suitableHexes = GetAvailableHexes(chosenTerrain, leaderBiomeConfig.feature);
 
@@ -237,6 +243,18 @@ public class NationSpawner : MonoBehaviour
             hex.RedrawPC();
         }
 
+        // Non-playable leaders that start with a port but have no adjacent water lose the port and warships.
+        if (!isPlayable && leaderBiomeConfig.startsWithPort && !HasNeighboringWater(hex))
+        {
+            if (pc != null && pc.hasPort)
+            {
+                pc.hasPort = false;
+            }
+            RemoveWarshipsFromLeaderArmiesAtHex(leader, hex);
+            hex.RedrawPC();
+            hex.RedrawArmies();
+        }
+
         currentPcCount++;
     }
 
@@ -278,6 +296,36 @@ public class NationSpawner : MonoBehaviour
         }
 
         return union;
+    }
+
+    private bool HasNeighboringWater(Hex hex)
+    {
+        if (hex == null || board == null) return false;
+        if (hex.IsWaterTerrain()) return true;
+
+        var neighbors = ((hex.v2.x & 1) == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+        for (int i = 0; i < neighbors.Length; i++)
+        {
+            Vector2Int pos = new(hex.v2.x + neighbors[i].x, hex.v2.y + neighbors[i].y);
+            if (board.hexes.TryGetValue(pos, out Hex neighbor) && neighbor != null && neighbor.IsWaterTerrain())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void RemoveWarshipsFromLeaderArmiesAtHex(Leader leader, Hex hex)
+    {
+        if (leader == null || hex == null || hex.armies == null) return;
+        for (int i = 0; i < hex.armies.Count; i++)
+        {
+            Army army = hex.armies[i];
+            if (army == null || army.commander == null) continue;
+            if (army.commander.GetOwner() != leader) continue;
+            if (army.ws > 0) army.ws = 0;
+        }
     }
 
     private Vector2Int FindFarthestPosition(List<Vector2Int> candidates, List<Vector2Int> existingPositions)

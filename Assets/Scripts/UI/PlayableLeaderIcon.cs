@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Playables;
 using UnityEngine.Video;
+using System;
 
 public class PlayableLeaderIcon : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class PlayableLeaderIcon : MonoBehaviour
     public Image alignmentImage;
     public Image border;
     public TextMeshProUGUI victoryPoints;
+    public TextMeshProUGUI newRumoursText;
 
     [HideInInspector]
     public AlignmentEnum alignment;
@@ -47,6 +49,7 @@ public class PlayableLeaderIcon : MonoBehaviour
         alignmentImage.sprite = illustrations.GetIllustrationByName(leader.alignment.ToString());
         RefreshVictoryPoints(leader.victoryPoints != null ? leader.victoryPoints.RelativeScore : 0);
         RemoveCurrentlyPlayingEffect();
+        RefreshNewRumoursCount();
 
         // Start the coroutine to hide the text after 6 seconds
         // StartCoroutine(HideJoinedTextAfterDelay(6f));
@@ -115,6 +118,13 @@ public class PlayableLeaderIcon : MonoBehaviour
         if (icons != null) icons.UpdateVictoryPointColors();
     }
 
+    public void RefreshNewRumoursCount()
+    {
+        if (newRumoursText == null || playableLeader == null) return;
+        int count = RumoursManager.GetUnseenRumoursCount(playableLeader);
+        newRumoursText.text = Math.Max(count, 0).ToString();
+    }
+
     private void SetLeaderVisuals(VideoClip clip, Sprite fallbackSprite)
     {
         bool hasClip = clip != null && video != null;
@@ -137,5 +147,10 @@ public class PlayableLeaderIcon : MonoBehaviour
                 image.sprite = fallbackSprite;
             }
         }
+    }
+
+    public void ShowRumours()
+    {
+        FindFirstObjectByType<RumoursManager>().Show();
     }
 }

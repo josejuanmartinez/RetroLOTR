@@ -51,11 +51,13 @@ public class Spell : CharacterAction
     private Artifact GetSpellArtifact(Character c)
     {
         if (c == null) return null;
-        string baseName = ActionNameUtils.StripShortcut(actionName);
+        if (c.artifacts == null) return null;
+        string baseName = NormalizeSpellName(actionName);
+        if (string.IsNullOrWhiteSpace(baseName)) return null;
         return c.artifacts.FirstOrDefault(a =>
             a != null &&
             !string.IsNullOrEmpty(a.providesSpell) &&
-            a.providesSpell.Equals(baseName, StringComparison.OrdinalIgnoreCase));
+            NormalizeSpellName(a.providesSpell) == baseName);
     }
 
     protected float GetSpellEffectMultiplier(Character character)

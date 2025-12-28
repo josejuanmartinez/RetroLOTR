@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -30,6 +31,7 @@ public class PopupManager : MonoBehaviour
     private Vector2 initialSize;
     public static bool IsShowing { get; private set; }
     private Videos videos;
+    private Coroutine waitForMessagesRoutine;
 
     private struct PopupData
     {
@@ -74,7 +76,14 @@ public class PopupManager : MonoBehaviour
 
         if (currentIndex == -1)
         {
-            ShowEntry(0);
+            if (ShouldDelayPopup())
+            {
+                StartWaitForMessages();
+            }
+            else
+            {
+                ShowEntry(0);
+            }
         }
         else
         {
@@ -109,6 +118,12 @@ public class PopupManager : MonoBehaviour
 
         SetActorVisuals(actor1, actor1RawImage, actor1Video, null, null);
         SetActorVisuals(actor2, actor2RawImage, actor2Video, null, null);
+
+        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        if (actionsManager != null)
+        {
+            actionsManager.RefreshInteractableState();
+        }
 
         onClose?.Invoke();
     }
@@ -201,6 +216,34 @@ public class PopupManager : MonoBehaviour
         }
 
         UpdateArrows();
+    }
+
+    private bool ShouldDelayPopup()
+    {
+        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy();
+    }
+
+    private void StartWaitForMessages()
+    {
+        if (waitForMessagesRoutine != null) return;
+        waitForMessagesRoutine = StartCoroutine(WaitForMessages());
+    }
+
+    private IEnumerator WaitForMessages()
+    {
+        while (ShouldDelayPopup())
+        {
+            yield return null;
+        }
+        waitForMessagesRoutine = null;
+        if (currentIndex == -1 && queue.Count > 0)
+        {
+            ShowEntry(0);
+        }
+        else
+        {
+            UpdateArrows();
+        }
     }
 
     private void UpdateArrows()

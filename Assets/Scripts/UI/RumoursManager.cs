@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TMPro;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,9 +6,11 @@ using UnityEngine.UI;
 public struct Rumour
 {
     public Leader leader;
+    public Character character;
     public string characterName;
     public string rumour;
     public Vector2Int v2;
+    public bool seen;
 }
 
 public class RumoursManager : MonoBehaviour
@@ -20,14 +21,14 @@ public class RumoursManager : MonoBehaviour
     public int rumoursShown = 25;
 
     [Header("References")]
-    public TextMeshProUGUI textWidget;
-    public ScrollRect scrollRect;
+    public GameObject rumourIconPrefab;
+    public GridLayoutGroup rumoursGridLayout;
+    public CanvasGroup rumoursCanvasGroup;
 
     private List<Rumour> rumours = new();
     private List<Rumour> privateRumours = new();
     
     private Game game;
-
     private void Awake()
     {
         // Singleton pattern
@@ -41,6 +42,35 @@ public class RumoursManager : MonoBehaviour
         game = FindFirstObjectByType<Game>();
     }
 
+    public void Show()
+    {
+        if (rumours.Count < 1)
+        {
+            _ = ConfirmationDialog.AskOk("No rumours yet. Hear Stories with an Emmissary to get information about the world");
+            return;
+        }
+
+        if (rumoursCanvasGroup != null)
+        {
+            rumoursCanvasGroup.alpha = 1f;
+            rumoursCanvasGroup.interactable = true;
+            rumoursCanvasGroup.blocksRaycasts = true;
+        }
+
+        MarkAllPublicRumoursSeen();
+    }
+
+    public void Close()
+    {
+        if (rumoursCanvasGroup != null)
+        {
+            rumoursCanvasGroup.alpha = 0f;
+            rumoursCanvasGroup.interactable = false;
+            rumoursCanvasGroup.blocksRaycasts = false;
+            return;
+        }
+    }
+
     public static void AddRumour(Rumour rumour, bool isPublic)
     {
         if (!EnsureInstance(nameof(AddRumour)))
@@ -48,14 +78,17 @@ public class RumoursManager : MonoBehaviour
 
         if (isPublic)
         {
+            rumour.seen = false;
             Instance.rumours.Add(rumour);
             UpdateRumourText();
+            RefreshNewRumoursUI();
         }
         else
         {
             // Strip location for private rumours from enemies so location isn't leaked
             Rumour sanitized = rumour;
             sanitized.v2 = default;
+            sanitized.seen = false;
             Instance.privateRumours.Add(sanitized);
         }
     }
@@ -85,8 +118,10 @@ public class RumoursManager : MonoBehaviour
             r.v2 == rumour.v2);
         if (alreadyPublic) return;
 
+        rumour.seen = false;
         Instance.rumours.Add(rumour);
         UpdateRumourText();
+        RefreshNewRumoursUI();
     }
 
 
@@ -146,7 +181,26 @@ public class RumoursManager : MonoBehaviour
         toRemove.ForEach(x => Instance.privateRumours.RemoveAt(x));
 
         UpdateRumourText();
+        RefreshNewRumoursUI();
         return totalRumours;
+    }
+
+    public static int GetUnseenRumoursCount(Leader leader)
+    {
+        if (leader == null || !EnsureInstance(nameof(GetUnseenRumoursCount)))
+            return 0;
+
+        int count = 0;
+        for (int i = 0; i < Instance.rumours.Count; i++)
+        {
+            Rumour rumour = Instance.rumours[i];
+            if (rumour.leader == leader && !rumour.seen)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     /// <summary>
@@ -158,35 +212,64 @@ public class RumoursManager : MonoBehaviour
             return;
 
         if (!Instance.game.IsPlayerCurrentlyPlaying()) return;
-        
-        if (Instance.textWidget == null)
+
+        if (Instance.rumourIconPrefab == null || Instance.rumoursGridLayout == null)
             return;
 
-        if (Instance.rumours.Count == 0)
+        for (int i = Instance.rumoursGridLayout.transform.childCount - 1; i >= 0; i--)
         {
-            Instance.textWidget.text = string.Empty;
-            return;
+            Destroy(Instance.rumoursGridLayout.transform.GetChild(i).gameObject);
         }
 
-        // How many to show (can't be more than we have)
+        if (Instance.rumours.Count == 0)
+            return;
+
         int toShow = Mathf.Min(Instance.rumoursShown, Instance.rumours.Count);
-
-        // Start index so we get the last `toShow` items
         int startIndex = Instance.rumours.Count - toShow;
-
-        // Safe GetRange: startIndex >= 0, count == toShow, and startIndex + toShow <= Count
         List<Rumour> recentRumours = Instance.rumours.GetRange(startIndex, toShow);
 
-        Instance.textWidget.text = string.Join("\n", recentRumours.ConvertAll(FormatRumourText));
+        for (int i = 0; i < recentRumours.Count; i++)
+        {
+            Rumour rumour = recentRumours[i];
+            string formatted = FormatRumourText(rumour);
+            if (string.IsNullOrWhiteSpace(formatted)) continue;
+
+            Character iconCharacter = rumour.character != null ? rumour.character : rumour.leader;
+            CharacterIconWithText icon = Instantiate(Instance.rumourIconPrefab, Instance.rumoursGridLayout.transform).GetComponent<CharacterIconWithText>();
+            icon.Initialize(iconCharacter, formatted);
+        }
     }
 
     private static string FormatRumourText(Rumour rumour)
     {
         string leaderName = rumour.leader?.characterName ?? "Unknown";
-        string characterName = !string.IsNullOrWhiteSpace(rumour.characterName) ? rumour.characterName : leaderName;
-        string locationPart = rumour.v2 != default ? $" at ({rumour.v2.x},{rumour.v2.y})" : string.Empty;
-        string body = string.IsNullOrWhiteSpace(rumour.rumour) ? "No details" : rumour.rumour;
-        return $"[{leaderName}]({characterName}){locationPart}: {body}";
+        string body = string.IsNullOrWhiteSpace(rumour.rumour) ? string.Empty : rumour.rumour.Trim();
+        if (string.IsNullOrEmpty(body)) return string.Empty;
+        return $"[{leaderName}] {body}";
+    }
+
+    private void MarkAllPublicRumoursSeen()
+    {
+        if (rumours.Count == 0) return;
+
+        for (int i = 0; i < rumours.Count; i++)
+        {
+            Rumour rumour = rumours[i];
+            if (rumour.seen) continue;
+            rumour.seen = true;
+            rumours[i] = rumour;
+        }
+
+        RefreshNewRumoursUI();
+    }
+
+    private static void RefreshNewRumoursUI()
+    {
+        if (!EnsureInstance(nameof(RefreshNewRumoursUI)))
+            return;
+
+        PlayableLeaderIcons icons = FindFirstObjectByType<PlayableLeaderIcons>();
+        if (icons != null) icons.RefreshNewRumoursCounts();
     }
 
     private static bool EnsureInstance(string caller)

@@ -184,6 +184,10 @@ public class Character : MonoBehaviour
     public void NewTurn()
     {
         // Debug.Log($"New turn for {characterName} {(isPlayerControlled? "[PLAYER]": "[AI]")}");
+        if (health < 100)
+        {
+            health = Mathf.Min(100, health + 5);
+        }
         // STATUSES
         // HALT
         if (isHalted && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this,  "Halted", Color.red);
@@ -388,6 +392,17 @@ public class Character : MonoBehaviour
         RefreshSelectedCharacterIconIfSelected();
         CharacterIcons.RefreshForHumanPlayerCharacter(this);
         if (health < 1) Killed(woundedBy);
+    }
+
+    public void ApplyOppositeAlignmentArtifactPenalty(Artifact artifact)
+    {
+        if (artifact == null || !artifact.ShouldApplyAlignmentPenalty(GetAlignment())) return;
+        int damage = Artifact.OppositeAlignmentHealthPenalty;
+        health = Mathf.Max(0, health - damage);
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} suffers {damage} damage from opposing relics", Color.red);
+        RefreshSelectedCharacterIconIfSelected();
+        CharacterIcons.RefreshForHumanPlayerCharacter(this);
+        if (health < 1) Killed(null);
     }
 
     public void Doubled(Leader doubledBy)

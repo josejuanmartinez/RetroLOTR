@@ -98,6 +98,13 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     private readonly Dictionary<string, List<NonPlayableLeaderEventDefinition>> eventsByLeader = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<ActiveEvent> activeEvents = new();
     private bool processingTurn;
+    private readonly HashSet<string> offensiveActionNames = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<Character, PendingReturn> pendingOffenseReturns = new();
+    private readonly Dictionary<Character, PendingRetreat> pendingRetreats = new();
+
+    [Header("Retreat")]
+    [SerializeField] private int retreatMaxTurns = 3;
+
 
     private class ActiveEvent
     {
@@ -109,6 +116,18 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         public Character.StatusSnapshot originalStatus;
         public bool createdArmy;
         public Army spawnedArmy;
+    }
+
+    private class PendingRetreat
+    {
+        public Hex capital;
+        public int attempts;
+    }
+
+    private class PendingReturn
+    {
+        public Hex city;
+        public int attempts;
     }
 
     private void OnEnable()
@@ -173,6 +192,9 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         }
 
         CleanupInactiveEvents();
+        ProcessPendingRetreats();
+        ProcessPendingOffenseReturns();
+        ResetNonPlayableLeaderCharacters();
 
         for (int i = activeEvents.Count - 1; i >= 0; i--)
         {
@@ -192,7 +214,117 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         }
 
         TrySpawnEvents();
+        yield return TryExecuteCityOffensives();
         processingTurn = false;
+    }
+
+    private void ResetNonPlayableLeaderCharacters()
+    {
+        if (game == null || game.npcs == null) return;
+        HashSet<Character> activeActors = new(activeEvents.Where(ev => ev?.actor != null).Select(ev => ev.actor));
+
+        foreach (NonPlayableLeader npl in game.npcs)
+        {
+            if (npl == null || npl.killed || npl.joined) continue;
+            foreach (Character character in npl.controlledCharacters)
+            {
+                if (character == null || character.killed) continue;
+                if (activeActors.Contains(character)) continue;
+                character.NewTurn();
+            }
+        }
+    }
+
+    private void ProcessPendingOffenseReturns()
+    {
+        if (pendingOffenseReturns.Count == 0) return;
+        List<Character> toRemove = new();
+        foreach (var entry in pendingOffenseReturns)
+        {
+            Character actor = entry.Key;
+            PendingReturn pending = entry.Value;
+            Hex cityHex = pending != null ? pending.city : null;
+            if (actor == null || actor.killed || cityHex == null)
+            {
+                toRemove.Add(actor);
+                continue;
+            }
+            if (actor.hex == cityHex)
+            {
+                toRemove.Add(actor);
+                continue;
+            }
+
+            bool moved = MoveActorToward(actor, cityHex);
+            if (actor.hex == cityHex)
+            {
+                toRemove.Add(actor);
+                continue;
+            }
+
+            pending.attempts++;
+            if (!moved || pending.attempts >= retreatMaxTurns)
+            {
+                LogDebug($"Offensive: return teleport for {actor.characterName} after {pending.attempts} turns.");
+                TeleportCharacter(actor, cityHex);
+                toRemove.Add(actor);
+            }
+        }
+
+        for (int i = 0; i < toRemove.Count; i++)
+        {
+            Character actor = toRemove[i];
+            if (actor != null)
+            {
+                pendingOffenseReturns.Remove(actor);
+            }
+        }
+    }
+
+    private void ProcessPendingRetreats()
+    {
+        if (pendingRetreats.Count == 0) return;
+        List<Character> toRemove = new();
+        foreach (var entry in pendingRetreats)
+        {
+            Character actor = entry.Key;
+            PendingRetreat retreat = entry.Value;
+            if (actor == null || actor.killed || retreat == null || retreat.capital == null)
+            {
+                toRemove.Add(actor);
+                continue;
+            }
+
+            if (actor.hex == retreat.capital)
+            {
+                toRemove.Add(actor);
+                continue;
+            }
+
+            bool moved = MoveActorToward(actor, retreat.capital);
+            if (actor.hex == retreat.capital)
+            {
+                toRemove.Add(actor);
+                continue;
+            }
+
+            retreat.attempts++;
+            if (!moved || retreat.attempts >= retreatMaxTurns)
+            {
+                LogDebug($"Offensive: retreat teleport for {actor.characterName} after {retreat.attempts} turns.");
+                TeleportCharacter(actor, retreat.capital);
+                toRemove.Add(actor);
+            }
+        }
+
+        for (int i = 0; i < toRemove.Count; i++)
+        {
+            Character actor = toRemove[i];
+            if (actor != null)
+            {
+                pendingRetreats.Remove(actor);
+            }
+        }
     }
 
     private void CleanupInactiveEvents()
@@ -225,6 +357,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (active.turnsRemaining <= 0) yield break;
         if (active.leader == null || active.leader.killed || active.leader.joined) { active.turnsRemaining = 0; yield break; }
         if (active.actor == null || active.actor.killed) { active.turnsRemaining = 0; yield break; }
+        if (IsPendingRetreat(active.actor)) { EndActiveEvent(active); yield break; }
 
         active.actor.NewTurn();
 
@@ -250,6 +383,11 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         {
             bool succeeded = false;
             yield return TryExecuteAction(active, result => succeeded = result);
+            if (MaybeRetreatToCapital(active.leader, active.actor))
+            {
+                EndActiveEvent(active);
+                yield break;
+            }
             if (succeeded)
             {
                 LogDebug($"Event {active.definition.eventId} succeeded.");
@@ -330,6 +468,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
                 spawnedArmy = spawnedArmy
             };
             activeEvents.Add(active);
+            RecordPrivateEventRumour(active, spawnHex);
             LogDebug($"Spawned event {picked.eventId} for {npl.characterName} at {spawnHex.v2} targeting {target.v2}.");
         }
     }
@@ -337,6 +476,225 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     private bool HasActiveEvent(NonPlayableLeader leader)
     {
         return activeEvents.Any(ev => ev != null && ev.leader == leader);
+    }
+
+    private IEnumerator TryExecuteCityOffensives()
+    {
+        if (game == null || board == null || actionsManager == null) yield break;
+        if (game.player == null || game.npcs == null) yield break;
+
+        HashSet<string> offensiveNames = GetOffensiveActionNames();
+        if (offensiveNames.Count == 0) yield break;
+
+        if (actionsManager.characterActions == null || actionsManager.characterActions.Length == 0)
+        {
+            actionsManager.characterActions = actionsManager.GetComponentsInChildren<CharacterAction>(true);
+        }
+
+        List<CharacterAction> offensiveActions = actionsManager.characterActions
+            .Where(action => action != null && offensiveNames.Contains(action.GetType().Name))
+            .ToList();
+
+        if (offensiveActions.Count == 0) yield break;
+
+        HashSet<Character> activeActors = new(activeEvents.Where(ev => ev?.actor != null).Select(ev => ev.actor));
+        HexPathRenderer pathRenderer = FindFirstObjectByType<HexPathRenderer>();
+        if (pathRenderer == null) yield break;
+
+        foreach (NonPlayableLeader npl in game.npcs)
+        {
+            if (npl == null || npl.killed || npl.joined) continue;
+            if (!IsEnemyOrNeutral(npl, game.player)) continue;
+            LogDebug($"Offensive: scanning {npl.characterName} cities for enemy targets.");
+
+            foreach (Character actor in npl.controlledCharacters.Where(c => c != null && !c.killed))
+            {
+                if (activeActors.Contains(actor)) continue;
+                if (IsPendingRetreat(actor)) continue;
+                if (actor.hex == null) continue;
+                if (actor.health < 50) continue;
+
+                PC cityPc = npl.controlledPcs.FirstOrDefault(pc => pc != null && pc.hex == actor.hex);
+                if (cityPc == null) continue;
+
+                Hex cityHex = actor.hex;
+                Hex targetHex = FindNearestEnemyHexInRange(actor, npl, cityHex, pathRenderer);
+                if (targetHex == null)
+                {
+                    LogDebug($"Offensive: {npl.characterName} at {cityHex.v2} found no enemy targets in range for {actor.characterName}.");
+                    continue;
+                }
+
+                float costToTarget = pathRenderer.GetPathCost(cityHex.v2, targetHex.v2, actor);
+                if (costToTarget < 0f || costToTarget > actor.GetMaxMovement()) continue;
+                float costBack = pathRenderer.GetPathCost(targetHex.v2, cityHex.v2, actor);
+
+                if (!TryPickOffensiveAction(actor, targetHex, cityPc, offensiveActions, out CharacterAction chosen))
+                {
+                    LogDebug($"Offensive: {npl.characterName} at {cityHex.v2} found target {targetHex.v2} but no valid action for {actor.characterName}.");
+                    continue;
+                }
+
+                if (actor.hex != targetHex)
+                {
+                    LogDebug($"Offensive: {npl.characterName} moving {actor.characterName} from {actor.hex.v2} to {targetHex.v2}.");
+                    MoveActorToward(actor, targetHex);
+                }
+                if (actor.hex != targetHex)
+                {
+                    LogDebug($"Offensive: {npl.characterName} could not reach {targetHex.v2}, returning to {cityHex.v2}.");
+                    if (actor.hex != cityHex) MoveActorToward(actor, cityHex);
+                    continue;
+                }
+
+                LogDebug($"Offensive: {npl.characterName} executing {chosen.GetType().Name} at {targetHex.v2} using {actor.characterName}.");
+                yield return ExecuteOffensiveAction(actor, chosen, _ => { });
+                if (MaybeRetreatToCapital(npl, actor)) continue;
+
+                if (actor.hex == targetHex && actor.hex != cityHex && actor.GetMovementLeft() >= costBack)
+                {
+                    LogDebug($"Offensive: {npl.characterName} returning {actor.characterName} to {cityHex.v2}.");
+                    MoveActorToward(actor, cityHex);
+                }
+                else if (actor.hex == targetHex && actor.hex != cityHex)
+                {
+                    LogDebug($"Offensive: {npl.characterName} could not return {actor.characterName} to {cityHex.v2} (movement left {actor.GetMovementLeft()}, cost {costBack}).");
+                    pendingOffenseReturns[actor] = new PendingReturn { city = cityHex, attempts = 0 };
+                }
+            }
+        }
+    }
+
+    private HashSet<string> GetOffensiveActionNames()
+    {
+        if (offensiveActionNames.Count > 0) return offensiveActionNames;
+        List<ActionDefinition> defs = Leader.GetOffensiveActions();
+        if (defs == null || defs.Count == 0) return offensiveActionNames;
+
+        foreach (ActionDefinition def in defs)
+        {
+            if (def == null || string.IsNullOrWhiteSpace(def.className)) continue;
+            offensiveActionNames.Add(def.className);
+        }
+
+        return offensiveActionNames;
+    }
+
+    private Hex FindNearestEnemyHexInRange(Character actor, NonPlayableLeader owner, Hex cityHex, HexPathRenderer pathRenderer)
+    {
+        if (actor == null || owner == null || cityHex == null || pathRenderer == null) return null;
+        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) return null;
+
+        int maxMovement = actor.GetMaxMovement();
+        List<Hex> candidates = new();
+        List<PlayableLeader> leaders = new();
+        if (game.player != null) leaders.Add(game.player);
+        if (game.competitors != null) leaders.AddRange(game.competitors.Where(l => l != null));
+
+        foreach (PlayableLeader leader in leaders)
+        {
+            if (leader == null) continue;
+
+            foreach (Character character in leader.controlledCharacters)
+            {
+                if (character == null || character.killed || character.hex == null) continue;
+                if (!IsEnemyAlignment(owner, character.GetOwner())) continue;
+                candidates.Add(character.hex);
+            }
+
+            foreach (PC pc in leader.controlledPcs)
+            {
+                if (pc == null || pc.hex == null) continue;
+                if (!IsEnemyAlignment(owner, pc.owner)) continue;
+                candidates.Add(pc.hex);
+            }
+        }
+
+        if (candidates.Count == 0) return null;
+        if (candidates.Any(h => h == cityHex)) return cityHex;
+
+        Hex best = null;
+        float bestCost = float.MaxValue;
+        foreach (Hex hex in candidates.Distinct())
+        {
+            float cost = pathRenderer.GetPathCost(cityHex.v2, hex.v2, actor);
+            if (cost < 0f || cost > maxMovement) continue;
+            if (cost < bestCost)
+            {
+                bestCost = cost;
+                best = hex;
+            }
+        }
+
+        if (best != null)
+        {
+            LogDebug($"Offensive: {owner.characterName} found target {best.v2} from {cityHex.v2} with cost {bestCost} (max {maxMovement}).");
+        }
+        return best;
+    }
+
+    private static bool IsEnemyAlignment(Leader owner, Leader target)
+    {
+        if (owner == null || target == null) return false;
+        AlignmentEnum ownerAlignment = owner.GetAlignment();
+        AlignmentEnum targetAlignment = target.GetAlignment();
+        return targetAlignment == AlignmentEnum.neutral || targetAlignment != ownerAlignment;
+    }
+
+    private bool TryPickOffensiveAction(Character actor, Hex targetHex, PC cityPc, List<CharacterAction> offensiveActions, out CharacterAction chosen)
+    {
+        chosen = null;
+        if (actor == null || targetHex == null || offensiveActions == null || offensiveActions.Count == 0) return false;
+
+        List<CharacterAction> viable = new();
+        Hex originalHex = actor.hex;
+
+        foreach (CharacterAction action in offensiveActions)
+        {
+            if (action == null) continue;
+            if (!action.IsRoleEligible(actor)) continue;
+
+            try
+            {
+                actor.hex = targetHex;
+                action.Initialize(actor);
+                if (action.FulfillsConditions()) viable.Add(action);
+            }
+            finally
+            {
+                actor.hex = originalHex;
+            }
+        }
+
+        if (viable.Count == 0) return false;
+        chosen = viable[UnityEngine.Random.Range(0, viable.Count)];
+        return true;
+    }
+
+    private IEnumerator ExecuteOffensiveAction(Character actor, CharacterAction action, Action<bool> onFinished)
+    {
+        bool succeeded = false;
+        bool actionExecuted = false;
+
+        if (actor != null && action != null)
+        {
+            action.Initialize(actor);
+            if (action.FulfillsConditions())
+            {
+                Task task = action.Execute();
+                while (!task.IsCompleted) yield return null;
+                actionExecuted = true;
+                succeeded = action.LastExecutionSucceeded;
+            }
+        }
+
+        if (actionExecuted)
+        {
+            RefreshHexAfterAction(actor);
+        }
+
+        onFinished?.Invoke(succeeded);
     }
 
     private bool CanSpawnEventForLeader(NonPlayableLeader leader, NonPlayableLeaderEventDefinition definition)
@@ -537,6 +895,42 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (leader == null) return null;
         PC capital = leader.controlledPcs.FirstOrDefault(pc => pc != null && pc.isCapital);
         return capital?.hex;
+    }
+
+    private bool MaybeRetreatToCapital(NonPlayableLeader leader, Character actor)
+    {
+        if (leader == null || actor == null || actor.killed) return false;
+        if (actor.health >= 50) return false;
+        Hex capital = GetCapitalHex(leader);
+        if (capital == null || actor.hex == capital) return false;
+        LogDebug($"Offensive: {leader.characterName} retreating {actor.characterName} to capital due to low health.");
+        StartRetreat(actor, capital);
+        MoveActorToward(actor, capital);
+        if (actor.hex == capital)
+        {
+            pendingRetreats.Remove(actor);
+            return false;
+        }
+        return true;
+    }
+
+    private void StartRetreat(Character actor, Hex capital)
+    {
+        if (actor == null || capital == null) return;
+        if (!pendingRetreats.TryGetValue(actor, out PendingRetreat retreat))
+        {
+            retreat = new PendingRetreat { capital = capital, attempts = 0 };
+            pendingRetreats[actor] = retreat;
+        }
+        else
+        {
+            retreat.capital = capital;
+        }
+    }
+
+    private bool IsPendingRetreat(Character actor)
+    {
+        return actor != null && pendingRetreats.ContainsKey(actor);
     }
 
     private Hex ChooseSpawnHex(Hex target)
@@ -764,6 +1158,31 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     {
         if (!debugEvents) return;
         Debug.Log($"[NPL Events] {message}");
+    }
+
+    private void RecordPrivateEventRumour(ActiveEvent active, Hex spawnHex)
+    {
+        if (active == null || active.definition == null || active.leader == null) return;
+        string message = BuildEventRumourMessage(active.definition);
+        if (string.IsNullOrWhiteSpace(message)) return;
+
+        Rumour rumour = new Rumour
+        {
+            leader = active.leader,
+            character = active.actor,
+            characterName = active.actor != null ? active.actor.characterName : null,
+            rumour = message,
+            v2 = spawnHex != null ? spawnHex.v2 : default
+        };
+        RumoursManager.AddRumour(rumour, false);
+    }
+
+    private string BuildEventRumourMessage(NonPlayableLeaderEventDefinition definition)
+    {
+        if (definition == null) return string.Empty;
+        if (!string.IsNullOrWhiteSpace(definition.title)) return definition.title.Trim();
+        string actionName = definition.GetActionClassName(out _);
+        return string.IsNullOrWhiteSpace(actionName) ? string.Empty : actionName.Trim();
     }
 
     private struct ActionRequirementSnapshot

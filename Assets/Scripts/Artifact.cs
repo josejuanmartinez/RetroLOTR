@@ -14,6 +14,7 @@ public class Artifact
     public string artifactName;
     public string artifactDescription;
     public bool hidden = false; 
+    public AlignmentEnum alignment = AlignmentEnum.neutral;
     public string providesSpell = "";
     public int commanderBonus = 0;
     public int agentBonus = 0;
@@ -25,10 +26,22 @@ public class Artifact
     public bool transferable = true;
     public string spriteString = "";
 
+    public const int OppositeAlignmentHealthPenalty = 10;
     
     public string GetSpriteString()
     {
         return spriteString != "" ? spriteString : "artifact";
+    }
+
+    public bool IsOppositeAlignment(AlignmentEnum bearerAlignment)
+    {
+        if (alignment == AlignmentEnum.neutral || bearerAlignment == AlignmentEnum.neutral) return false;
+        return alignment != bearerAlignment;
+    }
+
+    public bool ShouldApplyAlignmentPenalty(AlignmentEnum bearerAlignment)
+    {
+        return hidden && IsOppositeAlignment(bearerAlignment);
     }
 
     public string GetHoverText()

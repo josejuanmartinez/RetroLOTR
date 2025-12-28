@@ -6,6 +6,8 @@ using System.Text;
 
 public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [Header("References")]
+    public GraphicRaycaster raycaster;
     public CanvasGroup canvasGroup;
     public Image image;
     public CanvasGroup deadCanvasGroup;
@@ -29,6 +31,8 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         leaderSprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(leader.characterName);
         alignment = leader.alignment;
         text = $"<sprite name=\"{alignment}\">{leader.characterName}";
+        raycaster.enabled = false;
+        canvasGroup.alpha = 0;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -57,6 +61,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         if (!isUnrevealed || !game.IsPlayerCurrentlyPlaying()) return;
         PlayableLeader player = game.player;
         canvasGroup.alpha = 1;
+        raycaster.enabled = true;
         image.sprite = leaderSprite;
         image.color = Color.white;
         string alignment = nonPlayableLeader.alignment == AlignmentEnum.freePeople ? "a free people" : nonPlayableLeader.alignment == AlignmentEnum.darkServants ? "a dark servant" : "a neutral";

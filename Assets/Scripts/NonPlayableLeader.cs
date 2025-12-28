@@ -12,6 +12,7 @@ public class NonPlayableLeader : Leader
     private bool iconsInitialized = false;
 
     public List<PlayableLeader> revealedTo = new();
+    private bool playerRevealPopupShown = false;
 
 	NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome;
     private readonly Dictionary<Leader, HashSet<string>> actionsAtCapitalByLeader = new();
@@ -526,7 +527,7 @@ public class NonPlayableLeader : Leader
     {
         if (leader == null) return;
 
-        revealedTo.Add(leader);
+        if (!revealedTo.Contains(leader)) revealedTo.Add(leader);
 
         // Always refresh the icon state for the leader that just met them
         FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None)
@@ -536,17 +537,22 @@ public class NonPlayableLeader : Leader
                 if (x.playableLeader == leader) x.RevealToPlayerIfNot(this);
             });
 
-        // Show popup only for the human player turn
-        if(showPopup && FindFirstObjectByType<Game>().currentlyPlaying == leader && leader == FindFirstObjectByType<Game>().player)
+        // Show popup only for the human player's turn and only once for the player
+        Game game = FindFirstObjectByType<Game>();
+        if (showPopup && game != null && game.IsPlayerCurrentlyPlaying() && leader == game.player && !playerRevealPopupShown)
         {
-            FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None).ToList().ForEach(x => x.RevealToPlayerIfNot(this));      
+            RevealToPlayerIcons(game);
+            playerRevealPopupShown = true;
         }
     }
 
     public void RevealToPlayer()
     {
-        revealedTo.Add(FindFirstObjectByType<Game>().player);
-        FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None).ToList().ForEach(x => x.RevealToPlayerIfNot(this));  
+        Game game = FindFirstObjectByType<Game>();
+        if (game == null || game.player == null) return;
+        if (!revealedTo.Contains(game.player)) revealedTo.Add(game.player);
+        RevealToPlayerIcons(game);
+        playerRevealPopupShown = true;
     }
 
     public bool IsRevealedToLeader(PlayableLeader leader)
@@ -557,6 +563,22 @@ public class NonPlayableLeader : Leader
     public bool IsRevealedToPlayer()
     {
         return revealedTo.Contains(FindFirstObjectByType<Game>().currentlyPlaying);
+    }
+
+    public bool ShouldShowPlayerRevealPopup()
+    {
+        Game game = FindFirstObjectByType<Game>();
+        return game != null && game.IsPlayerCurrentlyPlaying() && !playerRevealPopupShown;
+    }
+
+    private void RevealToPlayerIcons(Game game)
+    {
+        FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None)
+            .ToList()
+            .ForEach(x =>
+            {
+                x.RevealToPlayerIfNot(this);
+            });
     }
 
     private string FormatRequirement(string description, bool met, string progress = "")

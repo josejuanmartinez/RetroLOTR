@@ -12,7 +12,8 @@
       "oneShot": false,
       "bonusAttack": 1,
       "bonusDefense": 0,
-      "spriteString": "scimitar"
+      "spriteString": "scimitar",
+      "alignment": 1
     },
     {
       "artifactName": "River Lillies",
@@ -26,7 +27,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "lillies"
+      "spriteString": "lillies",
+      "alignment": 2
     },
     {
       "artifactName": "Oak Shield",
@@ -40,7 +42,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 1,
-      "spriteString": "timber"
+      "spriteString": "timber",
+      "alignment": 2
     },
     {
       "artifactName": "Ring of Wind",
@@ -54,7 +57,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "ring"
+      "spriteString": "ring",
+      "alignment": 2
     },
     {
       "artifactName": "Tinculin",
@@ -68,7 +72,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "ring"
+      "spriteString": "ring",
+      "alignment": 0
     },
     {
       "artifactName": "Staff of Storms",
@@ -82,7 +87,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "staff"
+      "spriteString": "staff",
+      "alignment": 2
     },
     {
       "artifactName": "Palantir of Annuminas",
@@ -96,7 +102,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "palantir"
+      "spriteString": "palantir",
+      "alignment": 2
     },
     {
       "artifactName": "Palantir of Amon Sul",
@@ -110,7 +117,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "palantir"
+      "spriteString": "palantir",
+      "alignment": 2
     },
     {
       "artifactName": "Helm of Isildur",
@@ -124,7 +132,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "helm"
+      "spriteString": "helm",
+      "alignment": 0
     },
     {
       "artifactName": "Durin's Armour",
@@ -138,7 +147,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 1,
-      "spriteString": "helm"
+      "spriteString": "helm",
+      "alignment": 0
     },
     {
       "artifactName": "Elfbane",
@@ -152,7 +162,8 @@
       "oneShot": false,
       "bonusAttack": 1,
       "bonusDefense": 1,
-      "spriteString": "scimitar"
+      "spriteString": "scimitar",
+      "alignment": 1
     },
     {
       "artifactName": "Elfbane",
@@ -166,7 +177,8 @@
       "oneShot": false,
       "bonusAttack": 1,
       "bonusDefense": 1,
-      "spriteString": "scimitar"
+      "spriteString": "scimitar",
+      "alignment": 1
     },
     {
       "artifactName": "Durin's Axe",
@@ -180,7 +192,8 @@
       "oneShot": false,
       "bonusAttack": 1,
       "bonusDefense": 0,
-      "spriteString": "axe"
+      "spriteString": "axe",
+      "alignment": 0
     },
     {
       "artifactName": "Orcring",
@@ -194,7 +207,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "scimitar"
+      "spriteString": "scimitar",
+      "alignment": 1
     },
     {
       "artifactName": "Troll Cleaver",
@@ -208,7 +222,8 @@
       "oneShot": false,
       "bonusAttack": 1,
       "bonusDefense": 0,
-      "spriteString": "long_axe"
+      "spriteString": "long_axe",
+      "alignment": 1
     },
     {
       "artifactName": "Horse-tamer",
@@ -222,7 +237,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "staff"
+      "spriteString": "staff",
+      "alignment": 0
     },
     {
       "artifactName": "Staff of the Wanderer",
@@ -236,7 +252,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "staff"
+      "spriteString": "staff",
+      "alignment": 2
     },
     {
       "artifactName": "The Blue Ring",
@@ -250,7 +267,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "ring"
+      "spriteString": "ring",
+      "alignment": 0
     },
     {
       "artifactName": "Red Robes",
@@ -264,7 +282,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "cloak"
+      "spriteString": "cloak",
+      "alignment": 2
     },
     {
       "artifactName": "Mantle of Doriath",
@@ -278,7 +297,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "mantle"
+      "spriteString": "mantle",
+      "alignment": 0
     },
     {
       "artifactName": "Voice of the Dark Tower",
@@ -292,7 +312,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "leather"
+      "spriteString": "leather",
+      "alignment": 1
     },
     {
       "artifactName": "Usriev",
@@ -306,7 +327,8 @@
       "oneShot": false,
       "bonusAttack": 1,
       "bonusDefense": 0,
-      "spriteString": "scythe"
+      "spriteString": "scythe",
+      "alignment": 1
     },
     {
       "artifactName": "Cloak of Duvorn",
@@ -320,7 +342,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "cape"
+      "spriteString": "cape",
+      "alignment": 1
     },
     {
       "artifactName": "Storm dagger",
@@ -334,7 +357,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "dagger"
+      "spriteString": "dagger",
+      "alignment": 1
     },
     {
       "artifactName": "Bracers of the Mist",
@@ -348,7 +372,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "bracers"
+      "spriteString": "bracers",
+      "alignment": 2
     },
     {
       "artifactName": "Athelas",
@@ -362,7 +387,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "herb"
+      "spriteString": "herb",
+      "alignment": 0
     },
     {
       "artifactName": "Athelas",
@@ -376,7 +402,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "herb"
+      "spriteString": "herb",
+      "alignment": 0
     },
     {
       "artifactName": "Athelas",
@@ -390,7 +417,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "herb"
+      "spriteString": "herb",
+      "alignment": 0
     },
     {
       "artifactName": "Athelas",
@@ -404,7 +432,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "herb"
+      "spriteString": "herb",
+      "alignment": 0
     },
     {
       "artifactName": "Athelas",
@@ -418,7 +447,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "herb"
+      "spriteString": "herb",
+      "alignment": 0
     },
     {
       "artifactName": "Ovir Crown",
@@ -432,7 +462,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "crown"
+      "spriteString": "crown",
+      "alignment": 2
     },
     {
       "artifactName": "Listening Helm",
@@ -446,7 +477,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "crown"
+      "spriteString": "crown",
+      "alignment": 2
     },
     {
       "artifactName": "Ghostbane",
@@ -460,7 +492,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "scythe"
+      "spriteString": "scythe",
+      "alignment": 1
     },
     {
       "artifactName": "Horn of Fear",
@@ -474,7 +507,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "horn"
+      "spriteString": "horn",
+      "alignment": 1
     },
     {
       "artifactName": "Dawnsword",
@@ -488,7 +522,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "scimitar"
+      "spriteString": "scimitar",
+      "alignment": 1
     },
     {
       "artifactName": "Staff of Light",
@@ -502,7 +537,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "ring"
+      "spriteString": "ring",
+      "alignment": 0
     },
     {
       "artifactName": "Fireworks",
@@ -516,7 +552,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "fireworks"
+      "spriteString": "fireworks",
+      "alignment": 0
     },
     {
       "artifactName": "The Black Book",
@@ -530,7 +567,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "book"
+      "spriteString": "book",
+      "alignment": 1
     },
     {
       "artifactName": "Trap",
@@ -544,7 +582,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "rope"
+      "spriteString": "rope",
+      "alignment": 2
     },
     {
       "artifactName": "Elven Rope",
@@ -558,7 +597,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "rope"
+      "spriteString": "rope",
+      "alignment": 0
     },
     {
       "artifactName": "Wine",
@@ -572,7 +612,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "wine"
+      "spriteString": "wine",
+      "alignment": 2
     },
     {
       "artifactName": "Liquour",
@@ -586,7 +627,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "wine"
+      "spriteString": "wine",
+      "alignment": 2
     },
     {
       "artifactName": "Song",
@@ -600,7 +642,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "scroll"
+      "spriteString": "scroll",
+      "alignment": 0
     },
     {
       "artifactName": "Red Book of Westmarch",
@@ -614,7 +657,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "book"
+      "spriteString": "book",
+      "alignment": 0
     },
     {
       "artifactName": "Book of Kings",
@@ -628,7 +672,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "book"
+      "spriteString": "book",
+      "alignment": 0
     },
     {
       "artifactName": "Book of Mazarbul",
@@ -642,7 +687,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "book"
+      "spriteString": "book",
+      "alignment": 0
     },
     {
       "artifactName": "Dwarven Key",
@@ -656,7 +702,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "key"
+      "spriteString": "key",
+      "alignment": 0
     },
     {
       "artifactName": "Ithildin Runes",
@@ -670,7 +717,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "map"
+      "spriteString": "map",
+      "alignment": 0
     },
     {
       "artifactName": "Ring of Binding",
@@ -684,7 +732,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "ring"
+      "spriteString": "ring",
+      "alignment": 2
     },
     {
       "artifactName": "Second Age Banner",
@@ -698,7 +747,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "book"
+      "spriteString": "book",
+      "alignment": 0
     },
     {
       "artifactName": "First Age Banner",
@@ -712,7 +762,8 @@
       "oneShot": true,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "book"
+      "spriteString": "book",
+      "alignment": 0
     },
     {
       "artifactName": "Staff of Fire",
@@ -726,7 +777,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "staff"
+      "spriteString": "staff",
+      "alignment": 2
     },
     {
       "artifactName": "Black Powder",
@@ -740,7 +792,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "powder"
+      "spriteString": "powder",
+      "alignment": 2
     },
     {
       "artifactName": "Black Powder",
@@ -754,7 +807,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "powder"
+      "spriteString": "powder",
+      "alignment": 2
     },
     {
       "artifactName": "Dorwinion Tobacco",
@@ -768,7 +822,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "tobacco"
+      "spriteString": "tobacco",
+      "alignment": 2
     },
     {
       "artifactName": "Old Tobby",
@@ -782,7 +837,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "tobacco"
+      "spriteString": "tobacco",
+      "alignment": 2
     },
     {
       "artifactName": "Staff of Secret Fire",
@@ -796,7 +852,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "staff"
+      "spriteString": "staff",
+      "alignment": 0
     },
     {
       "artifactName": "Star Powder",
@@ -810,10 +867,11 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "powder"
+      "spriteString": "powder",
+      "alignment": 0
     },
     {
-      "artifactName": "Andúril",
+      "artifactName": "And\u00faril",
       "artifactDescription": "Grants +2 attack.",
       "hidden": true,
       "transferable": true,
@@ -825,7 +883,8 @@
       "oneShot": false,
       "bonusAttack": 2,
       "bonusDefense": 0,
-      "spriteString": "sword"
+      "spriteString": "sword",
+      "alignment": 2
     },
     {
       "artifactName": "Black Arrow",
@@ -840,7 +899,8 @@
       "oneShot": false,
       "bonusAttack": 1,
       "bonusDefense": 0,
-      "spriteString": "bow"
+      "spriteString": "bow",
+      "alignment": 0
     },
     {
       "artifactName": "The Arkenstone",
@@ -855,7 +915,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "gems"
+      "spriteString": "gems",
+      "alignment": 2
     },
     {
       "artifactName": "Mathom",
@@ -870,7 +931,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "artifact"
+      "spriteString": "artifact",
+      "alignment": 2
     },
     {
       "artifactName": "Crown of Cardolan",
@@ -884,7 +946,8 @@
       "oneShot": false,
       "bonusAttack": 0,
       "bonusDefense": 0,
-      "spriteString": "jewel"
+      "spriteString": "jewel",
+      "alignment": 2
     }
   ]
 }

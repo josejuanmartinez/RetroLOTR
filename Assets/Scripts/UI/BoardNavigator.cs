@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class BoardNavigator : MonoBehaviour
 {
+    public static BoardNavigator Instance { get; private set; }
+
     [Header("Move")]
     public float moveSpeed = 5.0f;
 
@@ -26,9 +28,22 @@ public class BoardNavigator : MonoBehaviour
     private float targetZoom;
     private static readonly List<RaycastResult> raycastResults = new(16);
     private static PointerEventData sharedPED;
+    private readonly Queue<FocusRequest> focusQueue = new();
+    private Coroutine focusQueueRoutine;
+
+    [Header("Enemy Follow")]
+    [SerializeField] private float enemyFocusDuration = 0.8f;
+    [SerializeField] private float enemyFocusPause = 0.4f;
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
         boardCamera = GetComponent<Camera>();
 
         if (boardCamera != null && boardCamera.orthographic)
@@ -102,6 +117,21 @@ public class BoardNavigator : MonoBehaviour
         lookAtCoroutine = StartCoroutine(SmoothLookAt(targetPosition, duration, delay));
     }
 
+    public void EnqueueEnemyFocus(Hex hex)
+    {
+        if (hex == null) return;
+        focusQueue.Enqueue(new FocusRequest
+        {
+            hex = hex,
+            duration = enemyFocusDuration,
+            pause = enemyFocusPause
+        });
+        if (focusQueueRoutine == null)
+        {
+            focusQueueRoutine = StartCoroutine(ProcessFocusQueue());
+        }
+    }
+
     private IEnumerator SmoothLookAt(Vector3 targetPosition, float duration = 1.0f, float delay = 0.0f)
     {
         Vector3 startPosition = transform.position;
@@ -131,6 +161,46 @@ public class BoardNavigator : MonoBehaviour
 
         transform.position = targetPosition;
         lookAtCoroutine = null;
+    }
+
+    private IEnumerator ProcessFocusQueue()
+    {
+        while (focusQueue.Count > 0)
+        {
+            FocusRequest request = focusQueue.Dequeue();
+            if (request.hex == null) continue;
+
+            while (MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy())
+            {
+                yield return null;
+            }
+
+            Vector3 targetPosition = request.hex.transform.position;
+            if (lookAtCoroutine != null)
+            {
+                StopCoroutine(lookAtCoroutine);
+                lookAtCoroutine = null;
+            }
+            lookAtCoroutine = StartCoroutine(SmoothLookAt(targetPosition, request.duration, 0.0f));
+            while (lookAtCoroutine != null)
+            {
+                yield return null;
+            }
+
+            if (request.pause > 0f)
+            {
+                yield return new WaitForSeconds(request.pause);
+            }
+        }
+
+        focusQueueRoutine = null;
+    }
+
+    private struct FocusRequest
+    {
+        public Hex hex;
+        public float duration;
+        public float pause;
     }
 
     public void LookAtSelected()

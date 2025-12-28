@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
@@ -26,18 +27,20 @@ public class Game : MonoBehaviour
     public int cavalryMovement = 7;
 
     [Header("Caps")]
-    public static int MAX_LEADERS = 30;
     public static int MAX_BOARD_WIDTH = 25;
     public static int MAX_BOARD_HEIGHT = 75;
     public static int MAX_ARTIFACTS = 100;
     public static int MAX_CHARACTERS = 100;
-    public static int MAX_PCS = 50;
-    public static int MAX_TURNS = 200;
+    public static int MAX_PCS = 100;
+    public static int MAX_TURNS = 999;
 
     [Header("References")]
     public StoresManager storesManager;
     public Board board;
     public CharacterIcons icons;
+    public CanvasGroup selectedCharacterIconCanvasGroup;
+    public CanvasGroup actionsCanvasGroup;
+    public Button nextTurnButton;
 
 
     [Header("Starting info")]
@@ -264,11 +267,12 @@ public class Game : MonoBehaviour
 
         if (currentlyPlaying == player)
         {
+            ShowHumanPlayerWidgetsWidgets();
             NewTurn();
         }
         else
         {
-            HideSelectedCharacterIcon();
+            HideHumanPlayerWidgetsWidgets();
             MessageDisplay.ShowPersistent($"{currentlyPlaying.characterName} is playing", Color.yellow);
         }
         board.RefreshRelevantHexes();
@@ -296,15 +300,17 @@ public class Game : MonoBehaviour
         storesManager.AdvanceTurn();
     }
 
-    private void HideSelectedCharacterIcon()
+    private void HideHumanPlayerWidgetsWidgets()
     {
-        SelectedCharacterIcon selected = FindFirstObjectByType<SelectedCharacterIcon>();
-        selected?.Hide();
-        Layout layout = FindFirstObjectByType<Layout>();
-        if (layout != null)
-        {
-            layout.GetActionsManager()?.Hide();
-        }
+        selectedCharacterIconCanvasGroup.alpha = 0;
+        actionsCanvasGroup.alpha = 0;
+        nextTurnButton.enabled = false;
+    }
+    private void ShowHumanPlayerWidgetsWidgets()
+    {
+        selectedCharacterIconCanvasGroup.alpha = 1;
+        actionsCanvasGroup.alpha = 1;
+        nextTurnButton.enabled = true;
     }
 
     private void BuildPlayerCharacterIcons()
@@ -322,11 +328,12 @@ public class Game : MonoBehaviour
 
         if (firstAlive != null)
         {
+            ShowHumanPlayerWidgetsWidgets();
             board.SelectCharacter(firstAlive, true, 1.0f, 0.0f);
         }
         else
         {
-            HideSelectedCharacterIcon();
+            HideHumanPlayerWidgetsWidgets();
         }
     }
 
@@ -347,24 +354,9 @@ public class Game : MonoBehaviour
     // Add this method to handle game ending
     public void EndGame(bool win)
     {
+        HideHumanPlayerWidgetsWidgets();
         if (win) MessageDisplay.ShowMessage("Victory!", Color.green); else MessageDisplay.ShowMessage("Defeat!", Color.red);
 
-        //FindObjectsByType<Character>(FindObjectsSortMode.None).ToList().FindAll(x => !x.killed && x.GetAI() != null).Select(x => x.GetAI()).ToList().ForEach(x =>
-        //{
-        //    x.AddReward(x.GetCharacter().GetOwner().killed ? -25f : 25f);
-        //    x.EndEpisode();
-        //});
-
-        // For training, we'll start a new game instead of quitting
-        //if (Academy.Instance.IsCommunicatorOn)
-        //{
-            // Reset the game state for a new episode
-        //    ResetForNewEpisode();
-        //    return;
-        //}
-
-        // Only quit or unload scenes if not in training mode
-        //UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(0);
         Application.Quit();
         Debug.Log("Game Ended!");
     }

@@ -89,8 +89,14 @@ public class TransferArtifact : CharacterAction
                 return false;
             }
 
+            if (artifact.ShouldApplyAlignmentPenalty(character.GetAlignment()) && !isAI)
+            {
+                await ConfirmationDialog.AskOk("Artifacts of opposite alignment have health penalties for their bearers");
+            }
+
             c.artifacts.Remove(artifact);
             character.artifacts.Add(artifact);
+            character.ApplyOppositeAlignmentArtifactPenalty(artifact);
 
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"{c.characterName}'s {artifact.artifactName} transferred to {character.characterName}", Color.green);
 

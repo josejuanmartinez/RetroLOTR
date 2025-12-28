@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
@@ -30,6 +31,7 @@ public class ConfirmationDialog : MonoBehaviour
     private Action pendingOnClose;
     private readonly List<DialogRequest> queuedRequests = new();
     private int activeIndex = -1;
+    private Coroutine waitForMessagesRoutine;
 
     private void Awake()
     {
@@ -171,6 +173,13 @@ public class ConfirmationDialog : MonoBehaviour
             return;
         }
 
+        if (ShouldDelayDialog())
+        {
+            HideInstant();
+            StartWaitForMessages();
+            return;
+        }
+
         activeIndex = Mathf.Clamp(activeIndex, 0, queuedRequests.Count - 1);
         var activeRequest = queuedRequests[activeIndex];
 
@@ -194,6 +203,27 @@ public class ConfirmationDialog : MonoBehaviour
         bool canNext = activeIndex < queuedRequests.Count - 1;
         if (previousButton != null) previousButton.gameObject.SetActive(canPrev);
         if (nextButton != null) nextButton.gameObject.SetActive(canNext);
+    }
+
+    private bool ShouldDelayDialog()
+    {
+        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy();
+    }
+
+    private void StartWaitForMessages()
+    {
+        if (waitForMessagesRoutine != null) return;
+        waitForMessagesRoutine = StartCoroutine(WaitForMessages());
+    }
+
+    private IEnumerator WaitForMessages()
+    {
+        while (ShouldDelayDialog())
+        {
+            yield return null;
+        }
+        waitForMessagesRoutine = null;
+        ShowActive();
     }
 
     private void ShowPrevious()

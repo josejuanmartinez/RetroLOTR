@@ -85,8 +85,10 @@ public class MessageDisplayNoUI : MonoBehaviour
         string hexText = hex.GetText();
         string textMessage = $"{author}{characterName} {hexText}: \"{message}\"";
 
-        bool playerCanSeeHex = game.player != null && game.player.visibleHexes.Contains(hex);
-        bool publicRumour = character != null && character.GetOwner() == game.player; // only publish our own actions
+        bool playerCanSeeHex = game.player != null
+            && game.player.visibleHexes.Contains(hex)
+            && hex.IsHexSeen();
+        bool publicRumour = character != null && (character.GetOwner() == game.player || playerCanSeeHex);
 
         // Only show floating text when the human player can see the hex (prevents enemy leakage)
         if (playerCanSeeHex)
@@ -101,8 +103,14 @@ public class MessageDisplayNoUI : MonoBehaviour
             }
         }
 
-        Rumour rumour = new Rumour {leader = character.GetOwner(), characterName = character?.characterName, rumour = textMessage, v2 = hex.v2};
+        Rumour rumour = new Rumour {leader = character.GetOwner(), character = character, characterName = character?.characterName, rumour = message, v2 = hex.v2};
         RumoursManager.AddRumour(rumour, publicRumour);
+    }
+
+    public static bool IsBusy()
+    {
+        if (instance == null) return false;
+        return instance.isDisplayingMessage || instance.messageQueue.Count > 0 || instance.pendingByHex.Count > 0;
     }
 
     // -------------------------------------------------------------------------

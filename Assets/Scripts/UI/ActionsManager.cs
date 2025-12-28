@@ -119,6 +119,11 @@ public class ActionsManager : MonoBehaviour
         canvasGroup.blocksRaycasts = enabled;
     }
 
+    public void RefreshInteractableState()
+    {
+        UpdateInteractableState();
+    }
+
     private void SetupPaginationButtons()
     {
         if (previousPageButton != null)

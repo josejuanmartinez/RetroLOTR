@@ -7,9 +7,9 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public CanvasGroup deadCanvasGroup;
     public Image image;
     public Image healthBar;
-    private Character character;
-    private Board board;
-    private SelectedCharacterIcon selectedCharacterIcon;
+    protected Character character;
+    protected Board board;
+    protected SelectedCharacterIcon selectedCharacterIcon;
 
     
 
@@ -82,7 +82,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         return character;
     }
 
-    private void SetCharacter(Character newCharacter)
+    protected void SetCharacter(Character newCharacter)
     {
         character = newCharacter;
         if (character != null)

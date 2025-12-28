@@ -111,6 +111,19 @@ public class PlayableLeaderIcons : MonoBehaviour
         }
     }
 
+    public void RefreshNewRumoursCounts()
+    {
+        EnsurePlayableLeaderIcons();
+        for (int i = 0; i < playableLeaderIcons.Count; i++)
+        {
+            PlayableLeaderIcon icon = playableLeaderIcons[i];
+            if (icon != null && icon.playableLeader != null)
+            {
+                icon.RefreshNewRumoursCount();
+            }
+        }
+    }
+
     public void UpdateVictoryPointColors()
     {
         EnsurePlayableLeaderIcons();

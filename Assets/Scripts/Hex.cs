@@ -272,6 +272,8 @@ public class Hex : MonoBehaviour
 
         PlayableLeader player = GetPlayer();
         bool isScouted = IsScouted(player);
+        bool isSeen = IsHexSeen();
+        bool viewerHasCharacter = player != null && HasCharacterOfLeader(player);
         Character selected = board != null ? board.selectedCharacter : null;
 
         if (selected != null && selected.hex == this && (isScouted || IsFriendlyCharacter(selected, player)))
@@ -291,6 +293,20 @@ public class Hex : MonoBehaviour
             }
         }
 
+        if (isSeen || viewerHasCharacter)
+        {
+            for (int i = 0, n = characters.Count; i < n; i++)
+            {
+                Character candidate = characters[i];
+                if (candidate == null || candidate.killed) continue;
+                if (candidate.IsArmyCommander())
+                {
+                    known = candidate;
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -298,7 +314,11 @@ public class Hex : MonoBehaviour
     {
         text = null;
         if (character == null) return false;
-        if (!IsScouted() && !IsFriendlyCharacter(character)) return false;
+        PlayableLeader viewer = GetPlayer();
+        bool canSee = IsScouted(viewer) || IsFriendlyCharacter(character, viewer);
+        bool isSeen = IsHexSeen();
+        bool viewerHasCharacter = viewer != null && HasCharacterOfLeader(viewer);
+        if (!canSee && !(character.IsArmyCommander() && (viewerHasCharacter || isSeen))) return false;
 
         text = character.characterName;
         if (character.IsArmyCommander())
@@ -410,6 +430,9 @@ public class Hex : MonoBehaviour
     {
         bool seen = IsHexSeen();
         bool pcRev = seen && pc != null && IsPCRevealed();
+        PlayableLeader viewer = GetPlayer();
+        bool isScouted = IsScouted(viewer);
+        bool viewerHasCharacter = viewer != null && HasCharacterOfLeader(viewer);
 
         if (pcHover != null)
         {
@@ -441,7 +464,10 @@ public class Hex : MonoBehaviour
         for (int i = 0, n = characters.Count; i < n; i++)
         {
             var ch = characters[i];
-            bool canSee = IsScouted() || IsFriendlyCharacter(ch);
+            bool isFriendly = IsFriendlyCharacter(ch, viewer);
+            bool canSeeNonCommander = isScouted || isFriendly;
+            bool canSeeCommander = canSeeNonCommander || viewerHasCharacter || seen;
+            bool canSee = ch.IsArmyCommander() ? canSeeCommander : canSeeNonCommander;
 
             if (canSee)
             {
@@ -695,6 +721,26 @@ public class Hex : MonoBehaviour
         {
             bool shouldPopup = showPopup && leader == game.player && game.currentlyPlaying == leader;
             npl.RevealToLeader(leader, shouldPopup);
+            return;
+        }
+
+        if (showPopup && leader == game.player && game.currentlyPlaying == leader)
+        {
+            NonPlayableLeader pending = null;
+            if (pc != null && pc.owner is NonPlayableLeader pendingOwner && pendingOwner.ShouldShowPlayerRevealPopup())
+            {
+                pending = pendingOwner;
+            }
+            if (pending == null)
+            {
+                pending = characters
+                    .Select(ch => ch.GetOwner() as NonPlayableLeader)
+                    .FirstOrDefault(owner => owner != null && owner.ShouldShowPlayerRevealPopup());
+            }
+            if (pending != null)
+            {
+                pending.RevealToLeader(leader, true);
+            }
         }
     }
 
@@ -844,30 +890,14 @@ public class Hex : MonoBehaviour
         SpriteRenderer sr = characterIcon.GetComponent<SpriteRenderer>();
         if (sr == null) return;
 
-        PlayableLeader player = GetPlayer();
-        bool isScouted = IsScouted(player);
-        Character selected = board != null ? board.selectedCharacter : null;
-
-        if (selected != null && selected.hex == this && (isScouted || IsFriendlyCharacter(selected, player)))
+        if (TryGetKnownCharacterForIcon(out Character known))
         {
-            sr.sprite = GetCharacterIllustrationOrDefault(selected);
-            UpdateCharacterIconZoom(sr.sprite);
-            return;
+            sr.sprite = GetCharacterIllustrationOrDefault(known);
         }
-
-        Character known = null;
-        for (int i = 0, n = characters.Count; i < n; i++)
+        else
         {
-            Character candidate = characters[i];
-            if (candidate == null || candidate.killed) continue;
-            if (isScouted || IsFriendlyCharacter(candidate, player))
-            {
-                known = candidate;
-                break;
-            }
+            sr.sprite = defaultCharacterSprite;
         }
-
-        sr.sprite = known != null ? GetCharacterIllustrationOrDefault(known) : defaultCharacterSprite;
         UpdateCharacterIconZoom(sr.sprite);
     }
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,6 +19,8 @@ public class SelectionDialog : MonoBehaviour
     [SerializeField] private TMP_Dropdown dropdown;
 
     private TaskCompletionSource<string> pendingRequest;
+    private DialogRequest pendingDisplay;
+    private Coroutine waitForMessagesRoutine;
 
     private void Awake()
     {
@@ -75,15 +78,23 @@ public class SelectionDialog : MonoBehaviour
         } 
         else
         {
-            content.SetActive(true);
-
-            messageLabel.text = message;
-            yesButtonText.text = yesString;
-            noButtonText.text = noString;
-            dropdown.options = new ();
-            options.ForEach(x => dropdown.options.Add(new TMP_Dropdown.OptionData(x)));
-            dropdown.value = 0;
-            dropdown.RefreshShownValue();            
+            var request = new DialogRequest
+            {
+                message = message,
+                yesString = yesString,
+                noString = noString,
+                options = options
+            };
+            if (ShouldDelayDialog())
+            {
+                pendingDisplay = request;
+                HideInstant();
+                StartWaitForMessages();
+            }
+            else
+            {
+                ShowInternal(request);
+            }
         }
         return pendingRequest.Task;
     }
@@ -103,10 +114,58 @@ public class SelectionDialog : MonoBehaviour
         HideInstant();
         pendingRequest?.TrySetResult(answer);
         pendingRequest = null;
+        pendingDisplay = null;
     }
 
     private void HideInstant()
     {
         content.SetActive(false);
+    }
+
+    private void ShowInternal(DialogRequest request)
+    {
+        if (request == null) return;
+        content.SetActive(true);
+
+        messageLabel.text = request.message;
+        yesButtonText.text = request.yesString;
+        noButtonText.text = request.noString;
+        dropdown.options = new ();
+        request.options.ForEach(x => dropdown.options.Add(new TMP_Dropdown.OptionData(x)));
+        dropdown.value = 0;
+        dropdown.RefreshShownValue();
+        pendingDisplay = null;
+    }
+
+    private bool ShouldDelayDialog()
+    {
+        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy();
+    }
+
+    private void StartWaitForMessages()
+    {
+        if (waitForMessagesRoutine != null) return;
+        waitForMessagesRoutine = StartCoroutine(WaitForMessages());
+    }
+
+    private IEnumerator WaitForMessages()
+    {
+        while (ShouldDelayDialog())
+        {
+            yield return null;
+        }
+        waitForMessagesRoutine = null;
+        if (pendingDisplay != null)
+        {
+            ShowInternal(pendingDisplay);
+        }
+    }
+
+    private class DialogRequest
+    {
+        public string message;
+        public string yesString;
+        public string noString;
+        public List<string> options;
     }
 }

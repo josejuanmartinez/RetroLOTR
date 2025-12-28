@@ -469,6 +469,13 @@ public class Leader : Character
         return match != null ? match.goldCost : null;
     }
 
+    public static List<ActionDefinition> GetOffensiveActions()
+    {
+        ActionDefinitionCollection defs = GetActionDefinitions();
+        if (defs?.actions == null) return new List<ActionDefinition>();
+        return defs.actions.Where(action => action != null && action.isOffensive).ToList();
+    }
+
     private static ActionDefinitionCollection GetActionDefinitions()
     {
         if (cachedActionDefinitions != null) return cachedActionDefinitions;

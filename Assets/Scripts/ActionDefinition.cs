@@ -24,6 +24,7 @@ public class ActionDefinition
     public int goldCost;
     public bool isBuyCaravans;
     public bool isSellCaravans;
+    public bool isOffensive;
 
     public int commanderXP;
     public int agentXP;
