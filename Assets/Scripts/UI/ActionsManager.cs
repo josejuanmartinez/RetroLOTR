@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(CanvasGroup))]
 public class ActionsManager : MonoBehaviour
 {
     [Header("Prefabs")]
@@ -35,6 +36,7 @@ public class ActionsManager : MonoBehaviour
     {
         if(illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
         // Load definitions from json and sync them with instantiated buttons
         characterActions = LoadActionsFromJson();
@@ -229,7 +231,32 @@ public class ActionsManager : MonoBehaviour
             }
             if (action == null)
             {
-                Debug.LogWarning($"Action '{definition.className}' in Actions.json does not exist in Actions.prefab");
+                // Create a new action button if the prefab does not have this action yet.
+                Type actionType = ResolveActionType(definition.className);
+                if (actionType == null || !typeof(CharacterAction).IsAssignableFrom(actionType))
+                {
+                    Debug.LogWarning($"Action type '{definition.className}' could not be found for action '{definition.actionName}'.");
+                    continue;
+                }
+
+                GameObject go = InstantiateActionButton(definition.actionName);
+                if (go == null)
+                {
+                    Debug.LogWarning($"Could not instantiate button for action '{definition.actionName}'. Ensure actionButtonPrefab is assigned.");
+                    continue;
+                }
+
+                action = go.GetComponent(actionType) as CharacterAction ?? go.AddComponent(actionType) as CharacterAction;
+                if (action == null)
+                {
+                    Debug.LogWarning($"Failed to attach action component '{definition.className}' to button '{definition.actionName}'.");
+                    Destroy(go);
+                    continue;
+                }
+
+                WireUiReferences(go, action);
+                ApplyDefinition(action, definition);
+                ordered.Add(action);
                 continue;
             }
 

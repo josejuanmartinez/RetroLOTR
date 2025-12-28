@@ -66,6 +66,15 @@ public class Character : MonoBehaviour
     private Colors colors;
     private bool awaken = false;
 
+    public struct StatusSnapshot
+    {
+        public bool isHalted;
+        public int encouragedTurns;
+        public int moved;
+        public bool hasActionedThisTurn;
+        public bool isEmbarked;
+    }
+
     void Awake()
     {
         army = null;
@@ -189,6 +198,47 @@ public class Character : MonoBehaviour
         StoreRelevantHexes();
         RefreshSelectedCharacterIconIfSelected();
         RefreshActionsIfSelected();
+    }
+
+    public StatusSnapshot CaptureStatusSnapshot()
+    {
+        return new StatusSnapshot
+        {
+            isHalted = isHalted,
+            encouragedTurns = encouragedTurns,
+            moved = moved,
+            hasActionedThisTurn = hasActionedThisTurn,
+            isEmbarked = isEmbarked
+        };
+    }
+
+    public void RestoreStatusSnapshot(StatusSnapshot snapshot)
+    {
+        isHalted = snapshot.isHalted;
+        encouragedTurns = snapshot.encouragedTurns;
+        moved = snapshot.moved;
+        hasActionedThisTurn = snapshot.hasActionedThisTurn;
+        isEmbarked = snapshot.isEmbarked;
+    }
+
+    public void DisbandArmy(bool showMessage = true)
+    {
+        if (army == null || !IsArmyCommander()) return;
+
+        if (hex != null)
+        {
+            if (hex.armies.Contains(army)) hex.armies.Remove(army);
+            hex.RedrawCharacters();
+            hex.RedrawArmies();
+        }
+
+        if (showMessage)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} disbanded their army", Color.yellow);
+        }
+
+        army = null;
+        RefreshSelectedCharacterIconIfSelected();
     }
 
     public virtual Leader GetOwner()

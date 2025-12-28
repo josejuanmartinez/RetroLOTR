@@ -1,0 +1,2520 @@
+{
+  "events": [
+    {
+      "eventId": "Galadriel_01",
+      "leaderName": "Galadriel",
+      "title": "A Sudden Stillness",
+      "narration": "Galadriel weaves a binding ward from Caras Galadhon over the road. Your nearest forces are halted and cannot advance this turn. Messengers report the road is bound by unseen will, and the march falters for a time. Light of the Golden Wood chills the heart of those who stand against her.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Galadriel",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "Halt"
+      }
+    },
+    {
+      "eventId": "Galadriel_02",
+      "leaderName": "Galadriel",
+      "title": "Galadriel Marks a Target",
+      "narration": "Galadriel sends a hunter from Caras Galadhon to cut down your closest hero. The strike is swift and deliberate, leaving them wounded and reeling. The wound is not fatal, but it leaves scars and slows any bold advance. Light of the Golden Wood chills the heart of those who stand against her.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Haldir",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "WoundCharacter"
+      }
+    },
+    {
+      "eventId": "Galadriel_03",
+      "leaderName": "Galadriel",
+      "title": "Galadriel Undermines the Gate",
+      "narration": "Galadriel directs a precise strike against the closest defenses from Caras Galadhon. A bastion falls, and the fort line is reduced. Stones that took years to raise come down in hours, and the breach yawns wide. Light of the Golden Wood chills the heart of those who stand against her.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Celeborn",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Elrond_01",
+      "leaderName": "Elrond",
+      "title": "Steps Denied",
+      "narration": "A sudden stillness grips the way from Imladris. By Elrond's will, your closest host is halted in place. Messengers report the road is bound by unseen will, and the march falters for a time. The river-song of Bruinen carries his will, and Rivendell's lore turns to peril.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Elrond",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "Halt"
+      }
+    },
+    {
+      "eventId": "Elrond_02",
+      "leaderName": "Elrond",
+      "title": "Elrond Breaks the Walls",
+      "narration": "Elrond dispatches sappers and siege crews from Imladris to undermine your nearest walls. The stone cracks, and a layer of fortifications is brought down. Dust and rubble spill into the streets. Stones that took years to raise come down in hours, and the breach yawns wide. The river-song of Bruinen carries his will, and Rivendell's lore turns to peril.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Elrond",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Elrond_03",
+      "leaderName": "Elrond",
+      "title": "Sedition in the Streets",
+      "narration": "A quiet campaign of whispers spreads from Imladris. Under Elrond's hand, your nearest population center turns against you. Trust frays and old loyalties are tested as rumor turns neighbor against neighbor. The river-song of Bruinen carries his will, and Rivendell's lore turns to peril.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Elrond",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "emmissary": "InfluenceDownPC"
+      }
+    },
+    {
+      "eventId": "Thranduil_01",
+      "leaderName": "Thranduil",
+      "title": "Sappers of Thanduil's Halls",
+      "narration": "Thranduil dispatches sappers and siege crews from Thranduil's Halls to undermine your nearest walls. The stone cracks, and a layer of fortifications is brought down. Dust and rubble spill into the streets. Stones that took years to raise come down in hours, and the breach yawns wide. From the deep halls beneath the Forest River, his folk move like shadows.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Thranduil",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Thranduil_02",
+      "leaderName": "Thranduil",
+      "title": "Thranduil Sows Doubt",
+      "narration": "An envoy of Thranduil arrives from Thranduil's Halls with soft words and harder promises. Loyalty frays in your nearest town as neighbors turn on one another. Trust frays and old loyalties are tested as rumor turns neighbor against neighbor. From the deep halls beneath the Forest River, his folk move like shadows.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Thranduil",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "emmissary": "InfluenceDownPC"
+      }
+    },
+    {
+      "eventId": "Thranduil_03",
+      "leaderName": "Thranduil",
+      "title": "Thranduil Lays Siege",
+      "narration": "Thranduil orders a grinding siege from Thranduil's Halls against your nearest town. Hunger and fear do the rest as the settlement shrinks by a level. Hunger, fear, and dwindling stores do more damage than blades. From the deep halls beneath the Forest River, his folk move like shadows.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Thranduil",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Murazor_01",
+      "leaderName": "Murazor",
+      "title": "Veil of Shadow",
+      "narration": "Murazor shrouds the land in darkness from Minas Morgul. Roads vanish into black and your scouts are blinded. Morgul fumes drift from the vale, sickening the air. A choking gloom smothers torchlight and makes every step uncertain. The pale light of Minas Morgul stains the horizon and saps courage.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Murazor",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "CastDarkness"
+      }
+    },
+    {
+      "eventId": "Murazor_02",
+      "leaderName": "Murazor",
+      "title": "Sappers of Minas Morgul",
+      "narration": "Murazor dispatches sappers and siege crews from Minas Morgul to undermine your nearest walls. The stone cracks, and a layer of fortifications is brought down. Dust and rubble spill into the streets. Morgul fumes drift from the vale, sickening the air. Stones that took years to raise come down in hours, and the breach yawns wide. The pale light of Minas Morgul stains the horizon and saps courage.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Murazor",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Murazor_03",
+      "leaderName": "Murazor",
+      "title": "Murazor Lays Siege",
+      "narration": "A slow, black-hearted siege begins from Minas Morgul. The closest town buckles under pressure and loses a level of population. Morgul fumes drift from the vale, sickening the air. Hunger, fear, and dwindling stores do more damage than blades. The pale light of Minas Morgul stains the horizon and saps courage.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Murazor",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Khamul_01",
+      "leaderName": "Khamul",
+      "title": "Khamul Undermines the Gate",
+      "narration": "Khamul directs a precise strike against the closest defenses from Dol Guldur. A bastion falls, and the fort line is reduced. Easterling drums carry far over the plains. Stones that took years to raise come down in hours, and the breach yawns wide. Easterling war-cries and the Eye of the East press upon the borders.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Khamul",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Khamul_02",
+      "leaderName": "Khamul",
+      "title": "A Whispered Betrayal",
+      "narration": "Khamul sends a silver-tongued emissary from Dol Guldur. The closest settlement grows uneasy and less loyal. Easterling drums carry far over the plains. Trust frays and old loyalties are tested as rumor turns neighbor against neighbor. Easterling war-cries and the Eye of the East press upon the borders.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Khamul",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "emmissary": "InfluenceDownPC"
+      }
+    },
+    {
+      "eventId": "Khamul_03",
+      "leaderName": "Khamul",
+      "title": "Khamul Lays Siege",
+      "narration": "Khamul orders a grinding siege from Dol Guldur against your nearest town. Hunger and fear do the rest as the settlement shrinks by a level. Easterling drums carry far over the plains. Hunger, fear, and dwindling stores do more damage than blades. Easterling war-cries and the Eye of the East press upon the borders.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Khamul",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Akhorahil_01",
+      "leaderName": "Akhorahil",
+      "title": "Akhorahil Calls the Dark",
+      "narration": "A veil of shadow falls from Luglurak at Akhorahil's command. The nearby paths grow treacherous and unseen. Corsair whispers rise from Umbar and the Black Havens. A choking gloom smothers torchlight and makes every step uncertain. Corsair oars beat in distant waters, and the rumor of Umbar sharpens dread.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Akhorahil",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "CastDarkness"
+      }
+    },
+    {
+      "eventId": "Akhorahil_02",
+      "leaderName": "Akhorahil",
+      "title": "A Dreadful Whisper",
+      "narration": "From Luglurak, Akhorahil sends dread-laden tidings. Your closest host loses heart and fights on in fear. Corsair whispers rise from Umbar and the Black Havens. Harsh tidings sap the will to fight, turning courage to doubt. Corsair oars beat in distant waters, and the rumor of Umbar sharpens dread.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Akhorahil",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "WordsOfDispair"
+      }
+    },
+    {
+      "eventId": "Akhorahil_03",
+      "leaderName": "Akhorahil",
+      "title": "Wizard-Fire",
+      "narration": "Akhorahil unleashes a sheet of fire from Luglurak, scorching the ground and your nearest troops alike. Corsair whispers rise from Umbar and the Black Havens. The air reeks of smoke and sorcery as the flames bite and then fade. Corsair oars beat in distant waters, and the rumor of Umbar sharpens dread.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Akhorahil",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "WizardsFire"
+      }
+    },
+    {
+      "eventId": "Ji_Indur_01",
+      "leaderName": "Ji Indur",
+      "title": "Ji Indur Seizes a Relic",
+      "narration": "In the confusion of night, an agent of Ji Indur takes an artifact from your nearest hero. The heirloom vanishes into shadow. Eastern roads hide swift thieves and patient spies. What is taken is carried far from honest hands, and its loss is keenly felt. Caravans whisper of Kal Nargil and its patient spies.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ji Indur",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "StealArtifact"
+      }
+    },
+    {
+      "eventId": "Ji_Indur_02",
+      "leaderName": "Ji Indur",
+      "title": "Ji Indur Spoils the Granaries",
+      "narration": "A quiet fire spreads through your nearest stores after Ji Indur gives the word. Multiple resources are destroyed, and the saboteurs vanish. Eastern roads hide swift thieves and patient spies. Spoiled stores and broken casks leave the mustering yards bare. Caravans whisper of Kal Nargil and its patient spies.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ji Indur",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "SabotageStorage"
+      }
+    },
+    {
+      "eventId": "Ji_Indur_03",
+      "leaderName": "Ji Indur",
+      "title": "Gold Goes Missing",
+      "narration": "From Kal Nargil, agents of Ji Indur strips gold from your closest settlement. The loss is immediate and sharp. Eastern roads hide swift thieves and patient spies. Coin goes missing before dawn, and pay chests stand light. Caravans whisper of Kal Nargil and its patient spies.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ji Indur",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "StealGold"
+      }
+    },
+    {
+      "eventId": "Ovatha_01",
+      "leaderName": "Ovatha",
+      "title": "Ovatha Seizes a Relic",
+      "narration": "In the confusion of night, an agent of Ovatha takes an artifact from your nearest hero. The heirloom vanishes into shadow. What is taken is carried far from honest hands, and its loss is keenly felt. Tol Buruth watches the crossings, and its riders know every ford.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ovatha",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "StealArtifact"
+      }
+    },
+    {
+      "eventId": "Ovatha_02",
+      "leaderName": "Ovatha",
+      "title": "Ovatha Undermines the Gate",
+      "narration": "Ovatha dispatches sappers and siege crews from Tol Buruth to undermine your nearest walls. The stone cracks, and a layer of fortifications is brought down. Dust and rubble spill into the streets. Stones that took years to raise come down in hours, and the breach yawns wide. Tol Buruth watches the crossings, and its riders know every ford.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ovatha",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Ovatha_03",
+      "leaderName": "Ovatha",
+      "title": "Ovatha Sets the Snare",
+      "narration": "A tight cordon forms under Ovatha from Tol Buruth. The enemy line holds the pass, and your nearest host is forced to halt and bleed. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Tol Buruth watches the crossings, and its riders know every ford.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ovatha",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Adunaphel_01",
+      "leaderName": "Adunaphel",
+      "title": "Assault from Lugarlur",
+      "narration": "Adunaphel drives a hard assault out of Lugarlur. The clash comes without warning, a brutal test of your border watch that leaves your nearest settlement reeling. The raid is swift and cruel, a reminder that the border is never safe. From Lugarlur, her will rides with cold discipline and the taste of fear.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Adunaphel",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Adunaphel_02",
+      "leaderName": "Adunaphel",
+      "title": "Adunaphel Sows Doubt",
+      "narration": "Adunaphel sends a silver-tongued emissary from Lugarlur. The closest settlement grows uneasy and less loyal. Trust frays and old loyalties are tested as rumor turns neighbor against neighbor. From Lugarlur, her will rides with cold discipline and the taste of fear.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Adunaphel",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "emmissary": "InfluenceDownPC"
+      }
+    },
+    {
+      "eventId": "Ren_the_Unclean_01",
+      "leaderName": "Ren the Unclean",
+      "title": "Ren the Unclean Undermines the Gate",
+      "narration": "From Barad Ungol, engineers loyal to Ren the Unclean work through the night. By dawn the gates are weakened and your fortifications drop a tier. Stones that took years to raise come down in hours, and the breach yawns wide. Barad Ungol's stink of filth and fear seeps down the pass.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ren the Unclean",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Ren_the_Unclean_02",
+      "leaderName": "Ren the Unclean",
+      "title": "Hunger at the Gates",
+      "narration": "Siege lines close under Ren the Unclean from Barad Ungol. The nearest settlement withers as supplies fail and the population is reduced. Hunger, fear, and dwindling stores do more damage than blades. Barad Ungol's stink of filth and fear seeps down the pass.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ren the Unclean",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Ren_the_Unclean_03",
+      "leaderName": "Ren the Unclean",
+      "title": "Roads Cut by Ren the Unclean",
+      "narration": "A tight cordon forms under Ren the Unclean from Barad Ungol. The enemy line holds the pass, and your nearest host is forced to halt and bleed. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Barad Ungol's stink of filth and fear seeps down the pass.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ren the Unclean",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Hoarmurath_01",
+      "leaderName": "Hoarmurath",
+      "title": "Hoarmurath Breaks the Walls",
+      "narration": "Hoarmurath directs a precise strike against the closest defenses from Durthang. A bastion falls, and the fort line is reduced. A bitter cold rides out of Forodwaith. Stones that took years to raise come down in hours, and the breach yawns wide. The cold of the north answers him, and the night seems longer.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Hoarmurath",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Hoarmurath_02",
+      "leaderName": "Hoarmurath",
+      "title": "Hoarmurath Lays Siege",
+      "narration": "A slow, black-hearted siege begins from Durthang. The closest town buckles under pressure and loses a level of population. A bitter cold rides out of Forodwaith. Hunger, fear, and dwindling stores do more damage than blades. The cold of the north answers him, and the night seems longer.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Hoarmurath",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Hoarmurath_03",
+      "leaderName": "Hoarmurath",
+      "title": "Skirmish Line of Durthang",
+      "narration": "Hoarmurath throws a skirmish screen across the approaches from Durthang. Your nearest host is pinned and harried, its march stolen by ambush and arrow-fire. A bitter cold rides out of Forodwaith. Pickets and skirmishers choke the approaches, turning the road into a killing ground. The cold of the north answers him, and the night seems longer.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Hoarmurath",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Dendra_Dwar_01",
+      "leaderName": "Dendra Dwar",
+      "title": "Dendra Dwar Breaks the Walls",
+      "narration": "Dendra Dwar directs a precise strike against the closest defenses from Morannon. A bastion falls, and the fort line is reduced. Stones that took years to raise come down in hours, and the breach yawns wide. Khazad ways and old grudges walk with her, heavy as iron.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Dendra Dwar",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Dendra_Dwar_02",
+      "leaderName": "Dendra Dwar",
+      "title": "Dendra Dwar Tightens the Noose",
+      "narration": "A slow, black-hearted siege begins from Morannon. The closest town buckles under pressure and loses a level of population. Hunger, fear, and dwindling stores do more damage than blades. Khazad ways and old grudges walk with her, heavy as iron.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Dendra Dwar",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Dendra_Dwar_03",
+      "leaderName": "Dendra Dwar",
+      "title": "Roads Cut by Dendra Dwar",
+      "narration": "A tight cordon forms under Dendra Dwar from Morannon. The enemy line holds the pass, and your nearest host is forced to halt and bleed. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Khazad ways and old grudges walk with her, heavy as iron.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Dendra Dwar",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Aragorn_01",
+      "leaderName": "Aragorn",
+      "title": "Knife in the Shadows",
+      "narration": "A knife in the dark, and your nearest hero is left wounded. Aragorn makes the lesson clear: no one is out of reach. The wound is not fatal, but it leaves scars and slows any bold advance. The heirs of Isildur inspire hard resolve, and the Dunedain watch unseen.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Aragorn",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "WoundCharacter"
+      }
+    },
+    {
+      "eventId": "Aragorn_02",
+      "leaderName": "Aragorn",
+      "title": "Aragorn Undermines the Gate",
+      "narration": "From Sarn Ford, engineers loyal to Aragorn work through the night. By dawn the gates are weakened and your fortifications drop a tier. Stones that took years to raise come down in hours, and the breach yawns wide. The heirs of Isildur inspire hard resolve, and the Dunedain watch unseen.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Aragorn",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Aragorn_03",
+      "leaderName": "Aragorn",
+      "title": "Sedition in the Streets",
+      "narration": "A quiet campaign of whispers spreads from Sarn Ford. Under Aragorn's hand, your nearest population center turns against you. Trust frays and old loyalties are tested as rumor turns neighbor against neighbor. The heirs of Isildur inspire hard resolve, and the Dunedain watch unseen.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Elrohir",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "emmissary": "InfluenceDownPC"
+      }
+    },
+    {
+      "eventId": "Waulfa_01",
+      "leaderName": "Waulfa",
+      "title": "Waulfa Undermines the Gate",
+      "narration": "From Larach Duhnnan, engineers loyal to Waulfa work through the night. By dawn the gates are weakened and your fortifications drop a tier. Stones that took years to raise come down in hours, and the breach yawns wide. Wargs run in his wake, and their howls carry far.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Waulfa",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Waulfa_02",
+      "leaderName": "Waulfa",
+      "title": "Waulfa Locks the Pass",
+      "narration": "Waulfa throws a skirmish screen across the approaches from Larach Duhnnan. Your nearest host is pinned and harried, its march stolen by ambush and arrow-fire. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Wargs run in his wake, and their howls carry far.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Waulfa",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Waulfa_03",
+      "leaderName": "Waulfa",
+      "title": "Waulfa Unleashes a Warband",
+      "narration": "Waulfa drives a hard assault out of Larach Duhnnan. The clash comes without warning, a brutal test of your border watch that leaves your nearest settlement reeling. The raid is swift and cruel, a reminder that the border is never safe. Wargs run in his wake, and their howls carry far.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Waulfa",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Beoraborn_01",
+      "leaderName": "Beoraborn",
+      "title": "Beoraborn Breaks the Walls",
+      "narration": "From The Carrock, engineers loyal to Beoraborn work through the night. By dawn the gates are weakened and your fortifications drop a tier. Stones that took years to raise come down in hours, and the breach yawns wide. The woodmen of the Vale heed his horn, and the wilds lend him cover.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Beoraborn",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Beoraborn_02",
+      "leaderName": "Beoraborn",
+      "title": "Siege Lines of The Carrock",
+      "narration": "Beoraborn orders a grinding siege from The Carrock against your nearest town. Hunger and fear do the rest as the settlement shrinks by a level. Hunger, fear, and dwindling stores do more damage than blades. The woodmen of the Vale heed his horn, and the wilds lend him cover.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Beoraborn",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Beoraborn_03",
+      "leaderName": "Beoraborn",
+      "title": "Beoraborn Sets the Snare",
+      "narration": "Light troops loyal to Beoraborn cut the road from The Carrock. Your closest forces are engaged and stalled, forced into a grinding standstill. Pickets and skirmishers choke the approaches, turning the road into a killing ground. The woodmen of the Vale heed his horn, and the wilds lend him cover.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Beoraborn",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Ingomer_01",
+      "leaderName": "Ingomer",
+      "title": "Ingomer Breaks the Walls",
+      "narration": "Ingomer directs a precise strike against the closest defenses from Woodmen town. A bastion falls, and the fort line is reduced. Stones that took years to raise come down in hours, and the breach yawns wide. The horse-lords ride at his call, swift as a summer storm.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ingomer",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Ingomer_02",
+      "leaderName": "Ingomer",
+      "title": "Ingomer Locks the Pass",
+      "narration": "Light troops loyal to Ingomer cut the road from Woodmen town. Your closest forces are engaged and stalled, forced into a grinding standstill. Pickets and skirmishers choke the approaches, turning the road into a killing ground. The horse-lords ride at his call, swift as a summer storm.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ingomer",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Ingomer_03",
+      "leaderName": "Ingomer",
+      "title": "Border Raid of Ingomer",
+      "narration": "A host under Ingomer slips through the wilds from Woodmen town and falls upon your closest town. The blow is deliberate, a show of force to weaken your grip on the marches. The raid is swift and cruel, a reminder that the border is never safe. The horse-lords ride at his call, swift as a summer storm.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Ingomer",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Shelob_01",
+      "leaderName": "Shelob",
+      "title": "Shelob Seizes a Relic",
+      "narration": "Shelob sends a relic-hunter from Shelob's Lair. Your closest hero is robbed of an artifact and learns of the theft too late. What is taken is carried far from honest hands, and its loss is keenly felt. Dark webs and silent hunger follow her, and the air turns foul.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Shelob",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "StealArtifact"
+      }
+    },
+    {
+      "eventId": "Shelob_02",
+      "leaderName": "Shelob",
+      "title": "Shelob Spoils the Granaries",
+      "narration": "A quiet fire spreads through your nearest stores after Shelob gives the word. Multiple resources are destroyed, and the saboteurs vanish. Spoiled stores and broken casks leave the mustering yards bare. Dark webs and silent hunger follow her, and the air turns foul.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Shelob",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "SabotageStorage"
+      }
+    },
+    {
+      "eventId": "Shelob_03",
+      "leaderName": "Shelob",
+      "title": "Assassin in the Night",
+      "narration": "Shelob removes a rival with a single strike. Your nearest hero dies in the shadows, beyond rescue. The deed is done in secrecy, and fear follows the assassin's passing. Dark webs and silent hunger follow her, and the air turns foul.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Shelob",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "AssassinateCharacter"
+      }
+    },
+    {
+      "eventId": "Balrog_01",
+      "leaderName": "Balrog",
+      "title": "Balrog Undermines the Gate",
+      "narration": "From Khazad-Dum, engineers loyal to Balrog work through the night. By dawn the gates are weakened and your fortifications drop a tier. Stones that took years to raise come down in hours, and the breach yawns wide. Ancient fire and shadow from the deep places stirs, and stone quakes beneath it.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Balrog",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Balrog_02",
+      "leaderName": "Balrog",
+      "title": "Siege Lines of Khazad-Dum",
+      "narration": "Siege lines close under Balrog from Khazad-Dum. The nearest settlement withers as supplies fail and the population is reduced. Hunger, fear, and dwindling stores do more damage than blades. Ancient fire and shadow from the deep places stirs, and stone quakes beneath it.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Balrog",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Balrog_03",
+      "leaderName": "Balrog",
+      "title": "Balrog Sets the Snare",
+      "narration": "Light troops loyal to Balrog cut the road from Khazad-Dum. Your closest forces are engaged and stalled, forced into a grinding standstill. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Ancient fire and shadow from the deep places stirs, and stone quakes beneath it.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Balrog",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Smaug_01",
+      "leaderName": "Smaug",
+      "title": "Smaug Undermines the Gate",
+      "narration": "Smaug directs a precise strike against the closest defenses from Erebor (Lost). A bastion falls, and the fort line is reduced. Stones that took years to raise come down in hours, and the breach yawns wide. Dragon-fire and greed scorch the land, and all gold trembles.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Smaug",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Smaug_02",
+      "leaderName": "Smaug",
+      "title": "Smaug Tightens the Noose",
+      "narration": "Siege lines close under Smaug from Erebor (Lost). The nearest settlement withers as supplies fail and the population is reduced. Hunger, fear, and dwindling stores do more damage than blades. Dragon-fire and greed scorch the land, and all gold trembles.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Smaug",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Smaug_03",
+      "leaderName": "Smaug",
+      "title": "Smaug Sets the Snare",
+      "narration": "A tight cordon forms under Smaug from Erebor (Lost). The enemy line holds the pass, and your nearest host is forced to halt and bleed. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Dragon-fire and greed scorch the land, and all gold trembles.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Smaug",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Bard_01",
+      "leaderName": "Bard",
+      "title": "Bard Undermines the Gate",
+      "narration": "From Esgaroth, engineers loyal to Bard work through the night. By dawn the gates are weakened and your fortifications drop a tier. Stones that took years to raise come down in hours, and the breach yawns wide. The men of Dale follow his bow, and the Long Lake carries his fame.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Bard",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Bard_02",
+      "leaderName": "Bard",
+      "title": "Roads Cut by Bard",
+      "narration": "A tight cordon forms under Bard from Esgaroth. The enemy line holds the pass, and your nearest host is forced to halt and bleed. Pickets and skirmishers choke the approaches, turning the road into a killing ground. The men of Dale follow his bow, and the Long Lake carries his fame.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Bard",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Bard_03",
+      "leaderName": "Bard",
+      "title": "Assault from Esgaroth",
+      "narration": "Bard drives a hard assault out of Esgaroth. The clash comes without warning, a brutal test of your border watch that leaves your nearest settlement reeling. The raid is swift and cruel, a reminder that the border is never safe. The men of Dale follow his bow, and the Long Lake carries his fame.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Bard",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Uvatha_01",
+      "leaderName": "Uvatha",
+      "title": "Stonework Shattered",
+      "narration": "From Sturlurtsa Khand, engineers loyal to Uvatha work through the night. By dawn the gates are weakened and your fortifications drop a tier. Stones that took years to raise come down in hours, and the breach yawns wide. From the east come masked riders and sudden raids.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Uvatha",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Uvatha_02",
+      "leaderName": "Uvatha",
+      "title": "Uvatha Locks the Pass",
+      "narration": "Light troops loyal to Uvatha cut the road from Sturlurtsa Khand. Your closest forces are engaged and stalled, forced into a grinding standstill. Pickets and skirmishers choke the approaches, turning the road into a killing ground. From the east come masked riders and sudden raids.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Uvatha",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Uvatha_03",
+      "leaderName": "Uvatha",
+      "title": "Assault from Sturlurtsa Khand",
+      "narration": "A host under Uvatha slips through the wilds from Sturlurtsa Khand and falls upon your closest town. The blow is deliberate, a show of force to weaken your grip on the marches. The raid is swift and cruel, a reminder that the border is never safe. From the east come masked riders and sudden raids.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Uvatha",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Haruth_Rammam_01",
+      "leaderName": "Haruth Rammam",
+      "title": "Haruth Rammam Undermines the Gate",
+      "narration": "Haruth Rammam dispatches sappers and siege crews from Kas Shadoul to undermine your nearest walls. The stone cracks, and a layer of fortifications is brought down. Dust and rubble spill into the streets. Stones that took years to raise come down in hours, and the breach yawns wide. From the south he brings harsh riders and dust on the wind.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Haruth Rammam",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Haruth_Rammam_02",
+      "leaderName": "Haruth Rammam",
+      "title": "Skirmish Line of Kas Shadoul",
+      "narration": "Light troops loyal to Haruth Rammam cut the road from Kas Shadoul. Your closest forces are engaged and stalled, forced into a grinding standstill. Pickets and skirmishers choke the approaches, turning the road into a killing ground. From the south he brings harsh riders and dust on the wind.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Haruth Rammam",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Haruth_Rammam_03",
+      "leaderName": "Haruth Rammam",
+      "title": "Haruth Rammam Unleashes a Warband",
+      "narration": "A host under Haruth Rammam slips through the wilds from Kas Shadoul and falls upon your closest town. The blow is deliberate, a show of force to weaken your grip on the marches. The raid is swift and cruel, a reminder that the border is never safe. From the south he brings harsh riders and dust on the wind.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Haruth Rammam",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Sangarunya_01",
+      "leaderName": "Sangarunya",
+      "title": "Stonework Shattered",
+      "narration": "Sangarunya directs a precise strike against the closest defenses from Havens of Umbar. A bastion falls, and the fort line is reduced. Stones that took years to raise come down in hours, and the breach yawns wide. Old malice and cunning from far lands cling to his name.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Sangarunya",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Sangarunya_02",
+      "leaderName": "Sangarunya",
+      "title": "Sangarunya Locks the Pass",
+      "narration": "Light troops loyal to Sangarunya cut the road from Havens of Umbar. Your closest forces are engaged and stalled, forced into a grinding standstill. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Old malice and cunning from far lands cling to his name.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Sangarunya",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Sangarunya_03",
+      "leaderName": "Sangarunya",
+      "title": "Border Raid of Sangarunya",
+      "narration": "From Havens of Umbar, Sangarunya sends a warband to strike your nearest holding. The raid is pragmatic and swift, meant to shatter watchfires and pull your strength away from the frontier. Smoke rises as the enemy presses its attack. The raid is swift and cruel, a reminder that the border is never safe. Old malice and cunning from far lands cling to his name.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Sangarunya",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Cirdan_01",
+      "leaderName": "Cirdan",
+      "title": "Stonework Shattered",
+      "narration": "Cirdan dispatches sappers and siege crews from The Grey Havens to undermine your nearest walls. The stone cracks, and a layer of fortifications is brought down. Dust and rubble spill into the streets. Stones that took years to raise come down in hours, and the breach yawns wide. The Havens keep his counsel, and the Sea listens to his passing.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Cirdan",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Cirdan_02",
+      "leaderName": "Cirdan",
+      "title": "Sedition in the Streets",
+      "narration": "A quiet campaign of whispers spreads from The Grey Havens. Under Cirdan's hand, your nearest population center turns against you. Trust frays and old loyalties are tested as rumor turns neighbor against neighbor. The Havens keep his counsel, and the Sea listens to his passing.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Cirdan",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "emmissary": "InfluenceDownPC"
+      }
+    },
+    {
+      "eventId": "Cirdan_03",
+      "leaderName": "Cirdan",
+      "title": "Roads Cut by Cirdan",
+      "narration": "Cirdan throws a skirmish screen across the approaches from The Grey Havens. Your nearest host is pinned and harried, its march stolen by ambush and arrow-fire. Pickets and skirmishers choke the approaches, turning the road into a killing ground. The Havens keep his counsel, and the Sea listens to his passing.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Cirdan",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Denethor_01",
+      "leaderName": "Denethor",
+      "title": "Denethor Strikes from Minas Tirith",
+      "narration": "From Minas Tirith, Denethor sends a warband to strike your nearest holding. The raid is resolute and swift, meant to shatter watchfires and pull your strength away from the frontier. Smoke rises as the enemy presses its attack. The raid is swift and cruel, a reminder that the border is never safe. The Steward's pride is sharp, and Minas Tirith does not forget a slight.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Denethor",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Denethor_02",
+      "leaderName": "Denethor",
+      "title": "Sappers of Minas Tirith",
+      "narration": "Denethor directs a precise strike against the closest defenses from Minas Tirith. A bastion falls, and the fort line is reduced. Stones that took years to raise come down in hours, and the breach yawns wide. The Steward's pride is sharp, and Minas Tirith does not forget a slight.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Boromir",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Denethor_03",
+      "leaderName": "Denethor",
+      "title": "Denethor Sets the Snare",
+      "narration": "Light troops loyal to Denethor cut the road from Minas Tirith. Your closest forces are engaged and stalled, forced into a grinding standstill. Pickets and skirmishers choke the approaches, turning the road into a killing ground. The Steward's pride is sharp, and Minas Tirith does not forget a slight.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Boromir",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Faramir_01",
+      "leaderName": "Faramir",
+      "title": "Faramir Marks a Target",
+      "narration": "Faramir sends a hunter from Henneth Annun to cut down your closest hero. The strike is swift and deliberate, leaving them wounded and reeling. The wound is not fatal, but it leaves scars and slows any bold advance. The Rangers of Ithilien move with him, stern and silent.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Faramir",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "WoundCharacter"
+      }
+    },
+    {
+      "eventId": "Faramir_02",
+      "leaderName": "Faramir",
+      "title": "Border Raid of Faramir",
+      "narration": "Faramir drives a hard assault out of Henneth Annun. The clash comes without warning, a brutal test of your border watch that leaves your nearest settlement reeling. The raid is swift and cruel, a reminder that the border is never safe. The Rangers of Ithilien move with him, stern and silent.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Faramir",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Theoden_01",
+      "leaderName": "Theoden",
+      "title": "Theoden Breaks the Walls",
+      "narration": "Theoden directs a precise strike against the closest defenses from Edoras. A bastion falls, and the fort line is reduced. Stones that took years to raise come down in hours, and the breach yawns wide. Rohan's honor rides with him, bright as new-forged steel.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Theoden",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Theoden_02",
+      "leaderName": "Theoden",
+      "title": "Theoden Sets the Snare",
+      "narration": "A tight cordon forms under Theoden from Edoras. The enemy line holds the pass, and your nearest host is forced to halt and bleed. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Rohan's honor rides with him, bright as new-forged steel.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Theoden",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Theoden_03",
+      "leaderName": "Theoden",
+      "title": "Border Raid of Theoden",
+      "narration": "A host under Theoden slips through the wilds from Edoras and falls upon your closest town. The blow is deliberate, a show of force to weaken your grip on the marches. The raid is swift and cruel, a reminder that the border is never safe. Rohan's honor rides with him, bright as new-forged steel.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Theoden",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Dain_01",
+      "leaderName": "Dain",
+      "title": "Sappers of Iron Hills",
+      "narration": "From Iron Hills, engineers loyal to Dain work through the night. By dawn the gates are weakened and your fortifications drop a tier. Stones that took years to raise come down in hours, and the breach yawns wide. The Dwarves of the Lonely Mountain answer him, and their oaths run deep.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Dain",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Dain_02",
+      "leaderName": "Dain",
+      "title": "Dain Tightens the Noose",
+      "narration": "A slow, coldly just siege begins from Iron Hills. The closest town buckles under pressure and loses a level of population. Hunger, fear, and dwindling stores do more damage than blades. The Dwarves of the Lonely Mountain answer him, and their oaths run deep.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Dain",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Dain_03",
+      "leaderName": "Dain",
+      "title": "Dain Sets the Snare",
+      "narration": "Dain throws a skirmish screen across the approaches from Iron Hills. Your nearest host is pinned and harried, its march stolen by ambush and arrow-fire. Pickets and skirmishers choke the approaches, turning the road into a killing ground. The Dwarves of the Lonely Mountain answer him, and their oaths run deep.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Dain",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Gloin_01",
+      "leaderName": "Gloin",
+      "title": "Stonework Shattered",
+      "narration": "Gloin dispatches sappers and siege crews from Blue Mountains to undermine your nearest walls. The stone cracks, and a layer of fortifications is brought down. Dust and rubble spill into the streets. Stones that took years to raise come down in hours, and the breach yawns wide. Erebor's craftsmen follow him, stout of heart and stubborn of will.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Gloin",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Gloin_02",
+      "leaderName": "Gloin",
+      "title": "Gloin Locks the Pass",
+      "narration": "Light troops loyal to Gloin cut the road from Blue Mountains. Your closest forces are engaged and stalled, forced into a grinding standstill. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Erebor's craftsmen follow him, stout of heart and stubborn of will.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Gloin",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Gloin_03",
+      "leaderName": "Gloin",
+      "title": "Border Raid of Gloin",
+      "narration": "From Blue Mountains, Gloin sends a warband to strike your nearest holding. The raid is stern and swift, meant to shatter watchfires and pull your strength away from the frontier. Smoke rises as the enemy presses its attack. The raid is swift and cruel, a reminder that the border is never safe. Erebor's craftsmen follow him, stout of heart and stubborn of will.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Gloin",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Radagast_01",
+      "leaderName": "Radagast",
+      "title": "The Host is Halted",
+      "narration": "A sudden stillness grips the way from Rhosgobel. By Radagast's will, your closest host is halted in place. From Rhosgobel, beasts and birds carry his will and unsettle the wild. Messengers report the road is bound by unseen will, and the march falters for a time. Beasts and birds heed his word, and the wild answers him.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Radagast",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "Halt"
+      }
+    },
+    {
+      "eventId": "Radagast_02",
+      "leaderName": "Radagast",
+      "title": "A Wound in the Dark",
+      "narration": "Radagast sends a hunter from Rhosgobel to cut down your closest hero. The strike is swift and deliberate, leaving them wounded and reeling. From Rhosgobel, beasts and birds carry his will and unsettle the wild. The wound is not fatal, but it leaves scars and slows any bold advance. Beasts and birds heed his word, and the wild answers him.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Radagast",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "WoundCharacter"
+      }
+    },
+    {
+      "eventId": "GhanBuriGhan_01",
+      "leaderName": "GhanBuriGhan",
+      "title": "GhanBuriGhan Marks a Target",
+      "narration": "A knife in the dark, and your nearest hero is left wounded. GhanBuriGhan makes the lesson clear: no one is out of reach. The wound is not fatal, but it leaves scars and slows any bold advance. The Woses move unseen in their woods, and their paths confound strangers.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "GhanBuriGhan",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "WoundCharacter"
+      }
+    },
+    {
+      "eventId": "Goblin_King_01",
+      "leaderName": "Goblin King",
+      "title": "Goblin King Undermines the Gate",
+      "narration": "From Goblin Town, engineers loyal to Goblin King work through the night. By dawn the gates are weakened and your fortifications drop a tier. Misty Mountain tunnels spill out raiders in the dark. Stones that took years to raise come down in hours, and the breach yawns wide. From the black clefts of the Misty Mountains comes a screeching chorus.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Goblin King",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Goblin_King_02",
+      "leaderName": "Goblin King",
+      "title": "Skirmish Line of Goblin Town",
+      "narration": "A tight cordon forms under Goblin King from Goblin Town. The enemy line holds the pass, and your nearest host is forced to halt and bleed. Misty Mountain tunnels spill out raiders in the dark. Pickets and skirmishers choke the approaches, turning the road into a killing ground. From the black clefts of the Misty Mountains comes a screeching chorus.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Goblin King",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Goblin_King_03",
+      "leaderName": "Goblin King",
+      "title": "Assault from Goblin Town",
+      "narration": "A host under Goblin King slips through the wilds from Goblin Town and falls upon your closest town. The blow is deliberate, a show of force to weaken your grip on the marches. Misty Mountain tunnels spill out raiders in the dark. The raid is swift and cruel, a reminder that the border is never safe. From the black clefts of the Misty Mountains comes a screeching chorus.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Goblin King",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Tom_Bombadil_01",
+      "leaderName": "Tom Bombadil",
+      "title": "Tom Bombadil Sows Doubt",
+      "narration": "An envoy of Tom Bombadil arrives from Old Forest with soft words and harder promises. Loyalty frays in your nearest town as neighbors turn on one another. Old Forest songs twist the path, and the land itself answers him. Trust frays and old loyalties are tested as rumor turns neighbor against neighbor. The Old Forest stirs; roots and water heed his strange mirth.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Tom Bombadil",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "emmissary": "InfluenceDownPC"
+      }
+    },
+    {
+      "eventId": "Tom_Bombadil_02",
+      "leaderName": "Tom Bombadil",
+      "title": "Sabotage of Supplies",
+      "narration": "Tom Bombadil orders sabotage from Old Forest. Crates are split, grain is fouled, and multiple goods are lost. Old Forest songs twist the path, and the land itself answers him. Spoiled stores and broken casks leave the mustering yards bare. The Old Forest stirs; roots and water heed his strange mirth.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Tom Bombadil",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "SabotageStorage"
+      }
+    },
+    {
+      "eventId": "Tom_Bombadil_03",
+      "leaderName": "Tom Bombadil",
+      "title": "A Stolen Heirloom",
+      "narration": "A clever thief serving Tom Bombadil targets your nearest champion and steals an artifact before anyone can react. The relic is gone, and the trail runs cold. Old Forest songs twist the path, and the land itself answers him. What is taken is carried far from honest hands, and its loss is keenly felt. The Old Forest stirs; roots and water heed his strange mirth.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Tom Bombadil",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "StealArtifact"
+      }
+    },
+    {
+      "eventId": "The_Undead_King_01",
+      "leaderName": "The Undead King",
+      "title": "Stonework Shattered",
+      "narration": "The Undead King dispatches sappers and siege crews from Paths of the Dead to undermine your nearest walls. The stone cracks, and a layer of fortifications is brought down. Dust and rubble spill into the streets. The Paths of the Dead chill even the bold. Stones that took years to raise come down in hours, and the breach yawns wide. The Dead do not sleep, and their whispers cling to the living.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "The Undead King",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "The_Undead_King_02",
+      "leaderName": "The Undead King",
+      "title": "The Undead King Sets the Snare",
+      "narration": "A tight cordon forms under The Undead King from Paths of the Dead. The enemy line holds the pass, and your nearest host is forced to halt and bleed. The Paths of the Dead chill even the bold. Pickets and skirmishers choke the approaches, turning the road into a killing ground. The Dead do not sleep, and their whispers cling to the living.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "The Undead King",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "The_Undead_King_03",
+      "leaderName": "The Undead King",
+      "title": "Border Raid of The Undead King",
+      "narration": "A host under The Undead King slips through the wilds from Paths of the Dead and falls upon your closest town. The blow is deliberate, a show of force to weaken your grip on the marches. The Paths of the Dead chill even the bold. The raid is swift and cruel, a reminder that the border is never safe. The Dead do not sleep, and their whispers cling to the living.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "The Undead King",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Pallando_01",
+      "leaderName": "Pallando",
+      "title": "A Sudden Stillness",
+      "narration": "Pallando weaves a binding ward from Elgaer over the road. Your nearest forces are halted and cannot advance this turn. Messengers report the road is bound by unseen will, and the march falters for a time. The Blue Wizard's counsel travels far along the southern roads.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Pallando",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "Halt"
+      }
+    },
+    {
+      "eventId": "Pallando_02",
+      "leaderName": "Pallando",
+      "title": "A Whispered Betrayal",
+      "narration": "An envoy of Pallando arrives from Elgaer with soft words and harder promises. Loyalty frays in your nearest town as neighbors turn on one another. Trust frays and old loyalties are tested as rumor turns neighbor against neighbor. The Blue Wizard's counsel travels far along the southern roads.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Pallando",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "emmissary": "InfluenceDownPC"
+      }
+    },
+    {
+      "eventId": "Alatar_01",
+      "leaderName": "Alatar",
+      "title": "A Sudden Stillness",
+      "narration": "A sudden stillness grips the way from Laorki. By Alatar's will, your closest host is halted in place. Messengers report the road is bound by unseen will, and the march falters for a time. The Blue Wizard's designs are patient, woven along the eastern roads.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Alatar",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "Halt"
+      }
+    },
+    {
+      "eventId": "Alatar_02",
+      "leaderName": "Alatar",
+      "title": "A Wound in the Dark",
+      "narration": "An agent loyal to Alatar strikes at your nearest champion. The blow is unsentimental and leaves the target wounded before help can arrive. The wound is not fatal, but it leaves scars and slows any bold advance. The Blue Wizard's designs are patient, woven along the eastern roads.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Alatar",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "WoundCharacter"
+      }
+    },
+    {
+      "eventId": "Treebeard_01",
+      "leaderName": "Treebeard",
+      "title": "Stonework Shattered",
+      "narration": "From Derndingle, engineers loyal to Treebeard work through the night. By dawn the gates are weakened and your fortifications drop a tier. Fangorn stirs and the trees remember old wrongs. Stones that took years to raise come down in hours, and the breach yawns wide. Fangorn's ancient anger wakes, and the wood itself judges trespass.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Treebeard",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Treebeard_02",
+      "leaderName": "Treebeard",
+      "title": "Treebeard Tightens the Noose",
+      "narration": "Siege lines close under Treebeard from Derndingle. The nearest settlement withers as supplies fail and the population is reduced. Fangorn stirs and the trees remember old wrongs. Hunger, fear, and dwindling stores do more damage than blades. Fangorn's ancient anger wakes, and the wood itself judges trespass.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Treebeard",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "SiegePC"
+      }
+    },
+    {
+      "eventId": "Treebeard_03",
+      "leaderName": "Treebeard",
+      "title": "Treebeard Sets the Snare",
+      "narration": "Treebeard throws a skirmish screen across the approaches from Derndingle. Your nearest host is pinned and harried, its march stolen by ambush and arrow-fire. Fangorn stirs and the trees remember old wrongs. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Fangorn's ancient anger wakes, and the wood itself judges trespass.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Treebeard",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Celdacil_01",
+      "leaderName": "Celdacil",
+      "title": "Silent Cut",
+      "narration": "An agent loyal to Celdacil strikes at your nearest champion. The blow is pragmatic and leaves the target wounded before help can arrive. The wound is not fatal, but it leaves scars and slows any bold advance. Quiet blades and harder coin are his common tools.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Celdacil",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "WoundCharacter"
+      }
+    },
+    {
+      "eventId": "Annatorion_01",
+      "leaderName": "Annatorion",
+      "title": "Sedition in the Streets",
+      "narration": "A quiet campaign of whispers spreads from Shrel-Kain. Under Annatorion's hand, your nearest population center turns against you. Trust frays and old loyalties are tested as rumor turns neighbor against neighbor. Shrel-Kain's shadowed courts trade in rumor and unrest.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Annatorion",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "emmissary": "InfluenceDownPC"
+      }
+    },
+    {
+      "eventId": "Barrow-wight_01",
+      "leaderName": "Barrow-wight",
+      "title": "Night on the Road",
+      "narration": "Barrow-wight shrouds the land in darkness from Barrow-downs. Roads vanish into black and your scouts are blinded. Cold from the barrows creeps into your bones. A choking gloom smothers torchlight and makes every step uncertain. Cold mists roll from the downs, numbing bone and spirit.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Barrow-wight",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "CastDarkness"
+      }
+    },
+    {
+      "eventId": "Barrow-wight_02",
+      "leaderName": "Barrow-wight",
+      "title": "Barrow-wight Unleashes a Warband",
+      "narration": "A host under Barrow-wight slips through the wilds from Barrow-downs and falls upon your closest town. The blow is deliberate, a show of force to weaken your grip on the marches. Cold from the barrows creeps into your bones. The raid is swift and cruel, a reminder that the border is never safe. Cold mists roll from the downs, numbing bone and spirit.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Barrow-wight",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Barrow-wight_03",
+      "leaderName": "Barrow-wight",
+      "title": "Wizard-Fire",
+      "narration": "Barrow-wight kindles wizard-fire from Barrow-downs. Your nearest troops are seared by the burning spell and forced to scatter. Cold from the barrows creeps into your bones. The air reeks of smoke and sorcery as the flames bite and then fade. Cold mists roll from the downs, numbing bone and spirit.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Barrow-wight",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "mage": "WizardsFire"
+      }
+    },
+    {
+      "eventId": "Gwaihir_01",
+      "leaderName": "Gwaihir",
+      "title": "Knife in the Shadows",
+      "narration": "Gwaihir sends a hunter from Eagle's Eyrie to cut down your closest hero. The strike is swift and deliberate, leaving them wounded and reeling. Wings shadow the sky as the Eagles descend without warning. The wound is not fatal, but it leaves scars and slows any bold advance. The wind bears his cry, and the Eagles' shadow turns day to dusk.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Gwaihir",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "WoundCharacter"
+      }
+    },
+    {
+      "eventId": "Huz_01",
+      "leaderName": "Huz",
+      "title": "Stonework Shattered",
+      "narration": "Huz directs a precise strike against the closest defenses from Riavod. A bastion falls, and the fort line is reduced. Stones that took years to raise come down in hours, and the breach yawns wide. Riavod's riders are swift, and their banners are seen from far hills.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Huz",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Huz_02",
+      "leaderName": "Huz",
+      "title": "Huz Locks the Pass",
+      "narration": "Huz throws a skirmish screen across the approaches from Riavod. Your nearest host is pinned and harried, its march stolen by ambush and arrow-fire. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Riavod's riders are swift, and their banners are seen from far hills.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Huz",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    },
+    {
+      "eventId": "Huz_03",
+      "leaderName": "Huz",
+      "title": "Huz Strikes from Riavod",
+      "narration": "A host under Huz slips through the wilds from Riavod and falls upon your closest town. The blow is deliberate, a show of force to weaken your grip on the marches. The raid is swift and cruel, a reminder that the border is never safe. Riavod's riders are swift, and their banners are seen from far hills.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Huz",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "hi",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Attack"
+      }
+    },
+    {
+      "eventId": "Azog_01",
+      "leaderName": "Azog",
+      "title": "Azog Marks a Target",
+      "narration": "An agent loyal to Azog strikes at your nearest champion. The blow is black-hearted and leaves the target wounded before help can arrive. Gundabad horns sound a harsh, brutal warning. The wound is not fatal, but it leaves scars and slows any bold advance. Gundabad's drums answer his call, and orc-eyes burn with malice.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Bolg",
+        "location": "hiddenOrUnseenNearbyHex"
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "agent": "WoundCharacter"
+      }
+    },
+    {
+      "eventId": "Azog_02",
+      "leaderName": "Azog",
+      "title": "Azog Undermines the Gate",
+      "narration": "Azog directs a precise strike against the closest defenses from Gundabad. A bastion falls, and the fort line is reduced. Gundabad horns sound a harsh, brutal warning. Stones that took years to raise come down in hours, and the breach yawns wide. Gundabad's drums answer his call, and orc-eyes burn with malice.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Azog",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "ca",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 7,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "DestroyFortifications"
+      }
+    },
+    {
+      "eventId": "Azog_03",
+      "leaderName": "Azog",
+      "title": "Azog Sets the Snare",
+      "narration": "Azog throws a skirmish screen across the approaches from Gundabad. Your nearest host is pinned and harried, its march stolen by ambush and arrow-fire. Gundabad horns sound a harsh, brutal warning. Pickets and skirmishers choke the approaches, turning the road into a killing ground. Gundabad's drums answer his call, and orc-eyes burn with malice.",
+      "alignmentRule": "enemyOrNeutral",
+      "spawn": {
+        "character": "Azog",
+        "location": "hiddenOrUnseenNearbyHex",
+        "army": {
+          "type": "li",
+          "size": 1
+        }
+      },
+      "movement": {
+        "target": "ClosestPCOrCharacterHexCloserToCapital",
+        "maxTries": 6,
+        "giveUpIfBlocked": true
+      },
+      "actions": {
+        "commander": "Block"
+      }
+    }
+  ]
+}

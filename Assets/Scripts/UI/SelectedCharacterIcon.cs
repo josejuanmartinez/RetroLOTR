@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 
 [RequireComponent(typeof(Image))]
+[RequireComponent(typeof(CanvasGroup))]
 public class SelectedCharacterIcon : MonoBehaviour
 {
     [Header("Game Objects")]
@@ -37,10 +38,12 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     private Videos videos;
     private Illustrations illustrations;
+    private CanvasGroup canvasGroup;
 
     // Update is called once per frame
     public void Refresh(Character c)
     {
+        SetVisible(true);
         border.SetActive(true);
         SetCharacterVisuals(
             GetVideoByName(c.characterName),
@@ -84,6 +87,7 @@ public class SelectedCharacterIcon : MonoBehaviour
             return;
         }
 
+        SetVisible(true);
         border.SetActive(true);
         SetCharacterVisuals(
             GetVideoByName(c.characterName),
@@ -127,6 +131,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     // Update is called once per frame
     public void Hide()
     {
+        SetVisible(false);
         border.SetActive(false);
         alignmentIcon.enabled = false;
         if (video != null)
@@ -164,6 +169,20 @@ public class SelectedCharacterIcon : MonoBehaviour
     private Image GetImageTarget()
     {
         return icon;
+    }
+
+    private void SetVisible(bool visible)
+    {
+        if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = visible ? 1f : 0f;
+            canvasGroup.interactable = visible;
+            canvasGroup.blocksRaycasts = visible;
+        }
+
+        Image rootImage = GetComponent<Image>();
+        if (rootImage != null) rootImage.enabled = visible;
     }
 
     private void SetCharacterVisuals(VideoClip clip, Sprite fallbackSprite)

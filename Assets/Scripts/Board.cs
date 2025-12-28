@@ -860,6 +860,7 @@ public class Board : MonoBehaviour
         SelectedCharacterIcon selected;
         ActionsManager actionsManager;
         Hex currentHex = character.hex; // Store initial hex
+        bool showPlayerUi = ShouldShowPlayerUi(character);
 
         try
         {
@@ -985,7 +986,7 @@ public class Board : MonoBehaviour
                 bool lastHex = i == path.Count -1;
                 MoveCharacterOneHex(character, previousHex, newHex, lastHex, lastHex);
                 currentHex = newHex;
-                selected.RefreshMovementLeft(character);
+                if (showPlayerUi) selected.RefreshMovementLeft(character);
             }
             catch (Exception e)
             {
@@ -1000,8 +1001,11 @@ public class Board : MonoBehaviour
 
         try
         {
-            selected.RefreshMovementLeft(character);
-            actionsManager.Refresh(character);
+            if (showPlayerUi)
+            {
+                selected.RefreshMovementLeft(character);
+                actionsManager.Refresh(character);
+            }
         }
         catch (Exception e)
         {
@@ -1012,8 +1016,11 @@ public class Board : MonoBehaviour
         // Final delay outside try block
         yield return new WaitForSeconds(0.5f);
         moving = false;
-        SelectCharacter(character);
-        actionsManager.Refresh(character);
+        if (showPlayerUi)
+        {
+            SelectCharacter(character);
+            actionsManager.Refresh(character);
+        }
     }
 
     public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true) {
@@ -1173,11 +1180,15 @@ public class Board : MonoBehaviour
             // Redraw
             currentHex.RedrawCharacters();
             currentHex.RedrawArmies();
-            currentHex.LookAt();
-            SelectHex(currentHex.v2);
+            if (ShouldShowPlayerUi(character))
+            {
+                currentHex.LookAt();
+                SelectHex(currentHex.v2);
+            }
         }
 
-        // Always refresh the actions manager and selected icon if available
+        if (!ShouldShowPlayerUi(character)) return;
+
         var actionsManager = FindFirstObjectByType<Layout>().GetActionsManager();
         if (actionsManager != null)
         {
@@ -1189,6 +1200,12 @@ public class Board : MonoBehaviour
         {
             selected.RefreshMovementLeft(character);
         }
+    }
+
+    private bool ShouldShowPlayerUi(Character character)
+    {
+        Game g = FindFirstObjectByType<Game>();
+        return g != null && g.IsPlayerCurrentlyPlaying() && g.player == character?.GetOwner();
     }
     private void UpdateGenerationProgress(float progress, string stage)
     {

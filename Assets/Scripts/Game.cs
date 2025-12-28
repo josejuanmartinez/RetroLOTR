@@ -52,6 +52,10 @@ public class Game : MonoBehaviour
         if (!board) board = FindAnyObjectByType<Board>();
         if (!storesManager) storesManager = FindAnyObjectByType<StoresManager>();
         if (AIContextCacheManager.Instance == null) gameObject.AddComponent<AIContextCacheManager>();
+        if (FindFirstObjectByType<NonPlayableLeaderEventManager>() == null)
+        {
+            gameObject.AddComponent<NonPlayableLeaderEventManager>();
+        }
     }
 
     private void AssignAIandHumans()

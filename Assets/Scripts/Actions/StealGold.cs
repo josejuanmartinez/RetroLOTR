@@ -14,13 +14,23 @@ public class StealGold : AgentPCAction
             if (pc == null) return false;
             int toSteal = Math.Min(pc.owner.goldAmount, UnityEngine.Random.Range(1, c.GetAgent()));
             if (toSteal < 1) return false;
-            PlayableLeader playable = (c.GetOwner() as PlayableLeader);
-            if (playable == null) return false;
-            playable.AddGold(toSteal);
+            Leader actorOwner = c.GetOwner();
+            if (actorOwner == null) return false;
+            if (actorOwner == FindFirstObjectByType<Game>().player)
+            {
+                actorOwner.AddGold(toSteal);
+            }
+            else
+            {
+                actorOwner.goldAmount += toSteal;
+            }
             pc.owner.RemoveGold(toSteal);
             MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"gold\"/> stolen!", Color.red);
-            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"gold\"/> stolen!", Color.green);
-            if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
+            if (actorOwner == FindFirstObjectByType<Game>().player)
+            {
+                MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"gold\"/> stolen!", Color.green);
+                FindFirstObjectByType<StoresManager>().RefreshStores();
+            }
             return true;
         };
         condition = (c) => {
