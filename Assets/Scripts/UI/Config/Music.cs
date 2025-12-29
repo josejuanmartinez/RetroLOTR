@@ -1,73 +1,48 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 public class Music : MonoBehaviour
 {
-    [Serializable]
-    private class MusicCollection
-    {
-        public List<MusicEntry> music = new();
-    }
-
-    [Serializable]
-    private class MusicEntry
-    {
-        public string path;
-        public string suggestedUse;
-        public bool used;
-        public float durationSeconds;
-    }
-
-    private enum MusicTag
-    {
-        Title,
-        World,
-        Town,
-        City,
-        Overworld,
-        Battle,
-        Boss,
-        FinalBoss,
-        Dungeon,
-        Desert,
-        Jungle,
-        Forest,
-        Sea,
-        Shrine,
-        Chase,
-        Credits,
-        Hero,
-        Evil,
-        Bazaar,
-        Parting,
-        Downtime,
-        Love,
-        Victory,
-        Generic
-    }
-
-    private enum AmbientTag
-    {
-        Forest,
-        Water,
-        Wind,
-        Rain,
-        Cave,
-        Fire,
-        Night,
-        River,
-        Waterfall,
-        Generic
-    }
-
     public static Music Instance { get; private set; }
 
     [Header("Audio Sources")]
     public AudioSource musicAudioSource;
     public AudioSource ambientAudioSource;
+
+    [Header("Music Clips")]
+    public List<AudioClip> musicBattleClips = new();
+    public List<AudioClip> musicBattleWonClips = new();
+    public List<AudioClip> musicCitySmallClips = new();
+    public List<AudioClip> musicCityBigClips = new();
+    public List<AudioClip> musicForestClips = new();
+    public List<AudioClip> musicGrasslandsClips = new();
+    public List<AudioClip> musicPlainsClips = new();
+    public List<AudioClip> musicHillsClips = new();
+    public List<AudioClip> musicMountainsClips = new();
+    public List<AudioClip> musicDesertClips = new();
+    public List<AudioClip> musicSwampClips = new();
+    public List<AudioClip> musicWastelandsClips = new();
+    public List<AudioClip> musicShoreClips = new();
+    public List<AudioClip> musicShallowWaterClips = new();
+    public List<AudioClip> musicDeepWaterClips = new();
+    public List<AudioClip> musicGenericClips = new();
+
+    [Header("Ambient Clips")]
+    public List<AudioClip> ambientForestClips = new();
+    public List<AudioClip> ambientGrasslandsClips = new();
+    public List<AudioClip> ambientPlainsClips = new();
+    public List<AudioClip> ambientHillsClips = new();
+    public List<AudioClip> ambientMountainsClips = new();
+    public List<AudioClip> ambientDesertClips = new();
+    public List<AudioClip> ambientSwampClips = new();
+    public List<AudioClip> ambientWastelandsClips = new();
+    public List<AudioClip> ambientShoreClips = new();
+    public List<AudioClip> ambientShallowWaterClips = new();
+    public List<AudioClip> ambientDeepWaterClips = new();
+    public List<AudioClip> ambientCitySmallClips = new();
+    public List<AudioClip> ambientCityBigClips = new();
 
     [Header("Playback")]
     public bool playOnStart = true;
@@ -77,13 +52,12 @@ public class Music : MonoBehaviour
     public float crossfadeDuration = 1.5f;
     public float ambientFadeDuration = 1.0f;
     public float minSwitchSeconds = 6f;
+    public float battleMusicHoldSeconds = 10f;
 
-    private readonly Dictionary<string, AudioClip> clipByPath = new();
-    private readonly Dictionary<MusicTag, List<AudioClip>> tracksByTag = new();
-    private readonly Dictionary<AmbientTag, List<AudioClip>> ambientByTag = new();
-
-    private MusicTag currentMusicTag = MusicTag.Generic;
-    private AmbientTag currentAmbientTag = AmbientTag.Generic;
+    private readonly Dictionary<string, AudioClip> stablePickByKey = new();
+    private string currentMusicKey;
+    private string currentAmbientKey;
+    private TerrainEnum? currentAmbientTerrain;
     private float lastSwitchTime = -999f;
     private Coroutine musicFadeRoutine;
     private Coroutine ambientFadeRoutine;
@@ -92,6 +66,14 @@ public class Music : MonoBehaviour
     private float previousMusicTime;
     private bool previousMusicLoop;
     private Vector2Int lastContextHex = Vector2Int.one * -1;
+    private float lastBattleMusicTime = -999f;
+    private string lastBattleMusicKey;
+    private AudioClip lastBattleClip;
+
+    private void OnValidate()
+    {
+        EnsureAudioClipLists();
+    }
 
     private void Awake()
     {
@@ -103,14 +85,14 @@ public class Music : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        LoadUsedMusic();
+        EnsureAudioClipLists();
     }
 
     private void Start()
     {
         if (playOnStart)
         {
-            SetContext(MusicTag.Title, AmbientTag.Generic, force: true, playAmbient: false);
+            SetContext(null, null, force: true, playAmbient: false);
         }
         if (ambientAudioSource != null)
         {
@@ -118,16 +100,57 @@ public class Music : MonoBehaviour
         }
     }
 
+    private void EnsureAudioClipLists()
+    {
+        var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        foreach (var field in fields)
+        {
+            if (field.FieldType == typeof(List<AudioClip>) && field.GetValue(this) == null)
+            {
+                field.SetValue(this, new List<AudioClip>());
+            }
+        }
+    }
+
     public void UpdateForHex(Hex hex)
     {
-        if (hex == null) return;
         Game g = FindFirstObjectByType<Game>();
-        if (g == null || !g.started) return;
+        if (g == null || !g.started)
+        {
+            SetContext(null, null, force: true, playAmbient: false);
+            StopAmbient();
+            return;
+        }
+        if (hex == null)
+        {
+            SetContext(null, null, force: true, playAmbient: false);
+            StopAmbient();
+            return;
+        }
         if (eventActive) return;
         if (hex.v2 == lastContextHex) return;
         lastContextHex = hex.v2;
-        var targetAmbient = DetermineAmbientTagForHex(hex);
-        SetContext(currentMusicTag, targetAmbient, playAmbient: true);
+        var targetMusic = (TerrainEnum?)hex.terrainType;
+        var targetAmbient = (TerrainEnum?)hex.terrainType;
+        PC pc = hex.GetPC();
+        bool battleOverride = IsBattleMusicActive();
+        AudioClip cityMusicClip = PickCityMusicClip(pc);
+        AudioClip cityAmbientClip = PickCityAmbientClip(pc);
+        string cityAmbientKey = GetCityAmbientKey(pc);
+        if (battleOverride && lastBattleClip != null)
+        {
+            SetContext(null, targetAmbient, playAmbient: true, musicOverride: lastBattleClip, musicOverrideKey: lastBattleMusicKey, ambientOverride: cityAmbientClip, ambientOverrideKey: cityAmbientKey);
+            return;
+        }
+
+        if (cityMusicClip != null)
+        {
+            SetContext(null, targetAmbient, playAmbient: true, musicOverride: cityMusicClip, musicOverrideKey: GetCityMusicKey(pc), ambientOverride: cityAmbientClip, ambientOverrideKey: cityAmbientKey);
+        }
+        else
+        {
+            SetContext(targetMusic, targetAmbient, playAmbient: true, ambientOverride: cityAmbientClip, ambientOverrideKey: cityAmbientKey);
+        }
     }
 
     public void PlayEventMusic()
@@ -160,22 +183,46 @@ public class Music : MonoBehaviour
         previousMusicTime = 0f;
     }
 
-    private void SetContext(MusicTag musicTag, AmbientTag ambientTag, bool force = false, bool playAmbient = true)
+    public void PlayBattleMusic()
+    {
+        var clip = PickStableClip(musicBattleClips, "music_battle");
+        if (clip == null) clip = PickStableClip(musicGenericClips, "music_battle_generic");
+        if (clip != null) CrossfadeMusic(clip);
+        lastBattleClip = clip;
+        lastBattleMusicKey = "music_battle";
+        lastBattleMusicTime = Time.time;
+    }
+
+    public void PlayBattleWonMusic()
+    {
+        var clip = PickStableClip(musicBattleWonClips, "music_battle_won");
+        if (clip == null) clip = PickStableClip(musicBattleClips, "music_battle");
+        if (clip == null) clip = PickStableClip(musicGenericClips, "music_battle_generic");
+        if (clip != null) CrossfadeMusic(clip);
+        lastBattleClip = clip;
+        lastBattleMusicKey = "music_battle_won";
+        lastBattleMusicTime = Time.time;
+    }
+
+    private void SetContext(TerrainEnum? musicTerrain, TerrainEnum? ambientTerrain, bool force = false, bool playAmbient = true, AudioClip musicOverride = null, string musicOverrideKey = null, AudioClip ambientOverride = null, string ambientOverrideKey = null)
     {
         if (!force && Time.time - lastSwitchTime < minSwitchSeconds) return;
 
-        if (musicTag != currentMusicTag || force)
+        string desiredMusicKey = musicOverrideKey ?? (musicTerrain.HasValue ? $"music_{musicTerrain.Value}" : "music_generic");
+        if (desiredMusicKey != currentMusicKey || force)
         {
-            var clip = PickRandom(tracksByTag, musicTag, MusicTag.Generic, musicAudioSource != null ? musicAudioSource.clip : null);
+            var clip = musicOverride ?? PickMusicClip(musicTerrain);
             if (clip != null) CrossfadeMusic(clip);
-            currentMusicTag = musicTag;
+            currentMusicKey = desiredMusicKey;
         }
 
-        if (playAmbient && (ambientTag != currentAmbientTag || force))
+        string desiredAmbientKey = ambientOverrideKey ?? (ambientTerrain.HasValue ? $"ambient_{ambientTerrain.Value}" : "ambient_none");
+        if (playAmbient && (desiredAmbientKey != currentAmbientKey || force))
         {
-            var clip = PickRandom(ambientByTag, ambientTag, AmbientTag.Generic, ambientAudioSource != null ? ambientAudioSource.clip : null);
+            var clip = ambientOverride ?? PickStableClip(GetAmbientClips(ambientTerrain), $"ambient_{ambientTerrain}");
             if (clip != null) CrossfadeAmbient(clip);
-            currentAmbientTag = ambientTag;
+            currentAmbientTerrain = ambientTerrain;
+            currentAmbientKey = desiredAmbientKey;
         }
 
         lastSwitchTime = Time.time;
@@ -185,116 +232,132 @@ public class Music : MonoBehaviour
     {
         if (ambientAudioSource == null) return;
         ambientAudioSource.Stop();
-        currentAmbientTag = AmbientTag.Generic;
+        currentAmbientTerrain = null;
+        currentAmbientKey = null;
     }
 
-    private void LoadUsedMusic()
+    private AudioClip PickStableClip(List<AudioClip> clips, string key)
     {
-        TextAsset jsonFile = Resources.Load<TextAsset>("music");
-        if (jsonFile == null)
+        if (clips == null || clips.Count == 0) return null;
+        if (stablePickByKey.TryGetValue(key, out var cached) && cached != null) return cached;
+
+        AudioClip chosen = null;
+        for (int i = 0; i < clips.Count; i++)
         {
-            Debug.LogWarning("Music.json not found in Resources.");
-            return;
-        }
-
-        MusicCollection collection = JsonUtility.FromJson<MusicCollection>(jsonFile.text);
-        if (collection == null || collection.music == null) return;
-
-        foreach (var entry in collection.music)
-        {
-            if (entry == null || !entry.used || string.IsNullOrWhiteSpace(entry.path)) continue;
-            var clip = LoadClipByPath(entry.path);
-            if (!clip) continue;
-
-            clipByPath[entry.path] = clip;
-            if (IsAmbient(entry.path))
+            var candidate = clips[UnityEngine.Random.Range(0, clips.Count)];
+            if (candidate != null)
             {
-                var tag = ClassifyAmbient(entry.path);
-                AddToMap(ambientByTag, tag, clip);
-            }
-            else
-            {
-                var tag = ClassifyMusic(entry.path);
-                AddToMap(tracksByTag, tag, clip);
+                chosen = candidate;
+                break;
             }
         }
-    }
 
-    private static bool IsAmbient(string path)
-    {
-        return path.ToLowerInvariant().Contains("/nature sounds/");
-    }
-
-    private static MusicTag ClassifyMusic(string path)
-    {
-        string low = path.ToLowerInvariant();
-        if (low.Contains("title")) return MusicTag.Title;
-        if (low.Contains("credits")) return MusicTag.Credits;
-        if (low.Contains("victory") || low.Contains("fanfare")) return MusicTag.Victory;
-        if (low.Contains("final boss")) return MusicTag.FinalBoss;
-        if (low.Contains("boss")) return MusicTag.Boss;
-        if (low.Contains("battle")) return MusicTag.Battle;
-        if (low.Contains("town")) return MusicTag.Town;
-        if (low.Contains("city")) return MusicTag.City;
-        if (low.Contains("castle")) return MusicTag.City;
-        if (low.Contains("bazaar") || low.Contains("store")) return MusicTag.Bazaar;
-        if (low.Contains("world map")) return MusicTag.World;
-        if (low.Contains("overworld") || low.Contains("adventure") || low.Contains("journey")) return MusicTag.Overworld;
-        if (low.Contains("dungeon") || low.Contains("cave")) return MusicTag.Dungeon;
-        if (low.Contains("desert")) return MusicTag.Desert;
-        if (low.Contains("jungle")) return MusicTag.Jungle;
-        if (low.Contains("forest")) return MusicTag.Forest;
-        if (low.Contains("sail") || low.Contains("sea") || low.Contains("island")) return MusicTag.Sea;
-        if (low.Contains("shrine")) return MusicTag.Shrine;
-        if (low.Contains("chase")) return MusicTag.Chase;
-        if (low.Contains("hero")) return MusicTag.Hero;
-        if (low.Contains("evil")) return MusicTag.Evil;
-        if (low.Contains("parting")) return MusicTag.Parting;
-        if (low.Contains("downtime")) return MusicTag.Downtime;
-        if (low.Contains("friendship") || low.Contains("love")) return MusicTag.Love;
-        return MusicTag.Generic;
-    }
-
-    private static AmbientTag ClassifyAmbient(string path)
-    {
-        string low = path.ToLowerInvariant();
-        if (low.Contains("forest")) return AmbientTag.Forest;
-        if (low.Contains("sea")) return AmbientTag.Water;
-        if (low.Contains("river") || low.Contains("stream")) return AmbientTag.River;
-        if (low.Contains("waterfall")) return AmbientTag.Waterfall;
-        if (low.Contains("wind")) return AmbientTag.Wind;
-        if (low.Contains("rain")) return AmbientTag.Rain;
-        if (low.Contains("cave") || low.Contains("cavern")) return AmbientTag.Cave;
-        if (low.Contains("fire")) return AmbientTag.Fire;
-        if (low.Contains("night")) return AmbientTag.Night;
-        return AmbientTag.Generic;
-    }
-
-    private static void AddToMap<T>(Dictionary<T, List<AudioClip>> map, T tag, AudioClip clip)
-    {
-        if (!map.TryGetValue(tag, out var list))
+        if (chosen == null)
         {
-            list = new List<AudioClip>();
-            map[tag] = list;
-        }
-        list.Add(clip);
-    }
-
-    private static AudioClip PickRandom<T>(Dictionary<T, List<AudioClip>> map, T tag, T fallbackTag, AudioClip avoid)
-    {
-        if (!map.TryGetValue(tag, out var list) || list.Count == 0)
-        {
-            if (map.TryGetValue(fallbackTag, out var fallback) && fallback.Count > 0) return fallback[0];
-            return null;
+            foreach (var candidate in clips)
+            {
+                if (candidate != null)
+                {
+                    chosen = candidate;
+                    break;
+                }
+            }
         }
 
-        if (list.Count == 1) return list[0];
-        for (int i = 0; i < 4; i++)
+        if (chosen != null)
         {
-            var candidate = list[UnityEngine.Random.Range(0, list.Count)];
-            if (candidate != avoid) return candidate;
+            stablePickByKey[key] = chosen;
         }
-        return list[0];
+        return chosen;
+    }
+
+    private static string GetCityMusicKey(PC pc)
+    {
+        if (pc == null) return null;
+        return (int)pc.citySize <= 2 ? "music_city_small" : "music_city_big";
+    }
+
+    private static string GetCityAmbientKey(PC pc)
+    {
+        if (pc == null) return null;
+        return (int)pc.citySize <= 2 ? "ambient_city_small" : "ambient_city_big";
+    }
+
+    private AudioClip PickCityMusicClip(PC pc)
+    {
+        if (pc == null || pc.citySize == PCSizeEnum.NONE) return null;
+        bool smallCity = (int)pc.citySize <= 2;
+        var clips = smallCity ? musicCitySmallClips : musicCityBigClips;
+        string key = smallCity ? "music_city_small" : "music_city_big";
+        return PickStableClip(clips, key);
+    }
+
+    private AudioClip PickCityAmbientClip(PC pc)
+    {
+        if (pc == null || pc.citySize == PCSizeEnum.NONE) return null;
+        bool smallCity = (int)pc.citySize <= 2;
+        var clips = smallCity ? ambientCitySmallClips : ambientCityBigClips;
+        string key = smallCity ? "ambient_city_small" : "ambient_city_big";
+        return PickStableClip(clips, key);
+    }
+
+    private bool IsBattleMusicActive()
+    {
+        return Time.time - lastBattleMusicTime <= battleMusicHoldSeconds;
+    }
+    private AudioClip PickMusicClip(TerrainEnum? terrain)
+    {
+        if (terrain == null)
+        {
+            return PickStableClip(musicGenericClips, "music_generic");
+        }
+
+        var terrainClips = GetMusicClips(terrain.Value);
+        if (terrainClips != null && terrainClips.Count > 0)
+        {
+            return PickStableClip(terrainClips, $"music_{terrain.Value}");
+        }
+
+        return PickStableClip(musicGenericClips, $"music_generic_{terrain.Value}");
+    }
+
+    private List<AudioClip> GetMusicClips(TerrainEnum terrain)
+    {
+        return terrain switch
+        {
+            TerrainEnum.forest => musicForestClips,
+            TerrainEnum.grasslands => musicGrasslandsClips,
+            TerrainEnum.plains => musicPlainsClips,
+            TerrainEnum.hills => musicHillsClips,
+            TerrainEnum.mountains => musicMountainsClips,
+            TerrainEnum.desert => musicDesertClips,
+            TerrainEnum.swamp => musicSwampClips,
+            TerrainEnum.wastelands => musicWastelandsClips,
+            TerrainEnum.shore => musicShoreClips,
+            TerrainEnum.shallowWater => musicShallowWaterClips,
+            TerrainEnum.deepWater => musicDeepWaterClips,
+            _ => null
+        };
+    }
+
+    private List<AudioClip> GetAmbientClips(TerrainEnum? terrain)
+    {
+        if (terrain == null) return null;
+        return terrain.Value switch
+        {
+            TerrainEnum.forest => ambientForestClips,
+            TerrainEnum.grasslands => ambientGrasslandsClips,
+            TerrainEnum.plains => ambientPlainsClips,
+            TerrainEnum.hills => ambientHillsClips,
+            TerrainEnum.mountains => ambientMountainsClips,
+            TerrainEnum.desert => ambientDesertClips,
+            TerrainEnum.swamp => ambientSwampClips,
+            TerrainEnum.wastelands => ambientWastelandsClips,
+            TerrainEnum.shore => ambientShoreClips,
+            TerrainEnum.shallowWater => ambientShallowWaterClips,
+            TerrainEnum.deepWater => ambientDeepWaterClips,
+            _ => null
+        };
     }
 
     private void CrossfadeMusic(AudioClip clip)
@@ -351,92 +414,8 @@ public class Music : MonoBehaviour
         source.volume = targetVolume;
     }
 
-    private static AudioClip LoadClipByPath(string path)
-    {
-        if (string.IsNullOrWhiteSpace(path)) return null;
-#if UNITY_EDITOR
-        return UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(path);
-#else
-        string resourcePath = ToResourcesPath(path);
-        if (string.IsNullOrWhiteSpace(resourcePath)) return null;
-        return Resources.Load<AudioClip>(resourcePath);
-#endif
-    }
-
-    private static string ToResourcesPath(string assetPath)
-    {
-        string normalized = assetPath.Replace("\\", "/");
-        int resourcesIndex = normalized.IndexOf("/Resources/", StringComparison.OrdinalIgnoreCase);
-        if (resourcesIndex < 0) return null;
-
-        string relative = normalized[(resourcesIndex + "/Resources/".Length)..];
-        return Path.ChangeExtension(relative, null);
-    }
-
-    private static MusicTag DetermineMusicTagForHex(Hex hex)
-    {
-        if (hex == null) return MusicTag.Generic;
-
-        var pc = hex.GetPC();
-        if (pc != null)
-        {
-            if (pc.citySize >= PCSizeEnum.city) return MusicTag.City;
-            if (pc.citySize >= PCSizeEnum.town) return MusicTag.Town;
-        }
-
-        if (hex.IsWaterTerrain()) return MusicTag.Sea;
-        return hex.terrainType switch
-        {
-            TerrainEnum.forest => MusicTag.Forest,
-            TerrainEnum.desert => MusicTag.Desert,
-            TerrainEnum.wastelands => MusicTag.Evil,
-            TerrainEnum.mountains => MusicTag.Shrine,
-            TerrainEnum.hills => MusicTag.Shrine,
-            TerrainEnum.swamp => MusicTag.Dungeon,
-            TerrainEnum.shore => MusicTag.Sea,
-            TerrainEnum.deepWater => MusicTag.Sea,
-            TerrainEnum.shallowWater => MusicTag.Sea,
-            _ => MusicTag.Overworld
-        };
-    }
-
-    private static AmbientTag DetermineAmbientTagForHex(Hex hex)
-    {
-        if (hex == null) return AmbientTag.Generic;
-
-        if (hex.IsWaterTerrain()) return AmbientTag.Water;
-        return hex.terrainType switch
-        {
-            TerrainEnum.forest => AmbientTag.Forest,
-            TerrainEnum.desert => AmbientTag.Wind,
-            TerrainEnum.wastelands => AmbientTag.Wind,
-            TerrainEnum.mountains => AmbientTag.Wind,
-            TerrainEnum.hills => AmbientTag.Wind,
-            TerrainEnum.swamp => AmbientTag.Night,
-            TerrainEnum.shore => AmbientTag.Water,
-            _ => AmbientTag.Generic
-        };
-    }
-
     private AudioClip PickEventClip()
     {
-        var priorities = new[]
-        {
-            MusicTag.Downtime,
-            MusicTag.Love,
-            MusicTag.Parting,
-            MusicTag.World,
-            MusicTag.Generic
-        };
-
-        foreach (var tag in priorities)
-        {
-            if (tracksByTag.TryGetValue(tag, out var list) && list.Count > 0)
-            {
-                return list[UnityEngine.Random.Range(0, list.Count)];
-            }
-        }
-
-        return null;
+        return PickStableClip(musicGenericClips, "music_event");
     }
 }

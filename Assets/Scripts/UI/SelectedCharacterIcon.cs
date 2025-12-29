@@ -62,7 +62,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         actionedIcon.SetActive(c.hasActionedThisTurn);
         unactionedIcon.SetActive(!actionedIcon.activeSelf);
         health.gameObject.SetActive(true);
-        health.fillAmount = c.health / 100;
+        health.fillAmount = c.health / 100f;
 
         foreach (Transform artifactChild in artifactsGridLayoutTransform)
         {

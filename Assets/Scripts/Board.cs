@@ -355,7 +355,7 @@ public class Board : MonoBehaviour
         FindFirstObjectByType<Layout>().GetActionsManager().Hide();
         FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Hide();
         SetSelectedCharacter(null);
-        Music.Instance?.StopAmbient();
+        Music.Instance?.UpdateForHex(null);
     }
 
     public void UnselectCharacter()
@@ -1084,7 +1084,7 @@ public class Board : MonoBehaviour
             if ((!wasWater && isWater) || (wasWater && !isWater) || finishMovement)
             {
                 character.moved = character.GetMaxMovement();
-                if(!wasWater && isWater) MessageDisplayNoUI.ShowMessage(newHex, character, "Embarked", Color.cyan);
+                if(!wasWater && isWater) MessageDisplayNoUI.ShowMessage(newHex, character, "Set Sail!", Color.cyan);
                 if(wasWater && !isWater) MessageDisplayNoUI.ShowMessage(newHex, character, "Disembarked", Color.cyan);
             }
             else
@@ -1097,7 +1097,7 @@ public class Board : MonoBehaviour
                 bool playerCanSee = g.player.visibleHexes.Contains(newHex) && newHex.IsHexSeen();
                 if (playerCanSee)
                 {
-                    BoardNavigator.Instance?.EnqueueEnemyFocus(newHex);
+                    BoardNavigator.Instance?.EnqueueEnemyFocus(newHex, character.GetOwner());
                 }
             }
 

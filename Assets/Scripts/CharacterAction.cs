@@ -265,7 +265,7 @@ public class CharacterAction : SearcherByName
         else if (PlayerCanSeeHex(character != null ? character.hex : null))
         {
             MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.red);
-            BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex);
+            BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex, character.GetOwner());
         }
         if (!isAI) game.PointToCharacterWithMissingActions();
         if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
@@ -290,7 +290,12 @@ public class CharacterAction : SearcherByName
             character.hasActionedThisTurn = true;
 
             bool failed = false;
-            if (UnityEngine.Random.Range(0, 100) < difficulty) failed = true;
+            int effectiveDifficulty = difficulty;
+            if (isAI && ShouldApplyUnscoutedPenalty(character))
+            {
+                effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + 25);
+            }
+            if (UnityEngine.Random.Range(0, 100) < effectiveDifficulty) failed = true;
 
             // Should be impossible as the button will show not show up but just in case
             if(!ResourcesAvailable()) failed = true;
@@ -327,7 +332,7 @@ public class CharacterAction : SearcherByName
                 if (PlayerCanSeeHex(character.hex))
                 {
                     MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.yellow);
-                    BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex);
+                    BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex, character.GetOwner());
                 }
             }
             
@@ -372,47 +377,40 @@ public class CharacterAction : SearcherByName
                 {
                     character.GetOwner().RemoveLeather(leatherCost);
                     // Debug.Log($"{character.characterName} spends {leatherCost} leather");
-                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"leather\"/> -{leatherCost}", Color.red);
                 }
                 if (timberCost > 0)
                 {
                     character.GetOwner().RemoveTimber(timberCost);
                     // Debug.Log($"{character.characterName} spends {timberCost} timberCost");
-                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"timber\"/> -{timberCost}", Color.red);
                 }
                 if (mountsCost > 0)
                 {
                     character.GetOwner().RemoveMounts(mountsCost);
                     // Debug.Log($"{character.characterName} spends {mountsCost} mounts");
-                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mounts\"/> -{mountsCost}", Color.red);
                 }
 
                 if (ironCost > 0)
                 {
                     character.GetOwner().RemoveIron(ironCost);
                     // Debug.Log($"{character.characterName} spends {ironCost} iron");
-                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"iron\"/> -{ironCost}", Color.red);
                 }
 
                 if (steelCost > 0)
                 {
                     character.GetOwner().RemoveSteel(steelCost);
                     // Debug.Log($"{character.characterName} spends {steelCost} steel");
-                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"steel\"/> -{steelCost}", Color.red);
                 }
 
                 if (mithrilCost > 0)
                 {
                     character.GetOwner().RemoveMithril(mithrilCost);
                     // Debug.Log($"{character.characterName} spends {mithrilCost} mithril");
-                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"mithril\"/> -{mithrilCost}", Color.red);
                 }
 
                 if (goldCost > 0)
                 {
                     character.GetOwner().RemoveGold(goldCost);
                     // Debug.Log($"{character.characterName} spends {goldCost} gold");
-                    if (!isAI) MessageDisplay.ShowMessage($"<sprite name=\"gold\"/> -{goldCost}", Color.red);
                 }
             }
 
@@ -464,7 +462,25 @@ public class CharacterAction : SearcherByName
         AlignmentEnum actorAlignment = actor.GetAlignment();
         if (actorAlignment != AlignmentEnum.neutral && target.GetAlignment() == actorAlignment) return true;
 
-        return actor.hex.IsScoutedBy(actorOwner);
+        return ShouldIgnoreScouting(actorOwner) || actor.hex.IsScoutedBy(actorOwner);
+    }
+
+    private bool ShouldApplyUnscoutedPenalty(Character actor)
+    {
+        if (actor == null || actor.hex == null) return false;
+        Leader owner = actor.GetOwner();
+        if (owner == null) return false;
+        if (!ShouldIgnoreScouting(owner)) return false;
+        return !actor.hex.IsScoutedBy(owner);
+    }
+
+    private bool ShouldIgnoreScouting(Leader leader)
+    {
+        if (leader == null) return false;
+        if (leader is NonPlayableLeader) return true;
+        Game g = game != null ? game : FindFirstObjectByType<Game>();
+        if (leader is PlayableLeader pl && g != null && g.player != pl) return true;
+        return false;
     }
 
     protected Character FindEnemyCharacterTargetAtHex(Character c)
@@ -1489,7 +1505,7 @@ public class CharacterAction : SearcherByName
         Sounds.Instance?.PlayVoicePain(character);
         if (!isAI)
         {
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{character.characterName} suffers {damage} damage", Color.red);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"-{damage} <sprite name=\"health\">", Color.red);
         }
         if (character.health < 1)
         {

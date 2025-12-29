@@ -19,6 +19,13 @@ public class Teleport: Spell
             Hex randomHex = unseenHexes[UnityEngine.Random.Range(0, unseenHexes.Count)];
             int radius = Math.Max(0, ApplySpellEffectMultiplier(c, c.GetMage()));
             randomHex.RevealArea(radius);
+            var radiusHexes = randomHex.GetHexesInRadius(radius);
+            for (int i = 0; i < radiusHexes.Count; i++)
+            {
+                Hex hex = radiusHexes[i];
+                if (hex == null) continue;
+                hex.RefreshVisibilityRendering();
+            }
             board.MoveCharacterOneHex(c, c.hex, randomHex, true);
             randomHex.LookAt();
             MessageDisplay.ShowMessage($"{c.characterName} warped to an unknown place", Color.green);

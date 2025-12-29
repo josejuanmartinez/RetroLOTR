@@ -1,91 +1,121 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 public class Sounds : SearcherByName
 {
-    [Serializable]
-    private class SoundCollection
-    {
-        public List<SoundEntry> sounds = new();
-    }
-
-    [Serializable]
-    private class SoundEntry
-    {
-        public string path;
-        public string category;
-        public string suggestedUse;
-        public bool used;
-        public float durationSeconds;
-    }
-
-    private class SoundRuntime
-    {
-        public SoundEntry entry;
-        public AudioClip clip;
-        public HashSet<string> tokens = new();
-        public string key;
-        public string category;
-    }
-
     private class VoiceSet
     {
         public AudioClip expression;
         public AudioClip attack;
         public AudioClip effort;
         public AudioClip pain;
+        public int voiceIndex;
     }
 
     public static Sounds Instance { get; private set; }
 
     [Header("Audio")]
-    public List<AudioClip> sounds = new();
     public AudioSource soundAudioSource;
+
+    [Header("UI SFX")]
+    public List<AudioClip> uiHoverClips = new();
+    public List<AudioClip> uiClickClips = new();
+    public List<AudioClip> uiDeniedClips = new();
+    public List<AudioClip> uiPositiveClips = new();
+    public List<AudioClip> uiNegativeClips = new();
+    public List<AudioClip> uiExitClips = new();
+
+    [Header("Notifications")]
+    public List<AudioClip> messageClips = new();
+    public List<AudioClip> artifactFoundClips = new();
+
+    [Header("Speech Intro")]
+    public List<AudioClip> speechIntroFreePeopleClips = new();
+    public List<AudioClip> speechIntroDarkServantsClips = new();
+    public List<AudioClip> speechIntroNeutralClips = new();
+
+    [Header("Voice - Race")]
+    public List<AudioClip> voiceOrcClips = new();
+    public List<AudioClip> voiceTrollClips = new();
+    public List<AudioClip> voiceGoblinClips = new();
+    public List<AudioClip> voiceNazgulClips = new();
+    public List<AudioClip> voiceUndeadClips = new();
+    public List<AudioClip> voiceDragonClips = new();
+    public List<AudioClip> voiceSpiderClips = new();
+    public List<AudioClip> voiceBalrogClips = new();
+    public List<AudioClip> voiceEagleClips = new();
+    public List<AudioClip> voiceEntClips = new();
+    public List<AudioClip> voiceBeorningClips = new();
+    public List<AudioClip> voiceWoseClips = new();
+    public List<AudioClip> voiceMaiaClips = new();
+    public List<AudioClip> voiceGenericClips = new();
+
+    [Header("Voice - Humanoid")]
+    public List<AudioClip> voiceExpressionMaleClips = new();
+    public List<AudioClip> voiceExpressionFemaleClips = new();
+    public List<AudioClip> voiceAttackMaleClips = new();
+    public List<AudioClip> voiceAttackFemaleClips = new();
+    public List<AudioClip> voiceEffortMaleClips = new();
+    public List<AudioClip> voiceEffortFemaleClips = new();
+    public List<AudioClip> voicePainMaleClips = new();
+    public List<AudioClip> voicePainFemaleClips = new();
+
+    [Header("Action SFX")]
+    public List<AudioClip> actionExecuteClips = new();
+    public List<AudioClip> actionSuccessDefaultClips = new();
+    public List<AudioClip> speedUpClips = new();
+    public List<AudioClip> actionSuccessIceClips = new();
+    public List<AudioClip> actionSuccessFireClips = new();
+    public List<AudioClip> actionSuccessLightningClips = new();
+    public List<AudioClip> actionSuccessHealClips = new();
+    public List<AudioClip> actionSuccessCurseClips = new();
+    public List<AudioClip> actionSuccessTeleportClips = new();
+    public List<AudioClip> actionSuccessScryClips = new();
+    public List<AudioClip> actionSuccessArtifactClips = new();
+    public List<AudioClip> actionSuccessCoinClips = new();
+    public List<AudioClip> actionSuccessBuildClips = new();
+    public List<AudioClip> actionSuccessAttackClips = new();
+    public List<AudioClip> actionSuccessDestroyClips = new();
+    public List<AudioClip> actionFailClips = new();
+
+    [Header("Combat/Magic SFX")]
+    public List<AudioClip> combatImpactClips = new();
+    public List<AudioClip> magicClips = new();
+    public List<AudioClip> buffClips = new();
+    public List<AudioClip> coinClips = new();
+    public List<AudioClip> keyClips = new();
+
+    [Header("Movement SFX")]
+    public float footstepMinInterval = 0.12f;
+    public float footstepVolume = 1.6f;
+    public float voiceVolume = 2.0f;
+    public List<AudioClip> footstepForestClips = new();
+    public List<AudioClip> footstepGrasslandsClips = new();
+    public List<AudioClip> footstepPlainsClips = new();
+    public List<AudioClip> footstepHillsClips = new();
+    public List<AudioClip> footstepMountainsClips = new();
+    public List<AudioClip> footstepDesertClips = new();
+    public List<AudioClip> footstepSwampClips = new();
+    public List<AudioClip> footstepWastelandsClips = new();
+    public List<AudioClip> footstepShoreClips = new();
+    public List<AudioClip> footstepDefaultClips = new();
+    public List<AudioClip> movementWaterClips = new();
 
     [Header("Queue")]
     public int maxQueueSize = 8;
     public float globalMinInterval = 0.05f;
 
-    private readonly Dictionary<string, AudioClip> clipByPath = new();
-    private readonly Dictionary<string, SoundRuntime> runtimeByKey = new();
-    private readonly Dictionary<string, List<SoundRuntime>> runtimeByCategory = new();
-    private readonly List<SoundRuntime> allRuntime = new();
-
     private readonly Queue<SfxRequest> queue = new();
     private readonly Dictionary<string, float> lastPlayByKey = new();
+    private readonly Dictionary<string, AudioClip> stablePickByKey = new();
     private float lastPlayTime = -999f;
     private Coroutine queueRoutine;
     private bool speechActive;
     private float speechEndTime;
     private float lastFootstepTime = -999f;
     private readonly Dictionary<int, VoiceSet> voiceSetByCharacterId = new();
-
-    [Header("Movement SFX")]
-    public float footstepMinInterval = 0.12f;
-    public float footstepVolume = 1.6f;
-    public float voiceVolume = 2.0f;
-
-    private const string CategoryUi = "10_ui_menu_sfx";
-    private const string CategoryButtons = "button_clicks";
-    private const string CategoryMenu = "menu sounds";
-    private const string CategoryPops = "pops and jingles";
-    private const string CategorySpecialPops = "special pops";
-    private const string CategoryMovement = "12_player_movement_sfx";
-    private const string CategoryFootsteps = "footsteps - essentials";
-    private const string CategoryWeapons = "weapons";
-    private const string CategoryBattle = "10_battle_sfx";
-    private const string CategoryMagic = "8_atk_magic_sfx";
-    private const string CategoryBuffs = "8_buffs_heals_sfx";
-    private const string CategoryCountdown = "countdown";
-    private const string CategoryClock = "ticking clock";
-    private const string CategoryCoin = "coin";
-    private const string CategoryKeys = "keys";
-    private const string CategoryJingles = "pops and jingles";
-    private const string CategorySplat = "splat_splash_squish";
-    private const string CategoryVoices = "voices sfx";
 
     private struct SfxRequest
     {
@@ -97,6 +127,7 @@ public class Sounds : SearcherByName
 
     private void Awake()
     {
+        EnsureAudioClipLists();
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -105,12 +136,7 @@ public class Sounds : SearcherByName
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        if (soundAudioSource == null)
-        {
-            Game g = FindFirstObjectByType<Game>();
-            if (g != null) soundAudioSource = g.soundPlayer;
-        }
-        LoadUsedSounds();
+
         if (soundAudioSource != null && soundAudioSource.volume < 1f)
         {
             soundAudioSource.volume = 1f;
@@ -118,15 +144,21 @@ public class Sounds : SearcherByName
         }
     }
 
-    public AudioClip GetSoundByName(string name)
+    private void OnValidate()
     {
-        if (string.IsNullOrWhiteSpace(name)) return null;
-        string key = Normalize(name);
-        if (runtimeByKey.TryGetValue(key, out var runtime)) return runtime.clip;
+        EnsureAudioClipLists();
+    }
 
-        AudioClip sound = sounds.Find(x => Normalize(x.name) == key);
-        if (!sound) Debug.LogWarning($"Sound for {name} is not registered. Typo? Forgot to add it?");
-        return sound;
+    private void EnsureAudioClipLists()
+    {
+        var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        foreach (var field in fields)
+        {
+            if (field.FieldType == typeof(List<AudioClip>) && field.GetValue(this) == null)
+            {
+                field.SetValue(this, new List<AudioClip>());
+            }
+        }
     }
 
     public void StopAllSounds()
@@ -139,34 +171,42 @@ public class Sounds : SearcherByName
 
     public void PlayUiHover()
     {
-        EnqueueByKeywords(new[] { "hover", "over", "select", "focus" }, CategoryUi, 0.08f, 0.7f);
+        EnqueueFromList(uiHoverClips, "ui_hover", 0.08f, 0.7f);
     }
 
     public void PlayUiClick()
     {
-        EnqueueByKeywords(new[] { "click", "press", "select", "confirm" }, CategoryButtons, 0.06f, 0.8f);
+        EnqueueFromList(uiClickClips, "ui_click", 0.06f, 0.8f);
     }
 
     public void PlayUiDenied()
     {
-        EnqueueByKeywords(new[] { "denied", "error", "fail", "cancel" }, CategoryUi, 0.2f, 0.9f);
+        EnqueueFromList(uiDeniedClips, "ui_denied", 0.2f, 0.9f);
     }
 
     public void PlayPositive()
     {
-        EnqueueByKeywords(new[] { "success", "win", "complete", "jingle", "reward", "gold" }, CategoryJingles, 0.2f, 0.85f);
+        EnqueueFromList(uiPositiveClips, "ui_positive", 0.2f, 0.85f);
     }
 
     public void PlayNegative()
     {
-        EnqueueByKeywords(new[] { "fail", "denied", "error", "lose", "negative" }, CategoryUi, 0.25f, 0.9f);
+        EnqueueFromList(uiNegativeClips, "ui_negative", 0.25f, 0.9f);
     }
 
     public void PlaySpeechIntro(AlignmentEnum alignment)
     {
         if (speechActive && Time.time < speechEndTime) return;
-        var clip = GetSoundByName($"{alignment}_intro");
-        if (!clip || soundAudioSource == null) return;
+        if (soundAudioSource == null) return;
+
+        List<AudioClip> clips = alignment switch
+        {
+            AlignmentEnum.freePeople => speechIntroFreePeopleClips,
+            AlignmentEnum.darkServants => speechIntroDarkServantsClips,
+            _ => speechIntroNeutralClips
+        };
+        var clip = PickStableClip(clips, $"speech_intro_{alignment}");
+        if (!clip) return;
 
         queue.Clear();
         if (queueRoutine != null) StopCoroutine(queueRoutine);
@@ -183,26 +223,25 @@ public class Sounds : SearcherByName
 
     public void PlayVoiceForRace(RacesEnum race)
     {
-        string[] keywords = race switch
+        var clips = race switch
         {
-            RacesEnum.Orc => new[] { "orc" },
-            RacesEnum.Troll => new[] { "troll" },
-            RacesEnum.Goblin => new[] { "goblin" },
-            RacesEnum.Nazgul => new[] { "nazgul" },
-            RacesEnum.Undead => new[] { "undead", "zombie" },
-            RacesEnum.Dragon => new[] { "dragon", "dinosaur" },
-            RacesEnum.Spider => new[] { "spider" },
-            RacesEnum.Balrog => new[] { "demon", "balrog" },
-            RacesEnum.Eagle => new[] { "beast", "creature", "dinosaur" },
-            RacesEnum.Ent => new[] { "beast", "creature" },
-            RacesEnum.Beorning => new[] { "beast", "creature" },
-            RacesEnum.Wose => new[] { "beast", "creature" },
-            RacesEnum.Maia => new[] { "humanoid", "voice" },
-            _ => new[] { "humanoid", "voice", "male", "female" }
+            RacesEnum.Orc => voiceOrcClips,
+            RacesEnum.Troll => voiceTrollClips,
+            RacesEnum.Goblin => voiceGoblinClips,
+            RacesEnum.Nazgul => voiceNazgulClips,
+            RacesEnum.Undead => voiceUndeadClips,
+            RacesEnum.Dragon => voiceDragonClips,
+            RacesEnum.Spider => voiceSpiderClips,
+            RacesEnum.Balrog => voiceBalrogClips,
+            RacesEnum.Eagle => voiceEagleClips,
+            RacesEnum.Ent => voiceEntClips,
+            RacesEnum.Beorning => voiceBeorningClips,
+            RacesEnum.Wose => voiceWoseClips,
+            RacesEnum.Maia => voiceMaiaClips,
+            _ => voiceGenericClips
         };
 
-        var clip = FindClipByKeywords(keywords, CategoryVoices);
-        if (!clip) clip = FindAnyFromCategory(CategoryVoices);
+        var clip = PickStableClip(clips, $"voice_race_{race}");
         if (!clip) return;
         Enqueue(clip, voiceVolume, 0.3f);
     }
@@ -212,8 +251,12 @@ public class Sounds : SearcherByName
         if (character == null) return;
         if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
-        if (!IsHumanoidRace(character.race)) return;
         if (!PlayerCanSeeHex(character.hex)) return;
+        if (!IsHumanoidRace(character.race))
+        {
+            PlayRaceVoice(character, 0.5f);
+            return;
+        }
 
         if (character.health < 50)
         {
@@ -231,8 +274,12 @@ public class Sounds : SearcherByName
         if (character == null) return;
         if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
-        if (!IsHumanoidRace(character.race)) return;
         if (!PlayerCanSeeHex(character.hex)) return;
+        if (!IsHumanoidRace(character.race))
+        {
+            PlayRaceVoice(character, 0.4f);
+            return;
+        }
 
         var voiceSet = GetOrCreateVoiceSet(character);
         if (voiceSet == null || !voiceSet.attack) return;
@@ -244,8 +291,12 @@ public class Sounds : SearcherByName
         if (character == null) return;
         if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
-        if (!IsHumanoidRace(character.race)) return;
         if (!PlayerCanSeeHex(character.hex)) return;
+        if (!IsHumanoidRace(character.race))
+        {
+            PlayRaceVoice(character, 0.4f);
+            return;
+        }
 
         var voiceSet = GetOrCreateVoiceSet(character);
         if (voiceSet == null || !voiceSet.effort) return;
@@ -257,8 +308,12 @@ public class Sounds : SearcherByName
         if (character == null) return;
         if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
-        if (!IsHumanoidRace(character.race)) return;
         if (!PlayerCanSeeHex(character.hex)) return;
+        if (!IsHumanoidRace(character.race))
+        {
+            PlayRaceVoice(character, 0.4f);
+            return;
+        }
 
         var voiceSet = GetOrCreateVoiceSet(character);
         if (voiceSet == null || !voiceSet.pain) return;
@@ -268,7 +323,11 @@ public class Sounds : SearcherByName
     public void PlayVoiceForAction(Character character, string actionName)
     {
         if (character == null || string.IsNullOrWhiteSpace(actionName)) return;
-        if (!IsHumanoidRace(character.race)) return;
+        if (!IsHumanoidRace(character.race))
+        {
+            PlayRaceVoice(character, 0.4f);
+            return;
+        }
 
         string lower = actionName.ToLowerInvariant();
         if (lower.Contains("attack") || lower.Contains("assassinate") || lower.Contains("wound") || lower.Contains("siege"))
@@ -287,17 +346,22 @@ public class Sounds : SearcherByName
 
     public void PlayUiExit()
     {
-        EnqueueByKeywords(new[] { "back", "close", "exit", "cancel" }, CategoryMenu, 0.12f, 0.6f);
+        EnqueueFromList(uiExitClips, "ui_exit", 0.12f, 0.6f);
     }
 
     public void PlayActionExecute()
     {
-        EnqueueByKeywords(new[] { "start", "action", "whoosh" }, CategoryPops, 0.1f, 0.7f);
+        EnqueueFromList(actionExecuteClips, "action_execute", 0.1f, 0.7f);
     }
 
     public void PlayActionSuccess()
     {
-        EnqueueByKeywords(new[] { "success", "win", "complete", "jingle" }, CategoryJingles, 0.3f, 0.9f);
+        EnqueueFromList(actionSuccessDefaultClips, "action_success_default", 0.3f, 0.9f);
+    }
+
+    public void PlaySpeedUp()
+    {
+        EnqueueFromList(speedUpClips, "speed_up", 0.12f, 0.85f);
     }
 
     public void PlayActionSuccess(string actionName)
@@ -312,62 +376,62 @@ public class Sounds : SearcherByName
 
         if (lower.Contains("ice") || lower.Contains("frost"))
         {
-            EnqueueByKeywords(new[] { "ice", "frost" }, CategoryMagic, 0.18f, 0.9f);
+            EnqueueFromList(actionSuccessIceClips, "action_success_ice", 0.18f, 0.9f);
             return;
         }
         if (lower.Contains("fire") || lower.Contains("flame") || lower.Contains("burn"))
         {
-            EnqueueByKeywords(new[] { "fire", "flame" }, CategoryMagic, 0.18f, 0.9f);
+            EnqueueFromList(actionSuccessFireClips, "action_success_fire", 0.18f, 0.9f);
             return;
         }
         if (lower.Contains("lightning") || lower.Contains("storm"))
         {
-            EnqueueByKeywords(new[] { "lightning", "storm" }, CategoryMagic, 0.18f, 0.9f);
+            EnqueueFromList(actionSuccessLightningClips, "action_success_lightning", 0.18f, 0.9f);
             return;
         }
         if (lower.Contains("heal") || lower.Contains("cure") || lower.Contains("restore") || lower.Contains("buff") || lower.Contains("courage"))
         {
-            EnqueueByKeywords(new[] { "heal", "buff", "restore" }, CategoryBuffs, 0.2f, 0.85f);
+            EnqueueFromList(actionSuccessHealClips, "action_success_heal", 0.2f, 0.85f);
             return;
         }
         if (lower.Contains("curse") || lower.Contains("halt") || lower.Contains("darkness"))
         {
-            EnqueueByKeywords(new[] { "dark", "curse", "whoosh" }, CategoryMagic, 0.2f, 0.85f);
+            EnqueueFromList(actionSuccessCurseClips, "action_success_curse", 0.2f, 0.85f);
             return;
         }
         if (lower.Contains("teleport") || lower.Contains("return"))
         {
-            EnqueueByKeywords(new[] { "whoosh", "magic", "portal" }, CategoryMagic, 0.2f, 0.85f);
+            EnqueueFromList(actionSuccessTeleportClips, "action_success_teleport", 0.2f, 0.85f);
             return;
         }
         if (lower.Contains("scry") || lower.Contains("reveal") || lower.Contains("perceive"))
         {
-            EnqueueByKeywords(new[] { "magic", "spark", "chime" }, CategorySpecialPops, 0.2f, 0.7f);
+            EnqueueFromList(actionSuccessScryClips, "action_success_scry", 0.2f, 0.7f);
             return;
         }
         if (lower.Contains("find artifact") || lower.Contains("artifact"))
         {
-            EnqueueByKeywords(new[] { "jingle", "reward", "special" }, CategorySpecialPops, 0.2f, 0.8f);
+            EnqueueFromList(actionSuccessArtifactClips, "action_success_artifact", 0.2f, 0.8f);
             return;
         }
         if (lower.Contains("buy") || lower.Contains("sell") || lower.Contains("steal") || lower.Contains("gold"))
         {
-            EnqueueByKeywords(new[] { "coin", "gold", "pickup" }, CategoryCoin, 0.12f, 0.8f);
+            EnqueueFromList(actionSuccessCoinClips, "action_success_coin", 0.12f, 0.8f);
             return;
         }
         if (lower.Contains("train") || lower.Contains("fortify") || lower.Contains("create camp") || lower.Contains("post camp"))
         {
-            EnqueueByKeywords(new[] { "powerup", "build", "forge" }, "powerup", 0.2f, 0.75f);
+            EnqueueFromList(actionSuccessBuildClips, "action_success_build", 0.2f, 0.75f);
             return;
         }
         if (lower.Contains("attack") || lower.Contains("siege") || lower.Contains("assassinate") || lower.Contains("wound"))
         {
-            EnqueueByKeywords(new[] { "hit", "impact", "slash" }, CategoryBattle, 0.12f, 0.85f);
+            EnqueueFromList(actionSuccessAttackClips, "action_success_attack", 0.12f, 0.85f);
             return;
         }
         if (lower.Contains("destroy") || lower.Contains("sabotage"))
         {
-            EnqueueByKeywords(new[] { "impact", "hit", "break" }, CategoryBattle, 0.12f, 0.85f);
+            EnqueueFromList(actionSuccessDestroyClips, "action_success_destroy", 0.12f, 0.85f);
             return;
         }
 
@@ -376,17 +440,17 @@ public class Sounds : SearcherByName
 
     public void PlayActionFail()
     {
-        EnqueueByKeywords(new[] { "fail", "denied", "error" }, CategoryUi, 0.3f, 0.9f);
+        EnqueueFromList(actionFailClips, "action_fail", 0.3f, 0.9f);
     }
 
     public void PlayMessage()
     {
-        EnqueueByKeywords(new[] { "pop", "notify", "message" }, CategorySpecialPops, 0.15f, 0.6f);
+        EnqueueFromList(messageClips, "message", 0.15f, 0.6f);
     }
 
     public void PlayArtifactFound()
     {
-        EnqueueByKeywords(new[] { "jingle", "reward", "special" }, CategorySpecialPops, 0.2f, 0.9f);
+        EnqueueFromList(artifactFoundClips, "artifact_found", 0.2f, 0.9f);
     }
 
     public void PlayMovement(Hex from, Hex to)
@@ -394,18 +458,22 @@ public class Sounds : SearcherByName
         if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
 
-        string category = CategoryFootsteps;
-        string[] keywords = to != null ? GetFootstepKeywordsForTerrain(to.terrainType) : new[] { "footsteps", "dirt", "ground" };
+        List<AudioClip> clips = footstepDefaultClips;
 
-        if (to != null && (to.IsWaterTerrain() || to.terrainType == TerrainEnum.shore))
+        if (to != null)
         {
-            category = CategorySplat;
-            keywords = new[] { "water", "splash" };
+            if (to.IsWaterTerrain() || to.terrainType == TerrainEnum.shore)
+            {
+                clips = movementWaterClips;
+            }
+            else
+            {
+                clips = GetFootstepClipsForTerrain(to.terrainType);
+            }
         }
 
         if (Time.time - lastFootstepTime < footstepMinInterval) return;
-        var clip = FindClipByKeywords(keywords, category);
-        if (!clip) clip = FindAnyFromCategory(category);
+        var clip = PickRandomClip(clips);
         if (!clip) return;
 
         soundAudioSource.PlayOneShot(clip, footstepVolume);
@@ -415,41 +483,40 @@ public class Sounds : SearcherByName
 
     public void PlayCombatImpact()
     {
-        EnqueueByKeywords(new[] { "hit", "impact", "slash" }, CategoryBattle, 0.08f, 0.85f);
+        EnqueueRandomFromList(combatImpactClips, 0.08f, 0.85f);
     }
 
     public void PlayMagic()
     {
-        EnqueueByKeywords(new[] { "magic", "spell", "cast" }, CategoryMagic, 0.12f, 0.85f);
+        EnqueueRandomFromList(magicClips, 0.12f, 0.85f);
     }
 
     public void PlayBuff()
     {
-        EnqueueByKeywords(new[] { "buff", "heal", "restore" }, CategoryBuffs, 0.12f, 0.8f);
-    }
-
-    public void PlayCountdown()
-    {
-        EnqueueByKeywords(new[] { "tick", "ticking", "clock", "count", "countdown" }, CategoryClock, 0.2f, 0.6f);
+        EnqueueRandomFromList(buffClips, 0.12f, 0.8f);
     }
 
     public void PlayCoin()
     {
-        EnqueueByKeywords(new[] { "coin", "gold", "pickup" }, CategoryCoin, 0.08f, 0.75f);
+        EnqueueFromList(coinClips, "coin", 0.08f, 0.75f);
     }
 
     public void PlayKey()
     {
-        EnqueueByKeywords(new[] { "key", "unlock" }, CategoryKeys, 0.12f, 0.75f);
+        EnqueueFromList(keyClips, "key", 0.12f, 0.75f);
     }
 
-    private void EnqueueByKeywords(string[] keywords, string category, float minInterval, float volume)
+    private void EnqueueFromList(List<AudioClip> clips, string key, float minInterval, float volume)
     {
-        var clip = FindClipByKeywords(keywords, category);
-        if (!clip) clip = FindClipByKeywords(keywords, null);
-        if (!clip) clip = FindAnyFromCategory(category);
+        var clip = PickStableClip(clips, key);
         if (!clip) return;
+        Enqueue(clip, volume, minInterval);
+    }
 
+    private void EnqueueRandomFromList(List<AudioClip> clips, float minInterval, float volume)
+    {
+        var clip = PickRandomClip(clips);
+        if (!clip) return;
         Enqueue(clip, volume, minInterval);
     }
 
@@ -498,211 +565,99 @@ public class Sounds : SearcherByName
         }
     }
 
-    private AudioClip FindClipByKeywords(IEnumerable<string> keywords, string category)
+    private AudioClip PickStableClip(List<AudioClip> clips, string key)
     {
-        return FindClipByKeywords(keywords, category, null);
-    }
+        if (clips == null || clips.Count == 0) return null;
+        if (stablePickByKey.TryGetValue(key, out var cached) && cached != null) return cached;
 
-    private AudioClip FindClipByKeywords(IEnumerable<string> keywords, string category, List<SoundRuntime> poolOverride)
-    {
-        var keywordList = new List<string>();
-        foreach (var k in keywords)
+        AudioClip chosen = null;
+        for (int i = 0; i < clips.Count; i++)
         {
-            if (string.IsNullOrWhiteSpace(k)) continue;
-            keywordList.Add(k.ToLowerInvariant());
-        }
-
-        IEnumerable<SoundRuntime> pool = poolOverride ?? allRuntime;
-        if (poolOverride == null && !string.IsNullOrWhiteSpace(category))
-        {
-            if (runtimeByCategory.TryGetValue(category.ToLowerInvariant(), out var categoryList))
+            var candidate = clips[UnityEngine.Random.Range(0, clips.Count)];
+            if (candidate != null)
             {
-                pool = categoryList;
+                chosen = candidate;
+                break;
             }
         }
 
-        var matches = new List<SoundRuntime>();
-        foreach (var entry in pool)
+        if (chosen == null)
         {
-            foreach (var k in keywordList)
+            foreach (var candidate in clips)
             {
-                if (entry.tokens.Contains(k))
+                if (candidate != null)
                 {
-                    matches.Add(entry);
+                    chosen = candidate;
                     break;
                 }
             }
         }
 
-        if (matches.Count == 0) return null;
-        var choice = matches[UnityEngine.Random.Range(0, matches.Count)];
-        return choice.clip;
+        if (chosen != null)
+        {
+            stablePickByKey[key] = chosen;
+        }
+        return chosen;
     }
 
-    private AudioClip FindClipByAllKeywords(IEnumerable<string> keywords, string category, List<SoundRuntime> poolOverride = null)
+    private static AudioClip PickRandomClip(List<AudioClip> clips)
     {
-        var keywordList = new List<string>();
-        foreach (var k in keywords)
+        if (clips == null || clips.Count == 0) return null;
+        for (int i = 0; i < clips.Count; i++)
         {
-            if (string.IsNullOrWhiteSpace(k)) continue;
-            keywordList.Add(k.ToLowerInvariant());
+            var candidate = clips[UnityEngine.Random.Range(0, clips.Count)];
+            if (candidate != null) return candidate;
         }
 
-        IEnumerable<SoundRuntime> pool = poolOverride ?? allRuntime;
-        if (poolOverride == null && !string.IsNullOrWhiteSpace(category))
+        foreach (var candidate in clips)
         {
-            if (runtimeByCategory.TryGetValue(category.ToLowerInvariant(), out var categoryList))
-            {
-                pool = categoryList;
-            }
+            if (candidate != null) return candidate;
         }
 
-        var matches = new List<SoundRuntime>();
-        foreach (var entry in pool)
-        {
-            bool allMatch = true;
-            foreach (var k in keywordList)
-            {
-                if (!entry.tokens.Contains(k))
-                {
-                    allMatch = false;
-                    break;
-                }
-            }
-            if (allMatch)
-            {
-                matches.Add(entry);
-            }
-        }
-
-        if (matches.Count == 0) return null;
-        var choice = matches[UnityEngine.Random.Range(0, matches.Count)];
-        return choice.clip;
+        return null;
     }
 
-    private AudioClip FindAnyFromCategory(string category)
-    {
-        if (string.IsNullOrWhiteSpace(category)) return null;
-        if (!runtimeByCategory.TryGetValue(category.ToLowerInvariant(), out var list) || list.Count == 0) return null;
-        return list[UnityEngine.Random.Range(0, list.Count)].clip;
-    }
-
-    private void LoadUsedSounds()
-    {
-        TextAsset jsonFile = Resources.Load<TextAsset>("sound");
-        if (jsonFile == null)
-        {
-            Debug.LogWarning("sound.json not found in Resources.");
-            return;
-        }
-
-        SoundCollection collection = JsonUtility.FromJson<SoundCollection>(jsonFile.text);
-        if (collection == null || collection.sounds == null) return;
-
-        sounds.Clear();
-        foreach (var entry in collection.sounds)
-        {
-            if (entry == null || !entry.used || string.IsNullOrWhiteSpace(entry.path)) continue;
-            var clip = LoadClipByPath(entry.path);
-            if (!clip) continue;
-
-            clipByPath[entry.path] = clip;
-            sounds.Add(clip);
-
-            var runtime = new SoundRuntime
-            {
-                entry = entry,
-                clip = clip,
-                key = Normalize(clip.name),
-                category = entry.category != null ? entry.category.ToLowerInvariant() : string.Empty
-            };
-            runtime.tokens = Tokenize(entry.path);
-
-            allRuntime.Add(runtime);
-            runtimeByKey[runtime.key] = runtime;
-            if (!string.IsNullOrWhiteSpace(runtime.category))
-            {
-                if (!runtimeByCategory.TryGetValue(runtime.category, out var list))
-                {
-                    list = new List<SoundRuntime>();
-                    runtimeByCategory[runtime.category] = list;
-                }
-                list.Add(runtime);
-            }
-        }
-    }
-
-    private static HashSet<string> Tokenize(string value)
-    {
-        var tokens = new HashSet<string>();
-        if (string.IsNullOrWhiteSpace(value)) return tokens;
-
-        var buffer = new List<char>();
-        foreach (var ch in value)
-        {
-            if (char.IsLetterOrDigit(ch))
-            {
-                buffer.Add(char.ToLowerInvariant(ch));
-            }
-            else
-            {
-                FlushToken(tokens, buffer);
-            }
-        }
-        FlushToken(tokens, buffer);
-        return tokens;
-    }
-
-    private static void FlushToken(HashSet<string> tokens, List<char> buffer)
-    {
-        if (buffer.Count == 0) return;
-        tokens.Add(new string(buffer.ToArray()));
-        buffer.Clear();
-    }
-
-    private static string[] GetFootstepKeywordsForTerrain(TerrainEnum terrain)
+    private List<AudioClip> GetFootstepClipsForTerrain(TerrainEnum terrain)
     {
         return terrain switch
         {
-            TerrainEnum.forest => new[] { "leaves", "grass", "forest" },
-            TerrainEnum.grasslands => new[] { "grass", "dirt", "dirtyground" },
-            TerrainEnum.plains => new[] { "grass", "dirt", "dirtyground", "ground" },
-            TerrainEnum.hills => new[] { "gravel", "rock", "stone" },
-            TerrainEnum.mountains => new[] { "rock", "gravel", "stone" },
-            TerrainEnum.desert => new[] { "sand" },
-            TerrainEnum.swamp => new[] { "mud" },
-            TerrainEnum.wastelands => new[] { "dirt", "dirtyground", "rock" },
-            TerrainEnum.shore => new[] { "sand", "water", "shore" },
-            _ => new[] { "dirt", "dirtyground", "ground" }
+            TerrainEnum.forest => footstepForestClips,
+            TerrainEnum.grasslands => footstepGrasslandsClips,
+            TerrainEnum.plains => footstepPlainsClips,
+            TerrainEnum.hills => footstepHillsClips,
+            TerrainEnum.mountains => footstepMountainsClips,
+            TerrainEnum.desert => footstepDesertClips,
+            TerrainEnum.swamp => footstepSwampClips,
+            TerrainEnum.wastelands => footstepWastelandsClips,
+            TerrainEnum.shore => footstepShoreClips,
+            _ => footstepDefaultClips
         };
     }
 
-    private AudioClip PickVoiceClip(VoiceType type, SexEnum sex)
+    private AudioClip PickVoiceClip(VoiceType type, SexEnum sex, int voiceIndex)
     {
-        string[] sexKeywords = sex == SexEnum.Female ? new[] { "female" } : new[] { "male" };
-        string[] typeKeywords = type switch
+        var clips = GetVoiceClips(type, sex);
+        if (clips == null || clips.Count == 0) return null;
+        int index = Mathf.Abs(voiceIndex) % clips.Count;
+        for (int i = 0; i < clips.Count; i++)
         {
-            VoiceType.Expression => new[] { "expressions" },
-            VoiceType.Attack => new[] { "attack" },
-            VoiceType.Effort => new[] { "effort" },
-            VoiceType.Pain => new[] { "pain" },
-            _ => new[] { "expressions" }
-        };
-
-        var clip = FindClipByAllKeywords(CombineKeywords(sexKeywords, typeKeywords), CategoryVoices);
-        if (!clip) clip = FindClipByAllKeywords(CombineKeywords(new[] { "voice" }, sexKeywords, typeKeywords), CategoryVoices);
-        return clip;
-    }
-
-    private static string[] CombineKeywords(params string[][] groups)
-    {
-        var list = new List<string>();
-        foreach (var g in groups)
-        {
-            if (g == null) continue;
-            list.AddRange(g);
+            var candidate = clips[(index + i) % clips.Count];
+            if (candidate != null) return candidate;
         }
-        return list.ToArray();
+        return null;
+    }
+
+    private List<AudioClip> GetVoiceClips(VoiceType type, SexEnum sex)
+    {
+        bool isFemale = sex == SexEnum.Female;
+        return type switch
+        {
+            VoiceType.Expression => isFemale ? voiceExpressionFemaleClips : voiceExpressionMaleClips,
+            VoiceType.Attack => isFemale ? voiceAttackFemaleClips : voiceAttackMaleClips,
+            VoiceType.Effort => isFemale ? voiceEffortFemaleClips : voiceEffortMaleClips,
+            VoiceType.Pain => isFemale ? voicePainFemaleClips : voicePainMaleClips,
+            _ => isFemale ? voiceExpressionFemaleClips : voiceExpressionMaleClips
+        };
     }
 
     private static bool IsHumanoidRace(RacesEnum race)
@@ -724,15 +679,61 @@ public class Sounds : SearcherByName
         int key = character.GetInstanceID();
         if (voiceSetByCharacterId.TryGetValue(key, out var set)) return set;
 
+        int voiceIndex = GetVoiceIndex(character.sex);
+        if (voiceIndex < 0) return null;
+
         var created = new VoiceSet
         {
-            expression = PickVoiceClip(VoiceType.Expression, character.sex),
-            attack = PickVoiceClip(VoiceType.Attack, character.sex),
-            effort = PickVoiceClip(VoiceType.Effort, character.sex),
-            pain = PickVoiceClip(VoiceType.Pain, character.sex)
+            voiceIndex = voiceIndex,
+            expression = PickVoiceClip(VoiceType.Expression, character.sex, voiceIndex),
+            attack = PickVoiceClip(VoiceType.Attack, character.sex, voiceIndex),
+            effort = PickVoiceClip(VoiceType.Effort, character.sex, voiceIndex),
+            pain = PickVoiceClip(VoiceType.Pain, character.sex, voiceIndex)
         };
         voiceSetByCharacterId[key] = created;
         return created;
+    }
+
+    private void PlayRaceVoice(Character character, float minInterval)
+    {
+        var clips = GetRaceVoiceClips(character.race);
+        if (clips == null || clips.Count == 0) return;
+        string key = $"voice_race_{character.race}_{character.GetInstanceID()}";
+        var clip = PickStableClip(clips, key);
+        if (!clip) return;
+        Enqueue(clip, voiceVolume, minInterval);
+    }
+
+    private List<AudioClip> GetRaceVoiceClips(RacesEnum race)
+    {
+        return race switch
+        {
+            RacesEnum.Orc => voiceOrcClips,
+            RacesEnum.Troll => voiceTrollClips,
+            RacesEnum.Goblin => voiceGoblinClips,
+            RacesEnum.Nazgul => voiceNazgulClips,
+            RacesEnum.Undead => voiceUndeadClips,
+            RacesEnum.Dragon => voiceDragonClips,
+            RacesEnum.Spider => voiceSpiderClips,
+            RacesEnum.Balrog => voiceBalrogClips,
+            RacesEnum.Eagle => voiceEagleClips,
+            RacesEnum.Ent => voiceEntClips,
+            RacesEnum.Beorning => voiceBeorningClips,
+            RacesEnum.Wose => voiceWoseClips,
+            RacesEnum.Maia => voiceMaiaClips,
+            _ => voiceGenericClips
+        };
+    }
+
+    private int GetVoiceIndex(SexEnum sex)
+    {
+        int maxCount = 0;
+        maxCount = Mathf.Max(maxCount, GetVoiceClips(VoiceType.Expression, sex).Count);
+        maxCount = Mathf.Max(maxCount, GetVoiceClips(VoiceType.Attack, sex).Count);
+        maxCount = Mathf.Max(maxCount, GetVoiceClips(VoiceType.Effort, sex).Count);
+        maxCount = Mathf.Max(maxCount, GetVoiceClips(VoiceType.Pain, sex).Count);
+        if (maxCount == 0) return -1;
+        return UnityEngine.Random.Range(0, maxCount);
     }
 
     private enum VoiceType
@@ -741,27 +742,5 @@ public class Sounds : SearcherByName
         Attack,
         Effort,
         Pain
-    }
-
-    private static AudioClip LoadClipByPath(string path)
-    {
-        if (string.IsNullOrWhiteSpace(path)) return null;
-#if UNITY_EDITOR
-        return UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(path);
-#else
-        string resourcePath = ToResourcesPath(path);
-        if (string.IsNullOrWhiteSpace(resourcePath)) return null;
-        return Resources.Load<AudioClip>(resourcePath);
-#endif
-    }
-
-    private static string ToResourcesPath(string assetPath)
-    {
-        string normalized = assetPath.Replace("\\", "/");
-        int resourcesIndex = normalized.IndexOf("/Resources/", StringComparison.OrdinalIgnoreCase);
-        if (resourcesIndex < 0) return null;
-
-        string relative = normalized[(resourcesIndex + "/Resources/".Length)..];
-        return Path.ChangeExtension(relative, null);
     }
 }

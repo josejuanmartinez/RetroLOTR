@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public class Game : MonoBehaviour
 {
@@ -50,6 +52,7 @@ public class Game : MonoBehaviour
     public event Action<int> NewTurnStarted;
 
     private bool skipNextTurnPrompt = false;
+    private readonly List<NpcFocusEntry> npcFocusEntries = new();
     void Awake()
     {
         if (!board) board = FindAnyObjectByType<Board>();
@@ -162,6 +165,9 @@ public class Game : MonoBehaviour
         List<Character> characters = player.controlledCharacters;
         if (characters == null || characters.Count == 0) return;
 
+        await WaitForNoUiMessagesAsync();
+        if (!IsPlayerCurrentlyPlaying() || player == null || board == null) return;
+
         Character current = board.selectedCharacter;
         Character nextCharacter = null;
 
@@ -197,6 +203,17 @@ public class Game : MonoBehaviour
         }
     }
 
+    private async Task WaitForNoUiMessagesAsync()
+    {
+        if (!MessageDisplayNoUI.IsBusy()) return;
+        int safety = 0;
+        while (MessageDisplayNoUI.IsBusy() && safety < 200)
+        {
+            await Task.Delay(50);
+            safety++;
+        }
+    }
+
     public void SelectNextCharacterInPriorityCycle()
     {
         if (!IsPlayerCurrentlyPlaying() || player == null || board == null) return;
@@ -220,6 +237,10 @@ public class Game : MonoBehaviour
 
     public async void NextPlayer()
     {
+        PopupManager.CloseAll();
+        ConfirmationDialog.CloseAll();
+        SelectionDialog.CloseAll();
+
         bool shouldPrompt = currentlyPlaying == player && !skipNextTurnPrompt;
         skipNextTurnPrompt = false;
 
@@ -267,37 +288,159 @@ public class Game : MonoBehaviour
 
         if (currentlyPlaying == player)
         {
-            ShowHumanPlayerWidgetsWidgets();
-            NewTurn();
+            StartCoroutine(BeginPlayerTurnSequence());
         }
         else
         {
             HideHumanPlayerWidgetsWidgets();
             MessageDisplay.ShowPersistent($"{currentlyPlaying.characterName} is playing", Color.yellow);
-        }
-        board.RefreshRelevantHexes();
-        currentlyPlaying.NewTurn();
-
-        if (currentlyPlaying == player)
-        {
-            SelectFirstPlayerCharacter();
+            MessageDisplayNoUI.SetPaused(true);
+            board.RefreshRelevantHexes();
+            currentlyPlaying.NewTurn();
         }
     }
 
     private void NewTurn()
     {
         MessageDisplay.ClearPersistent();
+        PopupManager.CloseAll();
+        ConfirmationDialog.CloseAll();
+        SelectionDialog.CloseAll();
         turn++;
         if (turn >= MAX_TURNS)
         {
             EndGame(false);
             return;
         }
+        AdvanceTemporaryPcVisibility();
+        AnnounceScoutingStatus();
         board?.ClearAllScouting();
         MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
         NewTurnStarted?.Invoke(turn);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         storesManager.AdvanceTurn();
+    }
+
+    public void QueueNpcFocus(Leader leader, Hex hex)
+    {
+        if (leader == null || hex == null) return;
+        if (player != null && leader == player) return;
+        npcFocusEntries.Add(new NpcFocusEntry { leader = leader, hex = hex });
+    }
+
+    private IEnumerator BeginPlayerTurnSequence()
+    {
+        HideHumanPlayerWidgetsWidgets();
+        MessageDisplayNoUI.SetPaused(true);
+
+        yield return PlayNpcFocusSequence();
+
+        MessageDisplayNoUI.SetPaused(false);
+
+        NewTurn();
+        board.RefreshRelevantHexes();
+        currentlyPlaying.NewTurn();
+
+        yield return WaitForCameraAndMessages();
+
+        ShowHumanPlayerWidgetsWidgets();
+        SelectFirstPlayerCharacter();
+    }
+
+    private IEnumerator PlayNpcFocusSequence()
+    {
+        if (npcFocusEntries.Count == 0) yield break;
+        BoardNavigator navigator = BoardNavigator.Instance;
+        if (navigator == null)
+        {
+            npcFocusEntries.Clear();
+            yield break;
+        }
+
+        List<Leader> leaderOrder = new();
+        for (int i = 0; i < npcFocusEntries.Count; i++)
+        {
+            Leader leader = npcFocusEntries[i].leader;
+            if (leader != null && !leaderOrder.Contains(leader)) leaderOrder.Add(leader);
+        }
+
+        for (int i = 0; i < leaderOrder.Count; i++)
+        {
+            Leader leader = leaderOrder[i];
+            for (int j = 0; j < npcFocusEntries.Count; j++)
+            {
+                if (npcFocusEntries[j].leader != leader) continue;
+                navigator.EnqueueNpcPlaybackFocus(npcFocusEntries[j].hex);
+            }
+            while (navigator.HasPendingFocus())
+            {
+                yield return null;
+            }
+        }
+
+        npcFocusEntries.Clear();
+    }
+
+    private IEnumerator WaitForCameraAndMessages()
+    {
+        BoardNavigator navigator = BoardNavigator.Instance;
+        while (MessageDisplayNoUI.IsBusy() || MessageDisplay.IsBusy() || (navigator != null && navigator.HasPendingFocus()))
+        {
+            yield return null;
+        }
+    }
+
+    private struct NpcFocusEntry
+    {
+        public Leader leader;
+        public Hex hex;
+    }
+
+    private void AnnounceScoutingStatus()
+    {
+        if (board == null || player == null || board.hexes == null) return;
+
+        foreach (Hex hex in board.hexes.Values)
+        {
+            if (hex == null) continue;
+            int scoutedTurns = hex.GetScoutedTurnsRemaining(player);
+            if (scoutedTurns <= 0) continue;
+
+            PC pc = hex.GetPCData();
+            string message = null;
+            if (pc != null && pc.temporaryRevealTurns > 0)
+            {
+                message = $"<sprite name=\"light\"> Light fades ({pc.temporaryRevealTurns} turn{(pc.temporaryRevealTurns == 1 ? "" : "s")} left)";
+            }
+            else if (pc != null && pc.temporaryHiddenTurns > 0)
+            {
+                message = $"<sprite name=\"darkness\"> Darkness fades ({pc.temporaryHiddenTurns} turn{(pc.temporaryHiddenTurns == 1 ? "" : "s")} left)";
+            }
+            else
+            {
+                message = $"<sprite name=\"scout\"> Scouted: {scoutedTurns} turn{(scoutedTurns == 1 ? "" : "s")} left";
+            }
+
+            MessageDisplayNoUI.ShowMessage(hex, player, message, Color.yellow);
+        }
+    }
+
+    private void AdvanceTemporaryPcVisibility()
+    {
+        List<Leader> leaders = new();
+        if (player != null) leaders.Add(player);
+        if (competitors != null) leaders.AddRange(competitors.Where(c => c != null));
+        if (npcs != null) leaders.AddRange(npcs.Where(n => n != null));
+
+        foreach (Leader leader in leaders)
+        {
+            foreach (PC pc in leader.controlledPcs)
+            {
+                if (pc == null) continue;
+                pc.TickTemporaryVisibility();
+                if (pc.hex != null) pc.hex.RedrawPC();
+            }
+        }
     }
 
     private void HideHumanPlayerWidgetsWidgets()

@@ -135,6 +135,12 @@ public class PopupManager : MonoBehaviour
     public static void HidePopup()
         => Instance.Hide();
 
+    public static void CloseAll()
+    {
+        if (Instance == null) return;
+        Instance.Hide();
+    }
+
     public void ShowPrevious()
     {
         if (queue.Count == 0 || currentIndex <= 0)

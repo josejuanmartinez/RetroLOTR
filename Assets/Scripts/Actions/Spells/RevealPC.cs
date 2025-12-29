@@ -13,6 +13,7 @@ public class RevealPC: Spell
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c.hex.GetPC() == null) return false;
             c.hex.GetPC().Reveal();
+            c.hex.RefreshVisibilityRendering();
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"{c.hex.GetPC()} revealed!", Color.green);
             return true;
         };

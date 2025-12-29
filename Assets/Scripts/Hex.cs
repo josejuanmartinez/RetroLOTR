@@ -37,6 +37,8 @@ public class Hex : MonoBehaviour
     public HoverNoUI charactersAtHexHover;
     public GameObject port;
     public HoverNoUI portHover;
+    public GameObject artifact;
+    public HoverNoUI artifactHover;
 
     public GameObject freeArmy;
     public GameObject darkArmy;
@@ -70,9 +72,12 @@ public class Hex : MonoBehaviour
     public List<Army> armies = new();
     public List<Character> characters = new();
     public List<Artifact> hiddenArtifacts = new();
+    private bool artifactRevealed = false;
 
     // Use HashSet for O(1) contains
     private HashSet<Leader> scoutedBy = new();
+    private readonly Dictionary<Leader, int> scoutedByTurns = new();
+    private readonly HashSet<Leader> persistentScoutedBy = new();
     private readonly Dictionary<Leader, int> anchoredWarships = new();
     private int anchoredWarshipsTotal = 0;
 
@@ -98,7 +103,7 @@ public class Hex : MonoBehaviour
     private static readonly Queue<Vector2Int> areaQueue = new(64);
     private static readonly HashSet<Vector2Int> areaVisited = new();
 
-    private const string Unknown = "?";
+    private const string Unknown = "";
 
     void Awake()
     {
@@ -199,6 +204,12 @@ public class Hex : MonoBehaviour
         return leader != null && scoutedBy.Contains(leader);
     }
 
+    public int GetScoutedTurnsRemaining(Leader leader)
+    {
+        if (leader == null) return 0;
+        return scoutedByTurns.TryGetValue(leader, out int turns) ? turns : 0;
+    }
+
     public bool IsFriendlyPC(PlayableLeader overrideLeader = null)
     {
         var l = overrideLeader ? overrideLeader : GetPlayer();
@@ -271,39 +282,49 @@ public class Hex : MonoBehaviour
         if (board == null) board = FindFirstObjectByType<Board>();
 
         PlayableLeader player = GetPlayer();
-        bool isScouted = IsScouted(player);
         bool isSeen = IsHexSeen();
-        bool viewerHasCharacter = player != null && HasCharacterOfLeader(player);
+        if (!isSeen) return false;
+
+        bool isScouted = IsScouted(player);
         Character selected = board != null ? board.selectedCharacter : null;
 
-        if (selected != null && selected.hex == this && (isScouted || IsFriendlyCharacter(selected, player)))
+        if (selected != null && selected.hex == this &&
+            (isScouted || IsFriendlyCharacter(selected, player) || selected.IsArmyCommander()))
         {
             known = selected;
             return true;
+        }
+
+        if (isScouted)
+        {
+            for (int i = 0, n = characters.Count; i < n; i++)
+            {
+                Character candidate = characters[i];
+                if (candidate == null || candidate.killed) continue;
+                known = candidate;
+                return true;
+            }
         }
 
         for (int i = 0, n = characters.Count; i < n; i++)
         {
             Character candidate = characters[i];
             if (candidate == null || candidate.killed) continue;
-            if (isScouted || IsFriendlyCharacter(candidate, player))
+            if (IsFriendlyCharacter(candidate, player))
             {
                 known = candidate;
                 return true;
             }
         }
 
-        if (isSeen || viewerHasCharacter)
+        for (int i = 0, n = characters.Count; i < n; i++)
         {
-            for (int i = 0, n = characters.Count; i < n; i++)
+            Character candidate = characters[i];
+            if (candidate == null || candidate.killed) continue;
+            if (candidate.IsArmyCommander())
             {
-                Character candidate = characters[i];
-                if (candidate == null || candidate.killed) continue;
-                if (candidate.IsArmyCommander())
-                {
-                    known = candidate;
-                    return true;
-                }
+                known = candidate;
+                return true;
             }
         }
 
@@ -324,10 +345,7 @@ public class Hex : MonoBehaviour
         if (character.IsArmyCommander())
         {
             Army army = character.GetArmy();
-            if (army != null)
-            {
-                text += army.GetHoverTextNoXp(false);
-            }
+            if (army != null) text += army.GetHoverTextNoXp();
         }
         return true;
     }
@@ -397,8 +415,7 @@ public class Hex : MonoBehaviour
         bool ownerIsNonPlayableLeader = pc.owner is NonPlayableLeader;
         bool nplKnownByViewer = ownerIsNonPlayableLeader && viewingLeader != null && (pc.owner as NonPlayableLeader).IsRevealedToLeader(viewingLeader);
         bool shouldShowPc = seen && (pcRevealed || (ownerIsNonPlayableLeader && nplKnownByViewer));
-        bool isHiddenAndNotRevealed = pc.isHidden && !pc.hiddenButRevealed;
-        float pcAlpha = isHiddenAndNotRevealed ? 0.75f : 1f;
+        float pcAlpha = pc.isHidden ? 0.35f : 1f;
         SetPcSpriteAlpha(pcAlpha);
 
         // PC visibility
@@ -409,6 +426,16 @@ public class Hex : MonoBehaviour
         SetActiveFast(fortObject, seen && pc != null && pc.fortSize != FortSizeEnum.NONE);
 
         if (refreshHoverText) RefreshHoverText();
+    }
+
+    public void RefreshVisibilityRendering()
+    {
+        UpdateVisibilityForFog();
+        UpdateMinimapTerrain(IsHexRevealed());
+        RedrawArmies(false);
+        RedrawCharacters(false);
+        RedrawPC(false);
+        RefreshHoverText();
     }
 
     public string GetLoyalty()
@@ -471,12 +498,13 @@ public class Hex : MonoBehaviour
 
             if (canSee)
             {
-                
-                if(game.IsPlayerCurrentlyPlaying() && ch.GetOwner() is NonPlayableLeader && !(ch.GetOwner() as NonPlayableLeader).IsRevealedToPlayer())
+                bool canRevealNpl = seen || isScouted;
+                if (canRevealNpl && game.IsPlayerCurrentlyPlaying() && ch.GetOwner() is NonPlayableLeader && !(ch.GetOwner() as NonPlayableLeader).IsRevealedToPlayer())
                 {
                     NonPlayableLeader npl = ch.GetOwner() as NonPlayableLeader;
                     npl.RevealToPlayer();
-                } else if(ch.GetOwner() is NonPlayableLeader && !(ch.GetOwner() as NonPlayableLeader).IsRevealedToLeader(FindAnyObjectByType<Game>().currentlyPlaying))
+                }
+                else if (canRevealNpl && ch.GetOwner() is NonPlayableLeader && !(ch.GetOwner() as NonPlayableLeader).IsRevealedToLeader(FindAnyObjectByType<Game>().currentlyPlaying))
                 {
                     NonPlayableLeader npl = ch.GetOwner() as NonPlayableLeader;
                     Game g = FindAnyObjectByType<Game>();
@@ -569,6 +597,7 @@ public class Hex : MonoBehaviour
     public void LookAt(float duration = 1.0f, float delay = 0.0f)
     {
         if (!game.IsPlayerCurrentlyPlaying()) return;
+        if (!IsHexSeen()) return;
         // Avoid GameObject.Find/string allocs; use our own transform
         if (navigator == null) navigator = FindFirstObjectByType<BoardNavigator>();
         if (navigator != null) navigator.LookAt(transform.position, duration, delay);
@@ -620,13 +649,16 @@ public class Hex : MonoBehaviour
         if (unrevealedPlayer)
         {
             AlignmentEnum unreleavedPlayerAlignment = unrevealedPlayer.GetAlignment();
-            foreach (var ch in scoutedBy)
+            List<Leader> toRemove = scoutedBy
+                .Where(ch => ch != null && ch.GetAlignment() != unreleavedPlayerAlignment)
+                .ToList();
+            for (int i = 0; i < toRemove.Count; i++)
             {
-                if (ch.GetAlignment() != unreleavedPlayerAlignment)
-                {
-                    scoutedBy.Remove(ch.GetOwner());
-                }
+                Leader leader = toRemove[i];
+                scoutedBy.Remove(leader);
+                scoutedByTurns.Remove(leader);
             }
+            RebuildScoutingCache();
         }
         if (game.currentlyPlaying == game.player && characters.Find(x => x.GetOwner() == game.player) == null)
         {
@@ -704,17 +736,28 @@ public class Hex : MonoBehaviour
         if (leader == null) return;
         if (game == null) game = FindFirstObjectByType<Game>();
 
+        if (!IsHexSeen()) return;
+        bool isScouted = IsScouted(leader);
         NonPlayableLeader npl = null;
 
-        if (pc != null && pc.owner is NonPlayableLeader pcOwner && !pcOwner.IsRevealedToLeader(leader))
+        if (pc != null && pc.owner is NonPlayableLeader pcOwner && pc.IsRevealed(leader) && !pcOwner.IsRevealedToLeader(leader))
         {
             npl = pcOwner;
         }
 
-        if (npl == null)
+        if (npl == null && characters != null)
         {
-            npl = characters.Select(ch => ch.GetOwner() as NonPlayableLeader)
-                             .FirstOrDefault(owner => owner != null && !owner.IsRevealedToLeader(leader));
+            for (int i = 0; i < characters.Count; i++)
+            {
+                Character ch = characters[i];
+                if (ch == null) continue;
+                if (ch.GetOwner() is not NonPlayableLeader owner) continue;
+                if (owner.IsRevealedToLeader(leader)) continue;
+                bool canReveal = ch.IsArmyCommander() || isScouted;
+                if (!canReveal) continue;
+                npl = owner;
+                break;
+            }
         }
 
         if (npl != null)
@@ -727,15 +770,23 @@ public class Hex : MonoBehaviour
         if (showPopup && leader == game.player && game.currentlyPlaying == leader)
         {
             NonPlayableLeader pending = null;
-            if (pc != null && pc.owner is NonPlayableLeader pendingOwner && pendingOwner.ShouldShowPlayerRevealPopup())
+            if (pc != null && pc.owner is NonPlayableLeader pendingOwner && pc.IsRevealed(leader) && pendingOwner.ShouldShowPlayerRevealPopup())
             {
                 pending = pendingOwner;
             }
-            if (pending == null)
+            if (pending == null && characters != null)
             {
-                pending = characters
-                    .Select(ch => ch.GetOwner() as NonPlayableLeader)
-                    .FirstOrDefault(owner => owner != null && owner.ShouldShowPlayerRevealPopup());
+                for (int i = 0; i < characters.Count; i++)
+                {
+                    Character ch = characters[i];
+                    if (ch == null) continue;
+                    if (ch.GetOwner() is not NonPlayableLeader owner) continue;
+                    if (!owner.ShouldShowPlayerRevealPopup()) continue;
+                    bool canReveal = ch.IsArmyCommander() || isScouted;
+                    if (!canReveal) continue;
+                    pending = owner;
+                    break;
+                }
             }
             if (pending != null)
             {
@@ -796,6 +847,7 @@ public class Hex : MonoBehaviour
                     if (placeholder != null) SetActiveFast(placeholder.gameObject, true);
                 }
             }
+            UpdateArtifactVisibility();
             return;
         }
 
@@ -809,6 +861,8 @@ public class Hex : MonoBehaviour
         SetActiveFast(neutralArmy, false);
         SetActiveFast(darkArmy, false);
         SetActiveFast(characterIconPrefab, false);
+        SetActiveFast(artifact, false);
+        if (artifactHover) SetActiveFast(artifactHover.gameObject, false);
 
         SetActiveFast(movement, false);
         SetActiveFast(hoverHexFrame, false);
@@ -986,7 +1040,11 @@ public class Hex : MonoBehaviour
 
     private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
     {
-        if (scoutedByPlayer) scoutedBy.Add(scoutedByPlayer);
+        if (scoutedByPlayer)
+        {
+            scoutedByTurns[scoutedByPlayer] = Math.Max(2, scoutedByTurns.TryGetValue(scoutedByPlayer, out int current) ? current : 0);
+            scoutedBy.Add(scoutedByPlayer);
+        }
         if (isPlayerTurn)
         {
             SetActiveFast(fow, false);
@@ -1007,15 +1065,27 @@ public class Hex : MonoBehaviour
 
     public void ClearScouting()
     {
-        if (scoutedBy.Count == 0 && anchoredWarshipsTotal == 0) return;
-        scoutedBy.Clear();
-        if (anchoredWarshipsTotal > 0)
+        if (scoutedByTurns.Count == 0 && anchoredWarshipsTotal == 0 && persistentScoutedBy.Count == 0) return;
+        if (scoutedByTurns.Count > 0)
         {
-            foreach (var entry in anchoredWarships)
+            List<Leader> leaders = scoutedByTurns.Keys.ToList();
+            for (int i = 0; i < leaders.Count; i++)
             {
-                if (entry.Key != null) scoutedBy.Add(entry.Key);
+                Leader leader = leaders[i];
+                scoutedByTurns[leader] = scoutedByTurns[leader] - 1;
+                if (scoutedByTurns[leader] <= 0) scoutedByTurns.Remove(leader);
             }
         }
+        RebuildScoutingCache();
+        RefreshHoverText();
+    }
+
+    public void ClearScoutingAll()
+    {
+        if (scoutedByTurns.Count == 0 && scoutedBy.Count == 0) return;
+        scoutedByTurns.Clear();
+        scoutedBy.Clear();
+        RebuildScoutingCache();
         RefreshHoverText();
     }
 
@@ -1103,7 +1173,12 @@ public class Hex : MonoBehaviour
         UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         if (game == null) game = FindFirstObjectByType<Game>();
-        if (game != null) scoutedBy.Remove(game.currentlyPlaying);
+        if (game != null)
+        {
+            scoutedBy.Remove(game.currentlyPlaying);
+            scoutedByTurns.Remove(game.currentlyPlaying);
+            RebuildScoutingCache();
+        }
         if (unseenChanged)
         {
             RedrawArmies(false);
@@ -1225,6 +1300,11 @@ public class Hex : MonoBehaviour
         return null;
     }
 
+    public PC GetPCData()
+    {
+        return pc != null && pc.citySize != PCSizeEnum.NONE ? pc : null;
+    }
+
     public void SetPC(PC pc, string pcFeature = "", string fortFeature = "", bool isIsland = false)
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
@@ -1243,6 +1323,10 @@ public class Hex : MonoBehaviour
         {
             terrainTexture.sprite = FindFirstObjectByType<Textures>().island;
         }
+        if (pc.owner is NonPlayableLeader)
+        {
+            EnsurePersistentScouting(pc.owner);
+        }
         UpdateMinimapTerrain(IsHexRevealed());
     }
 
@@ -1254,7 +1338,8 @@ public class Hex : MonoBehaviour
 
     public List<Character> GetEnemyCharacters(Leader leader)
     {
-        if(scoutedBy.Contains(leader)) return characters.FindAll(x => x.GetOwner() != leader && (x.GetAlignment() != leader.GetAlignment() || x.GetAlignment() == AlignmentEnum.neutral)).ToList();
+        if (ShouldIgnoreScouting(leader) || scoutedBy.Contains(leader))
+            return characters.FindAll(x => x.GetOwner() != leader && (x.GetAlignment() != leader.GetAlignment() || x.GetAlignment() == AlignmentEnum.neutral)).ToList();
         return new(){};
     }
 
@@ -1266,7 +1351,8 @@ public class Hex : MonoBehaviour
 
     public List<Character> GetEnemyArmies(Leader leader)
     {
-        if(scoutedBy.Contains(leader)) return characters.FindAll(x => x.IsArmyCommander() && x.GetOwner() != leader && (x.GetAlignment() != leader.GetAlignment() || x.GetAlignment() == AlignmentEnum.neutral)).ToList();
+        if (ShouldIgnoreScouting(leader) || scoutedBy.Contains(leader))
+            return characters.FindAll(x => x.IsArmyCommander() && x.GetOwner() != leader && (x.GetAlignment() != leader.GetAlignment() || x.GetAlignment() == AlignmentEnum.neutral)).ToList();
         return new(){};
     }
 
@@ -1278,6 +1364,53 @@ public class Hex : MonoBehaviour
     public string GetHoverV2()
     {
         return $"@{v2.x},{v2.y}";
+    }
+
+    public void RevealArtifact()
+    {
+        artifactRevealed = true;
+        UpdateArtifactVisibility();
+    }
+
+    public void UpdateArtifactVisibility()
+    {
+        bool shouldShow = artifactRevealed && hiddenArtifacts != null && hiddenArtifacts.Count > 0 && IsHexSeen();
+        SetActiveFast(artifact, shouldShow);
+        if (artifactHover) SetActiveFast(artifactHover.gameObject, shouldShow);
+    }
+
+    public void EnsurePersistentScouting(Leader leader)
+    {
+        if (leader == null) return;
+        if (persistentScoutedBy.Add(leader))
+        {
+            scoutedBy.Add(leader);
+        }
+    }
+
+    private void RebuildScoutingCache()
+    {
+        scoutedBy.Clear();
+        foreach (Leader leader in persistentScoutedBy)
+        {
+            if (leader != null) scoutedBy.Add(leader);
+        }
+        foreach (var entry in scoutedByTurns)
+        {
+            if (entry.Key != null && entry.Value > 0) scoutedBy.Add(entry.Key);
+        }
+        foreach (var entry in anchoredWarships)
+        {
+            if (entry.Key != null) scoutedBy.Add(entry.Key);
+        }
+    }
+
+    private bool ShouldIgnoreScouting(Leader leader)
+    {
+        if (leader == null) return false;
+        if (leader is NonPlayableLeader) return true;
+        if (leader is PlayableLeader pl && game != null && game.player != pl) return true;
+        return false;
     }
 
     // Safe SetActive that avoids redundant calls/dirtying the obj

@@ -10,7 +10,7 @@ public class Leader : Character
     public List<Character> controlledCharacters = new();
     public List<PC> controlledPcs = new();
     public List<Hex> visibleHexes = new();
-    private readonly HashSet<Hex> tempSeenHexes = new();
+    private readonly Dictionary<Hex, int> tempSeenHexes = new();
 
     [Header("Stores")]
     public int leatherAmount = 0;
@@ -165,7 +165,7 @@ public class Leader : Character
     }
     new public void NewTurn()
     {
-        tempSeenHexes.Clear();
+        DecrementTemporarySeenHexes();
         if (!killed && goldAmount < -10) Killed(this);
 
         if (killed) return;
@@ -221,11 +221,11 @@ public class Leader : Character
 
         List<Hex> allHexes = FindFirstObjectByType<Board>().hexes.Values.ToList();
 
-        allHexes.FindAll(x => !visibleHexes.Contains(x) && !tempSeenHexes.Contains(x)).ForEach(x => x.Hide());
+        allHexes.FindAll(x => !visibleHexes.Contains(x) && !IsTemporarilySeen(x) && !IsScoutedForLeader(x)).ForEach(x => x.Hide());
         var hexesToReveal = visibleHexes.ToList();
-        List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
-        hexesToReveal.AddRange(spiedHexes);
+        hexesToReveal.AddRange(allHexes.Where(IsScoutedForLeader));
         hexesToReveal = hexesToReveal.Distinct().ToList();
+        List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
 
         int batchSize = 15;
         for (int i = 0; i < hexesToReveal.Count; i += batchSize)
@@ -234,8 +234,12 @@ public class Leader : Character
             for (int j = i; j < endIndex; j++) hexesToReveal[j].RevealArea(1, false);
             yield return null;
         }
+        for (int i = 0; i < spiedHexes.Count; i++)
+        {
+            spiedHexes[i].Reveal();
+        }
 
-        foreach (var hex in tempSeenHexes)
+        foreach (var hex in GetTemporarySeenHexes())
         {
             if (hex != null) hex.Reveal();
         }
@@ -251,14 +255,15 @@ public class Leader : Character
         if (board == null || board.hexes == null) return;
 
         List<Hex> allHexes = board.hexes.Values.ToList();
-        allHexes.FindAll(x => !visibleHexes.Contains(x) && !tempSeenHexes.Contains(x)).ForEach(x => x.Hide());
+        allHexes.FindAll(x => !visibleHexes.Contains(x) && !IsTemporarilySeen(x) && !IsScoutedForLeader(x)).ForEach(x => x.Hide());
         var hexesToReveal = visibleHexes.ToList();
-        List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
-        hexesToReveal.AddRange(spiedHexes);
+        hexesToReveal.AddRange(allHexes.Where(IsScoutedForLeader));
         hexesToReveal = hexesToReveal.Distinct().ToList();
+        List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
 
         for (int i = 0; i < hexesToReveal.Count; i++) hexesToReveal[i].RevealArea(1, false);
-        foreach (var hex in tempSeenHexes)
+        for (int i = 0; i < spiedHexes.Count; i++) spiedHexes[i].Reveal();
+        foreach (var hex in GetTemporarySeenHexes())
         {
             if (hex != null) hex.Reveal();
         }
@@ -269,8 +274,45 @@ public class Leader : Character
         if (hexes == null) return;
         foreach (var hex in hexes)
         {
-            if (hex != null) tempSeenHexes.Add(hex);
+            if (hex == null) continue;
+            if (tempSeenHexes.TryGetValue(hex, out int current))
+            {
+                tempSeenHexes[hex] = Math.Max(current, 2);
+            }
+            else
+            {
+                tempSeenHexes[hex] = 2;
+            }
         }
+    }
+
+    private bool IsTemporarilySeen(Hex hex)
+    {
+        return hex != null && tempSeenHexes.TryGetValue(hex, out int turns) && turns > 0;
+    }
+
+    private IEnumerable<Hex> GetTemporarySeenHexes()
+    {
+        return tempSeenHexes.Where(entry => entry.Value > 0).Select(entry => entry.Key);
+    }
+
+    private void DecrementTemporarySeenHexes()
+    {
+        if (tempSeenHexes.Count == 0) return;
+        List<Hex> keys = tempSeenHexes.Keys.ToList();
+        for (int i = 0; i < keys.Count; i++)
+        {
+            Hex hex = keys[i];
+            tempSeenHexes[hex] = tempSeenHexes[hex] - 1;
+            if (tempSeenHexes[hex] <= 0) tempSeenHexes.Remove(hex);
+        }
+    }
+
+    private bool IsScoutedForLeader(Hex hex)
+    {
+        if (hex == null) return false;
+        if (this is not PlayableLeader playable) return false;
+        return hex.IsScouted(playable);
     }
 
     override public Leader GetOwner()

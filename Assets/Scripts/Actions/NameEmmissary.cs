@@ -16,6 +16,7 @@ public class NameEmmissary : EmmissaryAction
             Leader owner = character.GetOwner();
             if (owner == null || owner.killed) return false;
             if (!owner.HasCharacterSlot()) return false;
+            if (!HasOwnedPc(character, owner)) return false;
 
             string newName = owner.GetNextNewCharacterName();
             if (string.IsNullOrWhiteSpace(newName)) return false;
@@ -52,6 +53,7 @@ public class NameEmmissary : EmmissaryAction
             Leader owner = character.GetOwner();
             if (owner == null) return false;
             if (!owner.HasCharacterSlot()) return false;
+            if (!HasOwnedPc(character, owner)) return false;
             return owner.GetNextNewCharacterName() != null;
         };
 
@@ -62,5 +64,12 @@ public class NameEmmissary : EmmissaryAction
         };
 
         base.Initialize(c, condition, effect, asyncEffect);
+    }
+
+    private static bool HasOwnedPc(Character character, Leader owner)
+    {
+        if (character == null || owner == null) return false;
+        PC pc = character.hex != null ? character.hex.GetPCData() : null;
+        return pc != null && pc.owner == owner;
     }
 }

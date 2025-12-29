@@ -272,7 +272,7 @@ public class Character : MonoBehaviour
             if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? "[" + GetMage().ToString() + "]" : "")}");
         }
 
-        if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText(withHealth));
+        if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText());
         if (withColor) result.Add("</color>");
         return string.Join("", result);
     }
@@ -404,7 +404,7 @@ public class Character : MonoBehaviour
         if (artifact == null || !artifact.ShouldApplyAlignmentPenalty(GetAlignment())) return;
         int damage = Artifact.OppositeAlignmentHealthPenalty;
         health = Mathf.Max(0, health - damage);
-        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} suffers {damage} damage from opposing relics", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, this, $"-{damage} <sprite name=\"health\">", Color.red);
         Sounds.Instance?.PlayVoicePain(this);
         RefreshSelectedCharacterIconIfSelected();
         CharacterIcons.RefreshForHumanPlayerCharacter(this);

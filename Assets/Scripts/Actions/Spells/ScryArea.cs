@@ -22,7 +22,14 @@ public class ScryArea : Spell
                 Hex randomHex = eligibleHexes[randomIndex];
                 int radius = Math.Max(1, ApplySpellEffectMultiplier(c, Math.Max(1, c.GetMage() / 2)));
                 randomHex.RevealArea(radius);
-                c.GetOwner()?.AddTemporarySeenHexes(randomHex.GetHexesInRadius(radius));
+                var radiusHexes = randomHex.GetHexesInRadius(radius);
+                c.GetOwner()?.AddTemporarySeenHexes(radiusHexes);
+                for (int i = 0; i < radiusHexes.Count; i++)
+                {
+                    Hex hex = radiusHexes[i];
+                    if (hex == null) continue;
+                    hex.RefreshVisibilityRendering();
+                }
                 randomHex.LookAt();
                 MessageDisplayNoUI.ShowMessage(randomHex, c, $"Area scried!", Color.green);
                 return true;

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class ConfirmationDialog : MonoBehaviour
 {
     public static ConfirmationDialog Instance { get; private set; }
+    public static bool IsShowing { get; private set; }
 
     [Header("UI References")]
     [SerializeField] private GameObject content;
@@ -163,6 +164,7 @@ public class ConfirmationDialog : MonoBehaviour
     private void HideInstant()
     {
         content.SetActive(false);
+        IsShowing = false;
     }
 
     private void ShowActive()
@@ -187,6 +189,7 @@ public class ConfirmationDialog : MonoBehaviour
         pendingOnClose = activeRequest.onClose;
 
         content.SetActive(true);
+        IsShowing = true;
 
         messageLabel.text = string.IsNullOrWhiteSpace(activeRequest.message) ? fallbackMessage : activeRequest.message;
         yesButtonText.text = string.IsNullOrWhiteSpace(activeRequest.yesString) ? defaultYesLabel : activeRequest.yesString;
@@ -248,5 +251,27 @@ public class ConfirmationDialog : MonoBehaviour
         public bool singleButton;
         public Action onClose;
         public TaskCompletionSource<bool> tcs;
+    }
+
+    public static void CloseAll()
+    {
+        if (Instance == null) return;
+        Instance.ForceClose();
+    }
+
+    private void ForceClose()
+    {
+        if (waitForMessagesRoutine != null)
+        {
+            StopCoroutine(waitForMessagesRoutine);
+            waitForMessagesRoutine = null;
+        }
+        pendingRequest?.TrySetResult(false);
+        pendingOnClose?.Invoke();
+        pendingRequest = null;
+        pendingOnClose = null;
+        queuedRequests.Clear();
+        activeIndex = -1;
+        HideInstant();
     }
 }

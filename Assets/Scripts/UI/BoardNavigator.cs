@@ -117,14 +117,44 @@ public class BoardNavigator : MonoBehaviour
         lookAtCoroutine = StartCoroutine(SmoothLookAt(targetPosition, duration, delay));
     }
 
-    public void EnqueueEnemyFocus(Hex hex)
+    public void EnqueueEnemyFocus(Hex hex, Leader leader = null)
+    {
+        Game game = FindAnyObjectByType<Game>();
+        if (game != null && game.player != null && game.IsPlayerCurrentlyPlaying())
+        {
+            EnqueueFocus(hex, enemyFocusDuration, enemyFocusPause);
+            return;
+        }
+        if (game != null)
+        {
+            game.QueueNpcFocus(leader, hex);
+        }
+    }
+
+    public void EnqueueMessageFocus(Hex hex, System.Action onComplete = null)
+    {
+        EnqueueFocus(hex, enemyFocusDuration, enemyFocusPause, true, () =>
+        {
+            onComplete?.Invoke();
+            EnqueueReturnToSelected();
+        });
+    }
+
+    public void EnqueueNpcPlaybackFocus(Hex hex)
+    {
+        EnqueueFocus(hex, enemyFocusDuration, enemyFocusPause, true);
+    }
+
+    public void EnqueueFocus(Hex hex, float duration, float pause, bool allowDuringMessages = false, System.Action onComplete = null)
     {
         if (hex == null) return;
         focusQueue.Enqueue(new FocusRequest
         {
             hex = hex,
-            duration = enemyFocusDuration,
-            pause = enemyFocusPause
+            duration = duration,
+            pause = pause,
+            allowDuringMessages = allowDuringMessages,
+            onComplete = onComplete
         });
         if (focusQueueRoutine == null)
         {
@@ -144,13 +174,29 @@ public class BoardNavigator : MonoBehaviour
             yield break;
         }
 
-        yield return new WaitForSeconds(delay);
-
-        float startTime = Time.time;
-        while (Time.time - startTime < duration)
+        float delayElapsed = 0f;
+        while (delayElapsed < delay)
         {
-            float timeElapsed = Time.time - startTime;
-            float t = Mathf.SmoothStep(0, 1, timeElapsed / duration);
+            if (ShouldPauseFocus())
+            {
+                yield return null;
+                continue;
+            }
+            delayElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            if (ShouldPauseFocus())
+            {
+                yield return null;
+                continue;
+            }
+
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0, 1, elapsed / duration);
 
             Vector3 newPosition = Vector3.Lerp(startPosition, targetPosition, t);
             if (!float.IsNaN(newPosition.x) && !float.IsNaN(newPosition.y) && !float.IsNaN(newPosition.z))
@@ -167,10 +213,30 @@ public class BoardNavigator : MonoBehaviour
     {
         while (focusQueue.Count > 0)
         {
+            while (MessageDisplayNoUI.IsHoldingFocus)
+            {
+                yield return null;
+            }
+
             FocusRequest request = focusQueue.Dequeue();
             if (request.hex == null) continue;
+            if (ShouldSkipFocusHex(request.hex))
+            {
+                request.onComplete?.Invoke();
+                continue;
+            }
 
-            while (MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy())
+            if (!request.allowDuringMessages && MessageDisplayNoUI.IsBusy() && !MessageDisplayNoUI.IsDisplaying)
+            {
+                focusQueue.Enqueue(request);
+                yield return null;
+                continue;
+            }
+
+            while (ShouldPauseFocus()
+                || MessageDisplay.IsBusy()
+                || (!request.allowDuringMessages && MessageDisplayNoUI.IsBusy())
+                || (request.allowDuringMessages && MessageDisplayNoUI.IsDisplaying))
             {
                 yield return null;
             }
@@ -189,8 +255,20 @@ public class BoardNavigator : MonoBehaviour
 
             if (request.pause > 0f)
             {
-                yield return new WaitForSeconds(request.pause);
+                float pauseElapsed = 0f;
+                while (pauseElapsed < request.pause)
+                {
+                    if (ShouldPauseFocus())
+                    {
+                        yield return null;
+                        continue;
+                    }
+                    pauseElapsed += Time.deltaTime;
+                    yield return null;
+                }
             }
+
+            request.onComplete?.Invoke();
         }
 
         focusQueueRoutine = null;
@@ -201,6 +279,22 @@ public class BoardNavigator : MonoBehaviour
         public Hex hex;
         public float duration;
         public float pause;
+        public bool allowDuringMessages;
+        public System.Action onComplete;
+    }
+
+    private void EnqueueReturnToSelected()
+    {
+        Board board = FindAnyObjectByType<Board>();
+        if (board == null || board.selectedCharacter == null) return;
+        Hex selectedHex = board.selectedCharacter.hex;
+        if (selectedHex == null || !selectedHex.IsHexSeen()) return;
+        EnqueueFocus(selectedHex, enemyFocusDuration, 0f, false);
+    }
+
+    public bool HasPendingFocus()
+    {
+        return focusQueue.Count > 0 || focusQueueRoutine != null || lookAtCoroutine != null;
     }
 
     public void LookAtSelected()
@@ -278,5 +372,15 @@ public class BoardNavigator : MonoBehaviour
                 return true;
         }
         return false;
+    }
+
+    private static bool ShouldPauseFocus()
+    {
+        return PopupManager.IsShowing || ConfirmationDialog.IsShowing || SelectionDialog.IsShowing || MessageDisplayNoUI.IsDisplaying;
+    }
+
+    private static bool ShouldSkipFocusHex(Hex hex)
+    {
+        return hex == null || !hex.IsHexSeen();
     }
 }

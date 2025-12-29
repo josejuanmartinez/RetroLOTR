@@ -15,6 +15,7 @@ public class Haste: Spell
             int totalReduction = Math.Max(1, ApplySpellEffectMultiplier(c, 2 + boost));
             int displayedBoost = Math.Max(1, totalReduction);
             c.moved = c.moved - totalReduction;
+            Sounds.Instance?.PlaySpeedUp();
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"+{displayedBoost} <sprite name=\"movement\"/>", Color.green);
             return true;
         };
@@ -29,4 +30,3 @@ public class Haste: Spell
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
-

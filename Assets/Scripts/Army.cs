@@ -105,7 +105,7 @@ public class Army
         return result;
     }
 
-    public string GetHoverText(bool withHealth = true)
+    public string GetHoverText()
     {
         LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
         List<string> result = new() { };
@@ -120,12 +120,11 @@ public class Army
         if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}] {biomeConfig.wsDescription}");
 
         string xpText = GetXpHoverText();
-        string healthText = withHealth && commander != null ? commander.GetHealthHoverText() : "";
 
-        return $" leading {string.Join(',', result)}{xpText}{healthText}";
+        return $" leading {string.Join(',', result)}{xpText}";
     }
 
-    public string GetHoverTextNoXp(bool withHealth = true)
+    public string GetHoverTextNoXp()
     {
         LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
         List<string> result = new() { };
@@ -139,8 +138,7 @@ public class Army
         if (ca > 0) result.Add($"<sprite name=\"ca\">[{ca}] {biomeConfig.caDescription}");
         if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}] {biomeConfig.wsDescription}");
 
-        string healthText = withHealth && commander != null ? commander.GetHealthHoverText() : "";
-        return $" leading {string.Join(',', result)}{healthText}";
+        return $" leading {string.Join(',', result)}";
     }
 
     private string GetXpHoverText()
@@ -327,6 +325,7 @@ public class Army
         if(this == null || this.commander == null || killed || this.commander.killed || attackerLeader == null || attackerLeader.killed) return;
         // Get the attacker's alignment
         AlignmentEnum attackerAlignment = commander.GetAlignment();
+        bool attackerIsNonPlayable = attackerLeader is NonPlayableLeader;
 
         // Calculate attacker's base strength
         int attackerStrength = GetStrength();
@@ -365,13 +364,19 @@ public class Army
         // Check if there are any armies to attack in the target hex
         bool foundDefenders = false;
 
-        // First, handle all enemy armies in the hex using a snapshot to avoid collection modification issues
-        List<Army> defenderSnapshot = new List<Army>(targetHex.armies);
-        foreach (Army defenderArmy in defenderSnapshot)
-        {
+          // First, handle all enemy armies in the hex using a snapshot to avoid collection modification issues
+          List<Army> defenderSnapshot = new List<Army>(targetHex.armies);
+          foreach (Army defenderArmy in defenderSnapshot)
+          {
             if(defenderArmy == null || defenderArmy.commander == null || defenderArmy.killed || defenderArmy.commander.killed || defenderArmy.killed) continue;
             // Don't attack your own armies (check ownership)
             bool isOwnArmy = defenderArmy.commander.GetOwner() == commander.GetOwner();
+
+            // Never allow NonPlayableLeader vs NonPlayableLeader combat
+            if (attackerIsNonPlayable && defenderArmy.commander.GetOwner() is NonPlayableLeader)
+            {
+                continue;
+            }
 
             // Attack if defender has different alignment OR if attacker is neutral (attacks everyone)
             // OR if defender is neutral (everyone attacks neutrals)
@@ -393,6 +398,12 @@ public class Army
 
             // Don't attack your own PC (check both alignment and owner)
             bool isOwnPC = commander && !commander.killed ? defenderLeader == commander.GetOwner() : false;
+
+            // Never allow NonPlayableLeader vs NonPlayableLeader PC attacks
+            if (attackerIsNonPlayable && defenderLeader is NonPlayableLeader)
+            {
+                return;
+            }
 
             // Attack PC if it has different alignment OR if attacker is neutral (attacks all)
             // OR if PC is neutral (everyone attacks neutrals)
@@ -418,6 +429,13 @@ public class Army
     private void ProcessCombat(Hex targetHex, Army defenderArmy, int attackerStrength, int attackerDefence, Leader attackerLeader, int attackerAlliesJoined, int attackerAlliesStrength, int attackerAlliesDefence)
     {
         if(defenderArmy == null || defenderArmy.commander == null || defenderArmy.killed || defenderArmy.commander.killed || attackerLeader == null || attackerLeader.killed) return;
+        bool attackerIsPlayer = commander != null && commander.isPlayerControlled;
+        bool defenderIsPlayer = defenderArmy.commander != null && defenderArmy.commander.isPlayerControlled;
+        bool playerInvolved = attackerIsPlayer || defenderIsPlayer;
+        if (playerInvolved)
+        {
+            Music.Instance?.PlayBattleMusic();
+        }
         AlignmentEnum attackerAlignment = commander.GetAlignment();
         string attackerName = commander != null ? commander.characterName : attackerLeader.characterName;
         string defenderName = defenderArmy.GetCommander().characterName;
@@ -502,25 +520,24 @@ public class Army
             // Compare strengths to decide who loses one unit
             forceCasualtySide = attackerStrength >= defenderStrength;
         }
-        int attackerPercent = Mathf.RoundToInt(attackerCasualtyPercent * 100f);
-        int defenderPercent = Mathf.RoundToInt(defenderCasualtyPercent * 100f);
-        int attackerReportedLosses = attackerTotalLosses;
-        int defenderReportedLosses = defenderTotalLosses;
         string stalemateNote = null;
 
         if (!anyAttackerCasualties && !anyDefenderCasualties)
         {
             if (forceCasualtySide)
             {
-                defenderReportedLosses = 1;
                 stalemateNote = $"{defenderArmy.GetCommander().characterName} suffers a token casualty after a stalemate.";
             }
             else
             {
-                attackerReportedLosses = 1;
                 stalemateNote = $"{attackerName} suffers a token casualty after a stalemate.";
             }
         }
+
+        CasualtyBreakdown attackerLosses = CalculateCasualtyBreakdown(attackerCasualtyPercent, !anyAttackerCasualties && !forceCasualtySide);
+        CasualtyBreakdown defenderLosses = defenderArmy.CalculateCasualtyBreakdown(defenderCasualtyPercent, !anyDefenderCasualties && forceCasualtySide);
+        string attackerLossesText = BuildLossesShort(attackerLosses);
+        string defenderLossesText = BuildLossesShort(defenderLosses);
 
         string battleLocation = targetHex.HasAnyPC() && targetHex.IsPCRevealed() ? targetHex.GetPC().pcName : targetHex.GetHoverV2();
         string title = $"Attack at {battleLocation}";
@@ -545,20 +562,16 @@ public class Army
             attackerArtifactDefense,
             defenderArtifactAttack,
             defenderArtifactDefense,
-            attackerStrength,
-            defenderDefense,
-            defenderStrength,
-            attackerDefence,
-            attackerReportedLosses,
-            attackerPercent,
-            defenderReportedLosses,
-            defenderPercent,
+            attackerDamage,
+            defenderDamage,
+            attackerLossesText,
+            defenderLossesText,
             stalemateNote);
         Illustrations illustrations = GameObject.FindFirstObjectByType<Illustrations>();
         List<(string message, Color color)> hudMessages = new()
         {
-            ($"{attackerName} loses {attackerReportedLosses} ({attackerPercent}%).", Color.red),
-            ($"{defenderName} loses {defenderReportedLosses} ({defenderPercent}%).", Color.red)
+            ($"{attackerName} losses: {attackerLossesText}.", Color.red),
+            ($"{defenderName} losses: {defenderLossesText}.", Color.red)
         };
         Action onPopupClose = () => ShowHudMessagesAfterPopup(targetHex, hudActor, hudMessages);
         PopupManager.Show(
@@ -590,6 +603,18 @@ public class Army
                 : "The battle grinds on with no clear victor.");
         Color outcomeColor = attackerAlive && !defendersRemain ? Color.green : Color.yellow;
         hudMessages.Add((outcome, outcomeColor));
+        if (playerInvolved)
+        {
+            bool playerWin = attackerIsPlayer ? (attackerAlive && !defendersRemain) : (!attackerAlive && defendersRemain);
+            if (playerWin)
+            {
+                Music.Instance?.PlayBattleWonMusic();
+            }
+            else
+            {
+                Music.Instance?.PlayBattleMusic();
+            }
+        }
 
         int attackerXpDelta = xp - attackerXpBefore;
         int defenderXpDelta = defenderArmy.xp - defenderXpBefore;
@@ -618,42 +643,43 @@ public class Army
         int attackerArtifactDefense,
         int defenderArtifactAttack,
         int defenderArtifactDefense,
-        int attackerStrength,
-        int defenderDefense,
-        int defenderStrength,
-        int attackerDefence,
-        int attackerReportedLosses,
-        int attackerPercent,
-        int defenderReportedLosses,
-        int defenderPercent,
+        float attackerDamage,
+        float defenderDamage,
+        string attackerLossesText,
+        string defenderLossesText,
         string stalemateNote)
     {
         StringBuilder sb = new StringBuilder();
         int template = UnityEngine.Random.Range(0, 5);
 
+        string edgePhrase = BuildBattleEdgePhrase(attackerDamage, defenderDamage, attackerName, defenderName);
+        bool attackerHasEdge = attackerBonusPercent > defenderBonusPercent + 10;
+        bool defenderHasEdge = defenderBonusPercent > attackerBonusPercent + 10;
+        bool relicsActive = attackerArtifactAttack + attackerArtifactDefense + defenderArtifactAttack + defenderArtifactDefense > 0;
+
         void Allies(bool attackerSide)
         {
             if (attackerSide && attackerAlliesJoined > 0)
             {
-                sb.AppendLine($"Allies surge in: {attackerAlliesJoined} host(s) add +{attackerAlliesStrength} STR / +{attackerAlliesDefence} DEF to {attackerName}'s line.");
+                sb.AppendLine($"Allies surge in behind {attackerName}, swelling the assault.");
             }
             if (!attackerSide && defenderAlliesJoined > 0)
             {
-                sb.AppendLine($"Reinforcements rally to {defenderName}: {defenderAlliesJoined} contingent(s) lend +{defenderAlliesStrength} STR / +{defenderAlliesDefence} DEF.");
+                sb.AppendLine($"Reinforcements rally to {defenderName}, tightening the defense.");
             }
         }
 
         void Artifacts()
         {
-            if (attackerArtifactAttack + attackerArtifactDefense > 0 || defenderArtifactAttack + defenderArtifactDefense > 0)
+            if (relicsActive)
             {
-                sb.AppendLine($"Relics blaze: attacker +{attackerArtifactAttack} ATK / +{attackerArtifactDefense} DEF, defender +{defenderArtifactAttack} ATK / +{defenderArtifactDefense} DEF.");
+                sb.AppendLine("Relics flare and ward the front ranks.");
             }
         }
 
         void Casualties()
         {
-            sb.AppendLine($"Casualties mount: {attackerName} loses {attackerReportedLosses} ({attackerPercent}%), {defenderName} loses {defenderReportedLosses} ({defenderPercent}%).");
+            sb.AppendLine($"Losses: {attackerName} {attackerLossesText}; {defenderName} {defenderLossesText}.");
             if (!string.IsNullOrEmpty(stalemateNote)) sb.AppendLine(stalemateNote);
         }
 
@@ -663,51 +689,59 @@ public class Army
                 sb.AppendLine($"Under {attackerName}'s banner the host marches on {location}, while {defenderName} braces the shieldwall.");
                 Allies(true);
                 Allies(false);
-                if (pcDefenseContribution > 0) sb.AppendLine($"Battlements thunder from {location}, adding {pcDefenseContribution} to defense and reply.");
-                sb.AppendLine($"Command bites: {attackerName} drives +{attackerBonusPercent}% with {attackerTrainingLabel} troops (XP {attackerXp}); {defenderName} counters with +{defenderBonusPercent}% and {defenderTrainingLabel} (XP {defenderXp}).");
+                if (pcDefenseContribution > 0) sb.AppendLine($"Battlements thunder from {location}, stiffening the line.");
+                if (attackerHasEdge) sb.AppendLine($"{attackerName}'s command sharpens the assault.");
+                if (defenderHasEdge) sb.AppendLine($"{defenderName}'s command steadies the defense.");
+                sb.AppendLine($"Troops hold as {attackerTrainingLabel} clash with {defenderTrainingLabel}.");
                 Artifacts();
-                sb.AppendLine($"Steel and muscle: {attackerStrength} attack slams {defenderDefense} defense, while {defenderStrength} hammers back at {attackerDefence}.");
+                sb.AppendLine(edgePhrase);
                 Casualties();
                 break;
             case 1:
                 sb.AppendLine($"{location} erupts as {attackerName} advances; {defenderName} locks ranks and answers.");
-                if (pcDefenseContribution > 0) sb.AppendLine($"Stones and arrows rain from the walls (+{pcDefenseContribution} DEF).");
+                if (pcDefenseContribution > 0) sb.AppendLine("Stones and arrows rain from the walls.");
                 Allies(true);
                 Allies(false);
-                sb.AppendLine($"Veterans steady the lines: attacker {attackerTrainingLabel} (XP {attackerXp}) +{attackerBonusPercent}%, defender {defenderTrainingLabel} (XP {defenderXp}) +{defenderBonusPercent}%.");
+                sb.AppendLine($"Veterans steady the lines: {attackerTrainingLabel} vs {defenderTrainingLabel}.");
                 Artifacts();
-                sb.AppendLine($"Clash of totals: {attackerStrength} vs {defenderDefense}; riposte {defenderStrength} vs {attackerDefence}.");
+                sb.AppendLine(edgePhrase);
                 Casualties();
                 break;
             case 2:
                 sb.AppendLine($"{attackerName} presses into {location}, horns sounding. {defenderName} signals to hold the line.");
                 Allies(true);
-                if (pcDefenseContribution > 0) sb.AppendLine($"The settlement stiffens the defense (+{pcDefenseContribution}).");
+                if (pcDefenseContribution > 0) sb.AppendLine("The settlement stiffens the defense.");
                 Allies(false);
-                sb.AppendLine($"Leadership weighs heavy: +{attackerBonusPercent}% for {attackerName}, +{defenderBonusPercent}% for {defenderName}.");
-                sb.AppendLine($"Training shows: {attackerTrainingLabel} (XP {attackerXp}) vs {defenderTrainingLabel} (XP {defenderXp}).");
+                if (attackerHasEdge || defenderHasEdge)
+                {
+                    sb.AppendLine(attackerHasEdge
+                        ? $"{attackerName} finds gaps with disciplined orders."
+                        : $"{defenderName} anticipates the charge and holds.");
+                }
+                sb.AppendLine($"Training shows: {attackerTrainingLabel} vs {defenderTrainingLabel}.");
                 Artifacts();
-                sb.AppendLine($"Totals collide: attack {attackerStrength} onto {defenderDefense}, counter {defenderStrength} into {attackerDefence}.");
+                sb.AppendLine(edgePhrase);
                 Casualties();
                 break;
             case 3:
                 sb.AppendLine($"{attackerName} drives a wedge toward {location}; {defenderName} pivots to meet the charge.");
                 Allies(true);
                 Allies(false);
-                if (pcDefenseContribution > 0) sb.AppendLine($"Walls and militia strain, adding {pcDefenseContribution} to the stand.");
-                sb.AppendLine($"Edge in command: attacker +{attackerBonusPercent}%, defender +{defenderBonusPercent}%.");
+                if (pcDefenseContribution > 0) sb.AppendLine("Walls and militia strain to hold the breach.");
+                if (attackerHasEdge) sb.AppendLine($"{attackerName}'s leadership keeps the pressure on.");
+                if (defenderHasEdge) sb.AppendLine($"{defenderName}'s leadership keeps the line tight.");
                 Artifacts();
-                sb.AppendLine($"Blades find gaps: attacker {attackerStrength} vs defense {defenderDefense}. Counterblow {defenderStrength} vs {attackerDefence}.");
+                sb.AppendLine(edgePhrase);
                 Casualties();
                 break;
             default:
                 sb.AppendLine($"Battle for {location}: {attackerName} leads the assault, {defenderName} anchors the defense.");
                 Allies(true);
                 Allies(false);
-                if (pcDefenseContribution > 0) sb.AppendLine($"Local defenses join the fray (+{pcDefenseContribution}).");
-                sb.AppendLine($"Morale and drill: {attackerTrainingLabel} (XP {attackerXp}) vs {defenderTrainingLabel} (XP {defenderXp}); commanders push +{attackerBonusPercent}% / +{defenderBonusPercent}%.");
+                if (pcDefenseContribution > 0) sb.AppendLine("Local defenses join the fray.");
+                sb.AppendLine($"Morale and drill: {attackerTrainingLabel} vs {defenderTrainingLabel}.");
                 Artifacts();
-                sb.AppendLine($"Numbers clash: {attackerStrength} onto {defenderDefense}; return strike {defenderStrength} into {attackerDefence}.");
+                sb.AppendLine(edgePhrase);
                 Casualties();
                 break;
         }
@@ -719,52 +753,53 @@ public class Army
         string location,
         string attackerName,
         string defenderName,
-        int attackerStrength,
-        int defenderDefense,
-        int attackerDefence,
         int attackerBonusPercent,
         string attackerTrainingLabel,
         int attackerXp,
         int attackerArtifactAttack,
         int attackerArtifactDefense,
-        int attackerTotalLosses,
-        int attackerPercent,
         float attackerDamage,
+        string attackerLossesText,
         bool fortStands)
     {
         StringBuilder sb = new StringBuilder();
         int template = UnityEngine.Random.Range(0, 5);
+        bool attackerHasEdge = attackerBonusPercent > 10;
+        bool relicsActive = attackerArtifactAttack + attackerArtifactDefense > 0;
+        string edgePhrase = attackerDamage > 0 ? $"{attackerName} finds cracks in the defense." : $"{defenderName} holds the line.";
 
         switch (template)
         {
             case 0:
                 sb.AppendLine($"{attackerName} drives siege lines toward {location}, drums rolling as ladders rise.");
-                sb.AppendLine($"The assault throws {attackerStrength} strength at defenses of {defenderDefense}; arrows and oil bite back against {attackerDefence}.");
+                sb.AppendLine(attackerHasEdge ? "Tight orders keep the assault steady." : "The attack grinds forward in waves.");
                 break;
             case 1:
                 sb.AppendLine($"Siege of {location}: rams grind forward under {attackerName}'s shout while {defenderName} braces the parapet.");
-                sb.AppendLine($"Pressure: {attackerStrength} vs {defenderDefense}; missiles lash the attackers (DEF {attackerDefence}).");
+                sb.AppendLine("Pressure builds as the walls answer with stones and fire.");
                 break;
             case 2:
                 sb.AppendLine($"{location} shakes as {attackerName} orders the climb. {defenderName} answers with volleys.");
-                sb.AppendLine($"Strength meets stone: {attackerStrength} attacking, {defenderDefense} resisting; defenders strike back into {attackerDefence}.");
+                sb.AppendLine($"The {attackerTrainingLabel} set the pace up the ladders.");
                 break;
             case 3:
                 sb.AppendLine($"{attackerName} hurls the host at {location}; mantlets and ladders grind ahead.");
-                sb.AppendLine($"Force on the walls: {attackerStrength} against {defenderDefense}. Counterfire tests {attackerDefence}.");
+                sb.AppendLine("Boiling oil and arrows test the attackers' resolve.");
                 break;
             default:
                 sb.AppendLine($"At {location}, {attackerName} raises a storm of iron while {defenderName} commands the ramparts.");
-                sb.AppendLine($"Numbers collide: {attackerStrength} vs {defenderDefense}; the defense punishes {attackerDefence}.");
+                sb.AppendLine("The assault surges and breaks in repeated waves.");
                 break;
         }
 
-        sb.AppendLine($"Command and drill hold: {attackerName} pushes a +{attackerBonusPercent}% edge with {attackerTrainingLabel} troops (XP {attackerXp}).");
-        if (attackerArtifactAttack + attackerArtifactDefense > 0)
+        sb.AppendLine(attackerHasEdge ? $"{attackerName}'s command keeps the siege from stalling." : $"{defenderName} keeps the walls steady.");
+        sb.AppendLine($"Drill and grit: {attackerTrainingLabel} in the assault.");
+        if (relicsActive)
         {
-            sb.AppendLine($"Relics flare at the breach: +{attackerArtifactAttack} ATK / +{attackerArtifactDefense} DEF lend their might.");
+            sb.AppendLine("Relics flare at the breach.");
         }
-        sb.AppendLine($"Losses bite hard: {attackerName} loses {attackerTotalLosses} ({attackerPercent}%).");
+        sb.AppendLine(edgePhrase);
+        sb.AppendLine($"Losses: {attackerName} {attackerLossesText}.");
         if (attackerDamage > 0)
         {
             sb.AppendLine(fortStands ? "The walls crack and the defenders fall back a step." : "Gates burst and the population center falls to the attackers.");
@@ -789,6 +824,13 @@ public class Army
         string attackerName = commander != null ? commander.characterName : attackerLeader.characterName;
         int attackerXpBefore = xp;
         Character hudActor = commander;
+        bool attackerIsPlayer = commander != null && commander.isPlayerControlled;
+        bool defenderIsPlayer = IsPlayerLeader(defenderLeader);
+        bool playerInvolved = attackerIsPlayer || defenderIsPlayer;
+        if (playerInvolved)
+        {
+            Music.Instance?.PlayBattleMusic();
+        }
 
         // Don't attack your own PC (check both alignment and owner)
         bool isOwnPC = commander && !commander.killed ? defenderLeader == commander.GetOwner() : false;
@@ -825,30 +867,27 @@ public class Army
         int attackerTotalLosses = CalculateTotalCasualties(attackerCasualtyPercent);
         bool anyAttackerCasualties = attackerTotalLosses > 0;
 
-        int attackerPercent = Mathf.RoundToInt(attackerCasualtyPercent * 100f);
         int attackerArtifactAttack = GetArtifactAttackBonusTotal();
         int attackerArtifactDefense = GetArtifactDefenseBonusTotal();
+        CasualtyBreakdown attackerLosses = CalculateCasualtyBreakdown(attackerCasualtyPercent, !anyAttackerCasualties);
+        string attackerLossesText = BuildLossesShort(attackerLosses);
         string pcTitle = $"Siege of {targetHex.GetPC().pcName}";
         string pcText = BuildSiegeDescription(
             targetHex.GetPC().pcName,
             attackerName,
             defenderLeader.characterName,
-            attackerStrength,
-            defenderDefense,
-            attackerDefence,
             attackerBonusPercent,
             GetTrainingLabel(),
             xp,
             attackerArtifactAttack,
             attackerArtifactDefense,
-            attackerTotalLosses,
-            attackerPercent,
             attackerDamage,
+            attackerLossesText,
             targetHex.GetPC().fortSize > FortSizeEnum.NONE);
         Illustrations pcIllustrations = GameObject.FindFirstObjectByType<Illustrations>();
         List<(string message, Color color)> hudMessages = new()
         {
-            ($"{attackerName} loses {attackerTotalLosses} ({attackerPercent}%).", Color.red)
+            ($"{attackerName} losses: {attackerLossesText}.", Color.red)
         };
         Action onPopupClose = () => ShowHudMessagesAfterPopup(targetHex, hudActor, hudMessages);
         PopupManager.Show(
@@ -891,6 +930,18 @@ public class Army
 
         int attackerXpDelta = xp - attackerXpBefore;
         hudMessages.Add(($"XP gained: {attackerName} {FormatDelta(attackerXpDelta)}", Color.cyan));
+        if (playerInvolved)
+        {
+            bool playerWin = attackerIsPlayer ? (attackerDamage > 0) : (attackerDamage <= 0);
+            if (playerWin)
+            {
+                Music.Instance?.PlayBattleWonMusic();
+            }
+            else
+            {
+                Music.Instance?.PlayBattleMusic();
+            }
+        }
     }
 
     public void ApplyCasualtiesToDefenders(Hex targetHex, float casualtyPercent, AlignmentEnum attackerAlignment, bool forceOneUnitCasualty, Leader attacker)
@@ -968,93 +1019,27 @@ public class Army
     // Uses the same rounding function as the actual casualty calculation
     public int CalculateTotalCasualties(float casualtyPercent)
     {
-        // Calculate casualties for each unit type using the chosen rounding function
-        // You can replace Math.Floor with Math.Ceiling or Math.Round as needed
-        int maCasualties = (int)Math.Round(this.ma * casualtyPercent);
-        int arCasualties = (int)Math.Round(this.ar * casualtyPercent);
-        int liCasualties = (int)Math.Round(this.li * casualtyPercent);
-        int hiCasualties = (int)Math.Round(this.hi * casualtyPercent);
-        int lcCasualties = (int)Math.Round(this.lc * casualtyPercent);
-        int hcCasualties = (int)Math.Round(this.hc * casualtyPercent);
-        int caCasualties = (int)Math.Round(this.ca * casualtyPercent);
-        int wsCasualties = commander?.hex?.IsWaterTerrain() ?? false ? (int)Math.Round(this.ws * casualtyPercent) : 0;
-
-        return maCasualties + arCasualties + liCasualties + hiCasualties +
-               lcCasualties + hcCasualties + caCasualties + wsCasualties;
+        CasualtyBreakdown breakdown = CalculateCasualtyBreakdown(casualtyPercent, false);
+        return breakdown.Total;
     }
 
     public void ReceiveCasualties(float casualtyPercent, Leader defenderLeader, bool forceOneUnitCasualty = false)
     {
-        // Calculate casualties for each unit type
-        // You can replace Math.Floor with Math.Ceiling or Math.Round depending on desired behavior
-        // Math.Floor - Minimum losses (current behavior)
-        // Math.Ceiling - Maximum losses (more aggressive)
-        // Math.Round - Balanced approach (rounds 0.5 up, otherwise follows normal rounding rules)
-        int maCasualties = (int)Math.Round(this.ma * casualtyPercent);
-        int arCasualties = (int)Math.Round(this.ar * casualtyPercent);
-        int liCasualties = (int)Math.Round(this.li * casualtyPercent);
-        int hiCasualties = (int)Math.Round(this.hi * casualtyPercent);
-        int lcCasualties = (int)Math.Round(this.lc * casualtyPercent);
-        int hcCasualties = (int)Math.Round(this.hc * casualtyPercent);
-        int caCasualties = (int)Math.Round(this.ca * casualtyPercent);
-        int wsCasualties = commander.hex.IsWaterTerrain() ? (int)Math.Round(this.ws * casualtyPercent) : 0;
-
-        // Check if there are any casualties at all
-        bool anyCasualties = maCasualties > 0 || arCasualties > 0 || liCasualties > 0 ||
-                            hiCasualties > 0 || lcCasualties > 0 || hcCasualties > 0 ||
-                            caCasualties > 0 || wsCasualties > 0;
-
-        // If no casualties and we need to force one, find the weakest unit type and remove one
-        if (!anyCasualties && forceOneUnitCasualty && GetSize(false) > 0)
-        {
-            // Check each unit type in order of weakness precedence
-            if (ma > 0)
-            {
-                maCasualties = 1;
-            }
-            else if (ar > 0)
-            {
-                arCasualties = 1;
-            }
-            else if (li > 0)
-            {
-                liCasualties = 1;
-            }
-            else if (lc > 0)
-            {
-                lcCasualties = 1;
-            }
-            else if (hi > 0)
-            {
-                hiCasualties = 1;
-            }
-            else if (hc > 0)
-            {
-                hcCasualties = 1;
-            }
-            else if (ca > 0)
-            {
-                caCasualties = 1;
-            }
-            else if (ws > 0 && commander.hex.IsWaterTerrain())
-            {
-                wsCasualties = 1;
-            }
-        }
+        CasualtyBreakdown breakdown = CalculateCasualtyBreakdown(casualtyPercent, forceOneUnitCasualty);
 
         // Apply casualties
-        this.ma = Math.Max(0, this.ma - maCasualties);
-        this.ar = Math.Max(0, this.ar - arCasualties);
-        this.li = Math.Max(0, this.li - liCasualties);
-        this.hi = Math.Max(0, this.hi - hiCasualties);
-        this.lc = Math.Max(0, this.lc - lcCasualties);
-        this.hc = Math.Max(0, this.hc - hcCasualties);
-        this.ca = Math.Max(0, this.ca - caCasualties);
+        this.ma = Math.Max(0, this.ma - breakdown.ma);
+        this.ar = Math.Max(0, this.ar - breakdown.ar);
+        this.li = Math.Max(0, this.li - breakdown.li);
+        this.hi = Math.Max(0, this.hi - breakdown.hi);
+        this.lc = Math.Max(0, this.lc - breakdown.lc);
+        this.hc = Math.Max(0, this.hc - breakdown.hc);
+        this.ca = Math.Max(0, this.ca - breakdown.ca);
 
         // Only apply casualties to warships if in water
         if (commander.hex.IsWaterTerrain())
         {
-            this.ws = Math.Max(0, this.ws - wsCasualties);
+            this.ws = Math.Max(0, this.ws - breakdown.ws);
         }
 
         // Check if the army was eliminated
@@ -1062,21 +1047,99 @@ public class Army
         {
             this.Killed(defenderLeader);
         }
-        else if (maCasualties > 0 || arCasualties > 0 || liCasualties > 0 ||
-                hiCasualties > 0 || lcCasualties > 0 || hcCasualties > 0 ||
-                caCasualties > 0 || wsCasualties > 0)
+        else if (breakdown.Any)
         {
-            StringBuilder casualties = new StringBuilder();
-            if (maCasualties > 0) casualties.Append($"<sprite name=\"ma\"/>[{maCasualties}]");
-            if (arCasualties > 0) casualties.Append($"<sprite name=\"ar\"/>[{arCasualties}]");
-            if (liCasualties > 0) casualties.Append($"<sprite name=\"li\"/>[{liCasualties}]");
-            if (hiCasualties > 0) casualties.Append($"<sprite name=\"hi\"/>[{hiCasualties}]");
-            if (lcCasualties > 0) casualties.Append($"<sprite name=\"lc\"/>[{lcCasualties}]");
-            if (hcCasualties > 0) casualties.Append($"<sprite name=\"hc\"/>[{hcCasualties}]");
-            if (caCasualties > 0) casualties.Append($"<sprite name=\"ca\"/>[{caCasualties}]");
-            if (wsCasualties > 0) casualties.Append($"<sprite name=\"ws\"/>[{wsCasualties}]");
-            MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"{commander.characterName} army casualties: {casualties}", Color.red);
+            string casualties = BuildCasualtySpriteString(breakdown);
+            MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"{commander.characterName} losses: {casualties}", Color.red);
         }
+    }
+
+    private struct CasualtyBreakdown
+    {
+        public int ma;
+        public int ar;
+        public int li;
+        public int hi;
+        public int lc;
+        public int hc;
+        public int ca;
+        public int ws;
+        public int Total => ma + ar + li + hi + lc + hc + ca + ws;
+        public bool Any => Total > 0;
+    }
+
+    private CasualtyBreakdown CalculateCasualtyBreakdown(float casualtyPercent, bool forceOneUnitCasualty)
+    {
+        CasualtyBreakdown breakdown = new()
+        {
+            ma = (int)Math.Round(this.ma * casualtyPercent),
+            ar = (int)Math.Round(this.ar * casualtyPercent),
+            li = (int)Math.Round(this.li * casualtyPercent),
+            hi = (int)Math.Round(this.hi * casualtyPercent),
+            lc = (int)Math.Round(this.lc * casualtyPercent),
+            hc = (int)Math.Round(this.hc * casualtyPercent),
+            ca = (int)Math.Round(this.ca * casualtyPercent),
+            ws = commander != null && commander.hex != null && commander.hex.IsWaterTerrain()
+                ? (int)Math.Round(this.ws * casualtyPercent)
+                : 0
+        };
+
+        if (!breakdown.Any && forceOneUnitCasualty && GetSize(false) > 0)
+        {
+            if (ma > 0) breakdown.ma = 1;
+            else if (ar > 0) breakdown.ar = 1;
+            else if (li > 0) breakdown.li = 1;
+            else if (lc > 0) breakdown.lc = 1;
+            else if (hi > 0) breakdown.hi = 1;
+            else if (hc > 0) breakdown.hc = 1;
+            else if (ca > 0) breakdown.ca = 1;
+            else if (ws > 0 && commander != null && commander.hex != null && commander.hex.IsWaterTerrain()) breakdown.ws = 1;
+        }
+
+        return breakdown;
+    }
+
+    private static string BuildCasualtySpriteString(CasualtyBreakdown breakdown)
+    {
+        StringBuilder casualties = new StringBuilder();
+        if (breakdown.ma > 0) casualties.Append($"<sprite name=\"ma\"/>[{breakdown.ma}]");
+        if (breakdown.ar > 0) casualties.Append($"<sprite name=\"ar\"/>[{breakdown.ar}]");
+        if (breakdown.li > 0) casualties.Append($"<sprite name=\"li\"/>[{breakdown.li}]");
+        if (breakdown.hi > 0) casualties.Append($"<sprite name=\"hi\"/>[{breakdown.hi}]");
+        if (breakdown.lc > 0) casualties.Append($"<sprite name=\"lc\"/>[{breakdown.lc}]");
+        if (breakdown.hc > 0) casualties.Append($"<sprite name=\"hc\"/>[{breakdown.hc}]");
+        if (breakdown.ca > 0) casualties.Append($"<sprite name=\"ca\"/>[{breakdown.ca}]");
+        if (breakdown.ws > 0) casualties.Append($"<sprite name=\"ws\"/>[{breakdown.ws}]");
+        return casualties.ToString();
+    }
+
+    private static string BuildLossesShort(CasualtyBreakdown breakdown)
+    {
+        string sprites = BuildCasualtySpriteString(breakdown);
+        return string.IsNullOrEmpty(sprites) ? "no confirmed losses" : sprites;
+    }
+
+    private static string BuildBattleEdgePhrase(float attackerDamage, float defenderDamage, string attackerName, string defenderName)
+    {
+        if (attackerDamage <= 0f && defenderDamage <= 0f)
+        {
+            return "Neither side finds a clear opening.";
+        }
+        if (attackerDamage > defenderDamage * 1.25f)
+        {
+            return $"{attackerName} presses the advantage.";
+        }
+        if (defenderDamage > attackerDamage * 1.25f)
+        {
+            return $"{defenderName} blunts the assault.";
+        }
+        return "The fight swings back and forth.";
+    }
+
+    private static bool IsPlayerLeader(Leader leader)
+    {
+        Game g = UnityEngine.Object.FindFirstObjectByType<Game>();
+        return g != null && leader != null && g.player == leader;
     }
 
     private void ShowHudMessagesAfterPopup(Hex hex, Character actor, List<(string message, Color color)> messages)

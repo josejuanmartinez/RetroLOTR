@@ -22,7 +22,7 @@ public class AssassinateCharacter : AgentCharacterAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
             List<Character> characters = c.hex.GetEnemyCharacters(c.GetOwner());
             if (characters.Count < 1) return false;
-            bool isAI = FindFirstObjectByType<Game>().player == c.GetOwner();
+            bool isAI = !c.isPlayerControlled;
             Character enemy = null;
             if (!isAI)
             {

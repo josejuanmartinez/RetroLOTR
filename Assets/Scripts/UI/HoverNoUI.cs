@@ -54,8 +54,9 @@ public class HoverNoUI : MonoBehaviour
 
     public void Initialize(string text, float fontSize = 2f)
     {
-        string markStartStr = mark? markStart:"";
-        string markEndStr = mark? markEnd:"";
+        bool textNull = string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text);
+        string markStartStr = mark && !textNull? markStart:"";
+        string markEndStr = mark && !textNull? markEnd:"";
         textWidget.text = $"{markStartStr}{text}{markEndStr}";
         textWidget.fontSize = fontSize;
     }

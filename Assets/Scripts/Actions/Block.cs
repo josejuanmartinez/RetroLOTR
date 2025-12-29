@@ -22,7 +22,7 @@ public class Block : CommanderArmyAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
             List<Character> characters = c.hex.GetEnemyArmies(c.GetOwner());
             if(characters.Count < 1) return false;
-            bool isAI = FindFirstObjectByType<Game>().player == c.GetOwner();
+            bool isAI = !c.isPlayerControlled;
             Army enemy = null;
             if(!isAI)
             {

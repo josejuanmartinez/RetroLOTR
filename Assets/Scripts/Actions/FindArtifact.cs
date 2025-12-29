@@ -40,6 +40,7 @@ public class FindArtifact: MageAction
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c.hex.hiddenArtifacts.Count > 0) {
+                c.hex.RevealArtifact();
                 if (c.artifacts.Count >= Character.MAX_ARTIFACTS)
                 {
                     _ = ConfirmationDialog.AskOk($"{c.characterName} can't hold more artifacts");
@@ -77,6 +78,7 @@ public class FindArtifact: MageAction
             {
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
+                c.hex.UpdateArtifactVisibility();
                 await ApplyAlignmentPenaltyIfNeeded();
                 MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} found", Color.green);
                 Sounds.Instance?.PlayArtifactFound();
@@ -88,6 +90,7 @@ public class FindArtifact: MageAction
             {
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
+                c.hex.UpdateArtifactVisibility();
                 await ApplyAlignmentPenaltyIfNeeded();
                 MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} claimed", Color.green);
                 Sounds.Instance?.PlayArtifactFound();

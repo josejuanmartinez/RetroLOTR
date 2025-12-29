@@ -25,6 +25,13 @@ public class PerceiveDanger : Spell
 
             int radius = Mathf.Max(1, ApplySpellEffectMultiplier(c, Mathf.Max(1, c.GetMage() / 3)));
             target.RevealArea(radius, true, c.GetOwner());
+            var radiusHexes = target.GetHexesInRadius(radius);
+            for (int i = 0; i < radiusHexes.Count; i++)
+            {
+                Hex hex = radiusHexes[i];
+                if (hex == null) continue;
+                hex.RefreshVisibilityRendering();
+            }
             target.LookAt();
             MessageDisplayNoUI.ShowMessage(target, c, $"Danger perceived nearby!", Color.cyan);
             return true;

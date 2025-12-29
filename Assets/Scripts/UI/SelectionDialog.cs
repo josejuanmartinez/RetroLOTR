@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class SelectionDialog : MonoBehaviour
 {
     public static SelectionDialog Instance { get; private set; }
+    public static bool IsShowing { get; private set; }
 
     [Header("UI References")]
     [SerializeField] private GameObject content;
@@ -120,12 +121,14 @@ public class SelectionDialog : MonoBehaviour
     private void HideInstant()
     {
         content.SetActive(false);
+        IsShowing = false;
     }
 
     private void ShowInternal(DialogRequest request)
     {
         if (request == null) return;
         content.SetActive(true);
+        IsShowing = true;
 
         messageLabel.text = request.message;
         yesButtonText.text = request.yesString;
@@ -167,5 +170,24 @@ public class SelectionDialog : MonoBehaviour
         public string yesString;
         public string noString;
         public List<string> options;
+    }
+
+    public static void CloseAll()
+    {
+        if (Instance == null) return;
+        Instance.ForceClose();
+    }
+
+    private void ForceClose()
+    {
+        if (waitForMessagesRoutine != null)
+        {
+            StopCoroutine(waitForMessagesRoutine);
+            waitForMessagesRoutine = null;
+        }
+        pendingRequest?.TrySetResult(string.Empty);
+        pendingRequest = null;
+        pendingDisplay = null;
+        HideInstant();
     }
 }

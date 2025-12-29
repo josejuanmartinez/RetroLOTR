@@ -34,6 +34,8 @@ public class PC
     [SerializeField] public bool hasPort;
     [SerializeField] public bool hiddenButRevealed;
     [SerializeField] public bool isCapital;
+    [SerializeField] public int temporaryHiddenTurns;
+    [SerializeField] public int temporaryRevealTurns;
 
 
     public PC(Leader owner, string pcName, PCSizeEnum citySize, FortSizeEnum fortSize, bool hasPort, bool isHidden, Hex hex, bool isCapital = false, int loyalty = 75)
@@ -130,6 +132,8 @@ public class PC
         var l = overrideLeader ? overrideLeader : GameObject.FindFirstObjectByType<Game>().player;
         if (l == null) return false;
 
+        if (IsTemporarilyRevealed()) return true;
+        if (IsTemporarilyHidden(l)) return false;
         if (!isHidden || hiddenButRevealed) return true;
 
         var pcOwner = owner;
@@ -138,6 +142,35 @@ public class PC
         var pcAlign = pcOwner.GetAlignment();
         var lAlign = l.GetAlignment();
         return pcAlign != AlignmentEnum.neutral && pcAlign == lAlign;
+    }
+
+    public bool IsTemporarilyRevealed() => temporaryRevealTurns > 0;
+
+    public bool IsTemporarilyHidden(Leader viewer = null)
+    {
+        if (temporaryHiddenTurns <= 0) return false;
+        if (viewer != null && owner != null && viewer == owner) return false;
+        return true;
+    }
+
+    public void SetTemporaryHidden(int turns)
+    {
+        if (turns <= 0) return;
+        temporaryHiddenTurns = Mathf.Max(temporaryHiddenTurns, turns);
+        temporaryRevealTurns = 0;
+    }
+
+    public void SetTemporaryReveal(int turns)
+    {
+        if (turns <= 0) return;
+        temporaryRevealTurns = Mathf.Max(temporaryRevealTurns, turns);
+        temporaryHiddenTurns = 0;
+    }
+
+    public void TickTemporaryVisibility()
+    {
+        if (temporaryHiddenTurns > 0) temporaryHiddenTurns--;
+        if (temporaryRevealTurns > 0) temporaryRevealTurns--;
     }
 
     public string GetLoyaltyText()
@@ -176,6 +209,10 @@ public class PC
         owner.visibleHexes.Add(hex);
         loyalty = UnityEngine.Random.Range(50, 75);
         owner.hex.RedrawPC();
+        if (owner is NonPlayableLeader && hex != null)
+        {
+            hex.EnsurePersistentScouting(owner);
+        }
 
         if (previousOwner != null && previousOwner.controlledPcs.Count < 1) previousOwner.Killed(leader);
 

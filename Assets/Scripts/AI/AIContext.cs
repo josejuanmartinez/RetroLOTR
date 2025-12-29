@@ -136,6 +136,7 @@ public class AIContext
             case AdvisorType.Intelligence:
                 if (NeedsEconomicHelp) score += 3f;
                 if (needsIndirectApproach) score += 3f;
+                if (action is ScoutArea) score += 6f;
                 score += GetNearbyEnemyCharacterScore();
                 score += GetDistanceScore(true);
                 break;

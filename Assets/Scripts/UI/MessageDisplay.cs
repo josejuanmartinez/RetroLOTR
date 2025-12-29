@@ -7,6 +7,7 @@ using TMPro;
 public class MessageDisplay : MonoBehaviour
 {
     private static MessageDisplay instance;
+    private static bool displayPaused;
     private CanvasGroup canvasGroup;
     [SerializeField] private TextMeshProUGUI messageText;
     [SerializeField] private float displayDuration = 1f;
@@ -106,6 +107,7 @@ public class MessageDisplay : MonoBehaviour
     /// </summary>
     private void ProcessNextMessage()
     {
+        if (displayPaused) { isDisplayingMessage = false; return; }
         if (persistentActive) { isDisplayingMessage = false; return; }
         if (messageQueue.Count > 0)
         {
@@ -174,6 +176,15 @@ public class MessageDisplay : MonoBehaviour
         {
             Message = message;
             TextColor = textColor;
+        }
+    }
+
+    public static void SetPaused(bool paused)
+    {
+        displayPaused = paused;
+        if (!displayPaused && instance != null && !instance.isDisplayingMessage)
+        {
+            instance.ProcessNextMessage();
         }
     }
 
