@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d4ee4b4c04acf6c45ae25b3d549ddf85
+guid: 6dae6eb2b0fdaa247ab7a7997688e531
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8165637413251660086
-    second: TheMouthOfSauron_0
+      213: -1455096403836856330
+    second: image (2)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TheMouthOfSauron_0
+      name: image (2)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1100
-        height: 1133
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6393185c6fb225170800000000000000
-      internalID: 8165637413251660086
+      spriteID: 6f71b57b7857ecbe0800000000000000
+      internalID: -1455096403836856330
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      TheMouthOfSauron_0: 8165637413251660086
+      image (2)_0: -1455096403836856330
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
