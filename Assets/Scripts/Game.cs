@@ -313,8 +313,8 @@ public class Game : MonoBehaviour
             return;
         }
         AdvanceTemporaryPcVisibility();
-        AnnounceScoutingStatus();
         board?.ClearAllScouting();
+        AnnounceScoutingStatus();
         MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
         NewTurnStarted?.Invoke(turn);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
@@ -336,6 +336,7 @@ public class Game : MonoBehaviour
         yield return PlayNpcFocusSequence();
 
         MessageDisplayNoUI.SetPaused(false);
+        MessageDisplay.ClearPersistent();
 
         NewTurn();
         board.RefreshRelevantHexes();
@@ -421,7 +422,7 @@ public class Game : MonoBehaviour
                 message = $"<sprite name=\"scout\"> Scouted: {scoutedTurns} turn{(scoutedTurns == 1 ? "" : "s")} left";
             }
 
-            MessageDisplayNoUI.ShowMessage(hex, player, message, Color.yellow);
+            MessageDisplayNoUI.ShowMessage(hex, player, message, Color.yellow, false);
         }
     }
 

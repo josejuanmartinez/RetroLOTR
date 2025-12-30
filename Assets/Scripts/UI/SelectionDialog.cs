@@ -142,7 +142,8 @@ public class SelectionDialog : MonoBehaviour
 
     private bool ShouldDelayDialog()
     {
-        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy();
+        bool focusPending = BoardNavigator.Instance != null && BoardNavigator.Instance.HasPendingFocus();
+        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy() || focusPending;
     }
 
     private void StartWaitForMessages()

@@ -409,7 +409,11 @@ public class CharacterAction : SearcherByName
 
                 if (goldCost > 0)
                 {
-                    character.GetOwner().RemoveGold(goldCost);
+                    character.GetOwner().RemoveGold(goldCost, false);
+                    if (!isAI)
+                    {
+                        MessageDisplay.ShowMessage($"{character.GetOwner().characterName}: -{goldCost} <sprite name=\"gold\">", Color.red);
+                    }
                     // Debug.Log($"{character.characterName} spends {goldCost} gold");
                 }
             }
@@ -1462,28 +1466,31 @@ public class CharacterAction : SearcherByName
 
         Leader owner = character.GetOwner();
 
-        foreach (var cost in snapshot.resourceCosts)
+        if (isSellCaravans)
         {
-            switch (cost.produce)
+            foreach (var cost in snapshot.resourceCosts)
             {
-                case ProducesEnum.leather:
-                    owner.RemoveLeather(cost.amount);
-                    break;
-                case ProducesEnum.timber:
-                    owner.RemoveTimber(cost.amount);
-                    break;
-                case ProducesEnum.mounts:
-                    owner.RemoveMounts(cost.amount);
-                    break;
-                case ProducesEnum.iron:
-                    owner.RemoveIron(cost.amount);
-                    break;
-                case ProducesEnum.steel:
-                    owner.RemoveSteel(cost.amount);
-                    break;
-                case ProducesEnum.mithril:
-                    owner.RemoveMithril(cost.amount);
-                    break;
+                switch (cost.produce)
+                {
+                    case ProducesEnum.leather:
+                        owner.RemoveLeather(cost.amount);
+                        break;
+                    case ProducesEnum.timber:
+                        owner.RemoveTimber(cost.amount);
+                        break;
+                    case ProducesEnum.mounts:
+                        owner.RemoveMounts(cost.amount);
+                        break;
+                    case ProducesEnum.iron:
+                        owner.RemoveIron(cost.amount);
+                        break;
+                    case ProducesEnum.steel:
+                        owner.RemoveSteel(cost.amount);
+                        break;
+                    case ProducesEnum.mithril:
+                        owner.RemoveMithril(cost.amount);
+                        break;
+                }
             }
         }
 

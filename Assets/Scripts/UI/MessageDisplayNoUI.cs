@@ -74,7 +74,7 @@ public class MessageDisplayNoUI : MonoBehaviour
     // Public API
     // -------------------------------------------------------------------------
 
-    public static void ShowMessage(Hex hex, Character character, string message, Color? color = null)
+    public static void ShowMessage(Hex hex, Character character, string message, Color? color = null, bool recordRumour = true)
     {
         if (hex == null || hex.gameObject == null) return;
 
@@ -151,8 +151,11 @@ public class MessageDisplayNoUI : MonoBehaviour
             }
         }
 
-        Rumour rumour = new Rumour {leader = character.GetOwner(), character = character, characterName = character?.characterName, rumour = message, v2 = hex.v2};
-        RumoursManager.AddRumour(rumour, publicRumour);
+        if (recordRumour)
+        {
+            Rumour rumour = new Rumour {leader = character.GetOwner(), character = character, characterName = character?.characterName, rumour = message, v2 = hex.v2};
+            RumoursManager.AddRumour(rumour, publicRumour);
+        }
     }
 
     public static bool IsBusy()

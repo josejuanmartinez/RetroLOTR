@@ -103,7 +103,7 @@ public class Hex : MonoBehaviour
     private static readonly Queue<Vector2Int> areaQueue = new(64);
     private static readonly HashSet<Vector2Int> areaVisited = new();
 
-    private const string Unknown = "";
+    private const string Unknown = "Unknown character(s)";
 
     void Awake()
     {
@@ -522,6 +522,7 @@ public class Hex : MonoBehaviour
                         case AlignmentEnum.neutral: sbNeutral.Append(text).Append('\n'); break;
                         case AlignmentEnum.darkServants: sbDark.Append(text).Append('\n'); break;
                     }
+                    sbChars.Append(charName).Append('\n');
                 }
                 else
                 {
@@ -544,6 +545,7 @@ public class Hex : MonoBehaviour
                             if (!unkDarkShown) { sbDark.Append(Unknown).Append('\n'); unkDarkShown = true; }
                             break;
                     }
+                    if (!unkCharsShown) { sbChars.Append(Unknown).Append('\n'); unkCharsShown = true; }
                 }
                 else
                 {

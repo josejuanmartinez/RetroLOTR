@@ -12,7 +12,9 @@ public class StealTimber : AgentPCAction
             if (originalEffect != null && !originalEffect(c)) return false;
             PC pc = c.hex.GetPC();
             if (pc == null) return false;
-            int toSteal = Math.Min(pc.owner.timberAmount, UnityEngine.Random.Range(1, c.GetAgent()));
+            int maxSteal = Mathf.Min(c.GetAgent(), pc.owner.timberAmount);
+            if (maxSteal < 1) return false;
+            int toSteal = UnityEngine.Random.Range(1, maxSteal + 1);
             if (toSteal < 1) return false;
             PlayableLeader playable = (c.GetOwner() as PlayableLeader);
             if (playable == null) return false;
@@ -25,7 +27,8 @@ public class StealTimber : AgentPCAction
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.GetPC() != null && c.hex.GetPC().timber > 0;
+            PC pc = c.hex.GetPC();
+            return pc != null && pc.owner != null && pc.owner.timberAmount > 0;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

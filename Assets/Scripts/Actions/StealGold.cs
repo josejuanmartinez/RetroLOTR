@@ -12,7 +12,9 @@ public class StealGold : AgentPCAction
             if (originalEffect != null && !originalEffect(c)) return false;
             PC pc = c.hex.GetPC();
             if (pc == null) return false;
-            int toSteal = Math.Min(pc.owner.goldAmount, UnityEngine.Random.Range(1, c.GetAgent()));
+            int maxSteal = Mathf.Min(c.GetAgent(), pc.owner.goldAmount);
+            if (maxSteal < 1) return false;
+            int toSteal = UnityEngine.Random.Range(1, maxSteal + 1);
             if (toSteal < 1) return false;
             Leader actorOwner = c.GetOwner();
             if (actorOwner == null) return false;
@@ -35,7 +37,8 @@ public class StealGold : AgentPCAction
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.GetPC() != null;
+            PC pc = c.hex.GetPC();
+            return pc != null && pc.owner != null && pc.owner.goldAmount > 0;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

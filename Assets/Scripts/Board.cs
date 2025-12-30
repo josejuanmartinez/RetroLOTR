@@ -1073,6 +1073,13 @@ public class Board : MonoBehaviour
                     SelectHex(newHex, lookAt);
                 }
             }            
+            else if (g != null && g.player != null && character.doubledBy.Contains(g.player))
+            {
+                newHex.RevealArea(1, false, g.player);
+                g.player.AddTemporarySeenHexes(newHex.GetHexesInRadius(1));
+                g.player.AddTemporaryScoutCenters(new[] { newHex });
+                g.player.RefreshVisibleHexesImmediate();
+            }
 
             if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
             character.GetOwner().visibleHexes.Add(newHex);

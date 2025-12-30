@@ -15,6 +15,8 @@ public class CastLight: FreeNeutralSpell
             int radius = 1;
             List<Hex> radiusHexes = hex.GetHexesInRadius(radius);
             Leader owner = c.GetOwner();
+            Game game = FindFirstObjectByType<Game>();
+            bool applyGlobalEffects = owner != null && game != null && owner == game.player;
             bool revealedCharacters = false;
             if (owner != null)
             {
@@ -32,21 +34,25 @@ public class CastLight: FreeNeutralSpell
 
             hex.RevealArea(radius, true, owner);
             c.GetOwner()?.AddTemporarySeenHexes(radiusHexes);
-            for (int i = 0; i < radiusHexes.Count; i++)
+            c.GetOwner()?.AddTemporaryScoutCenters(new[] { c.hex });
+            if (applyGlobalEffects)
             {
-                Hex areaHex = radiusHexes[i];
-                if (areaHex == null) continue;
-                PC pc = areaHex.GetPC();
-                if (pc == null) continue;
-                if (pc.owner == owner) continue;
-                AlignmentEnum ownerAlignment = owner != null ? owner.GetAlignment() : AlignmentEnum.neutral;
-                AlignmentEnum pcAlignment = pc.owner != null ? pc.owner.GetAlignment() : AlignmentEnum.neutral;
-                bool isEnemy = pcAlignment == AlignmentEnum.neutral || pcAlignment != ownerAlignment;
-                if (!isEnemy) continue;
-                if (pc.isHidden || pc.IsTemporarilyHidden(owner))
+                for (int i = 0; i < radiusHexes.Count; i++)
                 {
-                    pc.SetTemporaryReveal(2);
-                    areaHex.RedrawPC();
+                    Hex areaHex = radiusHexes[i];
+                    if (areaHex == null) continue;
+                    PC pc = areaHex.GetPC();
+                    if (pc == null) continue;
+                    if (pc.owner == owner) continue;
+                    AlignmentEnum ownerAlignment = owner != null ? owner.GetAlignment() : AlignmentEnum.neutral;
+                    AlignmentEnum pcAlignment = pc.owner != null ? pc.owner.GetAlignment() : AlignmentEnum.neutral;
+                    bool isEnemy = pcAlignment == AlignmentEnum.neutral || pcAlignment != ownerAlignment;
+                    if (!isEnemy) continue;
+                    if (pc.isHidden || pc.IsTemporarilyHidden(owner))
+                    {
+                        pc.SetTemporaryReveal(2);
+                        areaHex.RedrawPC();
+                    }
                 }
             }
             for (int i = 0; i < radiusHexes.Count; i++)
@@ -56,8 +62,11 @@ public class CastLight: FreeNeutralSpell
                 areaHex.RefreshVisibilityRendering();
             }
 
-            string scoutMessage = revealedCharacters ? "Presence detected in the surroundings" : "Area scouted";
-            MessageDisplayNoUI.ShowMessage(c.hex, c, scoutMessage, Color.green);
+            if (applyGlobalEffects)
+            {
+                string scoutMessage = revealedCharacters ? "Presence detected in the surroundings" : "Area scouted";
+                MessageDisplayNoUI.ShowMessage(c.hex, c, scoutMessage, Color.green);
+            }
             return true;
         };
         condition = (c) => {

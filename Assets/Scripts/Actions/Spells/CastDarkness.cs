@@ -14,29 +14,38 @@ public class CastDarkness: DarkNeutralSpell
             Hex hex = c.hex;
             int radius = 1;
             List<Hex> radiusHexes = hex.GetHexesInRadius(radius);
+            Leader owner = c.GetOwner();
+            Game game = FindFirstObjectByType<Game>();
+            bool applyGlobalEffects = owner != null && game != null && owner == game.player;
             for (int i = 0; i < radiusHexes.Count; i++)
             {
                 Hex targetHex = radiusHexes[i];
                 if (targetHex == null) continue;
-                targetHex.ClearScoutingAll();
+                if (applyGlobalEffects)
+                {
+                    targetHex.ClearScoutingAll();
+                }
                 PC pc = targetHex.GetPC();
-                AlignmentEnum ownerAlignment = c.GetOwner() != null ? c.GetOwner().GetAlignment() : AlignmentEnum.neutral;
+                AlignmentEnum ownerAlignment = owner != null ? owner.GetAlignment() : AlignmentEnum.neutral;
                 AlignmentEnum pcAlignment = pc != null && pc.owner != null ? pc.owner.GetAlignment() : AlignmentEnum.neutral;
                 bool sameAlignment = pcAlignment == ownerAlignment && pcAlignment != AlignmentEnum.neutral;
-                if (pc != null && (pc.owner == c.GetOwner() || sameAlignment))
+                if (applyGlobalEffects && pc != null && (pc.owner == owner || sameAlignment))
                 {
                     pc.SetTemporaryHidden(2);
                     targetHex.RedrawPC();
                 }
             }
-            hex.ObscureArea(radius, true, c.owner);
-            for (int i = 0; i < radiusHexes.Count; i++)
+            if (applyGlobalEffects)
             {
-                Hex targetHex = radiusHexes[i];
-                if (targetHex == null) continue;
-                targetHex.RefreshVisibilityRendering();
+                hex.ObscureArea(radius, true, c.owner);
+                for (int i = 0; i < radiusHexes.Count; i++)
+                {
+                    Hex targetHex = radiusHexes[i];
+                    if (targetHex == null) continue;
+                    targetHex.RefreshVisibilityRendering();
+                }
+                MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area obscured!", Color.red);
             }
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Area obscured!", Color.red);
             return true;
         };
         condition = (c) => {

@@ -11,6 +11,7 @@ public class Leader : Character
     public List<PC> controlledPcs = new();
     public List<Hex> visibleHexes = new();
     private readonly Dictionary<Hex, int> tempSeenHexes = new();
+    private readonly Dictionary<Hex, int> tempScoutCenters = new();
 
     [Header("Stores")]
     public int leatherAmount = 0;
@@ -166,6 +167,7 @@ public class Leader : Character
     new public void NewTurn()
     {
         DecrementTemporarySeenHexes();
+        DecrementTemporaryScoutCenters();
         if (!killed && goldAmount < -10) Killed(this);
 
         if (killed) return;
@@ -222,17 +224,22 @@ public class Leader : Character
         List<Hex> allHexes = FindFirstObjectByType<Board>().hexes.Values.ToList();
 
         allHexes.FindAll(x => !visibleHexes.Contains(x) && !IsTemporarilySeen(x) && !IsScoutedForLeader(x)).ForEach(x => x.Hide());
-        var hexesToReveal = visibleHexes.ToList();
-        hexesToReveal.AddRange(allHexes.Where(IsScoutedForLeader));
-        hexesToReveal = hexesToReveal.Distinct().ToList();
+        var scoutCenters = GetTemporaryScoutCenters().ToList();
+        var scoutedHexes = allHexes.Where(IsScoutedForLeader).ToList();
+        var radiusHexes = visibleHexes.Union(scoutCenters).Distinct().ToList();
+        var scoutedOnly = scoutedHexes.Except(radiusHexes).ToList();
         List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
 
         int batchSize = 15;
-        for (int i = 0; i < hexesToReveal.Count; i += batchSize)
+        for (int i = 0; i < radiusHexes.Count; i += batchSize)
         {
-            int endIndex = Mathf.Min(i + batchSize, hexesToReveal.Count);
-            for (int j = i; j < endIndex; j++) hexesToReveal[j].RevealArea(1, false);
+            int endIndex = Mathf.Min(i + batchSize, radiusHexes.Count);
+            for (int j = i; j < endIndex; j++) radiusHexes[j].RevealArea(1, false);
             yield return null;
+        }
+        for (int i = 0; i < scoutedOnly.Count; i++)
+        {
+            scoutedOnly[i].Reveal();
         }
         for (int i = 0; i < spiedHexes.Count; i++)
         {
@@ -256,12 +263,14 @@ public class Leader : Character
 
         List<Hex> allHexes = board.hexes.Values.ToList();
         allHexes.FindAll(x => !visibleHexes.Contains(x) && !IsTemporarilySeen(x) && !IsScoutedForLeader(x)).ForEach(x => x.Hide());
-        var hexesToReveal = visibleHexes.ToList();
-        hexesToReveal.AddRange(allHexes.Where(IsScoutedForLeader));
-        hexesToReveal = hexesToReveal.Distinct().ToList();
+        var scoutCenters = GetTemporaryScoutCenters().ToList();
+        var scoutedHexes = allHexes.Where(IsScoutedForLeader).ToList();
+        var radiusHexes = visibleHexes.Union(scoutCenters).Distinct().ToList();
+        var scoutedOnly = scoutedHexes.Except(radiusHexes).ToList();
         List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
 
-        for (int i = 0; i < hexesToReveal.Count; i++) hexesToReveal[i].RevealArea(1, false);
+        for (int i = 0; i < radiusHexes.Count; i++) radiusHexes[i].RevealArea(1, false);
+        for (int i = 0; i < scoutedOnly.Count; i++) scoutedOnly[i].Reveal();
         for (int i = 0; i < spiedHexes.Count; i++) spiedHexes[i].Reveal();
         foreach (var hex in GetTemporarySeenHexes())
         {
@@ -286,14 +295,41 @@ public class Leader : Character
         }
     }
 
+    public void AddTemporaryScoutCenters(IEnumerable<Hex> hexes)
+    {
+        if (hexes == null) return;
+        foreach (var hex in hexes)
+        {
+            if (hex == null) continue;
+            if (tempScoutCenters.TryGetValue(hex, out int current))
+            {
+                tempScoutCenters[hex] = Math.Max(current, 2);
+            }
+            else
+            {
+                tempScoutCenters[hex] = 2;
+            }
+        }
+    }
+
     private bool IsTemporarilySeen(Hex hex)
     {
         return hex != null && tempSeenHexes.TryGetValue(hex, out int turns) && turns > 0;
     }
 
+    private bool IsScoutCenter(Hex hex)
+    {
+        return hex != null && tempScoutCenters.TryGetValue(hex, out int turns) && turns > 0;
+    }
+
     private IEnumerable<Hex> GetTemporarySeenHexes()
     {
         return tempSeenHexes.Where(entry => entry.Value > 0).Select(entry => entry.Key);
+    }
+
+    private IEnumerable<Hex> GetTemporaryScoutCenters()
+    {
+        return tempScoutCenters.Where(entry => entry.Value > 0).Select(entry => entry.Key);
     }
 
     private void DecrementTemporarySeenHexes()
@@ -305,6 +341,18 @@ public class Leader : Character
             Hex hex = keys[i];
             tempSeenHexes[hex] = tempSeenHexes[hex] - 1;
             if (tempSeenHexes[hex] <= 0) tempSeenHexes.Remove(hex);
+        }
+    }
+
+    private void DecrementTemporaryScoutCenters()
+    {
+        if (tempScoutCenters.Count == 0) return;
+        List<Hex> keys = tempScoutCenters.Keys.ToList();
+        for (int i = 0; i < keys.Count; i++)
+        {
+            Hex hex = keys[i];
+            tempScoutCenters[hex] = tempScoutCenters[hex] - 1;
+            if (tempScoutCenters[hex] <= 0) tempScoutCenters.Remove(hex);
         }
     }
 
@@ -398,10 +446,10 @@ public class Leader : Character
         mithrilAmount -= mithrilCost;
         if (mithrilCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mithrilCost} <sprite name=\"mithril\">", Color.red);
     }
-    public void RemoveGold(int goldCost)
+    public void RemoveGold(int goldCost, bool showMessage = true)
     {
         goldAmount -= goldCost;
-        if (goldCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{goldCost} <sprite name=\"gold\">", Color.red);
+        if (showMessage && goldCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{goldCost} <sprite name=\"gold\">", Color.red);
     }
 
     private static string NormalizeActionName(string actionName)

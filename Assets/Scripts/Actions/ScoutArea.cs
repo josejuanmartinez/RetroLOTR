@@ -16,6 +16,8 @@ public class ScoutArea : AgentAction
             var radiusHexes = c.hex.GetHexesInRadius(1);
             Leader owner = c.GetOwner();
             List<Hex> detectedHexes = new();
+            Game game = FindFirstObjectByType<Game>();
+            bool showPlayerResults = owner != null && game != null && owner == game.player;
             if (owner != null)
             {
                 for (int i = 0; i < radiusHexes.Count; i++)
@@ -31,6 +33,7 @@ public class ScoutArea : AgentAction
 
             c.hex.RevealArea(1, true, owner);
             c.GetOwner()?.AddTemporarySeenHexes(radiusHexes);
+            c.GetOwner()?.AddTemporaryScoutCenters(new[] { c.hex });
             bool hasArtifactsNearby = false;
             for (int i = 0; i < radiusHexes.Count; i++)
             {
@@ -46,13 +49,16 @@ public class ScoutArea : AgentAction
                 float chance = Mathf.Min(0.4f, 0.05f * c.GetAgent());
                 if (UnityEngine.Random.value < chance)
                 {
-                    MessageDisplayNoUI.ShowMessage(c.hex, c, "Something seems buried in the area", Color.yellow);
-                    for (int i = 0; i < radiusHexes.Count; i++)
+                    if (showPlayerResults)
                     {
-                        Hex hex = radiusHexes[i];
-                        if (hex != null && hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0)
+                        MessageDisplayNoUI.ShowMessage(c.hex, c, "Something seems buried in the area", Color.yellow);
+                        for (int i = 0; i < radiusHexes.Count; i++)
                         {
-                            hex.RevealArtifact();
+                            Hex hex = radiusHexes[i];
+                            if (hex != null && hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0)
+                            {
+                                hex.RevealArtifact();
+                            }
                         }
                     }
                 }
@@ -64,24 +70,10 @@ public class ScoutArea : AgentAction
                 hex.RefreshVisibilityRendering();
             }
             bool revealedCharacters = detectedHexes.Count > 0;
-            string scoutMessage = revealedCharacters ? "Presence detected in the surroundings" : "Area scouted";
-            MessageDisplayNoUI.ShowMessage(c.hex, c, scoutMessage, Color.green);
-            if (revealedCharacters)
+            if (showPlayerResults)
             {
-                for (int i = 0; i < detectedHexes.Count; i++)
-                {
-                    Hex hex = detectedHexes[i];
-                    if (hex == null || hex.characters == null) continue;
-                    var names = hex.characters
-                        .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != c.GetAlignment())
-                        .Select(ch => ch.characterName)
-                        .Distinct()
-                        .ToList();
-                    if (names.Count > 0)
-                    {
-                        MessageDisplayNoUI.ShowMessage(hex, c, string.Join(", ", names), Color.yellow);
-                    }
-                }
+                string scoutMessage = revealedCharacters ? "Presence detected in the surroundings" : "Area scouted";
+                MessageDisplayNoUI.ShowMessage(c.hex, c, scoutMessage, Color.green);
             }
             return true;
         };

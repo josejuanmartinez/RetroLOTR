@@ -229,7 +229,8 @@ public class PopupManager : MonoBehaviour
 
     private bool ShouldDelayPopup()
     {
-        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy();
+        bool focusPending = BoardNavigator.Instance != null && BoardNavigator.Instance.HasPendingFocus();
+        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy() || focusPending;
     }
 
     private void StartWaitForMessages()

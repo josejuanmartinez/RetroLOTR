@@ -128,12 +128,12 @@ public class ActionsManager : MonoBehaviour
     {
         if (previousPageButton != null)
         {
-            previousPageButton.onClick.RemoveListener(GoToPreviousPage);
+            previousPageButton.onClick.RemoveAllListeners();
             previousPageButton.onClick.AddListener(GoToPreviousPage);
         }
         if (nextPageButton != null)
         {
-            nextPageButton.onClick.RemoveListener(GoToNextPage);
+            nextPageButton.onClick.RemoveAllListeners();
             nextPageButton.onClick.AddListener(GoToNextPage);
         }
     }

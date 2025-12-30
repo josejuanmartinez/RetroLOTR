@@ -71,6 +71,7 @@ public class EventMovement
 {
     public string target;
     public int maxTries = 6;
+    public int objectiveTries = 2;
     public bool giveUpIfBlocked = true;
 }
 
@@ -118,12 +119,14 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         public NonPlayableLeaderEventDefinition definition;
         public NonPlayableLeader leader;
         public Character actor;
-        public int turnsRemaining;
+        public int travelTurnsRemaining;
+        public int objectiveAttemptsRemaining;
         public Hex originalHex;
         public Character.StatusSnapshot originalStatus;
         public bool createdArmy;
         public Army spawnedArmy;
         public bool playerSawArmy;
+        public bool completed;
     }
 
     private class PendingRetreat
@@ -201,32 +204,38 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         }
 
         BeginNpcUi();
-        CleanupInactiveEvents();
-        ProcessPendingRetreats();
-        ProcessPendingOffenseReturns();
-        ResetNonPlayableLeaderCharacters();
-
-        for (int i = activeEvents.Count - 1; i >= 0; i--)
+        try
         {
-            ActiveEvent active = activeEvents[i];
-            if (active == null)
+            CleanupInactiveEvents();
+            ProcessPendingRetreats();
+            ProcessPendingOffenseReturns();
+            ResetNonPlayableLeaderCharacters();
+
+            for (int i = activeEvents.Count - 1; i >= 0; i--)
             {
-                activeEvents.RemoveAt(i);
-                continue;
+                ActiveEvent active = activeEvents[i];
+                if (active == null)
+                {
+                    activeEvents.RemoveAt(i);
+                    continue;
+                }
+
+                yield return ProcessActiveEvent(active);
+
+                if (active.completed || active.actor == null || active.actor.killed)
+                {
+                    activeEvents.RemoveAt(i);
+                }
             }
 
-            yield return ProcessActiveEvent(active);
-
-            if (active.turnsRemaining <= 0 || active.actor == null || active.actor.killed)
-            {
-                activeEvents.RemoveAt(i);
-            }
+            TrySpawnEvents();
+            yield return TryExecuteCityOffensives();
         }
-
-        TrySpawnEvents();
-        yield return TryExecuteCityOffensives();
-        EndNpcUi();
-        processingTurn = false;
+        finally
+        {
+            EndNpcUi();
+            processingTurn = false;
+        }
     }
 
     private void ResetNonPlayableLeaderCharacters()
@@ -289,6 +298,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         }
         npcBannerRoutine = null;
         if (!npcUiActive) yield break;
+        HidePlayerUi();
         MessageDisplay.ShowPersistent("Other nations are playing...", Color.yellow);
         npcBannerShown = true;
     }
@@ -443,10 +453,11 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     private IEnumerator ProcessActiveEvent(ActiveEvent active)
     {
         if (active == null || active.definition == null) yield break;
-        if (active.turnsRemaining <= 0) yield break;
-        if (active.leader == null || active.leader.killed || active.leader.joined) { active.turnsRemaining = 0; yield break; }
-        if (active.actor == null || active.actor.killed) { active.turnsRemaining = 0; yield break; }
-        if (IsPendingRetreat(active.actor)) { EndActiveEvent(active); yield break; }
+        if (active.completed) yield break;
+        if (active.travelTurnsRemaining <= 0) { EndActiveEvent(active, false); yield break; }
+        if (active.leader == null || active.leader.killed || active.leader.joined) { EndActiveEvent(active, false); yield break; }
+        if (active.actor == null || active.actor.killed) { EndActiveEvent(active, false); yield break; }
+        if (IsPendingRetreat(active.actor)) { EndActiveEvent(active, false); yield break; }
 
         active.actor.NewTurn();
 
@@ -454,41 +465,53 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (target == null)
         {
             LogDebug($"Event {active.definition.eventId} has no target.");
-            active.turnsRemaining--;
-            if (active.turnsRemaining <= 0) EndActiveEvent(active);
+            active.travelTurnsRemaining--;
+            if (active.travelTurnsRemaining <= 0) EndActiveEvent(active, false);
             yield break;
         }
 
-        bool moved = false;
-        yield return MoveActorTowardEvent(active, target, result => moved = result);
-        if (!moved && active.definition.movement != null && active.definition.movement.giveUpIfBlocked)
+        if (active.actor.hex != target)
         {
-            LogDebug($"Event {active.definition.eventId} could not move toward target.");
-            active.turnsRemaining--;
-            if (active.turnsRemaining <= 0) EndActiveEvent(active);
+            bool moved = false;
+            yield return MoveActorTowardEvent(active, target, result => moved = result);
+            if (!moved && active.definition.movement != null && active.definition.movement.giveUpIfBlocked)
+            {
+                LogDebug($"Event {active.definition.eventId} could not move toward target.");
+            }
+
+            active.travelTurnsRemaining--;
+            if (active.travelTurnsRemaining <= 0 && active.actor.hex != target)
+            {
+                EndActiveEvent(active, false);
+                yield break;
+            }
+
+            if (active.actor.hex != target) yield break;
+        }
+
+        if (active.objectiveAttemptsRemaining <= 0)
+        {
+            EndActiveEvent(active, true);
             yield break;
         }
 
-        if (active.actor.hex == target)
+        bool succeeded = false;
+        yield return TryExecuteAction(active, result => succeeded = result);
+        if (MaybeRetreatToCapital(active.leader, active.actor))
         {
-            bool succeeded = false;
-            yield return TryExecuteAction(active, result => succeeded = result);
-            if (MaybeRetreatToCapital(active.leader, active.actor))
-            {
-                EndActiveEvent(active);
-                yield break;
-            }
-            if (succeeded)
-            {
-                LogDebug($"Event {active.definition.eventId} succeeded.");
-                ShowSuccessPopup(active, target);
-                EndActiveEvent(active);
-                yield break;
-            }
+            EndActiveEvent(active, false);
+            yield break;
+        }
+        if (succeeded)
+        {
+            LogDebug($"Event {active.definition.eventId} succeeded.");
+            ShowSuccessPopup(active, target);
+            EndActiveEvent(active, true);
+            yield break;
         }
 
-        active.turnsRemaining--;
-        if (active.turnsRemaining <= 0) EndActiveEvent(active);
+        active.objectiveAttemptsRemaining--;
+        if (active.objectiveAttemptsRemaining <= 0) EndActiveEvent(active, true);
     }
 
     private void TrySpawnEvents()
@@ -557,7 +580,8 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
                 definition = picked,
                 leader = npl,
                 actor = actor,
-                turnsRemaining = Mathf.Max(1, picked.movement != null ? picked.movement.maxTries : 1),
+                travelTurnsRemaining = Mathf.Max(1, picked.movement != null ? picked.movement.maxTries : 1),
+                objectiveAttemptsRemaining = GetObjectiveTries(picked),
                 originalHex = originalHex,
                 originalStatus = originalStatus,
                 createdArmy = createdArmy,
@@ -571,7 +595,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
 
     private bool HasActiveEvent(NonPlayableLeader leader)
     {
-        return activeEvents.Any(ev => ev != null && ev.leader == leader);
+        return activeEvents.Any(ev => ev != null && ev.leader == leader && !ev.completed);
     }
 
     private IEnumerator TryExecuteCityOffensives()
@@ -663,6 +687,8 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
                     pendingOffenseReturns[actor] = new PendingReturn { city = cityHex, attempts = 0 };
                 }
             }
+
+            yield return null;
         }
     }
 
@@ -740,6 +766,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (owner == null || target == null) return false;
         AlignmentEnum ownerAlignment = owner.GetAlignment();
         AlignmentEnum targetAlignment = target.GetAlignment();
+        if (ownerAlignment == AlignmentEnum.neutral) return targetAlignment == AlignmentEnum.neutral;
         return targetAlignment == AlignmentEnum.neutral || targetAlignment != ownerAlignment;
     }
 
@@ -857,7 +884,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (npl == null || player == null) return false;
         AlignmentEnum nplAlignment = npl.GetAlignment();
         AlignmentEnum playerAlignment = player.GetAlignment();
-        if (nplAlignment == AlignmentEnum.neutral) return true;
+        if (nplAlignment == AlignmentEnum.neutral) return playerAlignment == AlignmentEnum.neutral;
         return nplAlignment != playerAlignment;
     }
 
@@ -1257,10 +1284,18 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
             moved = true;
 
             bool hasArmy = active.actor != null && active.actor.IsArmyCommander() && active.actor.GetArmy() != null;
-            bool showedEventMessage = HandleEventVisibility(active, to, hasArmy);
-
-            if (showedEventMessage)
+            if (TryGetEventTitleOnFirstSeen(active, to, hasArmy, out string eventTitle))
             {
+                if (BoardNavigator.Instance != null)
+                {
+                    bool focusDone = false;
+                    BoardNavigator.Instance.EnqueueFocus(to, eventFollowDuration, eventFollowPause, true, () => focusDone = true);
+                    while (!focusDone)
+                    {
+                        yield return null;
+                    }
+                }
+                MessageDisplayNoUI.ShowMessage(to, active.actor, eventTitle, Color.yellow);
                 while (MessageDisplayNoUI.IsBusy())
                 {
                     yield return null;
@@ -1268,11 +1303,18 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
             }
             else if (hasArmy)
             {
-                bool focusDone = false;
-                if (BoardNavigator.Instance != null)
+                if (PlayerCanSeeHex(to))
                 {
-                    BoardNavigator.Instance.EnqueueFocus(to, eventFollowDuration, eventFollowPause, true, () => focusDone = true);
-                    while (!focusDone)
+                    bool focusDone = false;
+                    if (BoardNavigator.Instance != null)
+                    {
+                        BoardNavigator.Instance.EnqueueFocus(to, eventFollowDuration, eventFollowPause, true, () => focusDone = true);
+                        while (!focusDone)
+                        {
+                            yield return null;
+                        }
+                    }
+                    else
                     {
                         yield return null;
                     }
@@ -1293,19 +1335,17 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         onFinished?.Invoke(moved);
     }
 
-    private bool HandleEventVisibility(ActiveEvent active, Hex hex, bool hasArmy)
+    private bool TryGetEventTitleOnFirstSeen(ActiveEvent active, Hex hex, bool hasArmy, out string title)
     {
+        title = null;
         if (active == null || active.definition == null || active.actor == null || hex == null) return false;
         if (!hasArmy || active.playerSawArmy) return false;
         if (!PlayerCanSeeHex(hex)) return false;
 
-        string title = string.IsNullOrWhiteSpace(active.definition.title)
+        title = string.IsNullOrWhiteSpace(active.definition.title)
             ? BuildEventRumourMessage(active.definition)
             : active.definition.title;
-        if (!string.IsNullOrWhiteSpace(title))
-        {
-            MessageDisplayNoUI.ShowMessage(hex, active.actor, title, Color.yellow);
-        }
+        if (string.IsNullOrWhiteSpace(title)) return false;
         active.playerSawArmy = true;
         return true;
     }
@@ -1313,7 +1353,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     private bool PlayerCanSeeHex(Hex hex)
     {
         if (hex == null || game == null || game.player == null) return false;
-        return game.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
+        return hex.IsHexSeen();
     }
 
     private IEnumerator TryExecuteAction(ActiveEvent active, Action<bool> onFinished)
@@ -1376,6 +1416,8 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     private void ShowSuccessPopup(ActiveEvent active, Hex target)
     {
         if (active == null || game == null || game.player == null) return;
+        if (!game.IsPlayerCurrentlyPlaying()) return;
+        if (!PlayerCanSeeHex(target)) return;
         if (!IsPlayerInvolvedInEvent(target)) return;
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         Sprite actor1 = illustrations != null ? illustrations.GetIllustrationByName(active.definition.leaderName) : null;
@@ -1416,15 +1458,21 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         hex.RedrawCharacters();
     }
 
-    private void EndActiveEvent(ActiveEvent active)
+    private void EndActiveEvent(ActiveEvent active, bool showAbandonMessage)
     {
         if (active == null) return;
-        ReturnActorToOrigin(active);
+        ReturnActorToOrigin(active, showAbandonMessage);
         DisbandEventArmy(active);
-        active.turnsRemaining = 0;
+        active.completed = true;
     }
 
-    private void ReturnActorToOrigin(ActiveEvent active)
+    private int GetObjectiveTries(NonPlayableLeaderEventDefinition definition)
+    {
+        if (definition?.movement == null) return 2;
+        return Mathf.Max(1, definition.movement.objectiveTries);
+    }
+
+    private void ReturnActorToOrigin(ActiveEvent active, bool showAbandonMessage)
     {
         if (active.actor == null || active.actor.killed) return;
 
@@ -1439,6 +1487,16 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (teleported && active.leader != null && !active.leader.killed && active.actor != null && !active.actor.killed)
         {
             active.actor.Heal(50);
+        }
+        if (teleported && showAbandonMessage && active.playerSawArmy && PlayerCanSeeHex(active.actor.hex))
+        {
+            string eventName = string.IsNullOrWhiteSpace(active.definition?.title)
+                ? BuildEventRumourMessage(active.definition)
+                : active.definition.title;
+            if (!string.IsNullOrWhiteSpace(eventName))
+            {
+                MessageDisplayNoUI.ShowMessage(active.actor.hex, active.actor, $"{active.actor.characterName} abandons {eventName}", Color.yellow);
+            }
         }
     }
 
@@ -1494,9 +1552,11 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     private string BuildEventRumourMessage(NonPlayableLeaderEventDefinition definition)
     {
         if (definition == null) return string.Empty;
-        if (!string.IsNullOrWhiteSpace(definition.title)) return definition.title.Trim();
-        string actionName = definition.GetActionClassName(out _);
-        return string.IsNullOrWhiteSpace(actionName) ? string.Empty : actionName.Trim();
+        string title = !string.IsNullOrWhiteSpace(definition.title)
+            ? definition.title.Trim()
+            : definition.GetActionClassName(out _);
+        if (string.IsNullOrWhiteSpace(title)) return string.Empty;
+        return $"started an endeavor: {title}";
     }
 
     private struct ActionRequirementSnapshot

@@ -22,6 +22,7 @@ public class CharacterInstantiator : MonoBehaviour
     {
         Character character = InstantiateFromTemplate<Character>(characterTemplate, biomeConfig.characterName, otherCharactersParent);
         character.InitializeFromBiome(leader, hex, biomeConfig, showSpawnMessage: false);
+        CharacterIcons.RefreshForHumanPlayerOf(leader);
         return character;
     }
     public PlayableLeader InstantiatePlayableLeader(Hex hex, LeaderBiomeConfig leaderBiomeConfig)
