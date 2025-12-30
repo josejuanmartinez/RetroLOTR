@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class ScoutArea : AgentAction
 {
@@ -11,13 +12,15 @@ public class ScoutArea : AgentAction
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
+        List<(Hex hex, List<string> names)> revealedCharacterEntries = new();
+        bool showPlayerResults = false;
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             var radiusHexes = c.hex.GetHexesInRadius(1);
             Leader owner = c.GetOwner();
             List<Hex> detectedHexes = new();
             Game game = FindFirstObjectByType<Game>();
-            bool showPlayerResults = owner != null && game != null && owner == game.player;
+            showPlayerResults = owner != null && game != null && owner == game.player;
             if (owner != null)
             {
                 for (int i = 0; i < radiusHexes.Count; i++)
@@ -75,6 +78,18 @@ public class ScoutArea : AgentAction
                 string scoutMessage = revealedCharacters ? "Presence detected in the surroundings" : "Area scouted";
                 MessageDisplayNoUI.ShowMessage(c.hex, c, scoutMessage, Color.green);
             }
+            if (showPlayerResults && detectedHexes.Count > 0)
+            {
+                revealedCharacterEntries = detectedHexes
+                    .Select(hex => (hex, names: hex.characters
+                        .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != c.GetAlignment())
+                        .Select(ch => ch.characterName)
+                        .Where(name => !string.IsNullOrWhiteSpace(name))
+                        .Distinct()
+                        .ToList()))
+                    .Where(entry => entry.names.Count > 0)
+                    .ToList();
+            }
             return true;
         };
         condition = (c) => {
@@ -82,6 +97,29 @@ public class ScoutArea : AgentAction
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            if (!showPlayerResults || revealedCharacterEntries.Count == 0) return true;
+            while (MessageDisplayNoUI.IsBusy())
+            {
+                await Task.Yield();
+            }
+            foreach (var entry in revealedCharacterEntries)
+            {
+                if (entry.hex == null) continue;
+                if (BoardNavigator.Instance != null)
+                {
+                    var focusTcs = new TaskCompletionSource<bool>();
+                    BoardNavigator.Instance.EnqueueFocus(entry.hex, 0.6f, 0.2f, true, () => focusTcs.TrySetResult(true));
+                    await focusTcs.Task;
+                }
+                foreach (string name in entry.names)
+                {
+                    MessageDisplayNoUI.ShowMessage(entry.hex, c, name, Color.yellow);
+                    while (MessageDisplayNoUI.IsBusy())
+                    {
+                        await Task.Yield();
+                    }
+                }
+            }
             return true;
         };
         base.Initialize(c, condition, effect, asyncEffect);

@@ -8,6 +8,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasGroup))]
 public class ActionsManager : MonoBehaviour
 {
+    [Header("References")]
+    public CanvasGroup canvasGroup;
     [Header("Prefabs")]
     public GameObject actionButtonPrefab;
     public GameObject hoverPrefab;
@@ -23,10 +25,10 @@ public class ActionsManager : MonoBehaviour
     public CharacterAction[] characterActions;
     // Dictionary to store all the action components
     private Dictionary<Type, CharacterAction> actionComponents = new ();
-    private CanvasGroup canvasGroup;
     private readonly List<CharacterAction> availableActions = new();
     private readonly List<CharacterAction> unavailableActions = new();
     private int currentPageIndex;
+    private int lastPaginationFrame = -1;
     private Character currentCharacter;
     public static readonly char[] ActionHotkeyLetters = "BCEFGHIJKLMOQRTUVWYZ".ToCharArray();
 
@@ -35,9 +37,7 @@ public class ActionsManager : MonoBehaviour
     public void Start()
     {
         if(illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
-
+        
         // Load definitions from json and sync them with instantiated buttons
         characterActions = LoadActionsFromJson();
         if (characterActions == null || characterActions.Length == 0)
@@ -92,12 +92,14 @@ public class ActionsManager : MonoBehaviour
 
     public void Hide()
     {
+        canvasGroup.alpha = 0;        
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
         actionComponents.Values.ToList().ForEach(component => component.Reset());
         availableActions.Clear();
         unavailableActions.Clear();
         currentPageIndex = 0;
         UpdatePaginationButtons(0);
-        UpdateInteractableState();
     }
 
     public int GetDefault()
@@ -140,6 +142,8 @@ public class ActionsManager : MonoBehaviour
 
     public void GoToPreviousPage()
     {
+        if (lastPaginationFrame == Time.frameCount) return;
+        lastPaginationFrame = Time.frameCount;
         if (currentPageIndex <= 0) return;
         currentPageIndex--;
         ApplyPagination();
@@ -147,6 +151,8 @@ public class ActionsManager : MonoBehaviour
 
     public void GoToNextPage()
     {
+        if (lastPaginationFrame == Time.frameCount) return;
+        lastPaginationFrame = Time.frameCount;
         int totalPages = GetTotalPages();
         if (currentPageIndex >= totalPages - 1) return;
         currentPageIndex++;

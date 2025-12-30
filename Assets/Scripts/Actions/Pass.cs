@@ -19,6 +19,11 @@ public class Pass : CharacterAction
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            if (c != null && c.isPlayerControlled)
+            {
+                Game game = FindFirstObjectByType<Game>();
+                if (game != null) game.SelectNextCharacterOrFinishTurnPrompt();
+            }
             return true;
         };
         base.Initialize(c, condition, effect, asyncEffect);

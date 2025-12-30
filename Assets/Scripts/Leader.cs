@@ -78,7 +78,7 @@ public class Leader : Character
                     : "A new pc slot is available.";
             string costHint = BuildCreationCostHint(characterSlotAdded, pcSlotAdded);
             if (!string.IsNullOrWhiteSpace(costHint)) message += $" {costHint}";
-            _ = ConfirmationDialog.AskOk(message);
+            MessageDisplay.ShowMessage(message, Color.yellow);
         }
     }
 
@@ -414,37 +414,37 @@ public class Leader : Character
         goldAmount += amount;
         if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"gold\">", Color.green);
     }
-    public void RemoveLeather(int leatherCost)
+    public void RemoveLeather(int leatherCost, bool showMessage = true)
     {
         leatherAmount -= leatherCost;
-        if (leatherCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{leatherCost} <sprite name=\"leather\">", Color.red);
+        if (showMessage && leatherCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{leatherCost} <sprite name=\"leather\">", Color.red);
     }
-    public void RemoveTimber(int timberCost)
+    public void RemoveTimber(int timberCost, bool showMessage = true)
     {
         timberAmount -= timberCost;
-        if (timberCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{timberCost} <sprite name=\"timber\">", Color.red);
+        if (showMessage && timberCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{timberCost} <sprite name=\"timber\">", Color.red);
     }
-    public void RemoveMounts(int mountsCost)
+    public void RemoveMounts(int mountsCost, bool showMessage = true)
     {
         mountsAmount -= mountsCost;
-        if (mountsCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mountsCost} <sprite name=\"mounts\">", Color.red);
+        if (showMessage && mountsCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mountsCost} <sprite name=\"mounts\">", Color.red);
     }
-    public void RemoveIron(int ironCost)
+    public void RemoveIron(int ironCost, bool showMessage = true)
     {
         ironAmount -= ironCost;
-        if (ironCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{ironCost} <sprite name=\"iron\">", Color.red);
+        if (showMessage && ironCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{ironCost} <sprite name=\"iron\">", Color.red);
     }
 
-    public void RemoveSteel(int steelCost)
+    public void RemoveSteel(int steelCost, bool showMessage = true)
     {
         steelAmount -= steelCost;
-        if (steelCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{steelCost} <sprite name=\"steel\">", Color.red);
+        if (showMessage && steelCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{steelCost} <sprite name=\"steel\">", Color.red);
     }
 
-    public void RemoveMithril(int mithrilCost)
+    public void RemoveMithril(int mithrilCost, bool showMessage = true)
     {
         mithrilAmount -= mithrilCost;
-        if (mithrilCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mithrilCost} <sprite name=\"mithril\">", Color.red);
+        if (showMessage && mithrilCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{mithrilCost} <sprite name=\"mithril\">", Color.red);
     }
     public void RemoveGold(int goldCost, bool showMessage = true)
     {

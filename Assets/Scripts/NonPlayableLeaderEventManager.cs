@@ -86,10 +86,14 @@ public class EventActions
 
 public class NonPlayableLeaderEventManager : MonoBehaviour
 {
+    [Header("References")]
+    public ActionsManager actions;
+    public SelectedCharacterIcon selected;
     [Range(0f, 1f)]
     [SerializeField] private float maxEventChancePerLeader = 0.05f;
     [SerializeField] private int spawnSearchRadius = 3;
     [SerializeField] private bool debugEvents = false;
+    [SerializeField] private int menaceRadius = 3;
 
     private Game game;
     private Board board;
@@ -105,6 +109,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     private bool npcUiActive;
     private bool npcBannerShown;
     private Coroutine npcBannerRoutine;
+    public bool IsProcessingTurn => processingTurn;
 
     [Header("Retreat")]
     [SerializeField] private int retreatMaxTurns = 3;
@@ -112,6 +117,9 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     [Header("Camera Follow")]
     [SerializeField] private float eventFollowDuration = 0.45f;
     [SerializeField] private float eventFollowPause = 0.15f;
+    [SerializeField] private float eventStepDelay = 0.2f;
+    [SerializeField] private float focusWaitTimeout = 6f;
+    [SerializeField] private float messageWaitTimeout = 6f;
 
 
     private class ActiveEvent
@@ -121,6 +129,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         public Character actor;
         public int travelTurnsRemaining;
         public int objectiveAttemptsRemaining;
+        public Hex targetHex;
         public Hex originalHex;
         public Character.StatusSnapshot originalStatus;
         public bool createdArmy;
@@ -188,12 +197,12 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (processingTurn) return;
         if (game == null || !game.started) return;
         if (turn <= 0) return;
+        processingTurn = true;
         StartCoroutine(ProcessTurnEvents());
     }
 
     private IEnumerator ProcessTurnEvents()
     {
-        processingTurn = true;
         CacheReferences();
         LoadEvents();
 
@@ -299,29 +308,21 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         npcBannerRoutine = null;
         if (!npcUiActive) yield break;
         HidePlayerUi();
-        MessageDisplay.ShowPersistent("Other nations are playing...", Color.yellow);
+        MessageDisplay.ShowPersistent("Minor nations react to the world...", Color.yellow);
         npcBannerShown = true;
     }
 
     private void HidePlayerUi()
     {
-        Layout layout = FindFirstObjectByType<Layout>();
-        if (layout == null) return;
-        ActionsManager actions = layout.GetActionsManager();
         if (actions != null) actions.Hide();
-        SelectedCharacterIcon selected = layout.GetSelectedCharacterIcon();
         if (selected != null) selected.Hide();
     }
 
     private void RestorePlayerUi()
     {
         if (game == null || game.currentlyPlaying != game.player) return;
-        Layout layout = FindFirstObjectByType<Layout>();
-        if (layout == null) return;
-
+        
         Character selectedCharacter = board != null ? board.selectedCharacter : null;
-        ActionsManager actions = layout.GetActionsManager();
-        SelectedCharacterIcon selected = layout.GetSelectedCharacterIcon();
         if (selectedCharacter != null)
         {
             selected?.Refresh(selectedCharacter);
@@ -458,10 +459,16 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (active.leader == null || active.leader.killed || active.leader.joined) { EndActiveEvent(active, false); yield break; }
         if (active.actor == null || active.actor.killed) { EndActiveEvent(active, false); yield break; }
         if (IsPendingRetreat(active.actor)) { EndActiveEvent(active, false); yield break; }
+        if (IsLeaderMenaced(active.leader))
+        {
+            LogDebug($"Event {active.definition.eventId} cancelled: {active.leader.characterName} threatened near city.");
+            EndActiveEvent(active, true);
+            yield break;
+        }
 
         active.actor.NewTurn();
 
-        Hex target = SelectTargetHex(active);
+        Hex target = GetActiveEventTarget(active);
         if (target == null)
         {
             LogDebug($"Event {active.definition.eventId} has no target.");
@@ -556,7 +563,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
                 continue;
             }
 
-            Hex spawnHex = ChooseSpawnHex(target);
+            Hex spawnHex = ResolveSpawnHex(actor, target, picked);
             if (spawnHex == null)
             {
                 LogDebug($"Event {picked.eventId} skipped for {npl.characterName}: no hidden spawn.");
@@ -582,6 +589,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
                 actor = actor,
                 travelTurnsRemaining = Mathf.Max(1, picked.movement != null ? picked.movement.maxTries : 1),
                 objectiveAttemptsRemaining = GetObjectiveTries(picked),
+                targetHex = target,
                 originalHex = originalHex,
                 originalStatus = originalStatus,
                 createdArmy = createdArmy,
@@ -644,9 +652,9 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
                     LogDebug($"Offensive: {npl.characterName} at {cityHex.v2} found no enemy targets in range for {actor.characterName}.");
                     continue;
                 }
-                if (IsNonPlayableLeaderTargetHex(targetHex))
+                if (!HasEnemyPlayablePresence(npl, targetHex))
                 {
-                    LogDebug($"Offensive: {npl.characterName} at {cityHex.v2} skipped NPL target {targetHex.v2} for {actor.characterName}.");
+                    LogDebug($"Offensive: {npl.characterName} at {cityHex.v2} skipped non-enemy target {targetHex.v2} for {actor.characterName}.");
                     continue;
                 }
 
@@ -663,7 +671,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
                 if (actor.hex != targetHex)
                 {
                     LogDebug($"Offensive: {npl.characterName} moving {actor.characterName} from {actor.hex.v2} to {targetHex.v2}.");
-                    MoveActorToward(actor, targetHex);
+                    yield return MoveActorTowardOffensive(actor, targetHex, _ => { });
                 }
                 if (actor.hex != targetHex)
                 {
@@ -967,6 +975,15 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         return SelectTargetHex(active.leader, active.definition);
     }
 
+    private Hex GetActiveEventTarget(ActiveEvent active)
+    {
+        if (active == null) return null;
+        if (active.targetHex != null) return active.targetHex;
+        Hex target = SelectTargetHex(active);
+        active.targetHex = target;
+        return target;
+    }
+
     private Hex SelectTargetHex(NonPlayableLeader leader, NonPlayableLeaderEventDefinition definition)
     {
         if (game == null || board == null || game.player == null) return null;
@@ -1149,18 +1166,29 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     {
         if (target == null) return null;
         List<Hex> candidates = target.GetHexesInRadius(spawnSearchRadius)
-            .Where(h => h != null && IsHiddenOrUnseenForPlayer(h) && !h.HasAnyPC())
+            .Where(h => h != null && h != target && IsHiddenOrUnseenForPlayer(h) && !h.HasAnyPC())
             .ToList();
 
         if (candidates.Count == 0 && board != null)
         {
             candidates = board.GetHexes()
-                .Where(h => h != null && IsHiddenOrUnseenForPlayer(h) && !h.HasAnyPC())
+                .Where(h => h != null && h != target && IsHiddenOrUnseenForPlayer(h) && !h.HasAnyPC())
                 .ToList();
         }
 
         if (candidates.Count == 0) return null;
         return candidates[UnityEngine.Random.Range(0, candidates.Count)];
+    }
+
+    private Hex ResolveSpawnHex(Character actor, Hex target, NonPlayableLeaderEventDefinition definition)
+    {
+        if (actor == null) return null;
+        string location = definition?.spawn?.location;
+        if (string.Equals(location, "currentHex", StringComparison.OrdinalIgnoreCase))
+        {
+            return actor.hex;
+        }
+        return ChooseSpawnHex(target);
     }
 
     private bool IsHiddenOrUnseenForPlayer(Hex hex)
@@ -1265,7 +1293,32 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         List<Vector2Int> path = pathRenderer.FindPath(active.actor.hex.v2, target.v2, active.actor);
         if (path == null || path.Count < 2)
         {
-            onFinished?.Invoke(false);
+            Hex startHex = active.actor.hex;
+            moved = TryStepTowardTarget(active.actor, target, true, true);
+            if (moved && active.actor.hex != startHex)
+            {
+                Hex to = active.actor.hex;
+                bool hasArmy = active.actor.IsArmyCommander() && active.actor.GetArmy() != null;
+                bool playerCanSee = hasArmy && PlayerCanSeeHex(to);
+                if (playerCanSee)
+                {
+                    yield return FocusHexAndWait(to);
+                    if (!active.playerSawArmy)
+                    {
+                        if (TryGetEventTitleOnFirstSeen(active, target, to, hasArmy, out string eventTitle))
+                        {
+                            MessageDisplayNoUI.ShowMessage(to, active.actor, eventTitle, Color.yellow);
+                            yield return WaitForMessageClear();
+                        }
+                        active.playerSawArmy = true;
+                    }
+                    if (eventStepDelay > 0f)
+                    {
+                        yield return new WaitForSeconds(eventStepDelay);
+                    }
+                }
+            }
+            onFinished?.Invoke(moved);
             yield break;
         }
 
@@ -1284,44 +1337,22 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
             moved = true;
 
             bool hasArmy = active.actor != null && active.actor.IsArmyCommander() && active.actor.GetArmy() != null;
-            if (TryGetEventTitleOnFirstSeen(active, to, hasArmy, out string eventTitle))
+            bool playerCanSee = hasArmy && PlayerCanSeeHex(to);
+            if (playerCanSee)
             {
-                if (BoardNavigator.Instance != null)
+                yield return FocusHexAndWait(to);
+                if (!active.playerSawArmy)
                 {
-                    bool focusDone = false;
-                    BoardNavigator.Instance.EnqueueFocus(to, eventFollowDuration, eventFollowPause, true, () => focusDone = true);
-                    while (!focusDone)
+                    if (TryGetEventTitleOnFirstSeen(active, target, to, hasArmy, out string eventTitle))
                     {
-                        yield return null;
+                        MessageDisplayNoUI.ShowMessage(to, active.actor, eventTitle, Color.yellow);
+                        yield return WaitForMessageClear();
                     }
+                    active.playerSawArmy = true;
                 }
-                MessageDisplayNoUI.ShowMessage(to, active.actor, eventTitle, Color.yellow);
-                while (MessageDisplayNoUI.IsBusy())
+                if (eventStepDelay > 0f)
                 {
-                    yield return null;
-                }
-            }
-            else if (hasArmy)
-            {
-                if (PlayerCanSeeHex(to))
-                {
-                    bool focusDone = false;
-                    if (BoardNavigator.Instance != null)
-                    {
-                        BoardNavigator.Instance.EnqueueFocus(to, eventFollowDuration, eventFollowPause, true, () => focusDone = true);
-                        while (!focusDone)
-                        {
-                            yield return null;
-                        }
-                    }
-                    else
-                    {
-                        yield return null;
-                    }
-                }
-                else
-                {
-                    yield return null;
+                    yield return new WaitForSeconds(eventStepDelay);
                 }
             }
             else
@@ -1332,28 +1363,290 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
             if (active.actor.hex == target) break;
         }
 
+        if (!moved)
+        {
+            Hex startHex = active.actor.hex;
+            moved = TryStepTowardTarget(active.actor, target, true, true);
+            if (moved && active.actor.hex != startHex)
+            {
+                Hex to = active.actor.hex;
+                bool hasArmy = active.actor.IsArmyCommander() && active.actor.GetArmy() != null;
+                bool playerCanSee = hasArmy && PlayerCanSeeHex(to);
+                if (playerCanSee)
+                {
+                    yield return FocusHexAndWait(to);
+                    if (!active.playerSawArmy)
+                    {
+                        if (TryGetEventTitleOnFirstSeen(active, target, to, hasArmy, out string eventTitle))
+                        {
+                            MessageDisplayNoUI.ShowMessage(to, active.actor, eventTitle, Color.yellow);
+                            yield return WaitForMessageClear();
+                        }
+                        active.playerSawArmy = true;
+                    }
+                    if (eventStepDelay > 0f)
+                    {
+                        yield return new WaitForSeconds(eventStepDelay);
+                    }
+                }
+            }
+        }
+
         onFinished?.Invoke(moved);
     }
 
-    private bool TryGetEventTitleOnFirstSeen(ActiveEvent active, Hex hex, bool hasArmy, out string title)
+    private IEnumerator MoveActorTowardOffensive(Character actor, Hex target, Action<bool> onFinished)
+    {
+        bool moved = false;
+        if (actor == null || target == null || board == null)
+        {
+            onFinished?.Invoke(false);
+            yield break;
+        }
+        if (actor.hex == target)
+        {
+            onFinished?.Invoke(true);
+            yield break;
+        }
+
+        HexPathRenderer pathRenderer = FindFirstObjectByType<HexPathRenderer>();
+        if (pathRenderer == null)
+        {
+            onFinished?.Invoke(false);
+            yield break;
+        }
+
+        List<Vector2Int> path = pathRenderer.FindPath(actor.hex.v2, target.v2, actor);
+        if (path == null || path.Count < 2)
+        {
+            Hex startHex = actor.hex;
+            moved = TryStepTowardTarget(actor, target, true, true);
+            if (moved && actor.hex != startHex && actor.IsArmyCommander() && actor.GetArmy() != null && PlayerCanSeeHex(actor.hex))
+            {
+                yield return FocusHexAndWait(actor.hex);
+                if (eventStepDelay > 0f)
+                {
+                    yield return new WaitForSeconds(eventStepDelay);
+                }
+            }
+            onFinished?.Invoke(moved);
+            yield break;
+        }
+
+        int movementLeft = actor.GetMovementLeft();
+        for (int i = 0; i < path.Count - 1; i++)
+        {
+            Hex from = board.GetHex(path[i]);
+            Hex to = board.GetHex(path[i + 1]);
+            if (from == null || to == null) break;
+
+            int cost = to.GetTerrainCost(actor);
+            if (movementLeft < cost) break;
+
+            board.MoveCharacterOneHex(actor, from, to, false, false);
+            movementLeft = actor.GetMovementLeft();
+            moved = true;
+
+            bool hasArmy = actor.IsArmyCommander() && actor.GetArmy() != null;
+            if (hasArmy && PlayerCanSeeHex(to))
+            {
+                yield return FocusHexAndWait(to);
+                if (eventStepDelay > 0f)
+                {
+                    yield return new WaitForSeconds(eventStepDelay);
+                }
+            }
+            else
+            {
+                yield return null;
+            }
+
+            if (actor.hex == target) break;
+        }
+
+        if (!moved)
+        {
+            Hex startHex = actor.hex;
+            moved = TryStepTowardTarget(actor, target, true, true);
+            if (moved && actor.hex != startHex && actor.IsArmyCommander() && actor.GetArmy() != null && PlayerCanSeeHex(actor.hex))
+            {
+                yield return FocusHexAndWait(actor.hex);
+                if (eventStepDelay > 0f)
+                {
+                    yield return new WaitForSeconds(eventStepDelay);
+                }
+            }
+        }
+
+        onFinished?.Invoke(moved);
+    }
+
+    private bool TryStepTowardTarget(Character actor, Hex target, bool allowEqualDistance, bool allowIgnoreCost)
+    {
+        if (actor == null || target == null || board == null || actor.hex == null) return false;
+        int movementLeft = actor.GetMovementLeft();
+
+        Hex current = actor.hex;
+        bool targetIsWater = target.IsWaterTerrain();
+        bool currentIsWater = current.IsWaterTerrain();
+        Vector2Int[] neighborOffsets = (current.v2.x & 1) == 0 ? board.evenRowNeighbors : board.oddRowNeighbors;
+        Hex best = null;
+        int bestDistance = HexDistance(current, target);
+        Hex bestEqual = null;
+        Hex bestIgnoringCost = null;
+        Hex bestIgnoringCostLand = null;
+        int bestIgnoringCostDistance = int.MaxValue;
+        int bestIgnoringCostLandDistance = int.MaxValue;
+        Hex bestLandAny = null;
+        int bestLandAnyDistance = int.MaxValue;
+        bool foundPreferredTerrain = false;
+
+        for (int i = 0; i < neighborOffsets.Length; i++)
+        {
+            Vector2Int neighborPos = new(current.v2.x + neighborOffsets[i].x, current.v2.y + neighborOffsets[i].y);
+            if (!board.hexes.TryGetValue(neighborPos, out Hex neighbor)) continue;
+            if (neighbor == null) continue;
+
+            bool neighborIsWater = neighbor.IsWaterTerrain();
+            bool preferTerrain = neighborIsWater == targetIsWater;
+            if (!preferTerrain && foundPreferredTerrain) continue;
+
+            int cost = neighbor.GetTerrainCost(actor);
+            bool affordable = movementLeft >= cost;
+
+            int distance = HexDistance(neighbor, target);
+            if (distance < bestDistance && affordable)
+            {
+                foundPreferredTerrain = preferTerrain;
+                bestDistance = distance;
+                best = neighbor;
+            }
+            else if (distance == bestDistance && allowEqualDistance && affordable && best == null)
+            {
+                foundPreferredTerrain = preferTerrain;
+                bestEqual = neighbor;
+            }
+
+            if (allowIgnoreCost)
+            {
+                if (distance < bestIgnoringCostDistance)
+                {
+                    bestIgnoringCostDistance = distance;
+                    bestIgnoringCost = neighbor;
+                }
+                else if (distance == bestIgnoringCostDistance && bestIgnoringCost == null)
+                {
+                    bestIgnoringCost = neighbor;
+                }
+
+                if (!neighborIsWater)
+                {
+                    if (distance < bestIgnoringCostLandDistance)
+                    {
+                        bestIgnoringCostLandDistance = distance;
+                        bestIgnoringCostLand = neighbor;
+                    }
+                    else if (distance == bestIgnoringCostLandDistance && bestIgnoringCostLand == null)
+                    {
+                        bestIgnoringCostLand = neighbor;
+                    }
+                }
+            }
+
+            if (!neighborIsWater)
+            {
+                if (distance < bestLandAnyDistance)
+                {
+                    bestLandAnyDistance = distance;
+                    bestLandAny = neighbor;
+                }
+                else if (distance == bestLandAnyDistance && bestLandAny == null)
+                {
+                    bestLandAny = neighbor;
+                }
+            }
+        }
+
+        if (best == null && bestEqual != null)
+        {
+            best = bestEqual;
+        }
+        if (best == null && allowIgnoreCost)
+        {
+            if (!targetIsWater && !currentIsWater && bestIgnoringCostLand != null)
+            {
+                best = bestIgnoringCostLand;
+            }
+            else
+            {
+                best = bestIgnoringCost;
+            }
+            if (best == null && currentIsWater && !targetIsWater && bestLandAny != null)
+            {
+                best = bestLandAny;
+            }
+            if (best == null) return false;
+            board.MoveCharacterOneHex(actor, current, best, false, false);
+            actor.moved = actor.GetMaxMovement();
+            return true;
+        }
+        if (best == null) return false;
+        board.MoveCharacterOneHex(actor, current, best, false, false);
+        return true;
+    }
+
+    private bool TryGetEventTitleOnFirstSeen(ActiveEvent active, Hex eventTarget, Hex currentHex, bool hasArmy, out string title)
     {
         title = null;
-        if (active == null || active.definition == null || active.actor == null || hex == null) return false;
+        if (active == null || active.definition == null || active.actor == null || currentHex == null) return false;
         if (!hasArmy || active.playerSawArmy) return false;
-        if (!PlayerCanSeeHex(hex)) return false;
+        if (!PlayerCanSeeHex(currentHex)) return false;
 
         title = string.IsNullOrWhiteSpace(active.definition.title)
             ? BuildEventRumourMessage(active.definition)
             : active.definition.title;
         if (string.IsNullOrWhiteSpace(title)) return false;
-        active.playerSawArmy = true;
         return true;
     }
 
     private bool PlayerCanSeeHex(Hex hex)
     {
         if (hex == null || game == null || game.player == null) return false;
-        return hex.IsHexSeen();
+        return game.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
+    }
+
+    private IEnumerator FocusHexAndWait(Hex hex)
+    {
+        if (hex == null)
+        {
+            yield break;
+        }
+
+        bool focusDone = false;
+        if (BoardNavigator.Instance != null)
+        {
+            BoardNavigator.Instance.EnqueueFocus(hex, eventFollowDuration, eventFollowPause, true, () => focusDone = true);
+            float elapsed = 0f;
+            while (!focusDone && elapsed < focusWaitTimeout)
+            {
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+        }
+        else
+        {
+            yield return null;
+        }
+    }
+
+    private IEnumerator WaitForMessageClear()
+    {
+        float elapsed = 0f;
+        while (MessageDisplayNoUI.IsBusy() && elapsed < messageWaitTimeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
     }
 
     private IEnumerator TryExecuteAction(ActiveEvent active, Action<bool> onFinished)
@@ -1416,9 +1709,17 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     private void ShowSuccessPopup(ActiveEvent active, Hex target)
     {
         if (active == null || game == null || game.player == null) return;
-        if (!game.IsPlayerCurrentlyPlaying()) return;
-        if (!PlayerCanSeeHex(target)) return;
-        if (!IsPlayerInvolvedInEvent(target)) return;
+        bool isPlayersTurn = game.IsPlayerCurrentlyPlaying();
+        bool canSee = PlayerCanSeeHex(target);
+        bool playerInvolved = IsPlayerInvolvedInEvent(target);
+        if (debugEvents)
+        {
+            string eventTitle = active.definition != null ? active.definition.title : "unknown";
+            LogDebug($"Popup check for '{eventTitle}': playerTurn={isPlayersTurn}, canSee={canSee}, involved={playerInvolved}, target={target?.v2}.");
+        }
+        if (!isPlayersTurn) return;
+        if (!canSee) return;
+        if (!playerInvolved) return;
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         Sprite actor1 = illustrations != null ? illustrations.GetIllustrationByName(active.definition.leaderName) : null;
         Sprite actor2 = illustrations != null ? illustrations.GetIllustrationByName(game.player.characterName) : null;
@@ -1429,9 +1730,23 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     {
         if (target == null || game == null || game.player == null) return false;
         PlayableLeader player = game.player;
-        if (target.GetPC() != null && target.GetPC().owner == player) return true;
-        if (target.characters != null && target.characters.Any(ch => ch != null && ch.GetOwner() == player)) return true;
-        if (target.armies != null && target.armies.Any(army => army != null && army.commander != null && army.commander.GetOwner() == player)) return true;
+        PC pc = target.GetPC();
+        if (pc != null && pc.owner == player)
+        {
+            if (debugEvents) LogDebug($"Popup reason: target PC '{pc.pcName}' owned by player at {target.v2}.");
+            return true;
+        }
+        if (target.characters != null && target.characters.Any(ch => ch != null && ch.GetOwner() == player))
+        {
+            if (debugEvents) LogDebug($"Popup reason: player character present at {target.v2}.");
+            return true;
+        }
+        if (target.armies != null && target.armies.Any(army => army != null && army.commander != null && army.commander.GetOwner() == player))
+        {
+            if (debugEvents) LogDebug($"Popup reason: player army present at {target.v2}.");
+            return true;
+        }
+        if (debugEvents) LogDebug($"Popup reason: player not involved at {target.v2}.");
         return false;
     }
 
@@ -1442,6 +1757,54 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (pc != null && pc.owner is NonPlayableLeader) return true;
         if (target.characters != null && target.characters.Any(ch => ch != null && ch.GetOwner() is NonPlayableLeader)) return true;
         if (target.armies != null && target.armies.Any(army => army != null && army.commander != null && army.commander.GetOwner() is NonPlayableLeader)) return true;
+        return false;
+    }
+
+    private bool HasEnemyPlayablePresence(NonPlayableLeader leader, Hex target)
+    {
+        if (leader == null || target == null) return false;
+        List<PlayableLeader> enemies = GetEnemyPlayableLeaders(leader);
+        if (enemies.Count == 0) return false;
+
+        PC pc = target.GetPC();
+        if (pc != null && pc.owner is PlayableLeader pcOwner && enemies.Contains(pcOwner)) return true;
+
+        if (target.characters != null)
+        {
+            foreach (Character character in target.characters)
+            {
+                if (character == null) continue;
+                if (character.GetOwner() is PlayableLeader owner && enemies.Contains(owner)) return true;
+            }
+        }
+
+        if (target.armies != null)
+        {
+            foreach (Army army in target.armies)
+            {
+                if (army?.commander == null) continue;
+                if (army.commander.GetOwner() is PlayableLeader owner && enemies.Contains(owner)) return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsLeaderMenaced(NonPlayableLeader leader)
+    {
+        if (leader == null || leader.killed || leader.joined) return false;
+        if (menaceRadius <= 0) return false;
+        if (leader.controlledPcs == null || leader.controlledPcs.Count == 0) return false;
+
+        foreach (PC pc in leader.controlledPcs)
+        {
+            if (pc == null || pc.hex == null) continue;
+            foreach (Hex hex in pc.hex.GetHexesInRadius(menaceRadius))
+            {
+                if (HasEnemyPlayablePresence(leader, hex)) return true;
+            }
+        }
+
         return false;
     }
 

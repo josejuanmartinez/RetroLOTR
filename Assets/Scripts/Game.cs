@@ -340,12 +340,25 @@ public class Game : MonoBehaviour
 
         NewTurn();
         board.RefreshRelevantHexes();
+
+        yield return WaitForNpcEvents();
+
         currentlyPlaying.NewTurn();
 
         yield return WaitForCameraAndMessages();
 
         ShowHumanPlayerWidgetsWidgets();
         SelectFirstPlayerCharacter();
+    }
+
+    private IEnumerator WaitForNpcEvents()
+    {
+        NonPlayableLeaderEventManager manager = FindFirstObjectByType<NonPlayableLeaderEventManager>();
+        if (manager == null) yield break;
+        while (manager.IsProcessingTurn)
+        {
+            yield return null;
+        }
     }
 
     private IEnumerator PlayNpcFocusSequence()

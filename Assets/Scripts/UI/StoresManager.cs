@@ -211,20 +211,14 @@ public class StoresManager : MonoBehaviour
         await ShowMarketDialog();
     }
 
-    private async void NotifyMarketChanged(bool pricesChanged)
+    private void NotifyMarketChanged(bool pricesChanged)
     {
         MarketChanged?.Invoke();
         if (!pricesChanged) return;
 
         if (pricePopupShownThisFrame) return;
         pricePopupShownThisFrame = true;
-        try
-        {
-            await ConfirmationDialog.AskOk("Prices in the caravans changed. Please check the <sprite name=\"caravans\"> icon above.");
-        }
-        finally
-        {
-            pricePopupShownThisFrame = false;
-        }
+        MessageDisplay.ShowMessage("Prices in the caravans changed. Please check the <sprite name=\"caravans\"> icon above.", Color.yellow);
+        pricePopupShownThisFrame = false;
     }
 }

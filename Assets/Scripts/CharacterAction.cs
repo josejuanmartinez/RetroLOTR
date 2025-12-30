@@ -373,48 +373,50 @@ public class CharacterAction : SearcherByName
             }
             else
             {
-                if(leatherCost > 0)
+                Leader owner = character.GetOwner();
+                if (owner != null)
                 {
-                    character.GetOwner().RemoveLeather(leatherCost);
-                    // Debug.Log($"{character.characterName} spends {leatherCost} leather");
-                }
-                if (timberCost > 0)
-                {
-                    character.GetOwner().RemoveTimber(timberCost);
-                    // Debug.Log($"{character.characterName} spends {timberCost} timberCost");
-                }
-                if (mountsCost > 0)
-                {
-                    character.GetOwner().RemoveMounts(mountsCost);
-                    // Debug.Log($"{character.characterName} spends {mountsCost} mounts");
-                }
-
-                if (ironCost > 0)
-                {
-                    character.GetOwner().RemoveIron(ironCost);
-                    // Debug.Log($"{character.characterName} spends {ironCost} iron");
-                }
-
-                if (steelCost > 0)
-                {
-                    character.GetOwner().RemoveSteel(steelCost);
-                    // Debug.Log($"{character.characterName} spends {steelCost} steel");
-                }
-
-                if (mithrilCost > 0)
-                {
-                    character.GetOwner().RemoveMithril(mithrilCost);
-                    // Debug.Log($"{character.characterName} spends {mithrilCost} mithril");
-                }
-
-                if (goldCost > 0)
-                {
-                    character.GetOwner().RemoveGold(goldCost, false);
-                    if (!isAI)
+                    List<string> costParts = new();
+                    if (leatherCost > 0)
                     {
-                        MessageDisplay.ShowMessage($"{character.GetOwner().characterName}: -{goldCost} <sprite name=\"gold\">", Color.red);
+                        owner.RemoveLeather(leatherCost, false);
+                        costParts.Add($"-{leatherCost} <sprite name=\"leather\">");
                     }
-                    // Debug.Log($"{character.characterName} spends {goldCost} gold");
+                    if (timberCost > 0)
+                    {
+                        owner.RemoveTimber(timberCost, false);
+                        costParts.Add($"-{timberCost} <sprite name=\"timber\">");
+                    }
+                    if (mountsCost > 0)
+                    {
+                        owner.RemoveMounts(mountsCost, false);
+                        costParts.Add($"-{mountsCost} <sprite name=\"mounts\">");
+                    }
+                    if (ironCost > 0)
+                    {
+                        owner.RemoveIron(ironCost, false);
+                        costParts.Add($"-{ironCost} <sprite name=\"iron\">");
+                    }
+                    if (steelCost > 0)
+                    {
+                        owner.RemoveSteel(steelCost, false);
+                        costParts.Add($"-{steelCost} <sprite name=\"steel\">");
+                    }
+                    if (mithrilCost > 0)
+                    {
+                        owner.RemoveMithril(mithrilCost, false);
+                        costParts.Add($"-{mithrilCost} <sprite name=\"mithril\">");
+                    }
+                    if (goldCost > 0)
+                    {
+                        owner.RemoveGold(goldCost, false);
+                        costParts.Add($"-{goldCost} <sprite name=\"gold\">");
+                    }
+
+                    if (!isAI && costParts.Count > 0)
+                    {
+                        MessageDisplay.ShowMessage($"{owner.characterName}: {string.Join(" ", costParts)}", Color.red);
+                    }
                 }
             }
 
@@ -424,7 +426,6 @@ public class CharacterAction : SearcherByName
             if (!isAI && game != null)
             {
                 game.PointToCharacterWithMissingActions();
-                game.SelectNextCharacterOrFinishTurnPrompt();
             }
 
             RefreshVictoryPoints();
@@ -458,6 +459,7 @@ public class CharacterAction : SearcherByName
     protected bool IsCharacterKnownAtHex(Character actor, Character target)
     {
         if (actor == null || target == null || actor.hex == null) return false;
+        if (target.IsArmyCommander()) return true;
         Leader actorOwner = actor.GetOwner();
         if (actorOwner == null) return false;
 

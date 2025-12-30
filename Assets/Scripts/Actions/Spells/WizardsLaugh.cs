@@ -16,7 +16,7 @@ public class WizardLaugh: Spell
             if (pc.owner.GetAlignment() != c.GetAlignment() || pc.owner.GetAlignment() == AlignmentEnum.neutral)
             {
                 int loyaltyLoss = UnityEngine.Random.Range(0, 3) * c.GetMage();
-                loyaltyLoss = Math.Max(0, ApplySpellEffectMultiplier(c, loyaltyLoss));
+                loyaltyLoss = Math.Max(1, ApplySpellEffectMultiplier(c, loyaltyLoss));
                 pc.DecreaseLoyalty(loyaltyLoss, c);
             }
             else return false;

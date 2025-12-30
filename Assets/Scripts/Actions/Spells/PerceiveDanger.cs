@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Linq;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class PerceiveDanger : Spell
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
+        Hex perceivedHex = null;
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
 
@@ -32,8 +34,7 @@ public class PerceiveDanger : Spell
                 if (hex == null) continue;
                 hex.RefreshVisibilityRendering();
             }
-            target.LookAt();
-            MessageDisplayNoUI.ShowMessage(target, c, $"Danger perceived nearby!", Color.cyan);
+            perceivedHex = target;
             return true;
         };
         condition = (c) => {
@@ -42,6 +43,18 @@ public class PerceiveDanger : Spell
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            if (perceivedHex == null) return false;
+            if (BoardNavigator.Instance != null)
+            {
+                var focusTcs = new TaskCompletionSource<bool>();
+                BoardNavigator.Instance.EnqueueFocus(perceivedHex, 0.6f, 0.2f, true, () => focusTcs.TrySetResult(true));
+                await focusTcs.Task;
+            }
+            MessageDisplayNoUI.ShowMessage(perceivedHex, c, "Danger perceived nearby!", Color.cyan);
+            while (MessageDisplayNoUI.IsBusy())
+            {
+                await Task.Yield();
+            }
             return true;
         };
         base.Initialize(c, condition, effect, asyncEffect);

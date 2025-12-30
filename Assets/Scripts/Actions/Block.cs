@@ -27,8 +27,9 @@ public class Block : CommanderArmyAction
             if(!isAI)
             {
                 string targetCharacter = await SelectionDialog.Ask("Select enemy army", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI);    
+                if (string.IsNullOrEmpty(targetCharacter)) return false;
                 Character enemyChar = c.hex.characters.Find(x => x.characterName == targetCharacter);
-                if(!enemyChar.IsArmyCommander()) return false;
+                if (enemyChar == null || !enemyChar.IsArmyCommander()) return false;
                 enemy = enemyChar.GetArmy();
             } 
             else
@@ -38,6 +39,7 @@ public class Block : CommanderArmyAction
             
             if (enemy == null) return false;
 
+            enemy.commander.Halt();
             return true;
         }
         base.Initialize(c, condition, effect, blockAsync);
