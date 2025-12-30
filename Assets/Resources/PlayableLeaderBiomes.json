@@ -3,10 +3,10 @@
     {
       "characterName": "Gandalf",
       "alignment": 0,
-      "commander": 1,
-      "agent": 1,
+      "commander": 0,
+      "agent": 0,
       "emmissary": 1,
-      "mage": 3,
+      "mage": 1,
       "race": 4,
       "hcDescription": "Riders of Rohan",
       "lcDescription": "Elven Horsemen",
@@ -16,7 +16,42 @@
       "maDescription": "Men of Bree",
       "wsDescription": "Elven Ships",
       "caDescription": "Catapults",
-      "artifacts": [
+      "artifacts": [],
+      "description": "<b>Gandalf</b> is the grey pilgrim, a wanderer of hidden roads and quiet counsel.<br><br>He walks the edge between shadow and hope, guiding the small and the humble because he knows their courage can outlast any sword.<br><br>He trusts in patience, in wisdom earned by travel, and in the spark that lights when others have given in to fear.<br><br>The Shire lies under his watch, and the first steps of his journey begin among its green lanes, where he gathers trusted companions, listens for the first uneasy rumors, and searches old ground for relics that have waited too long.<br><br>His path starts in quiet places, but it will not remain quiet.",
+      "terrain": 3,
+      "startingCityName": "Bree",
+      "startingCitySize": 0,
+      "startingCityFortSize": 0,
+      "pcFeature": "halflingHouse00",
+      "fortFeature": "",
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
+      "startingCityIsHidden": false,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": [],
+      "tutorialAnchors": [
+        "Hobbiton",
+        "Frodo",
+        "Merry",
+        "Pippin"
+      ],
+      "newCharacters": [
+        "Halbarad",
+        "Erestor",
+        "Galdor",
+        "Harry Goatleaf",
+        "Barliman Butterbur"
+      ],
+      "newPCs": [
+        "Amon Sul",
+        "Michel Delving",
+        "Fornost Erain",
+        "Annuminas",
+        "Elostirion"
+      ],
+      "sex": 0,
+      "tutorialArtifacts": [
         {
           "artifactName": "Narya",
           "artifactDescription": "Perceive Danger: reveal the nearest enemy army and surroundings.",
@@ -111,109 +146,15 @@
           "transferable": false,
           "alignment": 0
         }
-      ],
-      "description": "<b>Gandalf</b><sprite name=\"commander\">[1]<sprite name=\"agent\">[1]<sprite name=\"emmissary\">[1]<sprite name=\"mage\"><mark=#00ff00>[3]</mark><br><br><b>Starting Population Centers:</b><br>- Hobbiton <sprite name=\"pc\"/>[2]<sprite name=\"fort\"/><mark=#ff0000>[0]</mark><br><br><b>Starting Characters:</b><br>- Frodo <sprite name=\"commander\"/>[1]<br>- Sam <sprite name=\"agent\"/>[1]<br>- Pippin <sprite name=\"emmissary\"/>[1]<br>- Merry <sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- <mark=#ff0000>No</mark> armies<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#ff0000>Hard</mark><br><b>Starting power</b>: <mark=#ff0000>Small</mark><br><b>Recruitable allies</b>: <mark=#00ff00>Plenty</mark><br><b>Recruitable armies</b>: <mark=#ff0000>Scarce</mark><br><br><b>Gameplay style</b>:<br>- Characters and artifacts search",
-      "joinedTitle": "The unexpected fate of the Ring",
-      "joinedText": "Frodo, there's something I never told you.<br><br>I always said I kept the ring with me. Every breath.<br><br>But there was one night when I took it off just for a heartbeat. I needed silence. I meant to pick it up again immediately.<br><br>But something happened.<br><br>I must have closed my eyes. Then suddenly it was morning, and the ring was gone.<br>No sound. No trail. Just absence.<br><br>I searched. Days, maybe weeks. Time felt wrong. The harder I looked, the more it felt like the ring wasn't lost - it had moved on.<br><br>And I'm sorry, Frodo, truly. I never meant for the burden to fall on you. But it has.<br><br>Gandalf will guide you now, my boy, where I could not.",
-      "introActor1": "Bilbo",
-      "introActor2": "Frodo",
-      "terrain": 3,
-      "startingCityName": "Hobbiton",
-      "startingCitySize": 2,
-      "startingCityFortSize": 0,
-      "pcFeature": "halflingHouse00",
-      "fortFeature": "",
-      "startingArmySize": 0,
-      "preferedTroopType": 0,
-      "startingCityIsHidden": false,
-      "startsWithPort": false,
-      "startingWarships": 0,
-      "startingCharacters": [
-        {
-          "characterName": "Frodo",
-          "alignment": 0,
-          "commander": 1,
-          "agent": 0,
-          "emmissary": 0,
-          "mage": 0,
-          "race": 3,
-          "artifacts": [
-            {
-              "artifactName": "Elvish Song",
-              "artifactDescription": "One-use Oh Elbereth! to damage an enemy character here (halts Nazgul).",
-              "hidden": false,
-              "providesSpell": "OhElbereth",
-              "commanderBonus": 0,
-              "agentBonus": 0,
-              "emmissaryBonus": 0,
-              "mageBonus": 0,
-              "oneShot": true,
-              "bonusAttack": 0,
-              "bonusDefense": 0,
-              "transferable": false,
-              "spriteString": "song",
-              "alignment": 0
-            }
-          ],
-          "sex": 0
-        },
-        {
-          "characterName": "Sam",
-          "alignment": 0,
-          "commander": 0,
-          "agent": 1,
-          "emmissary": 0,
-          "mage": 0,
-          "race": 3,
-          "artifacts": [],
-          "sex": 0
-        },
-        {
-          "characterName": "Pippin",
-          "alignment": 0,
-          "commander": 0,
-          "agent": 0,
-          "emmissary": 1,
-          "mage": 0,
-          "race": 3,
-          "artifacts": [],
-          "sex": 0
-        },
-        {
-          "characterName": "Merry",
-          "alignment": 0,
-          "commander": 0,
-          "agent": 1,
-          "emmissary": 0,
-          "mage": 0,
-          "race": 3,
-          "artifacts": [],
-          "sex": 0
-        }
-      ],
-      "newCharacters": [
-        "Halbarad",
-        "Erestor",
-        "Galdor",
-        "Harry Goatleaf",
-        "Barliman Butterbur"
-      ],
-      "newPCs": [
-        "Amon Sul",
-        "Michel Delving",
-        "Fornost Erain",
-        "Annuminas",
-        "Elostirion"
-      ],
-      "sex": 0
+      ]
     },
     {
       "characterName": "Saruman",
       "alignment": 2,
       "commander": 0,
       "agent": 0,
-      "emmissary": 2,
-      "mage": 3,
+      "emmissary": 1,
+      "mage": 1,
       "race": 4,
       "hcDescription": "Warg Riders",
       "lcDescription": "Wolves",
@@ -223,7 +164,40 @@
       "maDescription": "Dunlending Axemen",
       "wsDescription": "Dunlending Boats",
       "caDescription": "Blasting Fire",
-      "artifacts": [
+      "artifacts": [],
+      "description": "<b>Saruman</b> is the master of Orthanc, once the chief of the wise, now the architect of his own dominion.<br><br>His voice bends courts, his mind measures every weakness, and his ambition refuses to wait for permission.<br><br>He builds in silence, gathering strength behind fair words, and he intends to remake the world in the image of his will.<br><br>His design begins with a careful reach into the courts of Rohan, the securing of a pliant voice, and the quiet unearthing of power long buried.<br><br>From Orthanc he turns influence into force and raises the first ranks of his war.",
+      "terrain": 1,
+      "startingCityName": "Orthanc",
+      "startingCitySize": 0,
+      "startingCityFortSize": 1,
+      "pcFeature": "clayPit01_dark",
+      "fortFeature": "wizardTowerDark00",
+      "startingArmySize": 0,
+      "preferedTroopType": 0,
+      "startingCityIsHidden": false,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": [],
+      "tutorialAnchors": [
+        "Theoden",
+        "Orthanc"
+      ],
+      "newCharacters": [
+        "Bugrug",
+        "Enion",
+        "Aonghas",
+        "Broggha",
+        "Mauhir"
+      ],
+      "newPCs": [
+        "Fangorn's camp",
+        "Treforn",
+        "Arailt",
+        "Angren",
+        "Enedhir"
+      ],
+      "sex": 0,
+      "tutorialArtifacts": [
         {
           "artifactName": "Ring of Orthanc",
           "artifactDescription": "Words of Dispair: inflict casualties on an enemy army here. Grants +1 <sprite name=\"commander\"/>.",
@@ -318,116 +292,15 @@
           "transferable": false,
           "alignment": 2
         }
-      ],
-      "description": "<b>Saruman</b><sprite name=\"commander\">[1]<sprite name=\"emmissary\"><mark=#ffff00>[2]</mark><sprite name=\"mage\"><mark=#00ff00>[4]</mark><br><br><b>Starting Population Centers:</b><br>- Orthanc <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/><mark=#ffff00>[1]</mark><br><br><b>Starting Characters:</b><br>- Grima<sprite name=\"agent\"/><mark=#ffff00>[2]</mark><sprite name=\"emmissary\"/>[1]<br>- Bill Ferny<sprite name=\"commander\"/>[1]<sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- Ugluk<sprite name=\"commander\">[2], leading a <mark=#ffff00>small</mark> <sprite name=\"neutral\"/>army<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#ffff00>Average</mark><br><b>Starting Power</b>: <mark=#ffff00>Average</mark><br><b>Recruitable allies</b>: <mark=#ff0000>Scarce</mark><br><b>Recruitable armies</b>: <mark=#ffff00>Average</mark><br><br><b>Gameplay style</b>:<br>- Characters and conquest",
-      "joinedTitle": "Saruman not the white, but of Many Colours!",
-      "joinedText": "Grima, listen carefully.<br><br>For years, I have searched for the One Ring.<br><br>Others believe it vanished into myth, that time swallowed it. But I felt its echo.<br><br>There was a moment in the deep archives of the ancient world when I sensed its presence.<br><br>Like a whisper slipping behind my ear.<br><br>I followed it through ruins, storms, sleepless nights. And then, nothing.<br><br>I should have found it. I should have been the one to wield it.<br><br>They call me Saruman the White, but no, Grima.<br><br>I pursue much more - power, dominion. I am Saruman, of Many Colours.",
-      "introActor1": "Saruman",
-      "introActor2": "Grima",
-      "terrain": 1,
-      "startingCityName": "Orthanc",
-      "startingCitySize": 1,
-      "startingCityFortSize": 1,
-      "pcFeature": "clayPit01_dark",
-      "fortFeature": "wizardTowerDark00",
-      "startingArmySize": 0,
-      "preferedTroopType": 0,
-      "startingCityIsHidden": false,
-      "startsWithPort": false,
-      "startingWarships": 0,
-      "startingCharacters": [
-        {
-          "characterName": "Ugluk",
-          "alignment": 2,
-          "commander": 2,
-          "agent": 0,
-          "emmissary": 0,
-          "mage": 0,
-          "race": 5,
-          "artifacts": [],
-          "startingArmySize": 2,
-          "preferedTroopType": 2,
-          "sex": 0
-        },
-        {
-          "characterName": "Grima",
-          "alignment": 2,
-          "commander": 0,
-          "agent": 2,
-          "emmissary": 1,
-          "mage": 0,
-          "race": 0,
-          "artifacts": [
-            {
-              "artifactName": "Poison",
-              "artifactDescription": "Curse an enemy character in your hex.",
-              "hidden": false,
-              "providesSpell": "Curse",
-              "commanderBonus": 0,
-              "agentBonus": 0,
-              "emmissaryBonus": 0,
-              "mageBonus": 0,
-              "oneShot": false,
-              "bonusAttack": 0,
-              "bonusDefense": 0,
-              "transferable": false,
-              "spriteString": "poison",
-              "alignment": 2
-            }
-          ],
-          "sex": 0
-        },
-        {
-          "characterName": "Bill Ferny",
-          "alignment": 2,
-          "commander": 1,
-          "agent": 1,
-          "emmissary": 0,
-          "mage": 0,
-          "race": 0,
-          "artifacts": [
-            {
-              "artifactName": "Bill, the Pony",
-              "artifactDescription": "Return to Capital: blink home (non-army commanders).",
-              "hidden": false,
-              "providesSpell": "Return To Capital",
-              "commanderBonus": 0,
-              "agentBonus": 0,
-              "emmissaryBonus": 0,
-              "mageBonus": 0,
-              "oneShot": false,
-              "bonusAttack": 0,
-              "bonusDefense": 0,
-              "spriteString": "hc",
-              "alignment": 2
-            }
-          ],
-          "sex": 0
-        }
-      ],
-      "newCharacters": [
-        "Bugrug",
-        "Enion",
-        "Aonghas",
-        "Broggha",
-        "Mauhir"
-      ],
-      "newPCs": [
-        "Fangorn's camp",
-        "Treforn",
-        "Arailt",
-        "Angren",
-        "Enedhir"
-      ],
-      "sex": 0
+      ]
     },
     {
       "characterName": "Sauron",
       "alignment": 1,
-      "commander": 3,
+      "commander": 0,
       "agent": 0,
-      "emmissary": 0,
-      "mage": 3,
+      "emmissary": 1,
+      "mage": 1,
       "race": 4,
       "hcDescription": "Warg Riders",
       "lcDescription": "Easterling Chariots",
@@ -437,7 +310,41 @@
       "maDescription": "Haradrim Spearmen",
       "wsDescription": "Corsair Ships",
       "caDescription": "Battering Rams",
-      "artifacts": [
+      "artifacts": [],
+      "description": "<b>Sauron</b> is the Dark Lord returned, a will of iron that has never forgotten its claim.<br><br>From Barad-dur he bends the lands through fear and patience, drawing all things toward a single purpose.<br><br>He does not need love or loyalty, only obedience, and he will take it by force or by dread.<br><br>The hunt begins in the shadow of Minas Morgul, where the trail is secured and a relic of power is drawn from cursed ground.<br><br>From there the march moves toward the Black Gate, where the first disciplined hosts take shape under a hard command.",
+      "terrain": 10,
+      "startingCityName": "Barad-dur",
+      "startingCitySize": 0,
+      "startingCityFortSize": 1,
+      "startingArmySize": 0,
+      "pcFeature": "volcanoCave",
+      "fortFeature": "wizardTowerRuins00_sauron",
+      "preferedTroopType": 0,
+      "startingCityIsHidden": false,
+      "startsWithPort": false,
+      "startingWarships": 0,
+      "startingCharacters": [],
+      "tutorialAnchors": [
+        "Dendra Dwar",
+        "Murazor",
+        "Barad-dur"
+      ],
+      "newCharacters": [
+        "Angulion",
+        "Maben",
+        "Lomelinde",
+        "Celedhring",
+        "Leardinoth"
+      ],
+      "newPCs": [
+        "Carn Dum",
+        "Mt. Gram",
+        "Thuringwathost",
+        "Olbamarl",
+        "Barad-wath"
+      ],
+      "sex": 0,
+      "tutorialArtifacts": [
         {
           "artifactName": "Dark Lord Banner",
           "artifactDescription": "One-use Summon Men-at-Arms: add 1 <sprite name=\"ma\"/> at an owned PC.",
@@ -516,125 +423,7 @@
           "spriteString": "speech",
           "alignment": 1
         }
-      ],
-      "description": "<b>Sauron</b><sprite name=\"commander\"><mark=#00ff00>[3]</mark><sprite name=\"mage\"><mark=#00ff00>[3]</mark><br><br><b>Starting Population Centers:</b><br>- Barad-dur <sprite name=\"pc\"/>[1] <sprite name=\"fort\"/><mark=#ffff00>[1]</mark><br><br><b>Starting Characters:</b><br>- Mouth of Sauron <sprite name=\"emmissary\"/><mark=#00ff00>[3]</mark><br>- Gollum <sprite name=\"agent\"/>[1]<br><br><b>Starting Armies:</b><br>- Gothmog<sprite name=\"commander\">[2], leading an <mark=#00ff00>average</mark> <sprite name=\"darkServants\"/>army<br><br><b>Starting Magic:</b><br>- <mark=#00ff00>Many</mark> spells <sprite name=\"spell\"/> and artifacts <sprite name=\"artifact\"/><br><br><b>Difficulty</b>: <mark=#00ff00>Easy</mark></b><br><b>Starting Power</b>: <mark=#ffff00>Average</mark><br><b>Recruitable characters</b>: <mark=#00ff00>Good</mark><br><b>Recruitable armies</b>: <mark=#00ff00>Plenty</mark><br><br><b>Gameplay style</b>:<br>- Characters, armies, artifact search",
-      "joinedTitle": "Shire. Baggins.",
-      "joinedText": "Listen well, creature.<br><br>You think your trembling bought you mercy.<br><br>It did not. I kept you because you knew something.<br><br>A place. A name. A direction that others have failed to see.<br><br>A land of small folk and smaller courage.<br><br>A place so insignificant no map dares to mark it.<br><br>Now I know enough. You may scurry back to your holes and rivers. My servants are already on the road.<br><br>The Ring is there - I taste its shadow.<br><br>You are still bound to it, wretch. You will follow it, and I will find you.<br><br>Any creature that finds it will succumb to the Lord of the Rings.",
-      "introActor1": "Sauron",
-      "introActor2": "Gollum",
-      "terrain": 10,
-      "startingCityName": "Barad-dur",
-      "startingCitySize": 1,
-      "startingCityFortSize": 1,
-      "startingArmySize": 0,
-      "pcFeature": "volcanoCave",
-      "fortFeature": "wizardTowerRuins00_sauron",
-      "preferedTroopType": 0,
-      "startingCityIsHidden": false,
-      "startsWithPort": false,
-      "startingWarships": 0,
-      "startingCharacters": [
-        {
-          "characterName": "Gothmog",
-          "alignment": 1,
-          "commander": 2,
-          "agent": 0,
-          "emmissary": 0,
-          "mage": 0,
-          "race": 6,
-          "artifacts": [],
-          "startingArmySize": 4,
-          "preferedTroopType": 2,
-          "sex": 0
-        },
-        {
-          "characterName": "Mouth of Sauron",
-          "alignment": 1,
-          "commander": 0,
-          "agent": 0,
-          "emmissary": 3,
-          "mage": 0,
-          "race": 0,
-          "artifacts": [
-            {
-              "artifactName": "Yellow teeth",
-              "artifactDescription": "Wizard's Laugh: clear doubles on allies or sap loyalty of hostile PCs here. Grants +1 <sprite name=\"commander\"/> and +1 <sprite name=\"emmissary\"/>.",
-              "hidden": false,
-              "providesSpell": "Wizard's Laugh",
-              "commanderBonus": 1,
-              "agentBonus": 0,
-              "emmissaryBonus": 1,
-              "mageBonus": 0,
-              "oneShot": false,
-              "bonusAttack": 0,
-              "bonusDefense": 0,
-              "transferable": false,
-              "spriteString": "tooth",
-              "alignment": 1
-            },
-            {
-              "artifactName": "Scroll of the Mouth",
-              "artifactDescription": "Perceive Danger: reveal the nearest enemy army and surroundings.",
-              "hidden": false,
-              "providesSpell": "Perceive Danger",
-              "commanderBonus": 0,
-              "agentBonus": 0,
-              "emmissaryBonus": 0,
-              "mageBonus": 0,
-              "oneShot": false,
-              "bonusAttack": 0,
-              "bonusDefense": 0,
-              "transferable": false,
-              "spriteString": "scroll",
-              "alignment": 1
-            }
-          ],
-          "sex": 0
-        },
-        {
-          "characterName": "Gollum",
-          "alignment": 1,
-          "commander": 0,
-          "agent": 1,
-          "emmissary": 0,
-          "mage": 0,
-          "race": 3,
-          "artifacts": [
-            {
-              "artifactName": "Riddle",
-              "artifactDescription": "Halt a target enemy character here for a turn.",
-              "hidden": false,
-              "providesSpell": "Halt",
-              "commanderBonus": 0,
-              "agentBonus": 0,
-              "emmissaryBonus": 0,
-              "mageBonus": 0,
-              "oneShot": false,
-              "bonusAttack": 0,
-              "bonusDefense": 0,
-              "transferable": false,
-              "spriteString": "scroll",
-              "alignment": 2
-            }
-          ],
-          "sex": 0
-        }
-      ],
-      "newCharacters": [
-        "Angulion",
-        "Maben",
-        "Lomelinde",
-        "Celedhring",
-        "Leardinoth"
-      ],
-      "newPCs": [
-        "Carn Dum",
-        "Mt. Gram",
-        "Thuringwathost",
-        "Olbamarl",
-        "Barad-wath"
-      ],
-      "sex": 0
+      ]
     }
   ]
 }

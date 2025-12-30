@@ -8,14 +8,16 @@ public class Illustrations : SearcherByName
 
     public Sprite GetIllustrationByName(string name)
     {
-        Sprite spr =  illustrations.Find(x => Normalize(x.name) == Normalize(name));
+        if (string.IsNullOrWhiteSpace(name) || illustrations == null) return null;
+        Sprite spr = illustrations.Find(x => x != null && Normalize(x.name) == Normalize(name));
         if (!spr) Debug.LogWarning($"Sprite for {name} is not registered. Typo? Forgot to add it to Illustrations?");
         return spr;
     }
 
     public Sprite GetIllustrationByName(Character character)
     {
-        Sprite spr= illustrations.Find(x => Normalize(x.name) == Normalize(character.characterName));
+        if (character == null || string.IsNullOrWhiteSpace(character.characterName) || illustrations == null) return null;
+        Sprite spr = illustrations.Find(x => x != null && Normalize(x.name) == Normalize(character.characterName));
         if (!spr) Debug.LogWarning($"Sprite for {character.characterName} is not registered. Typo? Forgot to add it to Illustrations?");
         return spr;
     }

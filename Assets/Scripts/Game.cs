@@ -62,6 +62,10 @@ public class Game : MonoBehaviour
         {
             gameObject.AddComponent<NonPlayableLeaderEventManager>();
         }
+        if (FindFirstObjectByType<TutorialManager>() == null)
+        {
+            gameObject.AddComponent<TutorialManager>();
+        }
     }
 
     private void AssignAIandHumans()
@@ -71,6 +75,10 @@ public class Game : MonoBehaviour
         foreach(Character character in allCharacters)
         {
             character.isPlayerControlled = character.GetOwner() == player;
+            if (character.GetOwner() != player)
+            {
+                SkillTreeService.UnlockAllNodes(character);
+            }
         }
     }
 
@@ -107,17 +115,10 @@ public class Game : MonoBehaviour
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         NewTurnStarted?.Invoke(turn);
         currentlyPlaying.NewTurn();
+        TutorialManager.Instance?.InitializeForLeader(player);
         BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
 
-        Sounds.Instance?.PlaySpeechIntro(currentlyPlaying.alignment);
-        PopupManager.Show(
-            currentlyPlaying.GetBiome().joinedTitle,
-            FindFirstObjectByType<Illustrations>().GetIllustrationByName(currentlyPlaying.GetBiome().introActor1),
-            FindFirstObjectByType<Illustrations>().GetIllustrationByName(currentlyPlaying.GetBiome().introActor2),
-            currentlyPlaying.GetBiome().joinedText,
-            true
-        );
     }
 
     private void InitializePlayableLeaderIcons()
@@ -485,6 +486,11 @@ public class Game : MonoBehaviour
 
         if (firstAlive != null)
         {
+            if (firstAlive.hex != null)
+            {
+                if (!player.visibleHexes.Contains(firstAlive.hex)) player.visibleHexes.Add(firstAlive.hex);
+                firstAlive.hex.RevealArea(1, true, player);
+            }
             ShowHumanPlayerWidgetsWidgets();
             board.SelectCharacter(firstAlive, true, 1.0f, 0.0f);
         }

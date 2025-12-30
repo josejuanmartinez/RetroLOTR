@@ -11,10 +11,6 @@ public class LeaderBiomeConfigCollection
 public class LeaderBiomeConfig: BiomeConfig
 {
     public string description;
-    public string joinedTitle;
-    public string joinedText;
-    public string introActor1;
-    public string introActor2;
     public TerrainEnum terrain;
     public FeaturesEnum feature = FeaturesEnum.noFeature;
     public bool isIsland = false;
@@ -28,6 +24,8 @@ public class LeaderBiomeConfig: BiomeConfig
     public bool startsWithPort;
 
     public List<BiomeConfig> startingCharacters = new();
+    public List<Artifact> tutorialArtifacts = new();
+    public List<string> tutorialAnchors = new();
 
     public string hcDescription = "Heavy Cavalry";
     public string lcDescription = "Light Cavalry";

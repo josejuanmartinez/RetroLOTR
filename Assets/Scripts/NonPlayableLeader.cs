@@ -378,7 +378,6 @@ public class NonPlayableLeader : Leader
             // Transfer characters
             foreach (Character character in charactersToTransfer)
             {
-                character.health = Math.Min(character.health, 50);
                 character.owner = joinedTo;
                 character.alignment = joinedTo.alignment;
                 character.startingCharacter = false;
@@ -391,8 +390,6 @@ public class NonPlayableLeader : Leader
             {
                 pc.owner = joinedTo;
                 pc.acquisitionType = PCAcquisitionType.Joined;
-                pc.DecreaseSize();
-                pc.DecreaseFort();            
                 joinedTo.controlledPcs.Add(pc);
                 joinedTo.visibleHexes.Add(pc.hex);
                 if(joinedTo == FindAnyObjectByType<Game>().player) pc.hex.RevealArea(1);
@@ -402,22 +399,6 @@ public class NonPlayableLeader : Leader
             owner.controlledCharacters.Clear();
             owner.controlledPcs.Clear();
             visibleHexes.Clear();
-
-            // Transfer resources
-            joinedTo.leatherAmount += leatherAmount;
-            joinedTo.mountsAmount += mountsAmount;
-            joinedTo.timberAmount += timberAmount;
-            joinedTo.ironAmount += ironAmount;
-            joinedTo.mithrilAmount += mithrilAmount;
-            joinedTo.goldAmount += goldAmount;
-
-            // Reset resources to 0
-            leatherAmount = 0;
-            mountsAmount = 0;
-            timberAmount = 0;
-            ironAmount = 0;
-            mithrilAmount = 0;
-            goldAmount = 0;
 
             health = Mathf.Max(health, 50);
             // Mark as killed and remove from NPCs list safely

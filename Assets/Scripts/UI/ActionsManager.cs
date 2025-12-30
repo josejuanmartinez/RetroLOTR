@@ -20,6 +20,9 @@ public class ActionsManager : MonoBehaviour
     public Button nextPageButton;
     [SerializeField] private int actionsPerPage = 5;
 
+    [Header("Debug")]
+    public bool showUnavailableActions = false;
+
     [HideInInspector]
     public CharacterAction DEFAULT;
     public CharacterAction[] characterActions;
@@ -343,7 +346,7 @@ public class ActionsManager : MonoBehaviour
             {
                 availableActions.Add(action);
             }
-            else if (action.ShouldShowWhenUnavailable())
+            else if (showUnavailableActions && action.ShouldShowWhenUnavailable())
             {
                 unavailableActions.Add(action);
             }
@@ -369,7 +372,7 @@ public class ActionsManager : MonoBehaviour
             }
         }
 
-        int totalActions = availableActions.Count + unavailableActions.Count;
+        int totalActions = availableActions.Count + (showUnavailableActions ? unavailableActions.Count : 0);
         int totalPages = GetTotalPages();
         if (totalActions == 0 || totalPages == 0)
         {
@@ -384,11 +387,11 @@ public class ActionsManager : MonoBehaviour
         Transform targetParent = gridLayoutTransform != null ? gridLayoutTransform : transform;
         for (int i = startIndex; i < endIndex; i++)
         {
-            CharacterAction action = i < availableActions.Count
+            bool isAvailable = i < availableActions.Count;
+            CharacterAction action = isAvailable
                 ? availableActions[i]
                 : unavailableActions[i - availableActions.Count];
             if (action == null) continue;
-            bool isAvailable = i < availableActions.Count;
             if (action.button != null)
             {
                 action.button.gameObject.SetActive(true);
@@ -412,7 +415,7 @@ public class ActionsManager : MonoBehaviour
     private int GetTotalPages()
     {
         if (actionsPerPage <= 0) return 0;
-        int totalActions = availableActions.Count + unavailableActions.Count;
+        int totalActions = availableActions.Count + (showUnavailableActions ? unavailableActions.Count : 0);
         return Mathf.CeilToInt(totalActions / (float)actionsPerPage);
     }
 

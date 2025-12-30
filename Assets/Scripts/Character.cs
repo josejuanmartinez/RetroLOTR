@@ -51,6 +51,10 @@ public class Character : MonoBehaviour
     [Header("Army")]
     [SerializeField] private Army army = null;
 
+    [Header("Skill Tree")]
+    [SerializeField] private int skillPointsAvailable = 0;
+    private readonly HashSet<string> unlockedSkillNodes = new(StringComparer.OrdinalIgnoreCase);
+
     [Header("AI")]
     public bool isPlayerControlled = true;
 
@@ -155,6 +159,7 @@ public class Character : MonoBehaviour
         hex.characters.Add(this);
 
         if (startingArmySize > 0 || startingWarships > 0) CreateArmy(preferedTroopType, startingArmySize, startingCharacter, startingWarships);
+        SkillTreeService.InitializeCharacter(this);
     }
 
     public AlignmentEnum GetAlignment()
@@ -255,6 +260,54 @@ public class Character : MonoBehaviour
         if (!owner && this is Leader) return this as Leader;
         
         return owner;
+    }
+
+    public bool IsSkillNodeUnlocked(string nodeId)
+    {
+        return !string.IsNullOrWhiteSpace(nodeId) && unlockedSkillNodes.Contains(nodeId);
+    }
+
+    public bool UnlockSkillNode(string nodeId, bool ignoreRequirements = false)
+    {
+        if (string.IsNullOrWhiteSpace(nodeId)) return false;
+        if (unlockedSkillNodes.Contains(nodeId)) return false;
+        if (!ignoreRequirements)
+        {
+            TutorialManager tutorial = TutorialManager.Instance;
+            if (tutorial != null && !tutorial.CanUnlockNode(this, nodeId)) return false;
+            if (!SkillTreeService.CanUnlockNode(this, nodeId)) return false;
+            if (!TrySpendSkillPoint()) return false;
+        }
+        unlockedSkillNodes.Add(nodeId);
+        return true;
+    }
+
+    public IReadOnlyCollection<string> GetUnlockedSkillNodes()
+    {
+        return unlockedSkillNodes;
+    }
+
+    public bool IsActionUnlocked(string actionClassName)
+    {
+        return SkillTreeService.IsActionUnlocked(this, actionClassName);
+    }
+
+    public int GetSkillPoints()
+    {
+        return skillPointsAvailable;
+    }
+
+    public void AddSkillPoints(int amount)
+    {
+        if (amount <= 0) return;
+        skillPointsAvailable += amount;
+    }
+
+    public bool TrySpendSkillPoint()
+    {
+        if (skillPointsAvailable <= 0) return false;
+        skillPointsAvailable--;
+        return true;
     }
 
     public string GetHoverText(bool withAlignment, bool withCharInfo, bool withLevels, bool withArmy, bool withColor, bool withHealth = true)

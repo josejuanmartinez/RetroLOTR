@@ -94,6 +94,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     [SerializeField] private int spawnSearchRadius = 3;
     [SerializeField] private bool debugEvents = false;
     [SerializeField] private int menaceRadius = 3;
+    [SerializeField] private int minTurnToEnableEvents = 20;
 
     private Game game;
     private Board board;
@@ -197,6 +198,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         if (processingTurn) return;
         if (game == null || !game.started) return;
         if (turn <= 0) return;
+        if (turn < minTurnToEnableEvents) return;
         processingTurn = true;
         StartCoroutine(ProcessTurnEvents());
     }

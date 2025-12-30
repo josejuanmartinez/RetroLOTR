@@ -43,6 +43,7 @@ public class CastLight: FreeNeutralSpell
                     if (areaHex == null) continue;
                     PC pc = areaHex.GetPC();
                     if (pc == null) continue;
+                    if (pc.owner == null) continue;
                     if (pc.owner == owner) continue;
                     AlignmentEnum ownerAlignment = owner != null ? owner.GetAlignment() : AlignmentEnum.neutral;
                     AlignmentEnum pcAlignment = pc.owner != null ? pc.owner.GetAlignment() : AlignmentEnum.neutral;

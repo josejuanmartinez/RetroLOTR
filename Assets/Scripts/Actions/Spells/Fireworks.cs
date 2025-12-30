@@ -11,7 +11,7 @@ public class Fireworks: FreeSpell
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             PC pc = c.hex.GetPC();
-            if (pc == null) return false;            
+            if (pc == null || pc.owner == null) return false;            
             int loyalty = UnityEngine.Random.Range(0, 10) * c.GetMage();
             loyalty = Math.Max(0, ApplySpellEffectMultiplier(c, loyalty));
             if (pc.owner.GetAlignment() == c.GetAlignment())
@@ -26,7 +26,8 @@ public class Fireworks: FreeSpell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.GetPC() != null;
+            PC pc = c.hex.GetPC();
+            return pc != null && pc.owner != null;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

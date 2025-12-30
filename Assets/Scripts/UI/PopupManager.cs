@@ -197,18 +197,23 @@ public class PopupManager : MonoBehaviour
         }
 
         titleWidget.text = data.title;
+        VideoClip actor1Clip = GetVideoByName(data.spriteActor1 != null ? data.spriteActor1.name : null);
         SetActorVisuals(
             actor1,
             actor1RawImage,
             actor1Video,
-            GetVideoByName(data.spriteActor1 != null ? data.spriteActor1.name : null),
+            actor1Clip,
             data.spriteActor1
         );
+
+        VideoClip actor2Clip = GetVideoByName(data.spriteActor2 != null ? data.spriteActor2.name : null);
+        bool hasActor2 = data.spriteActor2 != null || actor2Clip != null;
+        SetActor2Active(hasActor2);
         SetActorVisuals(
             actor2,
             actor2RawImage,
             actor2Video,
-            GetVideoByName(data.spriteActor2 != null ? data.spriteActor2.name : null),
+            actor2Clip,
             data.spriteActor2
         );
 
@@ -269,6 +274,13 @@ public class PopupManager : MonoBehaviour
         if (string.IsNullOrEmpty(name)) return null;
         if (videos == null) videos = FindFirstObjectByType<Videos>();
         return videos != null ? videos.GetVideoByName(name) : null;
+    }
+
+    private void SetActor2Active(bool isActive)
+    {
+        if (actor2 != null) actor2.gameObject.SetActive(isActive);
+        if (actor2RawImage != null) actor2RawImage.gameObject.SetActive(isActive);
+        if (actor2Video != null) actor2Video.gameObject.SetActive(isActive);
     }
 
     private static void SetActorVisuals(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)

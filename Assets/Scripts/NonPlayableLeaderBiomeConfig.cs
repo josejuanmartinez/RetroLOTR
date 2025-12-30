@@ -10,6 +10,7 @@ public class NonPlayableLeaderBiomeConfigCollection
 [Serializable]
 public class NonPlayableLeaderBiomeConfig: LeaderBiomeConfig
 {
+    public bool spawnPcWithoutOwner = false;
 
     public List<string> artifactsToJoin = new();
     public int artifactsQtyToJoin = 0;

@@ -221,6 +221,8 @@ public class Board : MonoBehaviour
         TextAsset jsonFile = Resources.Load<TextAsset>("Artifacts");
         List<Artifact> hiddenArtifacts = JsonUtility.FromJson<ArtifactCollection>(jsonFile.text).artifacts;
 
+        PlaceTutorialArtifacts(hiddenArtifacts);
+
         // Shuffle the hexes to randomize artifact placement
         List<Hex> shuffledHexes = hexes.OrderBy(hex => UnityEngine.Random.value).ToList();
 
@@ -244,6 +246,98 @@ public class Board : MonoBehaviour
             // Yield to distribute over frames if needed
             if (i % 10 == 0) yield return null;
         }
+    }
+
+    private void PlaceTutorialArtifacts(List<Artifact> hiddenArtifacts)
+    {
+        if (hiddenArtifacts == null) return;
+        PlayableLeader[] leaders = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None);
+        if (leaders == null || leaders.Length == 0) return;
+
+        HashSet<Hex> usedHexes = new();
+        foreach (PlayableLeader leader in leaders)
+        {
+            if (leader == null || leader.hex == null) continue;
+            LeaderBiomeConfig biome = leader.GetBiome();
+            if (biome == null || biome.tutorialArtifacts == null || biome.tutorialArtifacts.Count == 0) continue;
+
+            for (int i = hiddenArtifacts.Count - 1; i >= 0; i--)
+            {
+                Artifact artifact = hiddenArtifacts[i];
+                if (artifact == null) continue;
+                if (biome.tutorialArtifacts.Any(a => a != null && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    hiddenArtifacts.RemoveAt(i);
+                }
+            }
+
+            List<Hex> anchorHexes = new();
+            List<Hex> anchorPrimaryHexes = new();
+            if (biome.tutorialAnchors != null && biome.tutorialAnchors.Count > 0)
+            {
+                NonPlayableLeader[] nonPlayableLeaders = FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None);
+                foreach (string anchorName in biome.tutorialAnchors)
+                {
+                    if (string.IsNullOrWhiteSpace(anchorName)) continue;
+                    NonPlayableLeader anchor = nonPlayableLeaders.FirstOrDefault(npl => npl != null && string.Equals(npl.characterName, anchorName, StringComparison.OrdinalIgnoreCase));
+                    if (anchor?.hex == null) continue;
+                    anchorPrimaryHexes.Add(anchor.hex);
+                    anchorHexes.AddRange(anchor.hex.GetHexesInRadius(1));
+                }
+            }
+
+            List<Hex> candidates = new();
+            candidates.AddRange(anchorPrimaryHexes);
+            candidates.AddRange(anchorHexes);
+            candidates.Add(leader.hex);
+            candidates.AddRange(leader.hex.GetHexesInRadius(2));
+            candidates = candidates
+                .Where(h => h != null && !h.IsWaterTerrain())
+                .Distinct()
+                .ToList();
+
+            int candidateIndex = 0;
+            foreach (Artifact artifact in biome.tutorialArtifacts)
+            {
+                if (artifact == null || string.IsNullOrWhiteSpace(artifact.artifactName)) continue;
+
+                Hex target = null;
+                while (candidateIndex < candidates.Count)
+                {
+                    Hex candidate = candidates[candidateIndex++];
+                    if (candidate == null) continue;
+                    if (usedHexes.Contains(candidate)) continue;
+                    target = candidate;
+                    break;
+                }
+
+                if (target == null) target = leader.hex;
+                target.hiddenArtifacts.Add(CloneArtifact(artifact));
+                usedHexes.Add(target);
+            }
+        }
+    }
+
+    private static Artifact CloneArtifact(Artifact source)
+    {
+        if (source == null) return null;
+        return new Artifact
+        {
+            artifactName = source.artifactName,
+            artifactDescription = source.artifactDescription,
+            hidden = source.hidden,
+            alignment = source.alignment,
+            providesSpell = source.providesSpell,
+            commanderBonus = source.commanderBonus,
+            agentBonus = source.agentBonus,
+            emmissaryBonus = source.emmissaryBonus,
+            mageBonus = source.mageBonus,
+            bonusAttack = source.bonusAttack,
+            bonusDefense = source.bonusDefense,
+            oneShot = source.oneShot,
+            transferable = source.transferable,
+            spriteString = source.spriteString
+        };
     }
 
     public void StartGame()
@@ -1080,6 +1174,8 @@ public class Board : MonoBehaviour
                 g.player.AddTemporaryScoutCenters(new[] { newHex });
                 g.player.RefreshVisibleHexesImmediate();
             }
+
+            TutorialManager.Instance?.HandleCharacterArrived(character, newHex);
 
             if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
             character.GetOwner().visibleHexes.Add(newHex);

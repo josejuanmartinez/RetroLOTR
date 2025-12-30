@@ -51,7 +51,7 @@ public class PC
         this.loyalty = loyalty;
         this.isCapital = isCapital;
         hiddenButRevealed = false;
-        originType = GetOriginType(owner);
+        originType = owner != null ? GetOriginType(owner) : PCOriginType.Unknown;
         acquisitionType = PCAcquisitionType.StartingOwned;
 
         TerrainEnum terrain = hex.terrainType;
@@ -106,8 +106,11 @@ public class PC
         initialSteel = steel;
         initialMithril = mithril;
 
-        owner.controlledPcs.Add(this);
-        owner.visibleHexes.Add(hex);
+        if (owner != null)
+        {
+            owner.controlledPcs.Add(this);
+            owner.visibleHexes.Add(hex);
+        }
 
         hex.SetPC(this);
     }
@@ -137,6 +140,7 @@ public class PC
         if (!isHidden || hiddenButRevealed) return true;
 
         var pcOwner = owner;
+        if (pcOwner == null) return false;
         if (pcOwner == l) return true;
 
         var pcAlign = pcOwner.GetAlignment();
@@ -217,6 +221,23 @@ public class PC
         if (previousOwner != null && previousOwner.controlledPcs.Count < 1) previousOwner.Killed(leader);
 
         MessageDisplayNoUI.ShowMessage(hex, owner,  $"{pcName} was captured!", Color.red);
+    }
+
+    public bool ClaimUnowned(Leader leader)
+    {
+        if (leader == null || owner != null) return false;
+        owner = leader;
+        acquisitionType = PCAcquisitionType.Joined;
+        leader.controlledPcs.Add(this);
+        leader.visibleHexes.Add(hex);
+        loyalty = UnityEngine.Random.Range(50, 75);
+        hex.RedrawPC();
+        if (owner is NonPlayableLeader && hex != null)
+        {
+            hex.EnsurePersistentScouting(owner);
+        }
+        MessageDisplayNoUI.ShowMessage(hex, owner, $"{pcName} swore allegiance!", Color.green);
+        return true;
     }
 
     public void CheckHighLoyalty()
@@ -353,7 +374,10 @@ public class PC
         // Armies stationed in the PC defend at full strength if aligned.
         hex.armies.ForEach(army =>
         {
-            bool aligned = army.commander != null && army.commander.GetAlignment() == owner.GetAlignment() && owner.GetAlignment() != AlignmentEnum.neutral;
+            bool aligned = owner != null &&
+                army.commander != null &&
+                army.commander.GetAlignment() == owner.GetAlignment() &&
+                owner.GetAlignment() != AlignmentEnum.neutral;
             if (aligned) defense += army.GetDefence();
         });
 

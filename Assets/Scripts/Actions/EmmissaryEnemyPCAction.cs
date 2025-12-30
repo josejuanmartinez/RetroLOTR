@@ -10,7 +10,9 @@ public class EmmissaryEnemyPCAction : EmmissaryAction
         effect = (c) => { return originalEffect == null || originalEffect(c); };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.hex.GetPC() != null && c.hex.GetPC().owner != c.GetOwner() && (c.hex.GetPC().owner.GetAlignment() != c.GetAlignment() || c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral); 
+            PC pc = c.hex.GetPC();
+            if (pc == null || pc.owner == null) return false;
+            return pc.owner != c.GetOwner() && (pc.owner.GetAlignment() != c.GetAlignment() || pc.owner.GetAlignment() == AlignmentEnum.neutral);
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

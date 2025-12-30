@@ -188,12 +188,14 @@ public class CharacterAction : SearcherByName
 
     public bool ResourcesAvailable()
     {
-        if (commanderSkillRequired > 0 && !IsProvidedByArtifact() && character.GetCommander() < commanderSkillRequired) return false;
-        if (agentSkillRequired > 0 && !IsProvidedByArtifact() && character.GetAgent() < agentSkillRequired) return false;
-        if (emissarySkillRequired > 0 && !IsProvidedByArtifact() && character.GetEmmissary() < emissarySkillRequired) return false;
-        if (mageSkillRequired > 0 && !IsProvidedByArtifact() && character.GetMage() < mageSkillRequired) return false;
-
         if (character == null || character.GetOwner() == null) return false;
+        bool providedByArtifact = IsProvidedByArtifact();
+        Leader owner = character.GetOwner();
+        if (!providedByArtifact)
+        {
+            if (!SkillTreeService.ShouldUseSkillTree(character)) return false;
+            if (!character.IsActionUnlocked(GetType().Name)) return false;
+        }
 
         ActionCostSnapshot snapshot = CalculateCostSnapshot();
 
@@ -430,6 +432,7 @@ public class CharacterAction : SearcherByName
 
             RefreshVictoryPoints();
             LastExecutionSucceeded = true;
+            TutorialManager.Instance?.HandleActionExecuted(character, GetType().Name, character.hex);
             if (!isAI)
             {
                 Sounds.Instance?.PlayActionSuccess(actionName);
@@ -715,6 +718,7 @@ public class CharacterAction : SearcherByName
         {
             PC pc = hex.GetPC();
             if (pc != null &&
+                pc.owner != null &&
                 pc.owner != character.GetOwner() &&
                 pc.owner.GetAlignment() != character.GetAlignment() &&
                 pc.owner.GetAlignment() != AlignmentEnum.neutral &&
@@ -756,6 +760,7 @@ public class CharacterAction : SearcherByName
         {
             PC pc = hex.GetPC();
             if (pc != null &&
+                pc.owner != null &&
                 pc.owner != character.GetOwner() &&
                 (pc.owner.GetAlignment() == AlignmentEnum.neutral || pc.owner.GetAlignment() != character.GetAlignment()) &&
                 !pc.isCapital)
@@ -796,6 +801,7 @@ public class CharacterAction : SearcherByName
         {
             PC pc = hex.GetPC();
             if (pc != null &&
+                pc.owner != null &&
                 pc.owner != character.GetOwner() &&
                 pc.owner.GetAlignment() != character.GetAlignment() &&
                 pc.owner.GetAlignment() != AlignmentEnum.neutral)
@@ -836,6 +842,7 @@ public class CharacterAction : SearcherByName
         {
             PC pc = hex.GetPC();
             if (pc != null &&
+                pc.owner != null &&
                 pc.owner != character.GetOwner() &&
                 (pc.owner.GetAlignment() == AlignmentEnum.neutral || pc.owner.GetAlignment() != character.GetAlignment()))
             {
@@ -1320,6 +1327,8 @@ public class CharacterAction : SearcherByName
 
         List<string> parts = new();
         bool providedByArtifact = IsProvidedByArtifact();
+        Leader owner = character.GetOwner();
+        bool usesSkillTree = SkillTreeService.ShouldUseSkillTree(character);
 
         if (character.killed) parts.Add("Character is dead.");
         if (character.hasActionedThisTurn && actionName != FindFirstObjectByType<ActionsManager>().DEFAULT.actionName)
@@ -1329,25 +1338,17 @@ public class CharacterAction : SearcherByName
 
         if (!providedByArtifact)
         {
-            if (commanderSkillRequired > 0 && character.GetCommander() < commanderSkillRequired)
+            if (!usesSkillTree)
             {
-                parts.Add($"Need <sprite name=\"commander\">[{commanderSkillRequired}] (have {character.GetCommander()})");
+                parts.Add("Skill tree unavailable.");
             }
-            if (agentSkillRequired > 0 && character.GetAgent() < agentSkillRequired)
+            else if (!character.IsActionUnlocked(GetType().Name))
             {
-                parts.Add($"Need <sprite name=\"agent\">[{agentSkillRequired}] (have {character.GetAgent()})");
-            }
-            if (emissarySkillRequired > 0 && character.GetEmmissary() < emissarySkillRequired)
-            {
-                parts.Add($"Need <sprite name=\"emmissary\">[{emissarySkillRequired}] (have {character.GetEmmissary()})");
-            }
-            if (mageSkillRequired > 0 && character.GetMage() < mageSkillRequired)
-            {
-                parts.Add($"Need <sprite name=\"mage\">[{mageSkillRequired}] (have {character.GetMage()})");
+                string nodeName = SkillTreeService.GetNodeNameForAction(GetType().Name) ?? actionName;
+                parts.Add($"Unlock skill: {nodeName}");
             }
         }
 
-        Leader owner = character.GetOwner();
         if (owner != null)
         {
             if (isBuyCaravans || isSellCaravans)

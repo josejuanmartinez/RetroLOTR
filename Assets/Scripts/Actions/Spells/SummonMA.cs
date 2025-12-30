@@ -28,7 +28,7 @@ public class SummonMA: DarkSpell
             if (originalCondition != null && !originalCondition(c)) return false;
             if (c == null || c.hex == null) return false;
             PC pc = c.hex.GetPC();
-            if (pc == null) return false;
+            if (pc == null || pc.owner == null) return false;
             if (pc.owner != c.GetOwner())
             {
                 AlignmentEnum pcAlignment = pc.owner.GetAlignment();

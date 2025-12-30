@@ -213,7 +213,7 @@ public class Hex : MonoBehaviour
     public bool IsFriendlyPC(PlayableLeader overrideLeader = null)
     {
         var l = overrideLeader ? overrideLeader : GetPlayer();
-        if (l == null || pc == null) return false;
+        if (l == null || pc == null || pc.owner == null) return false;
         if (!IsPCRevealed(l)) return false;
         if(l == pc.owner) return true;
         var a = pc.owner.GetAlignment();
@@ -440,14 +440,14 @@ public class Hex : MonoBehaviour
 
     public string GetLoyalty()
     {
-        if (pc != null && (pc.owner == game.player || (pc.owner.alignment == game.player.alignment && pc.owner.alignment != AlignmentEnum.neutral) || scoutedBy.Contains(game.player))) {
+        if (pc != null && pc.owner != null && (pc.owner == game.player || (pc.owner.alignment == game.player.alignment && pc.owner.alignment != AlignmentEnum.neutral) || scoutedBy.Contains(game.player))) {
             return pc.GetLoyaltyText();
         }
         return "";
     }
     public string GetProduction()
     {
-        if (pc != null && (pc.owner == game.player || (pc.owner.alignment == game.player.alignment && pc.owner.alignment != AlignmentEnum.neutral) || scoutedBy.Contains(game.player))) {
+        if (pc != null && pc.owner != null && (pc.owner == game.player || (pc.owner.alignment == game.player.alignment && pc.owner.alignment != AlignmentEnum.neutral) || scoutedBy.Contains(game.player))) {
             return pc.GetProducesHoverText();
         }
         return "";

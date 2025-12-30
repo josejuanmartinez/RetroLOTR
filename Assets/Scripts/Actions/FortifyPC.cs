@@ -10,8 +10,8 @@ public class FortifyPC : CommanderPCAction
         var originalAsyncEffect = asyncEffect;
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
-            if (c.hex.GetPC() == null) return false;
             PC pc = c.hex.GetPC();
+            if (pc == null || pc.owner == null) return false;
             if (pc.owner != c.GetOwner()) return false;
             pc.IncreaseFort();
             MessageDisplayNoUI.ShowMessage(pc.hex, c, $"{pc.pcName} <sprite name=\"fort\"> {pc.GetFortSize()}", Color.green);

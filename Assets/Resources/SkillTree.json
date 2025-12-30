@@ -1,0 +1,1297 @@
+{
+  "version": 3,
+  "id": "class_action_tree",
+  "autoUnlockNodes": [
+    "core_root",
+    "core_Pass",
+    "core_StateAllegiance"
+  ],
+  "nodes": [
+    {
+      "id": "core_root",
+      "name": "Core Actions",
+      "role": "core",
+      "tier": 0,
+      "cost": 0,
+      "requiresAll": [],
+      "requiresAny": [],
+      "unlocksActions": []
+    },
+    {
+      "id": "commander_root",
+      "name": "Commander Path",
+      "role": "commander",
+      "tier": 0,
+      "cost": 0,
+      "requiresAll": [
+        "core_StateAllegiance"
+      ],
+      "requiresAny": [],
+      "unlocksActions": []
+    },
+    {
+      "id": "agent_root",
+      "name": "Agent Path",
+      "role": "agent",
+      "tier": 0,
+      "cost": 0,
+      "requiresAll": [
+        "core_StateAllegiance"
+      ],
+      "requiresAny": [],
+      "unlocksActions": []
+    },
+    {
+      "id": "emmissary_root",
+      "name": "Emmissary Path",
+      "role": "emmissary",
+      "tier": 0,
+      "cost": 0,
+      "requiresAll": [
+        "core_StateAllegiance"
+      ],
+      "requiresAny": [],
+      "unlocksActions": []
+    },
+    {
+      "id": "mage_root",
+      "name": "Mage Path",
+      "role": "mage",
+      "tier": 0,
+      "cost": 0,
+      "requiresAll": [
+        "core_StateAllegiance"
+      ],
+      "requiresAny": [],
+      "unlocksActions": []
+    },
+    {
+      "id": "emmissary_SellSteel",
+      "name": "Sell 5 Steel",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "SellSteel"
+      ]
+    },
+    {
+      "id": "emmissary_BuySteel",
+      "name": "Buy 5 Steel",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "BuySteel"
+      ]
+    },
+    {
+      "id": "commander_TrainArchers",
+      "name": "Train Archers",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "TrainArchers"
+      ]
+    },
+    {
+      "id": "commander_TrainMetAtArms",
+      "name": "Train Men-at-arms",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "TrainMetAtArms"
+      ]
+    },
+    {
+      "id": "commander_TrainLightInfantry",
+      "name": "Train Light Infantry",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "TrainLightInfantry"
+      ]
+    },
+    {
+      "id": "commander_TrainHeavyInfantry",
+      "name": "Train Heavy Infantry",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [
+        "commander_TrainLightInfantry"
+      ],
+      "unlocksActions": [
+        "TrainHeavyInfantry"
+      ]
+    },
+    {
+      "id": "commander_TrainLightCavalry",
+      "name": "Train Light Cavalry",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "TrainLightCavalry"
+      ]
+    },
+    {
+      "id": "commander_TrainHeavyCavalry",
+      "name": "Train Heavy Cavalry",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [
+        "commander_TrainLightCavalry"
+      ],
+      "unlocksActions": [
+        "TrainHeavyCavalry"
+      ]
+    },
+    {
+      "id": "commander_TrainCatapults",
+      "name": "Train Catapults",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [
+        "commander_TrainArmy"
+      ],
+      "unlocksActions": [
+        "TrainCatapults"
+      ]
+    },
+    {
+      "id": "commander_TrainWarships",
+      "name": "Train Warships",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "TrainWarships"
+      ]
+    },
+    {
+      "id": "emmissary_SellLeather",
+      "name": "Sell 5 Leather",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "SellLeather"
+      ]
+    },
+    {
+      "id": "emmissary_BuyLeather",
+      "name": "Buy 5 Leather",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "BuyLeather"
+      ]
+    },
+    {
+      "id": "emmissary_SellMounts",
+      "name": "Sell 5 Mounts",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "SellMounts"
+      ]
+    },
+    {
+      "id": "emmissary_BuyMounts",
+      "name": "Buy 5 Mounts",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "BuyMounts"
+      ]
+    },
+    {
+      "id": "emmissary_SellIron",
+      "name": "Sell 5 Iron",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "SellIron"
+      ]
+    },
+    {
+      "id": "emmissary_BuyIron",
+      "name": "Buy 5 Iron",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "BuyIron"
+      ]
+    },
+    {
+      "id": "emmissary_SellTimber",
+      "name": "Sell 5 Timber",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "SellTimber"
+      ]
+    },
+    {
+      "id": "emmissary_BuyTimber",
+      "name": "Buy 5 Timber",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "BuyTimber"
+      ]
+    },
+    {
+      "id": "emmissary_SellMithril",
+      "name": "Sell 5 Mithril",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [
+        "emmissary_SellIron"
+      ],
+      "unlocksActions": [
+        "SellMithril"
+      ]
+    },
+    {
+      "id": "emmissary_BuyMithril",
+      "name": "Buy 5 Mithril",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [
+        "emmissary_BuyIron"
+      ],
+      "unlocksActions": [
+        "BuyMithril"
+      ]
+    },
+    {
+      "id": "agent_AssassinateCharacter",
+      "name": "Assassinate Character",
+      "role": "agent",
+      "tier": 4,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [
+        "agent_WoundCharacter"
+      ],
+      "unlocksActions": [
+        "AssassinateCharacter"
+      ]
+    },
+    {
+      "id": "agent_WoundCharacter",
+      "name": "Wound Character",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "WoundCharacter"
+      ]
+    },
+    {
+      "id": "agent_DoubleCharacter",
+      "name": "Double Character",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "DoubleCharacter"
+      ]
+    },
+    {
+      "id": "agent_UndoubleCharacter",
+      "name": "Undouble Character",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [
+        "agent_DoubleCharacter"
+      ],
+      "unlocksActions": [
+        "UndoubleCharacter"
+      ]
+    },
+    {
+      "id": "emmissary_InfluenceUpPC",
+      "name": "Increase Loyalty",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "InfluenceUpPC"
+      ]
+    },
+    {
+      "id": "emmissary_InfluenceDownPC",
+      "name": "Decrease Loyalty",
+      "role": "emmissary",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [
+        "emmissary_RevealRumours"
+      ],
+      "unlocksActions": [
+        "InfluenceDownPC"
+      ]
+    },
+    {
+      "id": "commander_Attack",
+      "name": "Attack",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "Attack"
+      ]
+    },
+    {
+      "id": "commander_FortifyPC",
+      "name": "Increase Fortifications",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "FortifyPC"
+      ]
+    },
+    {
+      "id": "mage_CastDarkness",
+      "name": "Cast Darkness",
+      "role": "mage",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_WizardsFire"
+      ],
+      "unlocksActions": [
+        "CastDarkness"
+      ]
+    },
+    {
+      "id": "mage_CastLight",
+      "name": "Cast Light",
+      "role": "mage",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_ScryArea"
+      ],
+      "unlocksActions": [
+        "CastLight"
+      ]
+    },
+    {
+      "id": "mage_ConjureMounts",
+      "name": "Conjure Mounts",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_CastDarkness"
+      ],
+      "unlocksActions": [
+        "ConjureMounts"
+      ]
+    },
+    {
+      "id": "mage_Curse",
+      "name": "Curse",
+      "role": "mage",
+      "tier": 3,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_WizardLaugh"
+      ],
+      "unlocksActions": [
+        "Curse"
+      ]
+    },
+    {
+      "id": "mage_OhElbereth",
+      "name": "Oh, Elbereth!",
+      "role": "mage",
+      "tier": 3,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_CastLight"
+      ],
+      "unlocksActions": [
+        "OhElbereth"
+      ]
+    },
+    {
+      "id": "mage_ReturnToCapital",
+      "name": "Return To Capital",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "ReturnToCapital"
+      ]
+    },
+    {
+      "id": "mage_RevealPC",
+      "name": "Reveal Pc",
+      "role": "mage",
+      "tier": 3,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_CastLight"
+      ],
+      "unlocksActions": [
+        "RevealPC"
+      ]
+    },
+    {
+      "id": "mage_ScryArea",
+      "name": "Scry Area",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "core_FindArtifact"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "ScryArea"
+      ]
+    },
+    {
+      "id": "mage_Teleport",
+      "name": "Teleport",
+      "role": "mage",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_ReturnToCapital"
+      ],
+      "unlocksActions": [
+        "Teleport"
+      ]
+    },
+    {
+      "id": "mage_SummonMA",
+      "name": "Summon Men-at-arms",
+      "role": "mage",
+      "tier": 4,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_ConjureMounts"
+      ],
+      "unlocksActions": [
+        "SummonMA"
+      ]
+    },
+    {
+      "id": "mage_WizardLaugh",
+      "name": "Wizards Laugh",
+      "role": "mage",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_Fireworks"
+      ],
+      "unlocksActions": [
+        "WizardLaugh"
+      ]
+    },
+    {
+      "id": "mage_Heal",
+      "name": "Heal",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "Heal"
+      ]
+    },
+    {
+      "id": "mage_Fireworks",
+      "name": "Fireworks",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "Fireworks"
+      ]
+    },
+    {
+      "id": "core_FindArtifact",
+      "name": "Find Artifact",
+      "role": "core",
+      "tier": 0,
+      "cost": 1,
+      "requiresAll": [
+        "core_root",
+        "core_StateAllegiance"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "FindArtifact"
+      ]
+    },
+    {
+      "id": "mage_ScryArtifact",
+      "name": "Scry Artifact",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_ScryArea"
+      ],
+      "unlocksActions": [
+        "ScryArtifact"
+      ]
+    },
+    {
+      "id": "agent_StealGold",
+      "name": "Steal Gold",
+      "role": "agent",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [
+        "agent_StealIron"
+      ],
+      "unlocksActions": [
+        "StealGold"
+      ]
+    },
+    {
+      "id": "agent_StealIron",
+      "name": "Steal Iron",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "StealIron"
+      ]
+    },
+    {
+      "id": "agent_StealLeather",
+      "name": "Steal Leather",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "StealLeather"
+      ]
+    },
+    {
+      "id": "agent_StealMithril",
+      "name": "Steal Mithril",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "StealMithril"
+      ]
+    },
+    {
+      "id": "agent_StealMounts",
+      "name": "Steal Mounts",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "StealMounts"
+      ]
+    },
+    {
+      "id": "agent_StealTimber",
+      "name": "Steal Timber",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "StealTimber"
+      ]
+    },
+    {
+      "id": "core_Pass",
+      "name": "Pass",
+      "role": "core",
+      "tier": 0,
+      "cost": 1,
+      "requiresAll": [
+        "core_root"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "Pass"
+      ]
+    },
+    {
+      "id": "mage_Haste",
+      "name": "Haste",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "Haste"
+      ]
+    },
+    {
+      "id": "agent_ScoutArea",
+      "name": "Scout Area",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "ScoutArea"
+      ]
+    },
+    {
+      "id": "commander_Block",
+      "name": "Block",
+      "role": "commander",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [
+        "commander_Attack"
+      ],
+      "unlocksActions": [
+        "Block"
+      ]
+    },
+    {
+      "id": "mage_Courage",
+      "name": "Courage",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "Courage"
+      ]
+    },
+    {
+      "id": "mage_Halt",
+      "name": "Halt",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "Halt"
+      ]
+    },
+    {
+      "id": "mage_IceStorm",
+      "name": "Ice Storm",
+      "role": "mage",
+      "tier": 3,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_CastDarkness"
+      ],
+      "unlocksActions": [
+        "IceStorm"
+      ]
+    },
+    {
+      "id": "mage_WizardsFire",
+      "name": "Wizard's Fire",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "WizardsFire"
+      ]
+    },
+    {
+      "id": "mage_WordsOfDispair",
+      "name": "Words Of Dispair",
+      "role": "mage",
+      "tier": 3,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_WizardLaugh"
+      ],
+      "unlocksActions": [
+        "WordsOfDispair"
+      ]
+    },
+    {
+      "id": "mage_YouShallNotPass",
+      "name": "You Shall Not Pass!",
+      "role": "mage",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_Halt"
+      ],
+      "unlocksActions": [
+        "YouShallNotPass"
+      ]
+    },
+    {
+      "id": "emmissary_RevealRumours",
+      "name": "Hear Stories",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "RevealRumours"
+      ]
+    },
+    {
+      "id": "core_StateAllegiance",
+      "name": "State Allegiance",
+      "role": "core",
+      "tier": 0,
+      "cost": 1,
+      "requiresAll": [
+        "core_root"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "StateAllegiance"
+      ]
+    },
+    {
+      "id": "mage_PerceiveDanger",
+      "name": "Perceive Danger",
+      "role": "mage",
+      "tier": 4,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [
+        "mage_RevealPC"
+      ],
+      "unlocksActions": [
+        "PerceiveDanger"
+      ]
+    },
+    {
+      "id": "core_TransferArtifact",
+      "name": "Transfer Artifact",
+      "role": "core",
+      "tier": 0,
+      "cost": 1,
+      "requiresAll": [
+        "core_root",
+        "core_StateAllegiance"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "TransferArtifact"
+      ]
+    },
+    {
+      "id": "commander_TrainArmy",
+      "name": "Train Army",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "TrainArmy"
+      ]
+    },
+    {
+      "id": "commander_NameCommander",
+      "name": "Name Commander",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "NameCommander"
+      ]
+    },
+    {
+      "id": "agent_NameAgent",
+      "name": "Name Agent",
+      "role": "agent",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "NameAgent"
+      ]
+    },
+    {
+      "id": "emmissary_NameEmmissary",
+      "name": "Name Emmissary",
+      "role": "emmissary",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "NameEmmissary"
+      ]
+    },
+    {
+      "id": "mage_NameMage",
+      "name": "Name Mage",
+      "role": "mage",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "mage_root",
+        "mage_ScryArea"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "NameMage"
+      ]
+    },
+    {
+      "id": "emmissary_CreateCamp",
+      "name": "Create Camp",
+      "role": "emmissary",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "emmissary_root",
+        "emmissary_RevealRumours"
+      ],
+      "requiresAny": [
+        "emmissary_InfluenceUpPC"
+      ],
+      "unlocksActions": [
+        "CreateCamp"
+      ]
+    },
+    {
+      "id": "commander_PostCamp",
+      "name": "Post Camp",
+      "role": "commander",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [
+        "commander_TrainArmy"
+      ],
+      "unlocksActions": [
+        "PostCamp"
+      ]
+    },
+    {
+      "id": "agent_StealArtifact",
+      "name": "Steal Artifact",
+      "role": "agent",
+      "tier": 3,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [
+        "agent_StealGold"
+      ],
+      "unlocksActions": [
+        "StealArtifact"
+      ]
+    },
+    {
+      "id": "agent_SabotageStorage",
+      "name": "Sabotage Storage",
+      "role": "agent",
+      "tier": 2,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [
+        "agent_StealTimber"
+      ],
+      "unlocksActions": [
+        "SabotageStorage"
+      ]
+    },
+    {
+      "id": "agent_SabotagePort",
+      "name": "Sabotage Port",
+      "role": "agent",
+      "tier": 4,
+      "cost": 1,
+      "requiresAll": [
+        "agent_root",
+        "agent_DoubleCharacter"
+      ],
+      "requiresAny": [
+        "agent_SabotageStorage"
+      ],
+      "unlocksActions": [
+        "SabotagePort"
+      ]
+    },
+    {
+      "id": "commander_DestroyPort",
+      "name": "Destroy Port",
+      "role": "commander",
+      "tier": 3,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [
+        "commander_RemovePort"
+      ],
+      "unlocksActions": [
+        "DestroyPort"
+      ]
+    },
+    {
+      "id": "commander_RemovePort",
+      "name": "Remove Port",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "RemovePort"
+      ]
+    },
+    {
+      "id": "commander_DestroyFortifications",
+      "name": "Destroy Fortifications",
+      "role": "commander",
+      "tier": 4,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [
+        "commander_SiegePC"
+      ],
+      "unlocksActions": [
+        "DestroyFortifications"
+      ]
+    },
+    {
+      "id": "commander_RemoveFortifications",
+      "name": "Remove Fortifications",
+      "role": "commander",
+      "tier": 1,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "RemoveFortifications"
+      ]
+    },
+    {
+      "id": "commander_SiegePC",
+      "name": "Siege Population",
+      "role": "commander",
+      "tier": 3,
+      "cost": 1,
+      "requiresAll": [
+        "commander_root",
+        "commander_TrainMetAtArms"
+      ],
+      "requiresAny": [
+        "commander_TrainCatapults"
+      ],
+      "unlocksActions": [
+        "SiegePC"
+      ]
+    }
+  ]
+}

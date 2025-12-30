@@ -19,6 +19,8 @@ public class NationSpawner : MonoBehaviour
     private int currentCharacterCount;
     private int currentPcCount;
     private bool isInitialized = false;
+    private readonly Dictionary<string, Vector2Int> leaderPositions = new(StringComparer.OrdinalIgnoreCase);
+    private Dictionary<string, string> tutorialAnchorByNpl = new(StringComparer.OrdinalIgnoreCase);
 
     public void Initialize(Board board)
     {
@@ -48,6 +50,7 @@ public class NationSpawner : MonoBehaviour
             return;
         }
         playableLeaders.Initialize();
+        tutorialAnchorByNpl = BuildTutorialAnchors(playableLeaders.playableLeaders?.biomes);
 
         nonPlayableLeaders = FindFirstObjectByType<NonPlayableLeaders>();
         if (nonPlayableLeaders == null)
@@ -140,25 +143,48 @@ public class NationSpawner : MonoBehaviour
 
         InstantiateLeadersAndCharacters(playableLeaders.playableLeaders.biomes, placedPositions);
         InstantiateLeadersAndCharacters(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
+        PositionPlayableLeadersNearTutorialPcs();
     }
 
     private void InstantiateLeadersAndCharacters(List<LeaderBiomeConfig> leaderBiomes, List<Vector2Int> placedPositions)
     {
         foreach (LeaderBiomeConfig leaderBiomeConfig in leaderBiomes)
         {
-            InstantiateLeaderAndCharacters(leaderBiomeConfig, placedPositions, true);
+            Vector2Int? position = InstantiateLeaderAndCharacters(leaderBiomeConfig, placedPositions, true, null);
+            if (position.HasValue && !string.IsNullOrWhiteSpace(leaderBiomeConfig.characterName))
+            {
+                leaderPositions[leaderBiomeConfig.characterName] = position.Value;
+            }
         }
     }
 
     private void InstantiateLeadersAndCharacters(List<NonPlayableLeaderBiomeConfig> nonPlayableleaderBiomes, List<Vector2Int> placedPositions)
     {
-        foreach (NonPlayableLeaderBiomeConfig nonPlayableleaderBiomeConfig in nonPlayableleaderBiomes)
+        IEnumerable<NonPlayableLeaderBiomeConfig> orderedBiomes = nonPlayableleaderBiomes
+            .OrderByDescending(b => !string.IsNullOrWhiteSpace(b.characterName) && tutorialAnchorByNpl.ContainsKey(b.characterName))
+            .ThenBy(b => b.characterName);
+
+        foreach (NonPlayableLeaderBiomeConfig nonPlayableleaderBiomeConfig in orderedBiomes)
         {
-            InstantiateLeaderAndCharacters(nonPlayableleaderBiomeConfig, placedPositions, false);
+            Vector2Int? preferredPosition = null;
+            if (!string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName) &&
+                tutorialAnchorByNpl.TryGetValue(nonPlayableleaderBiomeConfig.characterName, out string anchorName) &&
+                leaderPositions.TryGetValue(anchorName, out Vector2Int anchorPosition))
+            {
+                preferredPosition = anchorPosition;
+            }
+
+            Vector2Int? position = nonPlayableleaderBiomeConfig.spawnPcWithoutOwner
+                ? InstantiateOwnerlessPc(nonPlayableleaderBiomeConfig, placedPositions, preferredPosition)
+                : InstantiateLeaderAndCharacters(nonPlayableleaderBiomeConfig, placedPositions, false, preferredPosition);
+            if (position.HasValue && !string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName))
+            {
+                leaderPositions[nonPlayableleaderBiomeConfig.characterName] = position.Value;
+            }
         }
     }
     
-    private void InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable)
+    private Vector2Int? InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable, Vector2Int? preferredPosition)
     {
         /*if (FindObjectsByType<Leader>(FindObjectsSortMode.None).Length >= Game.MAX_LEADERS)
         {
@@ -169,7 +195,7 @@ public class NationSpawner : MonoBehaviour
         {
             string leaderName = string.IsNullOrWhiteSpace(leaderBiomeConfig.characterName) ? "Unknown" : leaderBiomeConfig.characterName;
             Debug.LogError($"Skipping non-playable leader instantiation for {leaderName} because max PCs reached.");
-            return;
+            return null;
         }
         TerrainEnum chosenTerrain = leaderBiomeConfig.terrain;
         List<Vector2Int> suitableHexes = GetAvailableHexes(chosenTerrain, leaderBiomeConfig.feature);
@@ -195,14 +221,16 @@ public class NationSpawner : MonoBehaviour
             throw new Exception($"No suitable hexes found for leader with terrain {leaderBiomeConfig.terrain} (including fallbacks).");
         }
 
-        Vector2Int bestPosition = FindFarthestPosition(suitableHexes, placedPositions);
+        Vector2Int bestPosition = preferredPosition.HasValue
+            ? FindClosestPosition(suitableHexes, preferredPosition.Value)
+            : FindFarthestPosition(suitableHexes, placedPositions);
         placedPositions.Add(bestPosition);
 
         Vector2Int v2 = new(bestPosition.x, bestPosition.y);
         Hex hex = board.hexes[v2];
 
         if (!EnsureCharacterCapacity("Skipping leader instantiation."))
-            return;
+            return null;
 
         Leader leader;
         if (isPlayable)
@@ -216,7 +244,7 @@ public class NationSpawner : MonoBehaviour
         else
         {
             Debug.LogError("Non playable leader biome config expected but not provided.");
-            return;
+            return null;
         }
 
         currentCharacterCount++;
@@ -224,38 +252,191 @@ public class NationSpawner : MonoBehaviour
         foreach (var character in leader.GetBiome().startingCharacters)
         {
             if (!EnsureCharacterCapacity("Skipping leader instantiation."))
-                return;
+                return null;
 
             characterInstantiator.InstantiateCharacter(leader, hex, character);
             currentCharacterCount++;
         }
 
-        if (!EnsurePcCapacity())
-            return;
+        bool skipStartingPc = isPlayable && leaderBiomeConfig.startingCitySize == PCSizeEnum.NONE;
+        if (!skipStartingPc)
+        {
+            if (!EnsurePcCapacity())
+                return null;
 
-        PC pc = new(leader, hex);
+            PC pc = new(leader, hex);
+            hex.SetPC(pc, leaderBiomeConfig.pcFeature, leaderBiomeConfig.fortFeature, leaderBiomeConfig.isIsland);
+
+            // If we fell back from a shore start and the PC was meant to have a port, strip the port on non-shore terrain.
+            if (leaderBiomeConfig.startsWithPort && leaderBiomeConfig.terrain == TerrainEnum.shore && chosenTerrain != TerrainEnum.shore)
+            {
+                pc.hasPort = false;
+                hex.RedrawPC();
+            }
+
+            // Non-playable leaders that start with a port but have no adjacent water lose the port and warships.
+            if (!isPlayable && leaderBiomeConfig.startsWithPort && !HasNeighboringWater(hex))
+            {
+                if (pc != null && pc.hasPort)
+                {
+                    pc.hasPort = false;
+                }
+                RemoveWarshipsFromLeaderArmiesAtHex(leader, hex);
+                hex.RedrawPC();
+                hex.RedrawArmies();
+            }
+
+            currentPcCount++;
+        }
+        return bestPosition;
+    }
+
+    private void PositionPlayableLeadersNearTutorialPcs()
+    {
+        if (board == null || board.hexes == null) return;
+
+        PlayableLeader[] leaders = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None);
+        if (leaders == null || leaders.Length == 0) return;
+
+        foreach (PlayableLeader playableLeader in leaders)
+        {
+            if (playableLeader == null || playableLeader.hex == null) continue;
+            LeaderBiomeConfig biome = playableLeader.GetBiome();
+            if (biome == null || biome.tutorialAnchors == null || biome.tutorialAnchors.Count == 0) continue;
+
+            Hex targetHex = FindPcHexByAnchorNames(biome.tutorialAnchors);
+            if (targetHex == null) continue;
+
+            Hex neighbor = FindNeighborHex(targetHex);
+            if (neighbor == null || neighbor == playableLeader.hex) continue;
+
+            RelocateCharacter(playableLeader, neighbor);
+        }
+    }
+
+    private Hex FindPcHexByAnchorNames(List<string> anchorNames)
+    {
+        if (anchorNames == null || anchorNames.Count == 0) return null;
+
+        foreach (string anchorName in anchorNames)
+        {
+            if (string.IsNullOrWhiteSpace(anchorName)) continue;
+            foreach (Hex hex in board.hexes.Values)
+            {
+                if (hex == null) continue;
+                PC pc = hex.GetPCData();
+                if (pc == null) continue;
+                if (string.Equals(pc.pcName, anchorName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return hex;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Hex FindNeighborHex(Hex targetHex)
+    {
+        if (targetHex == null || board == null) return null;
+        var neighbors = ((targetHex.v2.x & 1) == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+        for (int i = 0; i < neighbors.Length; i++)
+        {
+            Vector2Int pos = new(targetHex.v2.x + neighbors[i].x, targetHex.v2.y + neighbors[i].y);
+            if (!board.hexes.TryGetValue(pos, out Hex neighbor) || neighbor == null) continue;
+            if (neighbor.IsWaterTerrain()) continue;
+            if (neighbor.HasAnyPC()) continue;
+            if (neighbor.characters != null && neighbor.characters.Count > 0) continue;
+            return neighbor;
+        }
+
+        return null;
+    }
+
+    private static void RelocateCharacter(Character actor, Hex targetHex)
+    {
+        if (actor == null || targetHex == null) return;
+        Hex oldHex = actor.hex;
+        if (oldHex != null)
+        {
+            oldHex.characters.Remove(actor);
+            if (actor.IsArmyCommander())
+            {
+                oldHex.armies.Remove(actor.GetArmy());
+            }
+            oldHex.RedrawCharacters();
+            oldHex.RedrawArmies();
+        }
+
+        actor.hex = targetHex;
+        if (!targetHex.characters.Contains(actor)) targetHex.characters.Add(actor);
+        if (actor.IsArmyCommander() && !targetHex.armies.Contains(actor.GetArmy()))
+        {
+            targetHex.armies.Add(actor.GetArmy());
+        }
+        targetHex.RedrawCharacters();
+        targetHex.RedrawArmies();
+    }
+
+    private Vector2Int? InstantiateOwnerlessPc(NonPlayableLeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, Vector2Int? preferredPosition)
+    {
+        if (!EnsurePcCapacity())
+        {
+            string leaderName = string.IsNullOrWhiteSpace(leaderBiomeConfig.characterName) ? "Unknown" : leaderBiomeConfig.characterName;
+            Debug.LogError($"Skipping ownerless PC instantiation for {leaderName} because max PCs reached.");
+            return null;
+        }
+
+        TerrainEnum chosenTerrain = leaderBiomeConfig.terrain;
+        List<Vector2Int> suitableHexes = GetAvailableHexes(chosenTerrain, leaderBiomeConfig.feature);
+
+        if (suitableHexes.Count == 0)
+        {
+            TerrainEnum[] fallbackTerrains = { TerrainEnum.plains, TerrainEnum.grasslands, TerrainEnum.hills, TerrainEnum.shore };
+            foreach (var fallbackTerrain in fallbackTerrains)
+            {
+                if (fallbackTerrain == leaderBiomeConfig.terrain) continue;
+                suitableHexes = GetAvailableHexes(fallbackTerrain, leaderBiomeConfig.feature);
+                if (suitableHexes.Count > 0)
+                {
+                    chosenTerrain = fallbackTerrain;
+                    Debug.LogWarning($"Falling back to terrain {fallbackTerrain} because all {leaderBiomeConfig.terrain} hexes already have PCs.");
+                    break;
+                }
+            }
+        }
+
+        if (suitableHexes.Count == 0)
+        {
+            throw new Exception($"No suitable hexes found for ownerless PC with terrain {leaderBiomeConfig.terrain} (including fallbacks).");
+        }
+
+        Vector2Int bestPosition = preferredPosition.HasValue
+            ? FindClosestPosition(suitableHexes, preferredPosition.Value)
+            : FindFarthestPosition(suitableHexes, placedPositions);
+        placedPositions.Add(bestPosition);
+
+        Vector2Int v2 = new(bestPosition.x, bestPosition.y);
+        Hex hex = board.hexes[v2];
+
+        PC pc = new(null, leaderBiomeConfig.startingCityName, leaderBiomeConfig.startingCitySize, leaderBiomeConfig.startingCityFortSize,
+            leaderBiomeConfig.startsWithPort, leaderBiomeConfig.startingCityIsHidden, hex, true);
         hex.SetPC(pc, leaderBiomeConfig.pcFeature, leaderBiomeConfig.fortFeature, leaderBiomeConfig.isIsland);
 
-        // If we fell back from a shore start and the PC was meant to have a port, strip the port on non-shore terrain.
         if (leaderBiomeConfig.startsWithPort && leaderBiomeConfig.terrain == TerrainEnum.shore && chosenTerrain != TerrainEnum.shore)
         {
             pc.hasPort = false;
             hex.RedrawPC();
         }
 
-        // Non-playable leaders that start with a port but have no adjacent water lose the port and warships.
-        if (!isPlayable && leaderBiomeConfig.startsWithPort && !HasNeighboringWater(hex))
+        currentPcCount++;
+
+        if (leaderBiomeConfig.startingCharacters != null && leaderBiomeConfig.startingCharacters.Count > 0)
         {
-            if (pc != null && pc.hasPort)
-            {
-                pc.hasPort = false;
-            }
-            RemoveWarshipsFromLeaderArmiesAtHex(leader, hex);
-            hex.RedrawPC();
-            hex.RedrawArmies();
+            Debug.LogWarning($"Ownerless PC '{leaderBiomeConfig.startingCityName}' has starting characters configured; skipping those.");
         }
 
-        currentPcCount++;
+        return bestPosition;
     }
 
     private List<Vector2Int> GetAvailableHexes(TerrainEnum terrain, FeaturesEnum feature)
@@ -364,6 +545,48 @@ public class NationSpawner : MonoBehaviour
         }
 
         return bestPosition;
+    }
+
+    private Vector2Int FindClosestPosition(List<Vector2Int> candidates, Vector2Int target)
+    {
+        Vector2Int bestPosition = candidates[0];
+        float minDistance = float.MaxValue;
+        Vector3Int targetCube = GetCachedCubeCoordinate(target);
+
+        foreach (var candidate in candidates)
+        {
+            float distance = CubeDistance(GetCachedCubeCoordinate(candidate), targetCube);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                bestPosition = candidate;
+            }
+        }
+
+        return bestPosition;
+    }
+
+    private static Dictionary<string, string> BuildTutorialAnchors(List<LeaderBiomeConfig> leaderBiomes)
+    {
+        Dictionary<string, string> anchors = new(StringComparer.OrdinalIgnoreCase);
+        if (leaderBiomes == null) return anchors;
+
+        foreach (LeaderBiomeConfig leader in leaderBiomes)
+        {
+            if (leader == null || string.IsNullOrWhiteSpace(leader.characterName)) continue;
+            if (leader.tutorialAnchors == null || leader.tutorialAnchors.Count == 0) continue;
+
+            foreach (string nplName in leader.tutorialAnchors)
+            {
+                if (string.IsNullOrWhiteSpace(nplName)) continue;
+                if (!anchors.ContainsKey(nplName))
+                {
+                    anchors[nplName] = leader.characterName;
+                }
+            }
+        }
+
+        return anchors;
     }
 
     private Vector3Int GetCachedCubeCoordinate(Vector2Int offset)

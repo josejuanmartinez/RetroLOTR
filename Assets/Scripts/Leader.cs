@@ -29,7 +29,6 @@ public class Leader : Character
     [SerializeField] private int createdPcs = 0;
     [SerializeField] private int nextCharacterSlotTurn = 1;
     [SerializeField] private int nextPcSlotTurn = 1;
-
     private readonly HashSet<string> completedActions = new(StringComparer.OrdinalIgnoreCase);
 
     private Game game;
@@ -194,6 +193,14 @@ public class Leader : Character
         // AI: Act if not player
         if (game.player != this)
         {
+            TutorialManager tutorial = FindFirstObjectByType<TutorialManager>();
+            if (tutorial != null && tutorial.HasTutorialForLeader(this as PlayableLeader) && !tutorial.IsAiTutorialComplete(this as PlayableLeader))
+            {
+                yield return tutorial.RunAiTutorialTurn(this as PlayableLeader);
+                game.NextPlayer();
+                yield break;
+            }
+
             yield return AITurnController.ExecuteLeaderTurn(this as PlayableLeader);
             game.NextPlayer();
             yield break;

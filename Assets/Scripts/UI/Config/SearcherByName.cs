@@ -26,6 +26,7 @@ public class SearcherByName : MonoBehaviour
 
     public string Normalize(string name)
     {
-        return RemoveDiacritics(name).Replace(" ", "").ToLower();
+        if (string.IsNullOrWhiteSpace(name)) return string.Empty;
+        return RemoveDiacritics(name).Replace(" ", "").ToLowerInvariant();
     }
 }

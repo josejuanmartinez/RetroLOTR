@@ -19,7 +19,14 @@ public class StateAllegiance : EmmissaryAction
             if (originalEffect != null && !originalEffect(character)) return false;
 
             PC pc = character.hex.GetPC();
-            if (pc == null || pc.owner is not NonPlayableLeader nonPlayableLeader || !pc.isCapital) return false;
+            if (pc == null || !pc.isCapital) return false;
+
+            if (pc.owner == null)
+            {
+                return pc.ClaimUnowned(character.GetOwner());
+            }
+
+            if (pc.owner is not NonPlayableLeader nonPlayableLeader) return false;
 
             Leader leader = character.GetOwner();
             if (!nonPlayableLeader.MeetsJoiningRequirements(leader)) return false;
@@ -32,7 +39,9 @@ public class StateAllegiance : EmmissaryAction
             if (originalCondition != null && !originalCondition(character)) return false;
 
             PC pc = character.hex.GetPC();
-            if (pc == null || pc.owner is not NonPlayableLeader nonPlayableLeader || !pc.isCapital) return false;
+            if (pc == null || !pc.isCapital) return false;
+            if (pc.owner == null) return true;
+            if (pc.owner is not NonPlayableLeader nonPlayableLeader) return false;
             if (nonPlayableLeader.joined || nonPlayableLeader.killed) return false;
 
             return nonPlayableLeader.MeetsJoiningRequirements(character.GetOwner());

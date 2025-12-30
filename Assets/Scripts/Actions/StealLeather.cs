@@ -11,7 +11,7 @@ public class StealLeather : AgentPCAction
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             PC pc = c.hex.GetPC();
-            if (pc == null) return false;
+            if (pc == null || pc.owner == null) return false;
             int maxSteal = Mathf.Min(c.GetAgent(), pc.owner.leatherAmount);
             if (maxSteal < 1) return false;
             int toSteal = UnityEngine.Random.Range(1, maxSteal + 1);

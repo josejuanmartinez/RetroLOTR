@@ -13,6 +13,7 @@ public class CommanderEnemyPCAction : CommanderArmyAction
             if (originalCondition != null && !originalCondition(c)) return false;
             PC pc = c.hex.GetPC();
             if (pc == null) return false;
+            if (pc.owner == null) return false;
             if (pc.owner == c.GetOwner()) return false;
             return pc.owner.GetAlignment() == AlignmentEnum.neutral || pc.owner.GetAlignment() != c.GetAlignment();
         };

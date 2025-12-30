@@ -1,0 +1,649 @@
+{
+  "version": 1,
+  "tutorials": [
+    {
+      "leaderName": "Gandalf",
+      "flowId": "Gandalf_Intro",
+      "steps": [
+        {
+          "stepId": "Gandalf_Hobbiton",
+          "title": "Find Frodo and Sam",
+          "type": "performAction",
+          "targetLocation": "Hobbiton",
+          "required": true,
+          "description": "Swear allegiance at Hobbiton to recruit Frodo and Sam.",
+          "narration": "The road begins in quiet fields, and Hobbiton is where trust must be earned before the burden can be carried. Walk the green lanes, take in the calm, and then find Frodo and Sam with patience rather than haste. They will not follow a stranger who speaks only in riddles, so let your purpose be clear and your allegiance firm. Speak of the danger beyond the hedges, but do not rob them of hope; show them that courage can live in small hands. When you state your allegiance here, it is not a spell but a promise, and it binds the first members of your company. This is the first true step, and the Shire will remember whether you treated it as a duty or a gift. Swear the bond and begin the journey that will stretch beyond these fields.",
+          "actor1": "Gandalf",
+          "actor2": "Frodo",
+          "requirements": {
+            "actionClass": "StateAllegiance",
+            "targetLeader": "Frodo"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "core_StateAllegiance"
+          ]
+        },
+        {
+          "stepId": "Gandalf_HearRumours",
+          "title": "Listen to the Shire",
+          "type": "performAction",
+          "required": true,
+          "description": "Use Hear Stories to gather rumours and learn what stirs beyond the hills.",
+          "narration": "Before the path grows harsh, sit with the people and listen, because the Shire keeps its wisdom in stories and gossip. Ask about travelers, uneasy nights, and rumors from the road, and let the talk find its own rhythm. You are gathering more than curiosity; you are mapping hidden fears and quiet hopes. Even the smallest tale can point to a safer route, a hidden ally, or a danger that has not yet marched in the open. Treat the stories as threads and hold them gently, for pulling too hard will break them. When you are done, you will not only know more, you will know where to look next and who might need your guidance. Let the rumors settle in your mind, then act on what you have learned.",
+          "actor1": "Gandalf",
+          "requirements": {
+            "actionClass": "RevealRumours"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "emmissary_RevealRumours"
+          ]
+        },
+        {
+          "stepId": "Gandalf_FindArtifact",
+          "title": "Find a Hidden Relic",
+          "type": "performAction",
+          "targetLocation": "Hobbiton",
+          "required": true,
+          "description": "Use Find Artifact in Hobbiton to recover something long forgotten.",
+          "narration": "Old ground keeps old secrets, and Hobbiton is older than it looks. Use your craft to search the earth and draw out what has been hidden, because relics do not announce themselves in bright light. The act of finding is a test of will, and the land answers only to those who are patient. A modest place can still guard a meaningful prize, and the right tool at the right time can shift the fate of a journey. Do not dismiss what you find as small or simple; many great turns begin with a humble object. Claim the relic with care, understand its purpose, and keep it safe for the road ahead. The power you uncover here is meant to be used, not admired. Bring it into your keeping and let it guide your next steps.",
+          "actor1": "Gandalf",
+          "requirements": {
+            "actionClass": "FindArtifact"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "core_FindArtifact"
+          ]
+        },
+        {
+          "stepId": "Gandalf_SamScout",
+          "title": "Sam Scouts Ahead",
+          "type": "performAction",
+          "required": true,
+          "description": "Have Sam scout the nearby area to spot dangers and hidden paths.",
+          "narration": "Sam knows the fields and fences as well as any in the Shire, and his eyes are sharper than most give him credit for. Send him ahead to scout the nearby area, not to chase danger but to see it before it reaches you. A single quiet scout can save the company from a bad path or reveal a safe haven hidden by hill and hedge. Let him move with care and return with a clear report, then listen to him with respect. This is how small folk become vital to great journeys, by being trusted with real tasks. Use his scouting to choose your next move, and keep your road steady and safe. The company survives when every member contributes, and Sam is ready to do his part.",
+          "actor1": "Sam",
+          "requirements": {
+            "actorCharacter": "Sam",
+            "actionClass": "ScoutArea"
+          }
+        },
+        {
+          "stepId": "Gandalf_FrodoTrain",
+          "title": "Frodo Raises a Guard",
+          "type": "performAction",
+          "required": true,
+          "description": "Have Frodo train Men-at-arms to protect the Shire.",
+          "narration": "Frodo carries more than he should, but he must also learn to guard his home. Ask him to train men at arms, not as a warlord but as a steward who understands that peace requires preparation. The drill will teach discipline and build a small defense that can deter fear and rumor from turning into panic. Each recruit is a promise that the Shire will not be caught unready, and each lesson strengthens Frodo as a leader. Do not push him with harshness; guide him with steady resolve and a clear purpose. A modest guard today can become a lifeline tomorrow. Let him raise the first ranks and learn what it means to protect those who depend on him.",
+          "actor1": "Frodo",
+          "requirements": {
+            "actorCharacter": "Frodo",
+            "actionClass": "TrainMetAtArms"
+          }
+        },
+        {
+          "stepId": "Gandalf_Buckland",
+          "title": "Visit Buckland",
+          "type": "travel",
+          "targetLocation": "Buckland",
+          "required": false,
+          "description": "Optional: travel to Buckland to find Merry.",
+          "narration": "Buckland sits by the river and the hedge, a place of warmth that does not yet know the full weight of the road. Go there and find Merry, for a journey that starts in friendship endures longer than one carried alone. This is not a demand but an invitation, a chance to bring a trusted heart into the company before the path grows dark. Walk the lanes, speak plainly, and offer him a place at your side. The ally gained here will steady the miles ahead and lighten the burdens that are yet to come.",
+          "actor1": "Gandalf",
+          "actor2": "Merry",
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [],
+          "rewards": {
+            "grantCharacters": [
+              {
+                "characterName": "Merry",
+                "commander": 0,
+                "agent": 1,
+                "emmissary": 0,
+                "mage": 0,
+                "race": 3,
+                "sex": 0
+              }
+            ]
+          }
+        },
+        {
+          "stepId": "Gandalf_MichelDelving",
+          "title": "Visit Michel Delving",
+          "type": "travel",
+          "targetLocation": "Michel Delving",
+          "required": false,
+          "description": "Optional: travel to Michel Delving to find Pippin.",
+          "narration": "Michel Delving is full of laughter and restless curiosity, and it is there that Pippin waits. Go to the town and seek him out, for bold spirits thrive when given a purpose worthy of their courage. This is the moment to widen the circle, to bring another friend into the fold before the world begins to close in. Speak honestly, invite him to the road, and let him choose it with a clear heart. The joy he brings will become a strength when the journey grows heavy.",
+          "actor1": "Gandalf",
+          "actor2": "Pippin",
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [],
+          "rewards": {
+            "grantCharacters": [
+              {
+                "characterName": "Pippin",
+                "commander": 0,
+                "agent": 0,
+                "emmissary": 1,
+                "mage": 0,
+                "race": 3,
+                "sex": 0
+              }
+            ]
+          }
+        },
+        {
+          "stepId": "Gandalf_UseNarya",
+          "title": "Test the Ring of Fire",
+          "type": "performAction",
+          "required": false,
+          "description": "Use Narya to sense the nearest threat.",
+          "narration": "Narya is warmth against the cold and clarity against creeping dread. When you use it, you are not merely searching, you are asking the world to reveal the nearest danger so you may choose your response. The ring is a tool, not a crutch, and its warning is meant to guide your judgment rather than replace it. Use it in moments where uncertainty could cost you more than caution, and let its light show what the shadows are hiding. Once you see the threat, act deliberately, because knowledge without action is just fear wearing a mask. Treat this power with respect, and do not waste it on trivial worries. The ring will answer, and the road will be safer for it.",
+          "actor1": "Gandalf",
+          "requirements": {
+            "actionClass": "PerceiveDanger"
+          }
+        },
+        {
+          "stepId": "Gandalf_UseStaff",
+          "title": "Stand Against Darkness",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Wizard Staff to halt an enemy.",
+          "narration": "A staff is more than wood, it is a boundary and a declaration. When you use it to halt an enemy, you are choosing a line that will not be crossed, and your will gives that line its strength. This is not a power to throw lightly; it is a command meant for moments when a halt can save lives or buy time. Speak with authority, not anger, and let the enemy feel the weight of your resolve. A single halted foe can change the course of a skirmish or protect a retreat. Hold your ground, use the moment well, and then move with purpose once the path is clear. The staff obeys your will, so let your will be steady.",
+          "actor1": "Gandalf",
+          "requirements": {
+            "actionClass": "YouShallNotPass"
+          }
+        },
+        {
+          "stepId": "Gandalf_UseCart",
+          "title": "A Spark of Hope",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Wizard's Cart to sway a population center.",
+          "narration": "The cart of fireworks is not a toy, it is a spark that can change hearts. In a place where fear or doubt has taken root, a celebration can remind people of what they love and whom they trust. Use it to sway a population center, and do so with intent, because joy can be a subtle but powerful weapon. The burst of light turns eyes toward you, and in that moment you can guide loyalty where it needs to go. Do not squander the moment with empty spectacle; make it a sign of protection and hope. When the lights fade, let the people remember that you brought them both warmth and courage. A simple show can begin a lasting allegiance.",
+          "actor1": "Gandalf",
+          "requirements": {
+            "actionClass": "Fireworks"
+          }
+        },
+        {
+          "stepId": "Gandalf_UseGlamdring",
+          "title": "Flame of the West",
+          "type": "performAction",
+          "required": false,
+          "description": "Wield Glamdring against an enemy army.",
+          "narration": "Glamdring is a blade that remembers ancient wars, and it is meant to be used when foes gather in strength. When you wield it, you are calling on an old fire to break a present threat. Strike decisively, because the power is strongest when it is focused and timely. Do not linger once the blow is delivered; the sword is a tool for a sharp moment, not a long brawl. Use it to shatter an enemy host or to turn a battle in a single sweep. Its flame is a warning as much as a weapon, and it will make the dark think twice. Wield it with purpose and let the West be feared by those who would threaten it.",
+          "actor1": "Gandalf",
+          "requirements": {
+            "actionClass": "WizardsFire"
+          }
+        },
+        {
+          "stepId": "Gandalf_UseShadowfax",
+          "title": "Ride the Wind",
+          "type": "performAction",
+          "required": false,
+          "description": "Call Shadowfax to act again.",
+          "narration": "Shadowfax answers only you, and his swiftness is a gift that should be used with care. Call him when a single extra action can change the shape of a turn, whether that means striking, repositioning, or escaping a trap. Speed without purpose is waste, so choose the moment that matters and commit to it. The open road becomes yours when he runs, and even a short burst can turn a close decision into a clear outcome. Do not call him simply to move faster; call him to act twice where others act once. Ride with intent, and let the wind carry you toward the choice you need to make. When you dismount, make the moment count.",
+          "actor1": "Gandalf",
+          "requirements": {
+            "actionClass": "Haste"
+          }
+        },
+        {
+          "stepId": "Gandalf_UseLongpipe",
+          "title": "A Wizard's Laugh",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Longpipe to unsettle your foes.",
+          "narration": "The Longpipe carries a quiet power that works through laughter and unease. Use it to unsettle foes or to clear hostile influence, because a light moment can dissolve a heavy plan. The smoke and the chuckle break rigid thinking, and in that break, loyalties can shift and schemes can weaken. This is a subtle tool, not a blunt one, and it rewards patience and timing. Use it where a brittle alliance needs to crack or where a hostile influence needs to be softened. Do not underestimate the force of a well-timed laugh; it can disarm more surely than a threat. Let the pipe do its work, and then move while the balance is in your favor.",
+          "actor1": "Gandalf",
+          "requirements": {
+            "actionClass": "WizardLaugh"
+          }
+        }
+      ]
+    },
+    {
+      "leaderName": "Saruman",
+      "flowId": "Saruman_Intro",
+      "steps": [
+        {
+          "stepId": "Saruman_Orthanc",
+          "title": "Claim Orthanc",
+          "type": "performAction",
+          "targetLocation": "Orthanc",
+          "required": true,
+          "description": "State allegiance at Orthanc to secure the tower for your cause.",
+          "narration": "Orthanc stands like a black needle against the sky, and it is yours to claim in full, not merely to inhabit. Speak your allegiance within the tower so the stone itself answers to your will, and let the first act of your dominion be clear and undeniable. This is not a plea for authority but a declaration that the tower serves you alone. When you bind Orthanc to your purpose, the long silence of the place becomes a weapon and a warning. Let the halls remember your voice, and let your enemies feel the change in the air. The strength you draw from this moment is the foundation of everything that follows.",
+          "actor1": "Saruman",
+          "requirements": {
+            "actionClass": "StateAllegiance",
+            "targetLeader": "Orthanc"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "core_StateAllegiance"
+          ]
+        },
+        {
+          "stepId": "Saruman_Edoras",
+          "title": "Seek Grima at Edoras",
+          "type": "travel",
+          "targetLocation": "Edoras",
+          "required": true,
+          "description": "Travel to Edoras and find Grima.",
+          "narration": "Edoras holds a court of pride and doubt, and the road there is the first step of your quiet conquest. Go to the golden hall and seek Grima, the voice that can turn a king without drawing a blade. This is a journey of careful steps, of watching before speaking, and of placing influence where it will grow the fastest. When you arrive, do not rush; let the hall breathe, learn the rhythm of its people, and then make your approach. The ally you secure here will open doors that force cannot, and the war you plan begins with that single, whispered turn.",
+          "actor1": "Saruman",
+          "actor2": "Grima",
+          "rewards": {
+            "unlockSkillNodes": [
+              "agent_root",
+              "commander_root"
+            ],
+            "grantCharacters": [
+              {
+                "characterName": "Grima",
+                "commander": 0,
+                "agent": 1,
+                "emmissary": 0,
+                "mage": 0,
+                "race": 0,
+                "sex": 0
+              }
+            ]
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": []
+        },
+        {
+          "stepId": "Saruman_HearRumours",
+          "title": "Whispers in the Hall",
+          "type": "performAction",
+          "required": true,
+          "description": "Use Hear Stories to gather rumours from the people of Rohan.",
+          "narration": "Rohan is full of whispers that ride faster than horses, and you must hear them before you move. Sit among the people and draw out their tales of raids, riders, and restless borders. Rumours are not noise; they are signals that show where fear is growing and where the defenses are thin. Gather names and places, listen for patterns, and sort the truth from the exaggeration. A single useful rumour can guide a whole campaign if you treat it with respect. Do not rush this step, because knowledge gathered too quickly is often useless. When you are done, you should know not only what is happening, but where to press next.",
+          "actor1": "Saruman",
+          "requirements": {
+            "actionClass": "RevealRumours"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "emmissary_RevealRumours"
+          ]
+        },
+        {
+          "stepId": "Saruman_FindArtifact",
+          "title": "Unearth a Relic",
+          "type": "performAction",
+          "targetLocation": "Edoras",
+          "required": true,
+          "description": "Use Find Artifact in Edoras to uncover something of power.",
+          "narration": "Edoras is old and layered, and old places hide old power beneath their stones. Use your craft to uncover a relic, because a small advantage early can become a decisive advantage later. The act of searching is as important as the find itself; it focuses your will and teaches the land to answer you. Be methodical, and do not be tempted to abandon the search too soon. A relic uncovered in Rohan can be a lever on its future, and it will serve your designs if you claim it first. When you find it, take it without fanfare and learn its weight. Power that is seized quietly is power that lasts.",
+          "actor1": "Saruman",
+          "requirements": {
+            "actionClass": "FindArtifact"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "core_FindArtifact"
+          ]
+        },
+        {
+          "stepId": "Saruman_DoubleGrima",
+          "title": "Turn Grima",
+          "type": "performAction",
+          "required": true,
+          "description": "Use Double Character on Grima.",
+          "narration": "Grima fears being overlooked more than he fears treachery, and that fear can be made to serve you. Use Double Character on him and turn his loyalty into a shadow of your own, so his actions mirror your will. Speak softly and make the bargain feel inevitable, because he will accept what he believes he cannot avoid. A doubled servant is a door that opens from inside, and this step turns the court into a tool. Do not hesitate once you choose; doubt only weakens the hold. Seal the bond and let him begin his quiet work. With him as your double, the hall becomes an extension of your hand.",
+          "actor1": "Saruman",
+          "actor2": "Grima",
+          "requirements": {
+            "actionClass": "DoubleCharacter",
+            "targetCharacter": "Grima"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "agent_DoubleCharacter"
+          ]
+        },
+        {
+          "stepId": "Saruman_GrimaScout",
+          "title": "Grima Scouts",
+          "type": "performAction",
+          "required": true,
+          "description": "Have Grima scout the area to reveal nearby threats and opportunities.",
+          "narration": "Now that Grima answers to you, send him to scout, because his quiet movement draws little attention. A scout sees threats before armies clash and reveals paths that open new choices. Let him move through the land and return with a clear report of dangers, opportunities, and weak points. His eyes will serve you better than a hundred boasts, and the knowledge he gathers will shape your next steps. Keep him close enough to control but far enough to be useful; that balance is the art of espionage. Use his report to plan a precise advance rather than a reckless march. A single good scouting run can save a campaign.",
+          "actor1": "Grima",
+          "requirements": {
+            "actorCharacter": "Grima",
+            "actionClass": "ScoutArea"
+          }
+        },
+        {
+          "stepId": "Saruman_ReturnOrthanc",
+          "title": "Return to Orthanc",
+          "type": "travel",
+          "targetLocation": "Orthanc",
+          "required": true,
+          "description": "Return to Orthanc to embrace the many colors.",
+          "narration": "Return to Orthanc and let the tower become your forge. Here you embrace the many colors and turn intent into action, raising the White Hand and calling your forces to gather. This step is the shift from influence to power, from whispered plots to visible musters. Let the tower see your resolve and let your enemies feel the change in the air. Unlock the means to recruit orcish troops, and bring Ugluk into your service so the host can take shape. Do not linger in doubt; the moment is now, and the war begins at your gate. When Orthanc answers, it answers with iron and smoke.",
+          "actor1": "Saruman",
+          "actor2": "Grima",
+          "rewards": {
+            "unlockRecruitmentTags": [
+              "orcs"
+            ],
+            "grantCharacters": [
+              {
+                "characterName": "Ugluk",
+                "commander": 1,
+                "agent": 0,
+                "emmissary": 0,
+                "mage": 0,
+                "race": 5,
+                "sex": 0
+              }
+            ]
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "commander_TrainMetAtArms"
+          ]
+        },
+        {
+          "stepId": "Saruman_UglukTrain",
+          "title": "Ugluk Musters Orcs",
+          "type": "performAction",
+          "required": true,
+          "description": "Have Ugluk train Men-at-arms to start building your host.",
+          "narration": "Ugluk understands only strength, and that makes him easy to command if you are clear. Order him to train men at arms and begin the mustering of your host, because an army is built one disciplined rank at a time. The act of training is not merely numbers; it is the creation of fear in your enemies and confidence in your own camp. Let the drills be strict and the standards high, because an undisciplined host collapses at the first real test. This is the first true step of open war, and it should feel like it. When the ranks are formed, your plans will have the muscle they need.",
+          "actor1": "Ugluk",
+          "requirements": {
+            "actorCharacter": "Ugluk",
+            "actionClass": "TrainMetAtArms"
+          }
+        },
+        {
+          "stepId": "Saruman_UseRobes",
+          "title": "Many-Coloured Sight",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Many-coloured robes to reveal nearby threats.",
+          "narration": "The many colored robes sharpen your sight and make the nearby world easier to read. Use them to reveal the nearest threat, because a clear view turns uncertainty into control. This is not a spell of destruction but of preparation, and it should be used before you commit to a risky move. The robes are a reminder that knowledge is a weapon, and that a well-timed reveal can save an army. Do not use them out of impatience; use them when the next choice matters. Let the vision settle, choose your response, and move while the enemy is still exposed.",
+          "actor1": "Saruman",
+          "requirements": {
+            "actionClass": "PerceiveDanger"
+          }
+        },
+        {
+          "stepId": "Saruman_UseTeeth",
+          "title": "Whispered Corruption",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Yellow teeth to twist loyalties.",
+          "narration": "The yellow teeth are a subtle tool, meant to corrode loyalty without a single sword drawn. Use them to twist minds and plant doubt where confidence once stood. This is the kind of power that works best in the quiet spaces between open moves, because it makes your enemies weaker before you face them. A single rumor sharpened by this token can spread like rot, turning strong positions into brittle ones. Use it deliberately, not in rage, and then watch how quickly a plan unravels. When loyalties crack, opportunities appear. Let this whisper do the work that force cannot.",
+          "actor1": "Saruman",
+          "requirements": {
+            "actionClass": "WizardLaugh"
+          }
+        },
+        {
+          "stepId": "Saruman_UseRing",
+          "title": "Words of Despair",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Ring of Orthanc against an enemy army.",
+          "narration": "The Ring of Orthanc is a weapon of despair, and it should be used when your enemies gather and think themselves strong. Speak the words and let their courage collapse, because a broken host cannot hold a line. This is not a power for idle intimidation; it is for moments when a decisive blow can be struck without blades crossing. Use it with purpose, then exploit the weakness it creates. A single act of despair can turn a siege or scatter a stubborn army. Do not waste its edge on small prey; wait for the moment that matters, and then strike.",
+          "actor1": "Saruman",
+          "requirements": {
+            "actionClass": "WordsOfDispair"
+          }
+        },
+        {
+          "stepId": "Saruman_UseBanner",
+          "title": "Raise the White Hand",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the White Hand Banner to muster troops.",
+          "narration": "The White Hand Banner is a clear command made visible, and soldiers answer when the symbol is raised. Use it to muster troops quickly at a place that matters, because a host formed early can decide the shape of the campaign. This is the act of turning influence into action, and it should be done without hesitation. A banner raised at the right time binds new recruits to your cause and tells the land that the war has begun. Do not hide it; let it be seen. When the ranks gather, move them with confidence and keep their purpose clear.",
+          "actor1": "Saruman",
+          "requirements": {
+            "actionClass": "SummonMA"
+          }
+        },
+        {
+          "stepId": "Saruman_UsePalantir",
+          "title": "Stone of Orthanc",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Palantir of Orthanc to reveal the map.",
+          "narration": "The Palantir of Orthanc peers beyond the walls and folds distance into a single view. Use it to reveal far ground and to choose your next move with knowledge rather than guesswork. The stone is a tool of clarity, but it demands discipline, because lingering too long invites distraction. Take the vision you need and step away, then act while the information is fresh. A glimpse of unseen ground can save an army or open a path that changes the game. Use it when the map feels uncertain, and let the stone answer. Knowledge is the first conquest, and the palantir gives it.",
+          "actor1": "Saruman",
+          "requirements": {
+            "actionClass": "ScryArea"
+          }
+        },
+        {
+          "stepId": "Saruman_UseStaff",
+          "title": "Storm of Ice",
+          "type": "performAction",
+          "required": false,
+          "description": "Use Saruman's Staff to freeze an enemy host.",
+          "narration": "Saruman's staff commands the cold, and it is best used to halt a strong enemy at a critical moment. When the foe gathers, call the ice and bind their movement, because a stopped army is an army that can be bypassed or broken. This is a precise tool, not a blunt one, and it should be saved for targets that matter. Use it to steal momentum from the enemy and give it to yourself. Once the freeze takes hold, choose whether to strike or reposition; either path is yours. Let the storm answer your will and leave your foes trapped in it.",
+          "actor1": "Saruman",
+          "requirements": {
+            "actionClass": "IceStorm"
+          }
+        }
+      ]
+    },
+    {
+      "leaderName": "Sauron",
+      "flowId": "Sauron_Intro",
+      "steps": [
+        {
+          "stepId": "Sauron_BaradDur",
+          "title": "Claim Barad-dur",
+          "type": "performAction",
+          "targetLocation": "Barad-dur",
+          "required": true,
+          "description": "State allegiance at Barad-dur to secure the Dark Tower.",
+          "narration": "Barad-dur is the heart of your will, and its shadow must fall under your command before the hunt begins. State your allegiance here to seal the tower to your purpose, as if placing your hand upon a blade you forged long ago. The act is both symbol and force, the first tightening of the chain that binds the land. Let the Dark Tower answer, and let the world feel the weight of that answer. This is the moment the Age remembers, the moment your return is not rumor but fact.",
+          "actor1": "Sauron",
+          "requirements": {
+            "actionClass": "StateAllegiance",
+            "targetLeader": "Barad-dur"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "core_StateAllegiance"
+          ]
+        },
+        {
+          "stepId": "Sauron_MinasMorgul",
+          "title": "Secure Minas Morgul",
+          "type": "travel",
+          "targetLocation": "Minas Morgul",
+          "required": true,
+          "description": "Travel to Minas Morgul to secure the trail and find Gollum.",
+          "narration": "The road to Minas Morgul is steeped in old fear, and the air itself seems to recoil from what waits within. Travel there to secure the trail and draw the creature of the depths into your service, because the hunt cannot proceed without its knowledge. This is not an open conquest but a retrieval of a tool, and you will take it whether it comes willingly or not. The city knows your name, and its stones are ready to bow. When you arrive, make the claim and take what you need, then move before the shadow grows familiar.",
+          "actor1": "Sauron",
+          "actor2": "Gollum",
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "core_StateAllegiance"
+          ],
+          "rewards": {
+            "grantCharacters": [
+              {
+                "characterName": "Gollum",
+                "commander": 0,
+                "agent": 1,
+                "emmissary": 0,
+                "mage": 0,
+                "race": 3,
+                "sex": 0
+              }
+            ]
+          }
+        },
+        {
+          "stepId": "Sauron_HearRumours",
+          "title": "Gather Fearful Whispers",
+          "type": "performAction",
+          "required": true,
+          "description": "Use Hear Stories to gather rumours and learn where your foes are weakest.",
+          "narration": "Fear loosens every tongue, and in your realm even whispers become useful weapons. Use Hear Stories to gather rumors of movement, weakness, and opportunity, because every murmur can point to a target. Listen without mercy and sort what you hear into patterns, for patterns reveal where the enemy is most exposed. The frightened will talk, and their talk will lead you if you let it. This is not idle chatter; it is a map drawn in fear. When you finish, you should know where to press next and where your grip can tighten. Let the rumors guide your hunt and sharpen your next move.",
+          "actor1": "Sauron",
+          "requirements": {
+            "actionClass": "RevealRumours"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "emmissary_RevealRumours"
+          ]
+        },
+        {
+          "stepId": "Sauron_FindArtifact",
+          "title": "Claim a Buried Relic",
+          "type": "performAction",
+          "targetLocation": "Minas Morgul",
+          "required": true,
+          "description": "Use Find Artifact in Minas Morgul to claim a relic of power.",
+          "narration": "Minas Morgul is steeped in malice, and its ground hides relics that respond to your will. Use Find Artifact to draw out what lies buried, because power left in the earth is power wasted. Search with purpose and patience, and let the curse of the place work for you rather than against you. A relic found here carries the weight of old darkness and will strengthen your hand. Take it without hesitation and feel its pull, then decide how best to wield it. This is a deliberate act of reclamation, not a lucky stumble. The hunt grows darker from here, and you should grow stronger with it.",
+          "actor1": "Sauron",
+          "requirements": {
+            "actionClass": "FindArtifact"
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "core_FindArtifact"
+          ]
+        },
+        {
+          "stepId": "Sauron_GollumScout",
+          "title": "Gollum Scouts",
+          "type": "performAction",
+          "required": true,
+          "description": "Have Gollum scout the area to sniff out enemies and secrets.",
+          "narration": "Gollum moves like a shadow and knows how to slip between the cracks of attention. Send him to scout, because he sees what armies overlook and hears what soldiers cannot. A single scouting run can reveal a hidden path, a weak target, or a threat that needs immediate response. Keep him leashed by fear and reward, because his loyalty is thin and his usefulness is sharp. When he returns, listen closely, then move with the knowledge he brings. The creature is a tool, and tools must be used. Let his report guide your next action and keep the hunt closing in.",
+          "actor1": "Gollum",
+          "requirements": {
+            "actorCharacter": "Gollum",
+            "actionClass": "ScoutArea"
+          }
+        },
+        {
+          "stepId": "Sauron_Morannon",
+          "title": "Summon Gothmog",
+          "type": "travel",
+          "targetLocation": "Morannon",
+          "required": true,
+          "description": "Travel to Morannon to rally Gothmog and begin raising armies.",
+          "narration": "The Black Gate is the mouth of war, and its iron teeth must open at your command. Travel to Morannon and rally Gothmog, for a host needs a commander who can make it march. The journey is a declaration that open conflict has begun, and the return of your armies will be heard across the plains. When the gate answers, bind it to your purpose and let the first ranks gather beneath its shadow. This is the moment the march becomes real, when fear hardens into discipline.",
+          "actor1": "Sauron",
+          "actor2": "Gothmog",
+          "rewards": {
+            "unlockSkillNodes": [
+              "commander_root"
+            ],
+            "grantCharacters": [
+              {
+                "characterName": "Gothmog",
+                "commander": 1,
+                "agent": 0,
+                "emmissary": 0,
+                "mage": 0,
+                "race": 5,
+                "sex": 0
+              }
+            ]
+          },
+          "grantSkillPoints": 1,
+          "allowedSkillNodes": [
+            "core_StateAllegiance"
+          ]
+        },
+        {
+          "stepId": "Sauron_GothmogTrain",
+          "title": "Gothmog Raises the Host",
+          "type": "performAction",
+          "required": true,
+          "description": "Have Gothmog train Men-at-arms to begin raising the armies of Mordor.",
+          "narration": "Gothmog understands only strength and order, and that makes him ideal for raising the first ranks. Command him to train men at arms and begin the mustering of Mordor's host. The act of training is the act of building fear, and every disciplined soldier is another step toward domination. Let the drills be ruthless and the standards unforgiving, because a weak host is worse than none. This is how wars are built, not with speeches but with ranks that hold. When he finishes, you will feel the army begin to breathe. Then you may decide where its first blow will land.",
+          "actor1": "Gothmog",
+          "requirements": {
+            "actorCharacter": "Gothmog",
+            "actionClass": "TrainMetAtArms"
+          }
+        },
+        {
+          "stepId": "Sauron_UseVeil",
+          "title": "Cloak the Land",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Morgul Veil to cover nearby ground.",
+          "narration": "The Morgul Veil spreads darkness over the land and bends sight to your will. Use it to conceal your movements or to blind your enemies, because confusion is as deadly as any blade. The veil turns open ground into uncertainty and forces your foes to guess, and in that guessing they fail. This is a power for moments when you need to move unseen or to deny your enemy a clear plan. Do not cast it idly; cast it when the next step matters. Let the darkness settle, then strike from it with certainty. The land itself will feel the weight of your shadow.",
+          "actor1": "Sauron",
+          "requirements": {
+            "actionClass": "CastDarkness"
+          }
+        },
+        {
+          "stepId": "Sauron_UseEye",
+          "title": "Reveal the Hidden",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Lidless eye to expose what is concealed.",
+          "narration": "The Lidless Eye sees what hides, and its gaze is enough to strip away false safety. Use it to reveal a concealed population center or to expose a hidden threat, because nothing should remain unseen by you. The moment the Eye opens, fear rises, and fear forces mistakes. This is a tool of discovery and domination, and it should be used when you need a target to make your will felt. Do not let enemies linger in the shadows; bring them into the open and bind them with your attention. The Eye is your claim made visible, and the world bends under it. Reveal what is hidden, then move to take it.",
+          "actor1": "Sauron",
+          "requirements": {
+            "actionClass": "RevealPC"
+          }
+        },
+        {
+          "stepId": "Sauron_UsePalantir",
+          "title": "Stone of Ithil",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Palantir of Ithil to reveal distant lands.",
+          "narration": "The Palantir of Ithil answers to you and shows what distance would otherwise hide. Use it to reveal far ground and choose the next target of your hunt, because a clear map is a chain on your enemies. The stone is a tool of control, but it demands discipline; take the vision you need and step away. A single glimpse can change a plan, save a march, or open a new route. Use it when uncertainty threatens to slow you, and let it sharpen your resolve. Knowledge is the first blow in any campaign. Take the sight and act on it without delay.",
+          "actor1": "Sauron",
+          "requirements": {
+            "actionClass": "ScryArea"
+          }
+        },
+        {
+          "stepId": "Sauron_UseBanner",
+          "title": "Call the Host",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Dark Lord Banner to muster troops.",
+          "narration": "The Dark Lord Banner is a visible command, and when it rises the host gathers. Use it to muster troops quickly and swell your ranks at a place that matters. A banner is more than cloth; it is an order that soldiers can see and obey. This is a moment to commit, not to hesitate, because momentum is built on decisive calls. Let the ranks gather and feel the weight of their number, then move while the fear is fresh. A large host ends arguments and makes cities reconsider their loyalty. Raise the banner and let the land tremble beneath it.",
+          "actor1": "Sauron",
+          "requirements": {
+            "actionClass": "SummonMA"
+          }
+        },
+        {
+          "stepId": "Sauron_UseVoice",
+          "title": "Voice of the Dark Tower",
+          "type": "performAction",
+          "required": false,
+          "description": "Use the Voice of the Dark Tower against an enemy army.",
+          "narration": "Your voice is a weapon of despair, and it should be used when an enemy host stands within reach. Speak and let their courage collapse, because fear is older and stronger than steel. This is not a warning; it is a breaking, a moment where willpower drains from their ranks. Use it when the stakes are high and the payoff is decisive. Once they falter, press the advantage without mercy, because a broken army can be shattered quickly. Let your words haunt them, and let the memory of them weaken the next line as well. The tower's voice is final, and they will learn it.",
+          "actor1": "Sauron",
+          "requirements": {
+            "actionClass": "WordsOfDispair"
+          }
+        }
+      ]
+    }
+  ]
+}

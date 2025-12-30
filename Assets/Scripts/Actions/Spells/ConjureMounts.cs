@@ -21,6 +21,7 @@ public class ConjureMounts: DarkNeutralSpell
             if (c == null || c.hex == null) return false;
             PC pc = c.hex.GetPC();
             if (pc == null) return false;
+            if (pc.owner == null) return false;
             if (pc.owner == c.GetOwner()) return true;
             AlignmentEnum pcAlignment = pc.owner.GetAlignment();
             return pcAlignment != AlignmentEnum.neutral && pcAlignment == c.GetAlignment();

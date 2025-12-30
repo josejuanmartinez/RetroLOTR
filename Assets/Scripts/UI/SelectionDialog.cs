@@ -75,7 +75,8 @@ public class SelectionDialog : MonoBehaviour
 
         pendingRequest = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
         if(isAI) {
-            dropdown.value = Random.Range(0, options.Count);        
+            int index = Random.Range(0, options.Count);
+            pendingRequest.TrySetResult(options[index]);
         } 
         else
         {
@@ -143,7 +144,7 @@ public class SelectionDialog : MonoBehaviour
     private bool ShouldDelayDialog()
     {
         bool focusPending = BoardNavigator.Instance != null && BoardNavigator.Instance.HasPendingFocus();
-        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy() || focusPending;
+        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy() || PopupManager.IsShowing || focusPending;
     }
 
     private void StartWaitForMessages()

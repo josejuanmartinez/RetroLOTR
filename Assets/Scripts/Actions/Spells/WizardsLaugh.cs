@@ -11,7 +11,7 @@ public class WizardLaugh: Spell
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             PC pc = c.hex.GetPC();
-            if (pc == null) return false;
+            if (pc == null || pc.owner == null) return false;
 
             if (pc.owner.GetAlignment() != c.GetAlignment() || pc.owner.GetAlignment() == AlignmentEnum.neutral)
             {
@@ -25,7 +25,7 @@ public class WizardLaugh: Spell
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
             PC pc = c.hex.GetPC();
-            if (pc == null) return false;
+            if (pc == null || pc.owner == null) return false;
             AlignmentEnum pcAlignment = pc.owner.GetAlignment();
             return pcAlignment != c.GetAlignment() || pcAlignment == AlignmentEnum.neutral;
         };
