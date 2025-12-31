@@ -77,6 +77,8 @@ public class TutorialManager : MonoBehaviour
     private int requiredStepIndex;
     private readonly HashSet<string> completedOptionalSteps = new(StringComparer.OrdinalIgnoreCase);
     private Dictionary<string, Artifact> artifactCatalog;
+    private Dictionary<string, ActionDefinition> actionDefinitionsByClass;
+    private Dictionary<string, ActionDefinition> actionDefinitionsByName;
     private PlayableLeader leader;
     private Coroutine pendingSkillPrompt;
     private readonly Dictionary<string, AiTutorialProgress> aiProgressByLeader = new(StringComparer.OrdinalIgnoreCase);
@@ -205,12 +207,7 @@ public class TutorialManager : MonoBehaviour
     {
         TutorialStep step = GetCurrentRequiredStep();
         if (step == null || leader == null) return;
-        if (step.grantSkillPoints > 0)
-        {
-            leader.AddSkillPoints(step.grantSkillPoints);
-        }
         ShowStepPopup(step);
-        ScheduleSkillUnlockPrompt(step);
     }
 
     private void ShowStepPopup(TutorialStep step)
@@ -223,7 +220,8 @@ public class TutorialManager : MonoBehaviour
         List<TutorialStep> requiredSteps = GetRequiredSteps();
         int stepNumber = requiredStepIndex + 1;
         int totalSteps = requiredSteps.Count;
-        string title = totalSteps > 0 ? $"{baseTitle} ({stepNumber}/{totalSteps})" : baseTitle;
+        //string title = totalSteps > 0 ? $"{baseTitle} ({stepNumber}/{totalSteps})" : baseTitle;
+        string title = baseTitle;
         string text = string.IsNullOrWhiteSpace(step.narration) ? step.description : step.narration;
         PopupManager.Show(title, actor1, actor2, text, true);
     }
@@ -272,6 +270,7 @@ public class TutorialManager : MonoBehaviour
         {
             string nodeName = GetNodeDisplayName(nodeId);
             MessageDisplay.ShowMessage($"{leader.characterName} unlocked {nodeName}.", Color.green);
+            ShowSkillUnlockDialog(nodeId);
         }
     }
 
@@ -279,10 +278,13 @@ public class TutorialManager : MonoBehaviour
     {
         List<string> options = new();
         if (allowedNodes == null || leader == null) return options;
+        SkillTreeDefinition tree = SkillTreeService.GetDefinition();
         foreach (string nodeId in allowedNodes)
         {
             if (string.IsNullOrWhiteSpace(nodeId)) continue;
             if (leader.IsSkillNodeUnlocked(nodeId)) continue;
+            SkillTreeNode node = tree?.nodes?.FirstOrDefault(x => x != null && string.Equals(x.id, nodeId, StringComparison.OrdinalIgnoreCase));
+            if (node != null && node.cost <= 0) continue;
             if (!SkillTreeService.CanUnlockNode(leader, nodeId)) continue;
             string display = $"{GetNodeDisplayName(nodeId)} ({nodeId})";
             options.Add(display);
@@ -314,6 +316,108 @@ public class TutorialManager : MonoBehaviour
         return node != null && !string.IsNullOrWhiteSpace(node.name) ? node.name : nodeId;
     }
 
+    private void ShowSkillUnlockDialog(string nodeId)
+    {
+        if (leader == null || string.IsNullOrWhiteSpace(nodeId)) return;
+        Game game = FindFirstObjectByType<Game>();
+        if (game == null || game.player != leader) return;
+
+        string message = BuildSkillUnlockHelpMessage(nodeId);
+        if (string.IsNullOrWhiteSpace(message)) return;
+        ConfirmationDialog.AskOk(message);
+    }
+
+    private string BuildSkillUnlockHelpMessage(string nodeId)
+    {
+        if (string.IsNullOrWhiteSpace(nodeId)) return string.Empty;
+
+        SkillTreeDefinition tree = SkillTreeService.GetDefinition();
+        SkillTreeNode node = tree?.nodes?.FirstOrDefault(x => x != null && string.Equals(x.id, nodeId, StringComparison.OrdinalIgnoreCase));
+        string nodeName = GetNodeDisplayName(nodeId);
+        List<string> lines = new() { $"{nodeName} learned." };
+
+        if (node?.unlocksActions == null || node.unlocksActions.Count == 0)
+        {
+            return string.Join("\n", lines);
+        }
+
+        EnsureActionDefinitionsLoaded();
+
+        foreach (string actionClass in node.unlocksActions)
+        {
+            if (string.IsNullOrWhiteSpace(actionClass)) continue;
+            ActionDefinition definition = GetActionDefinition(actionClass);
+            string actionName = definition != null && !string.IsNullOrWhiteSpace(definition.actionName) ? definition.actionName : actionClass;
+            string info = definition != null && !string.IsNullOrWhiteSpace(definition.tutorialInfo)
+                ? definition.tutorialInfo
+                : definition?.description;
+
+            if (string.IsNullOrWhiteSpace(info))
+            {
+                lines.Add($"- {actionName}");
+            }
+            else
+            {
+                lines.Add($"- {actionName}: {info}");
+            }
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    private void EnsureActionDefinitionsLoaded()
+    {
+        if (actionDefinitionsByClass != null && actionDefinitionsByName != null) return;
+
+        actionDefinitionsByClass = new Dictionary<string, ActionDefinition>(StringComparer.OrdinalIgnoreCase);
+        actionDefinitionsByName = new Dictionary<string, ActionDefinition>(StringComparer.OrdinalIgnoreCase);
+
+        TextAsset json = Resources.Load<TextAsset>("Actions");
+        if (json == null) return;
+
+        ActionDefinitionCollection collection = JsonUtility.FromJson<ActionDefinitionCollection>(json.text);
+        if (collection?.actions == null) return;
+
+        foreach (ActionDefinition action in collection.actions)
+        {
+            if (action == null) continue;
+            if (!string.IsNullOrWhiteSpace(action.className) && !actionDefinitionsByClass.ContainsKey(action.className))
+            {
+                actionDefinitionsByClass[action.className] = action;
+            }
+            if (!string.IsNullOrWhiteSpace(action.actionName))
+            {
+                string key = NormalizeActionName(action.actionName);
+                if (!actionDefinitionsByName.ContainsKey(key))
+                {
+                    actionDefinitionsByName[key] = action;
+                }
+            }
+        }
+    }
+
+    private ActionDefinition GetActionDefinition(string actionClassOrName)
+    {
+        if (string.IsNullOrWhiteSpace(actionClassOrName)) return null;
+        if (actionDefinitionsByClass != null && actionDefinitionsByClass.TryGetValue(actionClassOrName, out ActionDefinition byClass))
+        {
+            return byClass;
+        }
+        if (actionDefinitionsByName != null)
+        {
+            string key = NormalizeActionName(actionClassOrName);
+            return actionDefinitionsByName.TryGetValue(key, out ActionDefinition byName) ? byName : null;
+        }
+        return null;
+    }
+
+    private static string NormalizeActionName(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+        string stripped = ActionNameUtils.StripShortcut(value);
+        return string.IsNullOrWhiteSpace(stripped) ? string.Empty : stripped.Trim().ToLowerInvariant();
+    }
+
     private bool StepMatchesAction(TutorialStep step, Character actor, string actionClassName, Hex actionHex)
     {
         if (step == null || string.IsNullOrWhiteSpace(step.type)) return false;
@@ -336,11 +440,12 @@ public class TutorialManager : MonoBehaviour
         {
             PC pc = actionHex.GetPCData();
             string ownerName = pc != null && pc.owner != null ? pc.owner.characterName : string.Empty;
-            if (string.IsNullOrWhiteSpace(ownerName) && pc != null)
-            {
-                ownerName = pc.pcName;
-            }
-            if (!string.Equals(ownerName, req.targetLeader, StringComparison.OrdinalIgnoreCase)) return false;
+            string pcName = pc != null ? pc.pcName : string.Empty;
+            bool matchesOwner = !string.IsNullOrWhiteSpace(ownerName)
+                && string.Equals(ownerName, req.targetLeader, StringComparison.OrdinalIgnoreCase);
+            bool matchesPc = !string.IsNullOrWhiteSpace(pcName)
+                && string.Equals(pcName, req.targetLeader, StringComparison.OrdinalIgnoreCase);
+            if (!matchesOwner && !matchesPc) return false;
         }
 
         if (req != null && !string.IsNullOrWhiteSpace(req.targetCharacter))
@@ -370,7 +475,12 @@ public class TutorialManager : MonoBehaviour
     private void CompleteStep(TutorialStep step, Character actor)
     {
         if (step == null) return;
+        if (step.grantSkillPoints > 0 && leader != null)
+        {
+            leader.AddSkillPoints(step.grantSkillPoints);
+        }
         ApplyRewards(step, actor);
+        ScheduleSkillUnlockPrompt(step);
     }
 
     private void ApplyRewards(TutorialStep step, Character actor)

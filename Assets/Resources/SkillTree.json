@@ -75,7 +75,10 @@
         "emmissary_root",
         "emmissary_RevealRumours"
       ],
-      "requiresAny": [],
+      "requiresAny": [
+        "emmissary_SellIron",
+        "emmissary_BuyIron"
+      ],
       "unlocksActions": [
         "SellSteel"
       ]
@@ -90,7 +93,10 @@
         "emmissary_root",
         "emmissary_RevealRumours"
       ],
-      "requiresAny": [],
+      "requiresAny": [
+        "emmissary_SellIron",
+        "emmissary_BuyIron"
+      ],
       "unlocksActions": [
         "BuySteel"
       ]
@@ -103,7 +109,7 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_Attack"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -132,7 +138,7 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_TrainArchers"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -147,11 +153,9 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
-      ],
-      "requiresAny": [
         "commander_TrainLightInfantry"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "TrainHeavyInfantry"
       ]
@@ -164,7 +168,7 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_TrainLightInfantry"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -179,11 +183,9 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
-      ],
-      "requiresAny": [
         "commander_TrainLightCavalry"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "TrainHeavyCavalry"
       ]
@@ -196,11 +198,9 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_TrainHeavyCavalry"
       ],
-      "requiresAny": [
-        "commander_TrainArmy"
-      ],
+      "requiresAny": [],
       "unlocksActions": [
         "TrainCatapults"
       ]
@@ -213,7 +213,7 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_TrainHeavyCavalry"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -290,7 +290,14 @@
         "emmissary_root",
         "emmissary_RevealRumours"
       ],
-      "requiresAny": [],
+      "requiresAny": [
+        "emmissary_SellTimber",
+        "emmissary_BuyTimber",
+        "emmissary_SellLeather",
+        "emmissary_BuyLeather",
+        "emmissary_SellMounts",
+        "emmissary_BuyMounts"
+      ],
       "unlocksActions": [
         "SellIron"
       ]
@@ -305,7 +312,14 @@
         "emmissary_root",
         "emmissary_RevealRumours"
       ],
-      "requiresAny": [],
+      "requiresAny": [
+        "emmissary_SellTimber",
+        "emmissary_BuyTimber",
+        "emmissary_SellLeather",
+        "emmissary_BuyLeather",
+        "emmissary_SellMounts",
+        "emmissary_BuyMounts"
+      ],
       "unlocksActions": [
         "BuyIron"
       ]
@@ -351,7 +365,7 @@
         "emmissary_RevealRumours"
       ],
       "requiresAny": [
-        "emmissary_SellIron"
+        "emmissary_SellSteel"
       ],
       "unlocksActions": [
         "SellMithril"
@@ -368,7 +382,7 @@
         "emmissary_RevealRumours"
       ],
       "requiresAny": [
-        "emmissary_BuyIron"
+        "emmissary_BuySteel"
       ],
       "unlocksActions": [
         "BuyMithril"
@@ -382,11 +396,9 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
-      ],
-      "requiresAny": [
         "agent_WoundCharacter"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "AssassinateCharacter"
       ]
@@ -413,7 +425,8 @@
       "tier": 1,
       "cost": 1,
       "requiresAll": [
-        "agent_root"
+        "agent_root",
+        "agent_ScoutArea"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -430,9 +443,7 @@
         "agent_root",
         "agent_DoubleCharacter"
       ],
-      "requiresAny": [
-        "agent_DoubleCharacter"
-      ],
+      "requiresAny": [],
       "unlocksActions": [
         "UndoubleCharacter"
       ]
@@ -460,11 +471,9 @@
       "cost": 1,
       "requiresAll": [
         "emmissary_root",
-        "emmissary_RevealRumours"
+        "emmissary_InfluenceUpPC"
       ],
-      "requiresAny": [
-        "emmissary_RevealRumours"
-      ],
+      "requiresAny": [],
       "unlocksActions": [
         "InfluenceDownPC"
       ]
@@ -476,8 +485,7 @@
       "tier": 1,
       "cost": 1,
       "requiresAll": [
-        "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_root"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -492,7 +500,7 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_TrainArmy"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -507,11 +515,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
+        "mage_PerceiveDanger"
       ],
-      "requiresAny": [
-        "mage_WizardsFire"
-      ],
+      "requiresAny": [],
       "unlocksActions": [
         "CastDarkness"
       ]
@@ -524,11 +530,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
+        "mage_PerceiveDanger"
       ],
-      "requiresAny": [
-        "mage_ScryArea"
-      ],
+      "requiresAny": [],
       "unlocksActions": [
         "CastLight"
       ]
@@ -541,11 +545,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
-      ],
-      "requiresAny": [
         "mage_CastDarkness"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "ConjureMounts"
       ]
@@ -575,11 +577,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
-      ],
-      "requiresAny": [
         "mage_CastLight"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "OhElbereth"
       ]
@@ -591,8 +591,7 @@
       "tier": 1,
       "cost": 1,
       "requiresAll": [
-        "mage_root",
-        "mage_ScryArea"
+        "mage_root"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -607,11 +606,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
+        "mage_ScryArtifact"
       ],
-      "requiresAny": [
-        "mage_CastLight"
-      ],
+      "requiresAny": [],
       "unlocksActions": [
         "RevealPC"
       ]
@@ -639,11 +636,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
-      ],
-      "requiresAny": [
         "mage_ReturnToCapital"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "Teleport"
       ]
@@ -656,11 +651,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
-      ],
-      "requiresAny": [
         "mage_ConjureMounts"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "SummonMA"
       ]
@@ -673,11 +666,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
-      ],
-      "requiresAny": [
         "mage_Fireworks"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "WizardLaugh"
       ]
@@ -689,8 +680,7 @@
       "tier": 1,
       "cost": 1,
       "requiresAll": [
-        "mage_root",
-        "mage_ScryArea"
+        "mage_root"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -704,8 +694,7 @@
       "tier": 1,
       "cost": 1,
       "requiresAll": [
-        "mage_root",
-        "mage_ScryArea"
+        "mage_root"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -715,11 +704,11 @@
     {
       "id": "core_FindArtifact",
       "name": "Find Artifact",
-      "role": "core",
+      "role": "mage",
       "tier": 0,
       "cost": 1,
       "requiresAll": [
-        "core_root",
+        "mage_root",
         "core_StateAllegiance"
       ],
       "requiresAny": [],
@@ -737,9 +726,7 @@
         "mage_root",
         "mage_ScryArea"
       ],
-      "requiresAny": [
-        "mage_ScryArea"
-      ],
+      "requiresAny": [],
       "unlocksActions": [
         "ScryArtifact"
       ]
@@ -752,11 +739,9 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
-      ],
-      "requiresAny": [
         "agent_StealIron"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "StealGold"
       ]
@@ -769,7 +754,7 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
+        "agent_ScoutArea"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -784,7 +769,7 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
+        "agent_ScoutArea"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -799,7 +784,7 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
+        "agent_ScoutArea"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -814,7 +799,7 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
+        "agent_ScoutArea"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -829,7 +814,7 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
+        "agent_ScoutArea"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -841,7 +826,7 @@
       "name": "Pass",
       "role": "core",
       "tier": 0,
-      "cost": 1,
+      "cost": 0,
       "requiresAll": [
         "core_root"
       ],
@@ -858,7 +843,7 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
+        "mage_ReturnToCapital"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -887,11 +872,9 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
-      ],
-      "requiresAny": [
         "commander_Attack"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "Block"
       ]
@@ -919,7 +902,7 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
+        "mage_Haste"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -934,11 +917,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
-      ],
-      "requiresAny": [
         "mage_CastDarkness"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "IceStorm"
       ]
@@ -951,7 +932,7 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
+        "mage_Halt"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -966,11 +947,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
-      ],
-      "requiresAny": [
         "mage_WizardLaugh"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "WordsOfDispair"
       ]
@@ -1011,7 +990,7 @@
       "name": "State Allegiance",
       "role": "core",
       "tier": 0,
-      "cost": 1,
+      "cost": 0,
       "requiresAll": [
         "core_root"
       ],
@@ -1028,11 +1007,9 @@
       "cost": 1,
       "requiresAll": [
         "mage_root",
-        "mage_ScryArea"
-      ],
-      "requiresAny": [
         "mage_RevealPC"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "PerceiveDanger"
       ]
@@ -1040,12 +1017,12 @@
     {
       "id": "core_TransferArtifact",
       "name": "Transfer Artifact",
-      "role": "core",
+      "role": "mage",
       "tier": 0,
       "cost": 1,
       "requiresAll": [
-        "core_root",
-        "core_StateAllegiance"
+        "mage_root",
+        "core_FindArtifact"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -1060,7 +1037,7 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_TrainLightInfantry"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -1075,7 +1052,7 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_TrainLightCavalry"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -1135,11 +1112,9 @@
       "cost": 1,
       "requiresAll": [
         "emmissary_root",
-        "emmissary_RevealRumours"
-      ],
-      "requiresAny": [
         "emmissary_InfluenceUpPC"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "CreateCamp"
       ]
@@ -1152,11 +1127,9 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
-      ],
-      "requiresAny": [
         "commander_TrainArmy"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "PostCamp"
       ]
@@ -1169,11 +1142,9 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
-      ],
-      "requiresAny": [
         "agent_StealGold"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "StealArtifact"
       ]
@@ -1186,11 +1157,9 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
-      ],
-      "requiresAny": [
         "agent_StealTimber"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "SabotageStorage"
       ]
@@ -1203,11 +1172,9 @@
       "cost": 1,
       "requiresAll": [
         "agent_root",
-        "agent_DoubleCharacter"
-      ],
-      "requiresAny": [
         "agent_SabotageStorage"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "SabotagePort"
       ]
@@ -1220,11 +1187,9 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
-      ],
-      "requiresAny": [
         "commander_RemovePort"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "DestroyPort"
       ]
@@ -1237,7 +1202,7 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_TrainWarships"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -1252,11 +1217,9 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
-      ],
-      "requiresAny": [
         "commander_SiegePC"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "DestroyFortifications"
       ]
@@ -1269,7 +1232,7 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
+        "commander_RemovePort"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -1284,13 +1247,41 @@
       "cost": 1,
       "requiresAll": [
         "commander_root",
-        "commander_TrainMetAtArms"
-      ],
-      "requiresAny": [
         "commander_TrainCatapults"
       ],
+      "requiresAny": [],
       "unlocksActions": [
         "SiegePC"
+      ]
+    },
+    {
+      "id": "core_Duel",
+      "name": "Duel",
+      "role": "core",
+      "tier": 0,
+      "cost": 1,
+      "requiresAll": [
+        "core_root",
+        "core_StateAllegiance"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "Duel"
+      ]
+    },
+    {
+      "id": "core_RefuseDuel",
+      "name": "Refuse Duel",
+      "role": "core",
+      "tier": 0,
+      "cost": 1,
+      "requiresAll": [
+        "core_root",
+        "core_StateAllegiance"
+      ],
+      "requiresAny": [],
+      "unlocksActions": [
+        "RefuseDuel"
       ]
     }
   ]

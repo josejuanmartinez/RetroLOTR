@@ -489,7 +489,7 @@ public class Game : MonoBehaviour
             if (firstAlive.hex != null)
             {
                 if (!player.visibleHexes.Contains(firstAlive.hex)) player.visibleHexes.Add(firstAlive.hex);
-                firstAlive.hex.RevealArea(1, true, player);
+                firstAlive.hex.RevealArea(1, true, null);
             }
             ShowHumanPlayerWidgetsWidgets();
             board.SelectCharacter(firstAlive, true, 1.0f, 0.0f);

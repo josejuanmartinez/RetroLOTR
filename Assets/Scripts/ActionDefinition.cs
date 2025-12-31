@@ -8,6 +8,7 @@ public class ActionDefinition
     public string actionName;
     public string iconName;
     public string description;
+    public string tutorialInfo;
     public int actionId;
     public int difficulty;
     public int commanderSkillRequired;

@@ -184,6 +184,18 @@ public class NonPlayableLeader : Leader
         return hasLeather && hasMounts && hasTimber && hasIron && hasSteel && hasMithril && hasGold;
     }
 
+    private bool HasAnyStoreRequirements()
+    {
+        return nonPlayableLeaderBiome != null
+            && (nonPlayableLeaderBiome.leatherToJoin > 0
+                || nonPlayableLeaderBiome.mountsToJoin > 0
+                || nonPlayableLeaderBiome.timberToJoin > 0
+                || nonPlayableLeaderBiome.ironToJoin > 0
+                || nonPlayableLeaderBiome.steelToJoin > 0
+                || nonPlayableLeaderBiome.mithrilToJoin > 0
+                || nonPlayableLeaderBiome.goldToJoin > 0);
+    }
+
     private bool HasCharacterLevelRequirements(Leader leader)
     {
         IEnumerable<Character> characters = GetLivingCharacters(leader);
@@ -194,6 +206,15 @@ public class NonPlayableLeader : Leader
         return hasCommander && hasAgent && hasEmmissary && hasMage;
     }
 
+    private bool HasAnyCharacterLevelRequirements()
+    {
+        return nonPlayableLeaderBiome != null
+            && (nonPlayableLeaderBiome.commanderLevelToJoin > 0
+                || nonPlayableLeaderBiome.agentLevelToJoin > 0
+                || nonPlayableLeaderBiome.emmissaryLevelToJoin > 0
+                || nonPlayableLeaderBiome.mageLevelToJoin > 0);
+    }
+
     private bool HasCharacterCountRequirements(Leader leader)
     {
         IEnumerable<Character> characters = GetLivingCharacters(leader);
@@ -202,6 +223,15 @@ public class NonPlayableLeader : Leader
         bool emmissaries = nonPlayableLeaderBiome.emmissarysToJoin <= 0 || characters.Count(x => x.GetEmmissary() > 0) >= nonPlayableLeaderBiome.emmissarysToJoin;
         bool mages = nonPlayableLeaderBiome.magesToJoin <= 0 || characters.Count(x => x.GetMage() > 0) >= nonPlayableLeaderBiome.magesToJoin;
         return commanders && agents && emmissaries && mages;
+    }
+
+    private bool HasAnyCharacterCountRequirements()
+    {
+        return nonPlayableLeaderBiome != null
+            && (nonPlayableLeaderBiome.commandersToJoin > 0
+                || nonPlayableLeaderBiome.agentsToJoin > 0
+                || nonPlayableLeaderBiome.emmissarysToJoin > 0
+                || nonPlayableLeaderBiome.magesToJoin > 0);
     }
 
     private bool HasArmyRequirements(Leader leader)
@@ -218,6 +248,20 @@ public class NonPlayableLeader : Leader
         bool ws = nonPlayableLeaderBiome.wsSizeToJoin <= 0 || armies.Sum(x => x.ws) >= nonPlayableLeaderBiome.wsSizeToJoin;
 
         return armyCount && ma && ar && li && hi && lc && hc && ca && ws;
+    }
+
+    private bool HasAnyArmyRequirements()
+    {
+        return nonPlayableLeaderBiome != null
+            && (nonPlayableLeaderBiome.armiesToJoin > 0
+                || nonPlayableLeaderBiome.maSizeToJoin > 0
+                || nonPlayableLeaderBiome.arSizeToJoin > 0
+                || nonPlayableLeaderBiome.liSizeToJoin > 0
+                || nonPlayableLeaderBiome.hiSizeToJoin > 0
+                || nonPlayableLeaderBiome.lcSizeToJoin > 0
+                || nonPlayableLeaderBiome.hcSizeToJoin > 0
+                || nonPlayableLeaderBiome.caSizeToJoin > 0
+                || nonPlayableLeaderBiome.wsSizeToJoin > 0);
     }
 
     private bool HasCompletedCapitalActions(Leader leader)
@@ -259,6 +303,64 @@ public class NonPlayableLeader : Leader
     {
         if (!MeetsJoiningRequirements(leader)) return false;
         return Joined(leader);
+    }
+
+    public float GetPartialJoinChance(Leader leader, float minChance = 0.02f, float maxChance = 0.15f)
+    {
+        if (leader == null || nonPlayableLeaderBiome == null) return 0f;
+        if (!IsAlignmentCompatibleWith(leader)) return 0f;
+
+        if (HasRequiredJoinArtifact(leader)) return maxChance;
+
+        int total = 0;
+        int met = 0;
+
+        if (nonPlayableLeaderBiome.artifactsQtyToJoin > 0)
+        {
+            total++;
+            if (MeetsArtifactCountRequirement(leader)) met++;
+        }
+
+        if (HasAnyStoreRequirements())
+        {
+            total++;
+            if (HasStoreRequirements(leader)) met++;
+        }
+
+        if (HasAnyCharacterLevelRequirements())
+        {
+            total++;
+            if (HasCharacterLevelRequirements(leader)) met++;
+        }
+
+        if (HasAnyCharacterCountRequirements())
+        {
+            total++;
+            if (HasCharacterCountRequirements(leader)) met++;
+        }
+
+        if (HasAnyArmyRequirements())
+        {
+            total++;
+            if (HasArmyRequirements(leader)) met++;
+        }
+
+        if (nonPlayableLeaderBiome.actionsAnywhere != null && nonPlayableLeaderBiome.actionsAnywhere.Count > 0)
+        {
+            total++;
+            if (HasCompletedAnywhereActions(leader)) met++;
+        }
+
+        if (nonPlayableLeaderBiome.actionsAtCapital != null && nonPlayableLeaderBiome.actionsAtCapital.Count > 0)
+        {
+            total++;
+            if (HasCompletedCapitalActions(leader)) met++;
+        }
+
+        if (total <= 0) return minChance;
+
+        float ratio = Mathf.Clamp01(met / (float)total);
+        return Mathf.Lerp(minChance, maxChance, ratio);
     }
 
     override public void Killed(Leader killedBy, bool onlyMask = false)

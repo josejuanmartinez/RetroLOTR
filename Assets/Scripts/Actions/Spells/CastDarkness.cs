@@ -23,6 +23,7 @@ public class CastDarkness: DarkNeutralSpell
                 if (targetHex == null) continue;
                 if (applyGlobalEffects)
                 {
+                    targetHex.MarkDarknessByPlayer();
                     targetHex.ClearScoutingAll();
                 }
                 PC pc = targetHex.GetPC();

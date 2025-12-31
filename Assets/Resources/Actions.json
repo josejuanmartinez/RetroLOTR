@@ -25,7 +25,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 2,
-      "description": "Sell 5 <sprite name=\"steel\"/> from your stores for gold."
+      "description": "Sell 5 <sprite name=\"steel\"/> from your stores for gold.",
+      "tutorialInfo": "Sell 5 <sprite name=\"steel\"/> from your stores for gold."
     },
     {
       "className": "BuySteel",
@@ -52,7 +53,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 1,
-      "description": "Buy 5 <sprite name=\"steel\"/> from the caravans."
+      "description": "Buy 5 <sprite name=\"steel\"/> from the caravans.",
+      "tutorialInfo": "Buy 5 <sprite name=\"steel\"/> from the caravans."
     },
     {
       "className": "TrainArchers",
@@ -79,7 +81,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Add 1 <sprite name=\"ar\"/> to your army here (or form a new army)."
+      "description": "Add 1 <sprite name=\"ar\"/> to your army here (or form a new army).",
+      "tutorialInfo": "Add 1 <sprite name=\"ar\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainMetAtArms",
@@ -106,7 +109,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Add 1 <sprite name=\"ma\"/> to your army here (or form a new army)."
+      "description": "Add 1 <sprite name=\"ma\"/> to your army here (or form a new army).",
+      "tutorialInfo": "Add 1 <sprite name=\"ma\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainLightInfantry",
@@ -133,7 +137,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Add 1 <sprite name=\"li\"/> to your army here (or form a new army)."
+      "description": "Add 1 <sprite name=\"li\"/> to your army here (or form a new army).",
+      "tutorialInfo": "Add 1 <sprite name=\"li\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainHeavyInfantry",
@@ -160,7 +165,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Add 1 <sprite name=\"hi\"/> to your army here (or form a new army)."
+      "description": "Add 1 <sprite name=\"hi\"/> to your army here (or form a new army).",
+      "tutorialInfo": "Add 1 <sprite name=\"hi\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainLightCavalry",
@@ -187,7 +193,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Add 1 <sprite name=\"lc\"/> to your army here (or form a new army)."
+      "description": "Add 1 <sprite name=\"lc\"/> to your army here (or form a new army).",
+      "tutorialInfo": "Add 1 <sprite name=\"lc\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainHeavyCavalry",
@@ -214,7 +221,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Add 1 <sprite name=\"hc\"/> to your army here (or form a new army)."
+      "description": "Add 1 <sprite name=\"hc\"/> to your army here (or form a new army).",
+      "tutorialInfo": "Add 1 <sprite name=\"hc\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainCatapults",
@@ -241,7 +249,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Add 1 <sprite name=\"ca\"/> to your army here (or form a new army)."
+      "description": "Add 1 <sprite name=\"ca\"/> to your army here (or form a new army).",
+      "tutorialInfo": "Add 1 <sprite name=\"ca\"/> to your army here (or form a new army)."
     },
     {
       "className": "TrainWarships",
@@ -268,7 +277,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Add 1 <sprite name=\"ws\"/> at this port."
+      "description": "Add 1 <sprite name=\"ws\"/> at this port.",
+      "tutorialInfo": "Add 1 <sprite name=\"ws\"/> at this port."
     },
     {
       "className": "SellLeather",
@@ -295,7 +305,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 2,
-      "description": "Sell 5 <sprite name=\"leather\"/> from your stores for gold."
+      "description": "Sell 5 <sprite name=\"leather\"/> from your stores for gold.",
+      "tutorialInfo": "Sell 5 <sprite name=\"leather\"/> from your stores for gold."
     },
     {
       "className": "BuyLeather",
@@ -322,7 +333,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 1,
-      "description": "Buy 5 <sprite name=\"leather\"/> from the caravans."
+      "description": "Buy 5 <sprite name=\"leather\"/> from the caravans.",
+      "tutorialInfo": "Buy 5 <sprite name=\"leather\"/> from the caravans."
     },
     {
       "className": "SellMounts",
@@ -349,7 +361,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 2,
-      "description": "Sell 5 <sprite name=\"mounts\"/> from your stores for gold."
+      "description": "Sell 5 <sprite name=\"mounts\"/> from your stores for gold.",
+      "tutorialInfo": "Sell 5 <sprite name=\"mounts\"/> from your stores for gold."
     },
     {
       "className": "BuyMounts",
@@ -376,7 +389,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 1,
-      "description": "Buy 5 <sprite name=\"mounts\"/> from the caravans."
+      "description": "Buy 5 <sprite name=\"mounts\"/> from the caravans.",
+      "tutorialInfo": "Buy 5 <sprite name=\"mounts\"/> from the caravans."
     },
     {
       "className": "SellIron",
@@ -403,7 +417,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 2,
-      "description": "Sell 5 <sprite name=\"iron\"/> from your stores for gold."
+      "description": "Sell 5 <sprite name=\"iron\"/> from your stores for gold.",
+      "tutorialInfo": "Sell 5 <sprite name=\"iron\"/> from your stores for gold."
     },
     {
       "className": "BuyIron",
@@ -430,7 +445,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 1,
-      "description": "Buy 5 <sprite name=\"iron\"/> from the caravans."
+      "description": "Buy 5 <sprite name=\"iron\"/> from the caravans.",
+      "tutorialInfo": "Buy 5 <sprite name=\"iron\"/> from the caravans."
     },
     {
       "className": "SellTimber",
@@ -457,7 +473,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 2,
-      "description": "Sell 5 <sprite name=\"timber\"/> from your stores for gold."
+      "description": "Sell 5 <sprite name=\"timber\"/> from your stores for gold.",
+      "tutorialInfo": "Sell 5 <sprite name=\"timber\"/> from your stores for gold."
     },
     {
       "className": "BuyTimber",
@@ -484,7 +501,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 1,
-      "description": "Buy 5 <sprite name=\"timber\"/> from the caravans."
+      "description": "Buy 5 <sprite name=\"timber\"/> from the caravans.",
+      "tutorialInfo": "Buy 5 <sprite name=\"timber\"/> from the caravans."
     },
     {
       "className": "SellMithril",
@@ -511,7 +529,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 2,
-      "description": "Sell 5 <sprite name=\"mithril\"/> from your stores for gold."
+      "description": "Sell 5 <sprite name=\"mithril\"/> from your stores for gold.",
+      "tutorialInfo": "Sell 5 <sprite name=\"mithril\"/> from your stores for gold."
     },
     {
       "className": "BuyMithril",
@@ -538,7 +557,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 1,
-      "description": "Buy 5 <sprite name=\"mithril\"/> from the caravans."
+      "description": "Buy 5 <sprite name=\"mithril\"/> from the caravans.",
+      "tutorialInfo": "Buy 5 <sprite name=\"mithril\"/> from the caravans."
     },
     {
       "className": "AssassinateCharacter",
@@ -566,7 +586,8 @@
       "reward": 3,
       "advisorType": 4,
       "description": "Attempt to kill an enemy character in this hex; the agent returns to capital and may be wounded.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Attempt to kill an enemy character in this hex; the agent returns to capital and may be wounded."
     },
     {
       "className": "WoundCharacter",
@@ -594,7 +615,8 @@
       "reward": 1,
       "advisorType": 4,
       "description": "Attempt to wound an enemy character here; the agent returns to capital.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Attempt to wound an enemy character here; the agent returns to capital."
     },
     {
       "className": "DoubleCharacter",
@@ -622,7 +644,8 @@
       "reward": 0,
       "advisorType": 4,
       "description": "Turn an enemy character here into your double agent.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Turn an enemy character here into your double agent."
     },
     {
       "className": "UndoubleCharacter",
@@ -649,7 +672,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 4,
-      "description": "Turn an enemy character here into your double agent."
+      "description": "Turn an enemy character here into your double agent.",
+      "tutorialInfo": "Turn an enemy character here into your double agent."
     },
     {
       "className": "InfluenceUpPC",
@@ -676,7 +700,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 3,
-      "description": "Raise the loyalty of the population center in this hex."
+      "description": "Raise the loyalty of the population center in this hex.",
+      "tutorialInfo": "Raise the loyalty of the population center in this hex."
     },
     {
       "className": "InfluenceDownPC",
@@ -704,7 +729,8 @@
       "reward": 2,
       "advisorType": 3,
       "description": "Lower the loyalty of the population center in this hex.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Lower the loyalty of the population center in this hex."
     },
     {
       "className": "Attack",
@@ -732,7 +758,8 @@
       "reward": 3,
       "advisorType": 1,
       "description": "Lead your army to attack enemy armies or population centers in this hex.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Lead your army to attack enemy armies or population centers in this hex."
     },
     {
       "className": "FortifyPC",
@@ -759,7 +786,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Upgrade the fortification level of your population center here."
+      "description": "Upgrade the fortification level of your population center here.",
+      "tutorialInfo": "Upgrade the fortification level of your population center here."
     },
     {
       "className": "CastDarkness",
@@ -787,7 +815,8 @@
       "reward": 1,
       "advisorType": 4,
       "description": "Obscure the area around your hex from enemy sight.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Obscure the area around your hex from enemy sight."
     },
     {
       "className": "CastLight",
@@ -814,7 +843,8 @@
       "mageXP": 10,
       "reward": 1,
       "advisorType": 4,
-      "description": "Reveal the area around your hex."
+      "description": "Reveal the area around your hex.",
+      "tutorialInfo": "Reveal the area around your hex."
     },
     {
       "className": "ConjureMounts",
@@ -841,7 +871,8 @@
       "mageXP": 10,
       "reward": 1,
       "advisorType": 1,
-      "description": "Create 1-3 <sprite name=\"mounts\"/> at a friendly or aligned population center here."
+      "description": "Create 1-3 <sprite name=\"mounts\"/> at a friendly or aligned population center here.",
+      "tutorialInfo": "Create 1-3 <sprite name=\"mounts\"/> at a friendly or aligned population center here."
     },
     {
       "className": "Curse",
@@ -869,7 +900,8 @@
       "reward": 1,
       "advisorType": 4,
       "description": "Damage an enemy character in your hex with dark magic.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Damage an enemy character in your hex with dark magic."
     },
     {
       "className": "OhElbereth",
@@ -897,7 +929,8 @@
       "reward": 1,
       "advisorType": 4,
       "description": "Smite an enemy character here; Nazgul are also halted.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Smite an enemy character here; Nazgul are also halted."
     },
     {
       "className": "ReturnToCapital",
@@ -924,7 +957,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 5,
-      "description": "Teleport this character back to your capital (not available to army commanders)."
+      "description": "Teleport this character back to your capital (not available to army commanders).",
+      "tutorialInfo": "Teleport this character back to your capital (not available to army commanders)."
     },
     {
       "className": "RevealPC",
@@ -951,7 +985,8 @@
       "mageXP": 0,
       "reward": 3,
       "advisorType": 5,
-      "description": "Expose a hidden population center in this hex."
+      "description": "Expose a hidden population center in this hex.",
+      "tutorialInfo": "Expose a hidden population center in this hex."
     },
     {
       "className": "ScryArea",
@@ -978,7 +1013,8 @@
       "mageXP": 5,
       "reward": 0,
       "advisorType": 5,
-      "description": "Reveal a random unseen hex and its surroundings."
+      "description": "Reveal a random unseen hex and its surroundings.",
+      "tutorialInfo": "Reveal a random unseen hex and its surroundings."
     },
     {
       "className": "Teleport",
@@ -1005,7 +1041,8 @@
       "mageXP": 5,
       "reward": 0,
       "advisorType": 5,
-      "description": "Blink to a random explored hex and reveal tiles based on mage skill."
+      "description": "Blink to a random explored hex and reveal tiles based on mage skill.",
+      "tutorialInfo": "Blink to a random explored hex and reveal tiles based on mage skill."
     },
     {
       "className": "SummonMA",
@@ -1032,7 +1069,8 @@
       "mageXP": 15,
       "reward": 1,
       "advisorType": 1,
-      "description": "Add 1 <sprite name=\"ma\"/> to an owned population center here."
+      "description": "Add 1 <sprite name=\"ma\"/> to an owned population center here.",
+      "tutorialInfo": "Add 1 <sprite name=\"ma\"/> to an owned population center here."
     },
     {
       "className": "WizardLaugh",
@@ -1060,7 +1098,8 @@
       "reward": 1,
       "advisorType": 3,
       "description": "Clear doubles on allied characters here or reduce loyalty of a hostile/neutral PC.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Clear doubles on allied characters here or reduce loyalty of a hostile/neutral PC."
     },
     {
       "className": "Heal",
@@ -1087,7 +1126,8 @@
       "mageXP": 5,
       "reward": 1,
       "advisorType": 5,
-      "description": "Heal a wounded allied or aligned character in your hex."
+      "description": "Heal a wounded allied or aligned character in your hex.",
+      "tutorialInfo": "Heal a wounded allied or aligned character in your hex."
     },
     {
       "className": "Fireworks",
@@ -1114,7 +1154,8 @@
       "mageXP": 5,
       "reward": 0,
       "advisorType": 3,
-      "description": "Shift this PC's loyalty using fireworks (up if aligned, down if hostile)."
+      "description": "Shift this PC's loyalty using fireworks (up if aligned, down if hostile).",
+      "tutorialInfo": "Shift this PC's loyalty using fireworks (up if aligned, down if hostile)."
     },
     {
       "className": "FindArtifact",
@@ -1141,7 +1182,8 @@
       "mageXP": 40,
       "reward": 1,
       "advisorType": 5,
-      "description": "Search this hex for hidden artifacts and claim one if found."
+      "description": "Search this hex for hidden artifacts and claim one if found.",
+      "tutorialInfo": "Search this hex for hidden artifacts and claim one if found."
     },
     {
       "className": "ScryArtifact",
@@ -1168,7 +1210,8 @@
       "mageXP": 10,
       "reward": 0,
       "advisorType": 5,
-      "description": "Reveal a hidden artifact's location and show its details."
+      "description": "Reveal a hidden artifact's location and show its details.",
+      "tutorialInfo": "Reveal a hidden artifact's location and show its details."
     },
     {
       "className": "StealGold",
@@ -1196,7 +1239,8 @@
       "reward": 2,
       "advisorType": 2,
       "description": "Steal gold from the current population center.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Steal gold from the current population center."
     },
     {
       "className": "StealIron",
@@ -1224,7 +1268,8 @@
       "reward": 1,
       "advisorType": 2,
       "description": "Steal up to your agent rating in <sprite name=\"iron\"/> from the current population center.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Steal up to your agent rating in <sprite name=\"iron\"/> from the current population center."
     },
     {
       "className": "StealLeather",
@@ -1252,7 +1297,8 @@
       "reward": 1,
       "advisorType": 2,
       "description": "Steal <sprite name=\"leather\"/> from the current population center.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Steal <sprite name=\"leather\"/> from the current population center."
     },
     {
       "className": "StealMithril",
@@ -1280,7 +1326,8 @@
       "reward": 1,
       "advisorType": 2,
       "description": "Steal <sprite name=\"mithril\"/> from the current population center.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Steal <sprite name=\"mithril\"/> from the current population center."
     },
     {
       "className": "StealMounts",
@@ -1308,7 +1355,8 @@
       "reward": 1,
       "advisorType": 2,
       "description": "Steal <sprite name=\"mounts\"/> from the current population center.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Steal <sprite name=\"mounts\"/> from the current population center."
     },
     {
       "className": "StealTimber",
@@ -1336,7 +1384,8 @@
       "reward": 1,
       "advisorType": 2,
       "description": "Steal <sprite name=\"timber\"/> from the current population center.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Steal <sprite name=\"timber\"/> from the current population center."
     },
     {
       "className": "Pass",
@@ -1363,7 +1412,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 0,
-      "description": "End this character's turn without taking another action."
+      "description": "End this character's turn without taking another action.",
+      "tutorialInfo": "End this character's turn without taking another action."
     },
     {
       "className": "Haste",
@@ -1390,7 +1440,8 @@
       "mageXP": 5,
       "reward": 1,
       "advisorType": 1,
-      "description": "Refund movement so this non-army commander can move farther this turn."
+      "description": "Refund movement so this non-army commander can move farther this turn.",
+      "tutorialInfo": "Refund movement so this non-army commander can move farther this turn."
     },
     {
       "className": "ScoutArea",
@@ -1417,7 +1468,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 4,
-      "description": "Reveal the surrounding hexes."
+      "description": "Reveal the surrounding hexes.",
+      "tutorialInfo": "Reveal the surrounding hexes."
     },
     {
       "className": "Block",
@@ -1445,7 +1497,8 @@
       "reward": 1,
       "advisorType": 1,
       "description": "Engage a selected enemy army in this hex (no additional effect yet).",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Engage a selected enemy army in this hex (no additional effect yet)."
     },
     {
       "className": "Courage",
@@ -1472,7 +1525,8 @@
       "mageXP": 10,
       "reward": 1,
       "advisorType": 5,
-      "description": "Encourage a friendly army here for several turns."
+      "description": "Encourage a friendly army here for several turns.",
+      "tutorialInfo": "Encourage a friendly army here for several turns."
     },
     {
       "className": "Halt",
@@ -1500,7 +1554,8 @@
       "reward": 1,
       "advisorType": 1,
       "description": "Stop a non-army enemy character in this hex from acting or moving next turn.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Stop a non-army enemy character in this hex from acting or moving next turn."
     },
     {
       "className": "IceStorm",
@@ -1528,7 +1583,8 @@
       "reward": 1,
       "advisorType": 5,
       "description": "Freeze an enemy army in this hex, halting it for a turn.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Freeze an enemy army in this hex, halting it for a turn."
     },
     {
       "className": "WizardsFire",
@@ -1556,7 +1612,8 @@
       "reward": 1,
       "advisorType": 5,
       "description": "Burn an enemy army in your hex, causing casualties.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Burn an enemy army in your hex, causing casualties."
     },
     {
       "className": "WordsOfDispair",
@@ -1584,7 +1641,8 @@
       "reward": 1,
       "advisorType": 5,
       "description": "Inflict magical casualties on an enemy army sharing your hex.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Inflict magical casualties on an enemy army sharing your hex."
     },
     {
       "className": "YouShallNotPass",
@@ -1612,7 +1670,8 @@
       "reward": 1,
       "advisorType": 5,
       "description": "Halt an enemy character in this hex; Balrogs also take damage.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Halt an enemy character in this hex; Balrogs also take damage."
     },
     {
       "className": "RevealRumours",
@@ -1639,7 +1698,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 3,
-      "description": "Gather rumours based on your emissary skill."
+      "description": "Gather rumours based on your emissary skill.",
+      "tutorialInfo": "Gather rumours based on your emissary skill."
     },
     {
       "className": "StateAllegiance",
@@ -1666,7 +1726,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 3,
-      "description": "At an aligned NPC capital, swear allegiance to recruit them if their conditions are met."
+      "description": "At an aligned NPC capital, swear allegiance to recruit them if their conditions are met.",
+      "tutorialInfo": "At an aligned NPC capital, swear allegiance to recruit them if their conditions are met."
     },
     {
       "className": "PerceiveDanger",
@@ -1693,7 +1754,8 @@
       "mageXP": 10,
       "reward": 1,
       "advisorType": 1,
-      "description": "Reveal the nearest enemy army and the nearby area."
+      "description": "Reveal the nearest enemy army and the nearby area.",
+      "tutorialInfo": "Reveal the nearest enemy army and the nearby area."
     },
     {
       "className": "TransferArtifact",
@@ -1720,7 +1782,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 5,
-      "description": "Give a transferable artifact to a friendly character in this hex."
+      "description": "Give a transferable artifact to a friendly character in this hex.",
+      "tutorialInfo": "Give a transferable artifact to a friendly character in this hex."
     },
     {
       "className": "TrainArmy",
@@ -1747,7 +1810,8 @@
       "mageXP": 0,
       "reward": 1,
       "advisorType": 1,
-      "description": "Drill your troops, improving army XP up to elite levels based on commander skill."
+      "description": "Drill your troops, improving army XP up to elite levels based on commander skill.",
+      "tutorialInfo": "Drill your troops, improving army XP up to elite levels based on commander skill."
     },
     {
       "className": "NameCommander",
@@ -1773,7 +1837,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 1
+      "advisorType": 1,
+      "tutorialInfo": ""
     },
     {
       "className": "NameAgent",
@@ -1799,7 +1864,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 4
+      "advisorType": 4,
+      "tutorialInfo": ""
     },
     {
       "className": "NameEmmissary",
@@ -1825,7 +1891,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 3
+      "advisorType": 3,
+      "tutorialInfo": ""
     },
     {
       "className": "NameMage",
@@ -1851,7 +1918,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 0,
-      "advisorType": 5
+      "advisorType": 5,
+      "tutorialInfo": ""
     },
     {
       "className": "CreateCamp",
@@ -1877,7 +1945,8 @@
       "emmissaryXP": 10,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 2
+      "advisorType": 2,
+      "tutorialInfo": ""
     },
     {
       "className": "PostCamp",
@@ -1903,7 +1972,8 @@
       "emmissaryXP": 0,
       "mageXP": 0,
       "reward": 1,
-      "advisorType": 2
+      "advisorType": 2,
+      "tutorialInfo": ""
     },
     {
       "className": "StealArtifact",
@@ -1931,7 +2001,8 @@
       "reward": 2,
       "advisorType": 4,
       "description": "Attempt to steal a transferable artifact from an enemy character in this hex.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Attempt to steal a transferable artifact from an enemy character in this hex."
     },
     {
       "className": "SabotageStorage",
@@ -1959,7 +2030,8 @@
       "reward": 2,
       "advisorType": 4,
       "description": "Sabotage two different types of stores in the target population center.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Sabotage two different types of stores in the target population center."
     },
     {
       "className": "SabotagePort",
@@ -1987,7 +2059,8 @@
       "reward": 0,
       "advisorType": 4,
       "description": "Sabotage the port in the target population center (requires agent 4).",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Sabotage the port in the target population center (requires agent 4)."
     },
     {
       "className": "DestroyPort",
@@ -2015,7 +2088,8 @@
       "reward": 0,
       "advisorType": 1,
       "description": "Destroy the port in the target population center (requires commander 3).",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Destroy the port in the target population center (requires commander 3)."
     },
     {
       "className": "RemovePort",
@@ -2042,7 +2116,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 1,
-      "description": "Remove the port from your own population center (requires commander 1)."
+      "description": "Remove the port from your own population center (requires commander 1).",
+      "tutorialInfo": "Remove the port from your own population center (requires commander 1)."
     },
     {
       "className": "DestroyFortifications",
@@ -2070,7 +2145,8 @@
       "reward": 2,
       "advisorType": 1,
       "description": "Attempt to reduce the fortifications of an enemy population center by one level.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Attempt to reduce the fortifications of an enemy population center by one level."
     },
     {
       "className": "RemoveFortifications",
@@ -2097,7 +2173,8 @@
       "mageXP": 0,
       "reward": 0,
       "advisorType": 1,
-      "description": "Reduce your own fortifications by one level."
+      "description": "Reduce your own fortifications by one level.",
+      "tutorialInfo": "Reduce your own fortifications by one level."
     },
     {
       "className": "SiegePC",
@@ -2125,7 +2202,64 @@
       "reward": 3,
       "advisorType": 1,
       "description": "Lay siege to an enemy population center to reduce its population. Catapults improve success.",
-      "isOffensive": true
+      "isOffensive": true,
+      "tutorialInfo": "Lay siege to an enemy population center to reduce its population. Catapults improve success."
+    },
+    {
+      "className": "Duel",
+      "actionName": "Duel",
+      "iconName": "",
+      "actionId": 181,
+      "difficulty": 0,
+      "commanderSkillRequired": 0,
+      "agentSkillRequired": 0,
+      "emissarySkillRequired": 0,
+      "mageSkillRequired": 0,
+      "leatherCost": 0,
+      "mountsCost": 0,
+      "timberCost": 0,
+      "ironCost": 0,
+      "steelCost": 0,
+      "mithrilCost": 0,
+      "goldCost": 0,
+      "isBuyCaravans": false,
+      "isSellCaravans": false,
+      "commanderXP": 0,
+      "agentXP": 0,
+      "emmissaryXP": 0,
+      "mageXP": 0,
+      "reward": 0,
+      "advisorType": 0,
+      "description": "Challenge an enemy character in this hex to a duel.",
+      "tutorialInfo": "Challenge an enemy character in this hex to a duel."
+    },
+    {
+      "className": "RefuseDuel",
+      "actionName": "Refuse Duel",
+      "iconName": "",
+      "actionId": 182,
+      "difficulty": 0,
+      "commanderSkillRequired": 0,
+      "agentSkillRequired": 0,
+      "emissarySkillRequired": 0,
+      "mageSkillRequired": 0,
+      "leatherCost": 0,
+      "mountsCost": 0,
+      "timberCost": 0,
+      "ironCost": 0,
+      "steelCost": 0,
+      "mithrilCost": 0,
+      "goldCost": 0,
+      "isBuyCaravans": false,
+      "isSellCaravans": false,
+      "commanderXP": 0,
+      "agentXP": 0,
+      "emmissaryXP": 0,
+      "mageXP": 0,
+      "reward": 0,
+      "advisorType": 0,
+      "description": "Refuse duels for the next turn. Challengers will be turned away.",
+      "tutorialInfo": "Refuse duels for the next turn. Challengers will be turned away."
     }
   ]
 }

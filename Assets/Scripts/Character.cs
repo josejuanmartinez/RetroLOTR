@@ -54,6 +54,7 @@ public class Character : MonoBehaviour
     [Header("Skill Tree")]
     [SerializeField] private int skillPointsAvailable = 0;
     private readonly HashSet<string> unlockedSkillNodes = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> unlockedSkillNodesByPoints = new(StringComparer.OrdinalIgnoreCase);
 
     [Header("AI")]
     public bool isPlayerControlled = true;
@@ -65,6 +66,7 @@ public class Character : MonoBehaviour
     [Header("Statuses")]
     [SerializeField] private bool isHalted = false;
     [SerializeField] private int encouragedTurns = -1; // 0 means this turn is still encouraged
+    [SerializeField] private int refusingDuelsTurns = 0;
 
     private BiomeConfig characterBiome;
 
@@ -75,6 +77,7 @@ public class Character : MonoBehaviour
     {
         public bool isHalted;
         public int encouragedTurns;
+        public int refusingDuelsTurns;
         public int moved;
         public bool hasActionedThisTurn;
         public bool isEmbarked;
@@ -190,6 +193,17 @@ public class Character : MonoBehaviour
         return encouragedTurns > -1;
     }
 
+    public bool IsRefusingDuels()
+    {
+        return refusingDuelsTurns > 0;
+    }
+
+    public void RefuseDuels(int turns = 1)
+    {
+        if (turns <= 0) return;
+        refusingDuelsTurns = Mathf.Max(refusingDuelsTurns, turns);
+    }
+
     public void NewTurn()
     {
         // Debug.Log($"New turn for {characterName} {(isPlayerControlled? "[PLAYER]": "[AI]")}");
@@ -206,6 +220,11 @@ public class Character : MonoBehaviour
         // COURAGE
         encouragedTurns = Mathf.Max(encouragedTurns - 1, -1);
         if (IsEncouraged() && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this,  "Encouraged", Color.green);
+        if (refusingDuelsTurns > 0 && GetOwner() == FindFirstObjectByType<Game>().player)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Refusing duels", Color.yellow);
+        }
+        refusingDuelsTurns = Mathf.Max(0, refusingDuelsTurns - 1);
         // STATUS EFFECTS (TODO)
         StoreReachableHexes();
         StoreRelevantHexes();
@@ -219,6 +238,7 @@ public class Character : MonoBehaviour
         {
             isHalted = isHalted,
             encouragedTurns = encouragedTurns,
+            refusingDuelsTurns = refusingDuelsTurns,
             moved = moved,
             hasActionedThisTurn = hasActionedThisTurn,
             isEmbarked = isEmbarked
@@ -229,6 +249,7 @@ public class Character : MonoBehaviour
     {
         isHalted = snapshot.isHalted;
         encouragedTurns = snapshot.encouragedTurns;
+        refusingDuelsTurns = snapshot.refusingDuelsTurns;
         moved = snapshot.moved;
         hasActionedThisTurn = snapshot.hasActionedThisTurn;
         isEmbarked = snapshot.isEmbarked;
@@ -279,6 +300,10 @@ public class Character : MonoBehaviour
             if (!TrySpendSkillPoint()) return false;
         }
         unlockedSkillNodes.Add(nodeId);
+        if (!ignoreRequirements)
+        {
+            unlockedSkillNodesByPoints.Add(nodeId);
+        }
         return true;
     }
 
@@ -475,28 +500,74 @@ public class Character : MonoBehaviour
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} undoubled by {doubledBy.characterName}", Color.green);
     }
 
+    public int GetBaseCommander()
+    {
+        return commander;
+    }
+
+    public int GetBaseAgent()
+    {
+        return agent;
+    }
+
+    public int GetBaseEmmissary()
+    {
+        return emmissary;
+    }
+
+    public int GetBaseMage()
+    {
+        return mage;
+    }
+
     public int GetCommander()
     {
-        int total = commander + artifacts.FindAll(x => x.commanderBonus > 0).Sum(x => x.commanderBonus);
+        int total = GetRoleLevel("commander") + artifacts.FindAll(x => x.commanderBonus > 0).Sum(x => x.commanderBonus);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetAgent()
     {
-        int total = agent + artifacts.FindAll(x => x.agentBonus > 0).Sum(x => x.agentBonus);
+        int total = GetRoleLevel("agent") + artifacts.FindAll(x => x.agentBonus > 0).Sum(x => x.agentBonus);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetEmmissary()
     {
-        int total = emmissary + artifacts.FindAll(x => x.emmissaryBonus > 0).Sum(x => x.emmissaryBonus);
+        int total = GetRoleLevel("emmissary") + artifacts.FindAll(x => x.emmissaryBonus > 0).Sum(x => x.emmissaryBonus);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetMage()
     {
-        int total = mage + artifacts.FindAll(x => x.mageBonus > 0).Sum(x => x.mageBonus);
+        int total = GetRoleLevel("mage") + artifacts.FindAll(x => x.mageBonus > 0).Sum(x => x.mageBonus);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
+    }
+
+    private int GetRoleLevel(string roleId)
+    {
+        if (string.IsNullOrWhiteSpace(roleId)) return 0;
+        int baseLevel = roleId.ToLowerInvariant() switch
+        {
+            "commander" => commander > 0 ? 1 : 0,
+            "agent" => agent > 0 ? 1 : 0,
+            "emmissary" => emmissary > 0 ? 1 : 0,
+            "mage" => mage > 0 ? 1 : 0,
+            _ => 0
+        };
+
+        if (baseLevel == 0) return 0;
+
+        SkillTreeDefinition tree = SkillTreeService.GetDefinition();
+        if (tree?.nodes == null) return baseLevel;
+
+        int unlocked = tree.nodes.Count(node =>
+            node != null
+            && string.Equals(node.role, roleId, StringComparison.OrdinalIgnoreCase)
+            && node.cost > 0
+            && unlockedSkillNodesByPoints.Contains(node.id));
+
+        return baseLevel + unlocked;
     }
 
     public void SetCommander(int level)

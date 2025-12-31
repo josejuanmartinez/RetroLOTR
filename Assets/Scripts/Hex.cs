@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,10 +62,18 @@ public class Hex : MonoBehaviour
     public SpriteRenderer neutralArmySR;
     public SpriteRenderer darkArmySR;
 
-    [Header("Hover")]
+    [Header("Frames")]
     public GameObject hoverHexFrame;
-    [Header("Selected")]
+    public GameObject tipHexFrame;
+
+    [Header("Particles")]
     public GameObject selectedParticles;
+    public GameObject scoutedParticles;
+    public GameObject fireParticles;
+    public GameObject iceParticles;
+    public GameObject darknessParticles;
+
+
 
     [Header("Data")]
     [SerializeField] private PC pc;
@@ -104,6 +113,11 @@ public class Hex : MonoBehaviour
     private static readonly HashSet<Vector2Int> areaVisited = new();
 
     private const string Unknown = "Unknown character(s)";
+    private const int DarknessTurnsDefault = 2;
+
+    private int darknessTurnsRemaining = 0;
+    private Coroutine fireParticlesRoutine;
+    private Coroutine iceParticlesRoutine;
 
     void Awake()
     {
@@ -128,6 +142,7 @@ public class Hex : MonoBehaviour
 
         UpdateMinimapTerrain(IsHexRevealed());
         UpdateVisibilityForFog();
+        UpdateParticles();
     }
 
     public bool IsHexRevealed() => !fow.activeSelf;
@@ -850,6 +865,7 @@ public class Hex : MonoBehaviour
                 }
             }
             UpdateArtifactVisibility();
+            UpdateParticles();
             return;
         }
 
@@ -869,6 +885,10 @@ public class Hex : MonoBehaviour
         SetActiveFast(movement, false);
         SetActiveFast(hoverHexFrame, false);
         SetActiveFast(selectedParticles, false);
+        StopOneShotParticles(fireParticles, ref fireParticlesRoutine);
+        StopOneShotParticles(iceParticles, ref iceParticlesRoutine);
+        SetActiveFast(scoutedParticles, false);
+        SetActiveFast(darknessParticles, false);
 
         if (pcHover) { pcHover.Initialize("", tooltipFontSize); SetActiveFast(pcHover.gameObject, false); }
         if (freeArmiesAtHexHover) { freeArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(freeArmiesAtHexHover.gameObject, false); }
@@ -884,6 +904,8 @@ public class Hex : MonoBehaviour
                 if (placeholder != null) SetActiveFast(placeholder.gameObject, false);
             }
         }
+
+        UpdateParticles();
     }
 
     private bool ShouldShowPcPort()
@@ -1067,7 +1089,15 @@ public class Hex : MonoBehaviour
 
     public void ClearScouting()
     {
-        if (scoutedByTurns.Count == 0 && anchoredWarshipsTotal == 0 && persistentScoutedBy.Count == 0) return;
+        if (scoutedByTurns.Count == 0 && anchoredWarshipsTotal == 0 && persistentScoutedBy.Count == 0)
+        {
+            if (darknessTurnsRemaining > 0)
+            {
+                darknessTurnsRemaining--;
+                UpdateParticles();
+            }
+            return;
+        }
         if (scoutedByTurns.Count > 0)
         {
             List<Leader> leaders = scoutedByTurns.Keys.ToList();
@@ -1079,6 +1109,8 @@ public class Hex : MonoBehaviour
             }
         }
         RebuildScoutingCache();
+        if (darknessTurnsRemaining > 0) darknessTurnsRemaining--;
+        UpdateParticles();
         RefreshHoverText();
     }
 
@@ -1405,6 +1437,7 @@ public class Hex : MonoBehaviour
         {
             if (entry.Key != null) scoutedBy.Add(entry.Key);
         }
+        UpdateParticles();
     }
 
     private bool ShouldIgnoreScouting(Leader leader)
@@ -1413,6 +1446,97 @@ public class Hex : MonoBehaviour
         if (leader is NonPlayableLeader) return true;
         if (leader is PlayableLeader pl && game != null && game.player != pl) return true;
         return false;
+    }
+
+    public void MarkDarknessByPlayer(int turns = DarknessTurnsDefault)
+    {
+        if (turns <= 0) return;
+        darknessTurnsRemaining = Math.Max(darknessTurnsRemaining, turns);
+        UpdateParticles();
+    }
+
+    public void PlayFireParticles()
+    {
+        if (!ShouldShowPlayerParticles()) return;
+        PlayOneShotParticles(fireParticles, ref fireParticlesRoutine);
+    }
+
+    public void PlayIceParticles()
+    {
+        if (!ShouldShowPlayerParticles()) return;
+        PlayOneShotParticles(iceParticles, ref iceParticlesRoutine);
+    }
+
+    private bool ShouldShowPlayerParticles()
+    {
+        if (!IsHexSeen()) return false;
+        if (game == null) game = FindFirstObjectByType<Game>();
+        return game != null && game.player != null;
+    }
+
+    private void UpdateParticles()
+    {
+        if (game == null) game = FindFirstObjectByType<Game>();
+        PlayableLeader player = game != null ? game.player : null;
+        bool seen = IsHexSeen();
+        bool scoutedByPlayer = player != null && scoutedBy.Contains(player);
+        SetActiveFast(scoutedParticles, seen && scoutedByPlayer);
+        SetActiveFast(darknessParticles, seen && darknessTurnsRemaining > 0);
+    }
+
+    private void PlayOneShotParticles(GameObject particlesObject, ref Coroutine routine)
+    {
+        if (!particlesObject) return;
+        if (routine != null)
+        {
+            StopCoroutine(routine);
+            routine = null;
+        }
+
+        SetActiveFast(particlesObject, true);
+        ParticleSystem[] systems = particlesObject.GetComponentsInChildren<ParticleSystem>(true);
+        if (systems.Length == 0) return;
+
+        for (int i = 0; i < systems.Length; i++)
+        {
+            if (systems[i] == null) continue;
+            systems[i].Clear(true);
+            systems[i].Play(true);
+        }
+
+        routine = StartCoroutine(DisableParticlesWhenDone(particlesObject, systems));
+    }
+
+    private IEnumerator DisableParticlesWhenDone(GameObject particlesObject, ParticleSystem[] systems)
+    {
+        if (!particlesObject || systems == null || systems.Length == 0) yield break;
+
+        bool anyAlive = true;
+        while (anyAlive)
+        {
+            anyAlive = false;
+            for (int i = 0; i < systems.Length; i++)
+            {
+                if (systems[i] != null && systems[i].IsAlive(true))
+                {
+                    anyAlive = true;
+                    break;
+                }
+            }
+            if (anyAlive) yield return null;
+        }
+
+        SetActiveFast(particlesObject, false);
+    }
+
+    private void StopOneShotParticles(GameObject particlesObject, ref Coroutine routine)
+    {
+        if (routine != null)
+        {
+            StopCoroutine(routine);
+            routine = null;
+        }
+        SetActiveFast(particlesObject, false);
     }
 
     // Safe SetActive that avoids redundant calls/dirtying the obj

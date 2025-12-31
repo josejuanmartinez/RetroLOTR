@@ -39,6 +39,7 @@ public class IceStorm : DarkNeutralSpell
             if (army == null) return false;
 
             army.commander.Halt();
+            if (c.hex != null) c.hex.PlayIceParticles();
             return true;
         }
         base.Initialize(c, condition, effect, iceStormAsync);

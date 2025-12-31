@@ -42,6 +42,7 @@ public class WizardsFire : FreeSpell
             float casualties = Math.Clamp(UnityEngine.Random.Range(0.05f, 0.25f) * c.GetMage(), 0.1f, 1f);
             casualties = Math.Clamp(ApplySpellEffectMultiplier(c, casualties), 0.1f, 1f);
             army.ReceiveCasualties(casualties, c.GetOwner());
+            if (c.hex != null) c.hex.PlayFireParticles();
             return true;
         }
         base.Initialize(c, condition, effect, wizardsFireAsync);

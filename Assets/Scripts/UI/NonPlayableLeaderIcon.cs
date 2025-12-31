@@ -60,9 +60,10 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
     {
         border.color = Color.white;
     }
-    public void RevealToPlayer()
+    public void RevealToPlayer(bool ignoreIfAlreadyRevealed = false)
     {
-        if (!isUnrevealed || !game.IsPlayerCurrentlyPlaying()) return;
+        if(!ignoreIfAlreadyRevealed && !isUnrevealed) return;
+        if (!game.IsPlayerCurrentlyPlaying()) return;
         PlayableLeader player = game.player;
         if (player != null)
         {

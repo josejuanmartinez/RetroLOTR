@@ -14,6 +14,7 @@ public class PopupManager : MonoBehaviour
     public GameObject container;
     public Image actor1;
     public Image actor2;
+    public Sprite actorReplacement;
     public RawImage actor1RawImage;
     public RawImage actor2RawImage;
     public VideoPlayer actor1Video;
@@ -278,9 +279,10 @@ public class PopupManager : MonoBehaviour
 
     private void SetActor2Active(bool isActive)
     {
-        if (actor2 != null) actor2.gameObject.SetActive(isActive);
-        if (actor2RawImage != null) actor2RawImage.gameObject.SetActive(isActive);
-        if (actor2Video != null) actor2Video.gameObject.SetActive(isActive);
+        if(!isActive) actor2.sprite = actorReplacement; 
+        actor2.gameObject.SetActive(true);
+        actor2RawImage.gameObject.SetActive(true);
+        actor2Video.gameObject.SetActive(true);
     }
 
     private static void SetActorVisuals(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
@@ -308,8 +310,8 @@ public class PopupManager : MonoBehaviour
         {
             image.enabled = !hasClip;
             if (!hasClip)
-            {
-                image.sprite = fallbackSprite;
+            {                
+                image.sprite = fallbackSprite? fallbackSprite: Instance.actorReplacement;
             }
         }
     }
