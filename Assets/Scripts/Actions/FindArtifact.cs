@@ -85,7 +85,7 @@ public class FindArtifact: MageAction
                 return true;
             }
 
-            string answer = await SelectionDialog.Ask(riddle.prompt, "Speak", "Leave", riddle.options, isAI);
+            string answer = await SelectionDialog.Ask(riddle.prompt, "Speak", "Leave", riddle.options, isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
             if (string.Equals(answer, riddle.answer, StringComparison.OrdinalIgnoreCase))
             {
                 c.artifacts.Add(artifact);

@@ -26,7 +26,7 @@ public class YouShallNotPass : FreeSpell
             Character target = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select character to halt", "Ok", "Cancel", chars.Select(x => x.characterName).ToList(), isAI);
+                string targetCharacter = await SelectionDialog.Ask("Select character to halt", "Ok", "Cancel", chars.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
                 if (string.IsNullOrEmpty(targetCharacter)) return false;
                 target = chars.Find(x => x.characterName == targetCharacter);
             }

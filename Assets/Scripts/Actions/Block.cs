@@ -26,7 +26,7 @@ public class Block : CommanderArmyAction
             Army enemy = null;
             if(!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select enemy army", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI);    
+                string targetCharacter = await SelectionDialog.Ask("Select enemy army", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);    
                 if (string.IsNullOrEmpty(targetCharacter)) return false;
                 Character enemyChar = c.hex.characters.Find(x => x.characterName == targetCharacter);
                 if (enemyChar == null || !enemyChar.IsArmyCommander()) return false;

@@ -1525,72 +1525,8 @@ public class CharacterAction : SearcherByName
     private async Task TryPromptSkillUnlock(Character actor)
     {
         if (actor == null) return;
-        if (actor.GetSkillPoints() <= 0) return;
-        if (!SkillTreeService.ShouldUseSkillTree(actor)) return;
-        if (TutorialManager.Instance != null && TutorialManager.Instance.IsActiveFor(actor.GetOwner())) return;
-        if (SelectionDialog.IsShowing) return;
-
-        List<string> options = BuildSkillUnlockOptions(actor);
-        if (options.Count == 0) return;
-
-        string message = $"You gained a skill point. Choose a skill to unlock ({actor.GetSkillPoints()} available).";
-        var selectionTask = SelectionDialog.Ask(message, "Unlock", "Later", options, false);
-        while (!selectionTask.IsCompleted)
-        {
-            await Task.Yield();
-        }
-
-        string selection = selectionTask.Result;
-        if (string.IsNullOrWhiteSpace(selection)) return;
-        if (!TryResolveNodeId(selection, out string nodeId)) return;
-
-        if (actor.UnlockSkillNode(nodeId))
-        {
-            string nodeName = GetNodeDisplayName(nodeId);
-            MessageDisplay.ShowMessage($"{actor.characterName} unlocked {nodeName}.", Color.green);
-        }
+        await SkillTreeService.PromptSkillUnlock(actor, false);
     }
 
-    private static List<string> BuildSkillUnlockOptions(Character actor)
-    {
-        List<string> options = new();
-        if (actor == null) return options;
-        SkillTreeDefinition tree = SkillTreeService.GetDefinition();
-        if (tree?.nodes == null) return options;
-
-        foreach (SkillTreeNode node in tree.nodes)
-        {
-            if (node == null || string.IsNullOrWhiteSpace(node.id)) continue;
-            if (node.cost <= 0) continue;
-            if (actor.IsSkillNodeUnlocked(node.id)) continue;
-            if (!SkillTreeService.CanUnlockNode(actor, node.id)) continue;
-            string displayName = !string.IsNullOrWhiteSpace(node.name) ? node.name : node.id;
-            options.Add($"{displayName} ({node.id})");
-        }
-
-        return options;
-    }
-
-    private static bool TryResolveNodeId(string selection, out string nodeId)
-    {
-        nodeId = null;
-        if (string.IsNullOrWhiteSpace(selection)) return false;
-        int start = selection.LastIndexOf('(');
-        int end = selection.LastIndexOf(')');
-        if (start >= 0 && end > start)
-        {
-            nodeId = selection.Substring(start + 1, end - start - 1);
-            return !string.IsNullOrWhiteSpace(nodeId);
-        }
-        return false;
-    }
-
-    private static string GetNodeDisplayName(string nodeId)
-    {
-        if (string.IsNullOrWhiteSpace(nodeId)) return string.Empty;
-        SkillTreeDefinition tree = SkillTreeService.GetDefinition();
-        if (tree?.nodes == null) return nodeId;
-        SkillTreeNode node = tree.nodes.FirstOrDefault(x => x != null && string.Equals(x.id, nodeId, StringComparison.OrdinalIgnoreCase));
-        return node != null && !string.IsNullOrWhiteSpace(node.name) ? node.name : nodeId;
-    }
+    
 }

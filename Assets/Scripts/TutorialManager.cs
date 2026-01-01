@@ -33,7 +33,6 @@ public class TutorialStep
     public string actor1;
     public string actor2;
     public int grantSkillPoints = 0;
-    public List<string> allowedSkillNodes = new();
     public TutorialRequirements requirements;
     public TutorialRewards rewards;
 }
@@ -109,21 +108,13 @@ public class TutorialManager : MonoBehaviour
         requiredStepIndex = 0;
         completedOptionalSteps.Clear();
         BuildArtifactCatalog();
+        UITutorialObjectivesManager.Instance?.ClearObjectives();
         ActivateCurrentRequiredStep();
     }
 
     public bool IsActiveFor(Character queryLeader)
     {
         return activeFlow != null && leader == queryLeader && !IsCompleted();
-    }
-
-    public bool CanUnlockNode(Character queryLeader, string nodeId)
-    {
-        if (!IsActiveFor(queryLeader)) return true;
-        TutorialStep step = GetCurrentRequiredStep();
-        if (step == null) return true;
-        if (step.allowedSkillNodes == null || step.allowedSkillNodes.Count == 0) return false;
-        return step.allowedSkillNodes.Any(x => string.Equals(x, nodeId, StringComparison.OrdinalIgnoreCase));
     }
 
     public void HandleActionExecuted(Character actor, string actionClassName, Hex actionHex)
@@ -208,6 +199,17 @@ public class TutorialManager : MonoBehaviour
         TutorialStep step = GetCurrentRequiredStep();
         if (step == null || leader == null) return;
         ShowStepPopup(step);
+        UpdateObjectiveDisplay(step);
+    }
+
+    public void RefreshObjectiveUI()
+    {
+        UITutorialObjectivesManager.Instance?.ClearObjectives();
+        TutorialStep step = GetCurrentRequiredStep();
+        if (step != null)
+        {
+            UpdateObjectiveDisplay(step);
+        }
     }
 
     private void ShowStepPopup(TutorialStep step)
@@ -235,7 +237,6 @@ public class TutorialManager : MonoBehaviour
         }
 
         if (step == null || leader == null) return;
-        if (step.allowedSkillNodes == null || step.allowedSkillNodes.Count == 0) return;
         if (leader.GetSkillPoints() <= 0) return;
 
         pendingSkillPrompt = StartCoroutine(WaitForPopupThenPrompt(step));
@@ -252,11 +253,11 @@ public class TutorialManager : MonoBehaviour
         if (!IsActiveFor(leader)) yield break;
         if (leader.GetSkillPoints() <= 0) yield break;
 
-        List<string> options = BuildUnlockOptions(step.allowedSkillNodes);
+        List<string> options = BuildUnlockOptionsFromAllNodes();
         if (options.Count == 0) yield break;
 
         string message = $"You gained a skill point. Choose a skill to unlock ({leader.GetSkillPoints()} available).";
-        var selectionTask = SelectionDialog.Ask(message, "Unlock", "Later", options, false);
+        var selectionTask = SelectionDialog.Ask(message, "Unlock", string.Empty, options, false, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(leader) : null);
         while (!selectionTask.IsCompleted)
         {
             yield return null;
@@ -274,21 +275,23 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    private List<string> BuildUnlockOptions(List<string> allowedNodes)
+    private List<string> BuildUnlockOptionsFromAllNodes()
     {
         List<string> options = new();
-        if (allowedNodes == null || leader == null) return options;
+        if (leader == null) return options;
         SkillTreeDefinition tree = SkillTreeService.GetDefinition();
-        foreach (string nodeId in allowedNodes)
+        if (tree?.nodes == null) return options;
+
+        foreach (SkillTreeNode node in tree.nodes)
         {
-            if (string.IsNullOrWhiteSpace(nodeId)) continue;
-            if (leader.IsSkillNodeUnlocked(nodeId)) continue;
-            SkillTreeNode node = tree?.nodes?.FirstOrDefault(x => x != null && string.Equals(x.id, nodeId, StringComparison.OrdinalIgnoreCase));
-            if (node != null && node.cost <= 0) continue;
-            if (!SkillTreeService.CanUnlockNode(leader, nodeId)) continue;
-            string display = $"{GetNodeDisplayName(nodeId)} ({nodeId})";
-            options.Add(display);
+            if (node == null || string.IsNullOrWhiteSpace(node.id)) continue;
+            if (node.cost <= 0) continue;
+            if (leader.IsSkillNodeUnlocked(node.id)) continue;
+            if (!SkillTreeService.CanUnlockNode(leader, node.id)) continue;
+            string displayName = !string.IsNullOrWhiteSpace(node.name) ? node.name : node.id;
+            options.Add($"{displayName} ({node.id})");
         }
+
         return options;
     }
 
@@ -445,7 +448,19 @@ public class TutorialManager : MonoBehaviour
                 && string.Equals(ownerName, req.targetLeader, StringComparison.OrdinalIgnoreCase);
             bool matchesPc = !string.IsNullOrWhiteSpace(pcName)
                 && string.Equals(pcName, req.targetLeader, StringComparison.OrdinalIgnoreCase);
-            if (!matchesOwner && !matchesPc) return false;
+            bool matchesCharacter = actionHex.characters.Any(c => c != null
+                && string.Equals(c.characterName, req.targetLeader, StringComparison.OrdinalIgnoreCase));
+            if (!matchesOwner && !matchesPc && !matchesCharacter)
+            {
+                bool isAllegiance = string.Equals(actionClassName, "StateAllegiance", StringComparison.OrdinalIgnoreCase);
+                bool matchesLocation = !string.IsNullOrWhiteSpace(step.targetLocation)
+                    && !string.IsNullOrWhiteSpace(pcName)
+                    && string.Equals(pcName, step.targetLocation, StringComparison.OrdinalIgnoreCase);
+                if (!(isAllegiance && matchesLocation && pc != null && pc.owner == null))
+                {
+                    return false;
+                }
+            }
         }
 
         if (req != null && !string.IsNullOrWhiteSpace(req.targetCharacter))
@@ -481,6 +496,34 @@ public class TutorialManager : MonoBehaviour
         }
         ApplyRewards(step, actor);
         ScheduleSkillUnlockPrompt(step);
+        RemoveObjectiveDisplay(step);
+    }
+
+    private void UpdateObjectiveDisplay(TutorialStep step)
+    {
+        if (step == null) return;
+        string id = step.stepId;
+        if (string.IsNullOrWhiteSpace(id)) return;
+        string text = GetObjectiveText(step);
+        if (string.IsNullOrWhiteSpace(text)) return;
+        UITutorialObjectivesManager.Instance?.AddObjective(id, text);
+    }
+
+    private void RemoveObjectiveDisplay(TutorialStep step)
+    {
+        if (step == null) return;
+        string id = step.stepId;
+        if (string.IsNullOrWhiteSpace(id)) return;
+        UITutorialObjectivesManager.Instance?.RemoveObjective(id);
+    }
+
+    private static string GetObjectiveText(TutorialStep step)
+    {
+        if (step == null) return string.Empty;
+        if (!string.IsNullOrWhiteSpace(step.description)) return step.description;
+        if (!string.IsNullOrWhiteSpace(step.narration)) return step.narration;
+        if (!string.IsNullOrWhiteSpace(step.title)) return step.title;
+        return string.Empty;
     }
 
     private void ApplyRewards(TutorialStep step, Character actor)

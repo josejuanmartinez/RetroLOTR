@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [Serializable]
@@ -117,6 +118,54 @@ public static class SkillTreeService
         }
     }
 
+    public static int GrantRoleSkillPoints(Character character)
+    {
+        if (character == null) return 0;
+        int points = character.GetBaseCommander()
+            + character.GetBaseAgent()
+            + character.GetBaseEmmissary()
+            + character.GetBaseMage();
+        if (points > 0)
+        {
+            character.AddSkillPoints(points);
+        }
+        return points;
+    }
+
+    public static async Task PromptSkillUnlock(Character actor, bool isAI)
+    {
+        if (actor == null) return;
+        if (!ShouldUseSkillTree(actor)) return;
+        if (!isAI && SelectionDialog.IsShowing) return;
+
+        while (actor.GetSkillPoints() > 0)
+        {
+            List<string> options = BuildSkillUnlockOptions(actor);
+            if (options.Count == 0) return;
+
+            string message = $"You gained a skill point. Choose a skill to unlock ({actor.GetSkillPoints()} available).";
+            var selectionTask = SelectionDialog.Ask(message, "Unlock", string.Empty, options, isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(actor) : null);
+            while (!selectionTask.IsCompleted)
+            {
+                await Task.Yield();
+            }
+
+            string selection = selectionTask.Result;
+            if (string.IsNullOrWhiteSpace(selection)) return;
+            if (!TryResolveNodeId(selection, out string nodeId)) return;
+
+            if (actor.UnlockSkillNode(nodeId))
+            {
+                string nodeName = GetNodeDisplayName(nodeId);
+                MessageDisplay.ShowMessage($"{actor.characterName} unlocked {nodeName}.", Color.green);
+            }
+            else
+            {
+                return;
+            }
+        }
+    }
+
     private static SkillTreeNode GetNodeById(string nodeId)
     {
         EnsureLoaded();
@@ -190,6 +239,49 @@ public static class SkillTreeService
         if (character.GetAgent() > 0) character.UnlockSkillNode("agent_root", ignoreRequirements: true);
         if (character.GetEmmissary() > 0) character.UnlockSkillNode("emmissary_root", ignoreRequirements: true);
         if (character.GetMage() > 0) character.UnlockSkillNode("mage_root", ignoreRequirements: true);
+    }
+
+    private static List<string> BuildSkillUnlockOptions(Character actor)
+    {
+        List<string> options = new();
+        if (actor == null) return options;
+        SkillTreeDefinition tree = GetDefinition();
+        if (tree?.nodes == null) return options;
+
+        foreach (SkillTreeNode node in tree.nodes)
+        {
+            if (node == null || string.IsNullOrWhiteSpace(node.id)) continue;
+            if (node.cost <= 0) continue;
+            if (actor.IsSkillNodeUnlocked(node.id)) continue;
+            if (!CanUnlockNode(actor, node.id)) continue;
+            string displayName = !string.IsNullOrWhiteSpace(node.name) ? node.name : node.id;
+            options.Add($"{displayName} ({node.id})");
+        }
+
+        return options;
+    }
+
+    private static bool TryResolveNodeId(string selection, out string nodeId)
+    {
+        nodeId = null;
+        if (string.IsNullOrWhiteSpace(selection)) return false;
+        int start = selection.LastIndexOf('(');
+        int end = selection.LastIndexOf(')');
+        if (start >= 0 && end > start)
+        {
+            nodeId = selection.Substring(start + 1, end - start - 1);
+            return !string.IsNullOrWhiteSpace(nodeId);
+        }
+        return false;
+    }
+
+    private static string GetNodeDisplayName(string nodeId)
+    {
+        if (string.IsNullOrWhiteSpace(nodeId)) return string.Empty;
+        SkillTreeDefinition tree = GetDefinition();
+        if (tree?.nodes == null) return nodeId;
+        SkillTreeNode node = tree.nodes.FirstOrDefault(x => x != null && string.Equals(x.id, nodeId, StringComparison.OrdinalIgnoreCase));
+        return node != null && !string.IsNullOrWhiteSpace(node.name) ? node.name : nodeId;
     }
 
 }

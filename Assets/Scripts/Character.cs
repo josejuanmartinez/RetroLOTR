@@ -294,8 +294,6 @@ public class Character : MonoBehaviour
         if (unlockedSkillNodes.Contains(nodeId)) return false;
         if (!ignoreRequirements)
         {
-            TutorialManager tutorial = TutorialManager.Instance;
-            if (tutorial != null && !tutorial.CanUnlockNode(this, nodeId)) return false;
             if (!SkillTreeService.CanUnlockNode(this, nodeId)) return false;
             if (!TrySpendSkillPoint()) return false;
         }
@@ -310,6 +308,14 @@ public class Character : MonoBehaviour
     public IReadOnlyCollection<string> GetUnlockedSkillNodes()
     {
         return unlockedSkillNodes;
+    }
+
+    public void ResetSkillTreeUnlocks()
+    {
+        unlockedSkillNodes.Clear();
+        unlockedSkillNodesByPoints.Clear();
+        skillPointsAvailable = 0;
+        SkillTreeService.InitializeCharacter(this);
     }
 
     public bool IsActionUnlocked(string actionClassName)

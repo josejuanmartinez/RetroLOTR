@@ -314,6 +314,7 @@ public class NationSpawner : MonoBehaviour
         }
     }
 
+
     private Hex FindPcHexByAnchorNames(List<string> anchorNames)
     {
         if (anchorNames == null || anchorNames.Count == 0) return null;

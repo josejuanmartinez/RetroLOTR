@@ -31,11 +31,11 @@ public class TransferArtifact : CharacterAction
             Artifact artifact = null;
             if(!isAI)
             {
-                string targetArtifact = await SelectionDialog.Ask("Select artifact", "Ok", "Cancel", transferableArtifacts.Select(x => x.artifactName).ToList(), isAI);
+                string targetArtifact = await SelectionDialog.Ask("Select artifact", "Ok", "Cancel", transferableArtifacts.Select(x => x.artifactName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
                 artifact = transferableArtifacts.Find(x => x.artifactName == targetArtifact);
                 if (artifact == null) return false;
 
-                string targetCharacter = await SelectionDialog.Ask("Select friendly character", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI);    
+                string targetCharacter = await SelectionDialog.Ask("Select friendly character", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);    
                 character = c.hex.characters.Find(x => x.characterName == targetCharacter);
                 if (character == null) return false;
                 

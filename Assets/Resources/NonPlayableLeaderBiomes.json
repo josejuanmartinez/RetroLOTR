@@ -4048,9 +4048,9 @@
     {
       "characterName": "Frodo",
       "alignment": 0,
-      "commander": 1,
+      "commander": 0,
       "agent": 0,
-      "emmissary": 0,
+      "emmissary": 1,
       "mage": 0,
       "race": 3,
       "hcDescription": "Shire Pony Riders",
@@ -4086,6 +4086,7 @@
           "sex": 0
         }
       ],
+      "spawnPcWithoutOwner": false,
       "artifactsToJoin": [],
       "artifactsQtyToJoin": 0,
       "leatherToJoin": 0,

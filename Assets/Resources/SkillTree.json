@@ -471,7 +471,8 @@
       "cost": 1,
       "requiresAll": [
         "emmissary_root",
-        "emmissary_InfluenceUpPC"
+        "emmissary_InfluenceUpPC",
+        "emmissary_RevealRumours"
       ],
       "requiresAny": [],
       "unlocksActions": [
@@ -1112,7 +1113,8 @@
       "cost": 1,
       "requiresAll": [
         "emmissary_root",
-        "emmissary_InfluenceUpPC"
+        "emmissary_InfluenceUpPC",
+        "emmissary_RevealRumours"
       ],
       "requiresAny": [],
       "unlocksActions": [

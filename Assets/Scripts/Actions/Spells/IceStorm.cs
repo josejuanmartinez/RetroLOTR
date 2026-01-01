@@ -26,7 +26,7 @@ public class IceStorm : DarkNeutralSpell
             Character selectedCommander = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select enemy army", "Ok", "Cancel", enemyCommanders.Select(x => x.characterName).ToList(), isAI);
+                string targetCharacter = await SelectionDialog.Ask("Select enemy army", "Ok", "Cancel", enemyCommanders.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
                 if (string.IsNullOrEmpty(targetCharacter)) return false;
                 selectedCommander = enemyCommanders.Find(x => x.characterName == targetCharacter);
             }

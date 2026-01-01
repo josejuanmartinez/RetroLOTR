@@ -18,6 +18,9 @@ public class SelectionDialog : MonoBehaviour
     [SerializeField] private Button noButton;
     [SerializeField] private TextMeshProUGUI noButtonText;
     [SerializeField] private TMP_Dropdown dropdown;
+    [SerializeField] private Image portraitImage;
+    [SerializeField] private CanvasGroup portraitCanvasGroup;
+    [SerializeField] private Illustrations illustrations;
 
     private TaskCompletionSource<string> pendingRequest;
     private DialogRequest pendingDisplay;
@@ -32,6 +35,7 @@ public class SelectionDialog : MonoBehaviour
         }
 
         Instance = this;
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
 
         yesButton.onClick.AddListener(() => Resolve(GetSelectedOptionText()));
         noButton.onClick.AddListener(() => Resolve(string.Empty));
@@ -48,7 +52,7 @@ public class SelectionDialog : MonoBehaviour
     /// <summary>
     /// Opens a confirmation dialog with a custom message and button labels.
     /// </summary>
-    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI)
+    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait = null)
     {
         if (Instance == null)
         {
@@ -56,10 +60,10 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, isAI);
+        return Instance.Show(message, yesString, noString, options, isAI, portrait);
     }
 
-    private Task<string> Show(string message, string yesString, string noString, List<string> options, bool isAI)
+    private Task<string> Show(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait)
     {
         if (pendingRequest != null && !pendingRequest.Task.IsCompleted)
         {
@@ -85,7 +89,8 @@ public class SelectionDialog : MonoBehaviour
                 message = message,
                 yesString = yesString,
                 noString = noString,
-                options = options
+                options = options,
+                portrait = portrait
             };
             if (ShouldDelayDialog())
             {
@@ -123,6 +128,7 @@ public class SelectionDialog : MonoBehaviour
     {
         content.SetActive(false);
         IsShowing = false;
+        UpdatePortrait(null);
     }
 
     private void ShowInternal(DialogRequest request)
@@ -134,6 +140,9 @@ public class SelectionDialog : MonoBehaviour
         messageLabel.text = request.message;
         yesButtonText.text = request.yesString;
         noButtonText.text = request.noString;
+        bool showNoButton = !string.IsNullOrWhiteSpace(request.noString);
+        noButton.gameObject.SetActive(showNoButton);
+        UpdatePortrait(request.portrait);
         dropdown.options = new ();
         request.options.ForEach(x => dropdown.options.Add(new TMP_Dropdown.OptionData(x)));
         dropdown.value = 0;
@@ -172,6 +181,7 @@ public class SelectionDialog : MonoBehaviour
         public string yesString;
         public string noString;
         public List<string> options;
+        public Sprite portrait;
     }
 
     public static void CloseAll()
@@ -191,5 +201,23 @@ public class SelectionDialog : MonoBehaviour
         pendingRequest = null;
         pendingDisplay = null;
         HideInstant();
+    }
+
+    private void UpdatePortrait(Sprite portrait)
+    {
+        if (portraitImage != null)
+        {
+            portraitImage.sprite = portrait;
+        }
+        if (portraitCanvasGroup != null)
+        {
+            portraitCanvasGroup.alpha = portrait != null ? 1f : 0f;
+        }
+    }
+
+    public Sprite GetCharacterIllustration(Character character)
+    {
+        if (character == null || string.IsNullOrWhiteSpace(character.characterName)) return null;
+        return illustrations != null ? illustrations.GetIllustrationByName(character.characterName) : null;
     }
 }

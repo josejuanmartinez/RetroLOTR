@@ -26,7 +26,7 @@ public class AssassinateCharacter : AgentCharacterAction
             Character enemy = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select enemy character", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI);
+                string targetCharacter = await SelectionDialog.Ask("Select enemy character", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
                 enemy = c.hex.characters.Find(x => x.characterName == targetCharacter);
             }
             else

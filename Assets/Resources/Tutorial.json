@@ -20,9 +20,6 @@
             "targetLeader": "Frodo"
           },
           "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "core_StateAllegiance"
-          ],
           "rewards": {
             "unlockSkillNodes": [
               "emmissary_SellSteel",
@@ -51,10 +48,7 @@
           "requirements": {
             "actionClass": "RevealRumours"
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "emmissary_RevealRumours"
-          ]
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Gandalf_FindArtifact",
@@ -68,10 +62,7 @@
           "requirements": {
             "actionClass": "FindArtifact"
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "core_FindArtifact"
-          ]
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Gandalf_SamScout",
@@ -110,7 +101,6 @@
           "actor1": "Gandalf",
           "actor2": "Merry",
           "grantSkillPoints": 1,
-          "allowedSkillNodes": [],
           "rewards": {
             "grantCharacters": [
               {
@@ -136,7 +126,6 @@
           "actor1": "Gandalf",
           "actor2": "Pippin",
           "grantSkillPoints": 1,
-          "allowedSkillNodes": [],
           "rewards": {
             "grantCharacters": [
               {
@@ -243,9 +232,6 @@
             "targetLeader": "Orthanc"
           },
           "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "core_StateAllegiance"
-          ],
           "rewards": {
             "unlockSkillNodes": [
               "emmissary_SellSteel",
@@ -290,8 +276,7 @@
               }
             ]
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": []
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Saruman_HearRumours",
@@ -304,10 +289,7 @@
           "requirements": {
             "actionClass": "RevealRumours"
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "emmissary_RevealRumours"
-          ]
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Saruman_FindArtifact",
@@ -321,10 +303,7 @@
           "requirements": {
             "actionClass": "FindArtifact"
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "core_FindArtifact"
-          ]
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Saruman_DoubleGrima",
@@ -339,10 +318,7 @@
             "actionClass": "DoubleCharacter",
             "targetCharacter": "Grima"
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "agent_DoubleCharacter"
-          ]
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Saruman_GrimaScout",
@@ -383,10 +359,7 @@
               }
             ]
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "commander_TrainMetAtArms"
-          ]
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Saruman_UglukTrain",
@@ -493,9 +466,6 @@
             "targetLeader": "Barad-dur"
           },
           "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "core_StateAllegiance"
-          ],
           "rewards": {
             "unlockSkillNodes": [
               "emmissary_SellSteel",
@@ -524,9 +494,6 @@
           "actor1": "Sauron",
           "actor2": "Gollum",
           "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "core_StateAllegiance"
-          ],
           "rewards": {
             "grantCharacters": [
               {
@@ -552,10 +519,7 @@
           "requirements": {
             "actionClass": "RevealRumours"
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "emmissary_RevealRumours"
-          ]
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Sauron_FindArtifact",
@@ -569,10 +533,7 @@
           "requirements": {
             "actionClass": "FindArtifact"
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "core_FindArtifact"
-          ]
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Sauron_GollumScout",
@@ -613,10 +574,7 @@
               }
             ]
           },
-          "grantSkillPoints": 1,
-          "allowedSkillNodes": [
-            "core_StateAllegiance"
-          ]
+          "grantSkillPoints": 1
         },
         {
           "stepId": "Sauron_GothmogTrain",
