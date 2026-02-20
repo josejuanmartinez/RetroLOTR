@@ -189,12 +189,10 @@ public class CharacterAction : SearcherByName
     public bool ResourcesAvailable()
     {
         if (character == null || character.GetOwner() == null) return false;
-        bool providedByArtifact = IsProvidedByArtifact();
         Leader owner = character.GetOwner();
-        if (!providedByArtifact)
+        if (!IsProvidedByArtifact() && !HasActionCardReady(owner))
         {
-            if (!SkillTreeService.ShouldUseSkillTree(character)) return false;
-            if (!character.IsActionUnlocked(GetType().Name)) return false;
+            return false;
         }
 
         ActionCostSnapshot snapshot = CalculateCostSnapshot();
@@ -287,7 +285,6 @@ public class CharacterAction : SearcherByName
             }
             Hex actionHex = character.hex;
             ActionCostSnapshot costSnapshot = CalculateCostSnapshot();
-            bool providedByArtifact = IsProvidedByArtifact();
             // All characters
             character.hasActionedThisTurn = true;
 
@@ -297,12 +294,24 @@ public class CharacterAction : SearcherByName
             {
                 effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + 25);
             }
-            if (UnityEngine.Random.Range(0, 100) < effectiveDifficulty) failed = true;
+            bool failedByChance = UnityEngine.Random.Range(0, 100) < effectiveDifficulty;
+            bool resourcesAvailable = ResourcesAvailable();
 
             // Should be impossible as the button will show not show up but just in case
-            if(!ResourcesAvailable()) failed = true;
+            if (!resourcesAvailable)
+            {
+                Fail(isAI);
+                return;
+            }
 
-            if (failed)
+            bool drawReplacementCard = ShouldDrawReplacementCardAfterUse(character != null ? character.GetOwner() : null);
+            if (!TryConsumeActionCardOnUse(character != null ? character.GetOwner() : null, drawReplacementCard, out _))
+            {
+                Fail(isAI);
+                return;
+            }
+
+            if (failedByChance)
             {
                 Fail(isAI);
                 return;
@@ -338,13 +347,6 @@ public class CharacterAction : SearcherByName
                 }
             }
             
-            character.AddSkillPoints(1);
-            if (!isAI)
-            {
-                MessageDisplayNoUI.ShowMessage(character.hex, character, "Skill point +1", Color.cyan);
-                await TryPromptSkillUnlock(character);
-            }
-
             if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
 
@@ -1305,9 +1307,7 @@ public class CharacterAction : SearcherByName
         if (character == null) return "No character selected.";
 
         List<string> parts = new();
-        bool providedByArtifact = IsProvidedByArtifact();
         Leader owner = character.GetOwner();
-        bool usesSkillTree = SkillTreeService.ShouldUseSkillTree(character);
 
         if (character.killed) parts.Add("Character is dead.");
         if (character.hasActionedThisTurn && actionName != FindFirstObjectByType<ActionsManager>().DEFAULT.actionName)
@@ -1315,17 +1315,9 @@ public class CharacterAction : SearcherByName
             parts.Add("Already actioned this turn.");
         }
 
-        if (!providedByArtifact)
+        if (!HasActionCardReady(owner))
         {
-            if (!usesSkillTree)
-            {
-                parts.Add("Skill tree unavailable.");
-            }
-            else if (!character.IsActionUnlocked(GetType().Name))
-            {
-                string nodeName = SkillTreeService.GetNodeNameForAction(GetType().Name) ?? actionName;
-                parts.Add($"Unlock skill: {nodeName}");
-            }
+            parts.Add("Missing action card in hand.");
         }
 
         if (owner != null)
@@ -1522,11 +1514,47 @@ public class CharacterAction : SearcherByName
         return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }
 
-    private async Task TryPromptSkillUnlock(Character actor)
+    private bool HasActionCardReady(Leader owner)
     {
-        if (actor == null) return;
-        await SkillTreeService.PromptSkillUnlock(actor, false);
+        if (owner == null) return false;
+        if (string.Equals(GetType().Name, "Pass", StringComparison.OrdinalIgnoreCase)) return true;
+        if (owner is not PlayableLeader playableLeader) return true;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return false;
+
+        if (!deckManager.HasDeckFor(playableLeader))
+        {
+            deckManager.InitializeHandsForCurrentGame();
+        }
+
+        return deckManager.HasActionCardInHand(playableLeader, GetType().Name, actionId);
     }
 
-    
+    private bool TryConsumeActionCardOnUse(Leader owner, bool drawReplacementCard, out CardData consumedCard)
+    {
+        consumedCard = null;
+        if (owner == null) return false;
+        if (string.Equals(GetType().Name, "Pass", StringComparison.OrdinalIgnoreCase)) return true;
+        if (owner is not PlayableLeader playableLeader) return true;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return false;
+
+        if (!deckManager.HasDeckFor(playableLeader))
+        {
+            deckManager.InitializeHandsForCurrentGame();
+        }
+
+        return deckManager.TryConsumeActionCard(playableLeader, GetType().Name, actionId, drawReplacementCard, out consumedCard);
+    }
+
+    private bool ShouldDrawReplacementCardAfterUse(Leader owner)
+    {
+        if (owner is not PlayableLeader playableLeader) return false;
+        TutorialManager tutorial = TutorialManager.Instance;
+        if (tutorial == null) return true;
+        return !tutorial.IsActiveFor(playableLeader);
+    }
 }
+

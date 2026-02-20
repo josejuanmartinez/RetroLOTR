@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class NonPlayableLeader : Leader
@@ -514,16 +513,6 @@ public class NonPlayableLeader : Leader
             MessageDisplayNoUI.ShowMessage(hex, this, $"{name} has joined {joinedTo.characterName}", Color.green);
             ShowJoinPopup(joinedTo);
             CharacterIcons.RefreshForHumanPlayerOf(joinedTo);
-            Game game = FindAnyObjectByType<Game>();
-            if (game != null && joinedTo == game.player)
-            {
-                foreach (Character character in charactersToTransfer)
-                {
-                    character.ResetSkillTreeUnlocks();
-                    SkillTreeService.GrantRoleSkillPoints(character);
-                }
-                StartCoroutine(PromptSkillUnlocks(charactersToTransfer));
-            }
             return true;    
         } catch(Exception e)
         {
@@ -775,20 +764,6 @@ public class NonPlayableLeader : Leader
         sb.Append("All requirements persist across turns once completed. Send an aligned emissary to the capital and issue State Allegiance to pledge your alliance.");
 
         return sb.ToString();
-    }
-
-    private IEnumerator PromptSkillUnlocks(IEnumerable<Character> characters)
-    {
-        if (characters == null) yield break;
-        foreach (Character character in characters)
-        {
-            if (character == null) continue;
-            Task task = SkillTreeService.PromptSkillUnlock(character, false);
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
-        }
     }
 
     new public void NewTurn()

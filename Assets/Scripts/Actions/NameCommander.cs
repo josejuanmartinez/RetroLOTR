@@ -8,7 +8,6 @@ public class NameCommander : CommanderAction
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
-        Character createdCharacter = null;
 
         effect = (character) =>
         {
@@ -42,8 +41,6 @@ public class NameCommander : CommanderAction
             if (newCharacter == null) return false;
             newCharacter.startingCharacter = false;
             newCharacter.hasActionedThisTurn = true; // prevent double actions on spawn turn
-            SkillTreeService.GrantRoleSkillPoints(newCharacter);
-            createdCharacter = newCharacter;
 
             MessageDisplayNoUI.ShowMessage(character.hex, character, $"{newName} joins as a commander.", Color.green);
             CharacterIcons.RefreshForHumanPlayerOf(owner);
@@ -63,15 +60,6 @@ public class NameCommander : CommanderAction
         asyncEffect = async (character) =>
         {
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
-            if (createdCharacter != null)
-            {
-                Game game = GameObject.FindFirstObjectByType<Game>();
-                bool isPlayer = game != null && game.player == createdCharacter.GetOwner();
-                if (isPlayer)
-                {
-                    await SkillTreeService.PromptSkillUnlock(createdCharacter, false);
-                }
-            }
             return true;
         };
 

@@ -909,6 +909,17 @@
                       "alignment":  0,
                       "actionClassName":  "RefuseDuel",
                       "actionId":  182
+                  },
+                  {
+                      "cardId":  118,
+                      "name":  "Reveal Hexes",
+                      "description":  "Reveal individual unseen hexes across the map. Revealed hex count scales with mage rank up to 7.",
+                      "type":  "Action",
+                      "spriteName":  "icons5_5",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0,
+                      "actionClassName":  "RevealHexes",
+                      "actionId":  183
                   }
               ]
 }

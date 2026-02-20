@@ -75,10 +75,6 @@ public class Game : MonoBehaviour
         foreach(Character character in allCharacters)
         {
             character.isPlayerControlled = character.GetOwner() == player;
-            if (character.GetOwner() != player)
-            {
-                SkillTreeService.UnlockAllNodes(character);
-            }
         }
     }
 

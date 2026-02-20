@@ -51,11 +51,6 @@ public class Character : MonoBehaviour
     [Header("Army")]
     [SerializeField] private Army army = null;
 
-    [Header("Skill Tree")]
-    [SerializeField] private int skillPointsAvailable = 0;
-    private readonly HashSet<string> unlockedSkillNodes = new(StringComparer.OrdinalIgnoreCase);
-    private readonly HashSet<string> unlockedSkillNodesByPoints = new(StringComparer.OrdinalIgnoreCase);
-
     [Header("AI")]
     public bool isPlayerControlled = true;
 
@@ -162,7 +157,6 @@ public class Character : MonoBehaviour
         hex.characters.Add(this);
 
         if (startingArmySize > 0 || startingWarships > 0) CreateArmy(preferedTroopType, startingArmySize, startingCharacter, startingWarships);
-        SkillTreeService.InitializeCharacter(this);
     }
 
     public AlignmentEnum GetAlignment()
@@ -281,64 +275,6 @@ public class Character : MonoBehaviour
         if (!owner && this is Leader) return this as Leader;
         
         return owner;
-    }
-
-    public bool IsSkillNodeUnlocked(string nodeId)
-    {
-        return !string.IsNullOrWhiteSpace(nodeId) && unlockedSkillNodes.Contains(nodeId);
-    }
-
-    public bool UnlockSkillNode(string nodeId, bool ignoreRequirements = false)
-    {
-        if (string.IsNullOrWhiteSpace(nodeId)) return false;
-        if (unlockedSkillNodes.Contains(nodeId)) return false;
-        if (!ignoreRequirements)
-        {
-            if (!SkillTreeService.CanUnlockNode(this, nodeId)) return false;
-            if (!TrySpendSkillPoint()) return false;
-        }
-        unlockedSkillNodes.Add(nodeId);
-        if (!ignoreRequirements)
-        {
-            unlockedSkillNodesByPoints.Add(nodeId);
-        }
-        return true;
-    }
-
-    public IReadOnlyCollection<string> GetUnlockedSkillNodes()
-    {
-        return unlockedSkillNodes;
-    }
-
-    public void ResetSkillTreeUnlocks()
-    {
-        unlockedSkillNodes.Clear();
-        unlockedSkillNodesByPoints.Clear();
-        skillPointsAvailable = 0;
-        SkillTreeService.InitializeCharacter(this);
-    }
-
-    public bool IsActionUnlocked(string actionClassName)
-    {
-        return SkillTreeService.IsActionUnlocked(this, actionClassName);
-    }
-
-    public int GetSkillPoints()
-    {
-        return skillPointsAvailable;
-    }
-
-    public void AddSkillPoints(int amount)
-    {
-        if (amount <= 0) return;
-        skillPointsAvailable += amount;
-    }
-
-    public bool TrySpendSkillPoint()
-    {
-        if (skillPointsAvailable <= 0) return false;
-        skillPointsAvailable--;
-        return true;
     }
 
     public string GetHoverText(bool withAlignment, bool withCharInfo, bool withLevels, bool withArmy, bool withColor, bool withHealth = true)
@@ -528,52 +464,26 @@ public class Character : MonoBehaviour
 
     public int GetCommander()
     {
-        int total = GetRoleLevel("commander") + artifacts.FindAll(x => x.commanderBonus > 0).Sum(x => x.commanderBonus);
+        int total = commander + artifacts.FindAll(x => x.commanderBonus > 0).Sum(x => x.commanderBonus);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetAgent()
     {
-        int total = GetRoleLevel("agent") + artifacts.FindAll(x => x.agentBonus > 0).Sum(x => x.agentBonus);
+        int total = agent + artifacts.FindAll(x => x.agentBonus > 0).Sum(x => x.agentBonus);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetEmmissary()
     {
-        int total = GetRoleLevel("emmissary") + artifacts.FindAll(x => x.emmissaryBonus > 0).Sum(x => x.emmissaryBonus);
+        int total = emmissary + artifacts.FindAll(x => x.emmissaryBonus > 0).Sum(x => x.emmissaryBonus);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetMage()
     {
-        int total = GetRoleLevel("mage") + artifacts.FindAll(x => x.mageBonus > 0).Sum(x => x.mageBonus);
+        int total = mage + artifacts.FindAll(x => x.mageBonus > 0).Sum(x => x.mageBonus);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
-    }
-
-    private int GetRoleLevel(string roleId)
-    {
-        if (string.IsNullOrWhiteSpace(roleId)) return 0;
-        int baseLevel = roleId.ToLowerInvariant() switch
-        {
-            "commander" => commander > 0 ? 1 : 0,
-            "agent" => agent > 0 ? 1 : 0,
-            "emmissary" => emmissary > 0 ? 1 : 0,
-            "mage" => mage > 0 ? 1 : 0,
-            _ => 0
-        };
-
-        if (baseLevel == 0) return 0;
-
-        SkillTreeDefinition tree = SkillTreeService.GetDefinition();
-        if (tree?.nodes == null) return baseLevel;
-
-        int unlocked = tree.nodes.Count(node =>
-            node != null
-            && string.Equals(node.role, roleId, StringComparison.OrdinalIgnoreCase)
-            && node.cost > 0
-            && unlockedSkillNodesByPoints.Contains(node.id));
-
-        return baseLevel + unlocked;
     }
 
     public void SetCommander(int level)

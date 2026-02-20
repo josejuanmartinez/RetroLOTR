@@ -32,7 +32,6 @@ public class TutorialStep
     public string narration;
     public string actor1;
     public string actor2;
-    public int grantSkillPoints = 0;
     public TutorialRequirements requirements;
     public TutorialRewards rewards;
 }
@@ -49,7 +48,6 @@ public class TutorialRequirements
 [Serializable]
 public class TutorialRewards
 {
-    public List<string> unlockSkillNodes = new();
     public List<string> unlockRecruitmentTags = new();
     public List<string> grantArtifacts = new();
     public List<TutorialCharacterReward> grantCharacters = new();
@@ -76,10 +74,7 @@ public class TutorialManager : MonoBehaviour
     private int requiredStepIndex;
     private readonly HashSet<string> completedOptionalSteps = new(StringComparer.OrdinalIgnoreCase);
     private Dictionary<string, Artifact> artifactCatalog;
-    private Dictionary<string, ActionDefinition> actionDefinitionsByClass;
-    private Dictionary<string, ActionDefinition> actionDefinitionsByName;
     private PlayableLeader leader;
-    private Coroutine pendingSkillPrompt;
     private readonly Dictionary<string, AiTutorialProgress> aiProgressByLeader = new(StringComparer.OrdinalIgnoreCase);
 
     private class AiTutorialProgress
@@ -191,6 +186,11 @@ public class TutorialManager : MonoBehaviour
     private void AdvanceRequiredStep()
     {
         requiredStepIndex++;
+        if (IsCompleted())
+        {
+            RestorePostTutorialHand();
+            return;
+        }
         ActivateCurrentRequiredStep();
     }
 
@@ -198,8 +198,35 @@ public class TutorialManager : MonoBehaviour
     {
         TutorialStep step = GetCurrentRequiredStep();
         if (step == null || leader == null) return;
+        ConfigureTutorialCardsForStep(step);
         ShowStepPopup(step);
         UpdateObjectiveDisplay(step);
+    }
+
+    private void ConfigureTutorialCardsForStep(TutorialStep step)
+    {
+        if (leader == null || step == null) return;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return;
+
+        List<string> actions = new();
+        if (string.Equals(step.type, "performAction", StringComparison.OrdinalIgnoreCase)
+            && step.requirements != null
+            && !string.IsNullOrWhiteSpace(step.requirements.actionClass))
+        {
+            actions.Add(step.requirements.actionClass);
+        }
+
+        deckManager.SetTutorialActionCards(leader, actions);
+    }
+
+    private void RestorePostTutorialHand()
+    {
+        if (leader == null) return;
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return;
+        deckManager.RestoreStandardHandAfterTutorial(leader, 5);
     }
 
     public void RefreshObjectiveUI()
@@ -226,199 +253,6 @@ public class TutorialManager : MonoBehaviour
         string title = baseTitle;
         string text = string.IsNullOrWhiteSpace(step.narration) ? step.description : step.narration;
         PopupManager.Show(title, actor1, actor2, text, true);
-    }
-
-    private void ScheduleSkillUnlockPrompt(TutorialStep step)
-    {
-        if (pendingSkillPrompt != null)
-        {
-            StopCoroutine(pendingSkillPrompt);
-            pendingSkillPrompt = null;
-        }
-
-        if (step == null || leader == null) return;
-        if (leader.GetSkillPoints() <= 0) return;
-
-        pendingSkillPrompt = StartCoroutine(WaitForPopupThenPrompt(step));
-    }
-
-    private IEnumerator WaitForPopupThenPrompt(TutorialStep step)
-    {
-        while (PopupManager.IsShowing)
-        {
-            yield return null;
-        }
-
-        if (step == null || leader == null) yield break;
-        if (!IsActiveFor(leader)) yield break;
-        if (leader.GetSkillPoints() <= 0) yield break;
-
-        List<string> options = BuildUnlockOptionsFromAllNodes();
-        if (options.Count == 0) yield break;
-
-        string message = $"You gained a skill point. Choose a skill to unlock ({leader.GetSkillPoints()} available).";
-        var selectionTask = SelectionDialog.Ask(message, "Unlock", string.Empty, options, false, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(leader) : null);
-        while (!selectionTask.IsCompleted)
-        {
-            yield return null;
-        }
-
-        string selection = selectionTask.Result;
-        if (string.IsNullOrWhiteSpace(selection)) yield break;
-        if (!TryResolveNodeId(selection, options, out string nodeId)) yield break;
-
-        if (leader.UnlockSkillNode(nodeId))
-        {
-            string nodeName = GetNodeDisplayName(nodeId);
-            MessageDisplay.ShowMessage($"{leader.characterName} unlocked {nodeName}.", Color.green);
-            ShowSkillUnlockDialog(nodeId);
-        }
-    }
-
-    private List<string> BuildUnlockOptionsFromAllNodes()
-    {
-        List<string> options = new();
-        if (leader == null) return options;
-        SkillTreeDefinition tree = SkillTreeService.GetDefinition();
-        if (tree?.nodes == null) return options;
-
-        foreach (SkillTreeNode node in tree.nodes)
-        {
-            if (node == null || string.IsNullOrWhiteSpace(node.id)) continue;
-            if (node.cost <= 0) continue;
-            if (leader.IsSkillNodeUnlocked(node.id)) continue;
-            if (!SkillTreeService.CanUnlockNode(leader, node.id)) continue;
-            string displayName = !string.IsNullOrWhiteSpace(node.name) ? node.name : node.id;
-            options.Add($"{displayName} ({node.id})");
-        }
-
-        return options;
-    }
-
-    private bool TryResolveNodeId(string selection, List<string> options, out string nodeId)
-    {
-        nodeId = null;
-        if (string.IsNullOrWhiteSpace(selection)) return false;
-        int start = selection.LastIndexOf('(');
-        int end = selection.LastIndexOf(')');
-        if (start >= 0 && end > start)
-        {
-            nodeId = selection.Substring(start + 1, end - start - 1);
-            return !string.IsNullOrWhiteSpace(nodeId);
-        }
-        if (options != null && options.Contains(selection)) return false;
-        return false;
-    }
-
-    private static string GetNodeDisplayName(string nodeId)
-    {
-        if (string.IsNullOrWhiteSpace(nodeId)) return string.Empty;
-        SkillTreeDefinition tree = SkillTreeService.GetDefinition();
-        if (tree?.nodes == null) return nodeId;
-        SkillTreeNode node = tree.nodes.FirstOrDefault(x => x != null && string.Equals(x.id, nodeId, StringComparison.OrdinalIgnoreCase));
-        return node != null && !string.IsNullOrWhiteSpace(node.name) ? node.name : nodeId;
-    }
-
-    private void ShowSkillUnlockDialog(string nodeId)
-    {
-        if (leader == null || string.IsNullOrWhiteSpace(nodeId)) return;
-        Game game = FindFirstObjectByType<Game>();
-        if (game == null || game.player != leader) return;
-
-        string message = BuildSkillUnlockHelpMessage(nodeId);
-        if (string.IsNullOrWhiteSpace(message)) return;
-        ConfirmationDialog.AskOk(message);
-    }
-
-    private string BuildSkillUnlockHelpMessage(string nodeId)
-    {
-        if (string.IsNullOrWhiteSpace(nodeId)) return string.Empty;
-
-        SkillTreeDefinition tree = SkillTreeService.GetDefinition();
-        SkillTreeNode node = tree?.nodes?.FirstOrDefault(x => x != null && string.Equals(x.id, nodeId, StringComparison.OrdinalIgnoreCase));
-        string nodeName = GetNodeDisplayName(nodeId);
-        List<string> lines = new() { $"{nodeName} learned." };
-
-        if (node?.unlocksActions == null || node.unlocksActions.Count == 0)
-        {
-            return string.Join("\n", lines);
-        }
-
-        EnsureActionDefinitionsLoaded();
-
-        foreach (string actionClass in node.unlocksActions)
-        {
-            if (string.IsNullOrWhiteSpace(actionClass)) continue;
-            ActionDefinition definition = GetActionDefinition(actionClass);
-            string actionName = definition != null && !string.IsNullOrWhiteSpace(definition.actionName) ? definition.actionName : actionClass;
-            string info = definition != null && !string.IsNullOrWhiteSpace(definition.tutorialInfo)
-                ? definition.tutorialInfo
-                : definition?.description;
-
-            if (string.IsNullOrWhiteSpace(info))
-            {
-                lines.Add($"- {actionName}");
-            }
-            else
-            {
-                lines.Add($"- {actionName}: {info}");
-            }
-        }
-
-        return string.Join("\n", lines);
-    }
-
-    private void EnsureActionDefinitionsLoaded()
-    {
-        if (actionDefinitionsByClass != null && actionDefinitionsByName != null) return;
-
-        actionDefinitionsByClass = new Dictionary<string, ActionDefinition>(StringComparer.OrdinalIgnoreCase);
-        actionDefinitionsByName = new Dictionary<string, ActionDefinition>(StringComparer.OrdinalIgnoreCase);
-
-        TextAsset json = Resources.Load<TextAsset>("Actions");
-        if (json == null) return;
-
-        ActionDefinitionCollection collection = JsonUtility.FromJson<ActionDefinitionCollection>(json.text);
-        if (collection?.actions == null) return;
-
-        foreach (ActionDefinition action in collection.actions)
-        {
-            if (action == null) continue;
-            if (!string.IsNullOrWhiteSpace(action.className) && !actionDefinitionsByClass.ContainsKey(action.className))
-            {
-                actionDefinitionsByClass[action.className] = action;
-            }
-            if (!string.IsNullOrWhiteSpace(action.actionName))
-            {
-                string key = NormalizeActionName(action.actionName);
-                if (!actionDefinitionsByName.ContainsKey(key))
-                {
-                    actionDefinitionsByName[key] = action;
-                }
-            }
-        }
-    }
-
-    private ActionDefinition GetActionDefinition(string actionClassOrName)
-    {
-        if (string.IsNullOrWhiteSpace(actionClassOrName)) return null;
-        if (actionDefinitionsByClass != null && actionDefinitionsByClass.TryGetValue(actionClassOrName, out ActionDefinition byClass))
-        {
-            return byClass;
-        }
-        if (actionDefinitionsByName != null)
-        {
-            string key = NormalizeActionName(actionClassOrName);
-            return actionDefinitionsByName.TryGetValue(key, out ActionDefinition byName) ? byName : null;
-        }
-        return null;
-    }
-
-    private static string NormalizeActionName(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
-        string stripped = ActionNameUtils.StripShortcut(value);
-        return string.IsNullOrWhiteSpace(stripped) ? string.Empty : stripped.Trim().ToLowerInvariant();
     }
 
     private bool StepMatchesAction(TutorialStep step, Character actor, string actionClassName, Hex actionHex)
@@ -490,12 +324,7 @@ public class TutorialManager : MonoBehaviour
     private void CompleteStep(TutorialStep step, Character actor)
     {
         if (step == null) return;
-        if (step.grantSkillPoints > 0 && leader != null)
-        {
-            leader.AddSkillPoints(step.grantSkillPoints);
-        }
         ApplyRewards(step, actor);
-        ScheduleSkillUnlockPrompt(step);
         RemoveObjectiveDisplay(step);
     }
 
@@ -531,14 +360,6 @@ public class TutorialManager : MonoBehaviour
         TutorialRewards rewards = step.rewards;
         if (rewards == null || actor == null) return;
         Character recipient = actor;
-
-        if (rewards.unlockSkillNodes != null)
-        {
-            foreach (string nodeId in rewards.unlockSkillNodes)
-            {
-                recipient.UnlockSkillNode(nodeId, ignoreRequirements: true);
-            }
-        }
 
         if (rewards.grantArtifacts != null)
         {
@@ -874,10 +695,6 @@ public class TutorialManager : MonoBehaviour
     private void ApplyAiStepRewards(TutorialStep step, Character actor)
     {
         if (step == null || actor == null) return;
-        if (step.grantSkillPoints > 0)
-        {
-            actor.AddSkillPoints(step.grantSkillPoints);
-        }
         ApplyRewards(step, actor);
     }
 
