@@ -71,7 +71,7 @@
                                             "actor1":  "Frodo",
                                             "requirements":  {
                                                                  "actorCharacter":  "Frodo",
-                                                                 "actionClass":  "TrainMetAtArms"
+                                                                 "actionClass":  "TrainMenAtArms"
                                                              }
                                         },
                                         {
@@ -191,7 +191,7 @@
                                             "narration":  "The Longpipe carries a quiet power that works through laughter and unease. Use it to unsettle foes or to clear hostile influence, because a light moment can dissolve a heavy plan. The smoke and the chuckle break rigid thinking, and in that break, loyalties can shift and schemes can weaken. This is a subtle tool, not a blunt one, and it rewards patience and timing. Use it where a brittle alliance needs to crack or where a hostile influence needs to be softened. Do not underestimate the force of a well-timed laugh; it can disarm more surely than a threat. Let the pipe do its work, and then move while the balance is in your favor.",
                                             "actor1":  "Gandalf",
                                             "requirements":  {
-                                                                 "actionClass":  "WizardLaugh"
+                                                                 "actionClass":  "WizardsLaugh"
                                                              }
                                         }
                                     ]
@@ -330,7 +330,7 @@
                                             "actor1":  "Ugluk",
                                             "requirements":  {
                                                                  "actorCharacter":  "Ugluk",
-                                                                 "actionClass":  "TrainMetAtArms"
+                                                                 "actionClass":  "TrainMenAtArms"
                                                              }
                                         },
                                         {
@@ -354,7 +354,7 @@
                                             "narration":  "The yellow teeth are a subtle tool, meant to corrode loyalty without a single sword drawn. Use them to twist minds and plant doubt where confidence once stood. This is the kind of power that works best in the quiet spaces between open moves, because it makes your enemies weaker before you face them. A single rumor sharpened by this token can spread like rot, turning strong positions into brittle ones. Use it deliberately, not in rage, and then watch how quickly a plan unravels. When loyalties crack, opportunities appear. Let this whisper do the work that force cannot.",
                                             "actor1":  "Saruman",
                                             "requirements":  {
-                                                                 "actionClass":  "WizardLaugh"
+                                                                 "actionClass":  "WizardsLaugh"
                                                              }
                                         },
                                         {
@@ -524,7 +524,7 @@
                                             "actor1":  "Gothmog",
                                             "requirements":  {
                                                                  "actorCharacter":  "Gothmog",
-                                                                 "actionClass":  "TrainMetAtArms"
+                                                                 "actionClass":  "TrainMenAtArms"
                                                              }
                                         },
                                         {

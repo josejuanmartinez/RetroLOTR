@@ -11,7 +11,6 @@ Implement actions in this project through the existing `CharacterAction` pipelin
 - Treat `Assets/Scripts/CharacterAction.cs` as the execution contract (costs, failure, XP, unlock checks, UI refresh, messages).
 - Treat `Assets/Scripts/UI/ActionsManager.cs` as the registration and UI contract (load order, class resolution, button wiring).
 - Treat `Assets/Resources/Actions.json` as action metadata and ordering.
-- Treat `Assets/Resources/SkillTree.json` as unlock gating for new actions.
 
 ## Action Class Hierarchy
 Choose the closest base class first, then add specific behavior in `Initialize(...)`.
@@ -46,9 +45,10 @@ Choose the closest base class first, then add specific behavior in `Initialize(.
 3. Override `Initialize(...)` and wrap delegates in the same pattern used across existing actions.
 4. Call `base.Initialize(c, condition, effect, asyncEffect)` so base gating still applies.
 5. Add or update the corresponding entry in `Assets/Resources/Actions.json`.
-6. If the new action is a spell, explicitly ask the user whether they also want one or more artifacts that grant this spell.
-7. If the user says yes, ask for artifact details and update `Assets/Resources/Artifacts.json` accordingly.
-8. Verify runtime resolution and visibility in the Actions UI.
+6. Create a new card image for the action by using the `new-image` skill and save it in the correct `Assets/Art/Cards/...` folder (`Actions` or `Actions/Spells` for spells).
+7. If the new action is a spell, explicitly ask the user whether they also want one or more artifacts that grant this spell.
+8. If the user says yes, ask for artifact details and update `Assets/Resources/Artifacts.json` accordingly.
+9. Verify runtime resolution and visibility in the Actions UI.
 
 ## Spell Artifact Rule
 When creating or updating a spell action:
@@ -120,10 +120,6 @@ Each action requires an entry in `Assets/Resources/Actions.json` with at least:
 
 ## Important Project-Specific Pitfalls
 - Keep project spelling as-is: `Emmissary` (double `s`) is intentional across code and JSON.
-- Legacy class names are canonical for unlocks and JSON:
-  - `TrainMetAtArms` (not `TrainMenAtArms`)
-  - `WizardLaugh` (file is `WizardsLaugh.cs`)
-  - `TrainWarships` (file is `TrainWarShips.cs`)
 - File name does not have to match class name, but class name must match `Actions.json`.
 - Prefer exact `className` matches in JSON even though `ActionsManager.ResolveActionType` has normalized fallback logic.
 - Do not bypass `base.Initialize(...)`; skipping it drops core checks and UI behavior.

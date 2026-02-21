@@ -1,6 +1,6 @@
 using System;
 
-public class TrainMetAtArms : CommanderPCAction
+public class TrainMenAtArms : CommanderPCAction
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
