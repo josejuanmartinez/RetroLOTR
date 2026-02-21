@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize":  5,
     "deckId":  "gandalf_deck",
     "nation":  "Gandalf",
@@ -920,6 +920,186 @@
                       "alignment":  0,
                       "actionClassName":  "RevealHexes",
                       "actionId":  183
+                  },
+                  {
+                      "cardId":  119,
+                      "name":  "Anduin",
+                      "description":  "<sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"leather\"><sprite name=\"food\"><sprite name=\"food\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  120,
+                      "name":  "Anfalas",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"timber\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  121,
+                      "name":  "Cardolan",
+                      "description":  "<sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"mounts\"><sprite name=\"iron\"><sprite name=\"iron\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  122,
+                      "name":  "EredLuin",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  123,
+                      "name":  "Eregion",
+                      "description":  "<sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"leather\"><sprite name=\"iron\"><sprite name=\"steel\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  124,
+                      "name":  "Eriador",
+                      "description":  "<sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"leather\"><sprite name=\"iron\"><sprite name=\"mounts\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  125,
+                      "name":  "Forochel",
+                      "description":  "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"mounts\"><sprite name=\"food\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  126,
+                      "name":  "IronHills",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"mithril\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  127,
+                      "name":  "Ithilien",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"mounts\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  128,
+                      "name":  "Lindon",
+                      "description":  "<sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"food\"><sprite name=\"food\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  129,
+                      "name":  "Lothlorien",
+                      "description":  "<sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"food\"><sprite name=\"food\"><sprite name=\"mounts\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  130,
+                      "name":  "MistyMountains",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\"><sprite name=\"mithril\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  131,
+                      "name":  "NorthernGondor",
+                      "description":  "<sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"leather\"><sprite name=\"iron\"><sprite name=\"timber\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  132,
+                      "name":  "Rhovanion",
+                      "description":  "<sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"leather\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  133,
+                      "name":  "Rhudaur",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"food\"><sprite name=\"leather\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  134,
+                      "name":  "Rivendell",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"steel\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  135,
+                      "name":  "Rohan",
+                      "description":  "<sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"leather\"><sprite name=\"leather\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  136,
+                      "name":  "SouthernGondor",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"timber\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  137,
+                      "name":  "TheNorthDowns",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"leather\"><sprite name=\"timber\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
+                  },
+                  {
+                      "cardId":  138,
+                      "name":  "TheShire",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"food\"><sprite name=\"food\"><sprite name=\"food\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "gandalf_deck",
+                      "alignment":  0
                   }
               ]
 }

@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize":  5,
     "deckId":  "saruman_deck",
     "nation":  "Saruman",
@@ -857,6 +857,150 @@
                       "alignment":  2,
                       "actionClassName":  "RevealHexes",
                       "actionId":  183
+                  },
+                  {
+                      "cardId":  185,
+                      "name":  "BrownLands",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"food\"><sprite name=\"mounts\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  186,
+                      "name":  "Cardolan",
+                      "description":  "<sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"mounts\"><sprite name=\"iron\"><sprite name=\"iron\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  187,
+                      "name":  "Dagorlad",
+                      "description":  "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"timber\"><sprite name=\"timber\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  188,
+                      "name":  "Dunland",                      
+                      "description":  "<sprite name=\"food\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"timber\"><sprite name=\"leather\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  189,
+                      "name":  "Eregion",
+                      "description":  "<sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"leather\"><sprite name=\"iron\"><sprite name=\"steel\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  190,
+                      "name":  "FarHarad",
+                      "description":  "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"mounts\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  191,
+                      "name":  "GapOfRohan",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"timber\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  192,
+                      "name":  "Khand",                      
+                      "description":  "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"food\"><sprite name=\"mounts\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  193,
+                      "name":  "MistyMountains",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\"><sprite name=\"mithril\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  194,
+                      "name":  "NearHarad",
+                      "description":  "<sprite name=\"leather\"><sprite name=\"timber\"><sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"mounts\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  195,
+                      "name":  "Rhovanion",
+                      "description":  "Land card for Rhovanion.",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  196,
+                      "name":  "Rhun",
+                      "description":  "<sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"leather\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  197,
+                      "name":  "SeaOfRhun",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"mounts\"><sprite name=\"leather\">",                      
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  198,
+                      "name":  "Udun",
+                      "description":  "<sprite name=\"mounts\"><sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"leather\">",                      
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  199,
+                      "name":  "Umbar",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"timber\">",                      
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  200,
+                      "name":  "WitheredHeath",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\"><sprite name=\"mithril\">",                      
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
                   }
               ]
 }

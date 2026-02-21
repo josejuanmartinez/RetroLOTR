@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize":  5,
     "deckId":  "sauron_deck",
     "nation":  "Sauron",
@@ -902,6 +902,150 @@
                       "alignment":  1,
                       "actionClassName":  "RevealHexes",
                       "actionId":  183
+                  },
+                  {
+                      "cardId":  251,
+                      "name":  "Angmar",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\">",                      
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  252,
+                      "name":  "BrownLands",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"food\"><sprite name=\"mounts\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  253,
+                      "name":  "Dagorlad",
+                      "description":  "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"timber\"><sprite name=\"timber\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  254,
+                      "name":  "Forochel",
+                      "description":  "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"mounts\"><sprite name=\"food\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  255,
+                      "name":  "Gorgoroth",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"steel\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  256,
+                      "name":  "Ithilien",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"mounts\">",                      
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  257,
+                      "name":  "MistyMountains",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\"><sprite name=\"mithril\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },                  
+                  {
+                      "cardId":  258,
+                      "name":  "Nurn",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"mounts\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "saruman_deck",
+                      "alignment":  2
+                  },
+                  {
+                      "cardId":  259,
+                      "name":  "Rhudaur",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"food\"><sprite name=\"leather\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  260,
+                      "name":  "SeaOfRhun",
+                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"mounts\"><sprite name=\"leather\">", 
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  261,
+                      "name":  "SouthernMirkwood",
+                      "description":  "<sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"mounts\">", 
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  262,
+                      "name":  "TheDeadMarshes",
+                      "description":  "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"steel\"><sprite name=\"timber\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  263,
+                      "name":  "TheNorthDowns",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"leather\"><sprite name=\"timber\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  264,
+                      "name":  "Udun",
+                      "description":  "<sprite name=\"mounts\"><sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"leather\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  265,
+                      "name":  "Ungol",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"steel\">",
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
+                  },
+                  {
+                      "cardId":  266,
+                      "name":  "WitheredHeath",
+                      "description":  "<sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\"><sprite name=\"mithril\">", 
+                      "type":  "Land",
+                      "spriteName":  "",
+                      "deckId":  "sauron_deck",
+                      "alignment":  1
                   }
               ]
 }
