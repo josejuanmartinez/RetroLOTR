@@ -69,9 +69,8 @@ public static class AITurnController
         foreach (CharacterAction action in actionsManager.characterActions)
         {
             if (action == null) continue;
-            if (action.button == null) continue;
-
-            bool isEnabled = action.button.gameObject.activeSelf && action.FulfillsConditions();
+            if (!action.IsRoleEligible(character)) continue;
+            bool isEnabled = action.FulfillsConditions();
             if (isEnabled) available.Add(action);
         }
 

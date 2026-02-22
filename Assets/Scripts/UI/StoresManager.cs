@@ -134,21 +134,13 @@ public class StoresManager : MonoBehaviour
     {
         EnsureMarketInitialized();
         PlayableLeader playableLeader = FindFirstObjectByType<Game>().player;
-        int leatherProduction = playableLeader.GetLeatherPerTurn();
-        int mountsProduction = playableLeader.GetMountsPerTurn();
-        int timberProduction = playableLeader.GetTimberPerTurn();
-        int ironProduction = playableLeader.GetIronPerTurn();
-        int steelProduction = playableLeader.GetSteelPerTurn();
-        int mithrilProduction = playableLeader.GetMithrilPerTurn();
-        int goldProduction = playableLeader.GetGoldPerTurn();
-
-        leatherAmount.text = $"{playableLeader.leatherAmount}<br>{(leatherProduction >= 0 ? "+" : "")}{leatherProduction}";
-        mountsAmount.text = $"{playableLeader.mountsAmount}<br>{(mountsProduction >= 0 ? "+" : "")}{mountsProduction}";
-        timberAmount.text = $"{playableLeader.timberAmount}<br>{(timberProduction >= 0 ? "+" : "")}{timberProduction}";
-        ironAmount.text = $"{playableLeader.ironAmount}<br>{(ironProduction >= 0 ? "+" : "")}{ironProduction}";
-        steelAmount.text = $"{playableLeader.steelAmount}<br>{(steelProduction >= 0 ? "+" : "")}{steelProduction}";
-        mithrilAmount.text = $"{playableLeader.mithrilAmount}<br>{(mithrilProduction >= 0 ? "+" : "")}{mithrilProduction}";
-        goldAmount.text =$"{playableLeader.goldAmount} <br> {(goldProduction >= 0 ? "+" : "")}{goldProduction}";
+        leatherAmount.text = $"{playableLeader.leatherAmount}";
+        mountsAmount.text = $"{playableLeader.mountsAmount}";
+        timberAmount.text = $"{playableLeader.timberAmount}";
+        ironAmount.text = $"{playableLeader.ironAmount}";
+        steelAmount.text = $"{playableLeader.steelAmount}";
+        mithrilAmount.text = $"{playableLeader.mithrilAmount}";
+        goldAmount.text = $"{playableLeader.goldAmount}";
     }
 
     // Call this once per turn to add passive stock growth to the market

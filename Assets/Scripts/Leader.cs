@@ -117,46 +117,34 @@ public class Leader : Character
         return leaderBiome.newPCs[createdPcs];
     }
 
-    public int GetGoldPerTurn()
-    {
-        int gold = 0;
-        foreach (PC pc in controlledPcs) gold += (int)pc.citySize;
-        foreach (Character character in controlledCharacters)
-        {
-            if (!character.startingCharacter) gold -= 1;
-            if (character.GetArmy() != null) gold -= character.GetArmy().GetMaintenanceCost();
-        }
-        return gold;
-    }
-
     public int GetLeatherPerTurn()
     {
-        return controlledPcs.Select(x => x.leather).Sum();
+        return 0;
     }
 
     public int GetMountsPerTurn()
     {
-        return controlledPcs.Select(x => x.mounts).Sum();
+        return 0;
     }
 
     public int GetTimberPerTurn()
     {
-        return controlledPcs.Select(x => x.timber).Sum();
+        return 0;
     }
 
     public int GetIronPerTurn()
     {
-        return controlledPcs.Select(x => x.iron).Sum();
+        return 0;
     }
 
     public int GetSteelPerTurn()
     {
-        return controlledPcs.Select(x => x.steel).Sum();
+        return 0;
     }
 
     public int GetMithrilPerTurn()
     {
-        return controlledPcs.Select(x => x.mithril).Sum();
+        return 0;
     }
 
     new public AlignmentEnum GetAlignment()
@@ -172,14 +160,6 @@ public class Leader : Character
         if (killed) return;
 
         EvaluateCreationSlots();
-
-        leatherAmount += GetLeatherPerTurn();
-        mountsAmount += GetMountsPerTurn();
-        timberAmount += GetTimberPerTurn();
-        ironAmount += GetIronPerTurn();
-        steelAmount += GetSteelPerTurn();
-        mithrilAmount += GetMithrilPerTurn();
-        goldAmount += GetGoldPerTurn();
         
         // Make all characters in nation act!
         controlledCharacters.FindAll(c => !c.killed).ForEach(x => x.NewTurn());

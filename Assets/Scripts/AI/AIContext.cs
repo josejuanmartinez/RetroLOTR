@@ -57,6 +57,7 @@ public class AIContext
         CharacterAction action = PickBestActionForAdvisor(advisor);
         if (action == null) return false;
 
+        action.difficulty = ResolveCardDifficulty(action);
         RecordAction(action, advisor);
         await action.Execute();
         return true;
@@ -71,6 +72,7 @@ public class AIContext
 
         if (action == null) return false;
 
+        action.difficulty = ResolveCardDifficulty(action);
         RecordAction(action, action.GetAdvisorType());
         await action.Execute();
         return true;
@@ -114,9 +116,10 @@ public class AIContext
     private float ScoreAction(CharacterAction action, AdvisorType advisor)
     {
         float score = 1f;
+        int actionDifficulty = ResolveCardDifficulty(action);
 
         // Prefer easier actions
-        score -= Mathf.Clamp(action.difficulty / 25f, 0f, 3f);
+        score -= Mathf.Clamp(actionDifficulty / 25f, 0f, 3f);
 
         // Prefer advisors that match the character's skills
         score += AdvisorAffinity(advisor);
@@ -207,6 +210,18 @@ public class AIContext
         float pressureFactor = NeedsEconomicHelp ? 2.5f : 1f;
         float bufferFactor = Mathf.Max(1f, (goldBuffer + Mathf.Max(0, goldPerTurn * 2)) / 10f);
         return (cost / bufferFactor) * pressureFactor;
+    }
+
+    private int ResolveCardDifficulty(CharacterAction action)
+    {
+        if (action == null || Leader == null) return 0;
+
+        DeckManager deckManager = DeckManager.Instance != null
+            ? DeckManager.Instance
+            : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return 0;
+
+        return deckManager.GetActionCardDifficulty(Leader, action.GetType().Name, action.actionId, Character);
     }
 
     private float GetMilitaryEdgeScore()
@@ -418,7 +433,7 @@ public class AIContext
             armyDefenceDelta = (army != null ? army.GetDefence() : 0) - preSnapshot.armyDefence,
             healthDelta = (Character?.health ?? 0) - preSnapshot.health,
             goldBuffer = owner != null ? owner.goldAmount : 0,
-            goldPerTurn = owner != null ? owner.GetGoldPerTurn() : 0,
+            goldPerTurn = 0,
             leather = owner != null ? owner.leatherAmount : 0,
             timber = owner != null ? owner.timberAmount : 0,
             iron = owner != null ? owner.ironAmount : 0,
@@ -447,7 +462,7 @@ public class AIContext
             ironDelta = (owner != null ? owner.ironAmount : 0) - preSnapshot.iron,
             mountsDelta = (owner != null ? owner.mountsAmount : 0) - preSnapshot.mounts,
             mithrilDelta = (owner != null ? owner.mithrilAmount : 0) - preSnapshot.mithril,
-            goldPerTurnDelta = (owner != null ? owner.GetGoldPerTurn() : 0) - preSnapshot.goldPerTurn,
+            goldPerTurnDelta = 0 - preSnapshot.goldPerTurn,
             leatherPerTurnDelta = (owner != null ? owner.GetLeatherPerTurn() : 0) - preSnapshot.leatherPerTurn,
             timberPerTurnDelta = (owner != null ? owner.GetTimberPerTurn() : 0) - preSnapshot.timberPerTurn,
             ironPerTurnDelta = (owner != null ? owner.GetIronPerTurn() : 0) - preSnapshot.ironPerTurn,
@@ -472,7 +487,7 @@ public class AIContext
             preferredTargetDistance = preferred != null && Character != null && Character.hex != null ? Vector2.Distance(Character.hex.v2, preferred.v2) : -1f,
             actionName = LastChosenAction != null ? LastChosenAction.actionName : "Pass",
             advisorType = LastAdvisor.ToString(),
-            actionDifficulty = LastChosenAction != null ? LastChosenAction.difficulty : 0,
+            actionDifficulty = LastChosenAction != null ? ResolveCardDifficulty(LastChosenAction) : 0,
             actionGoldCost = LastChosenAction != null ? LastChosenAction.GetGoldCost() : 0,
             scoredActions = scoredActions.Select(sa => $"{sa.actionName}|{sa.advisor}|{sa.score:0.00}|{sa.targetDistance:0.00}").ToList(),
             artifactTransferCandidates = artifactTransferCandidates.Select(c => $"{c.artifactName}->{c.targetName}|{c.score:0.00}|{c.distance:0.00}").ToList(),
@@ -487,7 +502,7 @@ public class AIContext
     {
         if (Leader == null) return EconomyStatus.Stable;
 
-        int goldPerTurn = Leader.GetGoldPerTurn();
+        int goldPerTurn = 0;
         int goldBuffer = Leader.goldAmount;
 
         if (goldPerTurn < 0 || goldBuffer < 5) return EconomyStatus.Critical;
@@ -726,7 +741,7 @@ public class AIContext
         return new ResourceSnapshot
         {
             gold = owner != null ? owner.goldAmount : 0,
-            goldPerTurn = owner != null ? owner.GetGoldPerTurn() : 0,
+            goldPerTurn = 0,
             leather = owner != null ? owner.leatherAmount : 0,
             timber = owner != null ? owner.timberAmount : 0,
             iron = owner != null ? owner.ironAmount : 0,

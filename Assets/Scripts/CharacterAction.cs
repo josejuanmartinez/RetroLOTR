@@ -106,7 +106,6 @@ public class CharacterAction : SearcherByName
             this.condition = (character) => { return 
                 character != null && !character.killed
                 && (!character.hasActionedThisTurn || this.actionName == FindFirstObjectByType<ActionsManager>().DEFAULT.actionName) 
-                &&  ResourcesAvailable() 
                 && (originalCondition == null || originalCondition(character)); 
             };
             this.effect = effect;
@@ -168,7 +167,10 @@ public class CharacterAction : SearcherByName
         condition = null;
         effect = null;
         asyncEffect = null;
-        button.gameObject.SetActive(false);
+        if (button != null)
+        {
+            button.gameObject.SetActive(false);
+        }
     }
 
     public bool IsProvidedByArtifact()
@@ -188,62 +190,6 @@ public class CharacterAction : SearcherByName
 
     public bool ResourcesAvailable()
     {
-        if (character == null || character.GetOwner() == null) return false;
-        Leader owner = character.GetOwner();
-        if (!IsProvidedByArtifact() && !HasActionCardReady(owner))
-        {
-            return false;
-        }
-
-        ActionCostSnapshot snapshot = CalculateCostSnapshot();
-
-        if (isBuyCaravans)
-        {
-            if (!snapshot.hasRequiredStock) return false;
-            if (snapshot.goldDelta < 0 && character.GetOwner().goldAmount < -snapshot.goldDelta) return false;
-            return true;
-        }
-
-        if (isSellCaravans)
-        {
-            if (!snapshot.hasRequiredStock) return false;
-            foreach (var cost in snapshot.resourceCosts)
-            {
-                switch (cost.produce)
-                {
-                    case ProducesEnum.leather:
-                        if (character.GetOwner().leatherAmount < cost.amount) return false;
-                        break;
-                    case ProducesEnum.timber:
-                        if (character.GetOwner().timberAmount < cost.amount) return false;
-                        break;
-                    case ProducesEnum.mounts:
-                        if (character.GetOwner().mountsAmount < cost.amount) return false;
-                        break;
-                    case ProducesEnum.iron:
-                        if (character.GetOwner().ironAmount < cost.amount) return false;
-                        break;
-                    case ProducesEnum.steel:
-                        if (character.GetOwner().steelAmount < cost.amount) return false;
-                        break;
-                    case ProducesEnum.mithril:
-                        if (character.GetOwner().mithrilAmount < cost.amount) return false;
-                        break;
-                }
-            }
-
-            if (snapshot.goldDelta < 0 && character.GetOwner().goldAmount < -snapshot.goldDelta) return false;
-            return true;
-        }
-
-        if (leatherCost > 0 && character.GetOwner().leatherAmount < leatherCost) return false;
-        if (timberCost > 0 && character.GetOwner().timberAmount < timberCost) return false;
-        if (mountsCost > 0 && character.GetOwner().mountsAmount < mountsCost) return false;
-        if (ironCost > 0 && character.GetOwner().ironAmount < ironCost) return false;
-        if (steelCost > 0 && character.GetOwner().steelAmount < steelCost) return false;
-        if (mithrilCost > 0 && character.GetOwner().mithrilAmount < mithrilCost) return false;
-        if (goldCost > 0 && character.GetOwner().goldAmount < goldCost) return false;
-
         return true;
     }
 
@@ -284,7 +230,6 @@ public class CharacterAction : SearcherByName
                 Sounds.Instance?.PlayActionExecute();
             }
             Hex actionHex = character.hex;
-            ActionCostSnapshot costSnapshot = CalculateCostSnapshot();
             // All characters
             character.hasActionedThisTurn = true;
 
@@ -295,21 +240,6 @@ public class CharacterAction : SearcherByName
                 effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + 25);
             }
             bool failedByChance = UnityEngine.Random.Range(0, 100) < effectiveDifficulty;
-            bool resourcesAvailable = ResourcesAvailable();
-
-            // Should be impossible as the button will show not show up but just in case
-            if (!resourcesAvailable)
-            {
-                Fail(isAI);
-                return;
-            }
-
-            bool drawReplacementCard = ShouldDrawReplacementCardAfterUse(character != null ? character.GetOwner() : null);
-            if (!TryConsumeActionCardOnUse(character != null ? character.GetOwner() : null, drawReplacementCard, out _))
-            {
-                Fail(isAI);
-                return;
-            }
 
             if (failedByChance)
             {
@@ -350,59 +280,6 @@ public class CharacterAction : SearcherByName
             if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
 
-            if (costSnapshot.isCaravan)
-            {
-                ApplyCaravanPayments(costSnapshot);
-            }
-            else
-            {
-                Leader owner = character.GetOwner();
-                if (owner != null)
-                {
-                    List<string> costParts = new();
-                    if (leatherCost > 0)
-                    {
-                        owner.RemoveLeather(leatherCost, false);
-                        costParts.Add($"-{leatherCost} <sprite name=\"leather\">");
-                    }
-                    if (timberCost > 0)
-                    {
-                        owner.RemoveTimber(timberCost, false);
-                        costParts.Add($"-{timberCost} <sprite name=\"timber\">");
-                    }
-                    if (mountsCost > 0)
-                    {
-                        owner.RemoveMounts(mountsCost, false);
-                        costParts.Add($"-{mountsCost} <sprite name=\"mounts\">");
-                    }
-                    if (ironCost > 0)
-                    {
-                        owner.RemoveIron(ironCost, false);
-                        costParts.Add($"-{ironCost} <sprite name=\"iron\">");
-                    }
-                    if (steelCost > 0)
-                    {
-                        owner.RemoveSteel(steelCost, false);
-                        costParts.Add($"-{steelCost} <sprite name=\"steel\">");
-                    }
-                    if (mithrilCost > 0)
-                    {
-                        owner.RemoveMithril(mithrilCost, false);
-                        costParts.Add($"-{mithrilCost} <sprite name=\"mithril\">");
-                    }
-                    if (goldCost > 0)
-                    {
-                        owner.RemoveGold(goldCost, false);
-                        costParts.Add($"-{goldCost} <sprite name=\"gold\">");
-                    }
-
-                    if (!isAI && costParts.Count > 0)
-                    {
-                        MessageDisplay.ShowMessage($"{owner.characterName}: {string.Join(" ", costParts)}", Color.red);
-                    }
-                }
-            }
-
             StoresManager storesManager = GetStoresManager();
             if (!isAI && storesManager != null) storesManager.RefreshStores();
 
@@ -431,7 +308,6 @@ public class CharacterAction : SearcherByName
             character.hasActionedThisTurn = true;
             return;
         }
-        
     }
 
     // Wrapper so Unity UI Buttons (which require void return) can trigger this async action
@@ -1149,12 +1025,14 @@ public class CharacterAction : SearcherByName
 
     public int GetGoldCost()
     {
-        return goldCost 
-        + ironCost*StoresManager.IronSellValue 
-        + mountsCost*StoresManager.MountsSellValue
-        + timberCost*StoresManager.TimberSellValue
-        + mithrilCost*StoresManager.MithrilSellValue
-        + leatherCost*StoresManager.LeatherSellValue;
+        Leader owner = character != null ? character.GetOwner() : null;
+        ResourceCostProfile cost = GetResourceCostProfile(owner);
+        return cost.gold
+        + cost.iron * StoresManager.IronSellValue
+        + cost.mounts * StoresManager.MountsSellValue
+        + cost.timber * StoresManager.TimberSellValue
+        + cost.mithril * StoresManager.MithrilSellValue
+        + cost.leather * StoresManager.LeatherSellValue;
     }
 
     protected virtual string GetDescription()
@@ -1171,24 +1049,38 @@ public class CharacterAction : SearcherByName
 
     private string BuildStandardCostText()
     {
+        Leader owner = character != null ? character.GetOwner() : null;
+        ResourceCostProfile cost = GetResourceCostProfile(owner);
         List<string> costs = new();
-        if (leatherCost > 0) costs.Add($"<color=red>-<sprite name=\"leather\"/>[{leatherCost}]</color>");
-        if (timberCost > 0) costs.Add($"<color=red>-<sprite name=\"timber\"/>[{timberCost}]</color>");
-        if (mountsCost > 0) costs.Add($"<color=red>-<sprite name=\"mounts\"/>[{mountsCost}]</color>");
-        if (ironCost > 0) costs.Add($"<color=red>-<sprite name=\"iron\"/>[{ironCost}]</color>");
-        if (mithrilCost > 0) costs.Add($"<color=red>-<sprite name=\"mithril\"/>[{mithrilCost}]</color>");
-        if (goldCost > 0) costs.Add($"<color=red>-<sprite name=\"gold\"/>[{goldCost}]</color>");
+        if (cost.leather > 0) costs.Add($"<color=red>-<sprite name=\"leather\"/>[{cost.leather}]</color>");
+        if (cost.timber > 0) costs.Add($"<color=red>-<sprite name=\"timber\"/>[{cost.timber}]</color>");
+        if (cost.mounts > 0) costs.Add($"<color=red>-<sprite name=\"mounts\"/>[{cost.mounts}]</color>");
+        if (cost.iron > 0) costs.Add($"<color=red>-<sprite name=\"iron\"/>[{cost.iron}]</color>");
+        if (cost.steel > 0) costs.Add($"<color=red>-<sprite name=\"steel\"/>[{cost.steel}]</color>");
+        if (cost.mithril > 0) costs.Add($"<color=red>-<sprite name=\"mithril\"/>[{cost.mithril}]</color>");
+        if (cost.gold > 0) costs.Add($"<color=red>-<sprite name=\"gold\"/>[{cost.gold}]</color>");
         return string.Join(" ", costs);
     }
 
-    private IEnumerable<(int amount, string sprite, ProducesEnum produce)> GetResourceCosts()
+    private IEnumerable<(int amount, string sprite, ProducesEnum produce)> GetResourceCosts(ResourceCostProfile costProfile)
     {
-        if (leatherCost > 0) yield return (leatherCost, "leather", ProducesEnum.leather);
-        if (timberCost > 0) yield return (timberCost, "timber", ProducesEnum.timber);
-        if (mountsCost > 0) yield return (mountsCost, "mounts", ProducesEnum.mounts);
-        if (ironCost > 0) yield return (ironCost, "iron", ProducesEnum.iron);
-        if (steelCost > 0) yield return (steelCost, "steel", ProducesEnum.steel);
-        if (mithrilCost > 0) yield return (mithrilCost, "mithril", ProducesEnum.mithril);
+        if (costProfile.leather > 0) yield return (costProfile.leather, "leather", ProducesEnum.leather);
+        if (costProfile.timber > 0) yield return (costProfile.timber, "timber", ProducesEnum.timber);
+        if (costProfile.mounts > 0) yield return (costProfile.mounts, "mounts", ProducesEnum.mounts);
+        if (costProfile.iron > 0) yield return (costProfile.iron, "iron", ProducesEnum.iron);
+        if (costProfile.steel > 0) yield return (costProfile.steel, "steel", ProducesEnum.steel);
+        if (costProfile.mithril > 0) yield return (costProfile.mithril, "mithril", ProducesEnum.mithril);
+    }
+
+    private struct ResourceCostProfile
+    {
+        public int leather;
+        public int timber;
+        public int mounts;
+        public int iron;
+        public int steel;
+        public int mithril;
+        public int gold;
     }
 
     private struct ActionCostSnapshot
@@ -1199,7 +1091,7 @@ public class CharacterAction : SearcherByName
         public bool hasRequiredStock;
     }
 
-    private ActionCostSnapshot CalculateCostSnapshot()
+    private ActionCostSnapshot CalculateCostSnapshot(ResourceCostProfile costProfile)
     {
         ActionCostSnapshot snapshot = new()
         {
@@ -1218,10 +1110,10 @@ public class CharacterAction : SearcherByName
             return snapshot;
         }
 
-        // goldCost is always treated as a spend (negative delta)
-        snapshot.goldDelta -= goldCost;
+        // gold requirement is always treated as a spend (negative delta)
+        snapshot.goldDelta -= costProfile.gold;
 
-        foreach (var cost in GetResourceCosts())
+        foreach (var cost in GetResourceCosts(costProfile))
         {
             snapshot.resourceCosts.Add((cost.produce, cost.amount));
             if (isBuyCaravans)
@@ -1243,8 +1135,10 @@ public class CharacterAction : SearcherByName
         StoresManager stores = GetStoresManager();
         if (stores == null) return BuildStandardCostText();
 
-        int totalGold = goldCost;
-        foreach (var cost in GetResourceCosts())
+        Leader owner = character != null ? character.GetOwner() : null;
+        ResourceCostProfile costProfile = GetResourceCostProfile(owner);
+        int totalGold = costProfile.gold;
+        foreach (var cost in GetResourceCosts(costProfile))
         {
             totalGold += stores.GetBuyPrice(cost.produce, cost.amount);
         }
@@ -1258,10 +1152,12 @@ public class CharacterAction : SearcherByName
         StoresManager stores = GetStoresManager();
         if (stores == null) return BuildStandardCostText();
 
+        Leader owner = character != null ? character.GetOwner() : null;
+        ResourceCostProfile costProfile = GetResourceCostProfile(owner);
         List<string> parts = new();
-        int totalGold = goldCost;
+        int totalGold = costProfile.gold;
 
-        foreach (var cost in GetResourceCosts())
+        foreach (var cost in GetResourceCosts(costProfile))
         {
             parts.Add($"<color=red>-<sprite name=\"{cost.sprite}\"/>[{cost.amount}]</color>");
             totalGold += stores.GetSellPrice(cost.produce, cost.amount);
@@ -1308,6 +1204,7 @@ public class CharacterAction : SearcherByName
 
         List<string> parts = new();
         Leader owner = character.GetOwner();
+        ResourceCostProfile costProfile = GetResourceCostProfile(owner);
 
         if (character.killed) parts.Add("Character is dead.");
         if (character.hasActionedThisTurn && actionName != FindFirstObjectByType<ActionsManager>().DEFAULT.actionName)
@@ -1315,16 +1212,11 @@ public class CharacterAction : SearcherByName
             parts.Add("Already actioned this turn.");
         }
 
-        if (!HasActionCardReady(owner))
-        {
-            parts.Add("Missing action card in hand.");
-        }
-
         if (owner != null)
         {
             if (isBuyCaravans || isSellCaravans)
             {
-                ActionCostSnapshot snapshot = CalculateCostSnapshot();
+                ActionCostSnapshot snapshot = CalculateCostSnapshot(costProfile);
                 if (!snapshot.hasRequiredStock)
                 {
                     parts.Add("Market lacks required stock.");
@@ -1358,20 +1250,20 @@ public class CharacterAction : SearcherByName
             }
             else
             {
-                if (leatherCost > 0 && owner.leatherAmount < leatherCost)
-                    parts.Add($"Need <sprite name=\"leather\"/>[{leatherCost}] (have {owner.leatherAmount})");
-                if (timberCost > 0 && owner.timberAmount < timberCost)
-                    parts.Add($"Need <sprite name=\"timber\"/>[{timberCost}] (have {owner.timberAmount})");
-                if (mountsCost > 0 && owner.mountsAmount < mountsCost)
-                    parts.Add($"Need <sprite name=\"mounts\"/>[{mountsCost}] (have {owner.mountsAmount})");
-                if (ironCost > 0 && owner.ironAmount < ironCost)
-                    parts.Add($"Need <sprite name=\"iron\"/>[{ironCost}] (have {owner.ironAmount})");
-                if (steelCost > 0 && owner.steelAmount < steelCost)
-                    parts.Add($"Need <sprite name=\"steel\"/>[{steelCost}] (have {owner.steelAmount})");
-                if (mithrilCost > 0 && owner.mithrilAmount < mithrilCost)
-                    parts.Add($"Need <sprite name=\"mithril\"/>[{mithrilCost}] (have {owner.mithrilAmount})");
-                if (goldCost > 0 && owner.goldAmount < goldCost)
-                    parts.Add($"Need <sprite name=\"gold\"/>[{goldCost}] (have {owner.goldAmount})");
+                if (costProfile.leather > 0 && owner.leatherAmount < costProfile.leather)
+                    parts.Add($"Need <sprite name=\"leather\"/>[{costProfile.leather}] (have {owner.leatherAmount})");
+                if (costProfile.timber > 0 && owner.timberAmount < costProfile.timber)
+                    parts.Add($"Need <sprite name=\"timber\"/>[{costProfile.timber}] (have {owner.timberAmount})");
+                if (costProfile.mounts > 0 && owner.mountsAmount < costProfile.mounts)
+                    parts.Add($"Need <sprite name=\"mounts\"/>[{costProfile.mounts}] (have {owner.mountsAmount})");
+                if (costProfile.iron > 0 && owner.ironAmount < costProfile.iron)
+                    parts.Add($"Need <sprite name=\"iron\"/>[{costProfile.iron}] (have {owner.ironAmount})");
+                if (costProfile.steel > 0 && owner.steelAmount < costProfile.steel)
+                    parts.Add($"Need <sprite name=\"steel\"/>[{costProfile.steel}] (have {owner.steelAmount})");
+                if (costProfile.mithril > 0 && owner.mithrilAmount < costProfile.mithril)
+                    parts.Add($"Need <sprite name=\"mithril\"/>[{costProfile.mithril}] (have {owner.mithrilAmount})");
+                if (costProfile.gold > 0 && owner.goldAmount < costProfile.gold)
+                    parts.Add($"Need <sprite name=\"gold\"/>[{costProfile.gold}] (have {owner.goldAmount})");
             }
         }
 
@@ -1385,7 +1277,9 @@ public class CharacterAction : SearcherByName
 
     private string BuildCaravanDetailText()
     {
-        ActionCostSnapshot snapshot = CalculateCostSnapshot();
+        Leader owner = character != null ? character.GetOwner() : null;
+        ResourceCostProfile costProfile = GetResourceCostProfile(owner);
+        ActionCostSnapshot snapshot = CalculateCostSnapshot(costProfile);
         if (!snapshot.isCaravan) return string.Empty;
 
         List<string> parts = new();
@@ -1418,16 +1312,18 @@ public class CharacterAction : SearcherByName
 
     private string BuildStandardDetailText()
     {
+        Leader owner = character != null ? character.GetOwner() : null;
+        ResourceCostProfile costProfile = GetResourceCostProfile(owner);
         List<string> parts = new();
 
-        foreach (var cost in GetResourceCosts())
+        foreach (var cost in GetResourceCosts(costProfile))
         {
             parts.Add($"<color=red>-<sprite name=\"{cost.sprite}\"/>[{cost.amount}]</color>");
         }
 
-        if (goldCost > 0)
+        if (costProfile.gold > 0)
         {
-            parts.Add($"<color=red>-<sprite name=\"gold\"/>[{goldCost}]</color>");
+            parts.Add($"<color=red>-<sprite name=\"gold\"/>[{costProfile.gold}]</color>");
         }
 
         return string.Join(" ", parts);
@@ -1514,47 +1410,18 @@ public class CharacterAction : SearcherByName
         return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }
 
-    private bool HasActionCardReady(Leader owner)
+    private ResourceCostProfile GetResourceCostProfile(Leader owner)
     {
-        if (owner == null) return false;
-        if (string.Equals(GetType().Name, "Pass", StringComparison.OrdinalIgnoreCase)) return true;
-        if (owner is not PlayableLeader playableLeader) return true;
-
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        if (deckManager == null) return false;
-
-        if (!deckManager.HasDeckFor(playableLeader))
+        return new ResourceCostProfile
         {
-            deckManager.InitializeHandsForCurrentGame();
-        }
-
-        return deckManager.HasActionCardInHand(playableLeader, GetType().Name, actionId, character);
-    }
-
-    private bool TryConsumeActionCardOnUse(Leader owner, bool drawReplacementCard, out CardData consumedCard)
-    {
-        consumedCard = null;
-        if (owner == null) return false;
-        if (string.Equals(GetType().Name, "Pass", StringComparison.OrdinalIgnoreCase)) return true;
-        if (owner is not PlayableLeader playableLeader) return true;
-
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        if (deckManager == null) return false;
-
-        if (!deckManager.HasDeckFor(playableLeader))
-        {
-            deckManager.InitializeHandsForCurrentGame();
-        }
-
-        return deckManager.TryConsumeActionCard(playableLeader, GetType().Name, actionId, drawReplacementCard, out consumedCard);
-    }
-
-    private bool ShouldDrawReplacementCardAfterUse(Leader owner)
-    {
-        if (owner is not PlayableLeader playableLeader) return false;
-        TutorialManager tutorial = TutorialManager.Instance;
-        if (tutorial == null) return true;
-        return !tutorial.IsActiveFor(playableLeader);
+            leather = leatherCost,
+            timber = timberCost,
+            mounts = mountsCost,
+            iron = ironCost,
+            steel = steelCost,
+            mithril = mithrilCost,
+            gold = goldCost
+        };
     }
 }
 

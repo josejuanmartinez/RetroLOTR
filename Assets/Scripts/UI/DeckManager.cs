@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 [Serializable]
 public class CardsManifest
@@ -68,6 +69,13 @@ public class CardData
     public int emissarySkillRequired;
     public int mageSkillRequired;
     public int difficulty;
+    public int leatherRequired;
+    public int mountsRequired;
+    public int timberRequired;
+    public int ironRequired;
+    public int steelRequired;
+    public int mithrilRequired;
+    public int goldRequired;
 
     [NonSerialized] public bool isPlayable;
     [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
@@ -109,7 +117,9 @@ public class CardData
             && selectedCharacter.GetEmmissary() >= emissarySkillRequired
             && selectedCharacter.GetMage() >= mageSkillRequired;
 
-        bool resourcesOk = resourceCheck == null || resourceCheck(selectedCharacter);
+        bool resourcesOk = resourceCheck != null
+            ? resourceCheck(selectedCharacter)
+            : MeetsResourceRequirements(selectedCharacter.GetOwner());
         bool conditionsOk = conditionCheck == null || conditionCheck(selectedCharacter);
 
         playability.failsLevelRequirements = !levelsOk;
@@ -119,6 +129,19 @@ public class CardData
         isPlayable = levelsOk && resourcesOk && conditionsOk;
         playability.isPlayable = isPlayable;
         return isPlayable;
+    }
+
+    public bool MeetsResourceRequirements(Leader owner)
+    {
+        if (owner == null) return false;
+        if (leatherRequired > 0 && owner.leatherAmount < leatherRequired) return false;
+        if (timberRequired > 0 && owner.timberAmount < timberRequired) return false;
+        if (mountsRequired > 0 && owner.mountsAmount < mountsRequired) return false;
+        if (ironRequired > 0 && owner.ironAmount < ironRequired) return false;
+        if (steelRequired > 0 && owner.steelAmount < steelRequired) return false;
+        if (mithrilRequired > 0 && owner.mithrilAmount < mithrilRequired) return false;
+        if (goldRequired > 0 && owner.goldAmount < goldRequired) return false;
+        return true;
     }
 }
 
@@ -135,6 +158,7 @@ public class DeckManager : MonoBehaviour
     public static DeckManager Instance { get; private set; }
 
     [Header("References")]
+    [FormerlySerializedAs("cardCameObject")]
     [SerializeField] GameObject cardCameObject;
     [SerializeField] GridLayoutGroup gridLayout;
 
@@ -153,10 +177,14 @@ public class DeckManager : MonoBehaviour
 
     private readonly Dictionary<string, DeckManifestEntry> deckManifestById = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, DeckData> loadedDecksById = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, ActionDefinition> actionDefinitionsByClass = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<int, ActionDefinition> actionDefinitionsById = new();
     private readonly Dictionary<PlayableLeader, PlayerDeckState> playerDecks = new();
+    private readonly List<GameObject> handCardInstances = new();
 
     private int handSize = 5;
     private bool loaded;
+    private bool isRefreshingHumanHandUI;
 
     private void Awake()
     {
@@ -184,6 +212,8 @@ public class DeckManager : MonoBehaviour
         inspectorDecks.Clear();
         deckManifestById.Clear();
         loadedDecksById.Clear();
+        actionDefinitionsByClass.Clear();
+        actionDefinitionsById.Clear();
         playerDecks.Clear();
 
         TextAsset manifestAsset = Resources.Load<TextAsset>(cardsManifestResourcePath);
@@ -209,6 +239,8 @@ public class DeckManager : MonoBehaviour
             deckManifestById[entry.deckId] = entry;
         }
 
+        LoadActionDefinitions();
+
         foreach (DeckManifestEntry entry in deckManifestById.Values)
         {
             if (string.IsNullOrWhiteSpace(entry.resourcePath)) continue;
@@ -233,6 +265,7 @@ public class DeckManager : MonoBehaviour
                 if (card == null) continue;
                 card.deckId = deckData.deckId;
                 card.alignment = deckData.alignment;
+                ApplyActionRequirementsToCard(card);
             }
 
             loadedDecksById[deckData.deckId] = deckData;
@@ -266,6 +299,7 @@ public class DeckManager : MonoBehaviour
         if (game.competitors != null) leaders.AddRange(game.competitors.Where(x => x != null));
 
         InitializeHands(leaders);
+        RefreshHumanPlayerHandUI();
         return true;
     }
 
@@ -320,6 +354,7 @@ public class DeckManager : MonoBehaviour
         card = state.drawPile[0];
         state.drawPile.RemoveAt(0);
         state.hand.Add(card);
+        RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
 
@@ -335,6 +370,7 @@ public class DeckManager : MonoBehaviour
         card = state.hand[index];
         state.hand.RemoveAt(index);
         state.discardPile.Add(card);
+        RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
 
@@ -374,24 +410,92 @@ public class DeckManager : MonoBehaviour
         return FindMatchingActionCardIndex(state.hand, actionClassName, actionId, selectedCharacter, resourceCheck, conditionCheck) >= 0;
     }
 
-    public bool TryConsumeActionCard(Leader leader, string actionClassName, int actionId, bool drawReplacement, out CardData consumedCard)
+    public bool TryGetActionCardInHand(Leader leader, string actionClassName, int actionId, out CardData card, Character selectedCharacter = null, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)
+    {
+        card = null;
+        if (leader is not PlayableLeader playableLeader) return false;
+        if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
+
+        int handIndex = FindMatchingActionCardIndex(state.hand, actionClassName, actionId, selectedCharacter, resourceCheck, conditionCheck);
+        if (handIndex < 0) return false;
+        card = state.hand[handIndex];
+        return card != null;
+    }
+
+    public int GetActionCardDifficulty(Leader leader, string actionClassName, int actionId, Character selectedCharacter = null)
+    {
+        if (TryGetActionCardInHand(leader, actionClassName, actionId, out CardData card, selectedCharacter))
+        {
+            return card != null ? Mathf.Max(0, card.difficulty) : 0;
+        }
+        return 0;
+    }
+
+    public bool TryConsumeActionCard(Leader leader, string actionClassName, int actionId, bool drawReplacement, out CardData consumedCard, int preferredCardId = 0)
     {
         consumedCard = null;
         if (leader is not PlayableLeader playableLeader) return true;
         if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
 
-        int handIndex = FindMatchingActionCardIndex(state.hand, actionClassName, actionId);
+        int handIndex = -1;
+        if (preferredCardId > 0)
+        {
+            handIndex = state.hand.FindIndex(card =>
+                card != null
+                && card.cardId == preferredCardId
+                && MatchesActionCard(card, actionClassName, actionId));
+        }
+        if (handIndex < 0)
+        {
+            handIndex = FindMatchingActionCardIndex(state.hand, actionClassName, actionId);
+        }
         if (handIndex < 0) return false;
 
         consumedCard = state.hand[handIndex];
+        if (consumedCard == null) return false;
+        if (!consumedCard.MeetsResourceRequirements(playableLeader))
+        {
+            consumedCard = null;
+            return false;
+        }
+
         state.hand.RemoveAt(handIndex);
         state.discardPile.Add(consumedCard);
+        ApplyCardCosts(playableLeader, consumedCard);
 
         if (drawReplacement)
         {
             TryDrawCard(playableLeader, out _);
         }
+        else
+        {
+            RefreshHumanPlayerHandUIIfHuman(playableLeader);
+        }
 
+        return true;
+    }
+
+    public bool TryReturnActionCardToHand(Leader leader, string actionClassName, int actionId)
+    {
+        if (leader is not PlayableLeader playableLeader) return false;
+        if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
+        if (state.discardPile == null || state.discardPile.Count == 0) return false;
+
+        int discardIndex = -1;
+        for (int i = state.discardPile.Count - 1; i >= 0; i--)
+        {
+            CardData card = state.discardPile[i];
+            if (!MatchesActionCard(card, actionClassName, actionId)) continue;
+            discardIndex = i;
+            break;
+        }
+
+        if (discardIndex < 0) return false;
+
+        CardData returnedCard = state.discardPile[discardIndex];
+        state.discardPile.RemoveAt(discardIndex);
+        state.hand.Add(returnedCard);
+        RefreshHumanPlayerHandUIIfHuman(playableLeader);
         return true;
     }
 
@@ -400,34 +504,9 @@ public class DeckManager : MonoBehaviour
         if (leader == null) return false;
         if (!loaded && !InitializeFromResources()) return false;
 
-        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state))
-        {
-            state = BuildDeckStateForLeader(leader);
-            if (state == null) return false;
-            playerDecks[leader] = state;
-        }
+        ApplyTutorialActionCardsToState(leader, actionClassNames);
 
-        List<string> required = actionClassNames?
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList() ?? new List<string>();
-
-        state.hand.Clear();
-        state.drawPile.Clear();
-        state.discardPile.Clear();
-
-        foreach (string actionClass in required)
-        {
-            CardData card = FindActionCardForLeader(leader, actionClass);
-            if (card == null)
-            {
-                Debug.LogWarning($"DeckManager: Could not find tutorial card for action '{actionClass}' and leader '{leader.characterName}'.");
-                continue;
-            }
-            state.hand.Add(CloneCard(card));
-        }
-
+        RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
 
@@ -441,7 +520,53 @@ public class DeckManager : MonoBehaviour
 
         playerDecks[leader] = rebuilt;
         RefillHandToCount(rebuilt, Mathf.Max(0, cardsToDraw));
+        RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
+    }
+
+    public void RefreshHumanPlayerHandUI()
+    {
+        if (isRefreshingHumanHandUI) return;
+        isRefreshingHumanHandUI = true;
+        try
+        {
+            ClearHandCardInstances();
+
+            GameObject cardPrefab = ResolveCardPrefab();
+            if (cardPrefab == null || gridLayout == null) return;
+
+            Game game = FindFirstObjectByType<Game>();
+            if (game == null || game.player == null) return;
+            EnsureTutorialHandForPlayer(game.player);
+            if (!playerDecks.TryGetValue(game.player, out PlayerDeckState state) || state.hand == null) return;
+
+            foreach (CardData card in state.hand)
+            {
+                if (card == null) continue;
+
+                GameObject cardGo = Instantiate(cardPrefab, gridLayout.transform);
+                cardGo.SetActive(true);
+                handCardInstances.Add(cardGo);
+
+                Car cardComponent = cardGo.GetComponent<Car>();
+                if (cardComponent == null)
+                {
+                    Debug.LogWarning("DeckManager: Card prefab is missing the Car component.");
+                    continue;
+                }
+
+                cardComponent.Initialize(card);
+            }
+        }
+        finally
+        {
+            isRefreshingHumanHandUI = false;
+        }
+    }
+
+    public void ClearHumanPlayerHandUI()
+    {
+        ClearHandCardInstances();
     }
 
     private void RefillHandToCount(PlayerDeckState state, int targetCount)
@@ -509,7 +634,14 @@ public class DeckManager : MonoBehaviour
             agentSkillRequired = card.agentSkillRequired,
             emissarySkillRequired = card.emissarySkillRequired,
             mageSkillRequired = card.mageSkillRequired,
-            difficulty = card.difficulty
+            difficulty = card.difficulty,
+            leatherRequired = card.leatherRequired,
+            mountsRequired = card.mountsRequired,
+            timberRequired = card.timberRequired,
+            ironRequired = card.ironRequired,
+            steelRequired = card.steelRequired,
+            mithrilRequired = card.mithrilRequired,
+            goldRequired = card.goldRequired
         };
     }
 
@@ -544,11 +676,39 @@ public class DeckManager : MonoBehaviour
         return -1;
     }
 
+    private static bool MatchesActionCard(CardData card, string actionClassName, int actionId)
+    {
+        if (card == null) return false;
+        CardTypeEnum ct = card.GetCardType();
+        if (!IsActionLikeCardType(ct)) return false;
+
+        if (!string.IsNullOrWhiteSpace(actionClassName)
+            && string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return actionId > 0 && card.actionId == actionId;
+    }
+
     private static bool IsActionLikeCardType(CardTypeEnum cardType)
     {
         return cardType == CardTypeEnum.Action
             || cardType == CardTypeEnum.Event
             || cardType == CardTypeEnum.Encounter;
+    }
+
+    private static void ApplyCardCosts(Leader owner, CardData card)
+    {
+        if (owner == null || card == null) return;
+
+        if (card.leatherRequired > 0) owner.RemoveLeather(card.leatherRequired, false);
+        if (card.timberRequired > 0) owner.RemoveTimber(card.timberRequired, false);
+        if (card.mountsRequired > 0) owner.RemoveMounts(card.mountsRequired, false);
+        if (card.ironRequired > 0) owner.RemoveIron(card.ironRequired, false);
+        if (card.steelRequired > 0) owner.RemoveSteel(card.steelRequired, false);
+        if (card.mithrilRequired > 0) owner.RemoveMithril(card.mithrilRequired, false);
+        if (card.goldRequired > 0) owner.RemoveGold(card.goldRequired, false);
     }
 
     private PlayerDeckState BuildDeckStateForLeader(PlayableLeader leader)
@@ -609,5 +769,180 @@ public class DeckManager : MonoBehaviour
             .OrderBy(x => x.nation)
             .ThenBy(x => x.deckId)
             .ToList();
+    }
+
+    private void RefreshHumanPlayerHandUIIfHuman(PlayableLeader leader)
+    {
+        if (leader == null) return;
+        Game game = FindFirstObjectByType<Game>();
+        if (game == null || game.player == null || leader != game.player) return;
+        RefreshHumanPlayerHandUI();
+    }
+
+    private void EnsureTutorialHandForPlayer(PlayableLeader leader)
+    {
+        if (leader == null) return;
+
+        TutorialManager tutorial = TutorialManager.Instance;
+        if (tutorial == null || !tutorial.IsActiveFor(leader)) return;
+
+        string requiredActionClass = tutorial.GetCurrentRequiredActionClass(leader);
+        List<string> requiredActions = string.IsNullOrWhiteSpace(requiredActionClass)
+            ? new List<string>()
+            : new List<string> { requiredActionClass };
+
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state))
+        {
+            SetTutorialActionCards(leader, requiredActions);
+            return;
+        }
+
+        bool sameCount = state.hand.Count == requiredActions.Count;
+        bool allPresent = requiredActions.All(required =>
+            state.hand.Any(card =>
+                card != null && string.Equals(card.GetActionRef(), required, StringComparison.OrdinalIgnoreCase)));
+
+        if (!sameCount || !allPresent)
+        {
+            ApplyTutorialActionCardsToState(leader, requiredActions);
+        }
+    }
+
+    private bool ApplyTutorialActionCardsToState(PlayableLeader leader, IEnumerable<string> actionClassNames)
+    {
+        if (leader == null) return false;
+
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state))
+        {
+            state = BuildDeckStateForLeader(leader);
+            if (state == null) return false;
+            playerDecks[leader] = state;
+        }
+
+        List<string> required = actionClassNames?
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList() ?? new List<string>();
+
+        state.hand.Clear();
+        state.drawPile.Clear();
+        state.discardPile.Clear();
+
+        foreach (string actionClass in required)
+        {
+            CardData card = FindActionCardForLeader(leader, actionClass);
+            if (card == null)
+            {
+                Debug.LogWarning($"DeckManager: Could not find tutorial card for action '{actionClass}' and leader '{leader.characterName}'.");
+                continue;
+            }
+            state.hand.Add(CloneCard(card));
+        }
+
+        return true;
+    }
+
+    private void ClearHandCardInstances()
+    {
+        foreach (GameObject card in handCardInstances)
+        {
+            if (card == null) continue;
+            Destroy(card);
+        }
+        handCardInstances.Clear();
+
+        if (gridLayout == null) return;
+
+        for (int i = gridLayout.transform.childCount - 1; i >= 0; i--)
+        {
+            Transform child = gridLayout.transform.GetChild(i);
+            if (child == null) continue;
+            GameObject childGo = child.gameObject;
+            if (childGo == null) continue;
+            if (cardCameObject != null && childGo == cardCameObject) continue;
+            if (childGo.GetComponent<Car>() == null) continue;
+            Destroy(childGo);
+        }
+    }
+
+    private GameObject ResolveCardPrefab()
+    {
+        if (cardCameObject != null)
+        {
+            if (cardCameObject.activeSelf)
+            {
+                cardCameObject.SetActive(false);
+            }
+            return cardCameObject;
+        }
+        if (gridLayout == null) return null;
+
+        Car existingCard = gridLayout.GetComponentInChildren<Car>(true);
+        if (existingCard == null) return null;
+
+        cardCameObject = existingCard.gameObject;
+        if (cardCameObject != null)
+        {
+            cardCameObject.SetActive(false);
+        }
+
+        return cardCameObject;
+    }
+
+    private void LoadActionDefinitions()
+    {
+        TextAsset actionsAsset = Resources.Load<TextAsset>("Actions");
+        if (actionsAsset == null) return;
+
+        ActionDefinitionCollection collection = JsonUtility.FromJson<ActionDefinitionCollection>(actionsAsset.text);
+        if (collection?.actions == null) return;
+
+        foreach (ActionDefinition definition in collection.actions)
+        {
+            if (definition == null) continue;
+            if (!string.IsNullOrWhiteSpace(definition.className))
+            {
+                actionDefinitionsByClass[definition.className] = definition;
+            }
+            if (definition.actionId > 0)
+            {
+                actionDefinitionsById[definition.actionId] = definition;
+            }
+        }
+    }
+
+    private void ApplyActionRequirementsToCard(CardData card)
+    {
+        if (card == null) return;
+
+        ActionDefinition definition = ResolveActionDefinitionForCard(card);
+        if (definition == null) return;
+
+        if (!string.IsNullOrWhiteSpace(card.description)
+            && !string.IsNullOrWhiteSpace(definition.description)
+            && string.Equals(card.description.Trim(), definition.description.Trim(), StringComparison.Ordinal))
+        {
+            card.description = string.Empty;
+        }
+    }
+
+    private ActionDefinition ResolveActionDefinitionForCard(CardData card)
+    {
+        if (card == null) return null;
+
+        string actionRef = card.GetActionRef();
+        if (!string.IsNullOrWhiteSpace(actionRef)
+            && actionDefinitionsByClass.TryGetValue(actionRef, out ActionDefinition byClass))
+        {
+            return byClass;
+        }
+
+        if (card.actionId > 0 && actionDefinitionsById.TryGetValue(card.actionId, out ActionDefinition byId))
+        {
+            return byId;
+        }
+
+        return null;
     }
 }

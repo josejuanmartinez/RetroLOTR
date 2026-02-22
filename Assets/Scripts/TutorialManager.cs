@@ -112,6 +112,25 @@ public class TutorialManager : MonoBehaviour
         return activeFlow != null && leader == queryLeader && !IsCompleted();
     }
 
+    public int GetActiveRequiredStepIndex(PlayableLeader playableLeader)
+    {
+        if (playableLeader == null) return -1;
+        if (leader != playableLeader) return -1;
+        if (activeFlow == null) return -1;
+        return requiredStepIndex;
+    }
+
+    public string GetCurrentRequiredActionClass(PlayableLeader playableLeader)
+    {
+        if (playableLeader == null) return null;
+        if (leader != playableLeader) return null;
+
+        TutorialStep step = GetCurrentRequiredStep();
+        if (step == null) return null;
+        if (!string.Equals(step.type, "performAction", StringComparison.OrdinalIgnoreCase)) return null;
+        return step.requirements != null ? step.requirements.actionClass : null;
+    }
+
     public void HandleActionExecuted(Character actor, string actionClassName, Hex actionHex)
     {
         if (actor == null || actionHex == null) return;

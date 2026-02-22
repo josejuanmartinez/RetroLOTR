@@ -53,7 +53,7 @@ public class LookForCharacterDestination : CharacterAction
             }
             else if (c.GetEmmissary() > 0)
             {
-                if (c.GetOwner().GetGoldPerTurn() <= 1)
+                if (c.GetOwner().goldAmount <= 1)
                 {
                     destination = ownPC.hex;
                 }

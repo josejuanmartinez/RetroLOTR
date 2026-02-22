@@ -1,47 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class ActionsManager : MonoBehaviour
 {
     [Header("References")]
     public CanvasGroup canvasGroup;
-    [Header("Prefabs")]
-    public GameObject actionButtonPrefab;
-    public GameObject hoverPrefab;
-    public Transform gridLayoutTransform;
-
-    [Header("Pagination")]
-    public Button previousPageButton;
-    public Button nextPageButton;
-    [SerializeField] private int actionsPerPage = 5;
-
-    [Header("Debug")]
-    public bool showUnavailableActions = false;
 
     [HideInInspector]
     public CharacterAction DEFAULT;
     public CharacterAction[] characterActions;
-    // Dictionary to store all the action components
-    private Dictionary<Type, CharacterAction> actionComponents = new ();
-    private readonly List<CharacterAction> availableActions = new();
-    private readonly List<CharacterAction> unavailableActions = new();
-    private int currentPageIndex;
-    private int lastPaginationFrame = -1;
-    private Character currentCharacter;
     public static readonly char[] ActionHotkeyLetters = "BCEFGHIJKLMOQRTUVWYZ".ToCharArray();
 
+    private readonly Dictionary<Type, CharacterAction> actionComponents = new();
+    private readonly List<CharacterAction> availableActions = new();
+    private Character currentCharacter;
 
-    private Illustrations illustrations;
     public void Start()
     {
-        if(illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        
-        // Load definitions from json and sync them with instantiated buttons
         characterActions = LoadActionsFromJson();
         if (characterActions == null || characterActions.Length == 0)
         {
@@ -55,22 +33,19 @@ public class ActionsManager : MonoBehaviour
             DEFAULT = characterActions.FirstOrDefault(a => NormalizeActionName(a.actionName) == "pass") ?? characterActions.FirstOrDefault();
         }
 
-        // Store each component by its type for easy access
+        actionComponents.Clear();
         foreach (CharacterAction component in characterActions)
         {
-            // Debug.Log($"Registering action {component.actionName}");
-            Type componentType = component.GetType();
-            actionComponents[componentType] = component;
+            if (component == null) continue;
+            actionComponents[component.GetType()] = component;
         }
-        SetupPaginationButtons();
+
         Hide();
     }
 
-    // Generic method to get a specific action component
     public T GetAction<T>() where T : CharacterAction
     {
         if (actionComponents.TryGetValue(typeof(T), out CharacterAction component)) return component as T;
-
         Debug.LogWarning($"Action of type {typeof(T).Name} not found!");
         return null;
     }
@@ -82,46 +57,39 @@ public class ActionsManager : MonoBehaviour
             Hide();
             return;
         }
-        if (currentCharacter != character)
+
+        currentCharacter = character;
+
+        foreach (CharacterAction component in actionComponents.Values)
         {
-            currentCharacter = character;
-            currentPageIndex = 0;
+            component.Initialize(character, null, null);
         }
-        actionComponents.Values.ToList().ForEach(component => component.Initialize(character, null, null));
+
         BuildAvailableActions();
-        ApplyPagination();
         UpdateInteractableState();
     }
 
     public void Hide()
     {
-        canvasGroup.alpha = 0;        
-        canvasGroup.interactable = false;
-        canvasGroup.blocksRaycasts = false;
-        actionComponents.Values.ToList().ForEach(component => component.Reset());
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 0f;
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
+
+        foreach (CharacterAction component in actionComponents.Values)
+        {
+            component.Reset();
+        }
+
         availableActions.Clear();
-        unavailableActions.Clear();
-        currentPageIndex = 0;
-        UpdatePaginationButtons(0);
+        currentCharacter = null;
     }
 
     public int GetDefault()
     {
-        return DEFAULT.actionId;
-    }
-
-    private void UpdateInteractableState()
-    {
-        if (canvasGroup == null) return;
-
-        Game game = FindFirstObjectByType<Game>();
-        bool isPlayerTurn = game != null && game.IsPlayerCurrentlyPlaying();
-        bool popupBlocking = PopupManager.IsShowing;
-
-        bool enabled = isPlayerTurn && !popupBlocking;
-        canvasGroup.alpha = enabled ? 1f : 0f;
-        canvasGroup.interactable = enabled;
-        canvasGroup.blocksRaycasts = enabled;
+        return DEFAULT != null ? DEFAULT.actionId : 0;
     }
 
     public void RefreshInteractableState()
@@ -129,59 +97,29 @@ public class ActionsManager : MonoBehaviour
         UpdateInteractableState();
     }
 
-    private void SetupPaginationButtons()
-    {
-        if (previousPageButton != null)
-        {
-            previousPageButton.onClick.RemoveAllListeners();
-            previousPageButton.onClick.AddListener(GoToPreviousPage);
-        }
-        if (nextPageButton != null)
-        {
-            nextPageButton.onClick.RemoveAllListeners();
-            nextPageButton.onClick.AddListener(GoToNextPage);
-        }
-    }
-
     public void GoToPreviousPage()
     {
-        if (lastPaginationFrame == Time.frameCount) return;
-        lastPaginationFrame = Time.frameCount;
-        if (currentPageIndex <= 0) return;
-        currentPageIndex--;
-        ApplyPagination();
     }
 
     public void GoToNextPage()
     {
-        if (lastPaginationFrame == Time.frameCount) return;
-        lastPaginationFrame = Time.frameCount;
-        int totalPages = GetTotalPages();
-        if (currentPageIndex >= totalPages - 1) return;
-        currentPageIndex++;
-        ApplyPagination();
     }
 
     public void PreviousPage()
     {
-        GoToPreviousPage();
     }
 
     public void NextPage()
     {
-        GoToNextPage();
     }
 
     public void ExecuteActionAtPageIndex(int index)
     {
-        if (index < 0 || index >= actionsPerPage) return;
+        if (index < 0 || index >= ActionHotkeyLetters.Length) return;
         if (availableActions.Count == 0) return;
+        if (index >= availableActions.Count) return;
 
-        int startIndex = currentPageIndex * actionsPerPage;
-        int targetIndex = startIndex + index;
-        if (targetIndex < 0 || targetIndex >= availableActions.Count) return;
-
-        CharacterAction action = availableActions[targetIndex];
+        CharacterAction action = availableActions[index];
         if (action == null || !action.FulfillsConditions()) return;
         action.ExecuteFromButton();
     }
@@ -193,10 +131,25 @@ public class ActionsManager : MonoBehaviour
         ExecuteActionAtPageIndex(index);
     }
 
+    private void BuildAvailableActions()
+    {
+        availableActions.Clear();
+        if (characterActions == null || currentCharacter == null) return;
+
+        foreach (CharacterAction action in characterActions)
+        {
+            if (action == null) continue;
+            if (!action.IsRoleEligible(currentCharacter)) continue;
+            if (!action.FulfillsConditions()) continue;
+            availableActions.Add(action);
+        }
+
+        availableActions.Sort((a, b) => string.Compare(a?.actionName, b?.actionName, StringComparison.OrdinalIgnoreCase));
+    }
+
     private CharacterAction[] LoadActionsFromJson()
     {
         TextAsset json = Resources.Load<TextAsset>("Actions");
-        // Include inactive children because action buttons may start disabled on the prefab
         List<CharacterAction> prefabActions = GetComponentsInChildren<CharacterAction>(true).ToList();
         if (json == null)
         {
@@ -211,13 +164,13 @@ public class ActionsManager : MonoBehaviour
             return prefabActions.ToArray();
         }
 
-        // If we already have action children, map and update them; otherwise instantiate from definitions
-        if (prefabActions.Count > 0)
+        if (prefabActions.Count == 0)
         {
-            return UpdateExistingActions(prefabActions, definitionCollection);
+            Debug.LogWarning("ActionsManager: no CharacterAction components found in scene/prefab.");
+            return Array.Empty<CharacterAction>();
         }
 
-        return CreateActionsFromDefinitions(definitionCollection);
+        return UpdateExistingActions(prefabActions, definitionCollection);
     }
 
     private CharacterAction[] UpdateExistingActions(List<CharacterAction> prefabActions, ActionDefinitionCollection definitionCollection)
@@ -245,44 +198,16 @@ public class ActionsManager : MonoBehaviour
             }
             if (action == null)
             {
-                // Create a new action button if the prefab does not have this action yet.
-                Type actionType = ResolveActionType(definition.className);
-                if (actionType == null || !typeof(CharacterAction).IsAssignableFrom(actionType))
-                {
-                    Debug.LogWarning($"Action type '{definition.className}' could not be found for action '{definition.actionName}'.");
-                    continue;
-                }
-
-                GameObject go = InstantiateActionButton(definition.actionName);
-                if (go == null)
-                {
-                    Debug.LogWarning($"Could not instantiate button for action '{definition.actionName}'. Ensure actionButtonPrefab is assigned.");
-                    continue;
-                }
-
-                action = go.GetComponent(actionType) as CharacterAction ?? go.AddComponent(actionType) as CharacterAction;
-                if (action == null)
-                {
-                    Debug.LogWarning($"Failed to attach action component '{definition.className}' to button '{definition.actionName}'.");
-                    Destroy(go);
-                    continue;
-                }
-
-                WireUiReferences(go, action);
-                ApplyDefinition(action, definition);
-                ordered.Add(action);
+                Debug.LogWarning($"ActionsManager: action '{definition.className}'/'{definition.actionName}' is not present as a CharacterAction component.");
                 continue;
             }
 
-            WireUiReferences(action.gameObject, action);
             ApplyDefinition(action, definition);
             ordered.Add(action);
         }
 
-        // Keep any prefab actions that were not present in the json at the end of the array
         foreach (CharacterAction leftover in prefabActions.Where(a => !ordered.Contains(a)))
         {
-            WireUiReferences(leftover.gameObject, leftover);
             ordered.Add(leftover);
         }
 
@@ -295,167 +220,36 @@ public class ActionsManager : MonoBehaviour
         return ordered.ToArray();
     }
 
-    private CharacterAction[] CreateActionsFromDefinitions(ActionDefinitionCollection definitionCollection)
+    private void ApplyDefinition(CharacterAction action, ActionDefinition definition)
     {
-        List<CharacterAction> created = new();
+        if (action == null || definition == null) return;
 
-        foreach (ActionDefinition definition in definitionCollection.actions)
-        {
-            Type actionType = ResolveActionType(definition.className);
-            if (actionType == null || !typeof(CharacterAction).IsAssignableFrom(actionType))
-            {
-                Debug.LogWarning($"Action type '{definition.className}' could not be found for action '{definition.actionName}'.");
-                continue;
-            }
-
-            GameObject go = InstantiateActionButton(definition.actionName);
-            if (go == null)
-            {
-                Debug.LogWarning($"Could not instantiate button for action '{definition.actionName}'. Ensure actionButtonPrefab is assigned.");
-                continue;
-            }
-
-            // Add or reuse the specific CharacterAction component
-            CharacterAction action = go.GetComponent(actionType) as CharacterAction ?? go.AddComponent(actionType) as CharacterAction;
-            if (action == null)
-            {
-                Debug.LogWarning($"Failed to attach action component '{definition.className}' to button '{definition.actionName}'.");
-                Destroy(go);
-                continue;
-            }
-
-            WireUiReferences(go, action);
-            ApplyDefinition(action, definition);
-            created.Add(action);
-        }
-
-        return created.ToArray();
+        action.actionName = definition.actionName;
+        action.description = definition.description;
+        action.gameObject.name = definition.actionName;
+        action.actionId = definition.actionId;
+        action.isBuyCaravans = definition.isBuyCaravans;
+        action.isSellCaravans = definition.isSellCaravans;
+        action.commanderXP = definition.commanderXP;
+        action.agentXP = definition.agentXP;
+        action.emmissaryXP = definition.emmissaryXP;
+        action.mageXP = definition.mageXP;
+        action.reward = definition.reward;
+        action.advisorType = definition.advisorType;
     }
 
-    private void BuildAvailableActions()
+    private void UpdateInteractableState()
     {
-        availableActions.Clear();
-        unavailableActions.Clear();
-        if (characterActions == null) return;
+        if (canvasGroup == null) return;
 
-        foreach (CharacterAction action in characterActions)
-        {
-            if (action == null) continue;
-            if (!action.IsRoleEligible(currentCharacter)) continue;
-            if (action.FulfillsConditions())
-            {
-                availableActions.Add(action);
-            }
-            else if (showUnavailableActions && action.ShouldShowWhenUnavailable())
-            {
-                unavailableActions.Add(action);
-            }
-        }
+        Game game = FindFirstObjectByType<Game>();
+        bool isPlayerTurn = game != null && game.IsPlayerCurrentlyPlaying();
+        bool popupBlocking = PopupManager.IsShowing;
 
-        availableActions.Sort((a, b) => string.Compare(a?.actionName, b?.actionName, StringComparison.OrdinalIgnoreCase));
-        unavailableActions.Sort((a, b) => string.Compare(a?.actionName, b?.actionName, StringComparison.OrdinalIgnoreCase));
-    }
-
-    private void ApplyPagination()
-    {
-        if (characterActions == null || characterActions.Length == 0)
-        {
-            UpdatePaginationButtons(0);
-            return;
-        }
-
-        foreach (CharacterAction action in characterActions)
-        {
-            if (action?.button != null)
-            {
-                action.button.gameObject.SetActive(false);
-            }
-        }
-
-        int totalActions = availableActions.Count + (showUnavailableActions ? unavailableActions.Count : 0);
-        int totalPages = GetTotalPages();
-        if (totalActions == 0 || totalPages == 0)
-        {
-            UpdatePaginationButtons(0);
-            return;
-        }
-
-        currentPageIndex = Mathf.Clamp(currentPageIndex, 0, totalPages - 1);
-        int startIndex = currentPageIndex * actionsPerPage;
-        int endIndex = Mathf.Min(startIndex + actionsPerPage, totalActions);
-
-        Transform targetParent = gridLayoutTransform != null ? gridLayoutTransform : transform;
-        for (int i = startIndex; i < endIndex; i++)
-        {
-            bool isAvailable = i < availableActions.Count;
-            CharacterAction action = isAvailable
-                ? availableActions[i]
-                : unavailableActions[i - availableActions.Count];
-            if (action == null) continue;
-            if (action.button != null)
-            {
-                action.button.gameObject.SetActive(true);
-                action.button.interactable = isAvailable;
-            }
-            if (action.transform.parent != targetParent)
-            {
-                action.transform.SetParent(targetParent, false);
-            }
-            action.transform.SetSiblingIndex(i - startIndex);
-            if (action.textUI != null)
-            {
-                action.textUI.text = FormatActionLabel(i - startIndex, action.actionName, isAvailable);
-            }
-            action.UpdateHoverText(isAvailable);
-        }
-
-        UpdatePaginationButtons(totalPages);
-    }
-
-    private int GetTotalPages()
-    {
-        if (actionsPerPage <= 0) return 0;
-        int totalActions = availableActions.Count + (showUnavailableActions ? unavailableActions.Count : 0);
-        return Mathf.CeilToInt(totalActions / (float)actionsPerPage);
-    }
-
-    private void UpdatePaginationButtons(int totalPages)
-    {
-        bool hasPages = totalPages > 1;
-
-        if (previousPageButton != null)
-        {
-            previousPageButton.gameObject.SetActive(hasPages);
-            previousPageButton.interactable = hasPages && currentPageIndex > 0;
-        }
-
-        if (nextPageButton != null)
-        {
-            nextPageButton.gameObject.SetActive(hasPages);
-            nextPageButton.interactable = hasPages && currentPageIndex < totalPages - 1;
-        }
-    }
-
-    private string FormatActionLabel(int index, string actionName, bool includeHotkey)
-    {
-        if (includeHotkey && TryGetHotkeyLetter(index, out char letter))
-        {
-            return $"[{letter}] {actionName ?? string.Empty}";
-        }
-
-        return actionName ?? string.Empty;
-    }
-
-    private bool TryGetHotkeyLetter(int index, out char letter)
-    {
-        if (index >= 0 && index < ActionHotkeyLetters.Length)
-        {
-            letter = ActionHotkeyLetters[index];
-            return true;
-        }
-
-        letter = '?';
-        return false;
+        bool enabled = isPlayerTurn && !popupBlocking;
+        canvasGroup.alpha = enabled ? 1f : 0f;
+        canvasGroup.interactable = enabled;
+        canvasGroup.blocksRaycasts = enabled;
     }
 
     private int GetHotkeyIndex(char letter)
@@ -467,125 +261,6 @@ public class ActionsManager : MonoBehaviour
         }
 
         return -1;
-    }
-
-    private Type ResolveActionType(string className)
-    {
-        if (string.IsNullOrWhiteSpace(className)) return null;
-
-        // Direct lookup
-        Type direct = Type.GetType($"{className}, Assembly-CSharp");
-        if (direct != null) return direct;
-
-        // Fallback: find any CharacterAction-derived type whose name matches ignoring case and common punctuation differences
-        string normalized = NormalizeActionName(className).Replace("-", string.Empty).Replace(" ", string.Empty);
-        foreach (Type t in typeof(CharacterAction).Assembly.GetTypes())
-        {
-            if (!typeof(CharacterAction).IsAssignableFrom(t)) continue;
-            string tn = NormalizeActionName(t.Name).Replace("-", string.Empty).Replace(" ", string.Empty);
-            if (tn == normalized) return t;
-        }
-
-        return null;
-    }
-
-    private GameObject InstantiateActionButton(string actionName)
-    {
-        GameObject prefab = actionButtonPrefab;
-        if (prefab == null)
-        {
-            prefab = Resources.Load<GameObject>("ActionButton");
-        }
-        if (prefab == null)
-        {
-            prefab = Resources.Load<GameObject>("GameObjects/ActionButton");
-        }
-        if (prefab == null)
-        {
-            Debug.LogWarning("ActionButton prefab is not assigned and could not be loaded from Resources.");
-            return null;
-        }
-
-        GameObject instance = Instantiate(prefab, gridLayoutTransform);
-        instance.name = actionName;
-        return instance;
-    }
-
-    private void WireUiReferences(GameObject go, CharacterAction action)
-    {
-        if (go == null || action == null) return;
-
-        action.button = go.GetComponent<Button>() ?? go.GetComponentInChildren<Button>(true);
-        action.textUI = go.GetComponentInChildren<TextMeshProUGUI>(true);
-        if (action.spriteImage == null)
-        {
-            action.spriteImage = FindActionSpriteImage(go);
-        }
-
-        if (hoverPrefab != null)
-        {
-            action.hoverPrefab = hoverPrefab;
-        }
-
-        if (action.button != null)
-        {
-            action.button.onClick.RemoveListener(action.ExecuteFromButton);
-            action.button.onClick.AddListener(action.ExecuteFromButton);
-        }
-    }
-
-    private void ApplyDefinition(CharacterAction action, ActionDefinition definition)
-    {
-        if (action == null || definition == null) return;
-
-        action.actionName = definition.actionName;
-        action.description = definition.description;
-        action.gameObject.name = definition.actionName;
-        action.actionId = definition.actionId;
-        action.difficulty = definition.difficulty;
-        action.commanderSkillRequired = definition.commanderSkillRequired;
-        action.agentSkillRequired = definition.agentSkillRequired;
-        action.emissarySkillRequired = definition.emissarySkillRequired;
-        action.mageSkillRequired = definition.mageSkillRequired;
-        action.leatherCost = definition.leatherCost;
-        action.mountsCost = definition.mountsCost;
-        action.timberCost = definition.timberCost;
-        action.ironCost = definition.ironCost;
-        action.steelCost = definition.steelCost;
-        action.mithrilCost = definition.mithrilCost;
-        action.goldCost = definition.goldCost;
-        action.isBuyCaravans = definition.isBuyCaravans;
-        action.isSellCaravans = definition.isSellCaravans;
-        action.commanderXP = definition.commanderXP;
-        action.agentXP = definition.agentXP;
-        action.emmissaryXP = definition.emmissaryXP;
-        action.mageXP = definition.mageXP;
-        action.reward = definition.reward;
-        action.advisorType = definition.advisorType;
-        ApplyIcon(action, definition.iconName);
-    }
-
-    private Image FindActionSpriteImage(GameObject go)
-    {
-        Transform imageTransform = go.transform.Find("Image");
-        if (imageTransform != null)
-        {
-            return imageTransform.GetComponent<Image>();
-        }
-
-        return go.GetComponentInChildren<Image>(true);
-    }
-
-    private void ApplyIcon(CharacterAction action, string iconName)
-    {
-        if (action == null || action.spriteImage == null) return;
-        if (string.IsNullOrWhiteSpace(iconName)) return;
-
-        if (illustrations == null) return;
-
-        Sprite icon = illustrations.GetIllustrationByName(iconName);
-        action.spriteImage.sprite = icon;
-        action.spriteImage.enabled = icon != null;
     }
 
     private string NormalizeActionName(string value)
