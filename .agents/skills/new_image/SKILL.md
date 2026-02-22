@@ -10,7 +10,7 @@ Create new game images that match the existing RetroLOTR card style.
 ## Workflow
 1. Determine image type from the request (`action`, `spell-action`, `pc`, `region`, `army`, `character`, `rest`).
 2. Pick at least 5 random reference images from `Assets/Art/Cards/Actions` to anchor style (never use fewer than 5).
-3. Generate a square image (`1:1`, recommended `1024x1024`) using model `gpt-image-1.5` and include all selected references in the API call using the image payload format required by `openai-image-gen` (base64, bytes, or equivalent supported binary input).
+3. Generate a square image (`1:1`, recommended `512x512`) using model `gpt-image-1.5` and include all selected references in the API call using the image payload format required by `openai-image-gen` (base64, bytes, or equivalent supported binary input).
 4. Enforce style direction in the prompt: black and white, ink drawing, old printer texture, retro sword-and-sorcery, Conan / MERPG / classic D&D vibe.
 5. Run the result through the `black&white` skill (`bw-postprocess`) to convert to strict pure black/white output (`0/255`).
 6. Save the final image to the correct folder in `Assets/Art/Cards`.

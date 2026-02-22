@@ -1528,7 +1528,7 @@ public class CharacterAction : SearcherByName
             deckManager.InitializeHandsForCurrentGame();
         }
 
-        return deckManager.HasActionCardInHand(playableLeader, GetType().Name, actionId);
+        return deckManager.HasActionCardInHand(playableLeader, GetType().Name, actionId, character);
     }
 
     private bool TryConsumeActionCardOnUse(Leader owner, bool drawReplacementCard, out CardData consumedCard)

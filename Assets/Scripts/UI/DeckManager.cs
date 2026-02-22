@@ -33,17 +33,93 @@ public class DeckData
 }
 
 [Serializable]
+public class CardPlayabilityResult
+{
+    public bool isPlayable;
+    public bool failsLevelRequirements;
+    public bool failsResourceRequirements;
+    public bool failsActionConditions;
+
+    public void Reset()
+    {
+        isPlayable = false;
+        failsLevelRequirements = false;
+        failsResourceRequirements = false;
+        failsActionConditions = false;
+    }
+}
+
+[Serializable]
 public class CardData
 {
     public int cardId;
     public string name;
     public string description;
     public string type;
-    public string spriteName;
     public string deckId;
     public int alignment;
     public string actionClassName;
+    public string action;
     public int actionId;
+
+    // Card-owned requirements (migrated from Actions.json)
+    public int commanderSkillRequired;
+    public int agentSkillRequired;
+    public int emissarySkillRequired;
+    public int mageSkillRequired;
+    public int difficulty;
+
+    [NonSerialized] public bool isPlayable;
+    [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
+
+    public CardTypeEnum GetCardType()
+    {
+        return CardTypeParser.Parse(type);
+    }
+
+    public bool IsEventCard()
+    {
+        return GetCardType() == CardTypeEnum.Event;
+    }
+
+    public bool IsEncounterCard()
+    {
+        return GetCardType() == CardTypeEnum.Encounter;
+    }
+
+    public string GetActionRef()
+    {
+        return !string.IsNullOrWhiteSpace(action) ? action : actionClassName;
+    }
+
+    public bool EvaluatePlayability(Character selectedCharacter, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)
+    {
+        playability ??= new CardPlayabilityResult();
+        playability.Reset();
+
+        if (selectedCharacter == null)
+        {
+            playability.failsActionConditions = true;
+            isPlayable = false;
+            return false;
+        }
+
+        bool levelsOk = selectedCharacter.GetCommander() >= commanderSkillRequired
+            && selectedCharacter.GetAgent() >= agentSkillRequired
+            && selectedCharacter.GetEmmissary() >= emissarySkillRequired
+            && selectedCharacter.GetMage() >= mageSkillRequired;
+
+        bool resourcesOk = resourceCheck == null || resourceCheck(selectedCharacter);
+        bool conditionsOk = conditionCheck == null || conditionCheck(selectedCharacter);
+
+        playability.failsLevelRequirements = !levelsOk;
+        playability.failsResourceRequirements = !resourcesOk;
+        playability.failsActionConditions = !conditionsOk;
+
+        isPlayable = levelsOk && resourcesOk && conditionsOk;
+        playability.isPlayable = isPlayable;
+        return isPlayable;
+    }
 }
 
 public class DeckManager : MonoBehaviour
@@ -152,6 +228,12 @@ public class DeckManager : MonoBehaviour
             }
 
             if (deckData.cards == null) deckData.cards = new();
+            foreach (CardData card in deckData.cards)
+            {
+                if (card == null) continue;
+                card.deckId = deckData.deckId;
+                card.alignment = deckData.alignment;
+            }
 
             loadedDecksById[deckData.deckId] = deckData;
             cards.AddRange(deckData.cards);
@@ -269,9 +351,11 @@ public class DeckManager : MonoBehaviour
         bool Matches(CardData card)
         {
             if (card == null) return false;
-            if (!string.Equals(card.type, "Action", StringComparison.OrdinalIgnoreCase)) return false;
+            CardTypeEnum ct = card.GetCardType();
+            if (!IsActionLikeCardType(ct)) return false;
+            string cardRef = card.GetActionRef();
             if (!string.IsNullOrWhiteSpace(actionClassName) &&
-                string.Equals(card.actionClassName, actionClassName, StringComparison.OrdinalIgnoreCase))
+                string.Equals(cardRef, actionClassName, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -283,11 +367,11 @@ public class DeckManager : MonoBehaviour
             || state.discardPile.Any(Matches);
     }
 
-    public bool HasActionCardInHand(Leader leader, string actionClassName, int actionId)
+    public bool HasActionCardInHand(Leader leader, string actionClassName, int actionId, Character selectedCharacter = null, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)
     {
         if (leader is not PlayableLeader playableLeader) return true;
         if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
-        return FindMatchingActionCardIndex(state.hand, actionClassName, actionId) >= 0;
+        return FindMatchingActionCardIndex(state.hand, actionClassName, actionId, selectedCharacter, resourceCheck, conditionCheck) >= 0;
     }
 
     public bool TryConsumeActionCard(Leader leader, string actionClassName, int actionId, bool drawReplacement, out CardData consumedCard)
@@ -396,15 +480,15 @@ public class DeckManager : MonoBehaviour
         {
             CardData inLeaderDeck = deckData.cards.FirstOrDefault(card =>
                 card != null
-                && string.Equals(card.type, "Action", StringComparison.OrdinalIgnoreCase)
-                && string.Equals(card.actionClassName, actionClassName, StringComparison.OrdinalIgnoreCase));
+                && IsActionLikeCardType(card.GetCardType())
+                && string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase));
             if (inLeaderDeck != null) return inLeaderDeck;
         }
 
         return cards.FirstOrDefault(card =>
             card != null
-            && string.Equals(card.type, "Action", StringComparison.OrdinalIgnoreCase)
-            && string.Equals(card.actionClassName, actionClassName, StringComparison.OrdinalIgnoreCase));
+            && IsActionLikeCardType(card.GetCardType())
+            && string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase));
     }
 
     private static CardData CloneCard(CardData card)
@@ -416,33 +500,55 @@ public class DeckManager : MonoBehaviour
             name = card.name,
             description = card.description,
             type = card.type,
-            spriteName = card.spriteName,
             deckId = card.deckId,
             alignment = card.alignment,
             actionClassName = card.actionClassName,
-            actionId = card.actionId
+            action = card.action,
+            actionId = card.actionId,
+            commanderSkillRequired = card.commanderSkillRequired,
+            agentSkillRequired = card.agentSkillRequired,
+            emissarySkillRequired = card.emissarySkillRequired,
+            mageSkillRequired = card.mageSkillRequired,
+            difficulty = card.difficulty
         };
     }
 
-    private static int FindMatchingActionCardIndex(List<CardData> cardsList, string actionClassName, int actionId)
+    private static int FindMatchingActionCardIndex(List<CardData> cardsList, string actionClassName, int actionId, Character selectedCharacter = null, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)
     {
         if (cardsList == null || cardsList.Count == 0) return -1;
         for (int i = 0; i < cardsList.Count; i++)
         {
             CardData card = cardsList[i];
             if (card == null) continue;
-            if (!string.Equals(card.type, "Action", StringComparison.OrdinalIgnoreCase)) continue;
+            CardTypeEnum ct = card.GetCardType();
+            if (!IsActionLikeCardType(ct)) continue;
+
+            bool matches = false;
             if (!string.IsNullOrWhiteSpace(actionClassName) &&
-                string.Equals(card.actionClassName, actionClassName, StringComparison.OrdinalIgnoreCase))
+                string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase))
             {
-                return i;
+                matches = true;
             }
-            if (actionId > 0 && card.actionId == actionId)
+            else if (actionId > 0 && card.actionId == actionId)
+            {
+                matches = true;
+            }
+
+            if (!matches) continue;
+
+            if (selectedCharacter == null || card.EvaluatePlayability(selectedCharacter, resourceCheck, conditionCheck))
             {
                 return i;
             }
         }
         return -1;
+    }
+
+    private static bool IsActionLikeCardType(CardTypeEnum cardType)
+    {
+        return cardType == CardTypeEnum.Action
+            || cardType == CardTypeEnum.Event
+            || cardType == CardTypeEnum.Encounter;
     }
 
     private PlayerDeckState BuildDeckStateForLeader(PlayableLeader leader)

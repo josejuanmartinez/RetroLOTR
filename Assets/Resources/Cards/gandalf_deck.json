@@ -1,4 +1,4 @@
-﻿{
+{
     "handSize":  5,
     "deckId":  "gandalf_deck",
     "nation":  "Gandalf",
@@ -9,1097 +9,1190 @@
                       "name":  "Bree",
                       "description":  "Starting population center for Gandalf.",
                       "type":  "PC",
-                      "spriteName":  "halflingHouse00",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalBree"
                   },
                   {
                       "cardId":  4,
                       "name":  "Caras Galadhon",
                       "description":  "Population center from non-playable leader Galadriel.",
                       "type":  "PC",
-                      "spriteName":  "hexForestBroadleafElfVillage00_onlyhouse",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalCarasGaladhon"
                   },
                   {
                       "cardId":  5,
                       "name":  "Imladris",
                       "description":  "Population center from non-playable leader Elrond.",
                       "type":  "PC",
-                      "spriteName":  "elvenLodge",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalImladris"
                   },
                   {
                       "cardId":  6,
                       "name":  "Thanduil\u0027s Halls",
                       "description":  "Population center from non-playable leader Thranduil.",
                       "type":  "PC",
-                      "spriteName":  "elvenLodge",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalThanduilSHalls"
                   },
                   {
                       "cardId":  16,
                       "name":  "Sarn Ford",
                       "description":  "Population center from non-playable leader Aragorn.",
                       "type":  "PC",
-                      "spriteName":  "tent00",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalSarnFord"
                   },
                   {
                       "cardId":  18,
                       "name":  "The Carrock",
                       "description":  "Population center from non-playable leader Beoraborn.",
                       "type":  "PC",
-                      "spriteName":  "redRock00",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalTheCarrock"
                   },
                   {
                       "cardId":  19,
                       "name":  "Woodmen town",
                       "description":  "Population center from non-playable leader Ingomer.",
                       "type":  "PC",
-                      "spriteName":  null,
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalWoodmenTown"
                   },
                   {
                       "cardId":  23,
                       "name":  "Esgaroth",
                       "description":  "Population center from non-playable leader Bard.",
                       "type":  "PC",
-                      "spriteName":  "transparent",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalEsgaroth"
                   },
                   {
                       "cardId":  27,
                       "name":  "The Grey Havens",
                       "description":  "Population center from non-playable leader Cirdan.",
                       "type":  "PC",
-                      "spriteName":  "elvenLodge",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalTheGreyHavens"
                   },
                   {
                       "cardId":  28,
                       "name":  "Minas Tirith",
                       "description":  "Population center from non-playable leader Denethor.",
                       "type":  "PC",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalMinasTirith"
                   },
                   {
                       "cardId":  29,
                       "name":  "Henneth Annun",
                       "description":  "Population center from non-playable leader Faramir.",
                       "type":  "PC",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalHennethAnnun"
                   },
                   {
                       "cardId":  30,
                       "name":  "Edoras",
                       "description":  "Population center from non-playable leader Theoden.",
                       "type":  "PC",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalEdoras"
                   },
                   {
                       "cardId":  31,
-                      "name":  "Iron Hills",
+                      "name":  "Azanulimbar-Dum",
                       "description":  "Population center from non-playable leader Dain.",
                       "type":  "PC",
-                      "spriteName":  "undergroundPassageClosed00",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalAzanulimbarDM"
                   },
                   {
                       "cardId":  32,
-                      "name":  "Blue Mountains",
+                      "name":  "EredLuin",
                       "description":  "Population center from non-playable leader Gloin.",
                       "type":  "PC",
-                      "spriteName":  "undergroundPassageClosed00",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalBlueMountains"
                   },
                   {
                       "cardId":  36,
                       "name":  "Old Forest",
                       "description":  "Population center from non-playable leader Tom Bombadil.",
                       "type":  "PC",
-                      "spriteName":  "halflingHouse05",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalOldForest"
                   },
                   {
                       "cardId":  40,
                       "name":  "Derndingle",
                       "description":  "Population center from non-playable leader Treebeard.",
                       "type":  "PC",
-                      "spriteName":  "hexForestBroadleafGiantTree00_onlytree",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalDerndingle"
                   },
                   {
                       "cardId":  44,
                       "name":  "Eagle\u0027s Eyrie",
                       "description":  "Population center from non-playable leader Gwaihir.",
                       "type":  "PC",
-                      "spriteName":  "standingStones",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalEagleSEyrie"
                   },
                   {
                       "cardId":  47,
                       "name":  "Buckland",
                       "description":  "Population center from non-playable leader Merry.",
                       "type":  "PC",
-                      "spriteName":  "halflingHouse00",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalBuckland"
                   },
                   {
                       "cardId":  48,
                       "name":  "Michel Delving",
                       "description":  "Population center from non-playable leader Pippin.",
                       "type":  "PC",
-                      "spriteName":  "halflingHouse00",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalMichelDelving"
                   },
                   {
                       "cardId":  49,
                       "name":  "Hobbiton",
                       "description":  "Population center from non-playable leader Frodo.",
                       "type":  "PC",
-                      "spriteName":  "halflingHouse00",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalHobbiton"
                   },
                   {
                       "cardId":  52,
                       "name":  "Sell 5 Steel",
                       "description":  "Sell 5 \u003csprite name=\"steel\"/\u003e from your stores for gold.",
                       "type":  "Action",
-                      "spriteName":  "icons3_7",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "SellSteel",
-                      "actionId":  98
+                      "actionId":  98,
+                      "action":  "SellSteel",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  53,
                       "name":  "Buy 5 Steel",
                       "description":  "Buy 5 \u003csprite name=\"steel\"/\u003e from the caravans.",
                       "type":  "Action",
-                      "spriteName":  "icons3_7",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "BuySteel",
-                      "actionId":  99
+                      "actionId":  99,
+                      "action":  "BuySteel",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  54,
                       "name":  "Sell 5 Leather",
                       "description":  "Sell 5 \u003csprite name=\"leather\"/\u003e from your stores for gold.",
                       "type":  "Action",
-                      "spriteName":  "icons3_0",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "SellLeather",
-                      "actionId":  109
+                      "actionId":  109,
+                      "action":  "SellLeather",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  55,
                       "name":  "Buy 5 Leather",
                       "description":  "Buy 5 \u003csprite name=\"leather\"/\u003e from the caravans.",
                       "type":  "Action",
-                      "spriteName":  "icons3_0",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "BuyLeather",
-                      "actionId":  110
+                      "actionId":  110,
+                      "action":  "BuyLeather",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  56,
                       "name":  "Sell 5 Mounts",
                       "description":  "Sell 5 \u003csprite name=\"mounts\"/\u003e from your stores for gold.",
                       "type":  "Action",
-                      "spriteName":  "icons3_3",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "SellMounts",
-                      "actionId":  111
+                      "actionId":  111,
+                      "action":  "SellMounts",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  57,
                       "name":  "Buy 5 Mounts",
                       "description":  "Buy 5 \u003csprite name=\"mounts\"/\u003e from the caravans.",
                       "type":  "Action",
-                      "spriteName":  "icons3_3",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "BuyMounts",
-                      "actionId":  112
+                      "actionId":  112,
+                      "action":  "BuyMounts",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  58,
                       "name":  "Sell 5 Iron",
                       "description":  "Sell 5 \u003csprite name=\"iron\"/\u003e from your stores for gold.",
                       "type":  "Action",
-                      "spriteName":  "icons3_1",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "SellIron",
-                      "actionId":  113
+                      "actionId":  113,
+                      "action":  "SellIron",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  59,
                       "name":  "Buy 5 Iron",
                       "description":  "Buy 5 \u003csprite name=\"iron\"/\u003e from the caravans.",
                       "type":  "Action",
-                      "spriteName":  "icons3_1",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "BuyIron",
-                      "actionId":  114
+                      "actionId":  114,
+                      "action":  "BuyIron",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  60,
                       "name":  "Sell 5 Timber",
                       "description":  "Sell 5 \u003csprite name=\"timber\"/\u003e from your stores for gold.",
                       "type":  "Action",
-                      "spriteName":  "icons3_4",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "SellTimber",
-                      "actionId":  115
+                      "actionId":  115,
+                      "action":  "SellTimber",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  61,
                       "name":  "Buy 5 Timber",
                       "description":  "Buy 5 \u003csprite name=\"timber\"/\u003e from the caravans.",
                       "type":  "Action",
-                      "spriteName":  "icons3_4",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "BuyTimber",
-                      "actionId":  116
+                      "actionId":  116,
+                      "action":  "BuyTimber",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  62,
                       "name":  "Sell 5 Mithril",
                       "description":  "Sell 5 \u003csprite name=\"mithril\"/\u003e from your stores for gold.",
                       "type":  "Action",
-                      "spriteName":  "icons4_21",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "SellMithril",
-                      "actionId":  117
+                      "actionId":  117,
+                      "action":  "SellMithril",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  63,
                       "name":  "Buy 5 Mithril",
                       "description":  "Buy 5 \u003csprite name=\"mithril\"/\u003e from the caravans.",
                       "type":  "Action",
-                      "spriteName":  "icons4_21",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "BuyMithril",
-                      "actionId":  118
+                      "actionId":  118,
+                      "action":  "BuyMithril",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  64,
                       "name":  "Assassinate Character",
                       "description":  "Attempt to kill an enemy character in this hex; the agent returns to capital and may be wounded.",
                       "type":  "Action",
-                      "spriteName":  "icons1_10",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "AssassinateCharacter",
-                      "actionId":  119
+                      "actionId":  119,
+                      "action":  "AssassinateCharacter",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  4,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  80
                   },
                   {
                       "cardId":  65,
                       "name":  "Wound Character",
                       "description":  "Attempt to wound an enemy character here; the agent returns to capital.",
                       "type":  "Action",
-                      "spriteName":  "icons5_18",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "WoundCharacter",
-                      "actionId":  120
+                      "actionId":  120,
+                      "action":  "WoundCharacter",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  1,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  66,
                       "name":  "Double Character",
                       "description":  "Turn an enemy character here into your double agent.",
                       "type":  "Action",
-                      "spriteName":  "icons5_0",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "DoubleCharacter",
-                      "actionId":  121
+                      "actionId":  121,
+                      "action":  "DoubleCharacter",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  1,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  67,
                       "name":  "Undouble Character",
                       "description":  "Turn an enemy character here into your double agent.",
                       "type":  "Action",
-                      "spriteName":  "icons5_0",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "UndoubleCharacter",
-                      "actionId":  122
+                      "actionId":  122,
+                      "action":  "UndoubleCharacter",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  1,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  68,
                       "name":  "Increase Loyalty",
                       "description":  "Raise the loyalty of the population center in this hex.",
                       "type":  "Action",
-                      "spriteName":  "pcUp",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "InfluenceUpPC",
-                      "actionId":  123
+                      "actionId":  123,
+                      "action":  "InfluenceUpPC",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  25
                   },
                   {
                       "cardId":  69,
                       "name":  "Decrease Loyalty",
                       "description":  "Lower the loyalty of the population center in this hex.",
                       "type":  "Action",
-                      "spriteName":  "pcDown",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "InfluenceDownPC",
-                      "actionId":  124
+                      "actionId":  124,
+                      "action":  "InfluenceDownPC",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  2,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  70,
                       "name":  "Attack",
                       "description":  "Lead your army to attack enemy armies or population centers in this hex.",
                       "type":  "Action",
-                      "spriteName":  "icons5_8",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Attack",
-                      "actionId":  125
+                      "actionId":  125,
+                      "action":  "Attack",
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  71,
                       "name":  "Increase Fortifications",
                       "description":  "Upgrade the fortification level of your population center here.",
                       "type":  "Action",
-                      "spriteName":  "fortUp",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "FortifyPC",
-                      "actionId":  126
+                      "actionId":  126,
+                      "action":  "FortifyPC",
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  72,
                       "name":  "Cast Darkness",
                       "description":  "Obscure the area around your hex from enemy sight.",
                       "type":  "Action",
-                      "spriteName":  "icons2_4",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "CastDarkness",
-                      "actionId":  127
+                      "actionId":  127,
+                      "action":  "CastDarkness",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  2,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  73,
                       "name":  "Cast Light",
                       "description":  "Reveal the area around your hex.",
                       "type":  "Action",
-                      "spriteName":  "icons5_23",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "CastLight",
-                      "actionId":  128
+                      "actionId":  128,
+                      "action":  "CastLight",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  2,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  74,
                       "name":  "Conjure Mounts",
                       "description":  "Create 1-3 \u003csprite name=\"mounts\"/\u003e at a friendly or aligned population center here.",
                       "type":  "Action",
-                      "spriteName":  "icons4_3",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "ConjureMounts",
-                      "actionId":  129
+                      "actionId":  129,
+                      "action":  "ConjureMounts",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  75,
                       "name":  "Curse",
                       "description":  "Damage an enemy character in your hex with dark magic.",
                       "type":  "Action",
-                      "spriteName":  "icons4_19",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Curse",
-                      "actionId":  130
+                      "actionId":  130,
+                      "action":  "Curse",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  3,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  76,
                       "name":  "Oh, Elbereth!",
                       "description":  "Smite an enemy character here; Nazgul are also halted.",
                       "type":  "Action",
-                      "spriteName":  "icons2_17",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "OhElbereth",
-                      "actionId":  131
+                      "actionId":  131,
+                      "action":  "OhElbereth",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  3,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  77,
                       "name":  "Return To Capital",
                       "description":  "Teleport this character back to your capital (not available to army commanders).",
                       "type":  "Action",
-                      "spriteName":  "icons5_14",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "ReturnToCapital",
-                      "actionId":  132
+                      "actionId":  132,
+                      "action":  "ReturnToCapital",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  25
                   },
                   {
                       "cardId":  78,
                       "name":  "Reveal Pc",
                       "description":  "Expose a hidden population center in this hex.",
                       "type":  "Action",
-                      "spriteName":  "icons4_9",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "RevealPC",
-                      "actionId":  133
+                      "actionId":  133,
+                      "action":  "RevealPC",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  3,
+                      "difficulty":  75
                   },
                   {
                       "cardId":  79,
                       "name":  "Scry Area",
                       "description":  "Reveal a random unseen hex and its surroundings.",
                       "type":  "Action",
-                      "spriteName":  "icons5_5",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "ScryArea",
-                      "actionId":  134
+                      "actionId":  134,
+                      "action":  "ScryArea",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  80,
                       "name":  "Teleport",
                       "description":  "Blink to a random explored hex and reveal tiles based on mage skill.",
                       "type":  "Action",
-                      "spriteName":  "icons1_25",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Teleport",
-                      "actionId":  135
+                      "actionId":  135,
+                      "action":  "Teleport",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  2,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  81,
-                      "name":  "Wizards Laugh",
+                      "name":  "WizardsLaugh",
                       "description":  "Clear doubles on allied characters here or reduce loyalty of a hostile/neutral PC.",
                       "type":  "Action",
-                      "spriteName":  "icons2_14",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "WizardsLaugh",
-                      "actionId":  137
+                      "actionId":  137,
+                      "action":  "WizardsLaugh",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  2,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  82,
                       "name":  "Heal",
                       "description":  "Heal a wounded allied or aligned character in your hex.",
                       "type":  "Action",
-                      "spriteName":  "icons3_25",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Heal",
-                      "actionId":  138
+                      "actionId":  138,
+                      "action":  "Heal",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  25
                   },
                   {
                       "cardId":  83,
                       "name":  "Fireworks",
                       "description":  "Shift this PC\u0027s loyalty using fireworks (up if aligned, down if hostile).",
                       "type":  "Action",
-                      "spriteName":  "icons1_27",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Fireworks",
-                      "actionId":  139
+                      "actionId":  139,
+                      "action":  "Fireworks",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  84,
                       "name":  "Find Artifact",
                       "description":  "Search this hex for hidden artifacts and claim one if found.",
                       "type":  "Action",
-                      "spriteName":  "icons1_20",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "FindArtifact",
-                      "actionId":  144
+                      "actionId":  144,
+                      "action":  "FindArtifact",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  85,
                       "name":  "Scry Artifact",
                       "description":  "Reveal a hidden artifact\u0027s location and show its details.",
                       "type":  "Action",
-                      "spriteName":  "icons1_13",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "ScryArtifact",
-                      "actionId":  145
+                      "actionId":  145,
+                      "action":  "ScryArtifact",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  75
                   },
                   {
                       "cardId":  86,
                       "name":  "Steal Gold",
                       "description":  "Steal gold from the current population center.",
                       "type":  "Action",
-                      "spriteName":  "icons5_6",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "StealGold",
-                      "actionId":  146
+                      "actionId":  146,
+                      "action":  "StealGold",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  2,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  70
                   },
                   {
                       "cardId":  87,
                       "name":  "Steal Iron",
                       "description":  "Steal up to your agent rating in \u003csprite name=\"iron\"/\u003e from the current population center.",
                       "type":  "Action",
-                      "spriteName":  "icons3_1",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "StealIron",
-                      "actionId":  147
+                      "actionId":  147,
+                      "action":  "StealIron",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  1,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  88,
                       "name":  "Steal Leather",
                       "description":  "Steal \u003csprite name=\"leather\"/\u003e from the current population center.",
                       "type":  "Action",
-                      "spriteName":  "icons3_0",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "StealLeather",
-                      "actionId":  148
+                      "actionId":  148,
+                      "action":  "StealLeather",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  1,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  89,
                       "name":  "Steal Mithril",
                       "description":  "Steal \u003csprite name=\"mithril\"/\u003e from the current population center.",
                       "type":  "Action",
-                      "spriteName":  "icons4_21",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "StealMithril",
-                      "actionId":  149
+                      "actionId":  149,
+                      "action":  "StealMithril",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  1,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  70
                   },
                   {
                       "cardId":  90,
                       "name":  "Steal Mounts",
                       "description":  "Steal \u003csprite name=\"mounts\"/\u003e from the current population center.",
                       "type":  "Action",
-                      "spriteName":  "icons3_3",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "StealMounts",
-                      "actionId":  150
+                      "actionId":  150,
+                      "action":  "StealMounts",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  1,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  91,
                       "name":  "Steal Timber",
                       "description":  "Steal \u003csprite name=\"timber\"/\u003e from the current population center.",
                       "type":  "Action",
-                      "spriteName":  "icons3_4",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "StealTimber",
-                      "actionId":  151
-                  },
-                  {
-                      "cardId":  92,
-                      "name":  "Pass",
-                      "description":  "End this character\u0027s turn without taking another action.",
-                      "type":  "Action",
-                      "spriteName":  "icons5_11",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
-                      "actionClassName":  "Pass",
-                      "actionId":  152
+                      "actionId":  151,
+                      "action":  "StealTimber",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  1,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  93,
                       "name":  "Haste",
                       "description":  "Refund movement so this non-army commander can move farther this turn.",
                       "type":  "Action",
-                      "spriteName":  "icons5_4",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Haste",
-                      "actionId":  153
+                      "actionId":  153,
+                      "action":  "Haste",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  40
                   },
                   {
                       "cardId":  94,
                       "name":  "Scout Area",
                       "description":  "Reveal the surrounding hexes.",
                       "type":  "Action",
-                      "spriteName":  "icons5_3",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "ScoutArea",
-                      "actionId":  154
+                      "actionId":  154,
+                      "action":  "ScoutArea",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  1,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  25
                   },
                   {
                       "cardId":  95,
                       "name":  "Block",
                       "description":  "Engage a selected enemy army in this hex (no additional effect yet).",
                       "type":  "Action",
-                      "spriteName":  "icons5_9",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Block",
-                      "actionId":  155
+                      "actionId":  155,
+                      "action":  "Block",
+                      "commanderSkillRequired":  2,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  96,
                       "name":  "Courage",
                       "description":  "Encourage a friendly army here for several turns.",
                       "type":  "Action",
-                      "spriteName":  "icons5_15",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Courage",
-                      "actionId":  156
+                      "actionId":  156,
+                      "action":  "Courage",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  40
                   },
                   {
                       "cardId":  97,
                       "name":  "Halt",
                       "description":  "Stop a non-army enemy character in this hex from acting or moving next turn.",
                       "type":  "Action",
-                      "spriteName":  "icons2_8",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Halt",
-                      "actionId":  157
+                      "actionId":  157,
+                      "action":  "Halt",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  98,
                       "name":  "Ice Storm",
                       "description":  "Freeze an enemy army in this hex, halting it for a turn.",
                       "type":  "Action",
-                      "spriteName":  "icons2_13",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "IceStorm",
-                      "actionId":  158
+                      "actionId":  158,
+                      "action":  "IceStorm",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  3,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  99,
                       "name":  "Wizard\u0027s Fire",
                       "description":  "Burn an enemy army in your hex, causing casualties.",
                       "type":  "Action",
-                      "spriteName":  "icons4_4",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "WizardsFire",
-                      "actionId":  159
+                      "actionId":  159,
+                      "action":  "WizardsFire",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  100,
                       "name":  "Words Of Dispair",
                       "description":  "Inflict magical casualties on an enemy army sharing your hex.",
                       "type":  "Action",
-                      "spriteName":  "icons5_13",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "WordsOfDispair",
-                      "actionId":  160
+                      "actionId":  160,
+                      "action":  "WordsOfDispair",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  3,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  101,
                       "name":  "You Shall Not Pass!",
                       "description":  "Halt an enemy character in this hex; Balrogs also take damage.",
                       "type":  "Action",
-                      "spriteName":  "icons5_8",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "YouShallNotPass",
-                      "actionId":  161
+                      "actionId":  161,
+                      "action":  "YouShallNotPass",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  2,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  102,
                       "name":  "Hear Stories",
                       "description":  "Gather rumours based on your emissary skill.",
                       "type":  "Action",
-                      "spriteName":  "icons1_6",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "RevealRumours",
-                      "actionId":  162
+                      "actionId":  162,
+                      "action":  "RevealRumours",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  1,
+                      "mageSkillRequired":  0,
+                      "difficulty":  25
                   },
                   {
                       "cardId":  103,
                       "name":  "State Allegiance",
                       "description":  "At an aligned NPC capital, swear allegiance to recruit them if their conditions are met.",
                       "type":  "Action",
-                      "spriteName":  "icons2_16",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "StateAllegiance",
-                      "actionId":  163
+                      "actionId":  163,
+                      "action":  "StateAllegiance",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  104,
                       "name":  "Perceive Danger",
                       "description":  "Reveal the nearest enemy army and the nearby area.",
                       "type":  "Action",
-                      "spriteName":  "icons4_30",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "PerceiveDanger",
-                      "actionId":  164
+                      "actionId":  164,
+                      "action":  "PerceiveDanger",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  4,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  105,
                       "name":  "Transfer Artifact",
                       "description":  "Give a transferable artifact to a friendly character in this hex.",
                       "type":  "Action",
-                      "spriteName":  "icons5_10",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "TransferArtifact",
-                      "actionId":  165
-                  },
-                  {
-                      "cardId":  106,
-                      "name":  "Create Camp",
-                      "description":  "Create Camp",
-                      "type":  "Action",
-                      "spriteName":  "icons5_19",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
-                      "actionClassName":  "CreateCamp",
-                      "actionId":  171
-                  },
-                  {
-                      "cardId":  107,
-                      "name":  "Post Camp",
-                      "description":  "Post Camp",
-                      "type":  "Action",
-                      "spriteName":  "icons5_19",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
-                      "actionClassName":  "PostCamp",
-                      "actionId":  172
+                      "actionId":  165,
+                      "action":  "TransferArtifact",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  108,
                       "name":  "Steal Artifact",
                       "description":  "Attempt to steal a transferable artifact from an enemy character in this hex.",
                       "type":  "Action",
-                      "spriteName":  "icons5_10",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "StealArtifact",
-                      "actionId":  173
+                      "actionId":  173,
+                      "action":  "StealArtifact",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  3,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  65
                   },
                   {
                       "cardId":  109,
                       "name":  "Sabotage Storage",
                       "description":  "Sabotage two different types of stores in the target population center.",
                       "type":  "Action",
-                      "spriteName":  "icons5_6",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "SabotageStorage",
-                      "actionId":  174
+                      "actionId":  174,
+                      "action":  "SabotageStorage",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  2,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  60
                   },
                   {
                       "cardId":  110,
                       "name":  "Sabotage Port",
                       "description":  "Sabotage the port in the target population center (requires agent 4).",
                       "type":  "Action",
-                      "spriteName":  "icons5_6",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "SabotagePort",
-                      "actionId":  177
+                      "actionId":  177,
+                      "action":  "SabotagePort",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  4,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  70
                   },
                   {
                       "cardId":  111,
                       "name":  "Destroy Port",
                       "description":  "Destroy the port in the target population center (requires commander 3).",
                       "type":  "Action",
-                      "spriteName":  "icons5_6",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "DestroyPort",
-                      "actionId":  180
+                      "actionId":  180,
+                      "action":  "DestroyPort",
+                      "commanderSkillRequired":  3,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  70
                   },
                   {
                       "cardId":  112,
                       "name":  "Remove Port",
                       "description":  "Remove the port from your own population center (requires commander 1).",
                       "type":  "Action",
-                      "spriteName":  "icons5_6",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "RemovePort",
-                      "actionId":  178
+                      "actionId":  178,
+                      "action":  "RemovePort",
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  113,
                       "name":  "Destroy Fortifications",
                       "description":  "Attempt to reduce the fortifications of an enemy population center by one level.",
                       "type":  "Action",
-                      "spriteName":  "fortDown",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "DestroyFortifications",
-                      "actionId":  175
+                      "actionId":  175,
+                      "action":  "DestroyFortifications",
+                      "commanderSkillRequired":  4,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  70
                   },
                   {
                       "cardId":  114,
                       "name":  "Remove Fortifications",
                       "description":  "Reduce your own fortifications by one level.",
                       "type":  "Action",
-                      "spriteName":  "fortDown",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "RemoveFortifications",
-                      "actionId":  179
+                      "actionId":  179,
+                      "action":  "RemoveFortifications",
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  115,
                       "name":  "Siege Population",
                       "description":  "Lay siege to an enemy population center to reduce its population. Catapults improve success.",
                       "type":  "Action",
-                      "spriteName":  "pcDown",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "SiegePC",
-                      "actionId":  176
+                      "actionId":  176,
+                      "action":  "SiegePC",
+                      "commanderSkillRequired":  3,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  75
                   },
                   {
                       "cardId":  116,
                       "name":  "Duel",
                       "description":  "Challenge an enemy character in this hex to a duel.",
                       "type":  "Action",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "Duel",
-                      "actionId":  181
+                      "actionId":  181,
+                      "action":  "Duel",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  117,
                       "name":  "Refuse Duel",
                       "description":  "Refuse duels for the next turn. Challengers will be turned away.",
                       "type":  "Action",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "RefuseDuel",
-                      "actionId":  182
+                      "actionId":  182,
+                      "action":  "RefuseDuel",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0
                   },
                   {
                       "cardId":  118,
-                      "name":  "Reveal Hexes",
+                      "name":  "MirrorOfGaladriel",
                       "description":  "Reveal individual unseen hexes across the map. Revealed hex count scales with mage rank up to 7.",
                       "type":  "Action",
-                      "spriteName":  "icons5_5",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0,
                       "actionClassName":  "RevealHexes",
-                      "actionId":  183
+                      "actionId":  183,
+                      "action":  "RevealHexes",
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  1,
+                      "difficulty":  50
                   },
                   {
                       "cardId":  119,
                       "name":  "Anduin",
-                      "description":  "<sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"leather\"><sprite name=\"food\"><sprite name=\"food\">",
+                      "description":  "\u003csprite name=\"mounts\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalAnduin"
                   },
                   {
                       "cardId":  120,
                       "name":  "Anfalas",
-                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"timber\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"timber\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalAnfalas"
                   },
                   {
                       "cardId":  121,
                       "name":  "Cardolan",
-                      "description":  "<sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"mounts\"><sprite name=\"iron\"><sprite name=\"iron\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalCardolan"
                   },
                   {
                       "cardId":  122,
                       "name":  "EredLuin",
-                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\">",
+                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"mithril\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalEredluin"
                   },
                   {
                       "cardId":  123,
                       "name":  "Eregion",
-                      "description":  "<sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"leather\"><sprite name=\"iron\"><sprite name=\"steel\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"steel\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalEregion"
                   },
                   {
                       "cardId":  124,
                       "name":  "Eriador",
-                      "description":  "<sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"leather\"><sprite name=\"iron\"><sprite name=\"mounts\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"mounts\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalEriador"
                   },
                   {
                       "cardId":  125,
                       "name":  "Forochel",
-                      "description":  "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"mounts\"><sprite name=\"food\">",
+                      "description":  "\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"gold\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalForochel"
                   },
                   {
                       "cardId":  126,
                       "name":  "IronHills",
-                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"mithril\">",
+                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"mithril\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalIronHills"
                   },
                   {
                       "cardId":  127,
                       "name":  "Ithilien",
-                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"mounts\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"mounts\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalIthilien"
                   },
                   {
                       "cardId":  128,
                       "name":  "Lindon",
-                      "description":  "<sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"food\"><sprite name=\"food\">",
+                      "description":  "\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalLindon"
                   },
                   {
                       "cardId":  129,
                       "name":  "Lothlorien",
-                      "description":  "<sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"food\"><sprite name=\"food\"><sprite name=\"mounts\">",
+                      "description":  "\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"mounts\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalLothlorien"
                   },
                   {
                       "cardId":  130,
                       "name":  "MistyMountains",
-                      "description":  "<sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\"><sprite name=\"mithril\">",
+                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"mithril\"\u003e\u003csprite name=\"mithril\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalMistymountains"
                   },
                   {
                       "cardId":  131,
                       "name":  "NorthernGondor",
-                      "description":  "<sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"leather\"><sprite name=\"iron\"><sprite name=\"timber\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"timber\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalNortherngondor"
                   },
                   {
                       "cardId":  132,
                       "name":  "Rhovanion",
-                      "description":  "<sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"leather\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"leather\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalRhovanion"
                   },
                   {
                       "cardId":  133,
                       "name":  "Rhudaur",
-                      "description":  "<sprite name=\"iron\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"food\"><sprite name=\"leather\">",
+                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"leather\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalRhudaur"
                   },
                   {
                       "cardId":  134,
                       "name":  "Rivendell",
-                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"steel\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"steel\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalRivendell"
                   },
                   {
                       "cardId":  135,
                       "name":  "Rohan",
-                      "description":  "<sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"leather\"><sprite name=\"leather\">",
+                      "description":  "\u003csprite name=\"mounts\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalRohan"
                   },
                   {
                       "cardId":  136,
                       "name":  "SouthernGondor",
-                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"mounts\"><sprite name=\"mounts\"><sprite name=\"timber\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"timber\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalSoutherngondor"
                   },
                   {
                       "cardId":  137,
                       "name":  "TheNorthDowns",
-                      "description":  "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"leather\"><sprite name=\"timber\">",
+                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"timber\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalThenorthdowns"
                   },
                   {
                       "cardId":  138,
                       "name":  "TheShire",
-                      "description":  "<sprite name=\"food\"><sprite name=\"food\"><sprite name=\"food\"><sprite name=\"food\"><sprite name=\"food\">",
+                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e",
                       "type":  "Land",
-                      "spriteName":  "",
-                      "deckId":  "gandalf_deck",
-                      "alignment":  0
+                      "action":  "MaterialRetrievalTheshire"
+                  },
+                  {
+                      "cardId":  139,
+                      "name":  "Dawn",
+                      "description":  "Event: Grants Courage to all Free People units for 1 turn and dispels Doors of Night.",
+                      "type":  "Event",
+                      "action":  "Dawn",
+                      "actionClassName":  "Dawn",
+                      "actionId":  185,
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  75
                   }
               ]
 }

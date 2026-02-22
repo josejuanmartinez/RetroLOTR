@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class DoorsOfNight : DarkNeutralSpell
+public class DoorsOfNight : EventAction
 {
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -16,59 +16,48 @@ public class DoorsOfNight : DarkNeutralSpell
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c == null) return false;
 
-            Leader owner = c.GetOwner();
-            Game game = FindFirstObjectByType<Game>();
             Board board = FindFirstObjectByType<Board>();
-            bool applyGlobalEffects = owner != null && game != null && owner == game.player;
             if (board == null) return false;
 
-            List<Hex> allHexes = board.GetHexes().Where(h => h != null).ToList();
-            if (allHexes.Count == 0) return false;
-
-            int affectedCount = Mathf.Max(1, Mathf.RoundToInt(allHexes.Count * 0.5f));
-            List<Hex> affectedHexes = allHexes
-                .OrderBy(_ => UnityEngine.Random.value)
-                .Take(affectedCount)
+            List<Character> allUnits = board.GetHexes()
+                .Where(h => h != null && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Where(ch => ch != null && !ch.killed)
+                .Distinct()
                 .ToList();
 
-            if (applyGlobalEffects)
+            List<Character> darkServants = allUnits
+                .Where(ch => ch.GetAlignment() == AlignmentEnum.darkServants)
+                .ToList();
+            List<Character> freePeople = allUnits
+                .Where(ch => ch.GetAlignment() == AlignmentEnum.freePeople)
+                .ToList();
+
+            if (darkServants.Count == 0) return false;
+
+            for (int i = 0; i < freePeople.Count; i++)
             {
-                for (int i = 0; i < affectedHexes.Count; i++)
-                {
-                    Hex targetHex = affectedHexes[i];
-                    if (targetHex == null) continue;
-
-                    targetHex.MarkDarknessByPlayer();
-                    targetHex.ClearScoutingAll();
-
-                    PC pc = targetHex.GetPC();
-                    AlignmentEnum ownerAlignment = owner != null ? owner.GetAlignment() : AlignmentEnum.neutral;
-                    AlignmentEnum pcAlignment = pc != null && pc.owner != null ? pc.owner.GetAlignment() : AlignmentEnum.neutral;
-                    bool sameAlignment = pcAlignment == ownerAlignment && pcAlignment != AlignmentEnum.neutral;
-                    if (pc != null && (pc.owner == owner || sameAlignment))
-                    {
-                        pc.SetTemporaryHidden(2);
-                        targetHex.RedrawPC();
-                    }
-                }
-
-                for (int i = 0; i < affectedHexes.Count; i++)
-                {
-                    Hex targetHex = affectedHexes[i];
-                    if (targetHex == null) continue;
-                    targetHex.RefreshVisibilityRendering();
-                }
-
-                MessageDisplayNoUI.ShowMessage(c.hex, c, $"Doors of Night shroud {affectedHexes.Count} hexes!", Color.red);
+                freePeople[i].ClearEncouraged();
             }
 
+            int turns = 1;
+            for (int i = 0; i < darkServants.Count; i++)
+            {
+                darkServants[i].ClearEncouraged();
+                darkServants[i].Encourage(turns);
+            }
+
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Doors of Night grants Courage to {darkServants.Count} dark servant unit(s) for {turns} turn(s), dispelling Dawn!", Color.red);
             return true;
         };
 
         condition = (c) =>
         {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return true;
+            if (c == null || c.GetAlignment() == AlignmentEnum.freePeople) return false;
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+            return board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.darkServants));
         };
 
         asyncEffect = async (c) =>

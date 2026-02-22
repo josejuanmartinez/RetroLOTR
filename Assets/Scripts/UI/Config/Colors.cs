@@ -18,6 +18,13 @@ public class Colors : SearcherByName
     public Color freePeople;
     public Color neutral;
     public Color darkServants;
+    public Color pcCard;
+    public Color landCard;
+    public Color characterCard;
+    public Color armyCard;
+    public Color eventCard;
+    public Color actionCard;
+    public Color spellCard;
     public Color MAX;
 
     private Dictionary<string, FieldInfo> normalizedLookup;

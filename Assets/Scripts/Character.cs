@@ -187,6 +187,11 @@ public class Character : MonoBehaviour
         return encouragedTurns > -1;
     }
 
+    public void ClearEncouraged()
+    {
+        encouragedTurns = -1;
+    }
+
     public bool IsRefusingDuels()
     {
         return refusingDuelsTurns > 0;
