@@ -59,9 +59,11 @@ public class Character : MonoBehaviour
     public SexEnum sex = SexEnum.Male;
 
     [Header("Statuses")]
+    public List<StatusEffectEnum> statusEffects = new();
     [SerializeField] private bool isHalted = false;
     [SerializeField] private int encouragedTurns = -1; // 0 means this turn is still encouraged
     [SerializeField] private int refusingDuelsTurns = 0;
+    [SerializeField] private int hasteTurns = 0;
 
     private BiomeConfig characterBiome;
 
@@ -73,6 +75,7 @@ public class Character : MonoBehaviour
         public bool isHalted;
         public int encouragedTurns;
         public int refusingDuelsTurns;
+        public int hasteTurns;
         public int moved;
         public bool hasActionedThisTurn;
         public bool isEmbarked;
@@ -83,6 +86,7 @@ public class Character : MonoBehaviour
         army = null;
         doubledBy = new();
         reachableHexes = new();
+        statusEffects = new();
         killed = false;
         awaken = true;
         colors = FindFirstObjectByType<Colors>();
@@ -173,34 +177,95 @@ public class Character : MonoBehaviour
 
     public void Halt()
     {
-        isHalted = true;
+        ApplyStatusEffect(StatusEffectEnum.Halted);
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} halted for next turn!", Color.red);
     }
 
     public void Encourage(int turns = 1)
     {
-        encouragedTurns += turns;
+        ApplyStatusEffect(StatusEffectEnum.Encouraged, turns);
     }
 
     public bool IsEncouraged()
     {
-        return encouragedTurns > -1;
+        return HasStatusEffect(StatusEffectEnum.Encouraged);
     }
 
     public void ClearEncouraged()
     {
-        encouragedTurns = -1;
+        ClearStatusEffect(StatusEffectEnum.Encouraged);
     }
 
     public bool IsRefusingDuels()
     {
-        return refusingDuelsTurns > 0;
+        return HasStatusEffect(StatusEffectEnum.RefusingDuels);
     }
 
     public void RefuseDuels(int turns = 1)
     {
-        if (turns <= 0) return;
-        refusingDuelsTurns = Mathf.Max(refusingDuelsTurns, turns);
+        ApplyStatusEffect(StatusEffectEnum.RefusingDuels, turns);
+    }
+
+    public bool HasStatusEffect(StatusEffectEnum effect)
+    {
+        return statusEffects != null && statusEffects.Contains(effect);
+    }
+
+    public int GetStatusEffectTurns(StatusEffectEnum effect)
+    {
+        return effect switch
+        {
+            StatusEffectEnum.Halted => isHalted ? 1 : 0,
+            StatusEffectEnum.Encouraged => Mathf.Max(encouragedTurns + 1, 0),
+            StatusEffectEnum.RefusingDuels => Mathf.Max(refusingDuelsTurns, 0),
+            StatusEffectEnum.Haste => Mathf.Max(hasteTurns, 0),
+            _ => 0
+        };
+    }
+
+    public void ApplyStatusEffect(StatusEffectEnum effect, int turns = 1)
+    {
+        statusEffects ??= new List<StatusEffectEnum>();
+        if (!statusEffects.Contains(effect)) statusEffects.Add(effect);
+
+        switch (effect)
+        {
+            case StatusEffectEnum.Halted:
+                isHalted = true;
+                break;
+            case StatusEffectEnum.Encouraged:
+                encouragedTurns += turns;
+                break;
+            case StatusEffectEnum.RefusingDuels:
+                if (turns <= 0) return;
+                refusingDuelsTurns = Mathf.Max(refusingDuelsTurns, turns);
+                break;
+            case StatusEffectEnum.Haste:
+                if (turns <= 0) return;
+                hasteTurns = Mathf.Max(hasteTurns, turns);
+                break;
+        }
+    }
+
+    public void ClearStatusEffect(StatusEffectEnum effect)
+    {
+        statusEffects?.Remove(effect);
+
+        switch (effect)
+        {
+            case StatusEffectEnum.Halted:
+                isHalted = false;
+                break;
+            case StatusEffectEnum.Encouraged:
+                encouragedTurns = -1;
+                break;
+            case StatusEffectEnum.RefusingDuels:
+                refusingDuelsTurns = 0;
+                break;
+            case StatusEffectEnum.Haste:
+                hasteTurns = 0;
+                break;
+        }
     }
 
     public void NewTurn()
@@ -216,14 +281,19 @@ public class Character : MonoBehaviour
         moved = isHalted ? GetMaxMovement() : 0;
         hasActionedThisTurn = isHalted;
         isHalted = false;
+        ClearStatusEffect(StatusEffectEnum.Halted);
         // COURAGE
         encouragedTurns = Mathf.Max(encouragedTurns - 1, -1);
+        if (encouragedTurns <= -1) ClearStatusEffect(StatusEffectEnum.Encouraged);
         if (IsEncouraged() && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this,  "Encouraged", Color.green);
         if (refusingDuelsTurns > 0 && GetOwner() == FindFirstObjectByType<Game>().player)
         {
             MessageDisplayNoUI.ShowMessage(hex, this, "Refusing duels", Color.yellow);
         }
         refusingDuelsTurns = Mathf.Max(0, refusingDuelsTurns - 1);
+        if (refusingDuelsTurns <= 0) ClearStatusEffect(StatusEffectEnum.RefusingDuels);
+        hasteTurns = Mathf.Max(0, hasteTurns - 1);
+        if (hasteTurns <= 0) ClearStatusEffect(StatusEffectEnum.Haste);
         // STATUS EFFECTS (TODO)
         StoreReachableHexes();
         StoreRelevantHexes();
@@ -238,6 +308,7 @@ public class Character : MonoBehaviour
             isHalted = isHalted,
             encouragedTurns = encouragedTurns,
             refusingDuelsTurns = refusingDuelsTurns,
+            hasteTurns = hasteTurns,
             moved = moved,
             hasActionedThisTurn = hasActionedThisTurn,
             isEmbarked = isEmbarked
@@ -249,6 +320,7 @@ public class Character : MonoBehaviour
         isHalted = snapshot.isHalted;
         encouragedTurns = snapshot.encouragedTurns;
         refusingDuelsTurns = snapshot.refusingDuelsTurns;
+        hasteTurns = snapshot.hasteTurns;
         moved = snapshot.moved;
         hasActionedThisTurn = snapshot.hasActionedThisTurn;
         isEmbarked = snapshot.isEmbarked;

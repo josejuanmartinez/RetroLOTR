@@ -17,5 +17,6 @@ public enum RacesEnum
     Eagle = 14,
     Wose = 15,
     Goblin = 16,
-    Ent = 17
+    Ent = 17,
+    Southron = 18
 }

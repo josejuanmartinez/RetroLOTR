@@ -57,6 +57,7 @@ public class CardData
     public string name;
     public string description;
     public string type;
+    public List<string> tags = new();
     public string deckId;
     public int alignment;
     public string actionClassName;
@@ -93,6 +94,18 @@ public class CardData
     public bool IsEncounterCard()
     {
         return GetCardType() == CardTypeEnum.Encounter;
+    }
+
+    public bool HasTag(string tag)
+    {
+        if (string.IsNullOrWhiteSpace(tag) || tags == null) return false;
+        return tags.Any(t => string.Equals(t?.Trim(), tag.Trim(), StringComparison.OrdinalIgnoreCase));
+    }
+
+    public bool HasAnyTag(params string[] queryTags)
+    {
+        if (queryTags == null || queryTags.Length == 0) return false;
+        return queryTags.Any(HasTag);
     }
 
     public string GetActionRef()
@@ -625,6 +638,7 @@ public class DeckManager : MonoBehaviour
             name = card.name,
             description = card.description,
             type = card.type,
+            tags = card.tags != null ? new List<string>(card.tags) : new List<string>(),
             deckId = card.deckId,
             alignment = card.alignment,
             actionClassName = card.actionClassName,

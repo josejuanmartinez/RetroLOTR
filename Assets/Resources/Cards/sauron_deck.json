@@ -9,126 +9,144 @@
             "name": "Barad-dur",
             "description": "Starting population center for Sauron.",
             "type": "PC",
-            "action": "MaterialRetrievalBaradDur"
+            "action": "MaterialRetrievalBaradDur",
+            "tags": []
         },
         {
             "cardId": 7,
             "name": "Minas Morgul",
             "description": "Population center from non-playable leader Murazor.",
             "type": "PC",
-            "action": "MaterialRetrievalMinasMorgul"
+            "action": "MaterialRetrievalMinasMorgul",
+            "tags": []
         },
         {
             "cardId": 8,
             "name": "Dol Guldur",
             "description": "Population center from non-playable leader Khamul.",
             "type": "PC",
-            "action": "MaterialRetrievalDolGuldur"
+            "action": "MaterialRetrievalDolGuldur",
+            "tags": []
         },
         {
             "cardId": 9,
             "name": "Luglurak",
             "description": "Population center from non-playable leader Akhorahil.",
             "type": "PC",
-            "action": "MaterialRetrievalLuglurak"
+            "action": "MaterialRetrievalLuglurak",
+            "tags": []
         },
         {
             "cardId": 10,
             "name": "Kal Nargil",
             "description": "Population center from non-playable leader Ji Indur.",
             "type": "PC",
-            "action": "MaterialRetrievalKalNargil"
+            "action": "MaterialRetrievalKalNargil",
+            "tags": []
         },
         {
             "cardId": 11,
             "name": "Tol Buruth",
             "description": "Population center from non-playable leader Ovatha.",
             "type": "PC",
-            "action": "MaterialRetrievalTolBuruth"
+            "action": "MaterialRetrievalTolBuruth",
+            "tags": []
         },
         {
             "cardId": 12,
             "name": "Lugarlur",
             "description": "Population center from non-playable leader Adunaphel.",
             "type": "PC",
-            "action": "MaterialRetrievalLugarlur"
+            "action": "MaterialRetrievalLugarlur",
+            "tags": []
         },
         {
             "cardId": 13,
             "name": "Barad Ungol",
             "description": "Population center from non-playable leader Ren the Unclean.",
             "type": "PC",
-            "action": "MaterialRetrievalBaradUngol"
+            "action": "MaterialRetrievalBaradUngol",
+            "tags": []
         },
         {
             "cardId": 14,
             "name": "Durthang",
             "description": "Population center from non-playable leader Hoarmurath.",
             "type": "PC",
-            "action": "MaterialRetrievalDurthang"
+            "action": "MaterialRetrievalDurthang",
+            "tags": []
         },
         {
             "cardId": 15,
             "name": "Morannon",
             "description": "Population center from non-playable leader Dendra Dwar.",
             "type": "PC",
-            "action": "MaterialRetrievalMorannon"
+            "action": "MaterialRetrievalMorannon",
+            "tags": []
         },
         {
             "cardId": 20,
             "name": "Shelob's Lair",
             "description": "Population center from non-playable leader Shelob.",
             "type": "PC",
-            "action": "MaterialRetrievalShelobSLair"
+            "action": "MaterialRetrievalShelobSLair",
+            "tags": []
         },
         {
             "cardId": 21,
             "name": "Khazad-Dum",
             "description": "Population center from non-playable leader Balrog.",
             "type": "PC",
-            "action": "MaterialRetrievalKhazadDum"
+            "action": "MaterialRetrievalKhazadDum",
+            "tags": []
         },
         {
             "cardId": 22,
             "name": "Erebor (Lost)",
             "description": "Population center from non-playable leader Smaug.",
             "type": "PC",
-            "action": "MaterialRetrievalEreborLost"
+            "action": "MaterialRetrievalEreborLost",
+            "tags": []
         },
         {
             "cardId": 35,
             "name": "Goblin Town",
             "description": "Population center from non-playable leader Goblin King.",
             "type": "PC",
-            "action": "MaterialRetrievalGoblinTown"
+            "action": "MaterialRetrievalGoblinTown",
+            "tags": []
         },
         {
             "cardId": 43,
             "name": "Barrow-downs",
             "description": "Population center from non-playable leader Barrow-wight.",
             "type": "PC",
-            "action": "MaterialRetrievalBarrowDowns"
+            "action": "MaterialRetrievalBarrowDowns",
+            "tags": []
         },
         {
             "cardId": 46,
             "name": "Gundabad",
             "description": "Population center from non-playable leader Azog.",
             "type": "PC",
-            "action": "MaterialRetrievalGundabad"
+            "action": "MaterialRetrievalGundabad",
+            "tags": []
         },
         {
             "cardId": 50,
             "name": "Orthanc",
             "description": "Population center from non-playable leader Orthanc.",
             "type": "PC",
-            "action": "MaterialRetrievalOrthanc"
+            "action": "MaterialRetrievalOrthanc",
+            "tags": []
         },
         {
             "cardId": 51,
             "name": "Barad-dur",
             "description": "Population center from non-playable leader Barad-dur.",
             "type": "PC",
-            "action": "MaterialRetrievalBaradDur"
+            "action": "MaterialRetrievalBaradDur",
+            "tags": []
         },
         {
             "cardId": 184,
@@ -149,7 +167,8 @@
             "ironRequired": 0,
             "steelRequired": 5,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 185,
@@ -170,7 +189,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 186,
@@ -191,7 +211,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 187,
@@ -212,7 +233,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 188,
@@ -233,7 +255,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 189,
@@ -254,7 +277,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 190,
@@ -275,7 +299,8 @@
             "ironRequired": 5,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 191,
@@ -296,7 +321,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 192,
@@ -317,7 +343,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 193,
@@ -338,7 +365,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 5
+            "goldRequired": 5,
+            "tags": []
         },
         {
             "cardId": 194,
@@ -359,7 +387,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 5,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 195,
@@ -380,7 +409,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 25
+            "goldRequired": 25,
+            "tags": []
         },
         {
             "cardId": 196,
@@ -401,7 +431,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 197,
@@ -422,7 +453,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 198,
@@ -443,7 +475,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 1
+            "goldRequired": 1,
+            "tags": []
         },
         {
             "cardId": 199,
@@ -464,7 +497,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 1
+            "goldRequired": 1,
+            "tags": []
         },
         {
             "cardId": 200,
@@ -485,7 +519,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 201,
@@ -506,7 +541,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 202,
@@ -527,7 +563,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 203,
@@ -548,7 +585,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 2
+            "goldRequired": 2,
+            "tags": []
         },
         {
             "cardId": 204,
@@ -569,7 +607,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 206,
@@ -590,7 +629,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 207,
@@ -611,7 +651,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 209,
@@ -632,7 +673,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 210,
@@ -653,7 +695,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 211,
@@ -674,7 +717,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 212,
@@ -695,7 +739,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 214,
@@ -716,7 +761,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 216,
@@ -737,7 +783,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 217,
@@ -758,7 +805,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 218,
@@ -779,7 +827,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 219,
@@ -800,7 +849,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 220,
@@ -821,7 +871,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 221,
@@ -842,7 +893,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 222,
@@ -863,7 +915,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 223,
@@ -884,7 +937,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 225,
@@ -905,7 +959,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 226,
@@ -926,7 +981,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 227,
@@ -947,7 +1003,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 228,
@@ -968,7 +1025,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 229,
@@ -989,7 +1047,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 230,
@@ -1010,7 +1069,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 232,
@@ -1031,7 +1091,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 234,
@@ -1052,7 +1113,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 235,
@@ -1073,7 +1135,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 236,
@@ -1094,7 +1157,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 237,
@@ -1115,7 +1179,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 240,
@@ -1136,7 +1201,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 241,
@@ -1157,7 +1223,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 242,
@@ -1178,7 +1245,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 243,
@@ -1199,7 +1267,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 244,
@@ -1220,7 +1289,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 245,
@@ -1241,7 +1311,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 246,
@@ -1262,7 +1333,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 247,
@@ -1283,7 +1355,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 248,
@@ -1304,7 +1377,8 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 249,
@@ -1325,119 +1399,136 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": []
         },
         {
             "cardId": 251,
             "name": "Angmar",
             "description": "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\">",
             "type": "Land",
-            "action": "MaterialRetrievalAngmar"
+            "action": "MaterialRetrievalAngmar",
+            "tags": []
         },
         {
             "cardId": 252,
             "name": "BrownLands",
             "description": "<sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"gold\"><sprite name=\"mounts\">",
             "type": "Land",
-            "action": "MaterialRetrievalBrownlands"
+            "action": "MaterialRetrievalBrownlands",
+            "tags": []
         },
         {
             "cardId": 253,
             "name": "Dagorlad",
             "description": "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"timber\"><sprite name=\"timber\">",
             "type": "Land",
-            "action": "MaterialRetrievalDagorlad"
+            "action": "MaterialRetrievalDagorlad",
+            "tags": []
         },
         {
             "cardId": 254,
             "name": "Forochel",
             "description": "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"mounts\"><sprite name=\"gold\">",
             "type": "Land",
-            "action": "MaterialRetrievalForochel"
+            "action": "MaterialRetrievalForochel",
+            "tags": []
         },
         {
             "cardId": 255,
             "name": "Gorgoroth",
             "description": "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"steel\">",
             "type": "Land",
-            "action": "MaterialRetrievalGorgoroth"
+            "action": "MaterialRetrievalGorgoroth",
+            "tags": []
         },
         {
             "cardId": 256,
             "name": "Ithilien",
             "description": "<sprite name=\"gold\"><sprite name=\"gold\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"mounts\">",
             "type": "Land",
-            "action": "MaterialRetrievalIthilien"
+            "action": "MaterialRetrievalIthilien",
+            "tags": []
         },
         {
             "cardId": 257,
             "name": "MistyMountains",
             "description": "<sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\"><sprite name=\"mithril\">",
             "type": "Land",
-            "action": "MaterialRetrievalMistymountains"
+            "action": "MaterialRetrievalMistymountains",
+            "tags": []
         },
         {
             "cardId": 258,
             "name": "Nurn",
             "description": "<sprite name=\"gold\"><sprite name=\"gold\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"mounts\">",
             "type": "Land",
-            "action": "MaterialRetrievalNurn"
+            "action": "MaterialRetrievalNurn",
+            "tags": []
         },
         {
             "cardId": 259,
             "name": "Rhudaur",
             "description": "<sprite name=\"iron\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"gold\"><sprite name=\"leather\">",
             "type": "Land",
-            "action": "MaterialRetrievalRhudaur"
+            "action": "MaterialRetrievalRhudaur",
+            "tags": []
         },
         {
             "cardId": 260,
             "name": "SeaOfRhun",
             "description": "<sprite name=\"gold\"><sprite name=\"gold\"><sprite name=\"timber\"><sprite name=\"mounts\"><sprite name=\"leather\">",
             "type": "Land",
-            "action": "MaterialRetrievalSeaofrhun"
+            "action": "MaterialRetrievalSeaofrhun",
+            "tags": []
         },
         {
             "cardId": 261,
             "name": "SouthernMirkwood",
             "description": "<sprite name=\"gold\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"timber\"><sprite name=\"mounts\">",
             "type": "Land",
-            "action": "MaterialRetrievalSouthernmirkwood"
+            "action": "MaterialRetrievalSouthernmirkwood",
+            "tags": []
         },
         {
             "cardId": 262,
             "name": "TheDeadMarshes",
             "description": "<sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"leather\"><sprite name=\"steel\"><sprite name=\"timber\">",
             "type": "Land",
-            "action": "MaterialRetrievalThedeadmarshes"
+            "action": "MaterialRetrievalThedeadmarshes",
+            "tags": []
         },
         {
             "cardId": 263,
             "name": "TheNorthDowns",
             "description": "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"leather\"><sprite name=\"timber\">",
             "type": "Land",
-            "action": "MaterialRetrievalThenorthdowns"
+            "action": "MaterialRetrievalThenorthdowns",
+            "tags": []
         },
         {
             "cardId": 264,
             "name": "Udun",
             "description": "<sprite name=\"mounts\"><sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"leather\">",
             "type": "Land",
-            "action": "MaterialRetrievalUdun"
+            "action": "MaterialRetrievalUdun",
+            "tags": []
         },
         {
             "cardId": 265,
             "name": "Ungol",
             "description": "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"leather\"><sprite name=\"steel\">",
             "type": "Land",
-            "action": "MaterialRetrievalUngol"
+            "action": "MaterialRetrievalUngol",
+            "tags": []
         },
         {
             "cardId": 266,
             "name": "WitheredHeath",
             "description": "<sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\"><sprite name=\"mithril\">",
             "type": "Land",
-            "action": "MaterialRetrievalWitheredheath"
+            "action": "MaterialRetrievalWitheredheath",
+            "tags": []
         },
         {
             "cardId": 267,
@@ -1458,7 +1549,59 @@
             "ironRequired": 0,
             "steelRequired": 0,
             "mithrilRequired": 0,
-            "goldRequired": 0
+            "goldRequired": 0,
+            "tags": [
+                "environmental"
+            ]
+        },
+        {
+            "cardId": 268,
+            "name": "Full Moon",
+            "description": "Environmental event. Grants Haste to all Nazgul for 1 turn.",
+            "type": "Event",
+            "action": "FullMoon",
+            "actionClassName": "FullMoon",
+            "actionId": 187,
+            "tags": [
+                "environmental"
+            ]
+        },
+        {
+            "cardId": 269,
+            "name": "Long Shadows",
+            "description": "Environmental event. Grants Courage to all beasts for 1 turn.",
+            "type": "Event",
+            "action": "LongShadows",
+            "actionClassName": "LongShadows",
+            "actionId": 190,
+            "tags": [
+                "environmental"
+            ]
+        },
+        {
+            "cardId": 271,
+            "name": "Cruel Winter",
+            "description": "Environmental event. All mountain enemy units have 7.5% chance to become Frozen.",
+            "type": "Event",
+            "action": "CruelWinter",
+            "actionClassName": "CruelWinter",
+            "actionId": 192,
+            "tags": [
+                "environmental"
+            ]
+        },
+        {
+            "cardId": 272,
+            "name": "Fury of Ulmo",
+            "description": "Environmental event. Halts all navy or embarked units.",
+            "type": "Event",
+            "action": "FuryOfUlmo",
+            "actionClassName": "FuryOfUlmo",
+            "actionId": 193,
+            "spriteName": "rage_of_ulmo",
+            "tags": [
+                "environmental"
+            ]
         }
     ]
 }
