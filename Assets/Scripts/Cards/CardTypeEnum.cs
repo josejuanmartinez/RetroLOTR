@@ -10,7 +10,8 @@ public enum CardTypeEnum
     Character = 5,
     Army = 6,
     Rest = 7,
-    Encounter = 8
+    Encounter = 8,
+    Spell = 9
 }
 
 public static class CardTypeParser

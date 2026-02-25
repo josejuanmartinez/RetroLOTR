@@ -8,7 +8,7 @@ description: Create new RetroLOTR card art images in a square format and in a re
 Create new game images that match the existing RetroLOTR card style.
 
 ## Workflow
-1. Determine image type from the request (`action`, `spell-action`, `pc`, `region`, `army`, `character`, `rest`).
+1. Determine image type from the request using `CardTypeEnum` from `Assets/Scripts/Cards/CardTypeEnum.cs` (`Action`, `Event`, `Land`, `PC`, `Character`, `Army`, `Rest`, `Encounter`, `Spell`).
 2. Pick at least 5 random reference images from `Assets/Art/Cards/Actions` to anchor style (never use fewer than 5).
 3. Generate a square image (`1:1`, recommended `512x512`) using model `gpt-image-1.5` and include all selected references in the API call using the image payload format required by `openai-image-gen` (base64, bytes, or equivalent supported binary input).
 4. Enforce style direction in the prompt: black and white, ink drawing, old printer texture, retro sword-and-sorcery, Conan / MERPG / classic D&D vibe.
@@ -44,25 +44,28 @@ Include all of the following constraints in the image-generation prompt:
 If there is not enough information to write a good prompt, ask the user for missing details before generating the image.
 
 ## Card Type Enum
-Use this card type enum:
-- `action`
-- `spell-action`
-- `pc`
-- `region`
-- `army`
-- `character`
-- `rest`
+Use `CardTypeEnum` from `Assets/Scripts/Cards/CardTypeEnum.cs`:
+- `Action`
+- `Event`
+- `Land`
+- `PC`
+- `Character`
+- `Army`
+- `Rest`
+- `Encounter`
+- `Spell`
 
 ## Save Location Rules
 Save by image type:
-- `action` (Actions, Skills, Events in the world): `Assets/Art/Cards/Actions/<ActionName>.<ext>`
-- `spell-action` (An Action that is specifically a spell): `Assets/Art/Cards/Actions/Spells/<SpellName>.<ext>`
-- `pc` (Small land that is a Population Center): `Assets/Art/Cards/PC/<Name>.<ext>`
-- `region` (Wild extense region / Land): `Assets/Art/Cards/Regions/<Name>.<ext>`
-- `army`: `Assets/Art/Cards/Armies/<Name>.<ext>`
-- `character`: `Assets/Art/Cards/Characters/<Name>.<ext>`
-
-- `rest` or generic card art: `Assets/Art/Cards/Rest/<Name>.<ext>`
+- `Action`: `Assets/Art/Cards/Actions/<Name>.<ext>`
+- `Event`: `Assets/Art/Cards/Actions/Events/<Name>.<ext>`
+- `Spell`: `Assets/Art/Cards/Actions/Spells/<Name>.<ext>`
+- `PC`: `Assets/Art/Cards/PC/<Name>.<ext>`
+- `Land`: `Assets/Art/Cards/Lands/<Name>.<ext>`
+- `Army`: `Assets/Art/Cards/Armies/<Name>.<ext>`
+- `Character`: `Assets/Art/Cards/Characters/<Name>.<ext>`
+- `Encounter`: `Assets/Art/Cards/Encounters/<Name>.<ext>`
+- `Rest` or generic card art: `Assets/Art/Cards/Rest/<Name>.<ext>`
 
 Always save all generated art under:
 - `Assets\Art\Cards\XXXX\...`
