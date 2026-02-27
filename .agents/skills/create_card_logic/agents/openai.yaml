@@ -1,0 +1,7 @@
+interface:
+  display_name: "Create Card Logic"
+  short_description: "Audit cards and wire missing deck/action logic"
+  default_prompt: "Use $create-card-logic to scan card files, map them to decks, and resolve missing action wiring with numbered choices."
+
+policy:
+  allow_implicit_invocation: true
