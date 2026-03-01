@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
 
-public class Hide : AgentAction
+public class Invisibility : Spell
 {
-    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
@@ -14,10 +14,11 @@ public class Hide : AgentAction
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c == null) return false;
 
+            int turns = Math.Max(1, ApplySpellEffectMultiplier(c, 1 + Mathf.FloorToInt(c.GetMage() / 2f)));
             return StealthEffectHelper.Apply(
                 c,
-                1,
-                $"{c.characterName} is hidden and refuses duels for 1 turn.",
+                turns,
+                $"{c.characterName} turns invisible for {turns} turn(s).",
                 Color.gray);
         };
 

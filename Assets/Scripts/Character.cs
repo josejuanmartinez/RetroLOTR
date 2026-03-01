@@ -44,6 +44,7 @@ public class Character : MonoBehaviour
 
     [Header("Spionage")]
     public List<Leader> doubledBy = new();
+    private Dictionary<Leader, int> doubledByTurns = new();
 
     [Header("Artifacts")]
     public List<Artifact> artifacts = new();
@@ -79,6 +80,7 @@ public class Character : MonoBehaviour
     {
         army = null;
         doubledBy = new();
+        doubledByTurns = new();
         reachableHexes = new();
         statusEffects = new();
         InitializeStatusEffects();
@@ -179,10 +181,18 @@ public class Character : MonoBehaviour
         await action.Execute();
     }
 
-    public void Halt()
+    public void Halt(int turns = 1)
     {
-        ApplyStatusEffect(StatusEffectEnum.Halted);
-        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} halted for next turn!", Color.red);
+        int clampedTurns = Mathf.Max(1, turns);
+        ApplyStatusEffect(StatusEffectEnum.Halted, clampedTurns);
+        if (clampedTurns == 1)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} halted (reduced movement) for next turn!", Color.red);
+        }
+        else
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} halted (reduced movement) for {clampedTurns} turns!", Color.red);
+        }
     }
 
     public void Encourage(int turns = 1)
@@ -269,11 +279,36 @@ public class Character : MonoBehaviour
             health = Mathf.Min(100, health + 5);
         }
         // STATUSES
+        int blockedTurns = GetStatusEffectTurns(StatusEffectEnum.Blocked);
+        bool blocked = blockedTurns > 0;
+        if (blocked && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this, "Blocked", Color.red);
+
         bool halted = HasStatusEffect(StatusEffectEnum.Halted);
-        if (halted && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this,  "Halted", Color.red);
-        moved = halted ? GetMaxMovement() : 0;
-        hasActionedThisTurn = halted;
-        ClearStatusEffect(StatusEffectEnum.Halted);
+        if (halted && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this, "Halted", Color.yellow);
+
+        if (blocked)
+        {
+            moved = GetMaxMovement();
+            hasActionedThisTurn = true;
+        }
+        else if (halted)
+        {
+            int maxMovement = GetMaxMovement();
+            int haltedPenalty = Mathf.Max(1, Mathf.FloorToInt(maxMovement * 0.5f));
+            moved = Mathf.Min(maxMovement, haltedPenalty);
+            hasActionedThisTurn = false;
+        }
+        else
+        {
+            moved = 0;
+            hasActionedThisTurn = false;
+        }
+        if (blockedTurns > 0)
+        {
+            blockedTurns = Mathf.Max(0, blockedTurns - 1);
+            statusEffectTurns[StatusEffectEnum.Blocked] = blockedTurns;
+            if (blockedTurns == 0) statusEffects?.Remove(StatusEffectEnum.Blocked);
+        }
 
         if (HasStatusEffect(StatusEffectEnum.Encouraged) && GetOwner() == FindFirstObjectByType<Game>().player)
         {
@@ -284,11 +319,15 @@ public class Character : MonoBehaviour
         {
             MessageDisplayNoUI.ShowMessage(hex, this, "Refusing duels", Color.yellow);
         }
+        if (!blocked && halted && GetOwner() == FindFirstObjectByType<Game>().player)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Movement reduced", Color.yellow);
+        }
 
         // tick all non-halted status effects
         foreach (StatusEffectEnum effect in Enum.GetValues(typeof(StatusEffectEnum)))
         {
-            if (effect == StatusEffectEnum.Halted) continue;
+            if (effect == StatusEffectEnum.Blocked) continue;
             int turns = GetStatusEffectTurns(effect);
             if (turns <= 0) continue;
 
@@ -299,6 +338,7 @@ public class Character : MonoBehaviour
                 statusEffects?.Remove(effect);
             }
         }
+        TickDoubledByTurns();
         StoreReachableHexes();
         StoreRelevantHexes();
         RefreshSelectedCharacterIconIfSelected();
@@ -520,14 +560,54 @@ public class Character : MonoBehaviour
         if (health < 1) Killed(null);
     }
 
-    public void Doubled(Leader doubledBy)
+    private void TickDoubledByTurns()
     {
-        this.doubledBy.Add(doubledBy);
-        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} doubled by {doubledBy.characterName}", Color.green);
+        if (doubledByTurns == null || doubledByTurns.Count == 0) return;
+
+        List<Leader> keys = doubledByTurns.Keys.ToList();
+        for (int i = 0; i < keys.Count; i++)
+        {
+            Leader spyLeader = keys[i];
+            int turns = Mathf.Max(0, doubledByTurns[spyLeader] - 1);
+            if (turns <= 0)
+            {
+                doubledByTurns.Remove(spyLeader);
+                doubledBy.Remove(spyLeader);
+            }
+            else
+            {
+                doubledByTurns[spyLeader] = turns;
+            }
+        }
+    }
+
+    public void Doubled(Leader doubledBy, int turns = -1)
+    {
+        if (doubledBy == null) return;
+        if (!this.doubledBy.Contains(doubledBy)) this.doubledBy.Add(doubledBy);
+
+        if (turns > 0)
+        {
+            if (doubledByTurns.TryGetValue(doubledBy, out int existing))
+            {
+                doubledByTurns[doubledBy] = Mathf.Max(existing, turns);
+            }
+            else
+            {
+                doubledByTurns[doubledBy] = turns;
+            }
+        }
+        else
+        {
+            doubledByTurns.Remove(doubledBy);
+        }
+
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} doubled by {doubledBy.characterName}", Color.green);
     }
     public void Undouble(Leader doubledBy)
     {
         this.doubledBy.Remove(doubledBy);
+        doubledByTurns.Remove(doubledBy);
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} undoubled by {doubledBy.characterName}", Color.green);
     }
 

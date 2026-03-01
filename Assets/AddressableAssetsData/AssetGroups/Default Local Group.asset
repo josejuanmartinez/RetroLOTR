@@ -1138,11 +1138,10 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 21d3c9b0d1f3dbf40970ef6c1b9862c4
-    m_Address: Assets/Art/Cards/Actions/SellFood.png
+  - m_GUID: 223b743dab6d11a41bdd04137fe0f445
+    m_Address: Assets/Art/Cards/Actions/Poison.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 224cfff784e925c42b8d6ddddeb69131
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Base Tiles/hexDirt00_bg.png
@@ -7549,7 +7548,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e2b8ec6c1a6d3554792105d37127056f
-    m_Address: Assets/Art/Cards/Actions/Spells/Telekinesis.jpg
+    m_Address: Assets/Art/Cards/Actions/Spells/Telepathy.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

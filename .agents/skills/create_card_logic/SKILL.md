@@ -13,10 +13,14 @@ Audit card coverage and action wiring card-by-card with minimal noise.
 - `Assets/Resources/Cards/SarumanDeck.json`
 - `Assets/Resources/Actions.json`
 - `Assets/Scripts/Actions`
-- Card files folder to scan: `Assets/Art/Cards`.
+- Card files folder to scan: `Assets/Art/Cards` (full tree), including:
+  - `Assets/Art/Cards/Actions`
+  - `Assets/Art/Cards/Actions/Spells`
+  - `Assets/Art/Cards/Actions/Events` (including nested folders)
 
 ## Required Behavior
 - Iterate cards by file name.
+- Do not narrow the scan to `Actions` only when unresolved cards may exist in `Spells` or other card subfolders.
 - **Presence check is mandatory before any question:** for each candidate card, first check all deck JSONs for any of these matches:
   - `name` normalized match
   - `actionClassName` match
@@ -32,25 +36,29 @@ Audit card coverage and action wiring card-by-card with minimal noise.
   - action class exists under `Assets/Scripts/Actions` (including subfolders)
 - Before proposing effects, verify required resources/mechanics exist in code. If missing (for example a new resource type), ask whether to map to existing mechanics or expand core systems.
 - Prefer data-driven requirement rendering (card fields) over hardcoded UI checks tied to specific card/action names.
+- Never implement or modify gameplay logic before the user chooses one proposed logic option.
 
 ## Workflow
 1. Resolve scan root (`Assets/Art/Cards`).
-2. Build a normalized card-name index from file names (ignore extension, normalize case/spacing/underscores/hyphens).
-3. For each candidate card, perform **presence resolution before any prompt** using all of:
+2. Collect candidate image files from the full scan root, explicitly including `Actions/Spells` and `Actions/Events`; ignore obvious non-card/template files (for example `CardFrame` variants).
+3. Build a normalized card-name index from file names (ignore extension, normalize case/spacing/underscores/hyphens).
+4. For each candidate card, perform **presence resolution before any prompt** using all of:
    - normalized `name`
    - normalized `actionClassName`
    - normalized `action`
    - `actionId` (if derivable from name/action)
    - support camel/pascal/spacing equivalence (e.g. `SellIron`, `Sell Iron`, `sell_iron`, `sell-iron`).
-4. If card exists in at least one deck:
+5. If card exists in at least one deck:
    - If the card has valid linkage (action metadata + action class), continue silently.
    - If linkage exists but is invalid, ask how to fix (reuse existing action, create new action, or skip).
    - **Never ask alignment/deck assignment for existing cards.**
-5. If card is not assigned to any deck after the full presence resolution, ask alignment using numbered options.
-6. After deck assignment, if no action is set, ask for confirmation using numbered options.
-7. If confirmed, create an action for it with the theme and nature of the card, using existing actions in `Assets/Scripts/Actions` as examples.
-8. After each action ask if the user wants to continue or stop. If stop, finish the loop.
-9. If continue, continue through remaining cards.
+6. If card is not assigned to any deck after the full presence resolution, ask alignment using numbered options.
+7. After deck assignment, if no action is set, ask for confirmation using numbered options.
+8. If confirmed, present 3 concise logic options for the card (option 1 should be conservative/recommended), then always include option 4 exactly as: `You will provide the text`.
+9. Wait for the user's option choice before any code changes.
+10. Implement only the selected option (or the user's custom text if option 4).
+11. After each action ask if the user wants to continue or stop. If stop, finish the loop.
+12. If continue, continue through remaining cards.
 
 ## Numbered Prompt Templates
 
@@ -79,11 +87,12 @@ Use this exact style for user interaction.
 
 ### Effect Definition Needed
 `I need the gameplay effect for '<CardName>'. Choose next step:`
-1. `I will suggest you 3 possible effects`
-2. `You will provide me a custom effect text`
-3. `Skip this card`
+1. `<Suggested logic A (Recommended)>`
+2. `<Suggested logic B>`
+3. `<Suggested logic C>`
+4. `You will provide the text`
 
-When option 1 is selected for effect definition, provide 3 concise suggestions inspired by existing actions and the card name/theme.
+When presenting this prompt, always include one short sentence per suggested option before the numbered list.
 
 ## Suggestion Rules
 - Base suggestions on existing `Actions.json` patterns (cost, target, reward, risk).
@@ -94,6 +103,11 @@ When option 1 is selected for effect definition, provide 3 concise suggestions i
 ## Silent Processing Rule
 - Do not report each successful card.
 - Report only blockers, decisions required, and final summary.
+- Exception: after each card is resolved (created/linked/skipped), provide a short per-card summary that states:
+  - card name
+  - deck/alignment decision
+  - whether action logic was created, linked, reused, or skipped
+  - concrete artifacts changed (deck JSON entry, `Actions.json` entry, action class file path) when applicable
 
 ## Final Summary Format
 At the end of a run, provide:
@@ -102,6 +116,18 @@ At the end of a run, provide:
 3. Cards added to decks (with alignment).
 4. Actions linked/created.
 5. Cards skipped or pending user input.
+
+## Per-Card Summary Format
+After each resolved card, provide:
+1. Card name.
+2. Alignment/deck assignment.
+3. Action outcome (`created`, `linked/reused`, `none`, or `skipped`).
+4. Files changed for that card (if any).
+5. Logic summary in plain language:
+   - what the action does at gameplay level
+   - who/what it can target
+   - success/failure gate (for example difficulty roll or required conditions)
+   - key effects and duration/value scaling
 
 ## Integration Notes
 - Use `new-card` skill for deck JSON edits.
