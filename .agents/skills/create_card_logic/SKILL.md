@@ -8,9 +8,9 @@ description: Audit cards and wire missing deck/action logic in RetroLOTR. Use wh
 Audit card coverage and action wiring card-by-card with minimal noise.
 
 ## Source Of Truth
-- `Assets/Resources/Cards/gandalf_deck.json`
-- `Assets/Resources/Cards/sauron_deck.json`
-- `Assets/Resources/Cards/saruman_deck.json`
+- `Assets/Resources/Cards/GandalfDeck.json`
+- `Assets/Resources/Cards/SauronDeck.json`
+- `Assets/Resources/Cards/SarumanDeck.json`
 - `Assets/Resources/Actions.json`
 - `Assets/Scripts/Actions`
 - Card files folder to scan:
@@ -22,14 +22,20 @@ Audit card coverage and action wiring card-by-card with minimal noise.
 - If a card is already present in a deck and its linked character action exists, continue silently to the next card.
 - Ask the user only when required information is missing.
 - Use numbered options whenever asking for confirmation or a choice.
+- Use deck-card schema as source of truth: action cards use `actionClassName`, `actionId`, `action`, and card-owned requirements (`*SkillRequired`, `*Required`).
+- For action validation, require both:
+  - action metadata exists in `Assets/Resources/Actions.json`
+  - action class exists under `Assets/Scripts/Actions` (including subfolders)
+- Before proposing effects, verify required resources/mechanics exist in code. If missing (for example a new resource type), ask whether to map to existing mechanics or expand core systems.
+- Prefer data-driven requirement rendering (card fields) over hardcoded UI checks tied to specific card/action names.
 
 ## Workflow
 1. Resolve scan root (`Assets/Art/Cards`).
 2. Build a normalized card-name index from file names (ignore extension, normalize case/spacing/underscores/hyphens).
-3. For each card name, check whether it exists in any deck JSON (`gandalf`, `sauron`, `saruman`).
+3. For each card name, check whether it exists in any deck JSON (`gandalf`, `sauron`, `saruman`), with support for adding a card to all decks when selected.
 4. If card exists in at least one deck:
-   - Of the card does not have an action linkage, use numbered options provided below to ask the action.
-   - If card has action linkage, verify action exists in `Assets/Resources/Actions.json` and corresponding class exists under `Assets/Scripts/Actions`.
+   - If the card does not have an action linkage, use numbered options provided below to ask the action.
+   - If card has action linkage, verify action metadata/class and that deck fields stay coherent (`actionClassName`, `actionId`, `action`).
    - If both exist, continue silently.
    - If missing action metadata/class, ask how to fix (reuse existing action, create new action, or skip).
 5. If card is not assigned to any deck, ask alignment using numbered options.
@@ -47,6 +53,7 @@ Use this exact style for user interaction.
 1. `Gandalf (Recommended)`
 2. `Sauron`
 3. `Saruman`
+4. `All alignments`
 
 ### Missing/Invalid Action Linkage
 `Card '<CardName>' has missing or invalid action linkage. Choose:`
@@ -90,3 +97,4 @@ At the end of a run, provide:
 - Use `new-card` skill for deck JSON edits.
 - Use `new-character-action` skill for action class + `Actions.json` edits.
 - Keep names consistent across card name, image name, action metadata, and class mapping.
+- When a dynamic-cost card needs symbolic requirements, encode them in card data fields (for example `jokerRequired`) and keep UI logic generic.

@@ -347,6 +347,11 @@ public class Car : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         AddSprites(parts, "steel", data.steelRequired);
         AddSprites(parts, "mithril", data.mithrilRequired);
         AddSprites(parts, "gold", data.goldRequired);
+        if (data.jokerRequired > 0 && data.goldRequired <= 0)
+        {
+            AddSprites(parts, "gold", 1);
+        }
+        AddSprites(parts, "joker", data.jokerRequired);
         return string.Concat(parts);
     }
 

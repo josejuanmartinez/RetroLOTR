@@ -2607,6 +2607,34 @@
             "description": "Environmental event: halts all non-Southron units on desert tiles.",
             "isOffensive": true,
             "tutorialInfo": "Environmental event: halts all non-Southron units on desert tiles."
+        },
+        {
+            "className": "BuyFood",
+            "actionName": "Army Rations",
+            "iconName": "icons3_4",
+            "actionId": 195,
+            "difficulty": 0,
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 1,
+            "mageSkillRequired": 0,
+            "leatherCost": 0,
+            "mountsCost": 0,
+            "timberCost": 0,
+            "ironCost": 0,
+            "steelCost": 0,
+            "mithrilCost": 0,
+            "goldCost": 0,
+            "isBuyCaravans": false,
+            "isSellCaravans": false,
+            "commanderXP": 0,
+            "agentXP": 0,
+            "emmissaryXP": 5,
+            "mageXP": 0,
+            "reward": 1,
+            "advisorType": 1,
+            "description": "Spend 2 gold per army to grant Haste for 1 turn to as many armies as you can afford.",
+            "tutorialInfo": "Spend 2 gold per army to grant Haste for 1 turn to as many armies as you can afford."
         }
     ]
 }

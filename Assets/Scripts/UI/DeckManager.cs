@@ -77,6 +77,7 @@ public class CardData
     public int steelRequired;
     public int mithrilRequired;
     public int goldRequired;
+    public int jokerRequired;
 
     [NonSerialized] public bool isPlayable;
     [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
@@ -655,7 +656,8 @@ public class DeckManager : MonoBehaviour
             ironRequired = card.ironRequired,
             steelRequired = card.steelRequired,
             mithrilRequired = card.mithrilRequired,
-            goldRequired = card.goldRequired
+            goldRequired = card.goldRequired,
+            jokerRequired = card.jokerRequired
         };
     }
 
