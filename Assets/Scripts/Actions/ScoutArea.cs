@@ -27,7 +27,7 @@ public class ScoutArea : AgentAction
                 {
                     Hex hex = radiusHexes[i];
                     if (hex == null) continue;
-                    if (!hex.IsScoutedBy(owner) && hex.characters != null && hex.characters.Find(x => x != null && !x.killed && x.GetAlignment() != c.GetAlignment()) != null)
+                    if (!hex.IsScoutedBy(owner) && hex.characters != null && hex.characters.Find(x => x != null && !x.killed && x.GetAlignment() != c.GetAlignment() && !x.IsHidden()) != null)
                     {
                         detectedHexes.Add(hex);
                     }
@@ -82,7 +82,7 @@ public class ScoutArea : AgentAction
             {
                 revealedCharacterEntries = detectedHexes
                     .Select(hex => (hex, names: hex.characters
-                        .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != c.GetAlignment())
+                        .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != c.GetAlignment() && !ch.IsHidden())
                         .Select(ch => ch.characterName)
                         .Where(name => !string.IsNullOrWhiteSpace(name))
                         .Distinct()

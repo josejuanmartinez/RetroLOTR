@@ -141,14 +141,6 @@
             "tags": []
         },
         {
-            "cardId": 51,
-            "name": "Barad-dur",
-            "description": "Population center from non-playable leader Barad-dur.",
-            "type": "PC",
-            "action": "MaterialRetrievalBaradDur",
-            "tags": []
-        },
-        {
             "cardId": 184,
             "name": "Sell 5 Steel",
             "description": "",
@@ -1625,6 +1617,48 @@
             "tags": [
                 "environmental"
             ]
+        },
+        {
+            "cardId": 275,
+            "name": "AssassinateCharacter",
+            "description": "Attempt to assassinate an enemy character.",
+            "type": "Action",
+            "action": "AssassinateCharacter",
+            "actionClassName": "AssassinateCharacter",
+            "actionId": 119,
+            "tags": []
+        },
+        {
+            "cardId": 276,
+            "name": "Hide",
+            "description": "Hide from duels for 1 turn.",
+            "type": "Action",
+            "action": "Hide",
+            "actionClassName": "Hide",
+            "actionId": 196,
+            "tags": []
+        },
+        {
+            "cardId": 277,
+            "name": "ABookOfLostMagic",
+            "description": "Reveal hidden artifacts in radius 2 and gain +1 Mage for 1 turn.",
+            "type": "Event",
+            "action": "ABookOfLostMagic",
+            "actionClassName": "ABookOfLostMagic",
+            "actionId": 197,
+            "tags": [
+                "environmental"
+            ]
+        },
+        {
+            "cardId": 278,
+            "name": "AMorgulBlade",
+            "description": "Target enemy character in your hex: apply Poisoned (2 turns) and Fear (1 turn).",
+            "type": "Action",
+            "action": "AMorgulBlade",
+            "actionClassName": "AMorgulBlade",
+            "actionId": 198,
+            "tags": []
         }
     ]
 }

@@ -16,7 +16,7 @@ public class Duel : CharacterAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            return FindEnemyCharactersAtHex(character).Count > 0;
+            return FindEnemyCharactersAtHex(character).Any(x => x != null && !x.IsHidden());
         };
 
         async Task<bool> duelAsync(Character character)
@@ -24,7 +24,9 @@ public class Duel : CharacterAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
 
-            List<Character> enemies = FindEnemyCharactersAtHex(character);
+            List<Character> enemies = FindEnemyCharactersAtHex(character)
+                .Where(x => x != null && !x.IsHidden())
+                .ToList();
             if (enemies.Count < 1) return false;
 
             bool isAI = !character.isPlayerControlled;

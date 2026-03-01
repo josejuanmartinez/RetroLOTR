@@ -10,5 +10,7 @@ public enum StatusEffectEnum
     Hope = 7,
     Despair = 8,
     Fear = 9,
-    Haste = 10
+    Haste = 10,
+    Hidden = 11,
+    ArcaneInsight = 12
 }

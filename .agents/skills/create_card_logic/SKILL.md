@@ -13,13 +13,17 @@ Audit card coverage and action wiring card-by-card with minimal noise.
 - `Assets/Resources/Cards/SarumanDeck.json`
 - `Assets/Resources/Actions.json`
 - `Assets/Scripts/Actions`
-- Card files folder to scan:
-  - Prefer `Assets/Cards` if present.
-  - Otherwise use `Assets/Art/Cards`.
+- Card files folder to scan: `Assets/Art/Cards`.
 
 ## Required Behavior
 - Iterate cards by file name.
-- If a card is already present in a deck and its linked character action exists, continue silently to the next card.
+- **Presence check is mandatory before any question:** for each candidate card, first check all deck JSONs for any of these matches:
+  - `name` normalized match
+  - `actionClassName` match
+  - `action` match
+  - `actionId` match (when known)
+- If a card is already present in any deck and its linked character action exists, continue silently to the next card.
+- **Never ask alignment/deck assignment for a card that is already present** (even if image filename differs).
 - Ask the user only when required information is missing.
 - Use numbered options whenever asking for confirmation or a choice.
 - Use deck-card schema as source of truth: action cards use `actionClassName`, `actionId`, `action`, and card-owned requirements (`*SkillRequired`, `*Required`).
@@ -32,17 +36,21 @@ Audit card coverage and action wiring card-by-card with minimal noise.
 ## Workflow
 1. Resolve scan root (`Assets/Art/Cards`).
 2. Build a normalized card-name index from file names (ignore extension, normalize case/spacing/underscores/hyphens).
-3. For each card name, check whether it exists in any deck JSON (`gandalf`, `sauron`, `saruman`), with support for adding a card to all decks when selected.
+3. For each candidate card, perform **presence resolution before any prompt** using all of:
+   - normalized `name`
+   - normalized `actionClassName`
+   - normalized `action`
+   - `actionId` (if derivable from name/action)
+   - support camel/pascal/spacing equivalence (e.g. `SellIron`, `Sell Iron`, `sell_iron`, `sell-iron`).
 4. If card exists in at least one deck:
-   - If the card does not have an action linkage, use numbered options provided below to ask the action.
-   - If card has action linkage, verify action metadata/class and that deck fields stay coherent (`actionClassName`, `actionId`, `action`).
-   - If both exist, continue silently.
-   - If missing action metadata/class, ask how to fix (reuse existing action, create new action, or skip).
-5. If card is not assigned to any deck, ask alignment using numbered options.
-6. After deck assignment, if no action has set, ask for confirmation using numbered options.
-7. If confirmed, create an action for it with the theme and nature of the card, and taking as examples other actions in Assets/Scripts/Actions. Feel free to ask for confirmation with numbered options
-8. After each action ask if the user wants to continue or stop already. If stop, finish the loop.
-9. If continue, Continue through remaining cards.
+   - If the card has valid linkage (action metadata + action class), continue silently.
+   - If linkage exists but is invalid, ask how to fix (reuse existing action, create new action, or skip).
+   - **Never ask alignment/deck assignment for existing cards.**
+5. If card is not assigned to any deck after the full presence resolution, ask alignment using numbered options.
+6. After deck assignment, if no action is set, ask for confirmation using numbered options.
+7. If confirmed, create an action for it with the theme and nature of the card, using existing actions in `Assets/Scripts/Actions` as examples.
+8. After each action ask if the user wants to continue or stop. If stop, finish the loop.
+9. If continue, continue through remaining cards.
 
 ## Numbered Prompt Templates
 
@@ -50,27 +58,29 @@ Use this exact style for user interaction.
 
 ### Alignment Missing
 `Card '<CardName>' is not in any deck. Choose alignment:`
-1. `Gandalf (Recommended)`
-2. `Sauron`
-3. `Saruman`
+1. `Gandalf`
+2. `Saruman`
+3. `Gandalf+Saruman`
+4. `Sauron`
+5. `Sauron+Saruman`
 4. `All alignments`
 
 ### Missing/Invalid Action Linkage
 `Card '<CardName>' has missing or invalid action linkage. Choose:`
-1. `Reuse existing action (Recommended)`
+1. `Reuse existing action`
 2. `Create new action`
 3. `Skip this card for now`
 
 ### Potential Action Confirmation
 `Card '<CardName>' may need a character action. Proceed?`
-1. `Yes, create/link an action (Recommended)`
+1. `Yes, create/link an action`
 2. `No, keep card without action`
 3. `Skip for now`
 
 ### Effect Definition Needed
 `I need the gameplay effect for '<CardName>'. Choose next step:`
-1. `Use one of your suggested effects (Recommended)`
-2. `I will provide custom effect text`
+1. `I will suggest you 3 possible effects`
+2. `You will provide me a custom effect text`
 3. `Skip this card`
 
 When option 1 is selected for effect definition, provide 3 concise suggestions inspired by existing actions and the card name/theme.

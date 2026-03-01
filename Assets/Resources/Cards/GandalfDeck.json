@@ -1510,14 +1510,6 @@
             "tags": []
         },
         {
-            "cardId": 122,
-            "name": "EredLuin",
-            "description": "<sprite name=\"iron\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"steel\"><sprite name=\"mithril\">",
-            "type": "Land",
-            "action": "MaterialRetrievalEredluin",
-            "tags": []
-        },
-        {
             "cardId": 123,
             "name": "Eregion",
             "description": "<sprite name=\"gold\"><sprite name=\"timber\"><sprite name=\"leather\"><sprite name=\"iron\"><sprite name=\"steel\">",
@@ -1729,6 +1721,38 @@
             "tags": [
                 "environmental"
             ]
+        },
+        {
+            "cardId": 274,
+            "name": "Hide",
+            "description": "Hide from duels for 1 turn.",
+            "type": "Action",
+            "action": "Hide",
+            "actionClassName": "Hide",
+            "actionId": 196,
+            "tags": []
+        },
+        {
+            "cardId": 275,
+            "name": "ABookOfLostMagic",
+            "description": "Reveal hidden artifacts in radius 2 and gain +1 Mage for 1 turn.",
+            "type": "Event",
+            "action": "ABookOfLostMagic",
+            "actionClassName": "ABookOfLostMagic",
+            "actionId": 197,
+            "tags": [
+                "environmental"
+            ]
+        },
+        {
+            "cardId": 276,
+            "name": "AriseRidersOfTheoden",
+            "description": "Allied cavalry units in radius 2 gain Haste (1 turn) and Courage (1 turn).",
+            "type": "Action",
+            "action": "AriseRidersOfTheoden",
+            "actionClassName": "AriseRidersOfTheoden",
+            "actionId": 199,
+            "tags": []
         }
     ]
 }

@@ -1655,6 +1655,38 @@
             "tags": [
                 "environmental"
             ]
+        },
+        {
+            "cardId": 276,
+            "name": "AssassinateCharacter",
+            "description": "Attempt to assassinate an enemy character.",
+            "type": "Action",
+            "action": "AssassinateCharacter",
+            "actionClassName": "AssassinateCharacter",
+            "actionId": 119,
+            "tags": []
+        },
+        {
+            "cardId": 277,
+            "name": "Hide",
+            "description": "Hide from duels for 1 turn.",
+            "type": "Action",
+            "action": "Hide",
+            "actionClassName": "Hide",
+            "actionId": 196,
+            "tags": []
+        },
+        {
+            "cardId": 278,
+            "name": "ABookOfLostMagic",
+            "description": "Reveal hidden artifacts in radius 2 and gain +1 Mage for 1 turn.",
+            "type": "Event",
+            "action": "ABookOfLostMagic",
+            "actionClassName": "ABookOfLostMagic",
+            "actionId": 197,
+            "tags": [
+                "environmental"
+            ]
         }
     ]
 }
