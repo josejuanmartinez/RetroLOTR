@@ -563,10 +563,10 @@ public class DeckManager : MonoBehaviour
                 cardGo.SetActive(true);
                 handCardInstances.Add(cardGo);
 
-                Car cardComponent = cardGo.GetComponent<Car>();
+                Card cardComponent = cardGo.GetComponent<Card>();
                 if (cardComponent == null)
                 {
-                    Debug.LogWarning("DeckManager: Card prefab is missing the Car component.");
+                    Debug.LogWarning("DeckManager: Card prefab is missing the Card component.");
                     continue;
                 }
 
@@ -878,7 +878,7 @@ public class DeckManager : MonoBehaviour
             GameObject childGo = child.gameObject;
             if (childGo == null) continue;
             if (cardCameObject != null && childGo == cardCameObject) continue;
-            if (childGo.GetComponent<Car>() == null) continue;
+            if (childGo.GetComponent<Card>() == null) continue;
             Destroy(childGo);
         }
     }
@@ -895,7 +895,7 @@ public class DeckManager : MonoBehaviour
         }
         if (gridLayout == null) return null;
 
-        Car existingCard = gridLayout.GetComponentInChildren<Car>(true);
+        Card existingCard = gridLayout.GetComponentInChildren<Card>(true);
         if (existingCard == null) return null;
 
         cardCameObject = existingCard.gameObject;

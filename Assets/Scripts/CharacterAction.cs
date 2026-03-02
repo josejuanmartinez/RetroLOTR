@@ -89,6 +89,14 @@ public class CharacterAction : SearcherByName
 
     protected virtual AdvisorType DefaultAdvisorType => AdvisorType.None;
 
+    private static string GetDefaultActionName()
+    {
+        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        return actionsManager != null && actionsManager.DEFAULT != null
+            ? actionsManager.DEFAULT.actionName
+            : null;
+    }
+
     public AdvisorType GetAdvisorType()
     {
         return advisorType == AdvisorType.None ? DefaultAdvisorType : advisorType;
@@ -102,11 +110,12 @@ public class CharacterAction : SearcherByName
             var originalCondition = condition;
             this.character = character;
             if (advisorType == AdvisorType.None) advisorType = DefaultAdvisorType;
+            string defaultActionName = GetDefaultActionName();
 
-            this.condition = (character) => { return 
+            this.condition = (character) => { return
                 character != null && !character.killed
-                && (!character.hasActionedThisTurn || this.actionName == FindFirstObjectByType<ActionsManager>().DEFAULT.actionName) 
-                && (originalCondition == null || originalCondition(character)); 
+                && (!character.hasActionedThisTurn || (!string.IsNullOrWhiteSpace(defaultActionName) && this.actionName == defaultActionName))
+                && (originalCondition == null || originalCondition(character));
             };
             this.effect = effect;
             this.asyncEffect = asyncEffect;
@@ -141,7 +150,7 @@ public class CharacterAction : SearcherByName
 
     public bool FulfillsConditions()
     {
-        return condition(character);
+        return condition != null && condition(character);
     }
 
     public virtual bool IsRoleEligible(Character character)
@@ -1207,7 +1216,8 @@ public class CharacterAction : SearcherByName
         ResourceCostProfile costProfile = GetResourceCostProfile(owner);
 
         if (character.killed) parts.Add("Character is dead.");
-        if (character.hasActionedThisTurn && actionName != FindFirstObjectByType<ActionsManager>().DEFAULT.actionName)
+        string defaultActionName = GetDefaultActionName();
+        if (character.hasActionedThisTurn && (string.IsNullOrWhiteSpace(defaultActionName) || actionName != defaultActionName))
         {
             parts.Add("Already actioned this turn.");
         }
