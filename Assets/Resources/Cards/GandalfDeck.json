@@ -1698,6 +1698,21 @@
             ]
         },
         {
+            "cardId": 291,
+            "name": "TreeParty",
+            "description": "A Hobbiton party inspired by Bilbo's celebration. Within radius 5, grants Courage to all Humans, Hobbits, and Dwarves for 1 turn, and halts all Troll units.",
+            "type": "Event",
+            "action": "TreeParty",
+            "actionClassName": "TreeParty",
+            "actionId": 212,
+            "spriteName": "TreeParty",
+            "tags": [
+                "hobbiton",
+                "party",
+                "environmental"
+            ]
+        },
+        {
             "cardId": 143,
             "name": "Long Shadows",
             "description": "Environmental event. Grants Courage to all beasts for 1 turn.",

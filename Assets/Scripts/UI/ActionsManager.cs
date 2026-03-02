@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
@@ -198,8 +199,30 @@ public class ActionsManager : MonoBehaviour
             }
             if (action == null)
             {
-                Debug.LogWarning($"ActionsManager: action '{definition.className}'/'{definition.actionName}' is not present as a CharacterAction component.");
-                continue;
+                Type resolvedType = ResolveActionType(definition.className);
+                if (resolvedType != null && typeof(CharacterAction).IsAssignableFrom(resolvedType))
+                {
+                    action = gameObject.AddComponent(resolvedType) as CharacterAction;
+                    if (action != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(definition.className))
+                        {
+                            actionsByType[definition.className] = action;
+                        }
+
+                        string normalizedName = NormalizeActionName(definition.actionName);
+                        if (!string.IsNullOrWhiteSpace(normalizedName))
+                        {
+                            actionsByName[normalizedName] = action;
+                        }
+                    }
+                }
+
+                if (action == null)
+                {
+                    Debug.LogWarning($"ActionsManager: action '{definition.className}'/'{definition.actionName}' is not present as a CharacterAction component.");
+                    continue;
+                }
             }
 
             ApplyDefinition(action, definition);
@@ -267,5 +290,35 @@ public class ActionsManager : MonoBehaviour
     {
         string stripped = ActionNameUtils.StripShortcut(value);
         return string.IsNullOrWhiteSpace(stripped) ? string.Empty : stripped.Trim().ToLowerInvariant();
+    }
+
+    private static Type ResolveActionType(string className)
+    {
+        if (string.IsNullOrWhiteSpace(className)) return null;
+
+        Type direct = Type.GetType(className, false, true);
+        if (direct != null) return direct;
+
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            Type candidate = assembly.GetType(className, false, true);
+            if (candidate != null) return candidate;
+
+            Type[] types;
+            try
+            {
+                types = assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                types = ex.Types.Where(t => t != null).ToArray();
+            }
+
+            candidate = types.FirstOrDefault(t =>
+                string.Equals(t.Name, className, StringComparison.OrdinalIgnoreCase));
+            if (candidate != null) return candidate;
+        }
+
+        return null;
     }
 }

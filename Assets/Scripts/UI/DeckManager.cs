@@ -63,6 +63,7 @@ public class CardData
     public string actionClassName;
     public string action;
     public int actionId;
+    public string spriteName;
 
     // Card-owned requirements (migrated from Actions.json)
     public int commanderSkillRequired;

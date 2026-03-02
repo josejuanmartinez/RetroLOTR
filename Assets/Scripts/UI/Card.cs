@@ -150,6 +150,11 @@ public class Car : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     private Sprite ResolveCardImage(CardData data)
     {
         if (data == null) return null;
+        if (!string.IsNullOrWhiteSpace(data.spriteName))
+        {
+            Sprite overrideSprite = GetSprite(data.spriteName);
+            if (overrideSprite != null) return overrideSprite;
+        }
 
         CardTypeEnum cardType = data.GetCardType();
         if (cardType == CardTypeEnum.Action || cardType == CardTypeEnum.Event || cardType == CardTypeEnum.Encounter)
