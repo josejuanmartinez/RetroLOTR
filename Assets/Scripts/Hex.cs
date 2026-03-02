@@ -460,13 +460,6 @@ public class Hex : MonoBehaviour
         }
         return "";
     }
-    public string GetProduction()
-    {
-        if (pc != null && pc.owner != null && (pc.owner == game.player || (pc.owner.alignment == game.player.alignment && pc.owner.alignment != AlignmentEnum.neutral) || scoutedBy.Contains(game.player))) {
-            return pc.GetProducesHoverText();
-        }
-        return "";
-    }
 
     public void RefreshHoverText()
     {
@@ -483,7 +476,7 @@ public class Hex : MonoBehaviour
                 int sizeValue = (int)pc.citySize;
                 int fortValue = (int)pc.fortSize;
                 string fortText = pc.fortSize != FortSizeEnum.NONE ? $" <sprite name=\"fort\">[{fortValue}]" : "";
-                string pcTooltip = $"{pc.pcName}<sprite name=\"pc\">[{sizeValue}]{fortText} {GetLoyalty()}{GetProduction()}";
+                string pcTooltip = $"{pc.pcName}<sprite name=\"pc\">[{sizeValue}]{fortText} {GetLoyalty()}";
                 pcHover.Initialize(pcTooltip, tooltipFontSize);
             }
             else

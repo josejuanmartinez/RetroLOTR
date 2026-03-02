@@ -389,6 +389,39 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
+    public bool TryConsumeCard(PlayableLeader leader, int cardId, bool drawReplacement, out CardData consumedCard)
+    {
+        consumedCard = null;
+        if (leader == null) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
+
+        int index = state.hand.FindIndex(x => x != null && x.cardId == cardId);
+        if (index < 0) return false;
+
+        consumedCard = state.hand[index];
+        if (consumedCard == null) return false;
+        if (!consumedCard.MeetsResourceRequirements(leader))
+        {
+            consumedCard = null;
+            return false;
+        }
+
+        state.hand.RemoveAt(index);
+        state.discardPile.Add(consumedCard);
+        ApplyCardCosts(leader, consumedCard);
+
+        if (drawReplacement)
+        {
+            TryDrawCard(leader, out _);
+        }
+        else
+        {
+            RefreshHumanPlayerHandUIIfHuman(leader);
+        }
+
+        return true;
+    }
+
     public bool HasDeckFor(PlayableLeader leader)
     {
         return leader != null && playerDecks.ContainsKey(leader);
@@ -535,6 +568,18 @@ public class DeckManager : MonoBehaviour
 
         playerDecks[leader] = rebuilt;
         RefillHandToCount(rebuilt, Mathf.Max(0, cardsToDraw));
+        RefreshHumanPlayerHandUIIfHuman(leader);
+        return true;
+    }
+
+    public bool ReplenishHandForTurn(PlayableLeader leader)
+    {
+        if (leader == null) return false;
+        if (!loaded && !InitializeFromResources()) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
+        if (ShouldSkipTurnRefillForTutorialHuman(leader)) return false;
+
+        RefillHandToCount(state, handSize);
         RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
@@ -823,6 +868,15 @@ public class DeckManager : MonoBehaviour
         {
             ApplyTutorialActionCardsToState(leader, requiredActions);
         }
+    }
+
+    private bool ShouldSkipTurnRefillForTutorialHuman(PlayableLeader leader)
+    {
+        if (leader == null) return false;
+        Game game = FindFirstObjectByType<Game>();
+        if (game == null || game.player == null || leader != game.player) return false;
+        TutorialManager tutorial = TutorialManager.Instance;
+        return tutorial != null && tutorial.IsActiveFor(leader);
     }
 
     private bool ApplyTutorialActionCardsToState(PlayableLeader leader, IEnumerable<string> actionClassNames)

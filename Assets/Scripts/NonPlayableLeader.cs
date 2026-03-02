@@ -434,13 +434,7 @@ public class NonPlayableLeader : Leader
             pc.owner,
             pc.citySize,
             pc.fortSize,
-            pc.loyalty,
-            pc.leather,
-            pc.mounts,
-            pc.timber,
-            pc.iron,
-            pc.steel,
-            pc.mithril
+            pc.loyalty
         }).ToList();
 
         int originalHealth = health;
@@ -536,12 +530,6 @@ public class NonPlayableLeader : Leader
                 snapshot.pc.citySize = snapshot.citySize;
                 snapshot.pc.fortSize = snapshot.fortSize;
                 snapshot.pc.loyalty = snapshot.loyalty;
-                snapshot.pc.leather = snapshot.leather;
-                snapshot.pc.mounts = snapshot.mounts;
-                snapshot.pc.timber = snapshot.timber;
-                snapshot.pc.iron = snapshot.iron;
-                snapshot.pc.steel = snapshot.steel;
-                snapshot.pc.mithril = snapshot.mithril;
                 snapshot.pc.hex.RedrawPC();
             }
 

@@ -3357,6 +3357,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3456754383573424265, guid: 905c1c5a61a62c04ea9c5baa9f3ec596, type: 3}
+      propertyPath: disabledImageCanvasGroup
+      value: 
+      objectReference: {fileID: 1781506994}
     - target: {fileID: 3893986238365175783, guid: 905c1c5a61a62c04ea9c5baa9f3ec596, type: 3}
       propertyPath: m_Enabled
       value: 1

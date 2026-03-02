@@ -153,6 +153,12 @@ public class Leader : Character
     }
     new public void NewTurn()
     {
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager != null && this is PlayableLeader playable)
+        {
+            deckManager.ReplenishHandForTurn(playable);
+        }
+
         DecrementTemporarySeenHexes();
         DecrementTemporaryScoutCenters();
         if (!killed && goldAmount < -10) Killed(this);
@@ -471,7 +477,6 @@ public class Leader : Character
     {
         int points = controlledPcs.Select(x => x.GetDefense()).Sum();
         points -= controlledPcs.FindAll(x => x.hiddenButRevealed).Count() * 10;
-        points += controlledPcs.Select(x => x.GetProductionPoints()).Sum();
         return points;
     }
 
