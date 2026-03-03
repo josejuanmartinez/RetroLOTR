@@ -45,9 +45,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private float nextInteractionRefreshTime;
     private Vector3 defaultScale = Vector3.one;
     private Vector2 defaultPivot = new Vector2(0.5f, 0.5f);
-    private int defaultSiblingIndex = -1;
     private bool isHovered;
     private bool disabled = false;
+    private Canvas hoverCanvas;
+    private bool hoverCanvasDefaultOverrideSorting;
+    private int hoverCanvasDefaultSortingOrder;
 
     private const float HoverScaleMultiplier = 1.5f;
     private const float InteractionRefreshInterval = 0.15f;
@@ -82,6 +84,21 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (disabledReasonHover == null)
         {
             disabledReasonHover = GetComponent<Hover>();
+        }
+        hoverCanvas = GetComponent<Canvas>();
+        if (hoverCanvas != null)
+        {
+            hoverCanvasDefaultOverrideSorting = hoverCanvas.overrideSorting;
+            hoverCanvasDefaultSortingOrder = hoverCanvas.sortingOrder;
+        }
+        else
+        {
+            hoverCanvasDefaultOverrideSorting = false;
+            hoverCanvasDefaultSortingOrder = 0;
+        }
+        if (disabledReasonHover != null)
+        {
+            disabledReasonHover.gameObject.SetActive(false);
         }
 
     }
@@ -397,38 +414,35 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         string sprites = BuildRequirementSprites(data);
         requirements.text = string.IsNullOrWhiteSpace(sprites)
             ? string.Empty
-            : $"<mark=#ffff00>{sprites}.</mark>";
+            : $"<mark=#ffff00>{sprites}</mark>";
     }
 
     private static string BuildRequirementSprites(CardData data)
     {
         List<string> parts = new();
-        AddSprites(parts, "commander", data.commanderSkillRequired);
-        AddSprites(parts, "agent", data.agentSkillRequired);
-        AddSprites(parts, "emmissary", data.emissarySkillRequired);
-        AddSprites(parts, "mage", data.mageSkillRequired);
-        AddSprites(parts, "leather", data.leatherRequired);
-        AddSprites(parts, "timber", data.timberRequired);
-        AddSprites(parts, "mounts", data.mountsRequired);
-        AddSprites(parts, "iron", data.ironRequired);
-        AddSprites(parts, "steel", data.steelRequired);
-        AddSprites(parts, "mithril", data.mithrilRequired);
-        AddSprites(parts, "gold", data.goldRequired);
+        AddRequirement(parts, "commander", data.commanderSkillRequired);
+        AddRequirement(parts, "agent", data.agentSkillRequired);
+        AddRequirement(parts, "emmissary", data.emissarySkillRequired);
+        AddRequirement(parts, "mage", data.mageSkillRequired);
+        AddRequirement(parts, "leather", data.leatherRequired);
+        AddRequirement(parts, "timber", data.timberRequired);
+        AddRequirement(parts, "mounts", data.mountsRequired);
+        AddRequirement(parts, "iron", data.ironRequired);
+        AddRequirement(parts, "steel", data.steelRequired);
+        AddRequirement(parts, "mithril", data.mithrilRequired);
+        AddRequirement(parts, "gold", data.goldRequired);
         if (data.jokerRequired > 0 && data.goldRequired <= 0)
         {
-            AddSprites(parts, "gold", 1);
+            AddRequirement(parts, "gold", 1);
         }
-        AddSprites(parts, "joker", data.jokerRequired);
-        return string.Concat(parts);
+        AddRequirement(parts, "joker", data.jokerRequired);
+        return string.Join(" ", parts);
     }
 
-    private static void AddSprites(List<string> parts, string spriteName, int amount)
+    private static void AddRequirement(List<string> parts, string spriteName, int amount)
     {
         if (parts == null || string.IsNullOrWhiteSpace(spriteName) || amount <= 0) return;
-        for (int i = 0; i < amount; i++)
-        {
-            parts.Add($"<sprite name=\"{spriteName}\">");
-        }
+        parts.Add($"{amount}<sprite name=\"{spriteName}\">");
     }
 
     private void RefreshInteractionState(bool force = false)
@@ -585,7 +599,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         SetDisabledOverlayVisible();
 
         if (!disabledReasonHover) return;
-        disabledReasonHover.Initialize(reasonText, Vector2.one * 40f, 14, TextAlignmentOptions.Center);                
+        disabledReasonHover.Initialize(reasonText, Vector2.one * 40f, 14, TextAlignmentOptions.Center);
+        if (disabled && isHovered)
+        {
+            ShowDisabledReasonHover();
+        }
+        else
+        {
+            HideDisabledReasonHover();
+        }
 
     }
 
@@ -795,14 +817,27 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         defaultScale = rectTransform.localScale;
         defaultPivot = rectTransform.pivot;
-        defaultSiblingIndex = rectTransform.GetSiblingIndex();
 
         rectTransform.pivot = HoverPivot;
         rectTransform.localScale = defaultScale * HoverScaleMultiplier;
-        rectTransform.SetAsLastSibling();       
+        if (hoverCanvas == null)
+        {
+            hoverCanvas = gameObject.AddComponent<Canvas>();
+            hoverCanvasDefaultOverrideSorting = false;
+            hoverCanvasDefaultSortingOrder = 0;
+        }
+        if (GetComponent<GraphicRaycaster>() == null)
+        {
+            gameObject.AddComponent<GraphicRaycaster>();
+        }
+        if (hoverCanvas != null)
+        {
+            hoverCanvas.overrideSorting = true;
+            hoverCanvas.sortingOrder = 1001;
+        }
 
         isHovered = true;
-        if(disabled) disabledReasonHover.gameObject.SetActive(isHovered);
+        if (disabled) ShowDisabledReasonHover();
     }
 
     private void RestoreHoverVisuals()
@@ -811,16 +846,34 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         rectTransform.localScale = defaultScale;
         rectTransform.pivot = defaultPivot;
-
-        if (rectTransform.parent != null)
+        if (hoverCanvas != null)
         {
-            int childCount = rectTransform.parent.childCount;
-            int clampedIndex = Mathf.Clamp(defaultSiblingIndex, 0, Mathf.Max(0, childCount - 1));
-            rectTransform.SetSiblingIndex(clampedIndex);
+            hoverCanvas.overrideSorting = hoverCanvasDefaultOverrideSorting;
+            hoverCanvas.sortingOrder = hoverCanvasDefaultSortingOrder;
         }
 
         isHovered = false;
-        if(disabled) disabledReasonHover.gameObject.SetActive(isHovered);
+        HideDisabledReasonHover();
+    }
+
+    private void ShowDisabledReasonHover()
+    {
+        if (!disabledReasonHover) return;
+        disabledReasonHover.gameObject.SetActive(true);
+        if (disabledReasonHover.tooltipPanel != null)
+        {
+            disabledReasonHover.tooltipPanel.SetActive(true);
+        }
+    }
+
+    private void HideDisabledReasonHover()
+    {
+        if (!disabledReasonHover) return;
+        if (disabledReasonHover.tooltipPanel != null)
+        {
+            disabledReasonHover.tooltipPanel.SetActive(false);
+        }
+        disabledReasonHover.gameObject.SetActive(false);
     }
 
     private Camera ResolveEventCamera(PointerEventData eventData)
