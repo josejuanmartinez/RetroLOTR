@@ -76,6 +76,8 @@ public class TutorialManager : MonoBehaviour
     private Dictionary<string, Artifact> artifactCatalog;
     private PlayableLeader leader;
     private readonly Dictionary<string, AiTutorialProgress> aiProgressByLeader = new(StringComparer.OrdinalIgnoreCase);
+    private bool tutorialSkipped;
+    private bool skipApplied;
 
     private class AiTutorialProgress
     {
@@ -98,6 +100,14 @@ public class TutorialManager : MonoBehaviour
     public void InitializeForLeader(PlayableLeader playableLeader)
     {
         if (playableLeader == null) return;
+        Game game = FindFirstObjectByType<Game>();
+        if (game != null && game.skipTutorial)
+        {
+            Skip(playableLeader);
+            return;
+        }
+        tutorialSkipped = false;
+        skipApplied = false;
         leader = playableLeader;
         activeFlow = definition?.tutorials?.FirstOrDefault(t => string.Equals(t.leaderName, playableLeader.characterName, StringComparison.OrdinalIgnoreCase));
         requiredStepIndex = 0;
@@ -109,7 +119,55 @@ public class TutorialManager : MonoBehaviour
 
     public bool IsActiveFor(Character queryLeader)
     {
+        if (tutorialSkipped) return false;
         return activeFlow != null && leader == queryLeader && !IsCompleted();
+    }
+
+    public void Skip(PlayableLeader playableLeader = null)
+    {
+        if (skipApplied) return;
+
+        if (playableLeader != null) leader = playableLeader;
+        if (leader == null) return;
+
+        if (definition == null) LoadTutorialDefinition();
+        tutorialSkipped = true;
+        PopupManager.CloseAll();
+        ConfirmationDialog.CloseAll();
+        SelectionDialog.CloseAll();
+
+        BuildArtifactCatalog();
+        activeFlow = definition?.tutorials?.FirstOrDefault(t => string.Equals(t.leaderName, leader.characterName, StringComparison.OrdinalIgnoreCase));
+        requiredStepIndex = 0;
+        completedOptionalSteps.Clear();
+        UITutorialObjectivesManager.Instance?.ClearObjectives();
+
+        if (activeFlow?.steps != null)
+        {
+            foreach (TutorialStep step in activeFlow.steps.Where(s => s != null))
+            {
+                Character actor = ResolveStepActor(leader, step) ?? leader;
+                ApplySkipStateAllegiance(step, leader);
+                ApplySkipRewards(step, actor);
+            }
+        }
+
+        GrantAllBiomeTutorialArtifacts(leader);
+        MarkAiTutorialCompleteForAllLeaders();
+        RestorePostTutorialHand();
+
+        requiredStepIndex = GetRequiredSteps().Count;
+        activeFlow = null;
+        skipApplied = true;
+
+        Board board = FindFirstObjectByType<Board>();
+        board?.RefreshRelevantHexes();
+        CharacterIcons.RefreshForHumanPlayerOf(leader);
+    }
+
+    public void skip(PlayableLeader playableLeader = null)
+    {
+        Skip(playableLeader);
     }
 
     public int GetActiveRequiredStepIndex(PlayableLeader playableLeader)
@@ -215,6 +273,7 @@ public class TutorialManager : MonoBehaviour
 
     private void ActivateCurrentRequiredStep()
     {
+        if (tutorialSkipped || skipApplied) return;
         TutorialStep step = GetCurrentRequiredStep();
         if (step == null || leader == null) return;
         ConfigureTutorialCardsForStep(step);
@@ -250,6 +309,11 @@ public class TutorialManager : MonoBehaviour
 
     public void RefreshObjectiveUI()
     {
+        if (tutorialSkipped || skipApplied)
+        {
+            UITutorialObjectivesManager.Instance?.ClearObjectives();
+            return;
+        }
         UITutorialObjectivesManager.Instance?.ClearObjectives();
         TutorialStep step = GetCurrentRequiredStep();
         if (step != null)
@@ -260,6 +324,9 @@ public class TutorialManager : MonoBehaviour
 
     private void ShowStepPopup(TutorialStep step)
     {
+        if (tutorialSkipped || skipApplied) return;
+        Game game = FindFirstObjectByType<Game>();
+        if (game != null && game.skipTutorial) return;
         if (step == null || leader == null) return;
         Illustrations illustrations = FindFirstObjectByType<Illustrations>();
         Sprite actor1 = illustrations != null ? illustrations.GetIllustrationByName(step.actor1) : null;
@@ -481,11 +548,13 @@ public class TutorialManager : MonoBehaviour
 
     public bool HasTutorialForLeader(PlayableLeader playableLeader)
     {
+        if (tutorialSkipped) return false;
         return GetAiProgress(playableLeader) != null;
     }
 
     public bool IsAiTutorialComplete(PlayableLeader playableLeader)
     {
+        if (tutorialSkipped) return true;
         AiTutorialProgress progress = GetAiProgress(playableLeader);
         if (progress == null) return true;
         List<TutorialStep> steps = GetRequiredSteps(progress.flow);
@@ -494,6 +563,7 @@ public class TutorialManager : MonoBehaviour
 
     public IEnumerator RunAiTutorialTurn(PlayableLeader playableLeader)
     {
+        if (tutorialSkipped) yield break;
         AiTutorialProgress progress = GetAiProgress(playableLeader);
         if (progress == null) yield break;
 
@@ -855,5 +925,109 @@ public class TutorialManager : MonoBehaviour
             transferable = source.transferable,
             spriteString = source.spriteString
         };
+    }
+
+    private void ApplySkipStateAllegiance(TutorialStep step, PlayableLeader playableLeader)
+    {
+        if (step == null || playableLeader == null) return;
+        if (!string.Equals(step.type, "performAction", StringComparison.OrdinalIgnoreCase)) return;
+        if (!string.Equals(step.requirements?.actionClass, "StateAllegiance", StringComparison.OrdinalIgnoreCase)) return;
+
+        Hex targetHex = ResolveTargetHex(step);
+        PC targetPc = targetHex?.GetPCData();
+        if (targetPc == null) return;
+
+        if (targetPc.owner == null)
+        {
+            targetPc.ClaimUnowned(playableLeader);
+            return;
+        }
+
+        if (targetPc.owner is NonPlayableLeader nonPlayableLeader)
+        {
+            nonPlayableLeader.Joined(playableLeader);
+        }
+    }
+
+    private void ApplySkipRewards(TutorialStep step, Character actor)
+    {
+        if (step == null || actor == null) return;
+        TutorialRewards rewards = step.rewards;
+        if (rewards == null) return;
+
+        if (rewards.grantArtifacts != null)
+        {
+            foreach (string artifactName in rewards.grantArtifacts)
+            {
+                Artifact artifact = GetArtifactByName(artifactName);
+                if (artifact == null) continue;
+                if (actor.artifacts.Any(a => a != null && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase))) continue;
+                if (actor.artifacts.Count >= Character.MAX_ARTIFACTS) break;
+                actor.artifacts.Add(CloneArtifact(artifact));
+            }
+        }
+
+        if (rewards.grantCharacters != null && rewards.grantCharacters.Count > 0)
+        {
+            GrantCharacters(rewards.grantCharacters, actor);
+        }
+    }
+
+    private void GrantAllBiomeTutorialArtifacts(PlayableLeader playableLeader)
+    {
+        if (playableLeader == null) return;
+        LeaderBiomeConfig biome = playableLeader.GetBiome();
+        if (biome?.tutorialArtifacts == null || biome.tutorialArtifacts.Count == 0) return;
+
+        HashSet<string> grantedNames = new(StringComparer.OrdinalIgnoreCase);
+        foreach (Artifact artifact in biome.tutorialArtifacts)
+        {
+            if (artifact == null || string.IsNullOrWhiteSpace(artifact.artifactName)) continue;
+            grantedNames.Add(artifact.artifactName);
+
+            bool alreadyOwned = playableLeader.artifacts.Any(a => a != null && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase));
+            if (alreadyOwned) continue;
+            if (playableLeader.artifacts.Count >= Character.MAX_ARTIFACTS) break;
+            playableLeader.artifacts.Add(CloneArtifact(artifact));
+        }
+
+        RemoveArtifactsFromMap(grantedNames);
+    }
+
+    private static void RemoveArtifactsFromMap(HashSet<string> artifactNames)
+    {
+        if (artifactNames == null || artifactNames.Count == 0) return;
+        Board board = FindFirstObjectByType<Board>();
+        if (board?.hexes == null) return;
+
+        foreach (Hex hex in board.hexes.Values)
+        {
+            if (hex == null || hex.hiddenArtifacts == null || hex.hiddenArtifacts.Count == 0) continue;
+            int removed = hex.hiddenArtifacts.RemoveAll(a =>
+                a != null
+                && !string.IsNullOrWhiteSpace(a.artifactName)
+                && artifactNames.Contains(a.artifactName));
+            if (removed > 0) hex.UpdateArtifactVisibility();
+        }
+    }
+
+    private void MarkAiTutorialCompleteForAllLeaders()
+    {
+        if (definition?.tutorials == null) return;
+        foreach (TutorialFlow flow in definition.tutorials)
+        {
+            if (flow == null || string.IsNullOrWhiteSpace(flow.leaderName)) continue;
+            List<TutorialStep> requiredSteps = GetRequiredSteps(flow);
+
+            if (!aiProgressByLeader.TryGetValue(flow.leaderName, out AiTutorialProgress progress))
+            {
+                progress = new AiTutorialProgress();
+                aiProgressByLeader[flow.leaderName] = progress;
+            }
+
+            progress.flow = flow;
+            progress.requiredIndex = requiredSteps.Count;
+            progress.attempts = 0;
+        }
     }
 }

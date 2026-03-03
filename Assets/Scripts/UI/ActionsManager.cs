@@ -167,8 +167,7 @@ public class ActionsManager : MonoBehaviour
 
         if (prefabActions.Count == 0)
         {
-            Debug.LogWarning("ActionsManager: no CharacterAction components found in scene/prefab.");
-            return Array.Empty<CharacterAction>();
+            Debug.LogWarning("ActionsManager: no CharacterAction components found in scene/prefab. Attempting to create actions from Actions.json.");
         }
 
         return UpdateExistingActions(prefabActions, definitionCollection);

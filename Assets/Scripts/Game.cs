@@ -48,6 +48,7 @@ public class Game : MonoBehaviour
     [Header("Starting info")]
     public int turn = 0;
     public bool started = false;
+    public bool skipTutorial = false;
 
     public event Action<int> NewTurnStarted;
 
@@ -96,8 +97,14 @@ public class Game : MonoBehaviour
 
     public void StartGame()
     {
+        StartGame(this.skipTutorial);
+    }
+
+    public void StartGame(bool skipTutorial)
+    {
         turn = 0;
         started = true;
+        this.skipTutorial = skipTutorial;
 
         currentlyPlaying = player;
         MessageDisplay.ClearPersistent();
@@ -110,8 +117,15 @@ public class Game : MonoBehaviour
         RefreshPlayableLeaderIconVictoryPoints();
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         NewTurnStarted?.Invoke(turn);
+        if (this.skipTutorial)
+        {
+            TutorialManager.Instance?.Skip(player);
+        }
+        else
+        {
+            TutorialManager.Instance?.InitializeForLeader(player);
+        }
         currentlyPlaying.NewTurn();
-        TutorialManager.Instance?.InitializeForLeader(player);
         BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
 

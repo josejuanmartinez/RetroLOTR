@@ -38,6 +38,7 @@ public class Board : MonoBehaviour
 
     [Header("Start button")]
     public Button startButton;
+    public Button tutorialButton;
 
     [Header("Debug")]
     public bool redraw = false;
@@ -194,7 +195,7 @@ public class Board : MonoBehaviour
         nationSpawner.Spawn();
         initialized = true;
         startButton.interactable = true;
-        startButton.GetComponentInChildren<TextMeshProUGUI>().text = "◊ Start as this leader ◊";
+        tutorialButton.interactable = true;
         
         var hexList = GetHexes();
         if (hexList != null)
