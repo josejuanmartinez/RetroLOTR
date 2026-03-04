@@ -10,6 +10,7 @@ public class PlayableLeaderIcon : MonoBehaviour
 {
     public Image image;
     public VideoPlayer video;
+    public bool videoMode;
     public NonPlayableLeaderIcons nonPlayableLeaderIcons;
     public CanvasGroup deadCanvasGroup;
     // public TextMeshProUGUI joinedText;
@@ -128,25 +129,28 @@ public class PlayableLeaderIcon : MonoBehaviour
     private void SetLeaderVisuals(VideoClip clip, Sprite fallbackSprite)
     {
         bool hasClip = clip != null && video != null;
-
-        if (video != null)
+        if(videoMode)
         {
-            video.enabled = hasClip;
-            if (hasClip)
+            if (video != null)
             {
-                video.clip = clip;
-                video.Play();
+                video.enabled = hasClip;
+                if (hasClip)
+                {
+                    video.clip = clip;
+                    video.Play();
+                    image.enabled = false;
+                    return;
+                }
             }
-        }
-
+        } 
+        
         if (image != null)
         {
-            image.enabled = !hasClip;
-            if (!hasClip)
-            {
-                image.sprite = fallbackSprite;
-            }
-        }
+            image.enabled = true;
+            video.enabled = false;
+            image.sprite = fallbackSprite;
+        }    
+        
     }
 
     public void ShowRumours()
