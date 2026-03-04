@@ -98,40 +98,6 @@ public class ActionsManager : MonoBehaviour
         UpdateInteractableState();
     }
 
-    public void GoToPreviousPage()
-    {
-    }
-
-    public void GoToNextPage()
-    {
-    }
-
-    public void PreviousPage()
-    {
-    }
-
-    public void NextPage()
-    {
-    }
-
-    public void ExecuteActionAtPageIndex(int index)
-    {
-        if (index < 0 || index >= ActionHotkeyLetters.Length) return;
-        if (availableActions.Count == 0) return;
-        if (index >= availableActions.Count) return;
-
-        CharacterAction action = availableActions[index];
-        if (action == null || !action.FulfillsConditions()) return;
-        action.ExecuteFromButton();
-    }
-
-    public void ExecuteActionByHotkey(char letter)
-    {
-        int index = GetHotkeyIndex(letter);
-        if (index < 0) return;
-        ExecuteActionAtPageIndex(index);
-    }
-
     private void BuildAvailableActions()
     {
         availableActions.Clear();
@@ -271,17 +237,6 @@ public class ActionsManager : MonoBehaviour
         canvasGroup.alpha = enabled ? 1f : 0f;
         canvasGroup.interactable = enabled;
         canvasGroup.blocksRaycasts = enabled;
-    }
-
-    private int GetHotkeyIndex(char letter)
-    {
-        char normalized = char.ToUpperInvariant(letter);
-        for (int i = 0; i < ActionHotkeyLetters.Length; i++)
-        {
-            if (ActionHotkeyLetters[i] == normalized) return i;
-        }
-
-        return -1;
     }
 
     private string NormalizeActionName(string value)

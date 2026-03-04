@@ -234,7 +234,6 @@ public class BoardNavigator : MonoBehaviour
             }
 
             while (ShouldPauseFocus()
-                || MessageDisplay.IsBusy()
                 || (!request.allowDuringMessages && MessageDisplayNoUI.IsBusy())
                 || (request.allowDuringMessages && MessageDisplayNoUI.IsDisplaying))
             {

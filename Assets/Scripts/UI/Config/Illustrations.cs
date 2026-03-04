@@ -42,16 +42,38 @@ public class Illustrations : SearcherByName
         foreach (Sprite sprite in handle.Result)
         {
             if (sprite == null) continue;
-            string key = Normalize(sprite.name);
-            if (!illustrationsByName.ContainsKey(key))
-            {
-                illustrationsByName[key] = sprite;
-                loadedCount++;
-            }
+            loadedCount += RegisterSpriteLookupKeys(sprite);
         }
 
         isLoaded = true;
         Debug.Log($"Illustrations: loaded {loadedCount} sprites from Addressables label '{IllustrationsLabel}'.");
+    }
+
+    private int RegisterSpriteLookupKeys(Sprite sprite)
+    {
+        if (sprite == null) return 0;
+
+        int added = 0;
+
+        // Primary key: actual Sprite object name.
+        string spriteKey = Normalize(sprite.name);
+        if (!string.IsNullOrWhiteSpace(spriteKey) && !illustrationsByName.ContainsKey(spriteKey))
+        {
+            illustrationsByName[spriteKey] = sprite;
+            added++;
+        }
+
+        // Fallback key: source texture asset name (usually filename).
+        // This covers cases where Sprite.name was not updated after image rename.
+        string textureName = sprite.texture != null ? sprite.texture.name : null;
+        string textureKey = Normalize(textureName);
+        if (!string.IsNullOrWhiteSpace(textureKey) && !illustrationsByName.ContainsKey(textureKey))
+        {
+            illustrationsByName[textureKey] = sprite;
+            added++;
+        }
+
+        return added;
     }
 
     public Sprite GetIllustrationByName(string name)

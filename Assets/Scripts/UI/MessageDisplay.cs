@@ -16,6 +16,7 @@ public class MessageDisplay : MonoBehaviour
     private Queue<MessageData> messageQueue = new Queue<MessageData>();
     private bool isDisplayingMessage = false;
     private bool persistentActive = false;
+    private Coroutine waitForSyncRoutine;
 
     private void Awake()
     {
@@ -109,6 +110,15 @@ public class MessageDisplay : MonoBehaviour
     {
         if (displayPaused) { isDisplayingMessage = false; return; }
         if (persistentActive) { isDisplayingMessage = false; return; }
+        if (ShouldDelayForFocusOrWorldMessages())
+        {
+            if (waitForSyncRoutine == null)
+            {
+                waitForSyncRoutine = StartCoroutine(WaitForSyncThenProcess());
+            }
+            return;
+        }
+
         if (messageQueue.Count > 0)
         {
             MessageData nextMessage = messageQueue.Dequeue();
@@ -120,6 +130,27 @@ public class MessageDisplay : MonoBehaviour
             // No more messages to display
             isDisplayingMessage = false;
         }
+    }
+
+    private IEnumerator WaitForSyncThenProcess()
+    {
+        while (ShouldDelayForFocusOrWorldMessages())
+        {
+            yield return null;
+        }
+
+        waitForSyncRoutine = null;
+        if (!isDisplayingMessage)
+        {
+            ProcessNextMessage();
+        }
+    }
+
+    private static bool ShouldDelayForFocusOrWorldMessages()
+    {
+        // Only block while a world-space message is actively being displayed.
+        // Using IsBusy() here can starve UI messages when deferred entries remain queued.
+        return MessageDisplayNoUI.IsDisplaying || MessageDisplayNoUI.IsHoldingFocus;
     }
 
     /// <summary>
@@ -190,6 +221,11 @@ public class MessageDisplay : MonoBehaviour
 
     private void SetPersistent(string message, Color textColor)
     {
+        if (waitForSyncRoutine != null)
+        {
+            StopCoroutine(waitForSyncRoutine);
+            waitForSyncRoutine = null;
+        }
         StopAllCoroutines();
         messageQueue.Clear();
         isDisplayingMessage = false;
@@ -203,6 +239,11 @@ public class MessageDisplay : MonoBehaviour
 
     private void RemovePersistent()
     {
+        if (waitForSyncRoutine != null)
+        {
+            StopCoroutine(waitForSyncRoutine);
+            waitForSyncRoutine = null;
+        }
         persistentActive = false;
         messageText.text = "";
         messageText.enabled = false;

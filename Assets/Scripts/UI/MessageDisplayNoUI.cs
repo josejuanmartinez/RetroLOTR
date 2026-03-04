@@ -368,7 +368,11 @@ public class MessageDisplayNoUI : MonoBehaviour
                 continue;
             }
 
-            if (CanDisplayNow(next.Hex))
+            if (next.RequiresFocus)
+            {
+                RequestFocusForMessage(next.Hex, () => PromoteDeferredForHex(next.Hex));
+            }
+            else if (CanDisplayNow(next.Hex))
             {
                 while (queue.Count > 0)
                     messageQueue.Enqueue(queue.Dequeue());
@@ -398,11 +402,22 @@ public class MessageDisplayNoUI : MonoBehaviour
     {
         if (hex == null) return;
         if (displayPaused) return;
+        // Avoid building up camera-focus backlog while modal UI is open.
+        // Pending messages remain queued and will request focus once dialogs close.
+        if (PopupManager.IsShowing || ConfirmationDialog.IsShowing || SelectionDialog.IsShowing) return;
         Vector2Int key = hex.v2;
+        bool created = false;
         if (!pendingFocusRequests.TryGetValue(key, out var callbacks))
         {
+            created = true;
             callbacks = new List<System.Action>();
             pendingFocusRequests.Add(key, callbacks);
+        }
+
+        if (onArrive != null) callbacks.Add(onArrive);
+
+        if (created)
+        {
             if (BoardNavigator.Instance != null)
             {
                 BoardNavigator.Instance.EnqueueMessageFocus(hex, () =>
@@ -419,10 +434,16 @@ public class MessageDisplayNoUI : MonoBehaviour
             }
             else
             {
-                pendingFocusRequests.Remove(key);
+                if (pendingFocusRequests.TryGetValue(key, out var list) && list != null)
+                {
+                    pendingFocusRequests.Remove(key);
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        list[i]?.Invoke();
+                    }
+                }
             }
         }
-        if (onArrive != null) callbacks.Add(onArrive);
     }
 
     private void PromoteDeferredForHex(Hex hex)
@@ -452,6 +473,11 @@ public class MessageDisplayNoUI : MonoBehaviour
         if (displayPaused)
         {
             messageQueue.Enqueue(new MessageData(hex, message, worldPos, textColor, true));
+            return;
+        }
+        if (PopupManager.IsShowing || ConfirmationDialog.IsShowing || SelectionDialog.IsShowing)
+        {
+            EnqueueDeferred(hex, message, worldPos, textColor);
             return;
         }
         if (BoardNavigator.Instance == null)

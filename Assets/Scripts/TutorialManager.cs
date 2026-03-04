@@ -480,9 +480,24 @@ public class TutorialManager : MonoBehaviour
             if (grant == null || string.IsNullOrWhiteSpace(grant.characterName)) continue;
 
             Character existing = FindCharacterByName(grant.characterName);
+            if (existing is NonPlayableLeader existingNpl)
+            {
+                if (!existingNpl.joined)
+                {
+                    existingNpl.Joined(owner);
+                }
+                continue;
+            }
+
             if (existing != null && existing is not Leader)
             {
                 TransferCharacter(existing, owner, actor.hex);
+                continue;
+            }
+
+            // Avoid creating duplicate names when a leader with this name already exists.
+            if (existing is Leader)
+            {
                 continue;
             }
 

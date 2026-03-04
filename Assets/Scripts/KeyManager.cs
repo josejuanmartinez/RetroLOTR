@@ -92,7 +92,6 @@ public class KeyManager : MonoBehaviour
                 pathRenderer.HidePath();
         }
 
-        HandleActionHotkeys(ctrlHeld, shiftHeld);
         HandleCharacterMovementHotkeys(ctrlHeld, shiftHeld);
         HandleKeyboardCameraMovement();
     }
@@ -219,39 +218,6 @@ public class KeyManager : MonoBehaviour
         {
             move.Normalize();
             boardNavigator.transform.position += move * keyboardMoveSpeed * Time.deltaTime;
-        }
-    }
-
-    private void HandleActionHotkeys(bool ctrlHeld, bool shiftHeld)
-    {
-        if (ctrlHeld || shiftHeld) return;
-
-        if (actionsManager == null)
-        {
-            actionsManager = FindFirstObjectByType<Layout>()?.GetActionsManager() ?? FindFirstObjectByType<ActionsManager>();
-            if (actionsManager == null) return;
-            BuildActionHotkeys();
-        }
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            actionsManager.PreviousPage();
-            return;
-        }
-
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            actionsManager.NextPage();
-            return;
-        }
-
-        foreach (var hotkey in actionHotkeys)
-        {
-            if (Input.GetKeyDown(hotkey.key))
-            {
-                actionsManager.ExecuteActionByHotkey(hotkey.letter);
-                return;
-            }
         }
     }
 

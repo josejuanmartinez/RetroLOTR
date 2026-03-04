@@ -456,7 +456,7 @@ public class NonPlayableLeader : Leader
         int targetGoldAmount = joinedTo.goldAmount;
 
 
-        NonPlayableLeaderIcons npls = FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None).FirstOrDefault(x => x.playableLeader = playableLeaderJoinedTo);
+        NonPlayableLeaderIcons npls = FindObjectsByType<NonPlayableLeaderIcons>(FindObjectsSortMode.None).FirstOrDefault(x => x.playableLeader == playableLeaderJoinedTo);
         if(!npls) return false;
         NonPlayableLeaderIcon npli = FindObjectsByType<NonPlayableLeaderIcon>(FindObjectsSortMode.None).FirstOrDefault(x => x.nonPlayableLeader == this);
         if(!npli) return false;

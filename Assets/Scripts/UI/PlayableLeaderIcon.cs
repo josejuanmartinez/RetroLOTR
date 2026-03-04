@@ -95,8 +95,8 @@ public class PlayableLeaderIcon : MonoBehaviour
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         VideoClip expectedClip = videos != null ? videos.GetVideoByName(leaderName) : null;
         Sprite expectedSprite = illustrations != null ? illustrations.GetIllustrationByName(leaderName) : null;
-        bool restoreFromVideo = expectedClip != null && video != null && video.clip == expectedClip;
-        bool restoreFromImage = expectedClip == null && image != null && image.sprite == expectedSprite;
+        bool restoreFromVideo = videoMode && expectedClip != null && video != null && video.clip == expectedClip;
+        bool restoreFromImage = (!videoMode || expectedClip == null) && image != null && image.sprite == expectedSprite;
         if (!restoreFromVideo && !restoreFromImage) return;
 
         SetLeaderVisuals(leaderClip, leaderSprite);
