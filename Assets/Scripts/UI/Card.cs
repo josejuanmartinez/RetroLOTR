@@ -50,6 +50,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private Canvas hoverCanvas;
     private bool hoverCanvasDefaultOverrideSorting;
     private int hoverCanvasDefaultSortingOrder;
+    private SelectedCharacterIcon selectedCharacterIcon;
 
     private const float HoverScaleMultiplier = 1.5f;
     private const float InteractionRefreshInterval = 0.15f;
@@ -112,6 +113,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         pointerIsDown = false;
         isDragging = false;
+        SetSelectedCharacterDropHint(false);
         RestoreHoverVisuals();
         RestoreCardTransformAfterDrag();
         SetDisabled(false, null);
@@ -240,7 +242,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         string actionDescription = TryGetActionDescription(data);
         if (!string.IsNullOrWhiteSpace(actionDescription))
         {
-            return $"<color=#{typeColorHex}>Skill.</color>{actionDescription}";
+            return $"<color=#{typeColorHex}>{cardTypeKey}.</color>{actionDescription}";
         }
 
         string jsonDescription = data.description ?? string.Empty;
@@ -252,6 +254,22 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (data == null) return null;
         string actionRef = NormalizeActionRef(data.GetActionRef());
         if (string.IsNullOrWhiteSpace(actionRef) && data.actionId <= 0) return null;
+
+        // Prefer runtime caravan descriptions so gold values reflect current market prices.
+        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        CharacterAction runtimeAction = ResolveActionByRef(actionRef, actionsManager);
+        if (runtimeAction != null && (runtimeAction.isBuyCaravans || runtimeAction.isSellCaravans))
+        {
+            Board board = FindFirstObjectByType<Board>();
+            Character selected = board != null ? board.selectedCharacter : null;
+            runtimeAction.character = selected;
+
+            string runtimeDescription = runtimeAction.GetDescriptionForCard();
+            if (!string.IsNullOrWhiteSpace(runtimeDescription))
+            {
+                return runtimeDescription;
+            }
+        }
 
         EnsureActionDescriptionsLoaded();
         if (!string.IsNullOrWhiteSpace(actionRef) && actionDescriptionsByClass.TryGetValue(actionRef, out string byClass))
@@ -550,6 +568,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             canvasGroup.alpha = Mathf.Clamp01(draggingAlpha);
         }
 
+        SetSelectedCharacterDropHint(true);
         SetDisabled(false, null);
     }
 
@@ -577,6 +596,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         bool droppedOnSelectedCharacter = IsDroppedOnSelectedCharacter(eventData);
         isDragging = false;
+        SetSelectedCharacterDropHint(false);
 
         if (canvasGroup != null)
         {
@@ -896,7 +916,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private bool IsDroppedOnSelectedCharacter(PointerEventData eventData)
     {
         if (eventData == null) return false;
-        SelectedCharacterIcon selectedIcon = FindFirstObjectByType<SelectedCharacterIcon>();
+        SelectedCharacterIcon selectedIcon = GetSelectedCharacterIcon();
         if (selectedIcon == null || !selectedIcon.gameObject.activeInHierarchy) return false;
 
         RectTransform targetRect = selectedIcon.transform as RectTransform;
@@ -904,6 +924,22 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         Camera eventCamera = ResolveEventCamera(eventData);
         return RectTransformUtility.RectangleContainsScreenPoint(targetRect, eventData.position, eventCamera);
+    }
+
+    private SelectedCharacterIcon GetSelectedCharacterIcon()
+    {
+        if (selectedCharacterIcon == null)
+        {
+            selectedCharacterIcon = FindFirstObjectByType<SelectedCharacterIcon>();
+        }
+        return selectedCharacterIcon;
+    }
+
+    private void SetSelectedCharacterDropHint(bool enabled)
+    {
+        SelectedCharacterIcon icon = GetSelectedCharacterIcon();
+        if (icon == null) return;
+        icon.SetDropTargetHighlight(enabled);
     }
 
     private void RestoreCardTransformAfterDrag()

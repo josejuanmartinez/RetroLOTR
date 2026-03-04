@@ -155,6 +155,7 @@ public class TutorialManager : MonoBehaviour
         GrantAllBiomeTutorialArtifacts(leader);
         MarkAiTutorialCompleteForAllLeaders();
         RestorePostTutorialHand();
+        MoveStartingCharactersToCapitalsForAllLeaders();
 
         requiredStepIndex = GetRequiredSteps().Count;
         activeFlow = null;
@@ -1029,5 +1030,56 @@ public class TutorialManager : MonoBehaviour
             progress.requiredIndex = requiredSteps.Count;
             progress.attempts = 0;
         }
+    }
+
+    private void MoveStartingCharactersToCapitalsForAllLeaders()
+    {
+        Leader[] leaders = FindObjectsByType<Leader>(FindObjectsSortMode.None);
+        if (leaders == null || leaders.Length == 0) return;
+
+        for (int i = 0; i < leaders.Length; i++)
+        {
+            MoveStartingCharactersToCapital(leaders[i]);
+        }
+    }
+
+    private static void MoveStartingCharactersToCapital(Leader targetLeader)
+    {
+        if (targetLeader == null || targetLeader.killed) return;
+        Hex capitalHex = ResolveCapitalHex(targetLeader);
+        if (capitalHex == null) return;
+
+        List<Character> owned = targetLeader.controlledCharacters;
+        if (owned == null || owned.Count == 0) return;
+
+        for (int i = 0; i < owned.Count; i++)
+        {
+            Character character = owned[i];
+            if (character == null || character.killed) continue;
+            if (!character.startingCharacter) continue;
+            if (character.hex == capitalHex) continue;
+            TeleportCharacterToHex(character, capitalHex);
+        }
+    }
+
+    private static Hex ResolveCapitalHex(Leader targetLeader)
+    {
+        if (targetLeader == null) return null;
+
+        PC capital = targetLeader.controlledPcs?.FirstOrDefault(pc => pc != null && pc.isCapital && pc.hex != null);
+        if (capital != null) return capital.hex;
+
+        Board board = FindFirstObjectByType<Board>();
+        if (board?.hexes == null) return null;
+
+        foreach (Hex hex in board.hexes.Values)
+        {
+            if (hex == null) continue;
+            PC pc = hex.GetPCData();
+            if (pc == null || !pc.isCapital || pc.owner != targetLeader) continue;
+            return hex;
+        }
+
+        return null;
     }
 }

@@ -248,7 +248,6 @@ public class ActionsManager : MonoBehaviour
 
         action.actionName = definition.actionName;
         action.description = definition.description;
-        action.gameObject.name = definition.actionName;
         action.actionId = definition.actionId;
         action.isBuyCaravans = definition.isBuyCaravans;
         action.isSellCaravans = definition.isSellCaravans;

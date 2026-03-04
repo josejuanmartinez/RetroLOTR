@@ -11,11 +11,22 @@ public class CommanderEnemyArmyAction : CommanderArmyAction
         condition = (c) => 
         {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return (
-                c.hex.armies.Find(x => x.GetCommander() != null && x.GetCommander().GetOwner() != c.GetOwner() && (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())) != null 
-                ||
-                (c.hex.GetPC() != null && c.hex.GetPC().owner != c.GetOwner() && (c.hex.GetPC().owner.GetAlignment() == AlignmentEnum.neutral || c.hex.GetPC().owner.GetAlignment() != c.GetAlignment()))
-            ); 
+            if (c == null || c.hex == null) return false;
+
+            bool hasEnemyArmy = c.hex.armies != null
+                && c.hex.armies.Find(x =>
+                    x != null
+                    && x.GetCommander() != null
+                    && x.GetCommander().GetOwner() != c.GetOwner()
+                    && (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())) != null;
+
+            PC pc = c.hex.GetPC();
+            Leader pcOwner = pc != null ? pc.owner : null;
+            bool hasEnemyOwnedPc = pcOwner != null
+                && pcOwner != c.GetOwner()
+                && (pcOwner.GetAlignment() == AlignmentEnum.neutral || pcOwner.GetAlignment() != c.GetAlignment());
+
+            return hasEnemyArmy || hasEnemyOwnedPc;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

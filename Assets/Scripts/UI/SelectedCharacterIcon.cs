@@ -36,13 +36,67 @@ public class SelectedCharacterIcon : MonoBehaviour
     public GameObject artifactPrefab;
     public Transform artifactsGridLayoutTransform;
 
+    [Header("Drop Target Hint")]
+    [SerializeField] private Color dropHintColor = new Color(1f, 0.92f, 0.35f, 1f);
+    [SerializeField] private float dropHintPulseSpeed = 8f;
+    [SerializeField] private float dropHintScaleMultiplier = 1.05f;
+
     private Videos videos;
     private Illustrations illustrations;
     private CanvasGroup canvasGroup;
+    private Image rootImage;
+    private Image borderImage;
+    private Color rootDefaultColor = Color.white;
+    private Color borderDefaultColor = Color.white;
+    private Vector3 defaultScale = Vector3.one;
+    private bool dropHintActive;
+
+    private void Awake()
+    {
+        rootImage = GetComponent<Image>();
+        borderImage = border != null ? border.GetComponent<Image>() : null;
+        if (rootImage != null) rootDefaultColor = rootImage.color;
+        if (borderImage != null) borderDefaultColor = borderImage.color;
+        defaultScale = transform.localScale;
+    }
+
+    private void OnDisable()
+    {
+        SetDropTargetHighlight(false);
+    }
+
+    private void Update()
+    {
+        if (!dropHintActive) return;
+
+        float pulse = (Mathf.Sin(Time.unscaledTime * dropHintPulseSpeed) + 1f) * 0.5f;
+        float scaleLerp = Mathf.Lerp(0.35f, 1f, pulse);
+        transform.localScale = Vector3.Lerp(defaultScale, defaultScale * dropHintScaleMultiplier, scaleLerp);
+
+        if (rootImage != null)
+        {
+            rootImage.color = Color.Lerp(rootDefaultColor, dropHintColor, 0.18f * pulse);
+        }
+        if (borderImage != null)
+        {
+            borderImage.color = Color.Lerp(borderDefaultColor, dropHintColor, 0.8f);
+        }
+    }
+
+    public void SetDropTargetHighlight(bool active)
+    {
+        dropHintActive = active;
+        if (dropHintActive) return;
+
+        transform.localScale = defaultScale;
+        if (rootImage != null) rootImage.color = rootDefaultColor;
+        if (borderImage != null) borderImage.color = borderDefaultColor;
+    }
 
     // Update is called once per frame
     public void Refresh(Character c)
     {
+        SetDropTargetHighlight(false);
         SetVisible(true);
         border.SetActive(true);
         SetCharacterVisuals(
@@ -87,6 +141,7 @@ public class SelectedCharacterIcon : MonoBehaviour
             return;
         }
 
+        SetDropTargetHighlight(false);
         SetVisible(true);
         border.SetActive(true);
         SetCharacterVisuals(
@@ -131,6 +186,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     // Update is called once per frame
     public void Hide()
     {
+        SetDropTargetHighlight(false);
         SetVisible(false);
         border.SetActive(false);
         alignmentIcon.enabled = false;

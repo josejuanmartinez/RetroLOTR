@@ -1049,6 +1049,17 @@ public class CharacterAction : SearcherByName
         return string.IsNullOrWhiteSpace(description) ? string.Empty : description;
     }
 
+    public string GetDescriptionForCard()
+    {
+        string desc = GetDescription();
+        if (!isBuyCaravans && !isSellCaravans) return desc;
+
+        string caravanDetail = BuildCaravanDetailText();
+        if (string.IsNullOrWhiteSpace(caravanDetail)) return desc;
+        if (string.IsNullOrWhiteSpace(desc)) return caravanDetail;
+        return $"{desc}<br><size=80%>{caravanDetail}</size>";
+    }
+
     private string BuildCostText()
     {
         if (isBuyCaravans) return BuildBuyCaravanCostText();

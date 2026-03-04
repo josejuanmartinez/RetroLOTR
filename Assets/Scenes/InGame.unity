@@ -7786,7 +7786,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4845752909459727288, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.00009918213
+      value: -0.000045776367
       objectReference: {fileID: 0}
     - target: {fileID: 4868598037499691253, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -17276,22 +17276,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2024059987494326303, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -55.74
-      objectReference: {fileID: 0}
-    - target: {fileID: 2024059987494326303, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -17.872992
-      objectReference: {fileID: 0}
-    - target: {fileID: 2161955573928548110, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_Interactable
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2161955573928548110, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_Colors.m_DisabledColor.a
-      value: 0.13333334
-      objectReference: {fileID: 0}
     - target: {fileID: 2161955573928548110, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -17316,10 +17300,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[6].m_Target
       value: 
       objectReference: {fileID: 1824633264}
-    - target: {fileID: 2161955573928548110, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_BoolArgument
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2970214047015904252, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_Name
       value: LeaderSelection
@@ -17332,73 +17312,13 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4957997208339764818, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_text
-      value: '<sprite name="joker"> Skip '
-      objectReference: {fileID: 0}
-    - target: {fileID: 4957997208339764818, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_fontSize
-      value: 26.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4957997208339764818, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_spriteAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 47d87ce6ab8189a438043aaf823ca844, type: 2}
-    - target: {fileID: 5130759216348873558, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -201.86
-      objectReference: {fileID: 0}
-    - target: {fileID: 5130759216348873558, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 33.54
-      objectReference: {fileID: 0}
-    - target: {fileID: 5130759216348873558, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
+    - target: {fileID: 6119230557819858457, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 76.8
+      value: 10.899994
       objectReference: {fileID: 0}
-    - target: {fileID: 5588608155728737661, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -145.91
-      objectReference: {fileID: 0}
-    - target: {fileID: 5588608155728737661, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 47.952
-      objectReference: {fileID: 0}
-    - target: {fileID: 6481301830735450447, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -200.97
-      objectReference: {fileID: 0}
-    - target: {fileID: 6481301830735450447, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -64.65
-      objectReference: {fileID: 0}
-    - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_text
-      value: '<sprite name="tutorial"> Tutorial '
-      objectReference: {fileID: 0}
-    - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_fontSize
-      value: 26.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_spriteAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 47d87ce6ab8189a438043aaf823ca844, type: 2}
-    - target: {fileID: 7492287437783088370, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_Enabled
+    - target: {fileID: 7283256923915831300, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
+      propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7775975865178784144, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_Interactable
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7775975865178784144, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_Colors.m_DisabledColor.a
-      value: 0.13333334
-      objectReference: {fileID: 0}
-    - target: {fileID: 7775975865178784144, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
-      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7775975865178784144, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
@@ -17424,10 +17344,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[6].m_Target
       value: 
       objectReference: {fileID: 1824633264}
-    - target: {fileID: 7775975865178784144, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_BoolArgument
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7996246413805952081, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
