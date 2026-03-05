@@ -266,6 +266,10 @@ public class CharacterAction : SearcherByName
                 return;
             }
 
+            // Store last successful action for selected-character UI "played card" slot.
+            character.lastPlayedActionClassNameThisTurn = GetType().Name;
+            character.lastPlayedActionNameThisTurn = actionName;
+
             NonPlayableLeader.RecordActionCompleted(character, actionName, actionHex);
             string message = actionName;            
             string rumourMessage = $"succeeds on {message}";

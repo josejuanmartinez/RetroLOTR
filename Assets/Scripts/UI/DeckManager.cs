@@ -435,8 +435,7 @@ public class DeckManager : MonoBehaviour
         bool Matches(CardData card)
         {
             if (card == null) return false;
-            CardTypeEnum ct = card.GetCardType();
-            if (!IsActionLikeCardType(ct)) return false;
+            if (!IsConsumableEffectCard(card)) return false;
             string cardRef = card.GetActionRef();
             if (!string.IsNullOrWhiteSpace(actionClassName) &&
                 string.Equals(cardRef, actionClassName, StringComparison.OrdinalIgnoreCase))
@@ -665,14 +664,14 @@ public class DeckManager : MonoBehaviour
         {
             CardData inLeaderDeck = deckData.cards.FirstOrDefault(card =>
                 card != null
-                && IsActionLikeCardType(card.GetCardType())
+                && IsConsumableEffectCard(card)
                 && string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase));
             if (inLeaderDeck != null) return inLeaderDeck;
         }
 
         return cards.FirstOrDefault(card =>
             card != null
-            && IsActionLikeCardType(card.GetCardType())
+            && IsConsumableEffectCard(card)
             && string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase));
     }
 
@@ -714,8 +713,7 @@ public class DeckManager : MonoBehaviour
         {
             CardData card = cardsList[i];
             if (card == null) continue;
-            CardTypeEnum ct = card.GetCardType();
-            if (!IsActionLikeCardType(ct)) continue;
+            if (!IsConsumableEffectCard(card)) continue;
 
             bool matches = false;
             if (!string.IsNullOrWhiteSpace(actionClassName) &&
@@ -740,9 +738,7 @@ public class DeckManager : MonoBehaviour
 
     private static bool MatchesActionCard(CardData card, string actionClassName, int actionId)
     {
-        if (card == null) return false;
-        CardTypeEnum ct = card.GetCardType();
-        if (!IsActionLikeCardType(ct)) return false;
+        if (!IsConsumableEffectCard(card)) return false;
 
         if (!string.IsNullOrWhiteSpace(actionClassName)
             && string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase))
@@ -753,11 +749,19 @@ public class DeckManager : MonoBehaviour
         return actionId > 0 && card.actionId == actionId;
     }
 
-    private static bool IsActionLikeCardType(CardTypeEnum cardType)
+    private static bool IsConsumableEffectCard(CardData card)
     {
-        return cardType == CardTypeEnum.Action
+        if (card == null) return false;
+
+        CardTypeEnum cardType = card.GetCardType();
+        bool supportedType = cardType == CardTypeEnum.Action
             || cardType == CardTypeEnum.Event
-            || cardType == CardTypeEnum.Encounter;
+            || cardType == CardTypeEnum.Encounter
+            || cardType == CardTypeEnum.Land
+            || cardType == CardTypeEnum.PC;
+        if (!supportedType) return false;
+
+        return !string.IsNullOrWhiteSpace(card.GetActionRef()) || card.actionId > 0;
     }
 
     private static void ApplyCardCosts(Leader owner, CardData card)

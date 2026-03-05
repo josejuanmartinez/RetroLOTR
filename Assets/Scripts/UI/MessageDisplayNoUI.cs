@@ -12,8 +12,8 @@ public class MessageDisplayNoUI : MonoBehaviour
     [SerializeField] private TextMeshPro textMesh;   // 3D TextMeshPro component
 
     [Header("Timing")]
-    [SerializeField] private float displayDuration = 1f;
-    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private float displayDuration = 0.07f;
+    [SerializeField] private float fadeDuration = 0.02f;
 
     [Header("Layout")]
     [SerializeField] private Vector3 worldOffset = new Vector3(0f, 1.5f, 0f);
@@ -88,10 +88,12 @@ public class MessageDisplayNoUI : MonoBehaviour
             return;
         }
 
+        string rawMessage = message ?? string.Empty;
+        string formattedMessage = ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(rawMessage);
         string author = $"[{game.currentlyPlaying.characterName}]";
         string characterName = character != game.currentlyPlaying ? $"({character.characterName})" : "";
         string hexText = hex.GetText();
-        string textMessage = $"{author}{characterName} {hexText}: \"{message}\"";
+        string textMessage = $"{author}{characterName} {hexText}: \"{formattedMessage}\"";
 
         bool playerCanSeeHex = game.player != null
             && game.player.visibleHexes.Contains(hex)
@@ -99,14 +101,14 @@ public class MessageDisplayNoUI : MonoBehaviour
         bool publicRumour = character != null && (character.GetOwner() == game.player || playerCanSeeHex);
 
         Color resolved = color ?? Color.white;
-        string displayMessage = message;
+        string displayMessage = formattedMessage;
         if (character != null && character.GetOwner() != null && character.GetOwner() != game.player)
         {
             bool knownEnemy = playerCanSeeHex && (hex.IsScouted(game.player) || character.IsArmyCommander());
             bool spotted = false;
             if (knownEnemy)
             {
-                displayMessage = $"{character.characterName}: {message}";
+                displayMessage = $"{character.characterName}: {formattedMessage}";
             }
             else
             {
@@ -115,7 +117,7 @@ public class MessageDisplayNoUI : MonoBehaviour
                 int roll = UnityEngine.Random.Range(0, 101);
                 spotted = roll < threshold;
                 string prefix = spotted ? $"{character.characterName}:" : "unspotted enemy:";
-                displayMessage = $"{prefix} {message}";
+                displayMessage = $"{prefix} {formattedMessage}";
             }
             if (playerCanSeeHex && (knownEnemy || spotted) && character.GetOwner() is NonPlayableLeader npl && game.player != null)
             {
@@ -153,7 +155,7 @@ public class MessageDisplayNoUI : MonoBehaviour
 
         if (recordRumour)
         {
-            Rumour rumour = new Rumour {leader = character.GetOwner(), character = character, characterName = character?.characterName, rumour = message, v2 = hex.v2};
+            Rumour rumour = new Rumour {leader = character.GetOwner(), character = character, characterName = character?.characterName, rumour = rawMessage, v2 = hex.v2};
             RumoursManager.AddRumour(rumour, publicRumour);
         }
     }

@@ -19,6 +19,7 @@ public class OnClickTile : MonoBehaviour
     }
     private void HandleLeftClick()
     {
+        if (BoardNavigator.IsNavigationInputLocked()) return;
         if (PopupManager.IsShowing) return;
         if (board != null)
         {

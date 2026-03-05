@@ -25,6 +25,8 @@ public class KeyManager : MonoBehaviour
     }
     void Update()
     {
+        if (BoardNavigator.IsNavigationInputLocked()) return;
+
         bool ctrlHeld = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
         bool shiftHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
@@ -206,6 +208,7 @@ public class KeyManager : MonoBehaviour
     private void HandleKeyboardCameraMovement()
     {
         if (boardNavigator == null) return;
+        if (BoardNavigator.IsNavigationInputLocked()) return;
         if (BoardNavigator.IsPointerOverVisibleUIElement()) return;
 
         Vector3 move = Vector3.zero;

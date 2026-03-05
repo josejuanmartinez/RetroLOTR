@@ -373,39 +373,39 @@ public class Leader : Character
     public void AddLeather(int amount) 
     {
         leatherAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"leather\">", Color.green);
+        TryPulseStoreResourceGain(ProducesEnum.leather, amount);
     }
     public void AddTimber(int amount)
     {
         timberAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"timber\">", Color.green);
+        TryPulseStoreResourceGain(ProducesEnum.timber, amount);
     }
     public void AddMounts(int amount)
     {
         mountsAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"mounts\">", Color.green);
+        TryPulseStoreResourceGain(ProducesEnum.mounts, amount);
     }
     public void AddIron(int amount)
     {
         ironAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"iron\">", Color.green);
+        TryPulseStoreResourceGain(ProducesEnum.iron, amount);
     }
 
     public void AddSteel(int amount)
     {
         steelAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"steel\">", Color.green);
+        TryPulseStoreResourceGain(ProducesEnum.steel, amount);
     }
 
     public void AddMithril(int amount)
     {
         mithrilAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"mithril\">", Color.green);
+        TryPulseStoreResourceGain(ProducesEnum.mithril, amount);
     }
     public void AddGold(int amount)
     {
         goldAmount += amount;
-        if (amount > 0) MessageDisplay.ShowMessage($"+{amount} <sprite name=\"gold\">", Color.green);
+        TryPulseStoreGoldGain(amount);
     }
     public void RemoveLeather(int leatherCost, bool showMessage = true)
     {
@@ -443,6 +443,36 @@ public class Leader : Character
     {
         goldAmount -= goldCost;
         if (showMessage && goldCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{goldCost} <sprite name=\"gold\">", Color.red);
+    }
+
+    private void TryPulseStoreResourceGain(ProducesEnum resourceType, int amount)
+    {
+        if (amount <= 0) return;
+
+        Game game = FindFirstObjectByType<Game>();
+        Leader owner = GetOwner();
+        if (game == null || owner == null || owner != game.player) return;
+
+        StoresManager storesManager = FindFirstObjectByType<StoresManager>();
+        if (storesManager == null) return;
+
+        storesManager.RefreshStores();
+        storesManager.PulseResourceGain(resourceType, amount);
+    }
+
+    private void TryPulseStoreGoldGain(int amount)
+    {
+        if (amount <= 0) return;
+
+        Game game = FindFirstObjectByType<Game>();
+        Leader owner = GetOwner();
+        if (game == null || owner == null || owner != game.player) return;
+
+        StoresManager storesManager = FindFirstObjectByType<StoresManager>();
+        if (storesManager == null) return;
+
+        storesManager.RefreshStores();
+        storesManager.PulseGoldGain(amount);
     }
 
     private static string NormalizeActionName(string actionName)

@@ -156,6 +156,7 @@ public class TutorialManager : MonoBehaviour
         MarkAiTutorialCompleteForAllLeaders();
         RestorePostTutorialHand();
         MoveStartingCharactersToCapitalsForAllLeaders();
+        SyncCharacterControlFlags();
 
         requiredStepIndex = GetRequiredSteps().Count;
         activeFlow = null;
@@ -461,11 +462,11 @@ public class TutorialManager : MonoBehaviour
 
         if (rewards.grantCharacters != null && rewards.grantCharacters.Count > 0)
         {
-            GrantCharacters(rewards.grantCharacters, actor);
+            GrantCharacters(rewards.grantCharacters, actor, markAsActionedThisTurn: true);
         }
     }
 
-    private void GrantCharacters(List<TutorialCharacterReward> grants, Character actor)
+    private void GrantCharacters(List<TutorialCharacterReward> grants, Character actor, bool markAsActionedThisTurn)
     {
         if (grants == null || actor == null) return;
         Leader owner = actor.GetOwner();
@@ -516,7 +517,9 @@ public class TutorialManager : MonoBehaviour
             Character newCharacter = instantiator.InstantiateCharacter(owner, actor.hex, config);
             if (newCharacter == null) continue;
             newCharacter.startingCharacter = false;
-            newCharacter.hasActionedThisTurn = true;
+            newCharacter.hasActionedThisTurn = markAsActionedThisTurn;
+            Game game = FindFirstObjectByType<Game>();
+            newCharacter.isPlayerControlled = game != null && owner == game.player;
             MessageDisplayNoUI.ShowMessage(actor.hex, actor, $"{grant.characterName} joins your service.", Color.green);
         }
     }
@@ -985,7 +988,8 @@ public class TutorialManager : MonoBehaviour
 
         if (rewards.grantCharacters != null && rewards.grantCharacters.Count > 0)
         {
-            GrantCharacters(rewards.grantCharacters, actor);
+            // Skip mode should leave tutorial-granted characters immediately playable.
+            GrantCharacters(rewards.grantCharacters, actor, markAsActionedThisTurn: false);
         }
     }
 
@@ -1096,5 +1100,21 @@ public class TutorialManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    private static void SyncCharacterControlFlags()
+    {
+        Game game = FindFirstObjectByType<Game>();
+        if (game == null || game.player == null) return;
+
+        Character[] characters = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        if (characters == null || characters.Length == 0) return;
+
+        for (int i = 0; i < characters.Length; i++)
+        {
+            Character character = characters[i];
+            if (character == null) continue;
+            character.isPlayerControlled = character.GetOwner() == game.player;
+        }
     }
 }

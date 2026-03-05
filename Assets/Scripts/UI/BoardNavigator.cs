@@ -32,8 +32,9 @@ public class BoardNavigator : MonoBehaviour
     private Coroutine focusQueueRoutine;
 
     [Header("Enemy Follow")]
-    [SerializeField] private float enemyFocusDuration = 0.8f;
-    [SerializeField] private float enemyFocusPause = 0.4f;
+    [SerializeField] private float enemyFocusDuration = 0.04f;
+    [SerializeField] private float enemyFocusPause = 0.006f;
+    [SerializeField] private float lookAtGlobalSpeedMultiplier = 5f;
 
     private void Awake()
     {
@@ -55,6 +56,17 @@ public class BoardNavigator : MonoBehaviour
 
     void Update()
     {
+        if (IsNavigationInputLocked())
+        {
+            if (isMouseWheelHeld)
+            {
+                isMouseWheelHeld = false;
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            return;
+        }
+
         if (IsPointerOverVisibleUIElement()) return;
 
         // Middle mouse button (wheel) pans the board
@@ -114,7 +126,10 @@ public class BoardNavigator : MonoBehaviour
         if (lookAtCoroutine != null)
             StopCoroutine(lookAtCoroutine);
 
-        lookAtCoroutine = StartCoroutine(SmoothLookAt(targetPosition, duration, delay));
+        float speed = Mathf.Max(0.01f, lookAtGlobalSpeedMultiplier);
+        float scaledDuration = Mathf.Max(0.01f, duration / speed);
+        float scaledDelay = Mathf.Max(0f, delay / speed);
+        lookAtCoroutine = StartCoroutine(SmoothLookAt(targetPosition, scaledDuration, scaledDelay));
     }
 
     public void EnqueueEnemyFocus(Hex hex, Leader leader = null)
@@ -148,11 +163,12 @@ public class BoardNavigator : MonoBehaviour
     public void EnqueueFocus(Hex hex, float duration, float pause, bool allowDuringMessages = false, System.Action onComplete = null)
     {
         if (hex == null) return;
+        float speed = Mathf.Max(0.01f, lookAtGlobalSpeedMultiplier);
         focusQueue.Enqueue(new FocusRequest
         {
             hex = hex,
-            duration = duration,
-            pause = pause,
+            duration = Mathf.Max(0.01f, duration / speed),
+            pause = Mathf.Max(0f, pause / speed),
             allowDuringMessages = allowDuringMessages,
             onComplete = onComplete
         });
@@ -294,6 +310,15 @@ public class BoardNavigator : MonoBehaviour
     public bool HasPendingFocus()
     {
         return focusQueue.Count > 0 || focusQueueRoutine != null || lookAtCoroutine != null;
+    }
+
+    public static bool IsNavigationInputLocked()
+    {
+        bool popupActive = PopupManager.IsShowing || ConfirmationDialog.IsShowing || SelectionDialog.IsShowing;
+        bool focusQueued = Instance != null && Instance.HasPendingFocus();
+        bool messageUiShowing = MessageDisplay.IsDisplaying();
+        bool messageNoUiShowing = MessageDisplayNoUI.IsDisplaying;
+        return popupActive || focusQueued || messageUiShowing || messageNoUiShowing;
     }
 
     public void LookAtSelected()

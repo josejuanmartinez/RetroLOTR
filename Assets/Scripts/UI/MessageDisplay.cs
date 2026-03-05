@@ -10,8 +10,8 @@ public class MessageDisplay : MonoBehaviour
     private static bool displayPaused;
     private CanvasGroup canvasGroup;
     [SerializeField] private TextMeshProUGUI messageText;
-    [SerializeField] private float displayDuration = 1f;
-    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private float displayDuration = 0.08f;
+    [SerializeField] private float fadeDuration = 0.02f;
 
     private Queue<MessageData> messageQueue = new Queue<MessageData>();
     private bool isDisplayingMessage = false;
@@ -45,6 +45,7 @@ public class MessageDisplay : MonoBehaviour
         Game game = FindFirstObjectByType<Game>();
         if (game == null) return;
         if (!game.started || game.currentlyPlaying != game.player) return;
+        string formattedMessage = ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(message);
         Color resolved = color ?? Color.white;
         if (IsNegativeColor(resolved))
         {
@@ -58,13 +59,19 @@ public class MessageDisplay : MonoBehaviour
         {
             Sounds.Instance?.PlayMessage();
         }
-        instance.EnqueueMessage(message, resolved);
+        instance.EnqueueMessage(formattedMessage, resolved);
     }
 
     public static bool IsBusy()
     {
         if (instance == null) return false;
         return instance.persistentActive || instance.isDisplayingMessage || instance.messageQueue.Count > 0;
+    }
+
+    public static bool IsDisplaying()
+    {
+        if (instance == null) return false;
+        return instance.isDisplayingMessage;
     }
 
     /// <summary>

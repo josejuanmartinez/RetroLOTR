@@ -33,6 +33,8 @@ public class PopupManager : MonoBehaviour
     public static bool IsShowing { get; private set; }
     private Videos videos;
     private Coroutine waitForMessagesRoutine;
+    private Coroutine actorPlaybackSequenceRoutine;
+    private int actorPlaybackToken;
 
     private struct PopupData
     {
@@ -94,6 +96,8 @@ public class PopupManager : MonoBehaviour
 
     public void Hide()
     {
+        actorPlaybackToken++;
+        StopActorPlaybackSequence();
         Action onClose = null;
         if (currentIndex >= 0 && currentIndex < queue.Count)
         {
@@ -169,6 +173,8 @@ public class PopupManager : MonoBehaviour
         if (index < 0 || index >= queue.Count)
             return;
 
+        actorPlaybackToken++;
+        StopActorPlaybackSequence();
         currentIndex = index;
         PopupData data = queue[currentIndex];
         Sounds.Instance?.PlayMessage();
@@ -198,25 +204,45 @@ public class PopupManager : MonoBehaviour
         }
 
         titleWidget.text = data.title;
+        StopActorVideo(actor1Video);
+        StopActorVideo(actor2Video);
+
         VideoClip actor1Clip = GetVideoByName(data.spriteActor1 != null ? data.spriteActor1.name : null);
-        SetActorVisuals(
-            actor1,
-            actor1RawImage,
-            actor1Video,
-            actor1Clip,
-            data.spriteActor1
-        );
 
         VideoClip actor2Clip = GetVideoByName(data.spriteActor2 != null ? data.spriteActor2.name : null);
         bool hasActor2 = data.spriteActor2 != null || actor2Clip != null;
         SetActor2Active(hasActor2);
-        SetActorVisuals(
-            actor2,
-            actor2RawImage,
-            actor2Video,
-            actor2Clip,
-            data.spriteActor2
-        );
+        if (actor1Clip != null && actor2Clip != null)
+        {
+            SetActorVisuals(
+                actor1,
+                actor1RawImage,
+                actor1Video,
+                actor1Clip,
+                data.spriteActor1
+            );
+            // Keep right actor static while left video is playing.
+            SetActorVisuals(actor2, actor2RawImage, actor2Video, null, data.spriteActor2);
+            int playbackTokenSnapshot = actorPlaybackToken;
+            actorPlaybackSequenceRoutine = StartCoroutine(PlayRightActorAfterLeftCompletes(playbackTokenSnapshot, actor1Clip, data.spriteActor1, actor2Clip, data.spriteActor2));
+        }
+        else
+        {
+            SetActorVisuals(
+                actor1,
+                actor1RawImage,
+                actor1Video,
+                actor1Clip,
+                data.spriteActor1
+            );
+            SetActorVisuals(
+                actor2,
+                actor2RawImage,
+                actor2Video,
+                actor2Clip,
+                data.spriteActor2
+            );
+        }
 
         if (rectTransform != null)
         {
@@ -283,6 +309,79 @@ public class PopupManager : MonoBehaviour
         actor2.gameObject.SetActive(true);
         actor2RawImage.gameObject.SetActive(true);
         actor2Video.gameObject.SetActive(true);
+    }
+
+    private void StopActorPlaybackSequence()
+    {
+        if (actorPlaybackSequenceRoutine == null) return;
+        StopCoroutine(actorPlaybackSequenceRoutine);
+        actorPlaybackSequenceRoutine = null;
+    }
+
+    private IEnumerator PlayRightActorAfterLeftCompletes(int tokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
+    {
+        if (rightClip == null)
+        {
+            actorPlaybackSequenceRoutine = null;
+            yield break;
+        }
+
+        if (actor1Video != null)
+        {
+            StopActorVideo(actor2Video);
+            // Ensure left popup video only runs once before right starts.
+            actor1Video.isLooping = false;
+            if (actor1Video.clip != leftClip)
+            {
+                actor1Video.clip = leftClip;
+                actor1Video.Play();
+            }
+
+            // Wait briefly for playback to actually begin.
+            float waitForStart = 0f;
+            const float maxWaitForStart = 0.75f;
+            while (tokenSnapshot == actorPlaybackToken
+                && waitForStart < maxWaitForStart
+                && (!actor1Video.enabled || !actor1Video.isPlaying))
+            {
+                waitForStart += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            // Once started, wait until it finishes.
+            if (actor1Video.enabled && actor1Video.isPlaying)
+            {
+                float safety = 0f;
+                float maxPlaybackWait = leftClip != null ? Mathf.Max(0.75f, (float)leftClip.length + 1f) : 4f;
+                while (tokenSnapshot == actorPlaybackToken
+                    && safety < maxPlaybackWait
+                    && actor1Video.enabled
+                    && actor1Video.isPlaying)
+                {
+                    safety += Time.unscaledDeltaTime;
+                    yield return null;
+                }
+            }
+        }
+
+        if (tokenSnapshot != actorPlaybackToken)
+        {
+            actorPlaybackSequenceRoutine = null;
+            yield break;
+        }
+
+        // Enforce single-video playback: left must be stopped before right starts.
+        SetActorVisuals(actor1, actor1RawImage, actor1Video, null, leftFallbackSprite);
+        StopActorVideo(actor1Video);
+        SetActorVisuals(actor2, actor2RawImage, actor2Video, rightClip, rightFallbackSprite);
+        actorPlaybackSequenceRoutine = null;
+    }
+
+    private static void StopActorVideo(VideoPlayer video)
+    {
+        if (video == null) return;
+        video.Stop();
+        video.enabled = false;
     }
 
     private static void SetActorVisuals(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)

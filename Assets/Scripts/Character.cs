@@ -38,6 +38,9 @@ public class Character : MonoBehaviour
 
     [Header("Turn data")]
     public bool hasActionedThisTurn;
+    public string lastPlayedActionClassNameThisTurn;
+    public string lastPlayedActionNameThisTurn;
+    public string lastPlayedCardSpriteNameThisTurn;
     public bool isEmbarked;
     public List<Hex> reachableHexes = new();
     public List<Hex> relevantHexes = new();
@@ -85,6 +88,9 @@ public class Character : MonoBehaviour
         statusEffects = new();
         InitializeStatusEffects();
         killed = false;
+        lastPlayedActionClassNameThisTurn = null;
+        lastPlayedActionNameThisTurn = null;
+        lastPlayedCardSpriteNameThisTurn = null;
         awaken = true;
         colors = FindFirstObjectByType<Colors>();
     }
@@ -290,6 +296,9 @@ public class Character : MonoBehaviour
         {
             moved = GetMaxMovement();
             hasActionedThisTurn = true;
+            lastPlayedActionClassNameThisTurn = null;
+            lastPlayedActionNameThisTurn = null;
+            lastPlayedCardSpriteNameThisTurn = null;
         }
         else if (halted)
         {
@@ -297,11 +306,17 @@ public class Character : MonoBehaviour
             int haltedPenalty = Mathf.Max(1, Mathf.FloorToInt(maxMovement * 0.5f));
             moved = Mathf.Min(maxMovement, haltedPenalty);
             hasActionedThisTurn = false;
+            lastPlayedActionClassNameThisTurn = null;
+            lastPlayedActionNameThisTurn = null;
+            lastPlayedCardSpriteNameThisTurn = null;
         }
         else
         {
             moved = 0;
             hasActionedThisTurn = false;
+            lastPlayedActionClassNameThisTurn = null;
+            lastPlayedActionNameThisTurn = null;
+            lastPlayedCardSpriteNameThisTurn = null;
         }
         if (blockedTurns > 0)
         {

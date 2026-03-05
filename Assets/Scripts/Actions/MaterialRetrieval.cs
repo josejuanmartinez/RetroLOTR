@@ -15,7 +15,6 @@ public class MaterialRetrieval : CharacterAction
         {
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c == null) return false;
-            MessageDisplayNoUI.ShowMessage(c.hex, c, "Material retrieval triggered.", Color.yellow);
             return true;
         };
 

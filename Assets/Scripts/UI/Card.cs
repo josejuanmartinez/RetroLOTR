@@ -24,7 +24,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] float dragScaleMultiplier = 1.15f;
     [SerializeField] float dragTiltDegrees = 7f;
     [SerializeField] float dragJitterPixels = 4f;
-    [SerializeField] float draggingAlpha = 0.92f;
+    [SerializeField] float dropPreviewRangePixels = 240f;
+    [SerializeField] float dropSnapRangePixels = 120f;
+    [SerializeField] float dropSnapLerpSpeed = 16f;
+    [SerializeField] float dropSnapScaleMultiplier = 1.02f;
     private Illustrations illustrations;
     private Colors colors;
     private Canvas rootCanvas;
@@ -51,6 +54,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private bool hoverCanvasDefaultOverrideSorting;
     private int hoverCanvasDefaultSortingOrder;
     private SelectedCharacterIcon selectedCharacterIcon;
+    private bool dropPreviewLocked;
 
     private const float HoverScaleMultiplier = 1.5f;
     private const float InteractionRefreshInterval = 0.15f;
@@ -113,6 +117,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         pointerIsDown = false;
         isDragging = false;
+        dropPreviewLocked = false;
         SetSelectedCharacterDropHint(false);
         RestoreHoverVisuals();
         RestoreCardTransformAfterDrag();
@@ -375,6 +380,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         RefreshInteractionState(force: true);
 
         await action.Execute();
+        if (action.LastExecutionSucceeded && selectedCharacter != null)
+        {
+            selectedCharacter.lastPlayedCardSpriteNameThisTurn =
+                !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
+        }
 
         if (tutorialActive)
         {
@@ -565,9 +575,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (canvasGroup != null)
         {
             canvasGroup.blocksRaycasts = false;
-            canvasGroup.alpha = Mathf.Clamp01(draggingAlpha);
+            canvasGroup.alpha = 1f;
         }
 
+        dropPreviewLocked = false;
         SetSelectedCharacterDropHint(true);
         SetDisabled(false, null);
     }
@@ -585,17 +596,29 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             0f
         );
 
-        rectTransform.position = pointerWorld + dragPointerOffsetWorld + jitter;
-        rectTransform.localScale = originalScaleBeforeDrag * dragScaleMultiplier;
-        rectTransform.rotation = Quaternion.Euler(0f, 0f, Mathf.Sin(Time.unscaledTime * 20f) * dragTiltDegrees);
+        dropPreviewLocked = UpdateDropPreview(eventData, eventCamera);
+        if (dropPreviewLocked && TryGetSelectedCharacterTargetCenter(out Vector3 targetCenter))
+        {
+            float lerp = 1f - Mathf.Exp(-dropSnapLerpSpeed * Time.unscaledDeltaTime);
+            rectTransform.position = Vector3.Lerp(rectTransform.position, targetCenter, lerp);
+            rectTransform.localScale = originalScaleBeforeDrag * dragScaleMultiplier * dropSnapScaleMultiplier;
+            rectTransform.rotation = Quaternion.Slerp(rectTransform.rotation, originalRotationBeforeDrag, lerp * 0.9f);
+        }
+        else
+        {
+            rectTransform.position = pointerWorld + dragPointerOffsetWorld + jitter;
+            rectTransform.localScale = originalScaleBeforeDrag * dragScaleMultiplier;
+            rectTransform.rotation = Quaternion.Euler(0f, 0f, Mathf.Sin(Time.unscaledTime * 20f) * dragTiltDegrees);
+        }
     }
 
     public async void OnEndDrag(PointerEventData eventData)
     {
         if (!isDragging) return;
 
-        bool droppedOnSelectedCharacter = IsDroppedOnSelectedCharacter(eventData);
+        bool droppedOnSelectedCharacter = dropPreviewLocked || IsDroppedOnSelectedCharacter(eventData);
         isDragging = false;
+        dropPreviewLocked = false;
         SetSelectedCharacterDropHint(false);
 
         if (canvasGroup != null)
@@ -926,6 +949,43 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return RectTransformUtility.RectangleContainsScreenPoint(targetRect, eventData.position, eventCamera);
     }
 
+    private bool UpdateDropPreview(PointerEventData eventData, Camera eventCamera)
+    {
+        if (eventData == null) return false;
+        SelectedCharacterIcon icon = GetSelectedCharacterIcon();
+        if (icon == null || !icon.gameObject.activeInHierarchy) return false;
+
+        RectTransform targetRect = icon.transform as RectTransform;
+        if (targetRect == null) return false;
+
+        Vector2 targetCenterScreen = RectTransformUtility.WorldToScreenPoint(eventCamera, targetRect.TransformPoint(targetRect.rect.center));
+        float distanceToCenter = Vector2.Distance(eventData.position, targetCenterScreen);
+        bool isInside = RectTransformUtility.RectangleContainsScreenPoint(targetRect, eventData.position, eventCamera);
+        bool isNear = distanceToCenter <= dropPreviewRangePixels;
+        bool lockDrop = isInside || distanceToCenter <= dropSnapRangePixels;
+
+        float proximity = 0f;
+        if (isNear)
+        {
+            proximity = 1f - Mathf.Clamp01(distanceToCenter / Mathf.Max(1f, dropPreviewRangePixels));
+        }
+        icon.SetDropTargetProximity(proximity, lockDrop);
+        return lockDrop;
+    }
+
+    private bool TryGetSelectedCharacterTargetCenter(out Vector3 centerWorld)
+    {
+        centerWorld = Vector3.zero;
+        SelectedCharacterIcon selectedIcon = GetSelectedCharacterIcon();
+        if (selectedIcon == null || !selectedIcon.gameObject.activeInHierarchy) return false;
+
+        RectTransform targetRect = selectedIcon.transform as RectTransform;
+        if (targetRect == null) return false;
+
+        centerWorld = targetRect.TransformPoint(targetRect.rect.center);
+        return true;
+    }
+
     private SelectedCharacterIcon GetSelectedCharacterIcon()
     {
         if (selectedCharacterIcon == null)
@@ -940,6 +1000,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         SelectedCharacterIcon icon = GetSelectedCharacterIcon();
         if (icon == null) return;
         icon.SetDropTargetHighlight(enabled);
+        if (!enabled)
+        {
+            icon.SetDropTargetProximity(0f, false);
+        }
     }
 
     private void RestoreCardTransformAfterDrag()
