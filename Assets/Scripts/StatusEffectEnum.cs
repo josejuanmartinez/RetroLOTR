@@ -12,5 +12,7 @@ public enum StatusEffectEnum
     Fear = 9,
     Haste = 10,
     Hidden = 11,
-    ArcaneInsight = 12
+    ArcaneInsight = 12,
+    Strengthened = 13,
+    Fortified = 14
 }

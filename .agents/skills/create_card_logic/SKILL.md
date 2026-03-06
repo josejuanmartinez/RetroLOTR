@@ -53,12 +53,11 @@ Audit card coverage and action wiring card-by-card with minimal noise.
    - If linkage exists but is invalid, ask how to fix (reuse existing action, create new action, or skip).
    - **Never ask alignment/deck assignment for existing cards.**
 6. If card is not assigned to any deck after the full presence resolution, ask alignment using numbered options.
-7. After deck assignment, if no action is set, ask for confirmation using numbered options.
-8. If confirmed, present 3 concise logic options for the card (option 1 should be conservative/recommended), then always include option 4 exactly as: `You will provide the text`.
+7. After deck assignment, if the card needs a character action, proceed directly to effect-definition without asking for separate confirmation.
+8. Present 3 concise logic options for the card (option 1 should be conservative/recommended), then always include option 4 exactly as: `You will provide the text`.
 9. Wait for the user's option choice before any code changes.
 10. Implement only the selected option (or the user's custom text if option 4).
-11. After each action ask if the user wants to continue or stop. If stop, finish the loop.
-12. If continue, continue through remaining cards.
+11. After each resolved card, automatically continue through remaining cards unless the user explicitly asks to stop.
 
 ## Numbered Prompt Templates
 
@@ -79,15 +78,9 @@ Use this exact style for user interaction.
 2. `Create new action`
 3. `Skip this card for now`
 
-### Potential Action Confirmation
-`Card '<CardName>' may need a character action. Proceed?`
-1. `Yes, create/link an action`
-2. `No, keep card without action`
-3. `Skip for now`
-
 ### Effect Definition Needed
 `I need the gameplay effect for '<CardName>'. Choose next step:`
-1. `<Suggested logic A (Recommended)>`
+1. `<Suggested logic A>`
 2. `<Suggested logic B>`
 3. `<Suggested logic C>`
 4. `You will provide the text`
@@ -134,3 +127,4 @@ After each resolved card, provide:
 - Use `new-character-action` skill for action class + `Actions.json` edits.
 - Keep names consistent across card name, image name, action metadata, and class mapping.
 - When a dynamic-cost card needs symbolic requirements, encode them in card data fields (for example `jokerRequired`) and keep UI logic generic.
+- For cards not present in any deck, default to creating/linking an action when action logic is implied by the card image/category; do not ask a separate proceed/confirm question before presenting effect options.

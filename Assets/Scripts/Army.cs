@@ -234,6 +234,7 @@ public class Army
         strength = ApplyCommanderBonus(strength);
         strength = ApplyTrainingBonus(strength);
         strength = ApplyArtifactAttackBonus(strength);
+        strength = ApplyStatusAttackBonus(strength);
         return strength;
     }
 
@@ -267,6 +268,7 @@ public class Army
         defence = ApplyCommanderBonus(defence);
         defence = ApplyTrainingBonus(defence);
         defence = ApplyArtifactDefenseBonus(defence);
+        defence = ApplyStatusDefenseBonus(defence);
         return defence;
     }
 
@@ -297,6 +299,24 @@ public class Army
         if (commander == null) return value;
         int bonus = commander.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
         return Mathf.Max(0, value + bonus);
+    }
+
+    private int ApplyStatusAttackBonus(int value)
+    {
+        if (commander != null && commander.HasStatusEffect(StatusEffectEnum.Strengthened))
+        {
+            value = Mathf.RoundToInt(value * 1.10f);
+        }
+        return Mathf.Max(0, value);
+    }
+
+    private int ApplyStatusDefenseBonus(int value)
+    {
+        if (commander != null && commander.HasStatusEffect(StatusEffectEnum.Fortified))
+        {
+            value = Mathf.RoundToInt(value * 1.10f);
+        }
+        return Mathf.Max(0, value);
     }
 
     public int GetArtifactAttackBonusTotal()

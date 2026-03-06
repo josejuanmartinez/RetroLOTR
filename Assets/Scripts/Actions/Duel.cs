@@ -203,7 +203,20 @@ public class Duel : CharacterAction
                           + character.GetBaseMage() * 1f
                           + character.GetBaseAgent() * 0.5f
                           + character.GetBaseEmmissary() * 0.25f;
-        return baseScore + GetArtifactCombatScore(character);
+
+        float score = baseScore + GetArtifactCombatScore(character);
+
+        if (character.HasStatusEffect(StatusEffectEnum.Strengthened))
+        {
+            score *= 1.10f;
+        }
+
+        if (character.HasStatusEffect(StatusEffectEnum.Fortified))
+        {
+            score *= 1.10f;
+        }
+
+        return score;
     }
 
     private int GetArtifactCombatScore(Character character)
