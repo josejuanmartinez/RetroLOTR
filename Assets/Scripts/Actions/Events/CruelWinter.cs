@@ -24,7 +24,7 @@ public class CruelWinter : EventAction
             List<Character> mountainEnemies = board.GetHexes()
                 .Where(h => h != null && h.terrainType == TerrainEnum.mountains && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != c.GetAlignment())
+                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != c.GetAlignment() && !ch.IsImmuneToNegativeEnvironmentalCards())
                 .Distinct()
                 .ToList();
 
@@ -54,7 +54,7 @@ public class CruelWinter : EventAction
             return board.GetHexes().Any(h => h != null
                 && h.terrainType == TerrainEnum.mountains
                 && h.characters != null
-                && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() != c.GetAlignment()));
+                && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() != c.GetAlignment() && !ch.IsImmuneToNegativeEnvironmentalCards()));
         };
 
         asyncEffect = async (c) =>

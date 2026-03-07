@@ -328,14 +328,14 @@ public class Board : MonoBehaviour
             artifactDescription = source.artifactDescription,
             hidden = source.hidden,
             alignment = source.alignment,
-            providesSpell = source.providesSpell,
             commanderBonus = source.commanderBonus,
             agentBonus = source.agentBonus,
             emmissaryBonus = source.emmissaryBonus,
             mageBonus = source.mageBonus,
             bonusAttack = source.bonusAttack,
             bonusDefense = source.bonusDefense,
-            oneShot = source.oneShot,
+            passiveEffectId = source.passiveEffectId,
+            passiveEffectValue = source.passiveEffectValue,
             transferable = source.transferable,
             spriteString = source.spriteString
         };
@@ -1145,6 +1145,8 @@ public class Board : MonoBehaviour
                 if (!newHex.armies.Contains(character.GetArmy())) newHex.armies.Add(character.GetArmy());
             }
             character.hex = newHex;
+            Character.RefreshArtifactPcVisibilityForHex(previousHex);
+            Character.RefreshArtifactPcVisibilityForHex(newHex);
             if (g != null)
             {
                 if (character.GetOwner() == g.player)
@@ -1232,7 +1234,10 @@ public class Board : MonoBehaviour
             if (character.IsArmyCommander() && !currentHex.armies.Contains(character.GetArmy())) currentHex.armies.Add(character.GetArmy());
 
             // Set character's hex reference properly
+            Hex previousCharacterHex = character.hex;
             character.hex = currentHex;
+            Character.RefreshArtifactPcVisibilityForHex(previousCharacterHex);
+            Character.RefreshArtifactPcVisibilityForHex(currentHex);
 
             // Redraw
             currentHex.RedrawCharacters();
@@ -1304,7 +1309,10 @@ public class Board : MonoBehaviour
             if (character.IsArmyCommander() && !currentHex.armies.Contains(character.GetArmy())) currentHex.armies.Add(character.GetArmy());
 
             // Set character's hex reference properly
+            Hex previousHex = character.hex;
             character.hex = currentHex;
+            Character.RefreshArtifactPcVisibilityForHex(previousHex);
+            Character.RefreshArtifactPcVisibilityForHex(currentHex);
 
             // Redraw
             currentHex.RedrawCharacters();

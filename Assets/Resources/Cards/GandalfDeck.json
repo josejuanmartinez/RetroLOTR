@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize":  5,
     "deckId":  "gandalf_deck",
     "nation":  "Gandalf",
@@ -941,7 +941,7 @@
                   },
                   {
                       "cardId":  83,
-                      "name":  "Fireworks",
+                      "name":  "Festival Night",
                       "description":  "",
                       "type":  "Action",
                       "actionClassName":  "Fireworks",
@@ -1661,7 +1661,7 @@
                   },
                   {
                       "cardId":  118,
-                      "name":  "MirrorOfGaladriel",
+                      "name":  "Visions in the Mirror",
                       "description":  "",
                       "type":  "Event",
                       "actionClassName":  "RevealHexes",
@@ -1989,7 +1989,7 @@
                   },
                   {
                       "cardId":  275,
-                      "name":  "ABookOfLostMagic",
+                      "name":  "Secrets from a Lost Tome",
                       "description":  "Reveal hidden artifacts in radius 2 and gain +1 Mage for 1 turn.",
                       "type":  "Event",
                       "action":  "ABookOfLostMagic",
@@ -2157,7 +2157,7 @@
                   },
                   {
                       "cardId":  283,
-                      "name":  "White Horses\u0027 Foam",
+                      "name":  "Foam on the Water",
                       "description":  "",
                       "type":  "Action",
                       "actionClassName":  "WhiteHorsesFoam",
@@ -2181,7 +2181,7 @@
                   },
                   {
                       "cardId":  289,
-                      "name":  "AndurilReforged",
+                      "name":  "The Blade Reforged",
                       "description":  "",
                       "type":  "Action",
                       "actionClassName":  "AndurilReforged",
@@ -2721,7 +2721,7 @@
                   },
                   {
                       "cardId":  394,
-                      "name":  "Arsenal",
+                      "name":  "Lake Town Arsenal",
                       "description":  "Gain +1 Iron, +1 Steel, +1 Timber.",
                       "type":  "Action",
                       "action":  "Arsenal",
@@ -2733,7 +2733,7 @@
                   },
                   {
                       "cardId":  395,
-                      "name":  "BannerOfElendil",
+                      "name":  "Under Elendil's Banner",
                       "description":  "Allied Humans and Dunedain in radius 2 gain Hope and Courage (1 turn).",
                       "type":  "Action",
                       "action":  "BannerOfElendil",
@@ -2745,7 +2745,7 @@
                   },
                   {
                       "cardId":  396,
-                      "name":  "BearerOfNenya",
+                      "name":  "The Power of Nenya",
                       "description":  "Target allied PC: hide it for 2 turns and grant Courage to nearby allied units.",
                       "type":  "Action",
                       "action":  "BearerOfNenya",
@@ -2757,7 +2757,7 @@
                   },
                   {
                       "cardId":  397,
-                      "name":  "BeltOfLorien",
+                      "name":  "Clad in Lorien",
                       "description":  "Target allied character: Hidden (2 turns) and Haste (1 turn).",
                       "type":  "Action",
                       "action":  "BeltOfLorien",
@@ -2793,7 +2793,7 @@
                   },
                   {
                       "cardId":  400,
-                      "name":  "CloakOfLorien",
+                      "name":  "Woven by the Galadhrim",
                       "description":  "Target allied character: gain Haste (1 turn) and Hidden (1 turn).",
                       "type":  "Action",
                       "action":  "CloakOfLorien",
@@ -2805,7 +2805,7 @@
                   },
                   {
                       "cardId":  401,
-                      "name":  "DolAmrothShield",
+                      "name":  "Stand of Dol Amroth",
                       "description":  "Target allied character: gain Fortified (1 turn).",
                       "type":  "Action",
                       "action":  "DolAmrothShield",
@@ -2830,26 +2830,26 @@
                   },
                   {
                       "cardId":  403,
-                      "name":  "BannerOfPelenorFields",
+                      "name":  "On the Pelennor",
                       "description":  "Target allied army commander in your hex: that army gains Courage (2 turns), and if it contains cavalry it also gains Haste (1 turn).",
                       "type":  "Action",
                       "action":  "BannerOfPelenorFields",
                       "actionClassName":  "BannerOfPelenorFields",
                       "actionId":  228,
-                      "spriteName":  "BannerOfPelenorFields",
+                      "spriteName":  "On the Pelennor",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  404,
-                      "name":  "BearerOfVilya",
-                      "description":  "Allied characters in radius 1 are fully healed, and White Horses\u0027 Foam is cast in radius 2-4 depending on the caster\u0027s Mage level.",
+                      "name":  "The Power of Vilya",
+                      "description":  "Allied characters in radius 1 are fully healed, and Foam on the Water is cast in radius 2-4 depending on the caster\u0027s Mage level.",
                       "type":  "Action",
                       "action":  "BearerOfVilya",
                       "actionClassName":  "BearerOfVilya",
                       "actionId":  229,
-                      "spriteName":  "BearerOfVilya",
+                      "spriteName":  "The Power of Vilya",
                       "tags":  [
 
                                ]
@@ -2869,26 +2869,26 @@
                   },
                   {
                       "cardId":  405,
-                      "name":  "BeoringsLongAxe",
+                      "name":  "The Beorning Charge",
                       "description":  "Fortify the caster for 1 turn and halt enemy units in the same or adjacent hexes.",
                       "type":  "Action",
                       "action":  "BeoringsLongAxe",
                       "actionClassName":  "BeoringsLongAxe",
                       "actionId":  230,
-                      "spriteName":  "BeoringsLongAxe",
+                      "spriteName":  "The Beorning Charge",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  406,
-                      "name":  "BladeOfGondolin",
+                      "name":  "Ancient Edge",
                       "description":  "Target allied character in your hex: gain Fortified (1 turn) and Haste (1 turn).",
                       "type":  "Action",
                       "action":  "BladeOfGondolin",
                       "actionClassName":  "BladeOfGondolin",
                       "actionId":  231,
-                      "spriteName":  "BladeOfGondolin",
+                      "spriteName":  "Ancient Edge",
                       "tags":  [
 
                                ]
@@ -2908,39 +2908,39 @@
                   },
                   {
                       "cardId":  410,
-                      "name":  "BowOfTheGaladhrim",
+                      "name":  "Arrows of the Galadhrim",
                       "description":  "Target enemy in same/adjacent hex: deal moderate damage and, if the target is on forest terrain, apply Fear (1 turn).",
                       "type":  "Action",
                       "action":  "BowOfTheGaladhrim",
                       "actionClassName":  "BowOfTheGaladhrim",
                       "actionId":  233,
-                      "spriteName":  "BowOfTheGaladhrim",
+                      "spriteName":  "Arrows of the Galadhrim",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  411,
-                      "name":  "DaggerOfEdhellond",
+                      "name":  "Ambush from Edhellond",
                       "description":  "Target enemy character in your hex: deal moderate damage; if the caster is Hidden, also apply Fear (1 turn).",
                       "type":  "Action",
                       "action":  "DaggerOfEdhellond",
                       "actionClassName":  "DaggerOfEdhellond",
                       "actionId":  234,
-                      "spriteName":  "DaggerOfEdhellond",
+                      "spriteName":  "Ambush from Edhellond",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  412,
-                      "name":  "DorwinionHelm",
+                      "name":  "Attired for the Winelords",
                       "description":  "Target allied character in your hex: gain Fortified (1 turn), and gain 2 gold.",
                       "type":  "Action",
                       "action":  "DorwinionHelm",
                       "actionClassName":  "DorwinionHelm",
                       "actionId":  235,
-                      "spriteName":  "DorwinionHelm",
+                      "spriteName":  "Attired for the Winelords",
                       "tags":  [
 
                                ]
@@ -2986,26 +2986,26 @@
                   },
                   {
                       "cardId":  430,
-                      "name":  "GaladhrimBoots",
+                      "name":  "Swift as the Galadhrim",
                       "description":  "Target allied character in your hex: gain Haste (1 turn), Hidden (1 turn), and if on a forest tile also remove Fear.",
                       "type":  "Action",
                       "action":  "GaladhrimBoots",
                       "actionClassName":  "GaladhrimBoots",
                       "actionId":  247,
-                      "spriteName":  "GaladhrimBoots",
+                      "spriteName":  "Swift as the Galadhrim",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  431,
-                      "name":  "GemsOfLasgalen",
+                      "name":  "Treasures of Lasgalen",
                       "description":  "All allied Elf characters in radius 2 gain Hope (1 turn), and one wounded allied character in your hex heals a moderate amount.",
                       "type":  "Action",
                       "action":  "GemsOfLasgalen",
                       "actionClassName":  "GemsOfLasgalen",
                       "actionId":  248,
-                      "spriteName":  "GemsOfLasgalen",
+                      "spriteName":  "Treasures of Lasgalen",
                       "tags":  [
 
                                ]
@@ -3025,130 +3025,130 @@
                   },
                   {
                       "cardId":  434,
-                      "name":  "GondorianHorn",
+                      "name":  "The Horn Calls",
                       "description":  "All allied Human and Dunedain units in radius 2 gain Courage (1 turn), and enemy units in your hex gain Fear (1 turn).",
                       "type":  "Action",
                       "action":  "GondorianHorn",
                       "actionClassName":  "GondorianHorn",
                       "actionId":  250,
-                      "spriteName":  "GondorianHorn",
+                      "spriteName":  "The Horn Calls",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  435,
-                      "name":  "GondorianTowerShield",
+                      "name":  "Shieldwall of Gondor",
                       "description":  "Target allied character in your hex: gain Fortified (1 turn), and if the target has Fear remove it.",
                       "type":  "Action",
                       "action":  "GondorianTowerShield",
                       "actionClassName":  "GondorianTowerShield",
                       "actionId":  251,
-                      "spriteName":  "GondorianTowerShield",
+                      "spriteName":  "Shieldwall of Gondor",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  439,
-                      "name":  "HelmOfArnor",
+                      "name":  "War spoils",
                       "description":  "Target allied character in your hex: gain Fortified (1 turn).",
                       "type":  "Action",
                       "action":  "HelmOfArnor",
                       "actionClassName":  "HelmOfArnor",
                       "actionId":  254,
-                      "spriteName":  "HelmOfArnor",
+                      "spriteName":  "War spoils",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  441,
-                      "name":  "Herbs",
+                      "name":  "Healing Healing Herbs",
                       "description":  "Target allied character in your hex: heal a moderate amount.",
                       "type":  "Action",
                       "action":  "Herbs",
                       "actionClassName":  "Herbs",
                       "actionId":  255,
-                      "spriteName":  "Herbs",
+                      "spriteName":  "Healing Healing Herbs",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  444,
-                      "name":  "HighNoldorinCloak",
+                      "name":  "Royal Attires",
                       "description":  "Target allied character in your hex: gain Haste (1 turn) and Hidden (2 turns).",
                       "type":  "Action",
                       "action":  "HighNoldorinCloak",
                       "actionClassName":  "HighNoldorinCloak",
                       "actionId":  256,
-                      "spriteName":  "HighNoldorinCloak",
+                      "spriteName":  "Royal Attires",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  445,
-                      "name":  "Hithlain",
+                      "name":  "Bound in Hithlain",
                       "description":  "Target allied character in your hex: gain Hidden (1 turn), and if on a forest or mountain tile also gain Haste (1 turn).",
                       "type":  "Action",
                       "action":  "Hithlain",
                       "actionClassName":  "Hithlain",
                       "actionId":  257,
-                      "spriteName":  "Hithlain",
+                      "spriteName":  "Bound in Hithlain",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  446,
-                      "name":  "Horses",
+                      "name":  "Mounts",
                       "description":  "Target allied character in your hex: gain Haste (1 turn).",
                       "type":  "Action",
                       "action":  "Horses",
                       "actionClassName":  "Horses",
                       "actionId":  258,
-                      "spriteName":  "Horses",
+                      "spriteName":  "Mounts",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  447,
-                      "name":  "IthilienRangerHood",
+                      "name":  "Shadows of Ithilien",
                       "description":  "Target allied character in your hex: gain Hidden (1 turn), and reveal enemies in radius 1 around the caster.",
                       "type":  "Action",
                       "action":  "IthilienRangerHood",
                       "actionClassName":  "IthilienRangerHood",
                       "actionId":  259,
-                      "spriteName":  "IthilienRangerHood",
+                      "spriteName":  "Shadows of Ithilien",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  448,
-                      "name":  "LeafBrooch",
+                      "name":  "Token of the Woodland Realm",
                       "description":  "Target allied character in your hex: gain Hidden (1 turn).",
                       "type":  "Action",
                       "action":  "LeafBrooch",
                       "actionClassName":  "LeafBrooch",
                       "actionId":  260,
-                      "spriteName":  "LeafBrooch",
+                      "spriteName":  "Token of the Woodland Realm",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  449,
-                      "name":  "Lembas",
+                      "name":  "Provided by the Elves",
                       "description":  "Target allied character in your hex: heal a moderate amount.",
                       "type":  "Action",
                       "action":  "Lembas",
                       "actionClassName":  "Lembas",
                       "actionId":  261,
-                      "spriteName":  "Lembas",
+                      "spriteName":  "Provided by the Elves",
                       "tags":  [
 
                                ]
@@ -3168,26 +3168,26 @@
                   },
                   {
                       "cardId":  451,
-                      "name":  "MithrilCoat",
+                      "name":  "A gift from Bilbo",
                       "description":  "Target allied character in your hex: gain Fortified (3 turns).",
                       "type":  "Action",
                       "action":  "MithrilCoat",
                       "actionClassName":  "MithrilCoat",
                       "actionId":  266,
-                      "spriteName":  "MithrilCoat",
+                      "spriteName":  "A gift from Bilbo",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  452,
-                      "name":  "NorthmenHelm",
+                      "name":  "Northmen Stand Firm",
                       "description":  "Target allied character in your hex: gain Fortified (1 turn).",
                       "type":  "Action",
                       "action":  "NorthmenHelm",
                       "actionClassName":  "NorthmenHelm",
                       "actionId":  269,
-                      "spriteName":  "NorthmenHelm",
+                      "spriteName":  "Northmen Stand Firm",
                       "tags":  [
 
                                ]
@@ -3207,6 +3207,8 @@
                   }
               ]
 }
+
+
 
 
 

@@ -20,6 +20,7 @@ public class PC
     [SerializeField] public bool hasPort;
     [SerializeField] public bool hiddenButRevealed;
     [SerializeField] public bool isCapital;
+    [SerializeField] public bool artifactOccupancyHidden;
     [SerializeField] public int temporaryHiddenTurns;
     [SerializeField] public int temporaryRevealTurns;
 
@@ -69,6 +70,7 @@ public class PC
         var l = overrideLeader ? overrideLeader : GameObject.FindFirstObjectByType<Game>().player;
         if (l == null) return false;
 
+        if (IsArtifactOccupancyHidden(l)) return false;
         if (IsTemporarilyRevealed()) return true;
         if (IsTemporarilyHidden(l)) return false;
         if (!isHidden || hiddenButRevealed) return true;
@@ -89,6 +91,18 @@ public class PC
         if (temporaryHiddenTurns <= 0) return false;
         if (viewer != null && owner != null && viewer == owner) return false;
         return true;
+    }
+
+    public bool IsArtifactOccupancyHidden(Leader viewer = null)
+    {
+        if (!artifactOccupancyHidden) return false;
+        if (viewer != null && owner != null && viewer == owner) return false;
+        return true;
+    }
+
+    public void SetArtifactOccupancyHidden(bool hidden)
+    {
+        artifactOccupancyHidden = hidden;
     }
 
     public void SetTemporaryHidden(int turns)

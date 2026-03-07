@@ -324,12 +324,6 @@ public class AIContext
                     ? Vector2.Distance(Character.hex.v2, target.hex.v2)
                     : float.MaxValue;
 
-                // Prefer sharing spells with non-mages
-                if (!string.IsNullOrEmpty(art.providesSpell))
-                {
-                    score += target.GetMage() == 0 ? 6f : 3f;
-                }
-
                 // Skill boosts help low-skill targets more
                 score += art.commanderBonus > 0 ? art.commanderBonus * 2f + Mathf.Max(0, 5 - target.GetCommander()) : 0f;
                 score += art.agentBonus > 0 ? art.agentBonus * 2f + Mathf.Max(0, 5 - target.GetAgent()) : 0f;

@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize":  5,
     "deckId":  "sauron_deck",
     "nation":  "Sauron",
@@ -1850,7 +1850,7 @@
                   },
                   {
                       "cardId":  277,
-                      "name":  "ABookOfLostMagic",
+                      "name":  "Secrets from a Lost Tome",
                       "description":  "Reveal hidden artifacts in radius 2 and gain +1 Mage for 1 turn.",
                       "type":  "Event",
                       "action":  "ABookOfLostMagic",
@@ -1862,7 +1862,7 @@
                   },
                   {
                       "cardId":  278,
-                      "name":  "AMorgulBlade",
+                      "name":  "Struck by a Morgul Blade",
                       "description":  "Target enemy character in your hex: apply Poisoned (2 turns) and Fear (1 turn).",
                       "type":  "Action",
                       "action":  "AMorgulBlade",
@@ -2473,7 +2473,7 @@
                   },
                   {
                       "cardId":  393,
-                      "name":  "Arsenal",
+                      "name":  "Lake Town Arsenal",
                       "description":  "Gain +1 Iron, +1 Steel, +1 Timber.",
                       "type":  "Action",
                       "action":  "Arsenal",
@@ -2485,7 +2485,7 @@
                   },
                   {
                       "cardId":  394,
-                      "name":  "BlackNumenoreanArmour",
+                      "name":  "Numenor turned to Shadow",
                       "description":  "Target allied army commander: remove Halted, grant Courage (1), and apply Fear (1) to enemies in the same hex.",
                       "type":  "Action",
                       "action":  "BlackNumenoreanArmour",
@@ -2497,7 +2497,7 @@
                   },
                   {
                       "cardId":  395,
-                      "name":  "BlazonOfTheEye",
+                      "name":  "The Eye Watches",
                       "description":  "Allied units in radius 1 gain Courage (1 turn); enemy units in radius 1 gain Fear (1 turn).",
                       "type":  "Action",
                       "action":  "BlazonOfTheEye",
@@ -2509,7 +2509,7 @@
                   },
                   {
                       "cardId":  396,
-                      "name":  "DragonBreath",
+                      "name":  "Dragon-fire",
                       "description":  "Enemy units in radius 1 gain Burning (1 turn); enemies on forest tiles also gain Fear (1 turn).",
                       "type":  "Action",
                       "action":  "DragonBreath",
@@ -2559,13 +2559,13 @@
                   },
                   {
                       "cardId":  415,
-                      "name":  "KalNargilDagger",
+                      "name":  "A Knife in the Dark",
                       "description":  "Target enemy character in your hex: apply Poisoned (2 turns) and Fear (1 turn).",
                       "type":  "Action",
                       "action":  "KalNargilDagger",
                       "actionClassName":  "KalNargilDagger",
                       "actionId":  237,
-                      "spriteName":  "KalNargilDagger",
+                      "spriteName":  "A Knife in the Dark",
                       "tags":  [
 
                                ]
@@ -2624,143 +2624,143 @@
                   },
                   {
                       "cardId":  427,
-                      "name":  "FlameOfUdun",
+                      "name":  "Flame of Udun",
                       "description":  "In radius 2, apply Burning (1 turn) and Fear (1 turn) to all enemy units.",
                       "type":  "Action",
                       "action":  "FlameOfUdun",
                       "actionClassName":  "FlameOfUdun",
                       "actionId":  245,
-                      "spriteName":  "FlameOfUdun",
+                      "spriteName":  "Flame of Udun",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  436,
-                      "name":  "GorgorothMorningStar",
+                      "name":  "The Blow of Gorgoroth",
                       "description":  "Target enemy character in your hex: deal moderate damage and apply Fear (1 turn).",
                       "type":  "Action",
                       "action":  "GorgorothMorningStar",
                       "actionClassName":  "GorgorothMorningStar",
                       "actionId":  252,
-                      "spriteName":  "GorgorothMorningStar",
+                      "spriteName":  "The Blow of Gorgoroth",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  437,
-                      "name":  "HaradrimScenticMace",
+                      "name":  "Scents of the Haradrim",
                       "description":  "Target enemy character in your hex: deal moderate damage and apply Poisoned (2 turns).",
                       "type":  "Action",
                       "action":  "HaradrimScenticMace",
                       "actionClassName":  "HaradrimScenticMace",
                       "actionId":  253,
-                      "spriteName":  "HaradrimScenticMace",
+                      "spriteName":  "Scents of the Haradrim",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  440,
-                      "name":  "HelmOfArnor",
+                      "name":  "War spoils",
                       "description":  "Target allied character in your hex: gain Fortified (1 turn).",
                       "type":  "Action",
                       "action":  "HelmOfArnor",
                       "actionClassName":  "HelmOfArnor",
                       "actionId":  254,
-                      "spriteName":  "HelmOfArnor",
+                      "spriteName":  "War spoils",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  443,
-                      "name":  "Herbs",
+                      "name":  "Healing Healing Herbs",
                       "description":  "Target allied character in your hex: heal a moderate amount.",
                       "type":  "Action",
                       "action":  "Herbs",
                       "actionClassName":  "Herbs",
                       "actionId":  255,
-                      "spriteName":  "Herbs",
+                      "spriteName":  "Healing Healing Herbs",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  448,
-                      "name":  "Horses",
+                      "name":  "Mounts",
                       "description":  "Target allied character in your hex: gain Haste (1 turn).",
                       "type":  "Action",
                       "action":  "Horses",
                       "actionClassName":  "Horses",
                       "actionId":  258,
-                      "spriteName":  "Horses",
+                      "spriteName":  "Mounts",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  449,
-                      "name":  "IthilienRangerHood",
+                      "name":  "Shadows of Ithilien",
                       "description":  "Target allied character in your hex: gain Hidden (1 turn), and reveal enemies in radius 1 around the caster.",
                       "type":  "Action",
                       "action":  "IthilienRangerHood",
                       "actionClassName":  "IthilienRangerHood",
                       "actionId":  259,
-                      "spriteName":  "IthilienRangerHood",
+                      "spriteName":  "Shadows of Ithilien",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  450,
-                      "name":  "StaffOfLuglurak",
+                      "name":  "Luglurak Dark Magic",
                       "description":  "Enemy characters in radius 1 gain Fear (1 turn).",
                       "type":  "Action",
                       "action":  "LuglurakStaff",
                       "actionClassName":  "LuglurakStaff",
                       "actionId":  263,
-                      "spriteName":  "LuglurakStaff",
+                      "spriteName":  "Luglurak Dark Magic",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  451,
-                      "name":  "MithrilCoat",
+                      "name":  "A gift from Bilbo",
                       "description":  "Target allied character in your hex: gain Fortified (3 turns).",
                       "type":  "Action",
                       "action":  "MithrilCoat",
                       "actionClassName":  "MithrilCoat",
                       "actionId":  266,
-                      "spriteName":  "MithrilCoat",
+                      "spriteName":  "A gift from Bilbo",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  452,
-                      "name":  "NazgulMark",
+                      "name":  "Marked by a Nazgul",
                       "description":  "Target enemy character in your hex: apply Fear (1 turn) and Halted (1 turn).",
                       "type":  "Action",
                       "action":  "NazgulMark",
                       "actionClassName":  "NazgulMark",
                       "actionId":  267,
-                      "spriteName":  "NazgulMark",
+                      "spriteName":  "Marked by a Nazgul",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  453,
-                      "name":  "OrcDraughts",
+                      "name":  "Orcish Stimulants",
                       "description":  "Target allied character in your hex: heal a small amount and gain Haste (1 turn).",
                       "type":  "Action",
                       "action":  "OrcDraughts",
                       "actionClassName":  "OrcDraughts",
                       "actionId":  270,
-                      "spriteName":  "OrcDraughts",
+                      "spriteName":  "Orcish Stimulants",
                       "tags":  [
 
                                ]
@@ -2793,6 +2793,8 @@
                   }
               ]
 }
+
+
 
 
 

@@ -43,7 +43,7 @@ public class RageOfUlmo : EventAction
             List<Character> targets = board.GetHexes()
                 .Where(h => h != null && IsSeaAdjacentHex(h) && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(IsNavyOrEmbarked)
+                .Where(ch => IsNavyOrEmbarked(ch) && !ch.IsImmuneToNegativeEnvironmentalCards())
                 .Distinct()
                 .ToList();
 
@@ -77,7 +77,7 @@ public class RageOfUlmo : EventAction
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
 
-            return board.GetHexes().Any(h => h != null && IsSeaAdjacentHex(h) && h.characters != null && h.characters.Any(IsNavyOrEmbarked));
+            return board.GetHexes().Any(h => h != null && IsSeaAdjacentHex(h) && h.characters != null && h.characters.Any(ch => IsNavyOrEmbarked(ch) && !ch.IsImmuneToNegativeEnvironmentalCards()));
         };
 
         asyncEffect = async (character) =>

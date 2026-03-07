@@ -131,11 +131,6 @@ public static class AIContextDataBuilder
                     ? Vector2.Distance(character.hex.v2, target.hex.v2)
                     : float.MaxValue;
 
-                if (!string.IsNullOrEmpty(art.providesSpell))
-                {
-                    score += target.GetMage() == 0 ? 6f : 3f;
-                }
-
                 score += art.commanderBonus > 0 ? art.commanderBonus * 2f + Mathf.Max(0, 5 - target.GetCommander()) : 0f;
                 score += art.agentBonus > 0 ? art.agentBonus * 2f + Mathf.Max(0, 5 - target.GetAgent()) : 0f;
                 score += art.emmissaryBonus > 0 ? art.emmissaryBonus * 2f + Mathf.Max(0, 5 - target.GetEmmissary()) : 0f;

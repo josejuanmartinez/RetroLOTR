@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize":  5,
     "deckId":  "saruman_deck",
     "nation":  "Saruman",
@@ -1885,7 +1885,7 @@
                   },
                   {
                       "cardId":  278,
-                      "name":  "ABookOfLostMagic",
+                      "name":  "Secrets from a Lost Tome",
                       "description":  "Reveal hidden artifacts in radius 2 and gain +1 Mage for 1 turn.",
                       "type":  "Event",
                       "action":  "ABookOfLostMagic",
@@ -2485,7 +2485,7 @@
                   },
                   {
                       "cardId":  391,
-                      "name":  "Arsenal",
+                      "name":  "Lake Town Arsenal",
                       "description":  "Gain +1 Iron, +1 Steel, +1 Timber.",
                       "type":  "Action",
                       "action":  "Arsenal",
@@ -2497,7 +2497,7 @@
                   },
                   {
                       "cardId":  392,
-                      "name":  "DunlendingShortBow",
+                      "name":  "Dunlending Ambush",
                       "description":  "Target enemy in same/adjacent hex: inflict small wound and Fear (1 turn).",
                       "type":  "Action",
                       "action":  "DunlendingShortBow",
@@ -2534,26 +2534,26 @@
                   },
                   {
                       "cardId":  413,
-                      "name":  "DorwinionHelm",
+                      "name":  "Attired for the Winelords",
                       "description":  "Target allied character in your hex: gain Fortified (1 turn), and gain 2 gold.",
                       "type":  "Action",
                       "action":  "DorwinionHelm",
                       "actionClassName":  "DorwinionHelm",
                       "actionId":  235,
-                      "spriteName":  "DorwinionHelm",
+                      "spriteName":  "Attired for the Winelords",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  418,
-                      "name":  "EasterlingHelm",
+                      "name":  "Easterling Resolve",
                       "description":  "Target allied character in your hex: gain Fortified (1 turn) and Haste (1 turn).",
                       "type":  "Action",
                       "action":  "EasterlingHelm",
                       "actionClassName":  "EasterlingHelm",
                       "actionId":  239,
-                      "spriteName":  "EasterlingHelm",
+                      "spriteName":  "Easterling Resolve",
                       "tags":  [
 
                                ]
@@ -2599,78 +2599,78 @@
                   },
                   {
                       "cardId":  428,
-                      "name":  "FlameOfUdun",
+                      "name":  "Flame of Udun",
                       "description":  "In radius 2, apply Burning (1 turn) and Fear (1 turn) to all enemy units.",
                       "type":  "Action",
                       "action":  "FlameOfUdun",
                       "actionClassName":  "FlameOfUdun",
                       "actionId":  245,
-                      "spriteName":  "FlameOfUdun",
+                      "spriteName":  "Flame of Udun",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  432,
-                      "name":  "GemsOfLasgalen",
+                      "name":  "Treasures of Lasgalen",
                       "description":  "All allied Elf characters in radius 2 gain Hope (1 turn), and one wounded allied character in your hex heals a moderate amount.",
                       "type":  "Action",
                       "action":  "GemsOfLasgalen",
                       "actionClassName":  "GemsOfLasgalen",
                       "actionId":  248,
-                      "spriteName":  "GemsOfLasgalen",
+                      "spriteName":  "Treasures of Lasgalen",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  438,
-                      "name":  "HaradrimScenticMace",
+                      "name":  "Scents of the Haradrim",
                       "description":  "Target enemy character in your hex: deal moderate damage and apply Poisoned (2 turns).",
                       "type":  "Action",
                       "action":  "HaradrimScenticMace",
                       "actionClassName":  "HaradrimScenticMace",
                       "actionId":  253,
-                      "spriteName":  "HaradrimScenticMace",
+                      "spriteName":  "Scents of the Haradrim",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  442,
-                      "name":  "Herbs",
+                      "name":  "Healing Healing Herbs",
                       "description":  "Target allied character in your hex: heal a moderate amount.",
                       "type":  "Action",
                       "action":  "Herbs",
                       "actionClassName":  "Herbs",
                       "actionId":  255,
-                      "spriteName":  "Herbs",
+                      "spriteName":  "Healing Healing Herbs",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  447,
-                      "name":  "Horses",
+                      "name":  "Mounts",
                       "description":  "Target allied character in your hex: gain Haste (1 turn).",
                       "type":  "Action",
                       "action":  "Horses",
                       "actionClassName":  "Horses",
                       "actionId":  258,
-                      "spriteName":  "Horses",
+                      "spriteName":  "Mounts",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  448,
-                      "name":  "LoveToHalflingsLeaf",
+                      "name":  "Lured by Halflings' Leaf",
                       "description":  "Target enemy Maia in radius 2: Halted (1 turn) and Blocked (2 turns).",
                       "type":  "Action",
                       "action":  "LoveToHalflingsLeaf",
                       "actionClassName":  "LoveToHalflingsLeaf",
                       "actionId":  262,
-                      "spriteName":  "LoveToHalflingsLeaf",
+                      "spriteName":  "Lured by Halflings' Leaf",
                       "tags":  [
 
                                ]
@@ -2690,13 +2690,13 @@
                   },
                   {
                       "cardId":  450,
-                      "name":  "MithrilCoat",
+                      "name":  "A gift from Bilbo",
                       "description":  "Target allied character in your hex: gain Fortified (3 turns).",
                       "type":  "Action",
                       "action":  "MithrilCoat",
                       "actionClassName":  "MithrilCoat",
                       "actionId":  266,
-                      "spriteName":  "MithrilCoat",
+                      "spriteName":  "A gift from Bilbo",
                       "tags":  [
 
                                ]
@@ -2716,26 +2716,26 @@
                   },
                   {
                       "cardId":  452,
-                      "name":  "NorthmenHelm",
+                      "name":  "Northmen Stand Firm",
                       "description":  "Target allied character in your hex: gain Fortified (1 turn).",
                       "type":  "Action",
                       "action":  "NorthmenHelm",
                       "actionClassName":  "NorthmenHelm",
                       "actionId":  269,
-                      "spriteName":  "NorthmenHelm",
+                      "spriteName":  "Northmen Stand Firm",
                       "tags":  [
 
                                ]
                   },
                   {
                       "cardId":  453,
-                      "name":  "OrcDraughts",
+                      "name":  "Orcish Stimulants",
                       "description":  "Target allied character in your hex: heal a small amount and gain Haste (1 turn).",
                       "type":  "Action",
                       "action":  "OrcDraughts",
                       "actionClassName":  "OrcDraughts",
                       "actionId":  270,
-                      "spriteName":  "OrcDraughts",
+                      "spriteName":  "Orcish Stimulants",
                       "tags":  [
 
                                ]
@@ -2768,6 +2768,8 @@
                   }
               ]
 }
+
+
 
 
 

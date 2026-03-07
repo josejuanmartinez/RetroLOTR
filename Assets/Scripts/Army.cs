@@ -268,6 +268,7 @@ public class Army
         defence = ApplyCommanderBonus(defence);
         defence = ApplyTrainingBonus(defence);
         defence = ApplyArtifactDefenseBonus(defence);
+        defence = ApplyEnemyArtifactDefensePenalty(defence);
         defence = ApplyStatusDefenseBonus(defence);
         return defence;
     }
@@ -291,6 +292,7 @@ public class Army
     {
         if (commander == null) return value;
         int bonus = commander.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
+        bonus += commander.artifacts.Sum(a => a != null ? a.GetArmyAttackStrengthBonus() : 0);
         return Mathf.Max(0, value + bonus);
     }
 
@@ -298,7 +300,29 @@ public class Army
     {
         if (commander == null) return value;
         int bonus = commander.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
+        bonus += commander.artifacts.Sum(a => a != null ? a.GetArmyDefenseStrengthBonus() : 0);
         return Mathf.Max(0, value + bonus);
+    }
+
+    private int ApplyEnemyArtifactDefensePenalty(int value)
+    {
+        if (commander == null || commander.hex == null || commander.hex.armies == null) return value;
+
+        int penalty = 0;
+        for (int i = 0; i < commander.hex.armies.Count; i++)
+        {
+            Army otherArmy = commander.hex.armies[i];
+            if (otherArmy == null || otherArmy == this || otherArmy.killed || otherArmy.commander == null || otherArmy.commander.killed) continue;
+            if (!otherArmy.commander.IsArmyCommander()) continue;
+            if (otherArmy.commander.GetOwner() == commander.GetOwner()) continue;
+
+            AlignmentEnum otherAlignment = otherArmy.commander.GetAlignment();
+            if (otherAlignment == commander.GetAlignment() && otherAlignment != AlignmentEnum.neutral) continue;
+
+            penalty += otherArmy.commander.artifacts.Sum(a => a != null ? a.GetEnemyArmyDefensePenaltySameHex() : 0);
+        }
+
+        return Mathf.Max(0, value - penalty);
     }
 
     private int ApplyStatusAttackBonus(int value)
@@ -706,6 +730,8 @@ public class Army
         {
             hudMessages.Add(($"XP gained: {attackerName} {FormatDelta(attackerXpDelta)}, {defenderName} {FormatDelta(defenderXpDelta)}", Color.cyan));
         }
+
+        TryApplyCommanderArtifactBurningOnSuccessfulAttack(defenderArmy, attackerDamage);
     }
 
 
@@ -834,6 +860,20 @@ public class Army
         }
 
         return sb.ToString();
+    }
+
+    private void TryApplyCommanderArtifactBurningOnSuccessfulAttack(Army defenderArmy, float attackerDamage)
+    {
+        if (attackerDamage <= 0f) return;
+        if (commander == null || commander.killed) return;
+        if (defenderArmy == null || defenderArmy.commander == null || defenderArmy.commander.killed) return;
+
+        int burnChance = commander.GetArmySuccessfulAttackBurningChancePercent();
+        if (burnChance <= 0) return;
+        if (UnityEngine.Random.Range(0, 100) >= burnChance) return;
+
+        defenderArmy.commander.ApplyStatusEffect(StatusEffectEnum.Burning, 1);
+        MessageDisplayNoUI.ShowMessage(defenderArmy.commander.hex, commander, $"{commander.characterName}'s attack sets {defenderArmy.commander.characterName}'s army ablaze.", Color.red);
     }
 
     private string BuildSiegeDescription(

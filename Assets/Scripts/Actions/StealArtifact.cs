@@ -49,6 +49,7 @@ public class StealArtifact : AgentAction
 
             c.artifacts.Add(stolen);
             c.ApplyOppositeAlignmentArtifactPenalty(stolen);
+            Character.RefreshArtifactPcVisibilityForHex(c.hex);
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"Stole {stolen.artifactName}!", Color.red);
             return true;
         };

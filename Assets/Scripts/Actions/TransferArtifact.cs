@@ -58,12 +58,6 @@ public class TransferArtifact : CharacterAction
                         if (art.bonusAttack > 0 && target.IsArmyCommander()) score += art.bonusAttack * 3;
                         if (art.bonusDefense > 0 && target.IsArmyCommander()) score += art.bonusDefense * 2;
 
-                        // Provide spells to someone who can cast or needs it
-                        if (!string.IsNullOrEmpty(art.providesSpell))
-                        {
-                            score += 6f - target.GetMage();
-                        }
-
                         // Small penalty if target already excels at the boosted area
                         if (art.commanderBonus > 0 && target.GetCommander() > 3) score -= 2f;
                         if (art.agentBonus > 0 && target.GetAgent() > 3) score -= 2f;
@@ -97,6 +91,7 @@ public class TransferArtifact : CharacterAction
             c.artifacts.Remove(artifact);
             character.artifacts.Add(artifact);
             character.ApplyOppositeAlignmentArtifactPenalty(artifact);
+            Character.RefreshArtifactPcVisibilityForHex(c.hex);
 
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"{c.characterName}'s {artifact.artifactName} transferred to {character.characterName}", Color.green);
 

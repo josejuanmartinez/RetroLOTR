@@ -1225,6 +1225,8 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
             destination.armies.Add(character.GetArmy());
         }
         character.hex = destination;
+        Character.RefreshArtifactPcVisibilityForHex(previous);
+        Character.RefreshArtifactPcVisibilityForHex(destination);
         destination.RedrawCharacters();
         destination.RedrawArmies();
 

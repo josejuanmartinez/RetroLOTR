@@ -22,7 +22,7 @@ public class SandStorm : EventAction
             List<Character> targets = board.GetHexes()
                 .Where(h => h != null && h.terrainType == TerrainEnum.desert && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.race != RacesEnum.Southron)
+                .Where(ch => ch != null && !ch.killed && ch.race != RacesEnum.Southron && !ch.IsImmuneToNegativeEnvironmentalCards())
                 .Distinct()
                 .ToList();
 
@@ -42,7 +42,7 @@ public class SandStorm : EventAction
             if (originalCondition != null && !originalCondition(c)) return false;
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
-            return board.GetHexes().Any(h => h != null && h.terrainType == TerrainEnum.desert && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race != RacesEnum.Southron));
+            return board.GetHexes().Any(h => h != null && h.terrainType == TerrainEnum.desert && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race != RacesEnum.Southron && !ch.IsImmuneToNegativeEnvironmentalCards()));
         };
 
         asyncEffect = async (c) =>

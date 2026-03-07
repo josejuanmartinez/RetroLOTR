@@ -380,6 +380,8 @@ public class NationSpawner : MonoBehaviour
         {
             targetHex.armies.Add(actor.GetArmy());
         }
+        Character.RefreshArtifactPcVisibilityForHex(oldHex);
+        Character.RefreshArtifactPcVisibilityForHex(targetHex);
         targetHex.RedrawCharacters();
         targetHex.RedrawArmies();
     }

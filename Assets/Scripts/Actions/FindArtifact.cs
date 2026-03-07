@@ -79,6 +79,7 @@ public class FindArtifact: MageAction
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
                 c.hex.UpdateArtifactVisibility();
+                Character.RefreshArtifactPcVisibilityForHex(c.hex);
                 await ApplyAlignmentPenaltyIfNeeded();
                 MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} found", Color.green);
                 Sounds.Instance?.PlayArtifactFound();
@@ -91,6 +92,7 @@ public class FindArtifact: MageAction
                 c.artifacts.Add(artifact);
                 c.hex.hiddenArtifacts.Remove(artifact);
                 c.hex.UpdateArtifactVisibility();
+                Character.RefreshArtifactPcVisibilityForHex(c.hex);
                 await ApplyAlignmentPenaltyIfNeeded();
                 MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} claimed", Color.green);
                 Sounds.Instance?.PlayArtifactFound();

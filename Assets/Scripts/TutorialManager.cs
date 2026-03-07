@@ -456,6 +456,7 @@ public class TutorialManager : MonoBehaviour
                 Artifact artifact = GetArtifactByName(artifactName);
                 if (artifact == null) continue;
                 actor.artifacts.Add(CloneArtifact(artifact));
+                Character.RefreshArtifactPcVisibilityForHex(actor.hex);
                 MessageDisplayNoUI.ShowMessage(actor.hex, actor, $"{actor.characterName} received {artifact.artifactName}", Color.green);
             }
         }
@@ -559,6 +560,8 @@ public class TutorialManager : MonoBehaviour
         character.hasActionedThisTurn = true;
         character.hex = destination;
         destination.characters.Add(character);
+        Character.RefreshArtifactPcVisibilityForHex(oldHex);
+        Character.RefreshArtifactPcVisibilityForHex(destination);
         destination.RedrawCharacters();
         destination.RedrawArmies();
         MessageDisplayNoUI.ShowMessage(destination, character, $"{character.characterName} joins your service.", Color.green);
@@ -833,6 +836,7 @@ public class TutorialManager : MonoBehaviour
                 actor.artifacts.Add(artifact);
                 actor.hex.hiddenArtifacts.RemoveAt(0);
                 actor.hex.UpdateArtifactVisibility();
+                Character.RefreshArtifactPcVisibilityForHex(actor.hex);
             }
         }
 
@@ -885,6 +889,8 @@ public class TutorialManager : MonoBehaviour
         {
             targetHex.armies.Add(actor.GetArmy());
         }
+        Character.RefreshArtifactPcVisibilityForHex(oldHex);
+        Character.RefreshArtifactPcVisibilityForHex(targetHex);
 
         targetHex.RedrawCharacters();
         targetHex.RedrawArmies();
@@ -933,14 +939,14 @@ public class TutorialManager : MonoBehaviour
             artifactDescription = source.artifactDescription,
             hidden = source.hidden,
             alignment = source.alignment,
-            providesSpell = source.providesSpell,
             commanderBonus = source.commanderBonus,
             agentBonus = source.agentBonus,
             emmissaryBonus = source.emmissaryBonus,
             mageBonus = source.mageBonus,
             bonusAttack = source.bonusAttack,
             bonusDefense = source.bonusDefense,
-            oneShot = source.oneShot,
+            passiveEffectId = source.passiveEffectId,
+            passiveEffectValue = source.passiveEffectValue,
             transferable = source.transferable,
             spriteString = source.spriteString
         };
@@ -983,6 +989,7 @@ public class TutorialManager : MonoBehaviour
                 if (actor.artifacts.Any(a => a != null && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase))) continue;
                 if (actor.artifacts.Count >= Character.MAX_ARTIFACTS) break;
                 actor.artifacts.Add(CloneArtifact(artifact));
+                Character.RefreshArtifactPcVisibilityForHex(actor.hex);
             }
         }
 
@@ -1009,6 +1016,7 @@ public class TutorialManager : MonoBehaviour
             if (alreadyOwned) continue;
             if (playableLeader.artifacts.Count >= Character.MAX_ARTIFACTS) break;
             playableLeader.artifacts.Add(CloneArtifact(artifact));
+            Character.RefreshArtifactPcVisibilityForHex(playableLeader.hex);
         }
 
         RemoveArtifactsFromMap(grantedNames);

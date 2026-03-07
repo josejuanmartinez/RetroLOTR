@@ -182,21 +182,6 @@ public class CharacterAction : SearcherByName
         }
     }
 
-    public bool IsProvidedByArtifact()
-    {
-        if (character == null || character.artifacts == null) return false;
-        string baseName = NormalizeSpellName(ActionNameUtils.StripShortcut(actionName));
-        if (string.IsNullOrWhiteSpace(baseName)) return false;
-        return character.artifacts.Exists(x => x != null && NormalizeSpellName(x.providesSpell) == baseName);
-    }
-
-    protected static string NormalizeSpellName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name)) return string.Empty;
-        string stripped = ActionNameUtils.StripShortcut(name);
-        return new string(stripped.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
-    }
-
     public bool ResourcesAvailable()
     {
         return true;
@@ -244,6 +229,10 @@ public class CharacterAction : SearcherByName
 
             bool failed = false;
             int effectiveDifficulty = difficulty;
+            if (character != null)
+            {
+                effectiveDifficulty = Mathf.Max(0, effectiveDifficulty - character.GetArtifactActionDifficultyReduction(GetType().Name));
+            }
             if (isAI && ShouldApplyUnscoutedPenalty(character))
             {
                 effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + 25);

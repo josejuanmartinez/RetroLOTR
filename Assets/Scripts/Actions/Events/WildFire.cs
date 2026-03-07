@@ -21,7 +21,7 @@ public class WildFire : EventAction
             List<Character> targets = character.hex.GetHexesInRadius(Radius)
                 .Where(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment())
+                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment() && !ch.IsImmuneToNegativeEnvironmentalCards())
                 .Distinct()
                 .ToList();
 
@@ -45,7 +45,7 @@ public class WildFire : EventAction
                 .Any(h => h != null
                     && h.terrainType == TerrainEnum.forest
                     && h.characters != null
-                    && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment()));
+                    && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment() && !ch.IsImmuneToNegativeEnvironmentalCards()));
         };
 
         asyncEffect = async (character) =>
