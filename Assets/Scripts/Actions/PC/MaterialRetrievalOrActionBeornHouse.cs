@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 public class MaterialRetrievalOrActionBeornHouse : MaterialRetrievalOrAction
 {
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -9,7 +9,7 @@ public class MaterialRetrievalOrActionBeornHouse : MaterialRetrievalOrAction
         effect = (c) =>
         {
             if (originalEffect != null && !originalEffect(c)) return false;
-            return GrantResources(c, ProducesEnum.steel, 1, ProducesEnum.mithril, 1, "BeornHouse");
+            return GrantResources(c, ProducesEnum.timber, 1, ProducesEnum.leather, 1, "BeornHouse");
         };
         condition = (c) =>
         {
@@ -24,3 +24,4 @@ public class MaterialRetrievalOrActionBeornHouse : MaterialRetrievalOrAction
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
+

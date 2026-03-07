@@ -43,7 +43,7 @@
                   {
                       "cardId":  25,
                       "name":  "Kas Shadoul",
-                      "description":  "FarHarad.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "FarHarad.<sprite name=\"gold\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionKasShadoul",
                       "tags":  [
@@ -55,7 +55,7 @@
                   {
                       "cardId":  26,
                       "name":  "Havens of Umbar",
-                      "description":  "Umbar.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "Umbar.<sprite name=\"gold\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionHavensOfUmbar",
                       "tags":  [
@@ -67,7 +67,7 @@
                   {
                       "cardId":  33,
                       "name":  "Rhosgobel",
-                      "description":  "SouthernMirkwood.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
+                      "description":  "SouthernMirkwood.<sprite name=\"timber\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionRhosgobel",
                       "tags":  [
@@ -91,7 +91,7 @@
                   {
                       "cardId":  37,
                       "name":  "Paths of the Dead",
-                      "description":  "SouthernGondor.<sprite name=\"leather\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "SouthernGondor.<sprite name=\"iron\"/><sprite name=\"iron\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionPathsOfTheDead",
                       "tags":  [
@@ -103,7 +103,7 @@
                   {
                       "cardId":  38,
                       "name":  "Elgaer",
-                      "description":  "Rhun.<sprite name=\"timber\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "Rhun.<sprite name=\"gold\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionElgaer",
                       "tags":  [
@@ -127,7 +127,7 @@
                   {
                       "cardId":  41,
                       "name":  "Sarn Lothduin",
-                      "description":  "Anduin.<sprite name=\"mounts\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "Anduin.<sprite name=\"gold\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionSarnLothduin",
                       "tags":  [
@@ -139,7 +139,7 @@
                   {
                       "cardId":  42,
                       "name":  "Shrel-Kain",
-                      "description":  "Dorwinion.<sprite name=\"leather\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "Dorwinion.<sprite name=\"gold\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionShrelKain",
                       "tags":  [
@@ -151,7 +151,7 @@
                   {
                       "cardId":  45,
                       "name":  "Riavod",
-                      "description":  "Dorwinion.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
+                      "description":  "Dorwinion.<sprite name=\"gold\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionRiavod",
                       "tags":  [
@@ -2210,7 +2210,7 @@
                   {
                       "cardId":  302,
                       "name":  "Ashkiri",
-                      "description":  "Dagorlad.<sprite name=\"timber\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "Dagorlad.<sprite name=\"leather\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionAshkiri",
                       "spriteName":  "Ashkiri",
@@ -2222,7 +2222,7 @@
                   {
                       "cardId":  303,
                       "name":  "BaradHarn",
-                      "description":  "NearHarad.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
+                      "description":  "NearHarad.<sprite name=\"gold\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionBaradHarn",
                       "spriteName":  "BaradHarn",
@@ -2234,7 +2234,7 @@
                   {
                       "cardId":  311,
                       "name":  "CamethBrin",
-                      "description":  "Rhudaur.<sprite name=\"leather\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "Rhudaur.<sprite name=\"timber\"/><sprite name=\"iron\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCamethBrin",
                       "spriteName":  "CamethBrin",
@@ -2246,7 +2246,7 @@
                   {
                       "cardId":  313,
                       "name":  "Caradhras",
-                      "description":  "MistyMountains.<sprite name=\"iron\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
+                      "description":  "MistyMountains.<sprite name=\"steel\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCaradhras",
                       "spriteName":  "Caradhras",
@@ -2258,7 +2258,7 @@
                   {
                       "cardId":  316,
                       "name":  "CarasMirilond",
-                      "description":  "FarHarad.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "FarHarad.<sprite name=\"mounts\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCarasMirilond",
                       "spriteName":  "CarasMirilond",
@@ -2270,7 +2270,7 @@
                   {
                       "cardId":  317,
                       "name":  "CarasTolfalas",
-                      "description":  "NearHarad.<sprite name=\"timber\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "NearHarad.<sprite name=\"gold\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCarasTolfalas",
                       "spriteName":  "CarasTolfalas",
@@ -2282,7 +2282,7 @@
                   {
                       "cardId":  319,
                       "name":  "Carvarad",
-                      "description":  "Rhun.<sprite name=\"timber\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "Rhun.<sprite name=\"mounts\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCarvarad",
                       "spriteName":  "Carvarad",
@@ -2306,7 +2306,7 @@
                   {
                       "cardId":  334,
                       "name":  "ErynVorn",
-                      "description":  "Cardolan.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "Cardolan.<sprite name=\"timber\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionErynVorn",
                       "spriteName":  "ErynVorn",
@@ -2318,7 +2318,7 @@
                   {
                       "cardId":  335,
                       "name":  "FangornSCamp",
-                      "description":  "GapOfRohan.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "GapOfRohan.<sprite name=\"timber\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionFangornSCamp",
                       "spriteName":  "FangornSCamp",
@@ -2342,7 +2342,7 @@
                   {
                       "cardId":  345,
                       "name":  "GladdenFields",
-                      "description":  "Anduin.<sprite name=\"iron\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
+                      "description":  "Anduin.<sprite name=\"leather\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionGladdenFields",
                       "spriteName":  "GladdenFields",
@@ -2354,7 +2354,7 @@
                   {
                       "cardId":  351,
                       "name":  "Ilanin",
-                      "description":  "Rhun.<sprite name=\"steel\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Rhun.<sprite name=\"gold\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionIlanin",
                       "spriteName":  "Ilanin",
@@ -2366,7 +2366,7 @@
                   {
                       "cardId":  353,
                       "name":  "Isigir",
-                      "description":  "Umbar.<sprite name=\"leather\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "Umbar.<sprite name=\"gold\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionIsigir",
                       "spriteName":  "Isigir",
@@ -2378,7 +2378,7 @@
                   {
                       "cardId":  355,
                       "name":  "KasShafra",
-                      "description":  "FarHarad.<sprite name=\"timber\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "FarHarad.<sprite name=\"mounts\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionKasShafra",
                       "spriteName":  "KasShafra",
@@ -2390,7 +2390,7 @@
                   {
                       "cardId":  357,
                       "name":  "LagariOrath",
-                      "description":  "Khand.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "Khand.<sprite name=\"gold\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionLagariOrath",
                       "spriteName":  "LagariOrath",
@@ -2402,7 +2402,7 @@
                   {
                       "cardId":  360,
                       "name":  "LarHuz",
-                      "description":  "IronHills.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "IronHills.<sprite name=\"gold\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionLarHuz",
                       "spriteName":  "LarHuz",
@@ -2414,7 +2414,7 @@
                   {
                       "cardId":  365,
                       "name":  "Methir",
-                      "description":  "NearHarad.<sprite name=\"iron\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
+                      "description":  "NearHarad.<sprite name=\"timber\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionMethir",
                       "spriteName":  "Methir",
@@ -2426,7 +2426,7 @@
                   {
                       "cardId":  371,
                       "name":  "Neburcha",
-                      "description":  "Khand.<sprite name=\"mounts\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "Khand.<sprite name=\"gold\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionNeburcha",
                       "spriteName":  "Neburcha",
@@ -2438,7 +2438,7 @@
                   {
                       "cardId":  379,
                       "name":  "Ovatharac",
-                      "description":  "Khand.<sprite name=\"steel\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Khand.<sprite name=\"mounts\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionOvatharac",
                       "spriteName":  "Ovatharac",
@@ -2450,7 +2450,7 @@
                   {
                       "cardId":  381,
                       "name":  "Pellardur",
-                      "description":  "Umbar.<sprite name=\"steel\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Umbar.<sprite name=\"timber\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionPellardur",
                       "spriteName":  "Pellardur",
@@ -2462,7 +2462,7 @@
                   {
                       "cardId":  382,
                       "name":  "RaiderHold",
-                      "description":  "SeaOfRhun.<sprite name=\"leather\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "SeaOfRhun.<sprite name=\"leather\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionRaiderHold",
                       "spriteName":  "RaiderHold",
@@ -2474,7 +2474,7 @@
                   {
                       "cardId":  390,
                       "name":  "Treforn",
-                      "description":  "Dunland.<sprite name=\"leather\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "Dunland.<sprite name=\"timber\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionTreforn",
                       "spriteName":  "Treforn",
@@ -2768,6 +2768,10 @@
                   }
               ]
 }
+
+
+
+
 
 
 

@@ -5,5 +5,6 @@ public enum ProducesEnum
     timber,
     iron,
     steel,
-    mithril
+    mithril,
+    gold
 }

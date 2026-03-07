@@ -487,6 +487,7 @@ public class StoresManager : MonoBehaviour
             ProducesEnum.iron => ironAmount,
             ProducesEnum.steel => steelAmount,
             ProducesEnum.mithril => mithrilAmount,
+            ProducesEnum.gold => goldAmount,
             _ => null
         };
     }
@@ -501,6 +502,7 @@ public class StoresManager : MonoBehaviour
             ProducesEnum.iron => ironImage,
             ProducesEnum.steel => steelImage,
             ProducesEnum.mithril => mithrilImage,
+            ProducesEnum.gold => goldImage,
             _ => null
         };
     }

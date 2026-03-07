@@ -19,7 +19,7 @@
                   {
                       "cardId":  4,
                       "name":  "Caras Galadhon",
-                      "description":  "Lothlorien.<sprite name=\"timber\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Lothlorien.<sprite name=\"timber\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCarasGaladhon",
                       "tags":  [
@@ -31,7 +31,7 @@
                   {
                       "cardId":  5,
                       "name":  "Imladris",
-                      "description":  "Rivendell.<sprite name=\"timber\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Rivendell.<sprite name=\"timber\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionImladris",
                       "tags":  [
@@ -151,7 +151,7 @@
                   {
                       "cardId":  31,
                       "name":  "Azanulimbar-Dum",
-                      "description":  "IronHills.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
+                      "description":  "IronHills.<sprite name=\"iron\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionAzanulimbarDum",
                       "tags":  [
@@ -209,7 +209,7 @@
                   {
                       "cardId":  47,
                       "name":  "Buckland",
-                      "description":  "TheShire.<sprite name=\"steel\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "TheShire.<sprite name=\"timber\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionBuckland",
                       "tags":  [
@@ -2218,7 +2218,7 @@
                   {
                       "cardId":  295,
                       "name":  "AmonLind",
-                      "description":  "Eregion.<sprite name=\"timber\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Eregion.<sprite name=\"timber\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionAmonLind",
                       "spriteName":  "AmonLind",
@@ -2266,7 +2266,7 @@
                   {
                       "cardId":  306,
                       "name":  "Belegost",
-                      "description":  "EredLuin.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
+                      "description":  "EredLuin.<sprite name=\"mithril\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionBelegost",
                       "spriteName":  "Belegost",
@@ -2278,7 +2278,7 @@
                   {
                       "cardId":  307,
                       "name":  "BeornHouse",
-                      "description":  "Anduin.<sprite name=\"steel\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Anduin.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionBeornHouse",
                       "spriteName":  "BeornHouse",
@@ -2302,7 +2302,7 @@
                   {
                       "cardId":  310,
                       "name":  "CairAndros",
-                      "description":  "Nindalf.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
+                      "description":  "Nindalf.<sprite name=\"gold\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCairAndros",
                       "spriteName":  "CairAndros",
@@ -2314,7 +2314,7 @@
                   {
                       "cardId":  314,
                       "name":  "CarasAmarth",
-                      "description":  "NorthernMirkwood.<sprite name=\"timber\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "NorthernMirkwood.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCarasAmarth",
                       "spriteName":  "CarasAmarth",
@@ -2326,7 +2326,7 @@
                   {
                       "cardId":  315,
                       "name":  "CarasCelairnen",
-                      "description":  "Arthedain.<sprite name=\"timber\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Arthedain.<sprite name=\"timber\"/><sprite name=\"iron\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCarasCelairnen",
                       "spriteName":  "CarasCelairnen",
@@ -2338,7 +2338,7 @@
                   {
                       "cardId":  320,
                       "name":  "CeberFanuin",
-                      "description":  "SouthernMirkwood.<sprite name=\"steel\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "SouthernMirkwood.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCeberFanuin",
                       "spriteName":  "CeberFanuin",
@@ -2350,7 +2350,7 @@
                   {
                       "cardId":  321,
                       "name":  "Celebannon",
-                      "description":  "NorthernMirkwood.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
+                      "description":  "NorthernMirkwood.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCelebannon",
                       "spriteName":  "Celebannon",
@@ -2362,7 +2362,7 @@
                   {
                       "cardId":  322,
                       "name":  "CerinAmroth",
-                      "description":  "Lothlorien.<sprite name=\"timber\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Lothlorien.<sprite name=\"timber\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCerinAmroth",
                       "spriteName":  "CerinAmroth",
@@ -2374,7 +2374,7 @@
                   {
                       "cardId":  324,
                       "name":  "Crickhollow",
-                      "description":  "TheShire.<sprite name=\"steel\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "TheShire.<sprite name=\"leather\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionCrickhollow",
                       "spriteName":  "Crickhollow",
@@ -2398,7 +2398,7 @@
                   {
                       "cardId":  327,
                       "name":  "DolAmroth",
-                      "description":  "SouthernGondor.<sprite name=\"timber\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "SouthernGondor.<sprite name=\"gold\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionDolAmroth",
                       "spriteName":  "DolAmroth",
@@ -2434,7 +2434,7 @@
                   {
                       "cardId":  330,
                       "name":  "Edhellond",
-                      "description":  "Anfalas.<sprite name=\"timber\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "Anfalas.<sprite name=\"timber\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionEdhellond",
                       "spriteName":  "Edhellond",
@@ -2446,7 +2446,7 @@
                   {
                       "cardId":  331,
                       "name":  "Elostirion",
-                      "description":  "Lindon.<sprite name=\"timber\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
+                      "description":  "Lindon.<sprite name=\"timber\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionElostirion",
                       "spriteName":  "Elostirion",
@@ -2506,7 +2506,7 @@
                   {
                       "cardId":  342,
                       "name":  "Framsburg",
-                      "description":  "Anduin.<sprite name=\"mounts\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "Anduin.<sprite name=\"iron\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionFramsburg",
                       "spriteName":  "Framsburg",
@@ -2518,7 +2518,7 @@
                   {
                       "cardId":  344,
                       "name":  "GladdenFields",
-                      "description":  "Anduin.<sprite name=\"iron\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
+                      "description":  "Anduin.<sprite name=\"leather\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionGladdenFields",
                       "spriteName":  "GladdenFields",
@@ -2542,7 +2542,7 @@
                   {
                       "cardId":  350,
                       "name":  "HelmDeep",
-                      "description":  "GapOfRohan.<sprite name=\"leather\"/><sprite name=\"leather\"/>\nOR\n<TBD>",
+                      "description":  "GapOfRohan.<sprite name=\"leather\"/><sprite name=\"iron\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionHelmDeep",
                       "spriteName":  "HelmDeep",
@@ -2638,7 +2638,7 @@
                   {
                       "cardId":  377,
                       "name":  "Osgiliath",
-                      "description":  "Ithilien.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
+                      "description":  "Ithilien.<sprite name=\"iron\"/><sprite name=\"gold\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionOsgiliath",
                       "spriteName":  "Osgiliath",
@@ -2698,7 +2698,7 @@
                   {
                       "cardId":  388,
                       "name":  "ThorinHall",
-                      "description":  "EredLuin.<sprite name=\"mounts\"/><sprite name=\"mounts\"/>\nOR\n<TBD>",
+                      "description":  "EredLuin.<sprite name=\"steel\"/><sprite name=\"mithril\"/>\nOR\n<TBD>",
                       "type":  "PC",
                       "action":  "MaterialRetrievalOrActionThorinHall",
                       "spriteName":  "ThorinHall",
@@ -3207,6 +3207,14 @@
                   }
               ]
 }
+
+
+
+
+
+
+
+
 
 
 

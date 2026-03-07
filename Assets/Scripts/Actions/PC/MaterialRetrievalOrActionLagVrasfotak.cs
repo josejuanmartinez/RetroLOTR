@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 public class MaterialRetrievalOrActionLagVrasfotak : MaterialRetrievalOrAction
 {
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -9,7 +9,7 @@ public class MaterialRetrievalOrActionLagVrasfotak : MaterialRetrievalOrAction
         effect = (c) =>
         {
             if (originalEffect != null && !originalEffect(c)) return false;
-            return GrantResources(c, ProducesEnum.mounts, 1, ProducesEnum.mounts, 1, "LagVrasfotak");
+            return GrantResources(c, ProducesEnum.iron, 1, ProducesEnum.iron, 1, "LagVrasfotak");
         };
         condition = (c) =>
         {

@@ -38,6 +38,9 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
             case ProducesEnum.mithril:
                 owner.AddMithril(amount);
                 break;
+            case ProducesEnum.gold:
+                owner.AddGold(amount);
+                break;
         }
     }
 }

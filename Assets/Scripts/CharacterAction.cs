@@ -1263,6 +1263,7 @@ public class CharacterAction : SearcherByName
                             ProducesEnum.iron => owner.ironAmount,
                             ProducesEnum.steel => owner.steelAmount,
                             ProducesEnum.mithril => owner.mithrilAmount,
+                            ProducesEnum.gold => owner.goldAmount,
                             _ => 0
                         };
                         if (available < cost.amount)
@@ -1383,6 +1384,9 @@ public class CharacterAction : SearcherByName
                         break;
                     case ProducesEnum.mithril:
                         owner.RemoveMithril(cost.amount);
+                        break;
+                    case ProducesEnum.gold:
+                        owner.RemoveGold(cost.amount);
                         break;
                 }
             }
