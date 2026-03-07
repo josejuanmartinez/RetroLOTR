@@ -15,7 +15,7 @@ public class Heal: FreeNeutralSpell
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
             return c.hex != null && c.hex.characters.Any(x =>
-                x.health < 100 &&
+                (x.health < 100 || x.HasStatusEffect(StatusEffectEnum.Poisoned)) &&
                 (x.GetOwner() == c.GetOwner() || (x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral)));
         };
         async System.Threading.Tasks.Task<bool> healAsync(Character c)
@@ -24,7 +24,7 @@ public class Heal: FreeNeutralSpell
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
 
             List<Character> healTargets = c.hex.characters.Where(x =>
-                x.health < 100 &&
+                (x.health < 100 || x.HasStatusEffect(StatusEffectEnum.Poisoned)) &&
                 (x.GetOwner() == c.GetOwner() || (x.GetAlignment() == c.GetAlignment() && x.GetAlignment() != AlignmentEnum.neutral))
             ).ToList();
             if (healTargets.Count < 1) return false;

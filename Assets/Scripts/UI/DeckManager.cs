@@ -40,6 +40,8 @@ public class CardPlayabilityResult
     public bool failsLevelRequirements;
     public bool failsResourceRequirements;
     public bool failsActionConditions;
+    public bool failsCardHistoryRequirements;
+    public string cardHistoryReason;
 
     public void Reset()
     {
@@ -47,6 +49,8 @@ public class CardPlayabilityResult
         failsLevelRequirements = false;
         failsResourceRequirements = false;
         failsActionConditions = false;
+        failsCardHistoryRequirements = false;
+        cardHistoryReason = null;
     }
 }
 
@@ -64,6 +68,7 @@ public class CardData
     public string action;
     public int actionId;
     public string spriteName;
+    public string region;
 
     // Card-owned requirements (migrated from Actions.json)
     public int commanderSkillRequired;
@@ -136,12 +141,15 @@ public class CardData
             ? resourceCheck(selectedCharacter)
             : MeetsResourceRequirements(selectedCharacter.GetOwner());
         bool conditionsOk = conditionCheck == null || conditionCheck(selectedCharacter);
+        bool cardHistoryOk = MeetsCardHistoryRequirements(selectedCharacter.GetOwner(), out string cardHistoryReason);
 
         playability.failsLevelRequirements = !levelsOk;
         playability.failsResourceRequirements = !resourcesOk;
         playability.failsActionConditions = !conditionsOk;
+        playability.failsCardHistoryRequirements = !cardHistoryOk;
+        playability.cardHistoryReason = cardHistoryReason;
 
-        isPlayable = levelsOk && resourcesOk && conditionsOk;
+        isPlayable = levelsOk && resourcesOk && conditionsOk && cardHistoryOk;
         playability.isPlayable = isPlayable;
         return isPlayable;
     }
@@ -157,6 +165,19 @@ public class CardData
         if (mithrilRequired > 0 && owner.mithrilAmount < mithrilRequired) return false;
         if (goldRequired > 0 && owner.goldAmount < goldRequired) return false;
         return true;
+    }
+
+    public bool MeetsCardHistoryRequirements(Leader owner, out string reason)
+    {
+        reason = null;
+        if (owner is not PlayableLeader playableLeader) return true;
+
+        if (GetCardType() != CardTypeEnum.PC) return true;
+        if (string.IsNullOrWhiteSpace(region)) return true;
+        if (playableLeader.HasPlayedLandCardForRegion(region)) return true;
+
+        reason = $"Play the Land card for {region} first.";
+        return false;
     }
 }
 
@@ -522,6 +543,35 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
+    public void ApplyMapRevealForPlayedCard(PlayableLeader leader, CardData card)
+    {
+        if (leader == null || card == null) return;
+
+        Game game = FindFirstObjectByType<Game>();
+        if (game == null || game.player != leader || !game.IsPlayerCurrentlyPlaying()) return;
+
+        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
+        if (board == null || board.hexes == null || board.hexes.Count == 0) return;
+
+        List<Hex> revealedPcHexes = null;
+        string revealMessage = null;
+        switch (card.GetCardType())
+        {
+            case CardTypeEnum.Land:
+                revealedPcHexes = RevealRegionOnMapOnly(board, card.name);
+                revealMessage = $"Lands of {card.name}";
+                break;
+            case CardTypeEnum.PC:
+                revealedPcHexes = RevealPcOnMapOnly(board, card.name);
+                revealMessage = $"Lands of {card.region}";
+                break;
+        }
+
+        leader.RefreshVisibleHexesImmediate();
+        MinimapManager.RefreshMinimap();
+        QueueRevealMessages(revealedPcHexes, revealMessage);
+    }
+
     public bool TryReturnActionCardToHand(Leader leader, string actionClassName, int actionId)
     {
         if (leader is not PlayableLeader playableLeader) return false;
@@ -694,6 +744,8 @@ public class DeckManager : MonoBehaviour
             agentSkillRequired = card.agentSkillRequired,
             emissarySkillRequired = card.emissarySkillRequired,
             mageSkillRequired = card.mageSkillRequired,
+            spriteName = card.spriteName,
+            region = card.region,
             difficulty = card.difficulty,
             leatherRequired = card.leatherRequired,
             mountsRequired = card.mountsRequired,
@@ -762,6 +814,101 @@ public class DeckManager : MonoBehaviour
         if (!supportedType) return false;
 
         return !string.IsNullOrWhiteSpace(card.GetActionRef()) || card.actionId > 0;
+    }
+
+    private List<Hex> RevealRegionOnMapOnly(Board board, string region)
+    {
+        List<Hex> revealedHexes = new();
+        if (board == null || string.IsNullOrWhiteSpace(region)) return revealedHexes;
+
+        string normalizedRegion = NormalizeCardName(region);
+        foreach (Hex hex in board.hexes.Values)
+        {
+            PC pc = hex?.GetPCData();
+            if (pc == null) continue;
+
+            string pcRegion = ResolveRegionForPc(pc);
+            if (string.IsNullOrWhiteSpace(pcRegion)) continue;
+            if (!string.Equals(NormalizeCardName(pcRegion), normalizedRegion, StringComparison.Ordinal)) continue;
+
+            hex.RevealMapOnlyArea(1, false, false);
+            revealedHexes.Add(hex);
+        }
+
+        return revealedHexes;
+    }
+
+    private List<Hex> RevealPcOnMapOnly(Board board, string pcName)
+    {
+        List<Hex> revealedHexes = new();
+        if (board == null || string.IsNullOrWhiteSpace(pcName)) return revealedHexes;
+
+        string normalizedPcName = NormalizeCardName(pcName);
+        foreach (Hex hex in board.hexes.Values)
+        {
+            PC pc = hex?.GetPCData();
+            if (pc == null) continue;
+            if (!string.Equals(NormalizeCardName(pc.pcName), normalizedPcName, StringComparison.Ordinal)) continue;
+
+            hex.RevealMapOnlyArea(1, false, false);
+            revealedHexes.Add(hex);
+            return revealedHexes;
+        }
+
+        return revealedHexes;
+    }
+
+    private string ResolveRegionForPc(PC pc)
+    {
+        if (pc == null) return null;
+
+        LeaderBiomeConfig ownerBiome = pc.owner != null ? pc.owner.GetBiome() : null;
+        if (ownerBiome != null
+            && !string.IsNullOrWhiteSpace(ownerBiome.startingCityName)
+            && string.Equals(NormalizeCardName(ownerBiome.startingCityName), NormalizeCardName(pc.pcName), StringComparison.Ordinal)
+            && !string.IsNullOrWhiteSpace(ownerBiome.startingCityRegion))
+        {
+            return ownerBiome.startingCityRegion;
+        }
+
+        string normalizedPcName = NormalizeCardName(pc.pcName);
+        CardData pcCard = cards.FirstOrDefault(card =>
+            card != null
+            && card.GetCardType() == CardTypeEnum.PC
+            && !string.IsNullOrWhiteSpace(card.region)
+            && string.Equals(NormalizeCardName(card.name), normalizedPcName, StringComparison.Ordinal));
+
+        return pcCard?.region;
+    }
+
+    private static string NormalizeCardName(string cardName)
+    {
+        if (string.IsNullOrWhiteSpace(cardName)) return string.Empty;
+        return new string(cardName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+    }
+
+    private static void QueueRevealMessages(List<Hex> revealedPcHexes, string message)
+    {
+        if (revealedPcHexes == null || revealedPcHexes.Count == 0) return;
+
+        BoardNavigator navigator = BoardNavigator.Instance != null ? BoardNavigator.Instance : FindFirstObjectByType<BoardNavigator>();
+        foreach (Hex hex in revealedPcHexes.Distinct())
+        {
+            if (hex == null) continue;
+            string revealText = string.IsNullOrWhiteSpace(message) ? "Lands revealed" : message;
+
+            if (navigator != null)
+            {
+                navigator.EnqueueFocus(hex, 0.35f, 0.18f, true, () =>
+                {
+                    MessageDisplayNoUI.ShowAnchoredMessage(hex, revealText, Color.yellow);
+                });
+            }
+            else
+            {
+                MessageDisplayNoUI.ShowAnchoredMessage(hex, revealText, Color.yellow);
+            }
+        }
     }
 
     private static void ApplyCardCosts(Leader owner, CardData card)

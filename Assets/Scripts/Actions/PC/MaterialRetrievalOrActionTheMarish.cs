@@ -9,7 +9,7 @@ public class MaterialRetrievalOrActionTheMarish : MaterialRetrievalOrAction
         effect = (c) =>
         {
             if (originalEffect != null && !originalEffect(c)) return false;
-            return GrantResources(c, ProducesEnum.mounts, 1, ProducesEnum.leather, 1, "TheMarish");
+            return GrantResources(c, ProducesEnum.mounts, 1, ProducesEnum.leather, 1, "Stock");
         };
         condition = (c) =>
         {

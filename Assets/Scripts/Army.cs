@@ -316,7 +316,64 @@ public class Army
         {
             value = Mathf.RoundToInt(value * 1.10f);
         }
+        if (commander != null && commander.HasStatusEffect(StatusEffectEnum.Frozen))
+        {
+            float frozenMultiplier = commander.hex != null && commander.hex.terrainType == TerrainEnum.mountains ? 0.75f : 0.90f;
+            value = Mathf.RoundToInt(value * frozenMultiplier);
+        }
         return Mathf.Max(0, value);
+    }
+
+    public TroopsTypeEnum? RemoveRandomTroop()
+    {
+        List<TroopsTypeEnum> available = new();
+        if (ma > 0) available.Add(TroopsTypeEnum.ma);
+        if (ar > 0) available.Add(TroopsTypeEnum.ar);
+        if (li > 0) available.Add(TroopsTypeEnum.li);
+        if (hi > 0) available.Add(TroopsTypeEnum.hi);
+        if (lc > 0) available.Add(TroopsTypeEnum.lc);
+        if (hc > 0) available.Add(TroopsTypeEnum.hc);
+        if (ca > 0) available.Add(TroopsTypeEnum.ca);
+
+        if (available.Count == 0) return null;
+
+        TroopsTypeEnum troop = available[UnityEngine.Random.Range(0, available.Count)];
+        switch (troop)
+        {
+            case TroopsTypeEnum.ma:
+                ma = Math.Max(0, ma - 1);
+                break;
+            case TroopsTypeEnum.ar:
+                ar = Math.Max(0, ar - 1);
+                break;
+            case TroopsTypeEnum.li:
+                li = Math.Max(0, li - 1);
+                break;
+            case TroopsTypeEnum.hi:
+                hi = Math.Max(0, hi - 1);
+                break;
+            case TroopsTypeEnum.lc:
+                lc = Math.Max(0, lc - 1);
+                break;
+            case TroopsTypeEnum.hc:
+                hc = Math.Max(0, hc - 1);
+                break;
+            case TroopsTypeEnum.ca:
+                ca = Math.Max(0, ca - 1);
+                break;
+        }
+
+        if (GetSize(true) < 1)
+        {
+            Killed(commander != null ? commander.GetOwner() : null);
+        }
+        else
+        {
+            commander?.hex?.RedrawArmies();
+            commander?.RefreshSelectedCharacterIconIfSelected();
+        }
+
+        return troop;
     }
 
     public int GetArtifactAttackBonusTotal()

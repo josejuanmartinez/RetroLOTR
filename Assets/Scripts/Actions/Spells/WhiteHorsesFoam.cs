@@ -27,7 +27,14 @@ public class WhiteHorsesFoam : FreeSpell
                 .Distinct()
                 .ToList();
 
-            if (nazguls.Count == 0) return false;
+            List<Character> burningUnits = c.hex.GetHexesInRadius(radius)
+                .Where(h => h != null && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Where(ch => ch != null && !ch.killed && ch.HasStatusEffect(StatusEffectEnum.Burning))
+                .Distinct()
+                .ToList();
+
+            if (nazguls.Count == 0 && burningUnits.Count == 0) return false;
 
             int movedCount = 0;
             for (int i = 0; i < nazguls.Count; i++)
@@ -43,9 +50,16 @@ public class WhiteHorsesFoam : FreeSpell
                 movedCount++;
             }
 
-            if (movedCount == 0) return false;
+            int burningCleared = 0;
+            for (int i = 0; i < burningUnits.Count; i++)
+            {
+                burningUnits[i].ClearStatusEffect(StatusEffectEnum.Burning);
+                burningCleared++;
+            }
 
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"White Horses' Foam drives {movedCount} Nazgul back to their capitals.", Color.cyan);
+            if (movedCount == 0 && burningCleared == 0) return false;
+
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"White Horses' Foam drives {movedCount} Nazgul back to their capitals and removes Burning from {burningCleared} unit(s).", Color.cyan);
             return true;
         };
 
@@ -65,13 +79,20 @@ public class WhiteHorsesFoam : FreeSpell
                 .Distinct()
                 .ToList();
 
-            return nazguls.Any(n =>
+            bool canMoveNazgul = nazguls.Any(n =>
             {
                 Leader owner = n.GetOwner();
                 if (owner == null) return false;
                 Hex capitalHex = board.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == owner && x.GetPC().isCapital);
                 return capitalHex != null && capitalHex != n.hex;
             });
+
+            if (canMoveNazgul) return true;
+
+            return c.hex.GetHexesInRadius(radius)
+                .Where(h => h != null && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Any(ch => ch != null && !ch.killed && ch.HasStatusEffect(StatusEffectEnum.Burning));
         };
 
         asyncEffect = async (c) =>

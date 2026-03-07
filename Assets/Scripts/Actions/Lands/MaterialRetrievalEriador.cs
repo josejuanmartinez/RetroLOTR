@@ -18,7 +18,7 @@ public class MaterialRetrievalEriador : MaterialRetrieval
             c.GetOwner().AddTimber(1);
             c.GetOwner().AddIron(1);
             c.GetOwner().AddGold(1);
-            MessageDisplayNoUI.ShowMessage(c.hex, c, "Eriador: +1 leather, 1 mounts, 1 timber, 1 iron, 1 gold", Color.yellow);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, "Arthedain: +1 leather, 1 mounts, 1 timber, 1 iron, 1 gold", Color.yellow);
             return true;
         };
 

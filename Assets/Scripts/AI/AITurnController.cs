@@ -59,8 +59,14 @@ public static class AITurnController
         foreach (CardData card in resourceCards)
         {
             if (card == null) continue;
+            if (!card.EvaluatePlayability(actor)) continue;
             if (!deckManager.TryConsumeCard(leader, card.cardId, drawReplacement: false, out CardData consumedCard)) continue;
-            await ExecuteCardEffectForAiAsync(consumedCard, actor, actionsManager);
+            bool succeeded = await ExecuteCardEffectForAiAsync(consumedCard, actor, actionsManager);
+            if (succeeded)
+            {
+                deckManager.ApplyMapRevealForPlayedCard(leader, consumedCard);
+                leader.RecordPlayedCard(consumedCard);
+            }
         }
     }
 

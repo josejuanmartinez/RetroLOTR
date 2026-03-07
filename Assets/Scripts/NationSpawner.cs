@@ -20,6 +20,7 @@ public class NationSpawner : MonoBehaviour
     private int currentPcCount;
     private bool isInitialized = false;
     private readonly Dictionary<string, Vector2Int> leaderPositions = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, List<Vector2Int>> startingCityPositionsByRegion = new(StringComparer.OrdinalIgnoreCase);
     private Dictionary<string, string> tutorialAnchorByNpl = new(StringComparer.OrdinalIgnoreCase);
 
     public void Initialize(Board board)
@@ -140,6 +141,8 @@ public class NationSpawner : MonoBehaviour
         }
 
         RecountExistingEntities();
+        leaderPositions.Clear();
+        startingCityPositionsByRegion.Clear();
 
         InstantiateLeadersAndCharacters(playableLeaders.playableLeaders.biomes, placedPositions);
         InstantiateLeadersAndCharacters(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
@@ -221,6 +224,7 @@ public class NationSpawner : MonoBehaviour
             throw new Exception($"No suitable hexes found for leader with terrain {leaderBiomeConfig.terrain} (including fallbacks).");
         }
 
+        preferredPosition ??= GetPreferredPositionForStartingCityRegion(leaderBiomeConfig);
         Vector2Int bestPosition = preferredPosition.HasValue
             ? FindClosestPosition(suitableHexes, preferredPosition.Value)
             : FindFarthestPosition(suitableHexes, placedPositions);
@@ -287,6 +291,7 @@ public class NationSpawner : MonoBehaviour
             }
 
             currentPcCount++;
+            RegisterStartingCityPosition(leaderBiomeConfig, bestPosition);
         }
         return bestPosition;
     }
@@ -412,6 +417,7 @@ public class NationSpawner : MonoBehaviour
             throw new Exception($"No suitable hexes found for ownerless PC with terrain {leaderBiomeConfig.terrain} (including fallbacks).");
         }
 
+        preferredPosition ??= GetPreferredPositionForStartingCityRegion(leaderBiomeConfig);
         Vector2Int bestPosition = preferredPosition.HasValue
             ? FindClosestPosition(suitableHexes, preferredPosition.Value)
             : FindFarthestPosition(suitableHexes, placedPositions);
@@ -431,6 +437,7 @@ public class NationSpawner : MonoBehaviour
         }
 
         currentPcCount++;
+        RegisterStartingCityPosition(leaderBiomeConfig, bestPosition);
 
         if (leaderBiomeConfig.startingCharacters != null && leaderBiomeConfig.startingCharacters.Count > 0)
         {
@@ -438,6 +445,40 @@ public class NationSpawner : MonoBehaviour
         }
 
         return bestPosition;
+    }
+
+    private Vector2Int? GetPreferredPositionForStartingCityRegion(LeaderBiomeConfig leaderBiomeConfig)
+    {
+        if (leaderBiomeConfig == null || string.IsNullOrWhiteSpace(leaderBiomeConfig.startingCityRegion))
+        {
+            return null;
+        }
+
+        if (!startingCityPositionsByRegion.TryGetValue(leaderBiomeConfig.startingCityRegion, out List<Vector2Int> positions) ||
+            positions == null || positions.Count == 0)
+        {
+            return null;
+        }
+
+        int avgX = Mathf.RoundToInt((float)positions.Average(p => p.x));
+        int avgY = Mathf.RoundToInt((float)positions.Average(p => p.y));
+        return new Vector2Int(avgX, avgY);
+    }
+
+    private void RegisterStartingCityPosition(LeaderBiomeConfig leaderBiomeConfig, Vector2Int position)
+    {
+        if (leaderBiomeConfig == null || string.IsNullOrWhiteSpace(leaderBiomeConfig.startingCityRegion))
+        {
+            return;
+        }
+
+        if (!startingCityPositionsByRegion.TryGetValue(leaderBiomeConfig.startingCityRegion, out List<Vector2Int> positions))
+        {
+            positions = new List<Vector2Int>();
+            startingCityPositionsByRegion[leaderBiomeConfig.startingCityRegion] = positions;
+        }
+
+        positions.Add(position);
     }
 
     private List<Vector2Int> GetAvailableHexes(TerrainEnum terrain, FeaturesEnum feature)

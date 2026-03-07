@@ -29,8 +29,6 @@ public class Leader : Character
     [SerializeField] private int createdPcs = 0;
     [SerializeField] private int nextCharacterSlotTurn = 1;
     [SerializeField] private int nextPcSlotTurn = 1;
-    private readonly HashSet<string> completedActions = new(StringComparer.OrdinalIgnoreCase);
-
     private Game game;
     private LeaderBiomeConfig leaderBiome;
 
@@ -473,28 +471,6 @@ public class Leader : Character
 
         storesManager.RefreshStores();
         storesManager.PulseGoldGain(amount);
-    }
-
-    private static string NormalizeActionName(string actionName)
-    {
-        if (string.IsNullOrWhiteSpace(actionName)) return string.Empty;
-        string baseName = ActionNameUtils.StripShortcut(actionName);
-        string normalized = new string(baseName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
-        return normalized;
-    }
-
-    public void RecordActionHistory(string actionName)
-    {
-        string normalized = NormalizeActionName(actionName);
-        if (string.IsNullOrEmpty(normalized)) return;
-        completedActions.Add(normalized);
-    }
-
-    public bool HasPerformedAction(string actionName)
-    {
-        string normalized = NormalizeActionName(actionName);
-        if (string.IsNullOrEmpty(normalized)) return false;
-        return completedActions.Contains(normalized);
     }
 
     public int GetCharacterPoints()

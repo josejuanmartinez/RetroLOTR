@@ -16,7 +16,7 @@ public class MaterialRetrievalRhun : MaterialRetrieval
             c.GetOwner().AddLeather(1);
             c.GetOwner().AddMounts(3);
             c.GetOwner().AddGold(1);
-            MessageDisplayNoUI.ShowMessage(c.hex, c, "Rhun: +1 leather, 3 mounts, 1 gold", Color.yellow);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, "Dorwinion: +1 leather, 3 mounts, 1 gold", Color.yellow);
             return true;
         };
 

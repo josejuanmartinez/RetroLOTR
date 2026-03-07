@@ -14,5 +14,6 @@ public enum StatusEffectEnum
     Hidden = 11,
     ArcaneInsight = 12,
     Strengthened = 13,
-    Fortified = 14
+    Fortified = 14,
+    MorgulTouch = 15
 }

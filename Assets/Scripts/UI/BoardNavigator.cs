@@ -405,6 +405,6 @@ public class BoardNavigator : MonoBehaviour
 
     private static bool ShouldSkipFocusHex(Hex hex)
     {
-        return hex == null || !hex.IsHexSeen();
+        return hex == null || (!hex.IsHexSeen() && !hex.IsHexRevealed());
     }
 }

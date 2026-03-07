@@ -30,29 +30,10 @@ public class StateAllegiance : EmmissaryAction
 
             Leader leader = character.GetOwner();
             if (nonPlayableLeader.joined || nonPlayableLeader.killed) return false;
-            if (leader == null) return false;
+            if (leader is not PlayableLeader playableLeader) return false;
+            if (!nonPlayableLeader.CanJoinWithStateAllegiance(playableLeader)) return false;
 
-            if (nonPlayableLeader.MeetsJoiningRequirements(leader))
-            {
-                return nonPlayableLeader.AttemptJoin(leader);
-            }
-
-            if (character.isPlayerControlled)
-            {
-                nonPlayableLeader.RevealToPlayer();
-                return true;
-            }
-
-            if (nonPlayableLeader.IsAlignmentCompatibleWith(leader))
-            {
-                float chance = nonPlayableLeader.GetPartialJoinChance(leader, 0.02f, 0.15f);
-                if (UnityEngine.Random.Range(0f, 1f) <= chance)
-                {
-                    return nonPlayableLeader.Joined(leader);
-                }
-            }
-
-            return true;
+            return nonPlayableLeader.Joined(playableLeader);
         };
 
         condition = (character) =>
@@ -64,8 +45,8 @@ public class StateAllegiance : EmmissaryAction
             if (pc.owner == null) return true;
             if (pc.owner is not NonPlayableLeader nonPlayableLeader) return false;
             if (nonPlayableLeader.joined || nonPlayableLeader.killed) return false;
-
-            return true;
+            if (character.GetOwner() is not PlayableLeader playableLeader) return false;
+            return nonPlayableLeader.CanJoinWithStateAllegiance(playableLeader);
         };
 
         asyncEffect = async (character) =>

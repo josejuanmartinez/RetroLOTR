@@ -69,8 +69,9 @@ Use this exact style for user interaction.
 2. `Saruman`
 3. `Gandalf+Saruman`
 4. `Sauron`
-5. `Sauron+Saruman`
-4. `All alignments`
+5. `Gandalf+Sauron`
+6. `Sauron+Saruman`
+7. `All alignments`
 
 ### Missing/Invalid Action Linkage
 `Card '<CardName>' has missing or invalid action linkage. Choose:`
@@ -86,6 +87,26 @@ Use this exact style for user interaction.
 4. `You will provide the text`
 
 When presenting this prompt, always include one short sentence per suggested option before the numbered list.
+
+## Status Reference
+Use these meanings when proposing card effects, durations, and balance. Prefer existing statuses over inventing new ones.
+
+- `MorgulTouch`: lasts 7 turns; target loses 10 health at the start of each turn. If health reaches 0 during this effect, the character becomes a `Nazgul` and joins `Sauron`.
+- `Encouraged`: immune to `Fear`, `Despair`, `Halted`, and `Blocked` while active.
+- `Fear`: if the character is not an army commander, each turn there is a 50% chance they lose their action.
+- `Hope`: heals 5 at turn start and ignores `Despair` penalties while active.
+- `Despair`: `-1` to each skill that is above 1, to a minimum of 1. Skills already at 0 stay at 0.
+- `Haste`: `+2` movement while active.
+- `Burning`: lasts at least 3 turns; deals 5 damage each turn. If the target is an army commander on a forest tile, the army also loses 1 random troop once. Applying `Burning` removes `Frozen`.
+- `Poisoned`: lasts at least 5 turns; deals 5 damage each turn. When 3 turns remain, the target also gains `Fear`. Healing removes `Poisoned`.
+- `Frozen`: no movement, `-10%` defense, cannot gain `Haste`; on mountain tiles defense penalty is `-25%`. Applying `Frozen` removes `Burning`.
+- `Blocked`: the character cannot move or act for the turn while it lasts.
+- `Halted`: movement is reduced on the next turn.
+- `Hidden`: used for stealth/untargetability style effects.
+- `RefusingDuels`: the character cannot initiate or receive duels while active.
+- `ArcaneInsight`: `+1 Mage` while active.
+- `Strengthened`: about `+10%` army attack for army commanders.
+- `Fortified`: about `+10%` army defense for army commanders.
 
 ## Suggestion Rules
 - Base suggestions on existing `Actions.json` patterns (cost, target, reward, risk).

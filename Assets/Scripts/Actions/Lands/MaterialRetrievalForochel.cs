@@ -16,7 +16,7 @@ public class MaterialRetrievalForochel : MaterialRetrieval
             c.GetOwner().AddLeather(3);
             c.GetOwner().AddMounts(1);
             c.GetOwner().AddGold(1);
-            MessageDisplayNoUI.ShowMessage(c.hex, c, "Forochel: +3 leather, 1 mounts, 1 gold", Color.yellow);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, "Bay of Forochel: +3 leather, 1 mounts, 1 gold", Color.yellow);
             return true;
         };
 

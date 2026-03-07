@@ -42,12 +42,18 @@ public class FuryOfUlmo : EventAction
 
             if (targets.Count == 0) return false;
 
+            int burningCleared = 0;
             for (int i = 0; i < targets.Count; i++)
             {
+                if (targets[i].HasStatusEffect(StatusEffectEnum.Burning))
+                {
+                    targets[i].ClearStatusEffect(StatusEffectEnum.Burning);
+                    burningCleared++;
+                }
                 targets[i].Halt();
             }
 
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Fury of Ulmo halts {targets.Count} navy/embarked unit(s).", Color.cyan);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Fury of Ulmo halts {targets.Count} navy/embarked unit(s) and extinguishes Burning on {burningCleared}.", Color.cyan);
             return true;
         };
 

@@ -74,7 +74,7 @@ public class MessageDisplayNoUI : MonoBehaviour
     // Public API
     // -------------------------------------------------------------------------
 
-    public static void ShowMessage(Hex hex, Character character, string message, Color? color = null, bool recordRumour = true)
+    public static void ShowMessage(Hex hex, Character character, string message, Color? color = null, bool recordRumour = true, bool forceDisplay = false)
     {
         if (hex == null || hex.gameObject == null) return;
 
@@ -98,6 +98,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         bool playerCanSeeHex = game.player != null
             && game.player.visibleHexes.Contains(hex)
             && hex.IsHexSeen();
+        bool canDisplayToPlayer = forceDisplay || playerCanSeeHex;
         bool publicRumour = character != null && (character.GetOwner() == game.player || playerCanSeeHex);
 
         Color resolved = color ?? Color.white;
@@ -129,7 +130,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         }
 
         // Only show floating text when the human player can see the hex (prevents enemy leakage)
-        if (playerCanSeeHex)
+        if (canDisplayToPlayer)
         {
             Vector3 worldPos = hex.gameObject.transform.position;
             if (instance != null)
@@ -157,6 +158,21 @@ public class MessageDisplayNoUI : MonoBehaviour
         {
             Rumour rumour = new Rumour {leader = character.GetOwner(), character = character, characterName = character?.characterName, rumour = rawMessage, v2 = hex.v2};
             RumoursManager.AddRumour(rumour, publicRumour);
+        }
+    }
+
+    public static void ShowAnchoredMessage(Hex hex, string message, Color? color = null)
+    {
+        if (instance == null || hex == null || hex.gameObject == null) return;
+
+        string formattedMessage = ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(message ?? string.Empty);
+        Color resolved = color ?? Color.white;
+        Vector3 worldPos = hex.gameObject.transform.position;
+
+        instance.messageQueue.Enqueue(new MessageData(null, formattedMessage, worldPos, resolved));
+        if (!instance.isDisplayingMessage)
+        {
+            instance.ProcessNextMessage();
         }
     }
 
@@ -219,13 +235,18 @@ public class MessageDisplayNoUI : MonoBehaviour
         while (messageQueue.Count > 0)
         {
             var next = messageQueue.Dequeue();
-            if (ShouldSkipMessageHex(next.Hex))
+            if (next.Hex != null && ShouldSkipMessageHex(next.Hex))
             {
                 if (next.RequiresFocus)
                 {
                     focusHoldCount = Mathf.Max(0, focusHoldCount - 1);
                 }
                 continue;
+            }
+            if (next.Hex == null)
+            {
+                StartCoroutine(DisplayCoroutine(next));
+                return;
             }
             if (CanDisplayNow(next.Hex))
             {

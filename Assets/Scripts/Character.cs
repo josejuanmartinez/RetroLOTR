@@ -65,6 +65,8 @@ public class Character : MonoBehaviour
     [Header("Statuses")]
     public List<StatusEffectEnum> statusEffects = new();
     private Dictionary<StatusEffectEnum, int> statusEffectTurns = new();
+    private bool burningForestTroopLossPending;
+    private bool poisonedFearTriggered;
 
     private BiomeConfig characterBiome;
 
@@ -77,6 +79,8 @@ public class Character : MonoBehaviour
         public int moved;
         public bool hasActionedThisTurn;
         public bool isEmbarked;
+        public bool burningForestTroopLossPending;
+        public bool poisonedFearTriggered;
     }
 
     void Awake()
@@ -87,6 +91,8 @@ public class Character : MonoBehaviour
         reachableHexes = new();
         statusEffects = new();
         InitializeStatusEffects();
+        burningForestTroopLossPending = false;
+        poisonedFearTriggered = false;
         killed = false;
         lastPlayedActionClassNameThisTurn = null;
         lastPlayedActionNameThisTurn = null;
@@ -258,12 +264,34 @@ public class Character : MonoBehaviour
             InitializeStatusEffects();
         }
 
-        turns = Mathf.Max(1, turns);
+        turns = GetNormalizedStatusTurns(effect, turns);
+        if (IsEncouraged() && IsBlockedByEncouraged(effect)) return;
+        if (effect == StatusEffectEnum.Haste && HasStatusEffect(StatusEffectEnum.Frozen)) return;
+
         int current = GetStatusEffectTurns(effect);
         statusEffectTurns[effect] = Mathf.Max(current, turns);
 
         statusEffects ??= new List<StatusEffectEnum>();
         if (!statusEffects.Contains(effect)) statusEffects.Add(effect);
+
+        if (effect == StatusEffectEnum.Burning)
+        {
+            ClearStatusEffect(StatusEffectEnum.Frozen);
+            if (turns > current) burningForestTroopLossPending = true;
+        }
+        else if (effect == StatusEffectEnum.Frozen)
+        {
+            ClearStatusEffect(StatusEffectEnum.Haste);
+            ClearStatusEffect(StatusEffectEnum.Burning);
+        }
+        else if (effect == StatusEffectEnum.Poisoned && turns > current)
+        {
+            poisonedFearTriggered = false;
+        }
+        else if (effect == StatusEffectEnum.Encouraged)
+        {
+            ClearSuppressedStatusesIfEncouraged();
+        }
     }
 
     public void ClearStatusEffect(StatusEffectEnum effect)
@@ -275,22 +303,45 @@ public class Character : MonoBehaviour
 
         statusEffectTurns[effect] = 0;
         statusEffects?.Remove(effect);
+        ResetStatusSpecialState(effect);
     }
 
     public void NewTurn()
     {
-        // Debug.Log($"New turn for {characterName} {(isPlayerControlled? "[PLAYER]": "[AI]")}");
+        Game game = FindFirstObjectByType<Game>();
+        Leader player = game != null ? game.player : null;
+
         if (health < 100)
         {
             health = Mathf.Min(100, health + 5);
         }
-        // STATUSES
+        if (HasStatusEffect(StatusEffectEnum.Hope) && health < 100)
+        {
+            health = Mathf.Min(100, health + 5);
+        }
+
+        ClearSuppressedStatusesIfEncouraged();
+
+        if (!killed)
+        {
+            ProcessMorgulTouch();
+        }
+        if (!killed)
+        {
+            ProcessBurning();
+        }
+        if (!killed)
+        {
+            ProcessPoisoned();
+        }
+        if (killed) return;
+
         int blockedTurns = GetStatusEffectTurns(StatusEffectEnum.Blocked);
         bool blocked = blockedTurns > 0;
-        if (blocked && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this, "Blocked", Color.red);
+        if (blocked && GetOwner() == player) MessageDisplayNoUI.ShowMessage(hex, this, "Blocked", Color.red);
 
         bool halted = HasStatusEffect(StatusEffectEnum.Halted);
-        if (halted && GetOwner() == FindFirstObjectByType<Game>().player) MessageDisplayNoUI.ShowMessage(hex, this, "Halted", Color.yellow);
+        if (halted && GetOwner() == player) MessageDisplayNoUI.ShowMessage(hex, this, "Halted", Color.yellow);
 
         if (blocked)
         {
@@ -318,28 +369,41 @@ public class Character : MonoBehaviour
             lastPlayedActionNameThisTurn = null;
             lastPlayedCardSpriteNameThisTurn = null;
         }
+
+        if (!blocked && HasStatusEffect(StatusEffectEnum.Fear) && !IsArmyCommander() && UnityEngine.Random.Range(0, 2) == 0)
+        {
+            hasActionedThisTurn = true;
+            if (GetOwner() == player)
+            {
+                MessageDisplayNoUI.ShowMessage(hex, this, "Fear prevents action", Color.red);
+            }
+        }
+
         if (blockedTurns > 0)
         {
             blockedTurns = Mathf.Max(0, blockedTurns - 1);
             statusEffectTurns[StatusEffectEnum.Blocked] = blockedTurns;
-            if (blockedTurns == 0) statusEffects?.Remove(StatusEffectEnum.Blocked);
+            if (blockedTurns == 0)
+            {
+                statusEffects?.Remove(StatusEffectEnum.Blocked);
+                ResetStatusSpecialState(StatusEffectEnum.Blocked);
+            }
         }
 
-        if (HasStatusEffect(StatusEffectEnum.Encouraged) && GetOwner() == FindFirstObjectByType<Game>().player)
+        if (HasStatusEffect(StatusEffectEnum.Encouraged) && GetOwner() == player)
         {
             MessageDisplayNoUI.ShowMessage(hex, this,  "Encouraged", Color.green);
         }
 
-        if (HasStatusEffect(StatusEffectEnum.RefusingDuels) && GetOwner() == FindFirstObjectByType<Game>().player)
+        if (HasStatusEffect(StatusEffectEnum.RefusingDuels) && GetOwner() == player)
         {
             MessageDisplayNoUI.ShowMessage(hex, this, "Refusing duels", Color.yellow);
         }
-        if (!blocked && halted && GetOwner() == FindFirstObjectByType<Game>().player)
+        if (!blocked && halted && GetOwner() == player)
         {
             MessageDisplayNoUI.ShowMessage(hex, this, "Movement reduced", Color.yellow);
         }
 
-        // tick all non-halted status effects
         foreach (StatusEffectEnum effect in Enum.GetValues(typeof(StatusEffectEnum)))
         {
             if (effect == StatusEffectEnum.Blocked) continue;
@@ -351,6 +415,7 @@ public class Character : MonoBehaviour
             if (turns == 0)
             {
                 statusEffects?.Remove(effect);
+                ResetStatusSpecialState(effect);
             }
         }
         TickDoubledByTurns();
@@ -372,7 +437,9 @@ public class Character : MonoBehaviour
             statusEffectTurns = new Dictionary<StatusEffectEnum, int>(statusEffectTurns),
             moved = moved,
             hasActionedThisTurn = hasActionedThisTurn,
-            isEmbarked = isEmbarked
+            isEmbarked = isEmbarked,
+            burningForestTroopLossPending = burningForestTroopLossPending,
+            poisonedFearTriggered = poisonedFearTriggered
         };
     }
 
@@ -391,6 +458,8 @@ public class Character : MonoBehaviour
         moved = snapshot.moved;
         hasActionedThisTurn = snapshot.hasActionedThisTurn;
         isEmbarked = snapshot.isEmbarked;
+        burningForestTroopLossPending = snapshot.burningForestTroopLossPending;
+        poisonedFearTriggered = snapshot.poisonedFearTriggered;
     }
 
     public void DisbandArmy(bool showMessage = true)
@@ -464,19 +533,26 @@ public class Character : MonoBehaviour
 
     public int GetMaxMovement()
     {
+        if (HasStatusEffect(StatusEffectEnum.Frozen))
+        {
+            return 0;
+        }
+
         MovementType movementType = army == null ? MovementType.Character : army.GetMovementType();
         bool isInWater = hex != null && hex.IsWaterTerrain();
-        switch(movementType)
-        {            
-            case MovementType.ArmyCommander:
-                return AdjustMovementByRace(FindFirstObjectByType<Game>().armyMovement, isInWater);
-            case MovementType.ArmyCommanderCavalryOnly:
-                return AdjustMovementByRace(FindFirstObjectByType<Game>().cavalryMovement, isInWater);
-            case MovementType.Character:
-            default:
-                return AdjustMovementByRace(FindFirstObjectByType<Game>().characterMovement, isInWater);            
+        int baseMovement = movementType switch
+        {
+            MovementType.ArmyCommander => AdjustMovementByRace(FindFirstObjectByType<Game>().armyMovement, isInWater),
+            MovementType.ArmyCommanderCavalryOnly => AdjustMovementByRace(FindFirstObjectByType<Game>().cavalryMovement, isInWater),
+            _ => AdjustMovementByRace(FindFirstObjectByType<Game>().characterMovement, isInWater)
+        };
+
+        if (HasStatusEffect(StatusEffectEnum.Haste))
+        {
+            baseMovement += 2;
         }
-        
+
+        return Mathf.Max(0, baseMovement);
     }
 
     private int AdjustMovementByRace(int baseMovement, bool isInWater)
@@ -649,18 +725,21 @@ public class Character : MonoBehaviour
     public int GetCommander()
     {
         int total = commander + artifacts.FindAll(x => x.commanderBonus > 0).Sum(x => x.commanderBonus);
+        total = ApplyDespairPenalty(total);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetAgent()
     {
         int total = agent + artifacts.FindAll(x => x.agentBonus > 0).Sum(x => x.agentBonus);
+        total = ApplyDespairPenalty(total);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetEmmissary()
     {
         int total = emmissary + artifacts.FindAll(x => x.emmissaryBonus > 0).Sum(x => x.emmissaryBonus);
+        total = ApplyDespairPenalty(total);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
@@ -668,6 +747,7 @@ public class Character : MonoBehaviour
     {
         int total = mage + artifacts.FindAll(x => x.mageBonus > 0).Sum(x => x.mageBonus);
         if (HasStatusEffect(StatusEffectEnum.ArcaneInsight)) total += 1;
+        total = ApplyDespairPenalty(total);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
@@ -714,10 +794,189 @@ public class Character : MonoBehaviour
 
     public void Heal(int health)
     {
-        this.health = Mathf.Min(100, this.health + health);
-        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} heals by {health}", Color.green);
+        int previousHealth = this.health;
+        this.health = Mathf.Min(100, this.health + Mathf.Max(0, health));
+        int healedAmount = Mathf.Max(0, this.health - previousHealth);
+        bool curedPoison = HasStatusEffect(StatusEffectEnum.Poisoned);
+        if (curedPoison)
+        {
+            ClearStatusEffect(StatusEffectEnum.Poisoned);
+        }
+
+        if (healedAmount > 0)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} heals by {healedAmount}", Color.green);
+        }
+        if (curedPoison)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} is cured of Poison.", Color.green);
+        }
+
+        if (healedAmount > 0 || curedPoison)
+        {
+            RefreshSelectedCharacterIconIfSelected();
+            CharacterIcons.RefreshForHumanPlayerCharacter(this);
+        }
+    }
+
+    private static int GetNormalizedStatusTurns(StatusEffectEnum effect, int turns)
+    {
+        turns = Mathf.Max(1, turns);
+        return effect switch
+        {
+            StatusEffectEnum.Burning => Mathf.Max(3, turns),
+            StatusEffectEnum.Poisoned => Mathf.Max(5, turns),
+            StatusEffectEnum.MorgulTouch => Mathf.Max(7, turns),
+            _ => turns
+        };
+    }
+
+    private static bool IsBlockedByEncouraged(StatusEffectEnum effect)
+    {
+        return effect == StatusEffectEnum.Fear
+            || effect == StatusEffectEnum.Despair
+            || effect == StatusEffectEnum.Halted
+            || effect == StatusEffectEnum.Blocked;
+    }
+
+    private void ClearSuppressedStatusesIfEncouraged()
+    {
+        if (!HasStatusEffect(StatusEffectEnum.Encouraged)) return;
+        ClearStatusEffect(StatusEffectEnum.Fear);
+        ClearStatusEffect(StatusEffectEnum.Despair);
+        ClearStatusEffect(StatusEffectEnum.Halted);
+        ClearStatusEffect(StatusEffectEnum.Blocked);
+    }
+
+    private void ResetStatusSpecialState(StatusEffectEnum effect)
+    {
+        if (effect == StatusEffectEnum.Burning)
+        {
+            burningForestTroopLossPending = false;
+        }
+        else if (effect == StatusEffectEnum.Poisoned)
+        {
+            poisonedFearTriggered = false;
+        }
+    }
+
+    private int ApplyDespairPenalty(int total)
+    {
+        if (!HasStatusEffect(StatusEffectEnum.Despair) || HasStatusEffect(StatusEffectEnum.Hope)) return total;
+        if (total <= 0) return 0;
+        if (total > 1) total -= 1;
+        return Mathf.Clamp(total, 1, MAX_SKILL_LEVEL);
+    }
+
+    private void ProcessBurning()
+    {
+        if (!HasStatusEffect(StatusEffectEnum.Burning)) return;
+
+        ApplyStatusDamage(5, "Burning");
+        if (killed) return;
+
+        if (!burningForestTroopLossPending || !IsArmyCommander() || hex == null || hex.terrainType != TerrainEnum.forest) return;
+        Army commandedArmy = GetArmy();
+        if (commandedArmy == null || commandedArmy.killed || commandedArmy.GetSize(true) < 1) return;
+
+        TroopsTypeEnum? lostTroop = commandedArmy.RemoveRandomTroop();
+        if (lostTroop.HasValue)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName}'s burning army loses 1 <sprite name=\"{lostTroop.Value.ToString().ToLower()}\"/> in the forest.", Color.red);
+        }
+        burningForestTroopLossPending = false;
+    }
+
+    private void ProcessPoisoned()
+    {
+        if (!HasStatusEffect(StatusEffectEnum.Poisoned)) return;
+
+        ApplyStatusDamage(5, "Poisoned");
+        if (killed) return;
+
+        if (poisonedFearTriggered || GetStatusEffectTurns(StatusEffectEnum.Poisoned) > 3) return;
+        ApplyStatusEffect(StatusEffectEnum.Fear, 1);
+        poisonedFearTriggered = true;
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} succumbs to Poison and gains Fear.", Color.magenta);
+    }
+
+    private void ProcessMorgulTouch()
+    {
+        if (!HasStatusEffect(StatusEffectEnum.MorgulTouch)) return;
+
+        health -= 10;
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} suffers 10 damage from Morgul Touch.", Color.magenta);
         RefreshSelectedCharacterIconIfSelected();
         CharacterIcons.RefreshForHumanPlayerCharacter(this);
+
+        if (health > 0) return;
+
+        Leader sauron = FindSauronLeader();
+        if (this is Leader || !ConvertToNazgulServant(sauron))
+        {
+            Killed(this is Leader ? GetOwner() : sauron);
+        }
+    }
+
+    private void ApplyStatusDamage(int damage, string sourceName)
+    {
+        health = Mathf.Max(0, health - Mathf.Max(0, damage));
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} takes {damage} damage from {sourceName}.", Color.red);
+        Sounds.Instance?.PlayVoicePain(this);
+        RefreshSelectedCharacterIconIfSelected();
+        CharacterIcons.RefreshForHumanPlayerCharacter(this);
+        if (health < 1)
+        {
+            Killed(this is Leader ? GetOwner() : null);
+        }
+    }
+
+    private Leader FindSauronLeader()
+    {
+        Leader[] leaders = FindObjectsByType<Leader>(FindObjectsSortMode.None);
+        for (int i = 0; i < leaders.Length; i++)
+        {
+            Leader leader = leaders[i];
+            if (leader != null && !leader.killed && string.Equals(leader.characterName, "Sauron", StringComparison.OrdinalIgnoreCase))
+            {
+                return leader;
+            }
+        }
+
+        return null;
+    }
+
+    private bool ConvertToNazgulServant(Leader sauron)
+    {
+        if (sauron == null || this is Leader) return false;
+
+        Leader oldOwner = GetOwner();
+        if (oldOwner != null && oldOwner.controlledCharacters.Contains(this))
+        {
+            oldOwner.controlledCharacters.Remove(this);
+        }
+
+        if (!sauron.controlledCharacters.Contains(this))
+        {
+            sauron.controlledCharacters.Add(this);
+        }
+
+        owner = sauron;
+        alignment = sauron.GetAlignment();
+        race = RacesEnum.Nazgul;
+        health = 100;
+        startingCharacter = false;
+        isPlayerControlled = FindFirstObjectByType<Game>()?.player == sauron;
+        ClearStatusEffect(StatusEffectEnum.MorgulTouch);
+
+        hex?.RedrawCharacters();
+        hex?.RedrawArmies();
+        CharacterIcons.RefreshForHumanPlayerOf(oldOwner);
+        CharacterIcons.RefreshForHumanPlayerOf(sauron);
+        RefreshSelectedCharacterIconIfSelected();
+        RefreshActionsIfSelected();
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} becomes a Nazgul and joins Sauron.", Color.magenta);
+        return true;
     }
 
     public List<Artifact> GetTransferableArtifacts()

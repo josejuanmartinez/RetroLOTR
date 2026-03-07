@@ -94,15 +94,15 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         {
             sb.Append("We found their nation but cannot find a way into their capital. Issue `Reveal PC` to possibly reveal a path.<br><br>");
         }
-        if (nonPlayableLeader.alignment == game.currentlyPlaying.alignment || nonPlayableLeader.alignment == AlignmentEnum.neutral)
+        if (nonPlayableLeader.alignment == game.currentlyPlaying.alignment)
         {
-            sb.Append("They can join your side; neutral nations will work with any alignment, others require a match.<br><br>");
+            sb.Append("They can join your side if you have already played their capital PC card.<br><br>");
             sb.Append(nonPlayableLeader.GetJoiningConditionsText(game.currentlyPlaying));
             sb.Append("<br><br>");
         }
-        if (nonPlayableLeader.alignment != game.currentlyPlaying.alignment && nonPlayableLeader.alignment != AlignmentEnum.neutral)
+        if (nonPlayableLeader.alignment != game.currentlyPlaying.alignment)
         {
-            sb.Append("You can attack to weaken their forces.");
+            sb.Append("Only a leader of the same alignment can recruit this nation. You can still attack to weaken their forces.");
         }
         PopupManager.Show(
             $"{nonPlayableLeader.characterName} reveals themselves!",

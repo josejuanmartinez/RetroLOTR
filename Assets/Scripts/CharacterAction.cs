@@ -270,7 +270,6 @@ public class CharacterAction : SearcherByName
             character.lastPlayedActionClassNameThisTurn = GetType().Name;
             character.lastPlayedActionNameThisTurn = actionName;
 
-            NonPlayableLeader.RecordActionCompleted(character, actionName, actionHex);
             string message = actionName;            
             string rumourMessage = $"succeeds on {message}";
             bool isDoubledByPlayer = character.doubledBy.Contains(game.player);

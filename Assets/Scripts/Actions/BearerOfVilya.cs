@@ -36,12 +36,15 @@ public class BearerOfVilya : CharacterAction
                 .ToList();
 
             int healedCount = 0;
+            int curedPoisonCount = 0;
             for (int i = 0; i < nearbyAllies.Count; i++)
             {
                 int missingHealth = Mathf.Max(0, 100 - nearbyAllies[i].health);
-                if (missingHealth <= 0) continue;
+                bool poisoned = nearbyAllies[i].HasStatusEffect(StatusEffectEnum.Poisoned);
+                if (missingHealth <= 0 && !poisoned) continue;
                 nearbyAllies[i].Heal(missingHealth);
-                healedCount++;
+                if (missingHealth > 0) healedCount++;
+                if (poisoned) curedPoisonCount++;
             }
 
             int foamRadius = Mathf.Clamp(character.GetMage(), 2, 4);
@@ -66,12 +69,12 @@ public class BearerOfVilya : CharacterAction
                 movedCount++;
             }
 
-            if (healedCount == 0 && movedCount == 0) return false;
+            if (healedCount == 0 && curedPoisonCount == 0 && movedCount == 0) return false;
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Bearer of Vilya fully heals {healedCount} allied character(s) in radius 1 and drives back {movedCount} Nazgul in radius {foamRadius}.",
+                $"Bearer of Vilya fully heals {healedCount} allied character(s), cures Poison on {curedPoisonCount}, and drives back {movedCount} Nazgul in radius {foamRadius}.",
                 Color.cyan);
             return true;
         };
@@ -84,7 +87,7 @@ public class BearerOfVilya : CharacterAction
             bool hasWoundedAllies = character.hex.GetHexesInRadius(1)
                 .Any(h => h != null
                     && h.characters != null
-                    && h.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch) && ch.health < 100));
+                    && h.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch) && (ch.health < 100 || ch.HasStatusEffect(StatusEffectEnum.Poisoned))));
             if (hasWoundedAllies) return true;
 
             Board board = FindFirstObjectByType<Board>();

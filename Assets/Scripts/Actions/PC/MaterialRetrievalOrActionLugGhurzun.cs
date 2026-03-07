@@ -9,7 +9,7 @@ public class MaterialRetrievalOrActionLugGhurzun : MaterialRetrievalOrAction
         effect = (c) =>
         {
             if (originalEffect != null && !originalEffect(c)) return false;
-            return GrantResources(c, ProducesEnum.iron, 1, ProducesEnum.timber, 1, "LugGhurzun");
+            return GrantResources(c, ProducesEnum.iron, 1, ProducesEnum.timber, 1, "Carach Angren");
         };
         condition = (c) =>
         {

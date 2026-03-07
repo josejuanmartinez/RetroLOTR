@@ -17,7 +17,7 @@ public class MaterialRetrievalSeaofrhun : MaterialRetrieval
             c.GetOwner().AddMounts(1);
             c.GetOwner().AddTimber(1);
             c.GetOwner().AddGold(2);
-            MessageDisplayNoUI.ShowMessage(c.hex, c, "SeaOfRhun: +1 leather, 1 mounts, 1 timber, 2 gold", Color.yellow);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, "Rhun: +1 leather, 1 mounts, 1 timber, 2 gold", Color.yellow);
             return true;
         };
 

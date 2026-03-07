@@ -15,7 +15,8 @@ public class AMorgulBlade : CharacterAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            return FindEnemyCharactersAtHex(character).Count > 0;
+            if (character == null || character.race != RacesEnum.Nazgul) return false;
+            return FindEnemyCharactersAtHex(character).Any(x => x != null && x is not Leader);
         };
 
         async Task<bool> morgulAsync(Character character)
@@ -23,7 +24,9 @@ public class AMorgulBlade : CharacterAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
 
-            List<Character> enemies = FindEnemyCharactersAtHex(character);
+            List<Character> enemies = FindEnemyCharactersAtHex(character)
+                .Where(x => x != null && x is not Leader)
+                .ToList();
             if (enemies.Count < 1) return false;
 
             bool isAI = !character.isPlayerControlled;
@@ -49,10 +52,14 @@ public class AMorgulBlade : CharacterAction
 
             if (target == null) return false;
 
-            target.ApplyStatusEffect(StatusEffectEnum.Poisoned, 2);
-            target.ApplyStatusEffect(StatusEffectEnum.Fear, 1);
+            if (UnityEngine.Random.Range(0, 100) >= 50)
+            {
+                MessageDisplayNoUI.ShowMessage(character.hex, character, $"The Morgul wound fails to take hold on {target.characterName}.", Color.red);
+                return false;
+            }
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} suffers a Morgul wound: Poisoned (2) and Fear (1).", Color.magenta);
+            target.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, 7);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} suffers Morgul Touch.", Color.magenta);
             return true;
         }
 

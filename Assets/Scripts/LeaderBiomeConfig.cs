@@ -15,6 +15,7 @@ public class LeaderBiomeConfig: BiomeConfig
     public FeaturesEnum feature = FeaturesEnum.noFeature;
     public bool isIsland = false;
     public string startingCityName;
+    public string startingCityRegion;
     public PCSizeEnum startingCitySize;
 
     public string pcFeature = "";

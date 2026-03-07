@@ -16,7 +16,7 @@ public class MaterialRetrievalThedeadmarshes : MaterialRetrieval
             c.GetOwner().AddLeather(3);
             c.GetOwner().AddTimber(1);
             c.GetOwner().AddSteel(1);
-            MessageDisplayNoUI.ShowMessage(c.hex, c, "TheDeadMarshes: +3 leather, 1 timber, 1 steel", Color.yellow);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, "Nindalf: +3 leather, 1 timber, 1 steel", Color.yellow);
             return true;
         };
 

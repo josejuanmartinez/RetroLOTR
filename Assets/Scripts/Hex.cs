@@ -77,6 +77,7 @@ public class Hex : MonoBehaviour
 
     [Header("Data")]
     [SerializeField] private PC pc;
+    [SerializeField] private bool mapOnlyRevealed;
 
     public List<Army> armies = new();
     public List<Character> characters = new();
@@ -146,7 +147,7 @@ public class Hex : MonoBehaviour
     }
 
     public bool IsHexRevealed() => !fow.activeSelf;
-    public bool IsHexSeen() => IsHexRevealed() && (!unseen || !unseen.activeSelf);
+    public bool IsHexSeen() => IsHexRevealed() && !mapOnlyRevealed && (!unseen || !unseen.activeSelf);
     public List<Hex> GetHexesInRadius(int radius)
     {
         if (board == null) board = FindFirstObjectByType<Board>();
@@ -670,7 +671,7 @@ public class Hex : MonoBehaviour
             }
             RebuildScoutingCache();
         }
-        if (game.currentlyPlaying == game.player && characters.Find(x => x.GetOwner() == game.player) == null)
+        if (!mapOnlyRevealed && game.currentlyPlaying == game.player && characters.Find(x => x.GetOwner() == game.player) == null)
         {
             if (IsHexRevealed()) SetActiveFast(unseen, true);
         }
@@ -685,6 +686,7 @@ public class Hex : MonoBehaviour
     public void Obscure(Leader obscuredBy = null)
     {
         Unreveal(obscuredBy);
+        mapOnlyRevealed = false;
         SetActiveFast(fow, true);
         SetActiveFast(unseen, true);
         UpdateVisibilityForFog();
@@ -738,6 +740,56 @@ public class Hex : MonoBehaviour
         if(game.IsPlayerCurrentlyPlaying()) {
             if (lookAt) LookAt();
             MinimapManager.RefreshMinimap();
+        }
+    }
+
+    public void RevealMapOnlyArea(int radius = 1, bool lookAt = true, bool refreshMinimap = true)
+    {
+        if (board == null) board = FindFirstObjectByType<Board>();
+
+        RevealMapOnlyInternal();
+        if (radius <= 0 || board == null)
+        {
+            if (game.IsPlayerCurrentlyPlaying() && lookAt) LookAt();
+            return;
+        }
+
+        var queue = areaQueue;
+        var visited = areaVisited;
+        queue.Clear();
+        visited.Clear();
+        queue.Enqueue(v2);
+        visited.Add(v2);
+
+        int currentRadius = 0;
+        while (queue.Count > 0 && currentRadius < radius)
+        {
+            int hexCount = queue.Count;
+            for (int i = 0; i < hexCount; i++)
+            {
+                var currentHex = queue.Dequeue();
+                var neighbors = ((currentHex.x & 1) == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+
+                for (int j = 0; j < neighbors.Length; j++)
+                {
+                    var offset = neighbors[j];
+                    var neighborPos = new Vector2Int(currentHex.x + offset.x, currentHex.y + offset.y);
+                    if (!visited.Add(neighborPos)) continue;
+
+                    if (board.hexes.TryGetValue(neighborPos, out Hex neighborHex))
+                    {
+                        neighborHex.RevealMapOnlyInternal();
+                        queue.Enqueue(neighborPos);
+                    }
+                }
+            }
+            currentRadius++;
+        }
+
+        if (game.IsPlayerCurrentlyPlaying())
+        {
+            if (lookAt) LookAt();
+            if (refreshMinimap) MinimapManager.RefreshMinimap();
         }
     }
 
@@ -1057,6 +1109,7 @@ public class Hex : MonoBehaviour
 
     private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
     {
+        mapOnlyRevealed = false;
         if (scoutedByPlayer)
         {
             scoutedByTurns[scoutedByPlayer] = Math.Max(2, scoutedByTurns.TryGetValue(scoutedByPlayer, out int current) ? current : 0);
@@ -1074,6 +1127,19 @@ public class Hex : MonoBehaviour
         var g = game ?? FindFirstObjectByType<Game>();
         bool showPopup = viewer != null && g != null && viewer == g.player && isPlayerTurn;
         RevealNonPlayableLeadersOnHex(viewer, showPopup);
+        RedrawArmies(false);
+        RedrawCharacters(false);
+        RedrawPC(false);
+        RefreshHoverText();
+    }
+
+    private void RevealMapOnlyInternal()
+    {
+        mapOnlyRevealed = true;
+        SetActiveFast(fow, false);
+        if (unseen != null) SetActiveFast(unseen, false);
+        UpdateVisibilityForFog();
+        UpdateMinimapTerrain(IsHexRevealed());
         RedrawArmies(false);
         RedrawCharacters(false);
         RedrawPC(false);
@@ -1194,7 +1260,7 @@ public class Hex : MonoBehaviour
 
     public void Hide()
     {
-        bool shouldBeUnseen = IsHexRevealed();
+        bool shouldBeUnseen = IsHexRevealed() && !mapOnlyRevealed;
         bool unseenChanged = unseen != null && unseen.activeSelf != shouldBeUnseen;
         if (unseenChanged) SetActiveFast(unseen, shouldBeUnseen);
         UpdateVisibilityForFog();

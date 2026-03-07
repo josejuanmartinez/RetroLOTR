@@ -384,6 +384,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             selectedCharacter.lastPlayedCardSpriteNameThisTurn =
                 !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
+            deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
+            playerLeader.RecordPlayedCard(cardData);
         }
 
         if (tutorialActive)
@@ -700,6 +702,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (result.failsActionConditions)
             {
                 reasons.Add("No valid target or action condition is not met.");
+            }
+
+            if (result.failsCardHistoryRequirements && !string.IsNullOrWhiteSpace(result.cardHistoryReason))
+            {
+                reasons.Add(result.cardHistoryReason);
             }
         }
 
