@@ -25,6 +25,7 @@ public class BuyTimber : EmmissaryPCAction
             if (!stores.HasStock(ProducesEnum.timber, quantity)) return false;
             if (playable.goldAmount < totalCost) return false;
 
+            playable.RemoveGold(totalCost);
             playable.AddTimber(quantity);
             stores.AdjustStock(ProducesEnum.timber, -quantity);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();

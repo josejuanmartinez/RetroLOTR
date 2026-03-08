@@ -1,6 +1,6 @@
 using System;
 
-public class MaterialRetrievalThanduilSHalls : MaterialRetrieval
+public class MaterialRetrievalThanduilSHalls : MaterialRetrievalOrAction
 {
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -11,16 +11,13 @@ public class MaterialRetrievalThanduilSHalls : MaterialRetrieval
         effect = (c) =>
         {
             if (originalEffect != null && !originalEffect(c)) return false;
-
-            // TODO (Thanduil's Halls): add custom logic after base MaterialRetrieval.
-
-            return true;
+            return GrantResources(c, ProducesEnum.timber, 1, ProducesEnum.leather, 1, "Thanduil's Halls");
         };
 
         condition = (c) =>
         {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return true;
+            return c != null;
         };
 
         asyncEffect = async (c) =>

@@ -614,9 +614,9 @@ public class Character : MonoBehaviour
         return Mathf.Max(0, GetMaxMovement() - moved);
     }
 
-    public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0)
+    public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, List<ArmySpecialAbilityEnum> specialAbilities = null)
     {
-        army = new Army(this, troopsType, amount, startingArmy, ws);
+        army = new Army(this, troopsType, amount, startingArmy, ws, 25, specialAbilities);
         hex.armies.Add(army);
 
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\"/>[{amount}]", Color.green);

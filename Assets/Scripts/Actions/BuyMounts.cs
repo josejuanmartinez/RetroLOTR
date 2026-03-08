@@ -25,6 +25,7 @@ public class BuyMounts : EmmissaryPCAction
             if (!stores.HasStock(ProducesEnum.mounts, quantity)) return false;
             if (playable.goldAmount < totalCost) return false;
 
+            playable.RemoveGold(totalCost);
             playable.AddMounts(quantity);
             stores.AdjustStock(ProducesEnum.mounts, -quantity);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();

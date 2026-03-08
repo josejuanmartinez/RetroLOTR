@@ -19,6 +19,7 @@ public class SellIron : EmmissaryPCAction
             if (stores == null) return false;
             int quantity = 5;
             int payout = stores.GetSellPrice(ProducesEnum.iron, quantity);
+            playable.AddGold(payout);
             stores.AdjustStock(ProducesEnum.iron, quantity);
             if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 

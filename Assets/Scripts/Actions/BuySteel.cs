@@ -26,6 +26,7 @@ public class BuySteel : EmmissaryPCAction
             if (!stores.HasStock(ProducesEnum.steel, quantity)) return false;
             if (playable.goldAmount < totalCost) return false;
 
+            playable.RemoveGold(totalCost);
             playable.AddSteel(quantity);
             stores.AdjustStock(ProducesEnum.steel, -quantity);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();

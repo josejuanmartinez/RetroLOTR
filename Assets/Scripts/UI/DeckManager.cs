@@ -69,6 +69,14 @@ public class CardData
     public int actionId;
     public string spriteName;
     public string region;
+    public int commander;
+    public int agent;
+    public int emmissary;
+    public int mage;
+    public RacesEnum race;
+    public List<Artifact> artifacts = new();
+    public TroopsTypeEnum troopType;
+    public List<ArmySpecialAbilityEnum> specialAbilities = new();
 
     // Card-owned requirements (migrated from Actions.json)
     public int commanderSkillRequired;
@@ -91,6 +99,22 @@ public class CardData
     public CardTypeEnum GetCardType()
     {
         return CardTypeParser.Parse(type);
+    }
+
+    public int GetCharacterPointTotal()
+    {
+        if (GetCardType() != CardTypeEnum.Character) return 0;
+        return Mathf.Max(0, commander) + Mathf.Max(0, agent) + Mathf.Max(0, emmissary) + Mathf.Max(0, mage);
+    }
+
+    public int GetAdditionalGoldCost()
+    {
+        return GetCardType() == CardTypeEnum.Character ? GetCharacterPointTotal() * 5 : 0;
+    }
+
+    public int GetTotalGoldCost()
+    {
+        return Mathf.Max(0, goldRequired) + GetAdditionalGoldCost();
     }
 
     public bool IsEventCard()
@@ -124,6 +148,20 @@ public class CardData
     {
         playability ??= new CardPlayabilityResult();
         playability.Reset();
+
+        if (GetCardType() == CardTypeEnum.Character || GetCardType() == CardTypeEnum.Army)
+        {
+            bool cardResourcesOk = resourceCheck != null
+                ? resourceCheck(selectedCharacter)
+                : selectedCharacter != null && MeetsResourceRequirements(selectedCharacter.GetOwner());
+            bool cardConditionsOk = conditionCheck == null || conditionCheck(selectedCharacter);
+
+            playability.failsResourceRequirements = !cardResourcesOk;
+            playability.failsActionConditions = !cardConditionsOk;
+            isPlayable = cardResourcesOk && cardConditionsOk;
+            playability.isPlayable = isPlayable;
+            return isPlayable;
+        }
 
         if (selectedCharacter == null)
         {
@@ -163,7 +201,7 @@ public class CardData
         if (ironRequired > 0 && owner.ironAmount < ironRequired) return false;
         if (steelRequired > 0 && owner.steelAmount < steelRequired) return false;
         if (mithrilRequired > 0 && owner.mithrilAmount < mithrilRequired) return false;
-        if (goldRequired > 0 && owner.goldAmount < goldRequired) return false;
+        if (GetTotalGoldCost() > 0 && owner.goldAmount < GetTotalGoldCost()) return false;
         return true;
     }
 
@@ -744,6 +782,14 @@ public class DeckManager : MonoBehaviour
             agentSkillRequired = card.agentSkillRequired,
             emissarySkillRequired = card.emissarySkillRequired,
             mageSkillRequired = card.mageSkillRequired,
+            commander = card.commander,
+            agent = card.agent,
+            emmissary = card.emmissary,
+            mage = card.mage,
+            race = card.race,
+            artifacts = card.artifacts != null ? new List<Artifact>(card.artifacts) : new List<Artifact>(),
+            troopType = card.troopType,
+            specialAbilities = card.specialAbilities != null ? new List<ArmySpecialAbilityEnum>(card.specialAbilities) : new List<ArmySpecialAbilityEnum>(),
             spriteName = card.spriteName,
             region = card.region,
             difficulty = card.difficulty,
@@ -921,7 +967,8 @@ public class DeckManager : MonoBehaviour
         if (card.ironRequired > 0) owner.RemoveIron(card.ironRequired, false);
         if (card.steelRequired > 0) owner.RemoveSteel(card.steelRequired, false);
         if (card.mithrilRequired > 0) owner.RemoveMithril(card.mithrilRequired, false);
-        if (card.goldRequired > 0) owner.RemoveGold(card.goldRequired, false);
+        int totalGoldCost = card.GetTotalGoldCost();
+        if (totalGoldCost > 0) owner.RemoveGold(totalGoldCost, false);
     }
 
     private PlayerDeckState BuildDeckStateForLeader(PlayableLeader leader)

@@ -19,6 +19,7 @@ public class SellTimber : EmmissaryPCAction
             if (stores == null) return false;
             int quantity = 5;
             int payout = stores.GetSellPrice(ProducesEnum.timber, quantity);
+            playable.AddGold(payout);
             stores.AdjustStock(ProducesEnum.timber, quantity);
             if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 

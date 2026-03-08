@@ -19,6 +19,7 @@ public class Army
     [SerializeField] public int ca = 0;
     [SerializeField] public int ws = 0;
     [SerializeField] public int xp = 25;
+    [SerializeField] public List<ArmyTroopAbilityGroup> troopAbilityGroups = new();
 
     [SerializeField] public bool startingArmy = false;
 
@@ -37,13 +38,15 @@ public class Army
         this.ca = ca;
         this.ws = ws;
         this.xp = Mathf.Clamp(xp, 0, 100);
+        troopAbilityGroups = new();
     }
 
-    public Army(Character commander, TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, int xp = 25)
+    public Army(Character commander, TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, int xp = 25, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null)
     {
         this.commander = commander;
         this.startingArmy = startingArmy;
         this.xp = Mathf.Clamp(xp, 0, 100);
+        troopAbilityGroups = new();
 
         // Use reflection to set the field based on the enum value
         string fieldName = troopsType.ToString();
@@ -62,6 +65,7 @@ public class Army
         }
 
         if (ws > 0) this.ws += ws;
+        AddSpecialTroopGroup(troopsType, amount, specialAbilities);
     }
 
     public AlignmentEnum GetAlignment()
@@ -84,8 +88,17 @@ public class Army
         {
             xp = Mathf.Clamp(Mathf.RoundToInt((xp * GetSize() + otherArmy.xp * otherArmy.GetSize()) / (float)totalSize), 0, 100);
         }
+        if (otherArmy.troopAbilityGroups != null)
+        {
+            for (int i = 0; i < otherArmy.troopAbilityGroups.Count; i++)
+            {
+                ArmyTroopAbilityGroup group = otherArmy.troopAbilityGroups[i];
+                if (group == null || group.amount <= 0) continue;
+                AddSpecialTroopGroup(group.troopType, group.amount, group.abilities);
+            }
+        }
     }
-    public void Recruit(TroopsTypeEnum troopsType, int amount)
+    public void Recruit(TroopsTypeEnum troopsType, int amount, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null)
     {
         MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\"/>", Color.green);
         if (troopsType == TroopsTypeEnum.ma) ma += amount;
@@ -96,6 +109,7 @@ public class Army
         if (troopsType == TroopsTypeEnum.hc) hc += amount;
         if (troopsType == TroopsTypeEnum.ca) ca += amount;
         if (troopsType == TroopsTypeEnum.ws) ws += amount;
+        AddSpecialTroopGroup(troopsType, amount, specialAbilities);
     }
 
     public int GetSize(bool withoutWs = false)
@@ -110,14 +124,14 @@ public class Army
         LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
         List<string> result = new() { };
     
-        if (ma > 0) result.Add($"<sprite name=\"ma\">[{ma}] {biomeConfig.maDescription}");
-        if (ar > 0) result.Add($"<sprite name=\"ar\">[{ar}] {biomeConfig.arDescription}");
-        if (li > 0) result.Add($"<sprite name=\"li\">[{li}] {biomeConfig.liDescription}");
-        if (hi > 0) result.Add($"<sprite name=\"hi\">[{hi}] {biomeConfig.hiDescription}");
-        if (lc > 0) result.Add($"<sprite name=\"lc\">[{lc}] {biomeConfig.lcDescription}");
-        if (hc > 0) result.Add($"<sprite name=\"hc\">[{hc}] {biomeConfig.hcDescription}");
-        if (ca > 0) result.Add($"<sprite name=\"ca\">[{ca}] {biomeConfig.caDescription}");
-        if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}] {biomeConfig.wsDescription}");
+        if (ma > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ma, ma, biomeConfig.maDescription));
+        if (ar > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ar, ar, biomeConfig.arDescription));
+        if (li > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.li, li, biomeConfig.liDescription));
+        if (hi > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.hi, hi, biomeConfig.hiDescription));
+        if (lc > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.lc, lc, biomeConfig.lcDescription));
+        if (hc > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.hc, hc, biomeConfig.hcDescription));
+        if (ca > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ca, ca, biomeConfig.caDescription));
+        if (ws > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ws, ws, biomeConfig.wsDescription));
 
         string xpText = GetXpHoverText();
 
@@ -129,14 +143,14 @@ public class Army
         LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
         List<string> result = new() { };
 
-        if (ma > 0) result.Add($"<sprite name=\"ma\">[{ma}] {biomeConfig.maDescription}");
-        if (ar > 0) result.Add($"<sprite name=\"ar\">[{ar}] {biomeConfig.arDescription}");
-        if (li > 0) result.Add($"<sprite name=\"li\">[{li}] {biomeConfig.liDescription}");
-        if (hi > 0) result.Add($"<sprite name=\"hi\">[{hi}] {biomeConfig.hiDescription}");
-        if (lc > 0) result.Add($"<sprite name=\"lc\">[{lc}] {biomeConfig.lcDescription}");
-        if (hc > 0) result.Add($"<sprite name=\"hc\">[{hc}] {biomeConfig.hcDescription}");
-        if (ca > 0) result.Add($"<sprite name=\"ca\">[{ca}] {biomeConfig.caDescription}");
-        if (ws > 0) result.Add($"<sprite name=\"ws\">[{ws}] {biomeConfig.wsDescription}");
+        if (ma > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ma, ma, biomeConfig.maDescription));
+        if (ar > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ar, ar, biomeConfig.arDescription));
+        if (li > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.li, li, biomeConfig.liDescription));
+        if (hi > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.hi, hi, biomeConfig.hiDescription));
+        if (lc > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.lc, lc, biomeConfig.lcDescription));
+        if (hc > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.hc, hc, biomeConfig.hcDescription));
+        if (ca > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ca, ca, biomeConfig.caDescription));
+        if (ws > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ws, ws, biomeConfig.wsDescription));
 
         return $" leading {string.Join(',', result)}";
     }
@@ -246,6 +260,11 @@ public class Army
 
     public int GetDefence()
     {
+        return GetDefenceAgainst(null);
+    }
+
+    public int GetDefenceAgainst(Army enemyArmy)
+    {
         int defence = 0;
         if (commander.hex.IsWaterTerrain())
         {
@@ -270,6 +289,7 @@ public class Army
         defence = ApplyArtifactDefenseBonus(defence);
         defence = ApplyEnemyArtifactDefensePenalty(defence);
         defence = ApplyStatusDefenseBonus(defence);
+        defence = ApplyPikemenDefenseModifier(defence, enemyArmy);
         return defence;
     }
 
@@ -348,6 +368,14 @@ public class Army
         return Mathf.Max(0, value);
     }
 
+    private int ApplyPikemenDefenseModifier(int value, Army enemyArmy)
+    {
+        if (!HasSpecialAbility(ArmySpecialAbilityEnum.Pikemen)) return value;
+        bool enemyHasCavalry = enemyArmy != null && enemyArmy.HasCavalryTroops();
+        float multiplier = enemyHasCavalry ? 1.30f : 0.90f;
+        return Mathf.Max(0, Mathf.RoundToInt(value * multiplier));
+    }
+
     public TroopsTypeEnum? RemoveRandomTroop()
     {
         List<TroopsTypeEnum> available = new();
@@ -397,6 +425,7 @@ public class Army
             commander?.RefreshSelectedCharacterIconIfSelected();
         }
 
+        RemoveSpecialTroops(troop, 1);
         return troop;
     }
 
@@ -547,8 +576,37 @@ public class Army
         Leader defenderLeader = defenderArmy.commander.GetOwner();
         AlignmentEnum defenderAlignment = defenderArmy.GetAlignment();
 
-        // Calculate defender's total defense and strength
-        int defenderDefense = defenderArmy.GetDefence();
+        List<(string message, Color color)> battleAbilityMessages = new();
+        List<string> battleAbilityNarration = new();
+        TriggerBattleSpecialAbilities(targetHex, defenderArmy, battleAbilityMessages, battleAbilityNarration);
+        if (killed || commander == null || commander.killed || defenderArmy == null || defenderArmy.killed || defenderArmy.commander == null || defenderArmy.commander.killed) return;
+
+        attackerStrength = GetStrength();
+        attackerDefence = GetDefenceAgainst(defenderArmy);
+        attackerAlliesJoined = 0;
+        attackerAlliesStrength = 0;
+        attackerAlliesDefence = 0;
+
+        if (commander != null && commander.hex != null)
+        {
+            foreach (Army ally in commander.hex.armies)
+            {
+                if (ally == null || ally == this || ally.killed || ally.commander == null || ally.commander.killed) continue;
+                if ((attackerAlignment != AlignmentEnum.neutral && ally.GetAlignment() == attackerAlignment) ||
+                    (attackerAlignment == AlignmentEnum.neutral && ally.GetAlignment() == AlignmentEnum.neutral && ally.commander.GetOwner() == commander.GetOwner()))
+                {
+                    int allyStrength = ally.GetStrength();
+                    int allyDefence = ally.GetDefenceAgainst(defenderArmy);
+                    attackerStrength += allyStrength;
+                    attackerDefence += allyDefence;
+                    attackerAlliesJoined++;
+                    attackerAlliesStrength += allyStrength;
+                    attackerAlliesDefence += allyDefence;
+                }
+            }
+        }
+
+        int defenderDefense = defenderArmy.GetDefenceAgainst(this);
         int defenderStrength = defenderArmy.GetStrength();
         int attackerArtifactAttack = GetArtifactAttackBonusTotal();
         int attackerArtifactDefense = GetArtifactDefenseBonusTotal();
@@ -570,7 +628,7 @@ public class Army
                 if ((defenderAlignment != AlignmentEnum.neutral && ally.GetAlignment() == defenderAlignment) ||
                     (defenderAlignment == AlignmentEnum.neutral && ally.GetAlignment() == AlignmentEnum.neutral && ally.commander.GetOwner() == defenderArmy.commander.GetOwner()))
                 {
-                    int allyDefence = ally.GetDefence();
+                    int allyDefence = ally.GetDefenceAgainst(this);
                     int allyStrength = ally.GetStrength();
                     defenderDefense += allyDefence;
                     defenderStrength += allyStrength;
@@ -646,6 +704,8 @@ public class Army
             battleLocation,
             attackerName,
             defenderArmy.GetCommander().characterName,
+            commander != null ? commander.race : RacesEnum.Common,
+            defenderArmy.GetCommander() != null ? defenderArmy.GetCommander().race : RacesEnum.Common,
             attackerAlliesJoined,
             attackerAlliesStrength,
             attackerAlliesDefence,
@@ -667,7 +727,8 @@ public class Army
             defenderDamage,
             attackerLossesText,
             defenderLossesText,
-            stalemateNote);
+            stalemateNote,
+            battleAbilityNarration);
         Illustrations illustrations = GameObject.FindFirstObjectByType<Illustrations>();
         bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(targetHex);
         List<(string message, Color color)> hudMessages = new()
@@ -675,6 +736,7 @@ public class Army
             ($"{attackerName} losses: {attackerLossesText}.", Color.red),
             ($"{defenderName} losses: {defenderLossesText}.", Color.red)
         };
+        hudMessages.AddRange(battleAbilityMessages);
         if (shouldShowPopup)
         {
             Action onPopupClose = () => ShowHudMessagesAfterPopup(targetHex, hudActor, hudMessages);
@@ -739,6 +801,8 @@ public class Army
         string location,
         string attackerName,
         string defenderName,
+        RacesEnum attackerRace,
+        RacesEnum defenderRace,
         int attackerAlliesJoined,
         int attackerAlliesStrength,
         int attackerAlliesDefence,
@@ -760,12 +824,14 @@ public class Army
         float defenderDamage,
         string attackerLossesText,
         string defenderLossesText,
-        string stalemateNote)
+        string stalemateNote,
+        List<string> battleAbilityNarration)
     {
         StringBuilder sb = new StringBuilder();
         int template = UnityEngine.Random.Range(0, 5);
 
         string edgePhrase = BuildBattleEdgePhrase(attackerDamage, defenderDamage, attackerName, defenderName);
+        string raceFlavor = BuildRaceBattleFlavor(attackerRace, defenderRace, attackerName, defenderName);
         bool attackerHasEdge = attackerBonusPercent > defenderBonusPercent + 10;
         bool defenderHasEdge = defenderBonusPercent > attackerBonusPercent + 10;
         bool relicsActive = attackerArtifactAttack + attackerArtifactDefense + defenderArtifactAttack + defenderArtifactDefense > 0;
@@ -790,6 +856,12 @@ public class Army
             }
         }
 
+        void Abilities()
+        {
+            if (battleAbilityNarration == null || battleAbilityNarration.Count == 0) return;
+            sb.AppendLine(BuildBattleAbilityNarration(battleAbilityNarration));
+        }
+
         void Casualties()
         {
             sb.AppendLine($"Losses: {attackerName} {attackerLossesText}; {defenderName} {defenderLossesText}.");
@@ -806,6 +878,8 @@ public class Army
                 if (attackerHasEdge) sb.AppendLine($"{attackerName}'s command sharpens the assault, turning chaos into ordered fury.");
                 if (defenderHasEdge) sb.AppendLine($"{defenderName}'s command steadies the defense, closing each gap as it opens.");
                 sb.AppendLine($"Steel meets steel: {attackerTrainingLabel} warbands collide with {defenderTrainingLabel} ranks.");
+                sb.AppendLine(raceFlavor);
+                Abilities();
                 Artifacts();
                 sb.AppendLine(edgePhrase);
                 Casualties();
@@ -816,6 +890,8 @@ public class Army
                 Allies(true);
                 Allies(false);
                 sb.AppendLine($"Veterans steady the lines, {attackerTrainingLabel} blades against {defenderTrainingLabel} resolve.");
+                sb.AppendLine(raceFlavor);
+                Abilities();
                 Artifacts();
                 sb.AppendLine(edgePhrase);
                 Casualties();
@@ -832,6 +908,8 @@ public class Army
                         : $"{defenderName} anticipates the charge and holds, turning the rush into a grind.");
                 }
                 sb.AppendLine($"Training shows in every step: {attackerTrainingLabel} hosts against {defenderTrainingLabel} defenders.");
+                sb.AppendLine(raceFlavor);
+                Abilities();
                 Artifacts();
                 sb.AppendLine(edgePhrase);
                 Casualties();
@@ -843,6 +921,8 @@ public class Army
                 if (pcDefenseContribution > 0) sb.AppendLine("Walls and militia strain to hold the breach, shouting orders above the din.");
                 if (attackerHasEdge) sb.AppendLine($"{attackerName}'s leadership keeps the pressure on, wave after wave striking in time.");
                 if (defenderHasEdge) sb.AppendLine($"{defenderName}'s leadership keeps the line tight, shields overlapping in a living wall.");
+                sb.AppendLine(raceFlavor);
+                Abilities();
                 Artifacts();
                 sb.AppendLine(edgePhrase);
                 Casualties();
@@ -853,6 +933,8 @@ public class Army
                 Allies(false);
                 if (pcDefenseContribution > 0) sb.AppendLine("Local defenses join the fray, adding grit to every line.");
                 sb.AppendLine($"Morale and drill decide the tempo: {attackerTrainingLabel} against {defenderTrainingLabel}.");
+                sb.AppendLine(raceFlavor);
+                Abilities();
                 Artifacts();
                 sb.AppendLine(edgePhrase);
                 Casualties();
@@ -1174,11 +1256,19 @@ public class Army
         this.lc = Math.Max(0, this.lc - breakdown.lc);
         this.hc = Math.Max(0, this.hc - breakdown.hc);
         this.ca = Math.Max(0, this.ca - breakdown.ca);
+        RemoveSpecialTroops(TroopsTypeEnum.ma, breakdown.ma);
+        RemoveSpecialTroops(TroopsTypeEnum.ar, breakdown.ar);
+        RemoveSpecialTroops(TroopsTypeEnum.li, breakdown.li);
+        RemoveSpecialTroops(TroopsTypeEnum.hi, breakdown.hi);
+        RemoveSpecialTroops(TroopsTypeEnum.lc, breakdown.lc);
+        RemoveSpecialTroops(TroopsTypeEnum.hc, breakdown.hc);
+        RemoveSpecialTroops(TroopsTypeEnum.ca, breakdown.ca);
 
         // Only apply casualties to warships if in water
         if (commander.hex.IsWaterTerrain())
         {
             this.ws = Math.Max(0, this.ws - breakdown.ws);
+            RemoveSpecialTroops(TroopsTypeEnum.ws, breakdown.ws);
         }
 
         // Check if the army was eliminated
@@ -1275,6 +1365,387 @@ public class Army
         return "The fight swings back and forth, momentum shifting with each fresh shout.";
     }
 
+    private void TriggerBattleSpecialAbilities(Hex battleHex, Army enemyArmy, List<(string message, Color color)> battleMessages, List<string> battleNarration)
+    {
+        if (battleHex == null || enemyArmy == null || battleMessages == null || battleNarration == null) return;
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Shielded, 10, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
+            return ($"{commander.characterName}'s shielded troops gain Fortified.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Shielded, commander.characterName, null, true));
+        });
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Berserker, 10, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
+            return ($"{commander.characterName}'s berserk fury grants Strengthened.", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Berserker, commander.characterName, null, true));
+        });
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Raid, 10, battleMessages, battleNarration, () =>
+        {
+            commander.GetOwner()?.AddGold(1);
+            return ($"{commander.characterName}'s raiders seize +1 <sprite name=\"gold\"/>.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.Raid, commander.characterName, null, true));
+        });
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Encouraging, 10, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Encouraged, 2);
+            return ($"{commander.characterName}'s army gains Courage (2).", Color.green, BuildAbilityNarration(ArmySpecialAbilityEnum.Encouraging, commander.characterName, null, true));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Discouraging, 10, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Despair, 2);
+            return ($"{enemyArmy.commander.characterName} suffers Despair (2).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Discouraging, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Poison, 10, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Poisoned, 5);
+            return ($"{enemyArmy.commander.characterName} is Poisoned (5).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Poison, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Fire, 10, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Burning, 3);
+            return ($"{enemyArmy.commander.characterName} is Burning (3).", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Fire, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Cursed, 10, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Fear, 2);
+            return ($"{enemyArmy.commander.characterName} is gripped by Fear (2).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Cursed, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.Longrange, 10, battleHex, enemyArmy, 2, 0.10f, "longrange volley", battleMessages, battleNarration);
+        TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.ShortRange, 10, battleHex, enemyArmy, 1, 0.20f, "shortrange strike", battleMessages, battleNarration);
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Shielded, 10, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
+            return ($"{enemyArmy.commander.characterName}'s shielded troops gain Fortified.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Shielded, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Berserker, 10, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
+            return ($"{enemyArmy.commander.characterName}'s berserk fury grants Strengthened.", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Berserker, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Raid, 10, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.GetOwner()?.AddGold(1);
+            return ($"{enemyArmy.commander.characterName}'s raiders seize +1 <sprite name=\"gold\"/>.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.Raid, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Encouraging, 10, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Encouraged, 2);
+            return ($"{enemyArmy.commander.characterName}'s army gains Courage (2).", Color.green, BuildAbilityNarration(ArmySpecialAbilityEnum.Encouraging, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Discouraging, 10, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Despair, 2);
+            return ($"{commander.characterName} suffers Despair (2).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Discouraging, enemyArmy.commander.characterName, commander.characterName, false));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Poison, 10, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Poisoned, 5);
+            return ($"{commander.characterName} is Poisoned (5).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Poison, enemyArmy.commander.characterName, commander.characterName, false));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Fire, 10, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Burning, 3);
+            return ($"{commander.characterName} is Burning (3).", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Fire, enemyArmy.commander.characterName, commander.characterName, false));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Cursed, 10, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Fear, 2);
+            return ($"{commander.characterName} is gripped by Fear (2).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Cursed, enemyArmy.commander.characterName, commander.characterName, false));
+        });
+
+        enemyArmy.TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.Longrange, 10, battleHex, this, 2, 0.10f, "longrange volley", battleMessages, battleNarration);
+        enemyArmy.TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.ShortRange, 10, battleHex, this, 1, 0.20f, "shortrange strike", battleMessages, battleNarration);
+    }
+
+    private void TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum ability, int percentChance, List<(string message, Color color)> battleMessages, List<string> battleNarration, Func<(string message, Color color, string narration)> onSuccess)
+    {
+        if (!HasSpecialAbility(ability) || commander == null || commander.killed) return;
+        if (UnityEngine.Random.Range(0, 100) >= percentChance) return;
+        var result = onSuccess.Invoke();
+        battleMessages.Add((result.message, result.color));
+        if (!string.IsNullOrWhiteSpace(result.narration)) battleNarration.Add(result.narration);
+    }
+
+    private void TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum ability, int percentChance, Army enemyArmy, List<(string message, Color color)> battleMessages, List<string> battleNarration, Func<(string message, Color color, string narration)> onSuccess)
+    {
+        if (!HasSpecialAbility(ability) || enemyArmy == null || enemyArmy.killed || enemyArmy.commander == null || enemyArmy.commander.killed) return;
+        if (UnityEngine.Random.Range(0, 100) >= percentChance) return;
+        var result = onSuccess.Invoke();
+        battleMessages.Add((result.message, result.color));
+        if (!string.IsNullOrWhiteSpace(result.narration)) battleNarration.Add(result.narration);
+    }
+
+    private void TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum ability, int percentChance, Hex battleHex, Army primaryEnemy, int radius, float casualtyPercent, string label, List<(string message, Color color)> battleMessages, List<string> battleNarration)
+    {
+        if (!HasSpecialAbility(ability) || battleHex == null || commander == null || commander.killed) return;
+        if (UnityEngine.Random.Range(0, 100) >= percentChance) return;
+
+        Army target = FindRandomEnemyArmyInRadius(battleHex, radius) ?? primaryEnemy;
+        if (target == null || target.killed || target.commander == null || target.commander.killed) return;
+
+        target.ReceiveCasualties(casualtyPercent, commander.GetOwner(), false);
+        battleMessages.Add(($"{commander.characterName}'s {label} hits {target.commander.characterName}'s army.", Color.yellow));
+        battleNarration.Add(BuildAbilityNarration(ability, commander.characterName, target.commander.characterName, false));
+    }
+
+    private Army FindRandomEnemyArmyInRadius(Hex origin, int radius)
+    {
+        if (origin == null) return null;
+        List<Hex> hexes = origin.GetHexesInRadius(radius);
+        if (hexes == null || hexes.Count == 0) return null;
+
+        List<Army> candidates = hexes
+            .Where(hex => hex != null && hex.armies != null)
+            .SelectMany(hex => hex.armies)
+            .Where(army => army != null
+                && army != this
+                && !army.killed
+                && army.commander != null
+                && !army.commander.killed
+                && army.commander.GetOwner() != commander.GetOwner()
+                && (army.GetAlignment() != GetAlignment() || army.GetAlignment() == AlignmentEnum.neutral || GetAlignment() == AlignmentEnum.neutral))
+            .ToList();
+
+        if (candidates.Count == 0) return null;
+        return candidates[UnityEngine.Random.Range(0, candidates.Count)];
+    }
+
+    private static string BuildBattleAbilityNarration(List<string> battleAbilityNarration)
+    {
+        if (battleAbilityNarration == null || battleAbilityNarration.Count == 0) return string.Empty;
+
+        int template = UnityEngine.Random.Range(0, 5);
+        string joined = string.Join(" ", battleAbilityNarration);
+        return template switch
+        {
+            0 => $"{joined}",
+            1 => $"In the thickest crush of the fighting, {joined}",
+            2 => $"The struggle shifts by sudden turns: {joined}",
+            3 => $"Dust, shouting, and steel swallow the field as {joined}",
+            _ => $"Across the melee, one sharp moment follows another. {joined}"
+        };
+    }
+
+    private static string BuildAbilityNarration(ArmySpecialAbilityEnum ability, string sourceName, string targetName, bool selfTargeted)
+    {
+        List<string> options = ability switch
+        {
+            ArmySpecialAbilityEnum.Shielded => new List<string>
+            {
+                $"{sourceName}'s shielded ranks lock together and harden the line.",
+                $"A wall of shields rises around {sourceName}'s foremost fighters, and the first shock breaks against it.",
+                $"{sourceName}'s troops overlap shields and blunt the worst of the blow.",
+                $"{sourceName}'s front ranks crouch behind locked shields, turning the enemy rush into a dull crash of iron.",
+                $"{sourceName}'s line knots into a bristling shieldwall that refuses to split."
+            },
+            ArmySpecialAbilityEnum.Berserker => new List<string>
+            {
+                $"{sourceName}'s fiercest warriors hurl themselves forward in a killing rage.",
+                $"Blood-frenzied fighters in {sourceName}'s host strike with reckless force.",
+                $"{sourceName}'s berserkers whip the line into a brutal surge.",
+                $"With wild cries, {sourceName}'s maddened champions crash in hard enough to shake the whole front.",
+                $"{sourceName}'s most savage fighters tear into the press, heedless of wounds and hungry for blood."
+            },
+            ArmySpecialAbilityEnum.Raid => new List<string>
+            {
+                $"{sourceName}'s raiders vanish through the confusion and come back with plunder at their belts.",
+                $"While the lines are tangled, riders from {sourceName}'s host strip the field of loose spoils.",
+                $"{sourceName}'s raiding parties dart through smoke and panic, carrying off what they can seize.",
+                $"In the disorder behind the front, men of {sourceName} snatch coin, baggage, and trophies of war.",
+                $"{sourceName}'s scouts slip out of the melee with fresh spoils before anyone can stop them."
+            },
+            ArmySpecialAbilityEnum.Encouraging => new List<string>
+            {
+                $"{sourceName}'s cries of courage steady wavering hearts.",
+                $"{sourceName}'s standards lift the host and harden its resolve.",
+                $"The line around {sourceName} rallies with renewed heart.",
+                $"{sourceName}'s captains bellow over the din, and tired fighters straighten and step back into the fight.",
+                $"A surge of resolve runs through {sourceName}'s host as banners rise above the press."
+            },
+            ArmySpecialAbilityEnum.Discouraging => new List<string>
+            {
+                $"{targetName} falters as dread spreads through the ranks.",
+                $"A wave of despair rolls into {targetName}'s line and steals its edge.",
+                $"{sourceName}'s grim presence saps the resolve of {targetName}'s host.",
+                $"{targetName}'s fighters lose heart for a moment, their advance thinning into hesitation.",
+                $"Dark cries from {sourceName}'s side leave {targetName}'s line unsteady and unsure."
+            },
+            ArmySpecialAbilityEnum.Poison => new List<string>
+            {
+                $"{targetName}'s warriors reel as poison takes hold.",
+                $"Venom from {sourceName}'s host seeps into the struggle and weakens {targetName}.",
+                $"{targetName}'s line fights on under the sting of poison.",
+                $"{targetName}'s front ranks begin to stagger, their strength ebbing under tainted wounds.",
+                $"Blades and darts from {sourceName}'s host leave {targetName}'s soldiers pale and unsteady."
+            },
+            ArmySpecialAbilityEnum.Fire => new List<string>
+            {
+                $"Flames spread where {sourceName}'s attack lands, setting {targetName}'s force ablaze.",
+                $"{targetName}'s front ranks catch fire in the violence of the clash.",
+                $"Burning brands and sparks from {sourceName}'s line leave {targetName}'s host smoking.",
+                $"Sudden fire runs along shields and cloaks in {targetName}'s line, throwing the formation into panic.",
+                $"A burst of flame from {sourceName}'s side leaves parts of {targetName}'s host burning through the melee."
+            },
+            ArmySpecialAbilityEnum.Cursed => new List<string>
+            {
+                $"{targetName}'s fighters shrink back under a sudden pall of fear.",
+                $"A cursed dread grips {targetName}'s line at the worst possible moment.",
+                $"{sourceName}'s dark omen leaves {targetName}'s ranks shaken.",
+                $"An unnatural chill passes through {targetName}'s host, and even bold fighters glance back in dread.",
+                $"{targetName}'s line wavers as a black foreboding settles over the field."
+            },
+            ArmySpecialAbilityEnum.Longrange => new List<string>
+            {
+                $"{sourceName}'s far-thrown volleys arc over the field and strike beyond the main clash.",
+                $"Missiles from {sourceName}'s rear lines find an enemy beyond the main clash.",
+                $"{sourceName} sends a distant volley that cuts into exposed foes.",
+                $"From well behind the front, shafts and stones from {sourceName}'s host fall on an enemy that thought itself clear of danger.",
+                $"{sourceName}'s rear ranks loose at long reach, and distant shapes crumple under the rain."
+            },
+            ArmySpecialAbilityEnum.ShortRange => new List<string>
+            {
+                $"{sourceName}'s close-thrown missiles hammer nearby enemies.",
+                $"{sourceName}'s short-range barrage tears into a force just beyond the melee.",
+                $"A sudden near volley from {sourceName} batters a neighboring enemy line.",
+                $"{sourceName}'s skirmishers dart up and unleash a fierce burst at enemies only a stone's throw away.",
+                $"At the edge of the fighting, a quick storm from {sourceName}'s line slams into a nearby foe."
+            },
+            _ => selfTargeted
+                ? new List<string>
+                {
+                    $"{sourceName}'s line finds an unexpected edge in the chaos.",
+                    $"{sourceName}'s host turns the moment to its favor with a sudden battlefield knack.",
+                    $"Something in {sourceName}'s way of war briefly tilts the clash."
+                }
+                : new List<string>
+                {
+                    $"{sourceName} catches {targetName} in a sudden turn of the fight.",
+                    $"{targetName}'s line is wrong-footed by an unexpected stroke from {sourceName}.",
+                    $"{sourceName} finds a cruel opening and {targetName} pays for it."
+                }
+        };
+
+        return options[UnityEngine.Random.Range(0, options.Count)];
+    }
+
+    private static string BuildRaceBattleFlavor(RacesEnum attackerRace, RacesEnum defenderRace, string attackerName, string defenderName)
+    {
+        List<string> options = new();
+
+        options.Add($"{GetRaceBattleNoun(attackerRace, true)} crash into {GetRaceBattleNoun(defenderRace, false)}, each side testing the other's nerve.");
+
+        switch (attackerRace)
+        {
+            case RacesEnum.Elf:
+                options.Add($"{attackerName}'s elves move with cold precision, seeking seams before {defenderName} can answer.");
+                break;
+            case RacesEnum.Dwarf:
+                options.Add($"{attackerName}'s dwarves advance like a hammerblow, stubborn and hard to turn aside.");
+                break;
+            case RacesEnum.Orc:
+            case RacesEnum.Goblin:
+                options.Add($"{attackerName}'s foul ranks come on in snarling waves, eager to drag the fight into chaos.");
+                break;
+            case RacesEnum.Troll:
+                options.Add($"{attackerName}'s trolls heave forward with brutal force, scattering the front before them.");
+                break;
+            case RacesEnum.Easterling:
+            case RacesEnum.Southron:
+                options.Add($"{attackerName}'s eastern host presses with harsh cries and disciplined surges.");
+                break;
+            case RacesEnum.Hobbit:
+                options.Add($"{attackerName}'s smallfolk fight with surprising resolve, refusing to yield the field.");
+                break;
+        }
+
+        switch (defenderRace)
+        {
+            case RacesEnum.Elf:
+                options.Add($"{defenderName}'s elves answer with measured volleys and quick-footed counters.");
+                break;
+            case RacesEnum.Dwarf:
+                options.Add($"{defenderName}'s dwarves plant themselves like stone, making every yard costly.");
+                break;
+            case RacesEnum.Orc:
+            case RacesEnum.Goblin:
+                options.Add($"{defenderName}'s orcish defenders howl behind jagged shields, turning the line into a brawl.");
+                break;
+            case RacesEnum.Troll:
+                options.Add($"{defenderName}'s trolls soak the blow and hurl it back with savage strength.");
+                break;
+            case RacesEnum.Beast:
+            case RacesEnum.Spider:
+                options.Add($"{defenderName}'s creatures snap and circle at the flanks, making the melee feel feral and close.");
+                break;
+            case RacesEnum.Undead:
+                options.Add($"{defenderName}'s dead hold without fear, meeting the clash in chilling silence.");
+                break;
+        }
+
+        if ((attackerRace == RacesEnum.Elf && defenderRace == RacesEnum.Orc) ||
+            (attackerRace == RacesEnum.Orc && defenderRace == RacesEnum.Elf))
+        {
+            options.Add("Ancient hatred sharpens every strike as elf and orc meet in a feud older than the field itself.");
+        }
+        if ((attackerRace == RacesEnum.Dwarf && defenderRace == RacesEnum.Goblin) ||
+            (attackerRace == RacesEnum.Goblin && defenderRace == RacesEnum.Dwarf))
+        {
+            options.Add("Old grudges flare anew as dwarf and goblin tear into one another at close quarters.");
+        }
+        if ((attackerRace == RacesEnum.Common && defenderRace == RacesEnum.Undead) ||
+            (attackerRace == RacesEnum.Undead && defenderRace == RacesEnum.Common))
+        {
+            options.Add("The living and the unquiet dead collide in a struggle that chills even the bold.");
+        }
+
+        return options[UnityEngine.Random.Range(0, options.Count)];
+    }
+
+    private static string GetRaceBattleNoun(RacesEnum race, bool plural)
+    {
+        return race switch
+        {
+            RacesEnum.Common => plural ? "the hosts of men" : "the hosts of men",
+            RacesEnum.Elf => plural ? "elven ranks" : "elven ranks",
+            RacesEnum.Dwarf => plural ? "dwarven shields" : "dwarven shields",
+            RacesEnum.Hobbit => plural ? "hobbit companies" : "hobbit companies",
+            RacesEnum.Maia => plural ? "maiar servants" : "maiar servants",
+            RacesEnum.Orc => plural ? "orc warbands" : "orc warbands",
+            RacesEnum.Troll => plural ? "troll packs" : "troll packs",
+            RacesEnum.Nazgul => plural ? "nazgul terror" : "nazgul terror",
+            RacesEnum.Spider => plural ? "spider broods" : "spider broods",
+            RacesEnum.Dragon => plural ? "dragon-kin" : "dragon-kin",
+            RacesEnum.Balrog => plural ? "balrog fire" : "balrog fire",
+            RacesEnum.Undead => plural ? "the restless dead" : "the restless dead",
+            RacesEnum.Dunedain => plural ? "dunedain companies" : "dunedain companies",
+            RacesEnum.Beorning => plural ? "beorning fighters" : "beorning fighters",
+            RacesEnum.Eagle => plural ? "eagle talons" : "eagle talons",
+            RacesEnum.Wose => plural ? "wose hunters" : "wose hunters",
+            RacesEnum.Goblin => plural ? "goblin mobs" : "goblin mobs",
+            RacesEnum.Ent => plural ? "entish strength" : "entish strength",
+            RacesEnum.Southron => plural ? "southron ranks" : "southron ranks",
+            RacesEnum.Easterling => plural ? "easterling companies" : "easterling companies",
+            RacesEnum.Beast => plural ? "beast packs" : "beast packs",
+            RacesEnum.Machine => plural ? "siege engines" : "siege engines",
+            _ => plural ? "warbands" : "warbands"
+        };
+    }
+
     private static bool IsPlayerLeader(Leader leader)
     {
         Game g = UnityEngine.Object.FindFirstObjectByType<Game>();
@@ -1334,5 +1805,148 @@ public class Army
         cost += hc;
 
         return Mathf.FloorToInt(cost);
+    }
+
+    public List<ArmySpecialAbilityEnum> GetSpecialAbilities(TroopsTypeEnum troopType)
+    {
+        if (troopAbilityGroups == null) return new List<ArmySpecialAbilityEnum>();
+        return troopAbilityGroups
+            .Where(group => group != null && group.troopType == troopType && group.amount > 0)
+            .SelectMany(group => group.abilities ?? new List<ArmySpecialAbilityEnum>())
+            .Distinct()
+            .OrderBy(value => (int)value)
+            .ToList();
+    }
+
+    private bool HasSpecialAbility(ArmySpecialAbilityEnum ability)
+    {
+        return troopAbilityGroups != null
+            && troopAbilityGroups.Any(group => group != null && group.amount > 0 && group.abilities != null && group.abilities.Contains(ability));
+    }
+
+    private bool HasCavalryTroops()
+    {
+        return lc > 0 || hc > 0;
+    }
+
+    private string BuildTroopHoverLine(TroopsTypeEnum troopType, int amount, string description)
+    {
+        string line = $"<sprite name=\"{troopType.ToString().ToLower()}\">[{amount}] {description}";
+        List<ArmySpecialAbilityEnum> abilities = GetSpecialAbilities(troopType);
+        if (abilities.Count == 0) return line;
+        return $"{line} ({string.Join(", ", abilities.Select(FormatAbilityLabel))})";
+    }
+
+    private static string FormatAbilityLabel(ArmySpecialAbilityEnum ability)
+    {
+        return ability switch
+        {
+            ArmySpecialAbilityEnum.Longrange => "longrange",
+            ArmySpecialAbilityEnum.ShortRange => "shortrange",
+            _ => ability.ToString().ToLowerInvariant()
+        };
+    }
+
+    private void AddSpecialTroopGroup(TroopsTypeEnum troopType, int amount, IEnumerable<ArmySpecialAbilityEnum> abilities)
+    {
+        if (amount <= 0 || abilities == null) return;
+
+        List<ArmySpecialAbilityEnum> normalized = abilities
+            .Distinct()
+            .OrderBy(value => (int)value)
+            .ToList();
+        if (normalized.Count == 0) return;
+
+        troopAbilityGroups ??= new List<ArmyTroopAbilityGroup>();
+        ArmyTroopAbilityGroup existing = troopAbilityGroups.FirstOrDefault(group => group != null && group.Matches(troopType, normalized));
+        if (existing != null)
+        {
+            existing.amount += amount;
+            return;
+        }
+
+        troopAbilityGroups.Add(new ArmyTroopAbilityGroup
+        {
+            troopType = troopType,
+            amount = amount,
+            abilities = normalized
+        });
+    }
+
+    private void RemoveSpecialTroops(TroopsTypeEnum troopType, int amount)
+    {
+        if (amount <= 0 || troopAbilityGroups == null || troopAbilityGroups.Count == 0) return;
+
+        int remaining = amount;
+        while (remaining > 0)
+        {
+            int totalTroopsOfType = GetTroopCount(troopType);
+            if (totalTroopsOfType <= 0) break;
+
+            List<ArmyTroopAbilityGroup> matchingGroups = troopAbilityGroups
+                .Where(group => group != null && group.troopType == troopType && group.amount > 0)
+                .ToList();
+            int totalSpecial = matchingGroups.Sum(group => group.amount);
+            if (totalSpecial <= 0) break;
+
+            bool removeSpecial = UnityEngine.Random.Range(0, totalTroopsOfType) < totalSpecial;
+            if (!removeSpecial) break;
+
+            int roll = UnityEngine.Random.Range(0, totalSpecial);
+            int cumulative = 0;
+            for (int i = 0; i < matchingGroups.Count; i++)
+            {
+                cumulative += matchingGroups[i].amount;
+                if (roll >= cumulative) continue;
+                matchingGroups[i].amount = Math.Max(0, matchingGroups[i].amount - 1);
+                break;
+            }
+
+            remaining--;
+        }
+
+        troopAbilityGroups.RemoveAll(group => group == null || group.amount <= 0);
+        TrimSpecialTroopGroupsToCurrentCounts();
+    }
+
+    private int GetTroopCount(TroopsTypeEnum troopType)
+    {
+        return troopType switch
+        {
+            TroopsTypeEnum.ma => ma,
+            TroopsTypeEnum.ar => ar,
+            TroopsTypeEnum.li => li,
+            TroopsTypeEnum.hi => hi,
+            TroopsTypeEnum.lc => lc,
+            TroopsTypeEnum.hc => hc,
+            TroopsTypeEnum.ca => ca,
+            TroopsTypeEnum.ws => ws,
+            _ => 0
+        };
+    }
+
+    private void TrimSpecialTroopGroupsToCurrentCounts()
+    {
+        if (troopAbilityGroups == null || troopAbilityGroups.Count == 0) return;
+
+        foreach (TroopsTypeEnum troopType in Enum.GetValues(typeof(TroopsTypeEnum)))
+        {
+            int available = GetTroopCount(troopType);
+            List<ArmyTroopAbilityGroup> groups = troopAbilityGroups
+                .Where(group => group != null && group.troopType == troopType && group.amount > 0)
+                .ToList();
+            int specialTotal = groups.Sum(group => group.amount);
+            int overflow = Math.Max(0, specialTotal - available);
+            if (overflow <= 0) continue;
+
+            for (int i = groups.Count - 1; i >= 0 && overflow > 0; i--)
+            {
+                int remove = Math.Min(groups[i].amount, overflow);
+                groups[i].amount -= remove;
+                overflow -= remove;
+            }
+        }
+
+        troopAbilityGroups.RemoveAll(group => group == null || group.amount <= 0);
     }
 }

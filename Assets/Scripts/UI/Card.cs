@@ -244,13 +244,30 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (data == null) return string.Empty;
 
+        if (data.GetCardType() == CardTypeEnum.Character)
+        {
+            return BuildCharacterCardDescriptionText(data, cardTypeKey, typeColorHex);
+        }
+        if (data.GetCardType() == CardTypeEnum.Army)
+        {
+            return BuildArmyCardDescriptionText(data, cardTypeKey, typeColorHex);
+        }
+
         string actionDescription = TryGetActionDescription(data);
+        string jsonDescription = data.description ?? string.Empty;
+        if (data.GetCardType() == CardTypeEnum.PC
+            && !string.IsNullOrWhiteSpace(actionDescription)
+            && jsonDescription.Contains("<TBD>", StringComparison.Ordinal))
+        {
+            string resolved = jsonDescription.Replace("<TBD>", actionDescription);
+            return $"<color=#{typeColorHex}>{cardTypeKey}.</color>{resolved}";
+        }
+
         if (!string.IsNullOrWhiteSpace(actionDescription))
         {
             return $"<color=#{typeColorHex}>{cardTypeKey}.</color>{actionDescription}";
         }
 
-        string jsonDescription = data.description ?? string.Empty;
         return $"<color=#{typeColorHex}>{cardTypeKey}.</color>{jsonDescription}";
     }
 
@@ -260,10 +277,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         string actionRef = NormalizeActionRef(data.GetActionRef());
         if (string.IsNullOrWhiteSpace(actionRef) && data.actionId <= 0) return null;
 
-        // Prefer runtime caravan descriptions so gold values reflect current market prices.
+        // Prefer runtime descriptions when available so generated card text stays in sync with action logic.
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
         CharacterAction runtimeAction = ResolveActionByRef(actionRef, actionsManager);
-        if (runtimeAction != null && (runtimeAction.isBuyCaravans || runtimeAction.isSellCaravans))
+        if (runtimeAction != null)
         {
             Board board = FindFirstObjectByType<Board>();
             Character selected = board != null ? board.selectedCharacter : null;
@@ -288,6 +305,115 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         return null;
+    }
+
+    private string BuildCharacterCardDescriptionText(CardData data, string cardTypeKey, string typeColorHex)
+    {
+        List<string> lines = new()
+        {
+            $"<color=#{typeColorHex}>{cardTypeKey}.</color>Race: {FormatEnumLabel(data.race.ToString())}"
+        };
+
+        List<string> skills = new();
+        AddCharacterSkill(skills, "commander", data.commander);
+        AddCharacterSkill(skills, "agent", data.agent);
+        AddCharacterSkill(skills, "emmissary", data.emmissary);
+        AddCharacterSkill(skills, "mage", data.mage);
+        if (skills.Count > 0)
+        {
+            lines.Add(string.Join("  ", skills));
+        }
+
+        string artifactText = data.artifacts == null || data.artifacts.Count == 0
+            ? "[]"
+            : $"[{string.Join(", ", data.artifacts.Where(a => a != null && !string.IsNullOrWhiteSpace(a.artifactName)).Select(a => a.artifactName))}]";
+        lines.Add($"<sprite name=\"artifact\"> {artifactText}");
+
+        if (!string.IsNullOrWhiteSpace(data.description))
+        {
+            lines.Add(data.description.Trim());
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    private string BuildArmyCardDescriptionText(CardData data, string cardTypeKey, string typeColorHex)
+    {
+        List<string> lines = new()
+        {
+            $"<color=#{typeColorHex}>{cardTypeKey}.</color>Race: {FormatEnumLabel(data.race.ToString())}"
+        };
+
+        lines.Add($"Troop: <sprite name=\"{data.troopType.ToString().ToLowerInvariant()}\"> {data.troopType.ToString().ToUpperInvariant()}");
+        if (data.specialAbilities != null && data.specialAbilities.Count > 0)
+        {
+            lines.Add($"Abilities: {string.Join("  ", data.specialAbilities.Select(FormatArmyAbilityRichLabel))}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(data.description))
+        {
+            lines.Add(data.description.Trim());
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    private static string FormatEnumLabel(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+
+        List<char> chars = new(value.Length + 4);
+        for (int i = 0; i < value.Length; i++)
+        {
+            char current = value[i];
+            if (i > 0 && char.IsUpper(current) && !char.IsUpper(value[i - 1]))
+            {
+                chars.Add(' ');
+            }
+            chars.Add(current);
+        }
+
+        return new string(chars.ToArray());
+    }
+
+    private static string FormatArmyAbilityLabel(ArmySpecialAbilityEnum ability)
+    {
+        return ability switch
+        {
+            ArmySpecialAbilityEnum.Longrange => "longrange",
+            ArmySpecialAbilityEnum.ShortRange => "shortrange",
+            _ => ability.ToString().ToLowerInvariant()
+        };
+    }
+
+    private static void AddCharacterSkill(List<string> parts, string spriteName, int value)
+    {
+        if (parts == null || value <= 0) return;
+        parts.Add($"<sprite name=\"{spriteName}\">{value}");
+    }
+
+    private static string FormatArmyAbilityRichLabel(ArmySpecialAbilityEnum ability)
+    {
+        string label = FormatArmyAbilityLabel(ability);
+        string spriteName = ability switch
+        {
+            ArmySpecialAbilityEnum.Longrange => "ar",
+            ArmySpecialAbilityEnum.ShortRange => "sword",
+            ArmySpecialAbilityEnum.Poison => "poison",
+            ArmySpecialAbilityEnum.Fire => "fire_sword",
+            ArmySpecialAbilityEnum.Cursed => "darkness",
+            ArmySpecialAbilityEnum.Raid => "boots",
+            ArmySpecialAbilityEnum.Pikemen => "sword",
+            ArmySpecialAbilityEnum.Shielded => "shield",
+            ArmySpecialAbilityEnum.Encouraging => "banner",
+            ArmySpecialAbilityEnum.Discouraging => "veil",
+            ArmySpecialAbilityEnum.Berserker => "axe",
+            _ => null
+        };
+
+        return string.IsNullOrWhiteSpace(spriteName)
+            ? label
+            : $"<sprite name=\"{spriteName}\"> {label}";
     }
 
     private static void EnsureActionDescriptionsLoaded()
@@ -339,6 +465,16 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private async Task<bool> TryPlayCardAsync(bool promptForConfirmation)
     {
         if (isDragging || isConsuming || cardData == null) return false;
+
+        if (cardData.GetCardType() == CardTypeEnum.Character)
+        {
+            return await TryPlayCharacterCardAsync(promptForConfirmation);
+        }
+        if (cardData.GetCardType() == CardTypeEnum.Army)
+        {
+            return await TryPlayArmyCardAsync(promptForConfirmation);
+        }
+
         if (!TryResolvePlayableAction(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out CharacterAction action))
         {
             RefreshInteractionState();
@@ -403,6 +539,250 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return true;
     }
 
+    private async Task<bool> TryPlayCharacterCardAsync(bool promptForConfirmation)
+    {
+        if (!TryResolveCharacterCardContext(out Game game, out PlayableLeader playerLeader, out Hex capitalHex, out string failureReason))
+        {
+            RefreshInteractionState();
+            return false;
+        }
+
+        int totalGoldCost = cardData.GetTotalGoldCost();
+        if (promptForConfirmation)
+        {
+            string prompt = totalGoldCost > 0
+                ? $"Recruit {cardData.name} for {totalGoldCost} gold?"
+                : $"Recruit {cardData.name}?";
+            bool confirm = await ConfirmationDialog.Ask(prompt, "Yes", "No");
+            if (!confirm) return false;
+        }
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        CharacterInstantiator instantiator = FindFirstObjectByType<CharacterInstantiator>();
+        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
+        if (deckManager == null || instantiator == null || capitalHex == null || board == null)
+        {
+            RefreshInteractionState();
+            return false;
+        }
+
+        bool drawReplacementCard = !(TutorialManager.Instance != null && TutorialManager.Instance.IsActiveFor(playerLeader));
+        if (!deckManager.TryConsumeCard(playerLeader, cardData.cardId, drawReplacementCard, out _))
+        {
+            RefreshInteractionState();
+            return false;
+        }
+
+        isConsuming = true;
+        RefreshInteractionState(force: true);
+
+        BiomeConfig biomeConfig = new()
+        {
+            characterName = cardData.name,
+            alignment = (AlignmentEnum)cardData.alignment,
+            commander = cardData.commander,
+            agent = cardData.agent,
+            emmissary = cardData.emmissary,
+            mage = cardData.mage,
+            race = cardData.race,
+            artifacts = cardData.artifacts != null ? new List<Artifact>(cardData.artifacts) : new List<Artifact>()
+        };
+
+        Character spawned = instantiator.InstantiateCharacter(playerLeader, capitalHex, biomeConfig);
+        if (spawned != null)
+        {
+            spawned.startingCharacter = false;
+            spawned.lastPlayedCardSpriteNameThisTurn =
+                !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
+            board.SelectCharacter(spawned, true, 1.0f, 0.0f);
+            deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
+            playerLeader.RecordPlayedCard(cardData);
+            MessageDisplayNoUI.ShowMessage(capitalHex, spawned, $"{spawned.characterName} joins {playerLeader.characterName} at {capitalHex.GetPC().pcName}.", Color.green);
+        }
+
+        isConsuming = false;
+        RefreshInteractionState(force: true);
+        return spawned != null;
+    }
+
+    private async Task<bool> TryPlayArmyCardAsync(bool promptForConfirmation)
+    {
+        if (!TryResolveArmyCardContext(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out string failureReason))
+        {
+            RefreshInteractionState();
+            return false;
+        }
+
+        int totalGoldCost = cardData.GetTotalGoldCost();
+        if (promptForConfirmation)
+        {
+            string prompt = totalGoldCost > 0
+                ? $"Recruit {cardData.name} for {totalGoldCost} gold?"
+                : $"Recruit {cardData.name}?";
+            bool confirm = await ConfirmationDialog.Ask(prompt, "Yes", "No");
+            if (!confirm) return false;
+        }
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
+        if (deckManager == null || board == null)
+        {
+            RefreshInteractionState();
+            return false;
+        }
+
+        bool drawReplacementCard = !(TutorialManager.Instance != null && TutorialManager.Instance.IsActiveFor(playerLeader));
+        if (!deckManager.TryConsumeCard(playerLeader, cardData.cardId, drawReplacementCard, out _))
+        {
+            RefreshInteractionState();
+            return false;
+        }
+
+        isConsuming = true;
+        RefreshInteractionState(force: true);
+
+        List<ArmySpecialAbilityEnum> specialAbilities = cardData.specialAbilities != null
+            ? new List<ArmySpecialAbilityEnum>(cardData.specialAbilities)
+            : new List<ArmySpecialAbilityEnum>();
+
+        if (!selectedCharacter.IsArmyCommander())
+        {
+            selectedCharacter.CreateArmy(cardData.troopType, 1, false, 0, specialAbilities);
+        }
+        else
+        {
+            selectedCharacter.GetArmy()?.Recruit(cardData.troopType, 1, specialAbilities);
+            selectedCharacter.hex?.RedrawCharacters();
+            selectedCharacter.hex?.RedrawArmies();
+            selectedCharacter.RefreshSelectedCharacterIconIfSelected();
+        }
+
+        selectedCharacter.lastPlayedCardSpriteNameThisTurn =
+            !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
+        deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
+        playerLeader.RecordPlayedCard(cardData);
+        board.SelectCharacter(selectedCharacter, true, 1.0f, 0.0f);
+        MessageDisplayNoUI.ShowMessage(
+            selectedCharacter.hex,
+            selectedCharacter,
+            $"{selectedCharacter.characterName} recruits 1 <sprite name=\"{cardData.troopType.ToString().ToLowerInvariant()}\"/> from {cardData.name}.",
+            Color.green);
+
+        isConsuming = false;
+        RefreshInteractionState(force: true);
+        return true;
+    }
+
+    private bool TryResolveCharacterCardContext(out Game game, out PlayableLeader playerLeader, out Hex capitalHex, out string reason)
+    {
+        game = FindFirstObjectByType<Game>();
+        playerLeader = game != null ? game.player : null;
+        capitalHex = null;
+        reason = null;
+
+        if (game == null || playerLeader == null)
+        {
+            reason = "Game is not initialized.";
+            return false;
+        }
+
+        if (!game.IsPlayerCurrentlyPlaying())
+        {
+            reason = "It is not your turn.";
+            return false;
+        }
+
+        capitalHex = ResolveCapitalHex(playerLeader);
+        if (capitalHex == null)
+        {
+            reason = "Your capital was not found.";
+            return false;
+        }
+
+        if (!cardData.MeetsResourceRequirements(playerLeader))
+        {
+            reason = BuildMissingResourcesReason(playerLeader);
+            return false;
+        }
+
+        bool duplicateExists = playerLeader.controlledCharacters.Any(ch =>
+            ch != null
+            && !ch.killed
+            && string.Equals(ch.characterName, cardData.name, StringComparison.OrdinalIgnoreCase));
+        if (duplicateExists)
+        {
+            reason = $"{cardData.name} already serves you.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool TryResolveArmyCardContext(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out string reason)
+    {
+        game = FindFirstObjectByType<Game>();
+        playerLeader = game != null ? game.player : null;
+        selectedCharacter = null;
+        reason = null;
+
+        if (game == null || playerLeader == null)
+        {
+            reason = "Game is not initialized.";
+            return false;
+        }
+
+        if (!game.IsPlayerCurrentlyPlaying())
+        {
+            reason = "It is not your turn.";
+            return false;
+        }
+
+        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
+        selectedCharacter = board != null ? board.selectedCharacter : null;
+        if (selectedCharacter == null)
+        {
+            reason = "Select a commander first.";
+            return false;
+        }
+
+        if (selectedCharacter.GetOwner() != playerLeader || selectedCharacter.killed)
+        {
+            reason = "Selected character is not controlled by you.";
+            return false;
+        }
+
+        if (selectedCharacter.GetCommander() <= 0)
+        {
+            reason = $"{selectedCharacter.characterName} is not a commander.";
+            return false;
+        }
+
+        if (cardData.troopType == TroopsTypeEnum.ws && (selectedCharacter.hex?.GetPC() == null || !selectedCharacter.hex.GetPC().hasPort))
+        {
+            reason = "Warships require a port.";
+            return false;
+        }
+
+        if (!cardData.MeetsResourceRequirements(playerLeader))
+        {
+            reason = BuildMissingResourcesReason(playerLeader);
+            return false;
+        }
+
+        return true;
+    }
+
+    private static Hex ResolveCapitalHex(Leader leader)
+    {
+        if (leader == null) return null;
+
+        PC capital = leader.controlledPcs?.FirstOrDefault(pc => pc != null && pc.isCapital && pc.hex != null);
+        if (capital != null) return capital.hex;
+
+        Board board = FindFirstObjectByType<Board>();
+        return board?.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == leader && x.GetPC().isCapital);
+    }
+
     private bool TryResolvePlayableAction(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out CharacterAction action)
     {
         game = FindFirstObjectByType<Game>();
@@ -460,8 +840,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         AddRequirement(parts, "iron", data.ironRequired);
         AddRequirement(parts, "steel", data.steelRequired);
         AddRequirement(parts, "mithril", data.mithrilRequired);
-        AddRequirement(parts, "gold", data.goldRequired);
-        if (data.jokerRequired > 0 && data.goldRequired <= 0)
+        AddRequirement(parts, "gold", data.GetTotalGoldCost());
+        if (data.jokerRequired > 0 && data.GetTotalGoldCost() <= 0)
         {
             AddRequirement(parts, "gold", 1);
         }
@@ -503,6 +883,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private bool IsPlayableNow()
     {
+        if (cardData != null && cardData.GetCardType() == CardTypeEnum.Character)
+        {
+            return TryResolveCharacterCardContext(out _, out _, out _, out _);
+        }
+        if (cardData != null && cardData.GetCardType() == CardTypeEnum.Army)
+        {
+            return TryResolveArmyCardContext(out _, out _, out _, out _);
+        }
+
         return cardData != null
             && TryResolvePlayableAction(out _, out _, out Character selectedCharacter, out CharacterAction action)
             && action != null
@@ -660,6 +1049,17 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (cardData == null) return "Card data is missing.";
 
+        if (cardData.GetCardType() == CardTypeEnum.Character)
+        {
+            if (TryResolveCharacterCardContext(out _, out _, out _, out string characterReason)) return string.Empty;
+            return string.IsNullOrWhiteSpace(characterReason) ? "Requirements are not met." : characterReason;
+        }
+        if (cardData.GetCardType() == CardTypeEnum.Army)
+        {
+            if (TryResolveArmyCardContext(out _, out _, out _, out string armyReason)) return string.Empty;
+            return string.IsNullOrWhiteSpace(armyReason) ? "Requirements are not met." : armyReason;
+        }
+
         Game game = FindFirstObjectByType<Game>();
         if (game == null || game.player == null) return "Game is not initialized.";
         if (!game.IsPlayerCurrentlyPlaying()) return "It is not your turn.";
@@ -738,7 +1138,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         AddMissingRequirement(parts, "Iron", cardData.ironRequired, owner.ironAmount);
         AddMissingRequirement(parts, "Steel", cardData.steelRequired, owner.steelAmount);
         AddMissingRequirement(parts, "Mithril", cardData.mithrilRequired, owner.mithrilAmount);
-        AddMissingRequirement(parts, "Gold", cardData.goldRequired, owner.goldAmount);
+        AddMissingRequirement(parts, "Gold", cardData.GetTotalGoldCost(), owner.goldAmount);
         if (parts.Count == 0) return "Not enough resources.";
         return $"Need resources: {string.Join(", ", parts)}";
     }

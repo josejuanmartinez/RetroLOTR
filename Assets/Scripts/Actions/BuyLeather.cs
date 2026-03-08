@@ -25,6 +25,7 @@ public class BuyLeather : EmmissaryPCAction
             if (!stores.HasStock(ProducesEnum.leather, quantity)) return false;
             if (playable.goldAmount < totalCost) return false;
 
+            playable.RemoveGold(totalCost);
             playable.AddLeather(quantity);
             stores.AdjustStock(ProducesEnum.leather, -quantity);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();

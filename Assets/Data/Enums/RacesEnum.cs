@@ -19,5 +19,7 @@ public enum RacesEnum
     Goblin = 16,
     Ent = 17,
     Southron = 18,
-    Easterling = 19
+    Easterling = 19,
+    Beast = 20,
+    Machine = 21
 }

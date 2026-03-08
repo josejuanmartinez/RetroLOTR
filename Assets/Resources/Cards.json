@@ -1,30 +1,36 @@
 {
-    "handSize": 5,
-    "deckCount": 3,
-    "decks": [
-        {
-            "deckId": "gandalf_deck",
-            "nation": "Gandalf",
-            "alignment": 0,
-            "resourcePath": "Cards/GandalfDeck",
-            "cardCount": 87,
-            "tags": []
-        },
-        {
-            "deckId": "saruman_deck",
-            "nation": "Saruman",
-            "alignment": 2,
-            "resourcePath": "Cards/SarumanDeck",
-            "cardCount": 80,
-            "tags": []
-        },
-        {
-            "deckId": "sauron_deck",
-            "nation": "Sauron",
-            "alignment": 1,
-            "resourcePath": "Cards/SauronDeck",
-            "cardCount": 85,
-            "tags": []
-        }
-    ]
+    "handSize":  5,
+    "deckCount":  3,
+    "decks":  [
+                  {
+                      "deckId":  "gandalf_deck",
+                      "nation":  "Gandalf",
+                      "alignment":  0,
+                      "resourcePath":  "Cards/GandalfDeck",
+                      "cardCount":  299,
+                      "tags":  [
+
+                               ]
+                  },
+                  {
+                      "deckId":  "saruman_deck",
+                      "nation":  "Saruman",
+                      "alignment":  2,
+                      "resourcePath":  "Cards/SarumanDeck",
+                      "cardCount":  230,
+                      "tags":  [
+
+                               ]
+                  },
+                  {
+                      "deckId":  "sauron_deck",
+                      "nation":  "Sauron",
+                      "alignment":  1,
+                      "resourcePath":  "Cards/SauronDeck",
+                      "cardCount":  243,
+                      "tags":  [
+
+                               ]
+                  }
+              ]
 }
