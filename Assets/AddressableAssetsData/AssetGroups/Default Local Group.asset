@@ -366,11 +366,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0cbc9617e8d09a144a0cf524631d953e
-    m_Address: Assets/Art/Cards/Actions/Events/NewOrder.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0d554013fdb222b4abfcecec3451a6d1
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Tiles/hexMarshCastleRuins00.png
     m_ReadOnly: 0
@@ -480,12 +475,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0f566fe1021d5ff48a20699cca0b3d2e
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Roads/hexRoad-001000-03.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0fb8f89414cad244a922648c5efa7bbd
-    m_Address: Assets/Art/Cards/Actions/Events/Easterling Resolve.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -757,11 +746,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 17bc1f31642af794e8d6a2a610bbea00
-    m_Address: Assets/Art/Cards/Actions/Events/Attired for the Wine Lords.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 17e22c8b5bd1e5e46a6f467993ed0fcc
     m_Address: Assets/Art/Hexes/transparent/grassland.png
     m_ReadOnly: 0
@@ -992,6 +976,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ee21f664b4a637438d220ca87a474c8
+    m_Address: Assets/Art/Cards/Actions/Events/Reach of Barad-Ungol.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1ee60b5d4bcea544c86cede3a7c9c158
     m_Address: Assets/Art/Cards/Characters/Encounters/KingOfTheMark.jpg
@@ -1456,11 +1445,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2a6b8ca26583b304e9eb22190cdbdf2b
-    m_Address: Assets/Art/Cards/Actions/Events/Reach of Barad-Ungol.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2a7b30a713ede674491f7ce2d6e442f5
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Tiles/hexPlainsVillageWood03.png
@@ -2532,11 +2516,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4cbbdbe684c43bc4d8434f36fa0c8e6f
-    m_Address: Assets/Art/Cards/Actions/Events/Luglurak Dark Magic.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4cc0a1520a0860e40bee699ee34f64e4
     m_Address: Assets/Art/Cards/Actions/Events/The Beorning Charge.jpg
@@ -3635,12 +3614,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 70f009bcc52177e49b430d4a402f244b
-    m_Address: Assets/Art/Cards/Actions/Events/Attired for the Winelords.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 70f7a38c3a1692a49922ee83dc5c1821
     m_Address: Assets/Art/Cards/Armies/Orcs.jpg
     m_ReadOnly: 0
@@ -4423,12 +4396,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 86ee8d42d28fdbb4abd19394e82c30cc
-    m_Address: Assets/Art/Cards/Actions/Spells/Foam on the Water.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8783bcbf04b721e499fd13c13658ee47
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Roads/hexRoad-101101-00.png
     m_ReadOnly: 0
@@ -4960,12 +4927,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 97da489e5598cb94cbcdd9a9d67796a9
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Base Tiles/hexDirt00.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 97e08a5a99aff1346a8590b4b55082be
-    m_Address: Assets/Art/Cards/Actions/Events/Scents of the Haradrim.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6092,11 +6053,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b626fa11e781e5247bd5245db3e2cd79
-    m_Address: Assets/Art/Cards/Actions/Events/Behind Noldo Shields.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b6733db33aea4e543b8188468f99217b
     m_Address: Assets/Art/Hexes/transparent/mountains.png
     m_ReadOnly: 0
@@ -6122,12 +6078,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b6eb770dc9f6a7246a5cb03e7e736434
     m_Address: Assets/Art/Cards/Characters/Encounters/DurinsBane.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b6fb060089ec39e49856be945450bf04
-    m_Address: Assets/Art/Cards/Actions/Events/Northmen Stand Firm.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6660,6 +6610,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c910e341afec21d4ca3c6a7e76664070
+    m_Address: Assets/Art/Cards/Actions/Events/Attired for the Winelords.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c9644fca618d3724198fafb795b00cc7
     m_Address: Assets/Art/Hexes/desert.png
     m_ReadOnly: 0
@@ -6970,12 +6925,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d2a7b8068ee2f1641b3bb60cc2b53183
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Decor/treesA_line01.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d2c519978a5bd50438d7c4a7844d098d
-    m_Address: Assets/Art/Cards/Actions/Events/Dread of Numenor.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

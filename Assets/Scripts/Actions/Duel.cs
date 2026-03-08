@@ -91,8 +91,9 @@ public class Duel : CharacterAction
 
         float attackerScore = GetDuelScore(attacker);
         float defenderScore = GetDuelScore(defender);
-        bool attackerWins = attackerScore > defenderScore;
-        if (Mathf.Approximately(attackerScore, defenderScore))
+        bool defenderAutoWins = defender.HasDuelSupremacy();
+        bool attackerWins = !defenderAutoWins && attackerScore > defenderScore;
+        if (!defenderAutoWins && Mathf.Approximately(attackerScore, defenderScore))
         {
             attackerWins = UnityEngine.Random.Range(0, 2) == 0;
         }
@@ -112,7 +113,7 @@ public class Duel : CharacterAction
 
         bool playerInvolved = attacker.isPlayerControlled || defender.isPlayerControlled;
         bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(attacker.hex);
-        string narration = BuildDuelNarration(attacker, defender, winner, loser, wound, attackerScore, defenderScore, defenseBonus, loserHealthBefore);
+        string narration = BuildDuelNarration(attacker, defender, winner, loser, wound, attackerScore, defenderScore, defenseBonus, loserHealthBefore, defenderAutoWins);
 
         if (shouldShowPopup)
         {
@@ -129,7 +130,7 @@ public class Duel : CharacterAction
         }
     }
 
-    private string BuildDuelNarration(Character attacker, Character defender, Character winner, Character loser, int wound, float attackerScore, float defenderScore, int defenseBonus, int loserHealthBefore)
+    private string BuildDuelNarration(Character attacker, Character defender, Character winner, Character loser, int wound, float attackerScore, float defenderScore, int defenseBonus, int loserHealthBefore, bool defenderAutoWins)
     {
         StringBuilder sb = new();
         int template = UnityEngine.Random.Range(0, 4);
@@ -162,6 +163,10 @@ public class Duel : CharacterAction
         }
 
         sb.AppendLine($"Strength: {attackerName} {attackerScore:0.0} vs {defenderName} {defenderScore:0.0}.");
+        if (defenderAutoWins)
+        {
+            sb.AppendLine($"{defenderName}'s riddle turns the challenge back and decides the duel instantly.");
+        }
         if (winnerArtifactAttack > 0)
         {
             sb.AppendLine($"{winnerName}'s relics add their bite to the strike.");

@@ -231,13 +231,16 @@ public class CharacterAction : SearcherByName
             int effectiveDifficulty = difficulty;
             if (character != null)
             {
-                effectiveDifficulty = Mathf.Max(0, effectiveDifficulty - character.GetArtifactActionDifficultyReduction(GetType().Name));
+                int artifactReduction = character.GetArtifactActionDifficultyReduction(GetType().Name);
+                int temporaryReduction = character.GetTemporaryActionDifficultyReduction(GetType().Name, actionHex);
+                effectiveDifficulty = Mathf.Max(0, effectiveDifficulty - artifactReduction - temporaryReduction);
             }
             if (isAI && ShouldApplyUnscoutedPenalty(character))
             {
                 effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + 25);
             }
             bool failedByChance = UnityEngine.Random.Range(0, 100) < effectiveDifficulty;
+            character?.ConsumeTemporaryActionDifficultyReduction(GetType().Name, actionHex);
 
             if (failedByChance)
             {

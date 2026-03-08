@@ -21,7 +21,7 @@ Choose the closest base class first, then add specific behavior in `Initialize(.
   - `AgentAction`
   - `EmmissaryAction`
   - `MageAction`
-  - `Spell` (special: usable by mage or by artifact provider)
+  - `Spell` (special: usable by mage)
 - Commander specializations:
   - `CommanderArmyAction`
   - `CommanderPCAction`
@@ -46,24 +46,7 @@ Choose the closest base class first, then add specific behavior in `Initialize(.
 4. Call `base.Initialize(c, condition, effect, asyncEffect)` so base gating still applies.
 5. Add or update the corresponding entry in `Assets/Resources/Actions.json`.
 6. Create a new card image for the action by using the `new-image` skill and save it in the correct `Assets/Art/Cards/...` folder (`Actions` or `Actions/Spells` for spells).
-7. If the new action is a spell, explicitly ask the user whether they also want one or more artifacts that grant this spell.
-8. If the user says yes, ask for artifact details and update `Assets/Resources/Artifacts.json` accordingly.
-9. Verify runtime resolution and visibility in the Actions UI.
-
-## Spell Artifact Rule
-When creating or updating a spell action:
-- Always ask: `Do you want to add artifact(s) that grant this spell?`
-- If yes, collect artifact fields before editing:
-  - `artifactName`
-  - `artifactDescription`
-  - `hidden`
-  - `providesSpell` (match spell action name as used by artifact spell matching)
-  - `alignment`
-  - `transferable`
-  - `oneShot`
-  - `spriteString`
-  - any stat bonuses (`commanderBonus`, `agentBonus`, `emmissaryBonus`, `mageBonus`, `bonusAttack`, `bonusDefense`)
-- Use existing entries in `Assets/Resources/Artifacts.json` as the schema and style reference.
+7. Verify runtime resolution and visibility in the Actions UI.
 
 ## Required Initialize Pattern
 Use this structure so composition with base classes remains intact:

@@ -18,5 +18,6 @@ public enum RacesEnum
     Wose = 15,
     Goblin = 16,
     Ent = 17,
-    Southron = 18
+    Southron = 18,
+    Easterling = 19
 }

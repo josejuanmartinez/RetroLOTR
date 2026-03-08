@@ -663,7 +663,8 @@ public class Sounds : SearcherByName
     private static bool IsHumanoidRace(RacesEnum race)
     {
         return race is RacesEnum.Common or RacesEnum.Elf or RacesEnum.Dwarf or RacesEnum.Hobbit
-            or RacesEnum.Maia or RacesEnum.Dunedain or RacesEnum.Beorning or RacesEnum.Wose or RacesEnum.Ent;
+            or RacesEnum.Maia or RacesEnum.Dunedain or RacesEnum.Beorning or RacesEnum.Wose or RacesEnum.Ent
+            or RacesEnum.Southron or RacesEnum.Easterling;
     }
 
     private static bool PlayerCanSeeHex(Hex hex)

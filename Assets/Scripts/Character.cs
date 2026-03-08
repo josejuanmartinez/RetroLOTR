@@ -67,6 +67,10 @@ public class Character : MonoBehaviour
     private Dictionary<StatusEffectEnum, int> statusEffectTurns = new();
     private bool burningForestTroopLossPending;
     private bool poisonedFearTriggered;
+    private string temporaryActionDifficultyReductionClassName;
+    private int temporaryActionDifficultyReductionValue;
+    private int temporaryActionDifficultyReductionTurns;
+    private Hex temporaryActionDifficultyReductionHex;
 
     private BiomeConfig characterBiome;
 
@@ -81,6 +85,10 @@ public class Character : MonoBehaviour
         public bool isEmbarked;
         public bool burningForestTroopLossPending;
         public bool poisonedFearTriggered;
+        public string temporaryActionDifficultyReductionClassName;
+        public int temporaryActionDifficultyReductionValue;
+        public int temporaryActionDifficultyReductionTurns;
+        public Hex temporaryActionDifficultyReductionHex;
     }
 
     void Awake()
@@ -93,6 +101,10 @@ public class Character : MonoBehaviour
         InitializeStatusEffects();
         burningForestTroopLossPending = false;
         poisonedFearTriggered = false;
+        temporaryActionDifficultyReductionClassName = null;
+        temporaryActionDifficultyReductionValue = 0;
+        temporaryActionDifficultyReductionTurns = 0;
+        temporaryActionDifficultyReductionHex = null;
         killed = false;
         lastPlayedActionClassNameThisTurn = null;
         lastPlayedActionNameThisTurn = null;
@@ -231,6 +243,16 @@ public class Character : MonoBehaviour
     public void RefuseDuels(int turns = 1)
     {
         ApplyStatusEffect(StatusEffectEnum.RefusingDuels, turns);
+    }
+
+    public bool HasDuelSupremacy()
+    {
+        return HasStatusEffect(StatusEffectEnum.DuelSupremacy);
+    }
+
+    public void GainDuelSupremacy(int turns = 1)
+    {
+        ApplyStatusEffect(StatusEffectEnum.DuelSupremacy, turns);
     }
 
     public bool IsHidden()
@@ -402,6 +424,10 @@ public class Character : MonoBehaviour
         {
             MessageDisplayNoUI.ShowMessage(hex, this, "Refusing duels", Color.yellow);
         }
+        if (HasStatusEffect(StatusEffectEnum.DuelSupremacy) && GetOwner() == player)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Wins challenged duels", Color.cyan);
+        }
         if (!blocked && halted && GetOwner() == player)
         {
             MessageDisplayNoUI.ShowMessage(hex, this, "Movement reduced", Color.yellow);
@@ -442,7 +468,11 @@ public class Character : MonoBehaviour
             hasActionedThisTurn = hasActionedThisTurn,
             isEmbarked = isEmbarked,
             burningForestTroopLossPending = burningForestTroopLossPending,
-            poisonedFearTriggered = poisonedFearTriggered
+            poisonedFearTriggered = poisonedFearTriggered,
+            temporaryActionDifficultyReductionClassName = temporaryActionDifficultyReductionClassName,
+            temporaryActionDifficultyReductionValue = temporaryActionDifficultyReductionValue,
+            temporaryActionDifficultyReductionTurns = temporaryActionDifficultyReductionTurns,
+            temporaryActionDifficultyReductionHex = temporaryActionDifficultyReductionHex
         };
     }
 
@@ -463,6 +493,10 @@ public class Character : MonoBehaviour
         isEmbarked = snapshot.isEmbarked;
         burningForestTroopLossPending = snapshot.burningForestTroopLossPending;
         poisonedFearTriggered = snapshot.poisonedFearTriggered;
+        temporaryActionDifficultyReductionClassName = snapshot.temporaryActionDifficultyReductionClassName;
+        temporaryActionDifficultyReductionValue = snapshot.temporaryActionDifficultyReductionValue;
+        temporaryActionDifficultyReductionTurns = snapshot.temporaryActionDifficultyReductionTurns;
+        temporaryActionDifficultyReductionHex = snapshot.temporaryActionDifficultyReductionHex;
     }
 
     public void DisbandArmy(bool showMessage = true)
@@ -659,6 +693,32 @@ public class Character : MonoBehaviour
     {
         if (artifacts == null || artifacts.Count == 0) return 0;
         return artifacts.Sum(a => a != null ? a.GetActionDifficultyReduction(actionClassName) : 0);
+    }
+
+    public int GetTemporaryActionDifficultyReduction(string actionClassName, Hex currentHex)
+    {
+        if (temporaryActionDifficultyReductionTurns <= 0) return 0;
+        if (string.IsNullOrWhiteSpace(temporaryActionDifficultyReductionClassName)) return 0;
+        if (!string.Equals(temporaryActionDifficultyReductionClassName, actionClassName, StringComparison.OrdinalIgnoreCase)) return 0;
+        if (temporaryActionDifficultyReductionHex != null && temporaryActionDifficultyReductionHex != currentHex) return 0;
+        return Math.Max(0, temporaryActionDifficultyReductionValue);
+    }
+
+    public void GrantTemporaryActionDifficultyReduction(string actionClassName, int value, int turns, Hex currentHex)
+    {
+        temporaryActionDifficultyReductionClassName = actionClassName;
+        temporaryActionDifficultyReductionValue = Math.Max(0, value);
+        temporaryActionDifficultyReductionTurns = Math.Max(1, turns);
+        temporaryActionDifficultyReductionHex = currentHex;
+    }
+
+    public void ConsumeTemporaryActionDifficultyReduction(string actionClassName, Hex currentHex)
+    {
+        if (GetTemporaryActionDifficultyReduction(actionClassName, currentHex) <= 0) return;
+        temporaryActionDifficultyReductionClassName = null;
+        temporaryActionDifficultyReductionValue = 0;
+        temporaryActionDifficultyReductionTurns = 0;
+        temporaryActionDifficultyReductionHex = null;
     }
 
     public bool IsImmuneToNegativeEnvironmentalCards()
@@ -1165,7 +1225,8 @@ public class Character : MonoBehaviour
     {
         return race == RacesEnum.Common
             || race == RacesEnum.Dunedain
-            || race == RacesEnum.Southron;
+            || race == RacesEnum.Southron
+            || race == RacesEnum.Easterling;
     }
 
     private static bool IsBlockedByEncouraged(StatusEffectEnum effect)
