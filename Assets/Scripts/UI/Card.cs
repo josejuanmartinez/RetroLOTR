@@ -20,6 +20,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] TextMeshProUGUI requirements;
     [SerializeField] Button button;
     [SerializeField] Hover disabledReasonHover;
+    [SerializeField] Button discardButton;
     [SerializeField] float holdToDragSeconds = 0.08f;
     [SerializeField] float dragScaleMultiplier = 1.15f;
     [SerializeField] float dragTiltDegrees = 7f;
@@ -85,6 +86,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             button.onClick.RemoveListener(OnCardClicked);
             button.onClick.AddListener(OnCardClicked);
         }
+        if (discardButton != null)
+        {
+            discardButton.onClick.RemoveListener(OnDiscardClicked);
+            discardButton.onClick.AddListener(OnDiscardClicked);
+        }
 
         if (disabledReasonHover == null)
         {
@@ -111,6 +117,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private void OnDestroy()
     {
         if (button != null) button.onClick.RemoveListener(OnCardClicked);
+        if (discardButton != null) discardButton.onClick.RemoveListener(OnDiscardClicked);
     }
 
     private void OnDisable()
@@ -462,6 +469,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         await TryPlayCardAsync(promptForConfirmation: true);
     }
 
+    private async void OnDiscardClicked()
+    {
+        await TryDiscardCardAsync();
+    }
+
     private async Task<bool> TryPlayCardAsync(bool promptForConfirmation)
     {
         if (isDragging || isConsuming || cardData == null) return false;
@@ -473,6 +485,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (cardData.GetCardType() == CardTypeEnum.Army)
         {
             return await TryPlayArmyCardAsync(promptForConfirmation);
+        }
+        if (cardData.GetCardType() == CardTypeEnum.Encounter)
+        {
+            return await TryPlayEncounterCardAsync(promptForConfirmation);
         }
 
         if (!TryResolvePlayableAction(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out CharacterAction action))
@@ -537,6 +553,51 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         isConsuming = false;
         RefreshInteractionState(force: true);
         return true;
+    }
+
+    private async Task<bool> TryPlayEncounterCardAsync(bool promptForConfirmation)
+    {
+        if (!TryResolveEncounterCardContext(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out _))
+        {
+            RefreshInteractionState();
+            return false;
+        }
+
+        if (promptForConfirmation)
+        {
+            bool confirm = await ConfirmationDialog.Ask($"Face {cardData.name}?", "Yes", "No");
+            if (!confirm) return false;
+        }
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null)
+        {
+            RefreshInteractionState();
+            return false;
+        }
+
+        bool drawReplacementCard = !(TutorialManager.Instance != null && TutorialManager.Instance.IsActiveFor(playerLeader));
+        if (!deckManager.TryConsumeCard(playerLeader, cardData.cardId, drawReplacementCard, out _))
+        {
+            RefreshInteractionState();
+            return false;
+        }
+
+        isConsuming = true;
+        RefreshInteractionState(force: true);
+
+        bool resolved = await EncounterResolver.ResolveAsync(cardData, selectedCharacter);
+        if (resolved)
+        {
+            selectedCharacter.lastPlayedCardSpriteNameThisTurn =
+                !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
+            deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
+            playerLeader.RecordPlayedCard(cardData);
+        }
+
+        isConsuming = false;
+        RefreshInteractionState(force: true);
+        return resolved;
     }
 
     private async Task<bool> TryPlayCharacterCardAsync(bool promptForConfirmation)
@@ -821,6 +882,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return;
         }
 
+        if (!string.IsNullOrWhiteSpace(data.requirementsText))
+        {
+            requirements.text = $"<mark=#ffff00>{data.requirementsText.Trim()}</mark>";
+            return;
+        }
+
         string sprites = BuildRequirementSprites(data);
         requirements.text = string.IsNullOrWhiteSpace(sprites)
             ? string.Empty
@@ -867,6 +934,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             button.interactable = !isDragging && !isConsuming && isPlayableNow;
         }
+        if (discardButton != null)
+        {
+            discardButton.interactable = !isDragging && !isConsuming && cardData != null && !cardData.IsEncounterCard();
+        }
 
         if (canvasGroup != null && !isDragging)
         {
@@ -890,6 +961,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (cardData != null && cardData.GetCardType() == CardTypeEnum.Army)
         {
             return TryResolveArmyCardContext(out _, out _, out _, out _);
+        }
+        if (cardData != null && cardData.GetCardType() == CardTypeEnum.Encounter)
+        {
+            return TryResolveEncounterCardContext(out _, out _, out Character encounterCharacter, out _)
+                && cardData.EvaluatePlayability(encounterCharacter);
         }
 
         return cardData != null
@@ -1059,6 +1135,36 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (TryResolveArmyCardContext(out _, out _, out _, out string armyReason)) return string.Empty;
             return string.IsNullOrWhiteSpace(armyReason) ? "Requirements are not met." : armyReason;
         }
+        if (cardData.GetCardType() == CardTypeEnum.Encounter)
+        {
+            if (!TryResolveEncounterCardContext(out _, out _, out Character encounterCharacter, out string encounterReason))
+            {
+                return string.IsNullOrWhiteSpace(encounterReason) ? "Requirements are not met." : encounterReason;
+            }
+
+            bool encounterPlayable = cardData.EvaluatePlayability(encounterCharacter);
+            if (encounterPlayable) return string.Empty;
+
+            List<string> encounterReasons = new();
+            CardPlayabilityResult encounterResult = cardData.playability;
+            if (encounterResult != null)
+            {
+                if (encounterResult.failsLevelRequirements)
+                {
+                    string levelReason = BuildMissingLevelsReason(encounterCharacter);
+                    if (!string.IsNullOrWhiteSpace(levelReason)) encounterReasons.Add(levelReason);
+                }
+
+                if (encounterResult.failsResourceRequirements)
+                {
+                    string resourceReason = BuildMissingResourcesReason(encounterCharacter.GetOwner());
+                    if (!string.IsNullOrWhiteSpace(resourceReason)) encounterReasons.Add(resourceReason);
+                }
+            }
+
+            if (encounterReasons.Count == 0) encounterReasons.Add("Requirements are not met.");
+            return string.Join("<br>", encounterReasons);
+        }
 
         Game game = FindFirstObjectByType<Game>();
         if (game == null || game.player == null) return "Game is not initialized.";
@@ -1147,6 +1253,72 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (parts == null || required <= 0 || current >= required) return;
         parts.Add($"{label} {required} (have {current})");
+    }
+
+    private bool TryResolveEncounterCardContext(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out string reason)
+    {
+        game = FindFirstObjectByType<Game>();
+        playerLeader = game != null ? game.player : null;
+        selectedCharacter = null;
+        reason = null;
+
+        if (game == null || playerLeader == null)
+        {
+            reason = "Game is not initialized.";
+            return false;
+        }
+        if (!game.IsPlayerCurrentlyPlaying())
+        {
+            reason = "It is not your turn.";
+            return false;
+        }
+
+        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
+        selectedCharacter = board != null ? board.selectedCharacter : null;
+        if (selectedCharacter == null)
+        {
+            reason = "Select one of your characters first.";
+            return false;
+        }
+        if (selectedCharacter.GetOwner() != playerLeader)
+        {
+            reason = "Selected character is not controlled by you.";
+            return false;
+        }
+        if (selectedCharacter.killed)
+        {
+            reason = "Selected character is dead.";
+            return false;
+        }
+        if ((cardData.encounterOptions == null || cardData.encounterOptions.Count == 0) && cardData.fleeOption == null)
+        {
+            reason = "This encounter has no configured choices.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task TryDiscardCardAsync()
+    {
+        if (isDragging || isConsuming || cardData == null || cardData.IsEncounterCard()) return;
+
+        Game game = FindFirstObjectByType<Game>();
+        PlayableLeader playerLeader = game != null ? game.player : null;
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (game == null || playerLeader == null || deckManager == null) return;
+        if (!game.IsPlayerCurrentlyPlaying()) return;
+
+        bool confirm = await ConfirmationDialog.Ask($"Discard {cardData.name} and draw another card?", "Yes", "No");
+        if (!confirm) return;
+
+        if (!deckManager.TryDiscardCard(playerLeader, cardData.cardId, out _))
+        {
+            RefreshInteractionState(force: true);
+            return;
+        }
+
+        deckManager.RefreshHumanPlayerHandUI();
     }
 
     private CharacterAction ResolveActionByRef(string actionRef, ActionsManager actionsManager = null)

@@ -1,4 +1,4 @@
-﻿{
+{
     "handSize":  5,
     "deckId":  "sauron_deck",
     "nation":  "Sauron",
@@ -9,6 +9,8 @@
                       "name":  "Barad-dur",
                       "description":  "Gorgoroth.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dark_fortress",
                       "action":  "MaterialRetrievalOrActionBaradDur",
                       "tags":  [
                                    "Gorgoroth"
@@ -21,6 +23,8 @@
                       "name":  "Minas Morgul",
                       "description":  "Ungol.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ungol_venom",
                       "action":  "MaterialRetrievalOrActionMinasMorgul",
                       "tags":  [
                                    "Ungol"
@@ -33,6 +37,8 @@
                       "name":  "Dol Guldur",
                       "description":  "SouthernMirkwood.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dark_fortress",
                       "action":  "MaterialRetrievalOrActionDolGuldur",
                       "tags":  [
                                    "SouthernMirkwood"
@@ -45,6 +51,8 @@
                       "name":  "Luglurak",
                       "description":  "Nurn.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "nurn_war_camp",
                       "action":  "MaterialRetrievalOrActionLuglurak",
                       "tags":  [
                                    "Nurn"
@@ -57,6 +65,8 @@
                       "name":  "Kal Nargil",
                       "description":  "Nurn.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"gold\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "nurn_war_camp",
                       "action":  "MaterialRetrievalOrActionKalNargil",
                       "tags":  [
                                    "Nurn"
@@ -69,6 +79,8 @@
                       "name":  "Tol Buruth",
                       "description":  "SeaOfRhun.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "harad_port",
                       "action":  "MaterialRetrievalOrActionTolBuruth",
                       "tags":  [
                                    "SeaOfRhun"
@@ -81,6 +93,8 @@
                       "name":  "Lugarlur",
                       "description":  "FarHarad.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "harad_port",
                       "action":  "MaterialRetrievalOrActionLugarlur",
                       "tags":  [
                                    "FarHarad"
@@ -93,6 +107,8 @@
                       "name":  "Barad Ungol",
                       "description":  "Ungol.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dark_fortress",
                       "action":  "MaterialRetrievalOrActionBaradUngol",
                       "tags":  [
                                    "Ungol"
@@ -105,6 +121,8 @@
                       "name":  "Durthang",
                       "description":  "Ithilien.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dark_fortress",
                       "action":  "MaterialRetrievalOrActionDurthang",
                       "tags":  [
                                    "Ithilien"
@@ -117,6 +135,8 @@
                       "name":  "Morannon",
                       "description":  "Udun.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "mordor_gate",
                       "action":  "MaterialRetrievalOrActionMorannon",
                       "tags":  [
                                    "Udun"
@@ -129,6 +149,8 @@
                       "name":  "Shelob\u0027s Lair",
                       "description":  "Ungol.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ungol_venom",
                       "action":  "MaterialRetrievalOrActionShelobSLair",
                       "tags":  [
                                    "Ungol"
@@ -141,6 +163,8 @@
                       "name":  "Khazad-Dum",
                       "description":  "MistyMountains.\u003csprite name=\"mithril\"/\u003e\u003csprite name=\"mithril\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dwarven_forge_hall",
                       "action":  "MaterialRetrievalOrActionKhazadDum",
                       "tags":  [
                                    "MistyMountains"
@@ -153,6 +177,8 @@
                       "name":  "Erebor (Lost)",
                       "description":  "Rhovanion.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mithril\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionEreborLost",
                       "tags":  [
                                    "Rhovanion"
@@ -165,6 +191,8 @@
                       "name":  "Goblin Town",
                       "description":  "MistyMountains.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "goblin_muster",
                       "action":  "MaterialRetrievalOrActionGoblinTown",
                       "tags":  [
                                    "MistyMountains"
@@ -177,6 +205,8 @@
                       "name":  "Barrow-downs",
                       "description":  "Cardolan.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "forgotten_barrows",
                       "action":  "MaterialRetrievalOrActionBarrowDowns",
                       "tags":  [
                                    "Cardolan"
@@ -189,6 +219,8 @@
                       "name":  "Gundabad",
                       "description":  "Angmar.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "goblin_muster",
                       "action":  "MaterialRetrievalOrActionGundabad",
                       "tags":  [
                                    "Angmar"
@@ -2213,6 +2245,8 @@
                       "name":  "AmonLhaw",
                       "description":  "Nindalf.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionAmonLhaw",
                       "spriteName":  "AmonLhaw",
                       "tags":  [
@@ -2225,6 +2259,8 @@
                       "name":  "AmonSul",
                       "description":  "Cardolan.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionAmonSul",
                       "spriteName":  "AmonSul",
                       "tags":  [
@@ -2237,6 +2273,8 @@
                       "name":  "BaradWath",
                       "description":  "Gorgoroth.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dark_fortress",
                       "action":  "MaterialRetrievalOrActionBaradWath",
                       "spriteName":  "BaradWath",
                       "tags":  [
@@ -2249,6 +2287,8 @@
                       "name":  "ButhOvaisa",
                       "description":  "Khand.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "khand_rider_camp",
                       "action":  "MaterialRetrievalOrActionButhOvaisa",
                       "spriteName":  "ButhOvaisa",
                       "tags":  [
@@ -2261,6 +2301,8 @@
                       "name":  "CamethBrin",
                       "description":  "Rhudaur.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionCamethBrin",
                       "spriteName":  "CamethBrin",
                       "tags":  [
@@ -2273,6 +2315,8 @@
                       "name":  "CarnDum",
                       "description":  "Angmar.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "goblin_muster",
                       "action":  "MaterialRetrievalOrActionCarnDum",
                       "spriteName":  "CarnDum",
                       "tags":  [
@@ -2285,6 +2329,8 @@
                       "name":  "CirithUngol",
                       "description":  "Ungol.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ungol_venom",
                       "action":  "MaterialRetrievalOrActionCirithUngol",
                       "spriteName":  "CirithUngol",
                       "tags":  [
@@ -2297,6 +2343,8 @@
                       "name":  "DeadMarshes",
                       "description":  "Dagorlad.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ashen_wastes",
                       "action":  "MaterialRetrievalOrActionDeadMarshes",
                       "spriteName":  "DeadMarshes",
                       "tags":  [
@@ -2309,6 +2357,8 @@
                       "name":  "FennasDrunin",
                       "description":  "Rhudaur.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionFennasDrunin",
                       "spriteName":  "FennasDrunin",
                       "tags":  [
@@ -2321,6 +2371,8 @@
                       "name":  "FornostErain",
                       "description":  "TheNorthDowns.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dwarven_forge_hall",
                       "action":  "MaterialRetrievalOrActionFornostErain",
                       "spriteName":  "FornostErain",
                       "tags":  [
@@ -2333,6 +2385,8 @@
                       "name":  "Framsburg",
                       "description":  "Anduin.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "beorning_hall",
                       "action":  "MaterialRetrievalOrActionFramsburg",
                       "spriteName":  "Framsburg",
                       "tags":  [
@@ -2345,6 +2399,8 @@
                       "name":  "GladdenFields",
                       "description":  "Anduin.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "beorning_hall",
                       "action":  "MaterialRetrievalOrActionGladdenFields",
                       "spriteName":  "GladdenFields",
                       "tags":  [
@@ -2357,6 +2413,8 @@
                       "name":  "GoblinGate",
                       "description":  "MistyMountains.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "goblin_muster",
                       "action":  "MaterialRetrievalOrActionGoblinGate",
                       "spriteName":  "GoblinGate",
                       "tags":  [
@@ -2369,6 +2427,8 @@
                       "name":  "Gondmaeglon",
                       "description":  "WitheredHeath.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"mithril\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionGondmaeglon",
                       "spriteName":  "Gondmaeglon",
                       "tags":  [
@@ -2381,6 +2441,8 @@
                       "name":  "JugRijeisha",
                       "description":  "FarHarad.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "harad_port",
                       "action":  "MaterialRetrievalOrActionJugRijeisha",
                       "spriteName":  "JugRijeisha",
                       "tags":  [
@@ -2393,6 +2455,8 @@
                       "name":  "KhandAmu",
                       "description":  "Khand.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "khand_rider_camp",
                       "action":  "MaterialRetrievalOrActionKhandAmu",
                       "spriteName":  "KhandAmu",
                       "tags":  [
@@ -2405,6 +2469,8 @@
                       "name":  "LagScara",
                       "description":  "Ithilien.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionLagScara",
                       "spriteName":  "LagScara",
                       "tags":  [
@@ -2417,6 +2483,8 @@
                       "name":  "LagVrasfotak",
                       "description":  "Gorgoroth.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ashen_wastes",
                       "action":  "MaterialRetrievalOrActionLagVrasfotak",
                       "spriteName":  "LagVrasfotak",
                       "tags":  [
@@ -2429,6 +2497,8 @@
                       "name":  "Carach Angren",
                       "description":  "Udun.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dunland_raid_camp",
                       "action":  "MaterialRetrievalOrActionLugGhurzun",
                       "spriteName":  "CarachAngren",
                       "tags":  [
@@ -2452,6 +2522,8 @@
                       "name":  "MountDoom",
                       "description":  "Gorgoroth.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dark_fortress",
                       "action":  "MaterialRetrievalOrActionMountDoom",
                       "spriteName":  "MountDoom",
                       "tags":  [
@@ -2464,6 +2536,8 @@
                       "name":  "MtGram",
                       "description":  "Angmar.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "goblin_muster",
                       "action":  "MaterialRetrievalOrActionMtGram",
                       "spriteName":  "MtGram",
                       "tags":  [
@@ -2476,6 +2550,8 @@
                       "name":  "Nurumurl",
                       "description":  "Nurn.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "nurn_war_camp",
                       "action":  "MaterialRetrievalOrActionNurumurl",
                       "spriteName":  "Nurumurl",
                       "tags":  [
@@ -2488,6 +2564,8 @@
                       "name":  "Olbamarl",
                       "description":  "Ungol.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionOlbamarl",
                       "spriteName":  "Olbamarl",
                       "tags":  [
@@ -2500,6 +2578,8 @@
                       "name":  "Ongushar",
                       "description":  "BrownLands.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionOngushar",
                       "spriteName":  "Ongushar",
                       "tags":  [
@@ -2512,6 +2592,8 @@
                       "name":  "OrdugaAivaisa",
                       "description":  "Nurn.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "nurn_war_camp",
                       "action":  "MaterialRetrievalOrActionOrdugaAivaisa",
                       "spriteName":  "OrdugaAivaisa",
                       "tags":  [
@@ -2524,6 +2606,8 @@
                       "name":  "Ostigurth",
                       "description":  "Gorgoroth.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ashen_wastes",
                       "action":  "MaterialRetrievalOrActionOstigurth",
                       "spriteName":  "Ostigurth",
                       "tags":  [
@@ -2536,6 +2620,8 @@
                       "name":  "Rul",
                       "description":  "Nurn.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "nurn_war_camp",
                       "action":  "MaterialRetrievalOrActionRul",
                       "spriteName":  "Rul",
                       "tags":  [
@@ -2548,6 +2634,8 @@
                       "name":  "SarnGoriwing",
                       "description":  "MountainsOfMirkwood.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionSarnGoriwing",
                       "spriteName":  "SarnGoriwing",
                       "tags":  [
@@ -2560,6 +2648,8 @@
                       "name":  "Thuringwathost",
                       "description":  "Dagorlad.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ashen_wastes",
                       "action":  "MaterialRetrievalOrActionThuringwathost",
                       "spriteName":  "Thuringwathost",
                       "tags":  [
@@ -2572,6 +2662,8 @@
                       "name":  "UrlurtsuNurn",
                       "description":  "Nurn.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "nurn_war_camp",
                       "action":  "MaterialRetrievalOrActionUrlurtsuNurn",
                       "spriteName":  "UrlurtsuNurn",
                       "tags":  [
@@ -2584,6 +2676,8 @@
                       "name":  "Wathduin",
                       "description":  "NearHarad.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "harad_port",
                       "action":  "MaterialRetrievalOrActionWathduin",
                       "spriteName":  "Wathduin",
                       "tags":  [

@@ -1,6 +1,6 @@
 {
     "handSize":  5,
-    "deckCount":  3,
+    "deckCount":  4,
     "decks":  [
                   {
                       "deckId":  "gandalf_deck",
@@ -28,6 +28,17 @@
                       "alignment":  1,
                       "resourcePath":  "Cards/SauronDeck",
                       "cardCount":  243,
+                      "tags":  [
+
+                               ]
+                  },
+                  {
+                      "deckId":  "encounter_shared",
+                      "nation":  "Encounter",
+                      "alignment":  2,
+                      "resourcePath":  "Cards/EncounterDeck",
+                      "cardCount":  82,
+                      "sharedToAll":  true,
                       "tags":  [
 
                                ]

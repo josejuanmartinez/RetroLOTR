@@ -5,6 +5,35 @@ using UnityEngine;
 
 public static class PcEffectCatalog
 {
+    private static readonly Dictionary<string, Func<PcEffectDefinition>> DefinitionsById =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["breefolk_hospitality"] = BreefolkHospitality,
+            ["elven_refuge"] = ElvenRefuge,
+            ["great_elven_sanctuary"] = GreatElvenSanctuary,
+            ["grey_havens_passage"] = GreyHavensPassage,
+            ["dwarven_forge_hall"] = DwarvenForgeHall,
+            ["rohirrim_muster"] = RohirrimMuster,
+            ["gondorian_bastion"] = GondorianBastion,
+            ["ranger_ambush"] = RangerAmbush,
+            ["hobbit_hearth"] = HobbitHearth,
+            ["beorning_hall"] = BeorningHall,
+            ["forest_sanctuary"] = ForestSanctuary,
+            ["eagle_watch"] = EagleWatch,
+            ["trade_waterways"] = TradeWaterways,
+            ["dunland_raid_camp"] = DunlandRaidCamp,
+            ["goblin_muster"] = GoblinMuster,
+            ["dark_fortress"] = DarkFortress,
+            ["mordor_gate"] = MordorGate,
+            ["ungol_venom"] = UngolVenom,
+            ["ashen_wastes"] = AshenWastes,
+            ["nurn_war_camp"] = NurnWarCamp,
+            ["harad_port"] = HaradPort,
+            ["khand_rider_camp"] = KhandRiderCamp,
+            ["rhunic_court"] = RhunicCourt,
+            ["forgotten_barrows"] = ForgottenBarrows
+        };
+
     public sealed class PcEffectDefinition
     {
         public string title;
@@ -17,145 +46,12 @@ public static class PcEffectCatalog
         public bool PreferEffectForAi(Character character) => CanExecute(character);
     }
 
-    public static PcEffectDefinition GetDefinition(string actionTypeName)
+    public static PcEffectDefinition GetDefinition(string effectId)
     {
-        if (string.IsNullOrWhiteSpace(actionTypeName)) return null;
-
-        string key = actionTypeName.Trim();
-        return ResolveExplicit(key) ?? ResolveHeuristic(key);
-    }
-
-    private static PcEffectDefinition ResolveExplicit(string key)
-    {
-        if (key.Contains("Bree", StringComparison.OrdinalIgnoreCase)) return BreefolkHospitality();
-        if (key.Contains("Imladris", StringComparison.OrdinalIgnoreCase)) return GreatElvenSanctuary();
-        if (key.Contains("GreyHavens", StringComparison.OrdinalIgnoreCase)) return GreyHavensPassage();
-        if (key.Contains("HennethAnnun", StringComparison.OrdinalIgnoreCase)) return RangerAmbush();
-        if (key.Contains("Hobbiton", StringComparison.OrdinalIgnoreCase)) return HobbitHearth();
-        if (key.Contains("Edoras", StringComparison.OrdinalIgnoreCase)) return RohirrimMuster();
-        if (key.Contains("MinasTirith", StringComparison.OrdinalIgnoreCase)) return GondorianBastion();
-        if (key.Contains("Orthanc", StringComparison.OrdinalIgnoreCase)) return DarkFortress();
-        if (key.Contains("BaradDur", StringComparison.OrdinalIgnoreCase)) return DarkFortress();
-        if (key.Contains("MinasMorgul", StringComparison.OrdinalIgnoreCase)) return UngolVenom();
-        if (key.Contains("KhazadDum", StringComparison.OrdinalIgnoreCase)) return DwarvenForgeHall();
-        if (key.Contains("Rhosgobel", StringComparison.OrdinalIgnoreCase)) return ForestSanctuary();
-        if (key.Contains("HavensOfUmbar", StringComparison.OrdinalIgnoreCase)) return HaradPort();
-        if (key.Contains("Thanduil", StringComparison.OrdinalIgnoreCase)) return ElvenRefuge();
-        return null;
-    }
-
-    private static PcEffectDefinition ResolveHeuristic(string key)
-    {
-        if (MatchesAny(key, "Caras", "Cerin", "Elostirion", "Forlond", "Harlond", "Edhellond"))
-        {
-            return ElvenRefuge();
-        }
-
-        if (MatchesAny(key, "Minas", "Cair", "Pelargir", "DolAmroth", "Osgiliath", "Erech", "Linhir", "Morthondost"))
-        {
-            return GondorianBastion();
-        }
-
-        if (MatchesAny(key, "Edoras", "Eastfold", "WestFold", "Helm", "Dunharrow", "Aglarond", "Derndingle"))
-        {
-            return RohirrimMuster();
-        }
-
-        if (MatchesAny(key, "Khazad", "Belegost", "Noegrod", "Thorin", "Azanulimbar", "Barak", "Annuminas", "Fornost"))
-        {
-            return DwarvenForgeHall();
-        }
-
-        if (MatchesAny(key, "Buckland", "Michel", "Crickhollow", "OldForest", "Marish"))
-        {
-            return HobbitHearth();
-        }
-
-        if (MatchesAny(key, "Beorn", "Carrock", "Framsburg", "Gladden"))
-        {
-            return BeorningHall();
-        }
-
-        if (MatchesAny(key, "Rhosgobel", "Woodmen", "Druadan", "ErynVorn", "CeberFanuin", "Forest"))
-        {
-            return ForestSanctuary();
-        }
-
-        if (MatchesAny(key, "Eagle", "Caradhras", "Forochel"))
-        {
-            return EagleWatch();
-        }
-
-        if (MatchesAny(key, "Dale", "Esgaroth", "Maethelburg", "Riavod"))
-        {
-            return TradeWaterways();
-        }
-
-        if (MatchesAny(key, "Angren", "Arailt", "Enedhir", "Larach", "Treforn"))
-        {
-            return DunlandRaidCamp();
-        }
-
-        if (MatchesAny(key, "Goblin", "Gundabad", "CarnDum", "MtGram"))
-        {
-            return GoblinMuster();
-        }
-
-        if (MatchesAny(key, "Barad", "Orthanc", "DolGuldur", "Durthang", "MountDoom"))
-        {
-            return DarkFortress();
-        }
-
-        if (MatchesAny(key, "Ungol", "Shelob", "Cirith"))
-        {
-            return UngolVenom();
-        }
-
-        if (MatchesAny(key, "Morannon", "LugGhurzun"))
-        {
-            return MordorGate();
-        }
-
-        if (MatchesAny(key, "Ashkiri", "DeadMarshes", "LagVrasfotak", "MountainsOfMirkwood", "Ostigurth", "Thuringwathost"))
-        {
-            return AshenWastes();
-        }
-
-        if (MatchesAny(key, "KalNargil", "Luglurak", "Nurumurl", "Orduga", "Rul", "Urlurtsu"))
-        {
-            return NurnWarCamp();
-        }
-
-        if (MatchesAny(key, "Umbar", "Harad", "CarasMirilond", "CarasTolfalas", "JugRijeisha", "KasShadoul", "Lugarlur", "Methir", "Pellardur", "TolBuruth", "Wathduin", "Isigir"))
-        {
-            return HaradPort();
-        }
-
-        if (MatchesAny(key, "Khand", "KasShafra", "Lagari", "Neburcha", "Laorki", "Ovatharac", "AnKaragmir", "ButhOvaisa", "Sturlurtsa"))
-        {
-            return KhandRiderCamp();
-        }
-
-        if (MatchesAny(key, "Rhun", "Rhubar", "Elgaer", "Ilanin", "Carvarad", "ShrelKain", "RaiderHold"))
-        {
-            return RhunicCourt();
-        }
-
-        if (MatchesAny(key, "Barrow", "Paths"))
-        {
-            return ForgottenBarrows();
-        }
-
-        return RangerAmbush();
-    }
-
-    private static bool MatchesAny(string key, params string[] needles)
-    {
-        for (int i = 0; i < needles.Length; i++)
-        {
-            if (key.Contains(needles[i], StringComparison.OrdinalIgnoreCase)) return true;
-        }
-        return false;
+        if (string.IsNullOrWhiteSpace(effectId)) return null;
+        return DefinitionsById.TryGetValue(effectId.Trim(), out Func<PcEffectDefinition> factory)
+            ? factory()
+            : null;
     }
 
     private static PcEffectDefinition Create(string title, string description, Func<Character, bool> canExecute, Func<Character, bool> execute)

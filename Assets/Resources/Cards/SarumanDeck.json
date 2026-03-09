@@ -9,6 +9,8 @@
                       "name":  "Orthanc",
                       "description":  "GapOfRohan.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dark_fortress",
                       "action":  "MaterialRetrievalOrActionOrthanc",
                       "tags":  [
                                    "GapOfRohan"
@@ -21,6 +23,8 @@
                       "name":  "Larach Duhnnan",
                       "description":  "Dunland.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dunland_raid_camp",
                       "action":  "MaterialRetrievalOrActionLarachDuhnnan",
                       "tags":  [
                                    "Dunland"
@@ -33,6 +37,8 @@
                       "name":  "Sturlurtsa Khand",
                       "description":  "Khand.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "khand_rider_camp",
                       "action":  "MaterialRetrievalOrActionSturlurtsaKhand",
                       "tags":  [
                                    "Khand"
@@ -45,6 +51,8 @@
                       "name":  "Kas Shadoul",
                       "description":  "FarHarad.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "harad_port",
                       "action":  "MaterialRetrievalOrActionKasShadoul",
                       "tags":  [
                                    "FarHarad"
@@ -57,6 +65,8 @@
                       "name":  "Havens of Umbar",
                       "description":  "Umbar.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"gold\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "harad_port",
                       "action":  "MaterialRetrievalOrActionHavensOfUmbar",
                       "tags":  [
                                    "Umbar"
@@ -69,6 +79,8 @@
                       "name":  "Rhosgobel",
                       "description":  "SouthernMirkwood.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "forest_sanctuary",
                       "action":  "MaterialRetrievalOrActionRhosgobel",
                       "tags":  [
                                    "SouthernMirkwood"
@@ -81,6 +93,8 @@
                       "name":  "Druadan Forest",
                       "description":  "NorthernGondor.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "forest_sanctuary",
                       "action":  "MaterialRetrievalOrActionDruadanForest",
                       "tags":  [
                                    "NorthernGondor"
@@ -93,6 +107,8 @@
                       "name":  "Paths of the Dead",
                       "description":  "SouthernGondor.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "forgotten_barrows",
                       "action":  "MaterialRetrievalOrActionPathsOfTheDead",
                       "tags":  [
                                    "SouthernGondor"
@@ -105,6 +121,8 @@
                       "name":  "Elgaer",
                       "description":  "Rhun.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "rhunic_court",
                       "action":  "MaterialRetrievalOrActionElgaer",
                       "tags":  [
                                    "Rhun"
@@ -117,6 +135,8 @@
                       "name":  "Laorki",
                       "description":  "Khand.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "khand_rider_camp",
                       "action":  "MaterialRetrievalOrActionLaorki",
                       "tags":  [
                                    "Khand"
@@ -129,6 +149,8 @@
                       "name":  "Sarn Lothduin",
                       "description":  "Anduin.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionSarnLothduin",
                       "tags":  [
                                    "Anduin"
@@ -141,6 +163,8 @@
                       "name":  "Shrel-Kain",
                       "description":  "Dorwinion.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"gold\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "rhunic_court",
                       "action":  "MaterialRetrievalOrActionShrelKain",
                       "tags":  [
                                    "Dorwinion"
@@ -153,6 +177,8 @@
                       "name":  "Riavod",
                       "description":  "Dorwinion.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "trade_waterways",
                       "action":  "MaterialRetrievalOrActionRiavod",
                       "tags":  [
                                    "Dorwinion"
@@ -2296,6 +2322,8 @@
                       "name":  "AmonHen",
                       "description":  "Nindalf.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionAmonHen",
                       "spriteName":  "AmonHen",
                       "tags":  [
@@ -2308,6 +2336,8 @@
                       "name":  "Angren",
                       "description":  "Dunland.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dunland_raid_camp",
                       "action":  "MaterialRetrievalOrActionAngren",
                       "spriteName":  "Angren",
                       "tags":  [
@@ -2320,6 +2350,8 @@
                       "name":  "AnKaragmir",
                       "description":  "Khand.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "khand_rider_camp",
                       "action":  "MaterialRetrievalOrActionAnKaragmir",
                       "spriteName":  "AnKaragmir",
                       "tags":  [
@@ -2332,6 +2364,8 @@
                       "name":  "Arailt",
                       "description":  "Dunland.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dunland_raid_camp",
                       "action":  "MaterialRetrievalOrActionArailt",
                       "spriteName":  "Arailt",
                       "tags":  [
@@ -2344,6 +2378,8 @@
                       "name":  "Ashkiri",
                       "description":  "Dagorlad.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ashen_wastes",
                       "action":  "MaterialRetrievalOrActionAshkiri",
                       "spriteName":  "Ashkiri",
                       "tags":  [
@@ -2356,6 +2392,8 @@
                       "name":  "BaradHarn",
                       "description":  "NearHarad.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dark_fortress",
                       "action":  "MaterialRetrievalOrActionBaradHarn",
                       "spriteName":  "BaradHarn",
                       "tags":  [
@@ -2368,6 +2406,8 @@
                       "name":  "CamethBrin",
                       "description":  "Rhudaur.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionCamethBrin",
                       "spriteName":  "CamethBrin",
                       "tags":  [
@@ -2380,6 +2420,8 @@
                       "name":  "Caradhras",
                       "description":  "MistyMountains.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"mithril\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "eagle_watch",
                       "action":  "MaterialRetrievalOrActionCaradhras",
                       "spriteName":  "Caradhras",
                       "tags":  [
@@ -2392,6 +2434,8 @@
                       "name":  "CarasMirilond",
                       "description":  "FarHarad.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "elven_refuge",
                       "action":  "MaterialRetrievalOrActionCarasMirilond",
                       "spriteName":  "CarasMirilond",
                       "tags":  [
@@ -2404,6 +2448,8 @@
                       "name":  "CarasTolfalas",
                       "description":  "NearHarad.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "elven_refuge",
                       "action":  "MaterialRetrievalOrActionCarasTolfalas",
                       "spriteName":  "CarasTolfalas",
                       "tags":  [
@@ -2416,6 +2462,8 @@
                       "name":  "Carvarad",
                       "description":  "Rhun.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "rhunic_court",
                       "action":  "MaterialRetrievalOrActionCarvarad",
                       "spriteName":  "Carvarad",
                       "tags":  [
@@ -2428,6 +2476,8 @@
                       "name":  "Enedhir",
                       "description":  "Dunland.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dunland_raid_camp",
                       "action":  "MaterialRetrievalOrActionEnedhir",
                       "spriteName":  "Enedhir",
                       "tags":  [
@@ -2440,6 +2490,8 @@
                       "name":  "ErynVorn",
                       "description":  "Cardolan.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "forest_sanctuary",
                       "action":  "MaterialRetrievalOrActionErynVorn",
                       "spriteName":  "ErynVorn",
                       "tags":  [
@@ -2452,6 +2504,8 @@
                       "name":  "FangornSCamp",
                       "description":  "GapOfRohan.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionFangornSCamp",
                       "spriteName":  "FangornSCamp",
                       "tags":  [
@@ -2464,6 +2518,8 @@
                       "name":  "FennasDrunin",
                       "description":  "Rhudaur.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionFennasDrunin",
                       "spriteName":  "FennasDrunin",
                       "tags":  [
@@ -2476,6 +2532,8 @@
                       "name":  "GladdenFields",
                       "description":  "Anduin.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "beorning_hall",
                       "action":  "MaterialRetrievalOrActionGladdenFields",
                       "spriteName":  "GladdenFields",
                       "tags":  [
@@ -2488,6 +2546,8 @@
                       "name":  "Ilanin",
                       "description":  "Rhun.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "rhunic_court",
                       "action":  "MaterialRetrievalOrActionIlanin",
                       "spriteName":  "Ilanin",
                       "tags":  [
@@ -2500,6 +2560,8 @@
                       "name":  "Isigir",
                       "description":  "Umbar.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "harad_port",
                       "action":  "MaterialRetrievalOrActionIsigir",
                       "spriteName":  "Isigir",
                       "tags":  [
@@ -2512,6 +2574,8 @@
                       "name":  "KasShafra",
                       "description":  "FarHarad.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "khand_rider_camp",
                       "action":  "MaterialRetrievalOrActionKasShafra",
                       "spriteName":  "KasShafra",
                       "tags":  [
@@ -2524,6 +2588,8 @@
                       "name":  "LagariOrath",
                       "description":  "Khand.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "khand_rider_camp",
                       "action":  "MaterialRetrievalOrActionLagariOrath",
                       "spriteName":  "LagariOrath",
                       "tags":  [
@@ -2536,6 +2602,8 @@
                       "name":  "LarHuz",
                       "description":  "IronHills.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "ranger_ambush",
                       "action":  "MaterialRetrievalOrActionLarHuz",
                       "spriteName":  "LarHuz",
                       "tags":  [
@@ -2548,6 +2616,8 @@
                       "name":  "Methir",
                       "description":  "NearHarad.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"gold\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "harad_port",
                       "action":  "MaterialRetrievalOrActionMethir",
                       "spriteName":  "Methir",
                       "tags":  [
@@ -2560,6 +2630,8 @@
                       "name":  "Neburcha",
                       "description":  "Khand.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "khand_rider_camp",
                       "action":  "MaterialRetrievalOrActionNeburcha",
                       "spriteName":  "Neburcha",
                       "tags":  [
@@ -2572,6 +2644,8 @@
                       "name":  "Ovatharac",
                       "description":  "Khand.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "khand_rider_camp",
                       "action":  "MaterialRetrievalOrActionOvatharac",
                       "spriteName":  "Ovatharac",
                       "tags":  [
@@ -2584,6 +2658,8 @@
                       "name":  "Pellardur",
                       "description":  "Umbar.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"gold\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "harad_port",
                       "action":  "MaterialRetrievalOrActionPellardur",
                       "spriteName":  "Pellardur",
                       "tags":  [
@@ -2596,6 +2672,8 @@
                       "name":  "RaiderHold",
                       "description":  "SeaOfRhun.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"gold\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "rhunic_court",
                       "action":  "MaterialRetrievalOrActionRaiderHold",
                       "spriteName":  "RaiderHold",
                       "tags":  [
@@ -2608,6 +2686,8 @@
                       "name":  "Treforn",
                       "description":  "Dunland.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
                       "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dunland_raid_camp",
                       "action":  "MaterialRetrievalOrActionTreforn",
                       "spriteName":  "Treforn",
                       "tags":  [

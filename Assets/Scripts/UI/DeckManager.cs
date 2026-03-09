@@ -21,6 +21,7 @@ public class DeckManifestEntry
     public int alignment;
     public string resourcePath;
     public int cardCount;
+    public bool sharedToAll;
 }
 
 [Serializable]
@@ -55,6 +56,45 @@ public class CardPlayabilityResult
 }
 
 [Serializable]
+public class EncounterStatusEffectData
+{
+    public string statusId;
+    public int turns = 1;
+}
+
+[Serializable]
+public class EncounterOutcomeData
+{
+    public string outcomeId;
+    public string resultText;
+    public string requiredAlignment = string.Empty;
+    public int minCommander;
+    public int minAgent;
+    public int minEmmissary;
+    public int minMage;
+    public int minHealth;
+    public int maxHealth = -1;
+    public int healthDelta;
+    public int goldDelta;
+    public int leatherDelta;
+    public int timberDelta;
+    public int mountsDelta;
+    public int ironDelta;
+    public int steelDelta;
+    public int mithrilDelta;
+    public List<EncounterStatusEffectData> statuses = new();
+}
+
+[Serializable]
+public class EncounterOptionData
+{
+    public string optionId;
+    public string label;
+    public string description;
+    public List<EncounterOutcomeData> outcomes = new();
+}
+
+[Serializable]
 public class CardData
 {
     public int cardId;
@@ -69,6 +109,12 @@ public class CardData
     public int actionId;
     public string spriteName;
     public string region;
+    public string requirementsText;
+    public string pcEffectId;
+    public string historyText;
+    public string portraitName;
+    public List<EncounterOptionData> encounterOptions = new();
+    public EncounterOptionData fleeOption;
     public int commander;
     public int agent;
     public int emmissary;
@@ -481,6 +527,23 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
+    public bool TryDiscardCard(PlayableLeader leader, int cardId, out CardData discardedCard)
+    {
+        discardedCard = null;
+        if (leader == null) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
+
+        int index = state.hand.FindIndex(x => x != null && x.cardId == cardId);
+        if (index < 0) return false;
+
+        discardedCard = state.hand[index];
+        if (discardedCard == null || discardedCard.IsEncounterCard()) return false;
+
+        state.hand.RemoveAt(index);
+        state.discardPile.Add(discardedCard);
+        return true;
+    }
+
     public bool HasDeckFor(PlayableLeader leader)
     {
         return leader != null && playerDecks.ContainsKey(leader);
@@ -792,6 +855,12 @@ public class DeckManager : MonoBehaviour
             specialAbilities = card.specialAbilities != null ? new List<ArmySpecialAbilityEnum>(card.specialAbilities) : new List<ArmySpecialAbilityEnum>(),
             spriteName = card.spriteName,
             region = card.region,
+            requirementsText = card.requirementsText,
+            pcEffectId = card.pcEffectId,
+            historyText = card.historyText,
+            portraitName = card.portraitName,
+            encounterOptions = card.encounterOptions != null ? CloneEncounterOptions(card.encounterOptions) : new List<EncounterOptionData>(),
+            fleeOption = CloneEncounterOption(card.fleeOption),
             difficulty = card.difficulty,
             leatherRequired = card.leatherRequired,
             mountsRequired = card.mountsRequired,
@@ -832,6 +901,58 @@ public class DeckManager : MonoBehaviour
             }
         }
         return -1;
+    }
+
+    private static List<EncounterOptionData> CloneEncounterOptions(List<EncounterOptionData> options)
+    {
+        if (options == null) return new List<EncounterOptionData>();
+        return options.Select(CloneEncounterOption).Where(option => option != null).ToList();
+    }
+
+    private static EncounterOptionData CloneEncounterOption(EncounterOptionData option)
+    {
+        if (option == null) return null;
+        return new EncounterOptionData
+        {
+            optionId = option.optionId,
+            label = option.label,
+            description = option.description,
+            outcomes = option.outcomes != null
+                ? option.outcomes.Select(CloneEncounterOutcome).Where(outcome => outcome != null).ToList()
+                : new List<EncounterOutcomeData>()
+        };
+    }
+
+    private static EncounterOutcomeData CloneEncounterOutcome(EncounterOutcomeData outcome)
+    {
+        if (outcome == null) return null;
+        return new EncounterOutcomeData
+        {
+            outcomeId = outcome.outcomeId,
+            resultText = outcome.resultText,
+            requiredAlignment = outcome.requiredAlignment,
+            minCommander = outcome.minCommander,
+            minAgent = outcome.minAgent,
+            minEmmissary = outcome.minEmmissary,
+            minMage = outcome.minMage,
+            minHealth = outcome.minHealth,
+            maxHealth = outcome.maxHealth,
+            healthDelta = outcome.healthDelta,
+            goldDelta = outcome.goldDelta,
+            leatherDelta = outcome.leatherDelta,
+            timberDelta = outcome.timberDelta,
+            mountsDelta = outcome.mountsDelta,
+            ironDelta = outcome.ironDelta,
+            steelDelta = outcome.steelDelta,
+            mithrilDelta = outcome.mithrilDelta,
+            statuses = outcome.statuses != null
+                ? outcome.statuses.Select(status => new EncounterStatusEffectData
+                {
+                    statusId = status.statusId,
+                    turns = status.turns
+                }).ToList()
+                : new List<EncounterStatusEffectData>()
+        };
     }
 
     private static bool MatchesActionCard(CardData card, string actionClassName, int actionId)
@@ -982,10 +1103,28 @@ public class DeckManager : MonoBehaviour
             deckId = deckId
         };
 
-        state.drawPile.AddRange(deckData.cards);
+        state.drawPile.AddRange(deckData.cards.Select(CloneCard).Where(card => card != null));
+        foreach (DeckData sharedDeck in GetSharedDecks())
+        {
+            if (sharedDeck?.cards == null) continue;
+            state.drawPile.AddRange(sharedDeck.cards.Select(CloneCard).Where(card => card != null));
+        }
         Shuffle(state.drawPile);
         DrawUpToHandSize(state);
         return state;
+    }
+
+    private IEnumerable<DeckData> GetSharedDecks()
+    {
+        foreach (DeckManifestEntry entry in deckManifestById.Values)
+        {
+            if (entry == null || !entry.sharedToAll) continue;
+            if (string.IsNullOrWhiteSpace(entry.deckId)) continue;
+            if (loadedDecksById.TryGetValue(entry.deckId, out DeckData deckData) && deckData != null)
+            {
+                yield return deckData;
+            }
+        }
     }
 
     private string ResolveDeckIdForLeader(PlayableLeader leader)
