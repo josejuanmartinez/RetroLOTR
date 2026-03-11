@@ -211,7 +211,7 @@ public class ConfirmationDialog : MonoBehaviour
     private bool ShouldDelayDialog()
     {
         bool focusPending = BoardNavigator.Instance != null && BoardNavigator.Instance.HasPendingFocus();
-        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy() || focusPending;
+        return MessageDisplay.IsDisplaying() || MessageDisplayNoUI.IsBusy() || focusPending;
     }
 
     private void StartWaitForMessages()

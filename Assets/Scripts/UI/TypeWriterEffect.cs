@@ -9,8 +9,9 @@ public class TypewriterEffect : MonoBehaviour
     public AutoScroll autoScroll;
     
     [TextArea] public string fullText;
-    
-    public float typingSpeed = 0.05f;
+
+    [Tooltip("Characters per second. Higher values type faster.")]
+    public float typingSpeed = 20f;
 
     public Coroutine coroutine;
 
@@ -37,12 +38,33 @@ public class TypewriterEffect : MonoBehaviour
         textMeshPro.text = ""; // Clear text initially
 
         if (text == null) text = fullText;
-
-        for (int i = 0; i <= text.Length; i++)
+        if (string.IsNullOrEmpty(text))
         {
-            textMeshPro.text = text.Substring(0, i);
-            yield return new WaitForSeconds(typingSpeed);
-            autoScroll.Refresh();
+            yield break;
+        }
+
+        float charactersPerSecond = Mathf.Max(0.01f, typingSpeed);
+        float visibleCharacters = 0f;
+        int lastShownCount = -1;
+
+        while (lastShownCount < text.Length)
+        {
+            visibleCharacters += charactersPerSecond * Time.unscaledDeltaTime;
+            int shownCount = Mathf.Clamp(Mathf.FloorToInt(visibleCharacters), 0, text.Length);
+
+            if (shownCount != lastShownCount)
+            {
+                textMeshPro.text = text.Substring(0, shownCount);
+                autoScroll?.Refresh();
+                lastShownCount = shownCount;
+            }
+
+            if (shownCount >= text.Length)
+            {
+                break;
+            }
+
+            yield return null;
         }
     }
 }

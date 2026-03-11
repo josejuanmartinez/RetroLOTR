@@ -54,6 +54,8 @@ public class Game : MonoBehaviour
 
     private bool skipNextTurnPrompt = false;
     private readonly List<NpcFocusEntry> npcFocusEntries = new();
+    private bool blockLookAtUntilStartupPopupCloses;
+    private bool startupPopupShown;
     void Awake()
     {
         if (!board) board = FindAnyObjectByType<Board>();
@@ -105,9 +107,12 @@ public class Game : MonoBehaviour
         turn = 0;
         started = true;
         this.skipTutorial = skipTutorial;
+        blockLookAtUntilStartupPopupCloses = true;
+        startupPopupShown = false;
 
         currentlyPlaying = player;
         MessageDisplay.ClearPersistent();
+        MessageDisplay.ShowPersistent("Game starting...", Color.yellow);
 
         InitializePlayableLeaderIcons();
         InitializeNonPlayableLeaderIcons();
@@ -128,6 +133,7 @@ public class Game : MonoBehaviour
         currentlyPlaying.NewTurn();
         BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
+        MessageDisplay.ClearPersistent();
 
     }
 
@@ -537,5 +543,22 @@ public class Game : MonoBehaviour
     public bool IsPlayerCurrentlyPlaying()
     {
         return currentlyPlaying == player;
+    }
+
+    public bool ShouldBlockLookAtUntilStartupPopupCloses()
+    {
+        return started && blockLookAtUntilStartupPopupCloses;
+    }
+
+    public void NotifyStartupPopupShown()
+    {
+        if (!blockLookAtUntilStartupPopupCloses || startupPopupShown) return;
+        startupPopupShown = true;
+    }
+
+    public void NotifyStartupPopupClosed()
+    {
+        if (!blockLookAtUntilStartupPopupCloses || !startupPopupShown) return;
+        blockLookAtUntilStartupPopupCloses = false;
     }
 }

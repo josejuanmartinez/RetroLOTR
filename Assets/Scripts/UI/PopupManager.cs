@@ -29,12 +29,15 @@ public class PopupManager : MonoBehaviour
     private readonly List<PopupData> queue = new();
     private int currentIndex = -1;
     private RectTransform rectTransform;
+    private CanvasGroup containerCanvasGroup;
     private Vector2 initialSize;
     public static bool IsShowing { get; private set; }
     private Videos videos;
     private Coroutine waitForMessagesRoutine;
     private Coroutine actorPlaybackSequenceRoutine;
+    private Coroutine popupDisplayRoutine;
     private int actorPlaybackToken;
+    private int popupDisplayToken;
 
     private struct PopupData
     {
@@ -59,13 +62,26 @@ public class PopupManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject); // optional: persists across scenes
 
+        if (container != null && !container.activeSelf)
+        {
+            container.SetActive(true);
+        }
+
         rectTransform = container.GetComponent<RectTransform>();
+        containerCanvasGroup = container != null ? container.GetComponent<CanvasGroup>() : null;
+        if (container != null && containerCanvasGroup == null)
+        {
+            containerCanvasGroup = container.AddComponent<CanvasGroup>();
+        }
         initialSize = rectTransform != null ? rectTransform.sizeDelta : Vector2.zero;
         IsShowing = false;
+        SetContainerVisible(false);
     }
 
     public void Initialize(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
     {
+        FindFirstObjectByType<Game>()?.NotifyStartupPopupShown();
+
         queue.Add(new PopupData
         {
             title = title,
@@ -96,6 +112,8 @@ public class PopupManager : MonoBehaviour
 
     public void Hide()
     {
+        popupDisplayToken++;
+        StopPopupDisplayRoutine();
         actorPlaybackToken++;
         StopActorPlaybackSequence();
         Action onClose = null;
@@ -106,7 +124,7 @@ public class PopupManager : MonoBehaviour
 
         FindFirstObjectByType<Sounds>().StopAllSounds();
         Music.Instance?.StopEventMusic();
-        container.SetActive(false);
+        SetContainerVisible(false);
         queue.Clear();
         currentIndex = -1;
         IsShowing = false;
@@ -131,6 +149,7 @@ public class PopupManager : MonoBehaviour
             actionsManager.RefreshInteractableState();
         }
 
+        FindFirstObjectByType<Game>()?.NotifyStartupPopupClosed();
         onClose?.Invoke();
     }
 
@@ -173,39 +192,19 @@ public class PopupManager : MonoBehaviour
         if (index < 0 || index >= queue.Count)
             return;
 
+        popupDisplayToken++;
+        StopPopupDisplayRoutine();
         actorPlaybackToken++;
         StopActorPlaybackSequence();
         currentIndex = index;
         PopupData data = queue[currentIndex];
         Sounds.Instance?.PlayMessage();
         Music.Instance?.PlayEventMusic();
-        container.SetActive(true);
-        IsShowing = true;
 
-        if (typeWriterEffect != null)
-        {
-            if (data.typeWrite)
-            {
-                typeWriterEffect.enabled = true;
-                typeWriterEffect.fullText = data.text;
-                textWidget.text = "";
-                typeWriterEffect.StartWriting();
-            }
-            else
-            {
-                typeWriterEffect.enabled = false;
-                typeWriterEffect.fullText = "";
-                textWidget.text = data.text;
-            }
-        }
-        else
-        {
-            textWidget.text = data.text;
-        }
-
-        titleWidget.text = data.title;
         StopActorVideo(actor1Video);
         StopActorVideo(actor2Video);
+        ClearActorOutput(actor1RawImage, actor1Video);
+        ClearActorOutput(actor2RawImage, actor2Video);
 
         VideoClip actor1Clip = GetVideoByName(data.spriteActor1 != null ? data.spriteActor1.name : null);
 
@@ -214,34 +213,23 @@ public class PopupManager : MonoBehaviour
         SetActor2Active(hasActor2);
         if (actor1Clip != null && actor2Clip != null)
         {
-            SetActorVisuals(
-                actor1,
-                actor1RawImage,
-                actor1Video,
+            int displayTokenSnapshot = popupDisplayToken;
+            popupDisplayRoutine = StartCoroutine(PrepareAndShowDualVideoEntry(
+                displayTokenSnapshot,
                 actor1Clip,
-                data.spriteActor1
-            );
-            // Keep right actor static while left video is playing.
-            SetActorVisuals(actor2, actor2RawImage, actor2Video, null, data.spriteActor2);
-            int playbackTokenSnapshot = actorPlaybackToken;
-            actorPlaybackSequenceRoutine = StartCoroutine(PlayRightActorAfterLeftCompletes(playbackTokenSnapshot, actor1Clip, data.spriteActor1, actor2Clip, data.spriteActor2));
+                data.spriteActor1,
+                actor2Clip,
+                data.spriteActor2));
         }
         else
         {
-            SetActorVisuals(
-                actor1,
-                actor1RawImage,
-                actor1Video,
+            int displayTokenSnapshot = popupDisplayToken;
+            popupDisplayRoutine = StartCoroutine(PrepareAndShowSingleStateEntry(
+                displayTokenSnapshot,
                 actor1Clip,
-                data.spriteActor1
-            );
-            SetActorVisuals(
-                actor2,
-                actor2RawImage,
-                actor2Video,
+                data.spriteActor1,
                 actor2Clip,
-                data.spriteActor2
-            );
+                data.spriteActor2));
         }
 
         if (rectTransform != null)
@@ -259,10 +247,17 @@ public class PopupManager : MonoBehaviour
         UpdateArrows();
     }
 
+    private void StopPopupDisplayRoutine()
+    {
+        if (popupDisplayRoutine == null) return;
+        StopCoroutine(popupDisplayRoutine);
+        popupDisplayRoutine = null;
+    }
+
     private bool ShouldDelayPopup()
     {
         bool focusPending = BoardNavigator.Instance != null && BoardNavigator.Instance.HasPendingFocus();
-        return MessageDisplay.IsBusy() || MessageDisplayNoUI.IsBusy() || focusPending;
+        return MessageDisplay.IsDisplaying() || MessageDisplayNoUI.IsBusy() || focusPending;
     }
 
     private void StartWaitForMessages()
@@ -373,8 +368,165 @@ public class PopupManager : MonoBehaviour
         // Enforce single-video playback: left must be stopped before right starts.
         SetActorVisuals(actor1, actor1RawImage, actor1Video, null, leftFallbackSprite);
         StopActorVideo(actor1Video);
-        SetActorVisuals(actor2, actor2RawImage, actor2Video, rightClip, rightFallbackSprite);
+        PlayPreparedVideo(actor2, actor2RawImage, actor2Video, rightClip, rightFallbackSprite);
         actorPlaybackSequenceRoutine = null;
+    }
+
+    private IEnumerator PrepareAndShowDualVideoEntry(int displayTokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
+    {
+        SetContainerVisible(false);
+
+        yield return PrepareVideo(actor1Video, actor1RawImage, leftClip);
+        if (displayTokenSnapshot != popupDisplayToken)
+        {
+            popupDisplayRoutine = null;
+            yield break;
+        }
+
+        yield return PrepareVideo(actor2Video, actor2RawImage, rightClip);
+        if (displayTokenSnapshot != popupDisplayToken)
+        {
+            popupDisplayRoutine = null;
+            yield break;
+        }
+
+        PlayPreparedVideo(actor1, actor1RawImage, actor1Video, leftClip, leftFallbackSprite);
+        SetActorVisuals(actor2, actor2RawImage, actor2Video, null, rightFallbackSprite);
+        ShowContainer();
+        ApplyPopupTextAndTitle(queue[currentIndex]);
+
+        int playbackTokenSnapshot = actorPlaybackToken;
+        actorPlaybackSequenceRoutine = StartCoroutine(PlayRightActorAfterLeftCompletes(playbackTokenSnapshot, leftClip, leftFallbackSprite, rightClip, rightFallbackSprite));
+        popupDisplayRoutine = null;
+    }
+
+    private IEnumerator PrepareAndShowSingleStateEntry(int displayTokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
+    {
+        SetContainerVisible(false);
+
+        yield return PrepareVideo(actor1Video, actor1RawImage, leftClip);
+        if (displayTokenSnapshot != popupDisplayToken)
+        {
+            popupDisplayRoutine = null;
+            yield break;
+        }
+
+        yield return PrepareVideo(actor2Video, actor2RawImage, rightClip);
+        if (displayTokenSnapshot != popupDisplayToken)
+        {
+            popupDisplayRoutine = null;
+            yield break;
+        }
+
+        ApplyPreparedActorState(actor1, actor1RawImage, actor1Video, leftClip, leftFallbackSprite);
+        ApplyPreparedActorState(actor2, actor2RawImage, actor2Video, rightClip, rightFallbackSprite);
+        ShowContainer();
+        ApplyPopupTextAndTitle(queue[currentIndex]);
+        popupDisplayRoutine = null;
+    }
+
+    private IEnumerator PrepareVideo(VideoPlayer video, RawImage rawImage, VideoClip clip)
+    {
+        if (video == null || clip == null)
+        {
+            yield break;
+        }
+
+        StopActorVideo(video);
+        ClearActorOutput(rawImage, video);
+        video.enabled = true;
+        video.clip = clip;
+        video.isLooping = true;
+        video.Prepare();
+
+        float elapsed = 0f;
+        const float maxPrepareWait = 2f;
+        while (!video.isPrepared && elapsed < maxPrepareWait)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+    }
+
+    private void ApplyPreparedActorState(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
+    {
+        if (clip != null && video != null && video.isPrepared)
+        {
+            PlayPreparedVideo(image, rawImage, video, clip, fallbackSprite);
+            return;
+        }
+
+        SetActorVisuals(image, rawImage, video, null, fallbackSprite);
+    }
+
+    private void PlayPreparedVideo(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
+    {
+        if (video == null || clip == null)
+        {
+            SetActorVisuals(image, rawImage, video, null, fallbackSprite);
+            return;
+        }
+
+        video.clip = clip;
+        video.enabled = true;
+        video.Play();
+        if (rawImage != null) rawImage.enabled = true;
+        if (image != null)
+        {
+            image.enabled = false;
+        }
+    }
+
+    private void ShowContainer()
+    {
+        SetContainerVisible(true);
+        IsShowing = true;
+    }
+
+    private void SetContainerVisible(bool visible)
+    {
+        if (container == null) return;
+        if (!container.activeSelf)
+        {
+            container.SetActive(true);
+        }
+
+        if (containerCanvasGroup != null)
+        {
+            containerCanvasGroup.alpha = visible ? 1f : 0f;
+            containerCanvasGroup.interactable = visible;
+            containerCanvasGroup.blocksRaycasts = visible;
+        }
+    }
+
+    private void ApplyPopupTextAndTitle(PopupData data)
+    {
+        if (typeWriterEffect != null)
+        {
+            if (data.typeWrite)
+            {
+                typeWriterEffect.enabled = true;
+                typeWriterEffect.fullText = data.text;
+                textWidget.text = "";
+            }
+            else
+            {
+                typeWriterEffect.enabled = false;
+                typeWriterEffect.fullText = "";
+                textWidget.text = data.text;
+            }
+        }
+        else
+        {
+            textWidget.text = data.text;
+        }
+
+        titleWidget.text = data.title;
+
+        if (typeWriterEffect != null && data.typeWrite)
+        {
+            typeWriterEffect.StartWriting();
+        }
     }
 
     private static void StopActorVideo(VideoPlayer video)
@@ -382,6 +534,22 @@ public class PopupManager : MonoBehaviour
         if (video == null) return;
         video.Stop();
         video.enabled = false;
+    }
+
+    private static void ClearActorOutput(RawImage rawImage, VideoPlayer video)
+    {
+        if (rawImage != null)
+        {
+            rawImage.enabled = false;
+        }
+
+        RenderTexture target = video != null ? video.targetTexture : null;
+        if (target == null) return;
+
+        RenderTexture previous = RenderTexture.active;
+        RenderTexture.active = target;
+        GL.Clear(true, true, Color.clear);
+        RenderTexture.active = previous;
     }
 
     private static void SetActorVisuals(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)

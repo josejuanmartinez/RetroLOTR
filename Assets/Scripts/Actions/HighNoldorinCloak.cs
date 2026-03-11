@@ -64,9 +64,9 @@ public class HighNoldorinCloak : CharacterAction
             if (target == null) return false;
 
             target.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
-            target.Hide(2);
+            target.Hide(1);
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} gains Haste (1) and Hidden (2).", Color.cyan);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} gains Haste (1) and Hidden (1).", Color.cyan);
             return true;
         }
 

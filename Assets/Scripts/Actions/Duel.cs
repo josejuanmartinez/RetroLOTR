@@ -89,6 +89,13 @@ public class Duel : CharacterAction
     {
         if (attacker == null || defender == null) return;
 
+        if (defender.HasStatusEffect(StatusEffectEnum.DuelSupremacy))
+        {
+            defender.ClearStatusEffect(StatusEffectEnum.DuelSupremacy);
+            ResolveGuaranteedDefenderWin(attacker, defender);
+            return;
+        }
+
         float attackerScore = GetDuelScore(attacker);
         float defenderScore = GetDuelScore(defender);
         bool defenderAutoWins = defender.HasDuelSupremacy();
@@ -114,6 +121,42 @@ public class Duel : CharacterAction
         bool playerInvolved = attacker.isPlayerControlled || defender.isPlayerControlled;
         bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(attacker.hex);
         string narration = BuildDuelNarration(attacker, defender, winner, loser, wound, attackerScore, defenderScore, defenseBonus, loserHealthBefore, defenderAutoWins);
+
+        if (shouldShowPopup)
+        {
+            PopupManager.Show(
+                $"Duel: {attacker.characterName} vs {defender.characterName}",
+                FindFirstObjectByType<Illustrations>().GetIllustrationByName(attacker.characterName),
+                FindFirstObjectByType<Illustrations>().GetIllustrationByName(defender.characterName),
+                narration,
+                true);
+        }
+        else
+        {
+            MessageDisplayNoUI.ShowMessage(attacker.hex, attacker, $"{winner.characterName} wins the duel.", Color.yellow);
+        }
+    }
+
+    private void ResolveGuaranteedDefenderWin(Character attacker, Character defender)
+    {
+        float attackerScore = GetDuelScore(attacker);
+        float defenderScore = GetDuelScore(defender);
+        Character winner = defender;
+        Character loser = attacker;
+
+        float diff = Mathf.Abs(attackerScore - defenderScore);
+        int baseWound = Mathf.Clamp(Mathf.RoundToInt(diff * 10f), 0, 100);
+        if (baseWound == 0) baseWound = UnityEngine.Random.Range(5, 16);
+
+        int defenseBonus = GetArtifactDefense(loser);
+        int wound = Mathf.Max(0, baseWound - defenseBonus * 5);
+        int loserHealthBefore = loser.health;
+
+        loser.Wounded(winner.GetOwner(), wound);
+
+        bool playerInvolved = attacker.isPlayerControlled || defender.isPlayerControlled;
+        bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(attacker.hex);
+        string narration = BuildDuelNarration(attacker, defender, winner, loser, wound, attackerScore, defenderScore, defenseBonus, loserHealthBefore, true);
 
         if (shouldShowPopup)
         {

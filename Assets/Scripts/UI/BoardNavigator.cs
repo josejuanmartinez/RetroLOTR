@@ -318,7 +318,7 @@ public class BoardNavigator : MonoBehaviour
         bool focusQueued = Instance != null && Instance.HasPendingFocus();
         bool messageUiShowing = MessageDisplay.IsDisplaying();
         bool messageNoUiShowing = MessageDisplayNoUI.IsDisplaying;
-        return popupActive || focusQueued || messageUiShowing || messageNoUiShowing;
+        return popupActive || focusQueued || messageUiShowing || messageNoUiShowing || IsStartupPopupLookAtBlocked();
     }
 
     public void LookAtSelected()
@@ -400,7 +400,13 @@ public class BoardNavigator : MonoBehaviour
 
     private static bool ShouldPauseFocus()
     {
-        return PopupManager.IsShowing || ConfirmationDialog.IsShowing || SelectionDialog.IsShowing || MessageDisplayNoUI.IsDisplaying;
+        return PopupManager.IsShowing || ConfirmationDialog.IsShowing || SelectionDialog.IsShowing || MessageDisplayNoUI.IsDisplaying || IsStartupPopupLookAtBlocked();
+    }
+
+    private static bool IsStartupPopupLookAtBlocked()
+    {
+        Game game = FindFirstObjectByType<Game>();
+        return game != null && game.ShouldBlockLookAtUntilStartupPopupCloses();
     }
 
     private static bool ShouldSkipFocusHex(Hex hex)

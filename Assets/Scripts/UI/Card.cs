@@ -474,6 +474,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         await TryDiscardCardAsync();
     }
 
+    public void Discard()
+    {
+        _ = TryDiscardCardAsync();
+    }
+
     private async Task<bool> TryPlayCardAsync(bool promptForConfirmation)
     {
         if (isDragging || isConsuming || cardData == null) return false;
@@ -882,19 +887,28 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return;
         }
 
-        if (!string.IsNullOrWhiteSpace(data.requirementsText))
-        {
-            requirements.text = $"<mark=#ffff00>{data.requirementsText.Trim()}</mark>";
-            return;
-        }
-
-        string sprites = BuildRequirementSprites(data);
-        requirements.text = string.IsNullOrWhiteSpace(sprites)
+        string richRequirements = BuildRequirementsText(data);
+        requirements.text = string.IsNullOrWhiteSpace(richRequirements)
             ? string.Empty
-            : $"<mark=#ffff00>{sprites}</mark>";
+            : $"<mark=#ffff00>{richRequirements}</mark>";
     }
 
-    private static string BuildRequirementSprites(CardData data)
+    private string BuildRequirementsText(CardData data)
+    {
+        if (TryBuildConditionalPcFoundingRequirements(data, out string conditionalRequirements))
+        {
+            return conditionalRequirements;
+        }
+
+        if (!string.IsNullOrWhiteSpace(data.requirementsText))
+        {
+            return data.requirementsText.Trim();
+        }
+
+        return BuildRequirementSprites(data);
+    }
+
+    private string BuildRequirementSprites(CardData data)
     {
         List<string> parts = new();
         AddRequirement(parts, "commander", data.commanderSkillRequired);
@@ -914,6 +928,51 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
         AddRequirement(parts, "joker", data.jokerRequired);
         return string.Join(" ", parts);
+    }
+
+    private bool TryBuildConditionalPcFoundingRequirements(CardData data, out string requirementsTextValue)
+    {
+        requirementsTextValue = null;
+        if (data == null || data.GetCardType() != CardTypeEnum.PC) return false;
+        if (!IsConditionalPcFoundingCard(data)) return false;
+
+        string baseRequirement = "2<sprite name=\"commander\"> OR 1<sprite name=\"emmissary\">";
+        requirementsTextValue = IsPcAbsentFromBoard(data.name)
+            ? $"{baseRequirement} 10<sprite name=\"gold\">"
+            : baseRequirement;
+        return true;
+    }
+
+    private bool IsConditionalPcFoundingCard(CardData data)
+    {
+        if (data == null) return false;
+
+        string actionRef = NormalizeActionRef(data.GetActionRef());
+        if (string.IsNullOrWhiteSpace(actionRef)) return false;
+
+        Type actionType = ResolveActionType(actionRef);
+        return actionType != null && typeof(MaterialRetrievalOrAction).IsAssignableFrom(actionType);
+    }
+
+    private bool IsPcAbsentFromBoard(string pcName)
+    {
+        if (string.IsNullOrWhiteSpace(pcName)) return true;
+
+        Board board = FindFirstObjectByType<Board>();
+        List<Hex> hexes = board?.GetHexes();
+        if (hexes == null || hexes.Count == 0) return true;
+
+        for (int i = 0; i < hexes.Count; i++)
+        {
+            PC pc = hexes[i]?.GetPCData();
+            if (pc == null || string.IsNullOrWhiteSpace(pc.pcName)) continue;
+            if (string.Equals(pc.pcName.Trim(), pcName.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static void AddRequirement(List<string> parts, string spriteName, int amount)
@@ -1318,6 +1377,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return;
         }
 
+        deckManager.TryDrawCard(playerLeader, out _);
         deckManager.RefreshHumanPlayerHandUI();
     }
 
