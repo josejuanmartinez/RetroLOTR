@@ -18,10 +18,13 @@ public class DeckManifestEntry
 {
     public string deckId;
     public string nation;
+    public string thematic;
     public int alignment;
     public string resourcePath;
     public int cardCount;
     public bool sharedToAll;
+    public string parentDeckId;
+    public bool isBaseDeck;
 }
 
 [Serializable]
@@ -811,8 +814,9 @@ public class DeckManager : MonoBehaviour
         if (leader == null || string.IsNullOrWhiteSpace(actionClassName)) return null;
 
         string deckId = ResolveDeckIdForLeader(leader);
-        if (!string.IsNullOrWhiteSpace(deckId) && loadedDecksById.TryGetValue(deckId, out DeckData deckData) && deckData.cards != null)
+        foreach (DeckData deckData in GetDeckChain(deckId))
         {
+            if (deckData?.cards == null) continue;
             CardData inLeaderDeck = deckData.cards.FirstOrDefault(card =>
                 card != null
                 && IsConsumableEffectCard(card)
@@ -1096,14 +1100,18 @@ public class DeckManager : MonoBehaviour
     {
         string deckId = ResolveDeckIdForLeader(leader);
         if (string.IsNullOrWhiteSpace(deckId)) return null;
-        if (!loadedDecksById.TryGetValue(deckId, out DeckData deckData)) return null;
 
         PlayerDeckState state = new PlayerDeckState
         {
             deckId = deckId
         };
 
-        state.drawPile.AddRange(deckData.cards.Select(CloneCard).Where(card => card != null));
+        foreach (DeckData ownedDeck in GetDeckChain(deckId))
+        {
+            if (ownedDeck?.cards == null) continue;
+            state.drawPile.AddRange(ownedDeck.cards.Select(CloneCard).Where(card => card != null));
+        }
+
         foreach (DeckData sharedDeck in GetSharedDecks())
         {
             if (sharedDeck?.cards == null) continue;
@@ -1127,17 +1135,56 @@ public class DeckManager : MonoBehaviour
         }
     }
 
+    private IEnumerable<DeckData> GetDeckChain(string deckId)
+    {
+        if (string.IsNullOrWhiteSpace(deckId)) yield break;
+
+        Stack<DeckData> chain = new();
+        string currentDeckId = deckId;
+        HashSet<string> visited = new(StringComparer.OrdinalIgnoreCase);
+
+        while (!string.IsNullOrWhiteSpace(currentDeckId)
+            && visited.Add(currentDeckId)
+            && deckManifestById.TryGetValue(currentDeckId, out DeckManifestEntry entry))
+        {
+            if (loadedDecksById.TryGetValue(currentDeckId, out DeckData deckData) && deckData != null)
+            {
+                chain.Push(deckData);
+            }
+
+            currentDeckId = entry.parentDeckId;
+        }
+
+        while (chain.Count > 0)
+        {
+            yield return chain.Pop();
+        }
+    }
+
     private string ResolveDeckIdForLeader(PlayableLeader leader)
     {
         if (leader == null) return null;
 
+        LeaderBiomeConfig biome = leader.GetBiome();
+        if (!string.IsNullOrWhiteSpace(biome?.subdeckId)
+            && deckManifestById.ContainsKey(biome.subdeckId))
+        {
+            return biome.subdeckId;
+        }
+
         DeckManifestEntry byNation = deckManifestById.Values.FirstOrDefault(x =>
+            !x.sharedToAll &&
+            !x.isBaseDeck &&
             !string.IsNullOrWhiteSpace(x?.nation) &&
             string.Equals(x.nation, leader.characterName, StringComparison.OrdinalIgnoreCase));
         if (byNation != null) return byNation.deckId;
 
         int alignment = (int)leader.alignment;
-        DeckManifestEntry byAlignment = deckManifestById.Values.FirstOrDefault(x => x != null && x.alignment == alignment);
+        DeckManifestEntry byAlignment = deckManifestById.Values.FirstOrDefault(x =>
+            x != null
+            && !x.sharedToAll
+            && x.isBaseDeck
+            && x.alignment == alignment);
         return byAlignment?.deckId;
     }
 

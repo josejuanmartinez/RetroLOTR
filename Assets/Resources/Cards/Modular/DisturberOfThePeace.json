@@ -1,0 +1,302 @@
+﻿{
+    "deckId":  "disturber_of_the_peace",
+    "nation":  "Gandalf",
+    "alignment":  0,
+    "handSize":  5,
+    "cards":  [
+                  {
+                      "cardId":  748,
+                      "name":  "Tom Bombadil",
+                      "description":  "",
+                      "type":  "Character",
+                      "spriteName":  "TomBombadil",
+                      "tags":  [
+
+                               ],
+                      "commander":  1,
+                      "agent":  1,
+                      "emmissary":  1,
+                      "mage":  1,
+                      "race":  4,
+                      "artifacts":  [
+                                        {
+                                            "artifactName":  "Yellow boots",
+                                            "artifactDescription":  "10% chance each turn to gain Haste.",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "boots",
+                                            "alignment":  0,
+                                            "passiveEffectId":  "HasteChancePerTurn",
+                                            "passiveEffectValue":  10,
+                                            "transferable":  true
+                                        },
+                                        {
+                                            "artifactName":  "Blue Jacket",
+                                            "artifactDescription":  "10% chance each turn to gain Hope.",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "flower",
+                                            "alignment":  2,
+                                            "passiveEffectId":  "HopeChancePerTurn",
+                                            "passiveEffectValue":  10,
+                                            "transferable":  true
+                                        }
+                                    ]
+                  },
+                  {
+                      "cardId":  514,
+                      "name":  "Fatty Bolger",
+                      "description":  "",
+                      "type":  "Character",
+                      "spriteName":  "FattyBolger",
+                      "tags":  [
+
+                               ],
+                      "commander":  0,
+                      "agent":  1,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  3,
+                      "artifacts":  [
+
+                                    ]
+                  },
+                  {
+                      "cardId":  291,
+                      "name":  "TreeParty",
+                      "description":  "A Hobbiton party inspired by Bilbo\u0027s celebration. Within radius 5, grants Courage to all Humans, Hobbits, and Dwarves for 1 turn, and halts all Troll units.",
+                      "type":  "Event",
+                      "action":  "TreeParty",
+                      "actionClassName":  "TreeParty",
+                      "actionId":  212,
+                      "spriteName":  "TreeParty",
+                      "tags":  [
+                                   "hobbiton",
+                                   "party",
+                                   "environmental"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  1,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  402,
+                      "name":  "BagginsDontLeaveHere",
+                      "description":  "All Hobbits within a personal radius of 2-4 hexes, based on each Hobbit\u0027s Agent skill, gain Hidden (1 turn) and remove Fear.",
+                      "type":  "Event",
+                      "action":  "BagginsDontLeaveHere",
+                      "actionClassName":  "BagginsDontLeaveHere",
+                      "actionId":  227,
+                      "spriteName":  "BagginsDontLeaveHere",
+                      "tags":  [
+
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  1,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  433,
+                      "name":  "GoingOnAnAdventure",
+                      "description":  "Provide Courage to all Hobbits and Dwarves in a radius of 2.",
+                      "type":  "Event",
+                      "action":  "GoingOnAnAdventure",
+                      "actionClassName":  "GoingOnAnAdventure",
+                      "actionId":  249,
+                      "spriteName":  "GoingOnAnAdventure",
+                      "tags":  [
+
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  450,
+                      "name":  "MathomHouse",
+                      "description":  "Hobbits in radius 2 gain Hope (1 turn). Gain +2 Gold.",
+                      "type":  "Event",
+                      "action":  "MathomHouse",
+                      "actionClassName":  "MathomHouse",
+                      "actionId":  265,
+                      "spriteName":  "MathomHouse",
+                      "tags":  [
+
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  476,
+                      "name":  "Riddle",
+                      "description":  "Cancels refuse a duel and if you are issued a duel, you automatically win it (1 turn).",
+                      "type":  "Action",
+                      "action":  "RiddleAction",
+                      "actionClassName":  "RiddleAction",
+                      "actionId":  290,
+                      "spriteName":  "Riddle",
+                      "tags":  [
+
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  1,
+                      "steelRequired":  0,
+                      "mithrilRequired":  1,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  783,
+                      "name":  "UnexpectedFireworks",
+                      "description":  "A noisy burst startles nearby foes and heartens nearby Hobbits. In radius 2, enemies gain Fear for 1 turn while Hobbits gain Hope for 1 turn.",
+                      "type":  "Event",
+                      "action":  "UnexpectedFireworksAction",
+                      "actionClassName":  "UnexpectedFireworksAction",
+                      "actionId":  321,
+                      "spriteName":  "UnexpectedFireworks",
+                      "tags":  [
+                                   "hobbit",
+                                   "mischief",
+                                   "disruption",
+                                   "festival"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  1,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  784,
+                      "name":  "SecondBreakfastDiversion",
+                      "description":  "A hobbit meal break turns into tactical confusion: in radius 2, Hobbits gain Hidden (1 turn) and enemy non-Hobbits are Halted (1 turn).",
+                      "type":  "Event",
+                      "action":  "SecondBreakfastDiversionAction",
+                      "actionClassName":  "SecondBreakfastDiversionAction",
+                      "actionId":  322,
+                      "spriteName":  "SecondBreakfastDiversion",
+                      "tags":  [
+                                   "hobbit",
+                                   "diversion",
+                                   "mischief",
+                                   "tempo"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  1,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  785,
+                      "name":  "RoadsideArgument",
+                      "description":  "A loud roadside quarrel turns into tactical confusion: enemies nearby refuse duels while Hobbits dart ahead.",
+                      "type":  "Event",
+                      "action":  "RoadsideArgumentAction",
+                      "actionClassName":  "RoadsideArgumentAction",
+                      "actionId":  323,
+                      "spriteName":  "RoadsideArgument",
+                      "tags":  [
+                                   "hobbit",
+                                   "social-chaos",
+                                   "duel-disruption",
+                                   "tempo"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  1,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  786,
+                      "name":  "TeaTimeAmbush",
+                      "description":  "A cheerful tea break turns into a trap: allies stand firm while enemies are stalled in confusion.",
+                      "type":  "Event",
+                      "action":  "TeaTimeAmbushAction",
+                      "actionClassName":  "TeaTimeAmbushAction",
+                      "actionId":  324,
+                      "spriteName":  "TeaTimeAmbush",
+                      "tags":  [
+                                   "hobbit",
+                                   "ambush",
+                                   "social-chaos",
+                                   "control"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  787,
+                      "name":  "ShirriffInterruption",
+                      "description":  "A fussy local shirriff turns a roadside stop into trouble: enemy non-army characters in radius 1 are Halted while allied Hobbits and Humans become Hidden.",
+                      "type":  "Event",
+                      "action":  "ShirriffInterruptionAction",
+                      "actionClassName":  "ShirriffInterruptionAction",
+                      "actionId":  325,
+                      "spriteName":  "ShirriffInterruption",
+                      "tags":  [
+                                   "bree-land",
+                                   "frontier",
+                                   "social-chaos",
+                                   "interruption"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  1,
+                      "jokerRequired":  0
+                  }
+              ]
+}

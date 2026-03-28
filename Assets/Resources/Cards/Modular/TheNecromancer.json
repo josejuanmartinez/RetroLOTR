@@ -1,0 +1,220 @@
+﻿{
+    "deckId": "the_necromancer",
+    "nation": "Sauron",
+    "alignment": 1,
+    "handSize": 5,
+    "cards": [
+        {
+            "cardId": 8,
+            "name": "Dol Guldur",
+            "description": "SouthernMirkwood.<sprite name=\"timber\"/><sprite name=\"timber\"/>\nOR\n<TBD>",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "dark_fortress",
+            "action": "MaterialRetrievalOrActionDolGuldur",
+            "tags": [
+                "SouthernMirkwood"
+            ],
+            "region": "SouthernMirkwood",
+            "spriteName": "DolGuldur"
+        },
+        {
+            "cardId": 554,
+            "name": "Lieutenant of Dol Guldur",
+            "description": "",
+            "type": "Character",
+            "spriteName": "LieutenantOfDolGuldur",
+            "tags": [],
+            "commander": 1,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 5,
+            "artifacts": []
+        },
+        {
+            "cardId": 549,
+            "name": "Goblin Miner",
+            "description": "",
+            "type": "Character",
+            "spriteName": "GoblinMiner",
+            "tags": [],
+            "commander": 0,
+            "agent": 1,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 16,
+            "artifacts": []
+        },
+        {
+            "cardId": 733,
+            "name": "Balrog",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Balrog",
+            "tags": [],
+            "commander": 5,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 10,
+            "artifacts": [
+                {
+                    "artifactName": "Sword of Flame",
+                    "artifactDescription": "Cast Darkness to unreveal nearby tiles. Grants +1 attack.",
+                    "hidden": false,
+                    "commanderBonus": 0,
+                    "agentBonus": 0,
+                    "emmissaryBonus": 0,
+                    "mageBonus": 0,
+                    "bonusAttack": 1,
+                    "bonusDefense": 0,
+                    "transferable": false,
+                    "spriteString": "fire_sword",
+                    "alignment": 1,
+                    "passiveEffectId": "",
+                    "passiveEffectValue": 0
+                },
+                {
+                    "artifactName": "Fire Whip",
+                    "artifactDescription": "Grants +1 attack.",
+                    "hidden": false,
+                    "commanderBonus": 0,
+                    "agentBonus": 0,
+                    "emmissaryBonus": 0,
+                    "mageBonus": 0,
+                    "bonusAttack": 1,
+                    "bonusDefense": 0,
+                    "transferable": false,
+                    "spriteString": "whip",
+                    "alignment": 1,
+                    "passiveEffectId": "",
+                    "passiveEffectValue": 0
+                }
+            ]
+        },
+        {
+            "cardId": 734,
+            "name": "Smaug",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Smaug",
+            "tags": [],
+            "commander": 5,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 9,
+            "artifacts": [
+                {
+                    "artifactName": "Dragon Wings",
+                    "artifactDescription": "10% chance each turn to gain Haste.",
+                    "hidden": false,
+                    "commanderBonus": 0,
+                    "agentBonus": 0,
+                    "emmissaryBonus": 0,
+                    "mageBonus": 0,
+                    "bonusAttack": 0,
+                    "bonusDefense": 0,
+                    "transferable": false,
+                    "spriteString": "wing",
+                    "alignment": 1,
+                    "passiveEffectId": "HasteChancePerTurn",
+                    "passiveEffectValue": 10
+                }
+            ]
+        },
+        {
+            "cardId": 747,
+            "name": "Goblin King",
+            "description": "",
+            "type": "Character",
+            "spriteName": "GoblinKing",
+            "tags": [],
+            "commander": 2,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 16,
+            "artifacts": [
+                {
+                    "artifactName": "Goblin Cleaver",
+                    "artifactDescription": "Grants +1 attack.",
+                    "hidden": false,
+                    "commanderBonus": 0,
+                    "agentBonus": 0,
+                    "emmissaryBonus": 0,
+                    "mageBonus": 0,
+                    "bonusAttack": 1,
+                    "bonusDefense": 0,
+                    "spriteString": "scimitar",
+                    "alignment": 1,
+                    "transferable": true,
+                    "passiveEffectId": "",
+                    "passiveEffectValue": 0
+                }
+            ]
+        },
+        {
+            "cardId": 755,
+            "name": "Barrow-wight",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Barrowwight",
+            "tags": [],
+            "commander": 1,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 2,
+            "race": 11,
+            "artifacts": [
+                {
+                    "artifactName": "Westernesse Blade",
+                    "artifactDescription": "Blade of Westernesse: +1 attack.",
+                    "hidden": false,
+                    "commanderBonus": 0,
+                    "agentBonus": 0,
+                    "emmissaryBonus": 0,
+                    "mageBonus": 0,
+                    "bonusAttack": 1,
+                    "bonusDefense": 0,
+                    "spriteString": "sword",
+                    "alignment": 1,
+                    "passiveEffectId": "",
+                    "transferable": true,
+                    "passiveEffectValue": 0
+                },
+                {
+                    "artifactName": "Gripping Bone",
+                    "artifactDescription": "5% chance each turn to apply Fear to an enemy on the bearer's hex.",
+                    "hidden": false,
+                    "commanderBonus": 0,
+                    "agentBonus": 0,
+                    "emmissaryBonus": 0,
+                    "mageBonus": 0,
+                    "bonusAttack": 0,
+                    "bonusDefense": 0,
+                    "spriteString": "skeleton_arm",
+                    "alignment": 1,
+                    "passiveEffectId": "HexEnemyFearChancePerTurn",
+                    "passiveEffectValue": 5,
+                    "transferable": true
+                }
+            ]
+        },
+        {
+            "cardId": 758,
+            "name": "Azog",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Azog",
+            "tags": [],
+            "commander": 2,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 5,
+            "artifacts": []
+        }
+    ]
+}

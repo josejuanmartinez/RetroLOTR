@@ -201,12 +201,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 084f3cf10a8d29a46aa506bca796a4fd
-    m_Address: Assets/Art/Cards/Actions/Events/Joining the Rangers.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0857c738cea23ee488bd605ba695bfce
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Decor/houseWood00.png
     m_ReadOnly: 0
@@ -797,10 +791,9 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1846265bd7adf6f4e925e9c9faaa8d5f
-    m_Address: Assets/Art/Cards/Characters/Saruman.png
+    m_Address: Assets/Art/Cards/Characters/Saruman-OfManyColors.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 186afbeb472bc7c4ca9aac55ccf4bb2f
     m_Address: Assets/Art/Cards/Characters/Galdor.png
@@ -1024,6 +1017,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1f2f51cb3af129244bfe968fac4c3ef5
+    m_Address: Assets/Art/Cards/Characters/Gandalf-DisturberOfPeace.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1f747e0f54b81514f8b103bb041c9303
     m_Address: Assets/Art/Cards/Armies/RidersOfRohan.jpg
@@ -1283,6 +1281,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 24a8eb54cb6c980449a9391bf4f6f526
+    m_Address: Assets/Art/Cards/Characters/Gandalf-Stormcrow.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 24bd693e683c6d046aac45df06fd50e3
     m_Address: Assets/Art/Cards/PC/Buckland.png
@@ -1866,6 +1869,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3596a9d18a9a0b94789b702412acedd6
+    m_Address: Assets/Art/Cards/Characters/Gandalf-Tharkur.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 35b43ed389568c54c919c23251150607
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Decor/banditCamp00.png
@@ -2823,12 +2831,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5345d580437f1d743b42a7e3f19a26fd
-    m_Address: Assets/Art/Fortifications/citadel.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5347ebc9073bfce4dab69a78c64a4774
     m_Address: Assets/Art/Cards/Armies/CrossbowOrcs.jpg
     m_ReadOnly: 0
@@ -2967,6 +2969,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5714753a654ad834d9a1fc109107f00a
+    m_Address: Assets/Art/Cards/Characters/Saruman-TheWhiteHand.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 574d6c44af854754e9989d13da42f359
     m_Address: Assets/Art/Cards/Actions/Events/KindleDawnfire.png
@@ -3276,12 +3283,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 618a83cf28734aa4682b256300421031
     m_Address: Assets/Art/Cards/PC/ShelobSLair.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 618d9146e2859f8449cdc7938539cbfc
-    m_Address: Assets/Art/Cards/Actions/Events/WhenThereIsAWhip.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3630,12 +3631,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6cd67ecae86596148ad267f7cb87272f
-    m_Address: Assets/Art/Cards/Actions/Events/Hope Reborn.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6cdf80f4e78004947991865fd9e953aa
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Roads/hexRoad-100000-02.png
     m_ReadOnly: 0
@@ -3750,6 +3745,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 703fa0175efb71f49b09f5b2778ad71e
+    m_Address: Assets/Art/Cards/Characters/Gandalf-TheWhite.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 704c21864b975ab44b8c615093e8a66c
     m_Address: Assets/Art/Cards/PC/FornostErain.jpg
     m_ReadOnly: 0
@@ -3788,12 +3788,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 71387274a35f46c40a6fa9c4c4c836cd
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Decor/chickenCoop00_chickens.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 71479a9d8b79f76438103a515666c229
-    m_Address: Assets/Art/Cards/Actions/Events/Well-equiped Army.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4035,12 +4029,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 782ec4a5336e9ec4189d9c088bff223c
     m_Address: Assets/Art/UI/UI1.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 789c90a4f5680334f8efc32e74982e79
-    m_Address: Assets/Art/Fortifications/fortress.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4437,12 +4425,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 82af1cfb0c4485a428d1e38304b5fcd6
-    m_Address: Assets/Art/Cards/Actions/Events/Ambush from Edhellond.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 82d5440e7afa1b548b1805ef87673bd1
     m_Address: Assets/Art/Cards/Actions/Events/EasterlingResolve.png
     m_ReadOnly: 0
@@ -4659,12 +4641,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8a316a21969bb81438a88bdf9f619098
-    m_Address: Assets/Art/Cards/Actions/Events/Stand of Dol Amroth.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8a39208e0554554458e8393ab2d51618
     m_Address: Assets/Art/Cards/Actions/Events/The Power of Vilya.png
     m_ReadOnly: 0
@@ -4805,12 +4781,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8dbde5d4dd1e8904ebd5a1d8e4160220
     m_Address: Assets/Art/Cards/Actions/Events/EyesTribute.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8dc48af1dfba08a4788a9e5402710458
-    m_Address: Assets/Art/Fortifications/fort.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5227,12 +5197,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9ad9fc9cc6902c642a9a55457fc64419
     m_Address: Assets/Art/Cards/Armies/NoldoCavalry.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9adb702b3eb30bc4f9cfd351753afe7d
-    m_Address: Assets/Art/Fortifications/keep.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6189,6 +6153,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b30b3dad6657f9043b19b309ae2255f6
+    m_Address: Assets/Art/Cards/Characters/Saruman-TheWhite.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b376ab43d2face14abe6570323f574b1
     m_Address: Assets/Art/Cards/Armies/Balchoth.jpg
     m_ReadOnly: 0
@@ -6255,6 +6224,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b5fa5c27f2e12144894759ded1d6eea1
+    m_Address: Assets/Art/Cards/Characters/Gandalf-Mithrandir.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b6105e97af4ad364a952074e5414c237
     m_Address: Assets/Art/Cards/PC/Ovatharac.jpg
@@ -6762,6 +6736,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c64ce577f84b702438e7d1b1c9d709d6
+    m_Address: Assets/Art/Cards/Characters/Sauron.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c6900da689ed9ef48a568c25d50282b6
     m_Address: Assets/Art/Cards/Encounters/WizardFromTheEast.jpg
     m_ReadOnly: 0
@@ -6991,6 +6970,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cd816cad16c83044dacee70cdaef1316
+    m_Address: Assets/Art/Cards/Characters/Saruman.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cd932a32b3a146849a51c4f4760852f4
     m_Address: Assets/Art/Cards/Characters/Hoarmurath.png
     m_ReadOnly: 0
@@ -7179,12 +7163,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d3d8e66f0a50bf141a886e47720879c3
     m_Address: Assets/Art/Cards/Armies/Rangers.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d3e21d48058e46740ac2e9e62c907371
-    m_Address: Assets/Art/Cards/Actions/Events/Sniped!.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7782,12 +7760,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e53bfc2c4d6547644a32b07c47850281
     m_Address: Assets/Art/Cards/Armies/SwanFleet.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e55e096923e61c04b87005b31a9046fe
-    m_Address: Assets/Art/Fortifications/tower.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8502,12 +8474,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fa038641b8078af4eb66ff20cf1c8af8
     m_Address: Assets/Art/Cards/Actions/Events/RalliedMen.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fa6182a94e4bdd24b85c0674efb34c45
-    m_Address: Assets/Art/Cards/Actions/Events/War spoils.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

@@ -11,6 +11,7 @@ public class LeaderBiomeConfigCollection
 public class LeaderBiomeConfig: BiomeConfig
 {
     public string description;
+    public string subdeckId;
     public TerrainEnum terrain;
     public FeaturesEnum feature = FeaturesEnum.noFeature;
     public bool isIsland = false;

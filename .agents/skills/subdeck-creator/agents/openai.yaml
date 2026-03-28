@@ -1,0 +1,7 @@
+interface:
+  display_name: "Subdeck Creator"
+  short_description: "Fill a modular subdeck to exactly 30 cards"
+  default_prompt: "Use $subdeck-creator to expand one RetroLOTR modular subdeck to exactly 30 cards, one card at a time."
+
+policy:
+  allow_implicit_invocation: true

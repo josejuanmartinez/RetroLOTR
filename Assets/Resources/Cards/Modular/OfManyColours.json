@@ -1,0 +1,26 @@
+﻿{
+    "deckId": "of_many_colours",
+    "nation": "Saruman",
+    "alignment": 2,
+    "handSize": 5,
+    "cards": [
+        {
+            "cardId": 456,
+            "name": "Clad in Many Colours",
+            "description": "Allied units in radius 1 gain Fortified and ArcaneInsight (1 turn); enemies in radius 1 gain Despair (1 turn).",
+            "type": "Action",
+            "action": "CladInManyColours",
+            "actionClassName": "CladInManyColours",
+            "actionId": 275,
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 1,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        }
+    ]
+}

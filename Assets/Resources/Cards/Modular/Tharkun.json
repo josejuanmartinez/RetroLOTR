@@ -1,0 +1,36 @@
+﻿{
+    "deckId": "tharkun",
+    "nation": "Gandalf",
+    "alignment": 0,
+    "handSize": 5,
+    "cards": [
+        {
+            "cardId": 743,
+            "name": "Dain",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Dain",
+            "tags": [],
+            "commander": 3,
+            "agent": 0,
+            "emmissary": 1,
+            "mage": 0,
+            "race": 2,
+            "artifacts": []
+        },
+        {
+            "cardId": 744,
+            "name": "Gloin",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Gloin",
+            "tags": [],
+            "commander": 2,
+            "agent": 0,
+            "emmissary": 1,
+            "mage": 0,
+            "race": 2,
+            "artifacts": []
+        }
+    ]
+}
