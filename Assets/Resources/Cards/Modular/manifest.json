@@ -470,7 +470,7 @@
         {
             "id": "SauronBase",
             "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SauronBase.json",
-            "count": 171,
+            "count": 165,
             "thematic": "Foundational Shadow empire deck covering Mordor's broad military, corruption, fear, conquest, and attrition game plan. Orcs, evil men, monsters, siege assets, and oppressive utility belong here, giving a reliable shell for expansion into more specialized Sauron identities; it rewards steady pressure, resource denial, battlefield cruelty, and inevitability through accumulation.",
             "fantasy": "The broad machinery of Mordor: armies, monsters, tyranny, and corruption grinding forward through fear and accumulation.",
             "mechanicalPillars": [
@@ -531,6 +531,39 @@
                 "mounted wraith pursuit",
                 "silhouettes under oppressive gaze",
                 "unseen domination spreading across space"
+            ]
+        },
+        {
+            "id": "TheDeceiver",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheDeceiver.json",
+            "count": 6,
+            "thematic": "Subversion-and-false-gifts deck for Sauron as Annatar and corrupter: persuasive command, fallen Numenorean legacy, palantir theft, temptation, and domination achieved through trust, seduction, and crooked counsel before open conquest.",
+            "fantasy": "Sauron as Annatar and the Deceiver: false gifts, seductive promises, corrupted loyalties, and domination won through trust before open war.",
+            "mechanicalPillars": [
+                "temptation and character disruption",
+                "emissary pressure and command shaping",
+                "palantir and relic corruption",
+                "elite fallen-men support"
+            ],
+            "themeLanes": [
+                "false gifts and promises",
+                "Black Numenorean legacy",
+                "the Mouth of Sauron and crooked diplomacy",
+                "palantiri and stolen relics",
+                "seduction and entrapment",
+                "command disguised as counsel"
+            ],
+            "avoidThemes": [
+                "Nazgul surveillance as the dominant identity",
+                "monster-horror swamping the social corruption theme",
+                "brute-force Orc swarm gameplay",
+                "siege-industrial visuals taking over the deck"
+            ],
+            "visualDirections": [
+                "courtly corruption and false ceremony",
+                "Black Numenorean regalia",
+                "persuasive emissaries in tense audiences",
+                "treasured objects turned dangerous"
             ]
         },
         {

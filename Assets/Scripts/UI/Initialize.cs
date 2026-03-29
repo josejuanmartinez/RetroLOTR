@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Initialize : MonoBehaviour
@@ -10,9 +12,9 @@ public class Initialize : MonoBehaviour
 
     void Awake()
     {
-        deactivate.ForEach(x => x.SetActive(false));
-        activate.ForEach(x => x.SetActive(true));
-        disable.ForEach(x => x.enabled = false);
-        enable.ForEach(x => x.enabled = true);
+        deactivate.FindAll(x => x != null).ForEach(x => x.SetActive(false));
+        activate.FindAll(x => x != null).ForEach(x => x.SetActive(true));
+        disable.FindAll(x => x != null).ForEach(x => x.enabled = false);
+        enable.FindAll(x => x != null).ForEach(x => x.enabled = true);
     }
 }

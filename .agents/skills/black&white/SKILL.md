@@ -10,8 +10,26 @@ Use this skill when the user wants to convert an existing image to pure black an
 ## Scope
 - Include only postprocessing on input images.
 - Do not use diffusion, LoRA, prompt generation, or GPU decorators.
-- Input: an existing image.
+- Input: one or more existing images.
 - Output: a PIL `L` image containing only pixel values `0` or `255`.
+
+## Required User Prompt
+Before selecting files, ask the user to choose the time window with this exact format:
+
+Which images should I include based on modified time?
+1. Last week.
+2. Last 2 weeks.
+3. Last month.
+4. All.
+Please choose a number and I will implement that option.
+
+Interpret the answer as follows:
+- `1.` last week = files with modified time within the last 7 days.
+- `2.` last 2 weeks = files with modified time within the last 14 days.
+- `3.` last month = files with modified time within the last 30 days.
+- `4.` all = no modified-time filter.
+
+Use the current local system time to calculate the cutoff. When reporting what will be processed, include the exact cutoff date/time used unless the user chose `4.`.
 
 ## Required Imports
 ```python
@@ -88,10 +106,22 @@ def to_pure_bw(
   - `True` for Floyd-Steinberg dithering texture.
 
 ## Agent Workflow
-1. Receive an input image as PIL `Image`.
-2. Run `to_pure_bw(...)` with user-selected parameters.
-3. Return/save the processed image as PNG.
-4. Ensure output remains strict black/white (`0/255`) in `L` mode.
+1. Ask the required numbered time-window question before selecting files.
+2. Calculate the cutoff timestamp from the user's choice.
+3. Discover candidate image files in the user-requested folder or file set.
+4. Keep only images whose modified time is newer than or equal to the cutoff, unless the user chose `4.`.
+5. Tell the user how many images matched, and name the files if the set is small enough to be useful.
+6. Open each selected image as PIL `Image`.
+7. Run `to_pure_bw(...)` with user-selected parameters.
+8. Return/save each processed image as PNG.
+9. Ensure every output remains strict black/white (`0/255`) in `L` mode.
+
+## File Selection Rules
+- Treat file modified time as the source of truth for "newer".
+- Supported image inputs should be common raster formats such as `.png`, `.jpg`, `.jpeg`, `.bmp`, `.tif`, `.tiff`, and `.webp`.
+- If no images match the selected time window, report that clearly and stop before processing.
+- Do not guess hidden directories or unrelated folders; limit discovery to the path the user asked you to inspect.
+- Preserve deterministic behavior: the same files and timestamps should yield the same selected set.
 
 ## Guardrails
 - Do not introduce diffusion pipeline code.

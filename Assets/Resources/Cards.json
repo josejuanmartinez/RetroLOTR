@@ -1,6 +1,6 @@
 ﻿{
     "handSize":  5,
-    "deckCount":  16,
+    "deckCount":  17,
     "decks":  [
                   {
                       "deckId":  "shared_base",
@@ -124,7 +124,7 @@
                       "nation":  "Sauron",
                       "alignment":  1,
                       "resourcePath":  "Cards/Modular/SauronBase",
-                      "cardCount":  240,
+                      "cardCount":  234,
                       "isBaseDeck":  true,
                       "thematic":  "Foundational Shadow empire deck covering Mordor\u0027s broad military, corruption, fear, conquest, and attrition game plan. Orcs, evil men, monsters, siege assets, and oppressive utility belong here, giving a reliable shell for expansion into more specialized Sauron identities; it rewards steady pressure, resource denial, battlefield cruelty, and inevitability through accumulation."
                   },
@@ -136,6 +136,15 @@
                       "cardCount":  17,
                       "parentDeckId":  "sauron_base",
                       "thematic":  "Lidless surveillance and Nazgul command deck centered on dread presence, revelation, control auras, and the feeling that no movement escapes Mordor\u0027s notice. It favors fear, despair, board locking, command projection, cursed riders, and oppressive events that squeeze the opponent\u0027s options turn by turn until resistance becomes inefficient."
+                  },
+                  {
+                      "deckId":  "the_deceiver",
+                      "nation":  "Sauron",
+                      "alignment":  1,
+                      "resourcePath":  "Cards/Modular/TheDeceiver",
+                      "cardCount":  6,
+                      "parentDeckId":  "sauron_base",
+                      "thematic":  "Subversion-and-false-gifts deck for Sauron as Annatar and corrupter: persuasive command, fallen Numenorean legacy, palantir theft, temptation, and domination achieved through trust, seduction, and crooked counsel before open conquest."
                   },
                   {
                       "deckId":  "the_necromancer",

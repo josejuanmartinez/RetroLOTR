@@ -791,9 +791,10 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1846265bd7adf6f4e925e9c9faaa8d5f
-    m_Address: Assets/Art/Cards/Characters/Saruman-OfManyColors.png
+    m_Address: Assets/Art/Cards/Characters/Saruman-OfManyColours.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 186afbeb472bc7c4ca9aac55ccf4bb2f
     m_Address: Assets/Art/Cards/Characters/Galdor.png
@@ -1021,7 +1022,8 @@ MonoBehaviour:
   - m_GUID: 1f2f51cb3af129244bfe968fac4c3ef5
     m_Address: Assets/Art/Cards/Characters/Gandalf-DisturberOfPeace.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1f747e0f54b81514f8b103bb041c9303
     m_Address: Assets/Art/Cards/Armies/RidersOfRohan.jpg
@@ -1285,7 +1287,8 @@ MonoBehaviour:
   - m_GUID: 24a8eb54cb6c980449a9391bf4f6f526
     m_Address: Assets/Art/Cards/Characters/Gandalf-Stormcrow.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 24bd693e683c6d046aac45df06fd50e3
     m_Address: Assets/Art/Cards/PC/Buckland.png
@@ -1871,9 +1874,10 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3596a9d18a9a0b94789b702412acedd6
-    m_Address: Assets/Art/Cards/Characters/Gandalf-Tharkur.png
+    m_Address: Assets/Art/Cards/Characters/Gandalf-Tharkun.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 35b43ed389568c54c919c23251150607
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Decor/banditCamp00.png
@@ -2131,7 +2135,8 @@ MonoBehaviour:
   - m_GUID: 3d29d5c5859444240b22516540f8a73a
     m_Address: Assets/Art/Cards/Actions/Events/Set Out at Once.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d5c25e8ae966db488bcd651eafc14dc
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Roads/hexRoad-100000-01.png
@@ -2572,6 +2577,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ac839b6f6a737e48adca235cc76998f
+    m_Address: Assets/Art/Cards/Characters/KingOfTaurRomen.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4af7497fce5037540878b679d3fae388
     m_Address: Assets/Art/Cards/PC/DolAmroth.jpg
     m_ReadOnly: 0
@@ -2916,6 +2927,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55a9da2618b85844f8a13fd51157cdee
+    m_Address: Assets/Art/Cards/Characters/Sauron-TheNecromancer.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 562bdccd8a0f965439b1b3cb670dd7d7
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Base Tiles/hexPlains00_bg.png
     m_ReadOnly: 0
@@ -2973,7 +2990,8 @@ MonoBehaviour:
   - m_GUID: 5714753a654ad834d9a1fc109107f00a
     m_Address: Assets/Art/Cards/Characters/Saruman-TheWhiteHand.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 574d6c44af854754e9989d13da42f359
     m_Address: Assets/Art/Cards/Actions/Events/KindleDawnfire.png
@@ -3748,7 +3766,8 @@ MonoBehaviour:
   - m_GUID: 703fa0175efb71f49b09f5b2778ad71e
     m_Address: Assets/Art/Cards/Characters/Gandalf-TheWhite.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 704c21864b975ab44b8c615093e8a66c
     m_Address: Assets/Art/Cards/PC/FornostErain.jpg
@@ -5069,6 +5088,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 97ce625ca53429741a017b592945500e
+    m_Address: Assets/Art/Cards/Characters/Sauron-TheDeceiver.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 97da489e5598cb94cbcdd9a9d67796a9
     m_Address: Assets/Art/Hexes/Hex Medieval Fantasy Locations/Base Tiles/hexDirt00.png
     m_ReadOnly: 0
@@ -6156,7 +6181,8 @@ MonoBehaviour:
   - m_GUID: b30b3dad6657f9043b19b309ae2255f6
     m_Address: Assets/Art/Cards/Characters/Saruman-TheWhite.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b376ab43d2face14abe6570323f574b1
     m_Address: Assets/Art/Cards/Armies/Balchoth.jpg
@@ -6228,7 +6254,8 @@ MonoBehaviour:
   - m_GUID: b5fa5c27f2e12144894759ded1d6eea1
     m_Address: Assets/Art/Cards/Characters/Gandalf-Mithrandir.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b6105e97af4ad364a952074e5414c237
     m_Address: Assets/Art/Cards/PC/Ovatharac.jpg
@@ -6739,7 +6766,8 @@ MonoBehaviour:
   - m_GUID: c64ce577f84b702438e7d1b1c9d709d6
     m_Address: Assets/Art/Cards/Characters/Sauron.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c6900da689ed9ef48a568c25d50282b6
     m_Address: Assets/Art/Cards/Encounters/WizardFromTheEast.jpg
@@ -6973,7 +7001,8 @@ MonoBehaviour:
   - m_GUID: cd816cad16c83044dacee70cdaef1316
     m_Address: Assets/Art/Cards/Characters/Saruman.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cd932a32b3a146849a51c4f4760852f4
     m_Address: Assets/Art/Cards/Characters/Hoarmurath.png

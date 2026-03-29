@@ -19,7 +19,45 @@
                        "artifacts":  [
 
                                      ],
-                       "description":  "\u003cb\u003eGandalf\u003c/b\u003e is the grey pilgrim, a wanderer of hidden roads and quiet counsel.\u003cbr\u003e\u003cbr\u003eHe walks the edge between shadow and hope, guiding the small and the humble because he knows their courage can outlast any sword.\u003cbr\u003e\u003cbr\u003eHe trusts in patience, in wisdom earned by travel, and in the spark that lights when others have given in to fear.\u003cbr\u003e\u003cbr\u003eThe Shire lies under his watch, and the first steps of his journey begin among its green lanes, where he gathers trusted companions, listens for the first uneasy rumors, and searches old ground for relics that have waited too long.\u003cbr\u003e\u003cbr\u003eHis path starts in quiet places, but it will not remain quiet.",
+                       "description":  "<b>Gandalf</b> is the grey pilgrim, a wanderer of hidden roads and quiet counsel.<br><br>He walks the edge between shadow and hope, guiding the small and the humble because he knows their courage can outlast any sword.<br><br>He trusts in patience, in wisdom earned by travel, and in the spark that lights when others have given in to fear.<br><br>The Shire lies under his watch, and the first steps of his journey begin among its green lanes, where he gathers trusted companions, listens for the first uneasy rumors, and searches old ground for relics that have waited too long.<br><br>His path starts in quiet places, but it will not remain quiet.",
+                       "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Broad alliance-of-the-Free-Peoples foundation: cooperation, guidance, resilience, and adaptable responses across many races and regions.",
+                       "variants":  [
+                                        {
+                                            "variantId":  "mithrandir",
+                                            "displayName":  "Mithrandir",
+                                            "description":  "<b>Mithrandir</b>, pilgrim of the West, passes like an old song through Rivendell, Lothlorien, and the hidden paths where the Wise still keep watch against the ancient Shadow. In him abide memory, mercy, and the secret fire set against a darkness older than the kingdoms of Men, and where he treads, veils are lifted and the designs of the Enemy are read before they ripen to ruin.<br><br>Under <b>Mithrandir</b>, the game turns toward revelation, warding, foresight, and spellcraft wielded with patient precision rather than open might.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as sage-mage: hidden lore, wards, visions, and exact magical responses grounded in wisdom rather than spectacle.",
+                                            "subdeckId":  "mithrandir"
+                                        },
+                                        {
+                                            "variantId":  "stormcrow",
+                                            "displayName":  "Stormcrow",
+                                            "description":  "<b>Stormcrow</b> they name him in the troubled halls of kings, for his coming is the whisper before the war-horn, the black wing against a paling sky. He is seen where Rohan wavers, where Gondor keeps weary watch, and where the old roads of the North begin once more to feel the breath of Angmar, Isengard, and Mordor upon their stones.<br><br>This variant carries the weight of vigilance, strained loyalties, bitter choices, and endurance beneath a darkening sky.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as Stormcrow in the wars of Men: a mistrusted but necessary presence who unsettles courts, hardens defenses, stirs movement, and marks the moment when ordinary peace gives way to border fear, mobilization, and survival under shadow.",
+                                            "subdeckId":  "stormcrow"
+                                        },
+                                        {
+                                            "variantId":  "disturber_of_the_peace",
+                                            "displayName":  "Disturber of the Peace",
+                                            "description":  "At Bag End and along the Bree-road, in fireworks, whispers, and the sudden knock at dusk, <b>the Disturber of the Peace</b> unsettles the comfortable world. From those small provocations spring journeys, riddles, unlikely fellowships, and the turning of humble lives toward deeds that will outlast towers and crowns.<br><br>This variant delights in disruption, strange meetings, roadside wonders, and the unruly mischief from which great tales are born.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> A wandering Eriador trouble deck where hobbit-scale mischief, awkward meetings, rumors, inns, hedgerow hazards, and strange little interruptions reshape the journey.",
+                                            "subdeckId":  "disturber_of_the_peace"
+                                        },
+                                        {
+                                            "variantId":  "tharkun",
+                                            "displayName":  "Tharkun",
+                                            "description":  "<b>Tharkun</b> is the name the Dwarves remember: friend of the House of Durin, walker in the deeps, and counselor in halls where stone keeps faith longer than flesh. He knows the grief buried in Khazad-dum, the splendor of Erebor restored, and the peril that lies ever beside gold, mithril, and the pride of mountain kings.<br><br>This variant turns toward hidden wealth, mountain fortitude, and alliances tempered in the dark under stone.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as dwarf-friend: mountain roads, ancient halls, treasure-lore, and hard endurance tied to the houses of Durin.",
+                                            "subdeckId":  "tharkun"
+                                        },
+                                        {
+                                            "variantId":  "gandalf_the_white",
+                                            "displayName":  "The White",
+                                            "description":  "Clothed in white and returned from death, <b>the White Rider</b> comes from Fangorn like a judgment upon despair. He breaks the pride of Saruman, scatters the poison of Wormtongue, and stands in the last defence of the West as hidden wisdom is transfigured into open command beneath the sunlit banners of hope.<br><br>This variant is one of cleansing, renewal, fearless command, and the sudden turning of darkness beneath a greater light.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Returned white authority: cleansing light, restored morale, command presence, and decisive renewal after despair.",
+                                            "subdeckId":  "gandalf_the_white"
+                                        }
+                                    ],
                        "subdeckId":  "mithrandir",
                        "terrain":  3,
                        "startingCityName":  "Bree",
@@ -161,7 +199,31 @@
                        "artifacts":  [
 
                                      ],
-                       "description":  "\u003cb\u003eSaruman\u003c/b\u003e is the master of Orthanc, once the chief of the wise, now the architect of his own dominion.\u003cbr\u003e\u003cbr\u003eHis voice bends courts, his mind measures every weakness, and his ambition refuses to wait for permission.\u003cbr\u003e\u003cbr\u003eHe builds in silence, gathering strength behind fair words, and he intends to remake the world in the image of his will.\u003cbr\u003e\u003cbr\u003eHis design begins with a careful reach into the courts of Rohan, the securing of a pliant voice, and the quiet unearthing of power long buried.\u003cbr\u003e\u003cbr\u003eFrom Orthanc he turns influence into force and raises the first ranks of his war.",
+                       "description":  "<b>Saruman</b> is the master of Orthanc, once the chief of the wise, now the architect of his own dominion.<br><br>His voice bends courts, his mind measures every weakness, and his ambition refuses to wait for permission.<br><br>He builds in silence, gathering strength behind fair words, and he intends to remake the world in the image of his will.<br><br>His design begins with a careful reach into the courts of Rohan, the securing of a pliant voice, and the quiet unearthing of power long buried.<br><br>From Orthanc he turns influence into force and raises the first ranks of his war.",
+                       "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> The broad Isengard foundation: planning, coercion, furnaces, mixed servants, and practical cruelty in service of controlled expansion.",
+                       "variants":  [
+                                        {
+                                            "variantId":  "saruman_the_white",
+                                            "displayName":  "The White",
+                                            "description":  "<b>Saruman the White</b> stands in the majesty of Orthanc, chief of the Istari, master of lore, ring-craft, and the long devices of the Wise. His voice is a weapon finer than steel, entering the counsels of kings and bending proud hearts with honeyed reason until obedience seems wisdom and surrender seems peace.<br><br>This variant favors influence, manipulation, and command exercised with polished restraint.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Saruman as silver-tongued master of Orthanc, winning by voice, status, and controlled perception rather than raw rush.",
+                                            "subdeckId":  "saruman_the_white"
+                                        },
+                                        {
+                                            "variantId":  "of_many_colours",
+                                            "displayName":  "Of Many Colors",
+                                            "description":  "Robed in many colours, <b>the Many-Coloured</b> shatters the white that once signified order and reveals the glittering fracture of pride. In that figure are gathered ring-lore, engines, subtle arts, and the cold brilliance of a mind that would rival the makers of old, yet all are bent now toward dominion, display, and the blasphemous imitation of a power once sent to oppose the Shadow.<br><br>This variant leans into grand sorcery, layered effects, and the dangerous splendor of power unbound by humility.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Saruman's fractured many-coloured persona: self-stylized wizardry, synthesis, vanity, illusion, and magical excess presented as sophistication.",
+                                            "subdeckId":  "of_many_colours"
+                                        },
+                                        {
+                                            "variantId":  "the_white_hand",
+                                            "displayName":  "The White Hand",
+                                            "description":  "<b>The White Hand</b> rises over Isengard like a blasphemous banner, and beneath it the world is remade in smoke, iron, and ruin. Fangorn falls to the axe, the furnaces thunder without ceasing, and from the black pits march Uruk-hai and wolf-riders, forged for the breaking of Helm's Deep and the humiliation of the Mark.<br><br>This variant drives forward with industry, relentless pressure, and the hard discipline of Isengard at war.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Isengard's forged war machine: Uruk discipline, furnace output, siege craft, and fear-driven aggression made systematic.",
+                                            "subdeckId":  "the_white_hand"
+                                        }
+                                    ],
                        "subdeckId":  "saruman_the_white",
                        "terrain":  1,
                        "startingCityName":  "Orthanc",
@@ -301,7 +363,31 @@
                        "artifacts":  [
 
                                      ],
-                       "description":  "\u003cb\u003eSauron\u003c/b\u003e is the Dark Lord returned, a will of iron that has never forgotten its claim.\u003cbr\u003e\u003cbr\u003eFrom Barad-dur he bends the lands through fear and patience, drawing all things toward a single purpose.\u003cbr\u003e\u003cbr\u003eHe does not need love or loyalty, only obedience, and he will take it by force or by dread.\u003cbr\u003e\u003cbr\u003eThe hunt begins in the shadow of Minas Morgul, where the trail is secured and a relic of power is drawn from cursed ground.\u003cbr\u003e\u003cbr\u003eFrom there the march moves toward the Black Gate, where the first disciplined hosts take shape under a hard command.",
+                       "description":  "<b>Sauron</b> is the Dark Lord returned, a will of iron that has never forgotten its claim.<br><br>From Barad-dur he bends the lands through fear and patience, drawing all things toward a single purpose.<br><br>He does not need love or loyalty, only obedience, and he will take it by force or by dread.<br><br>The hunt begins in the shadow of Minas Morgul, where the trail is secured and a relic of power is drawn from cursed ground.<br><br>From there the march moves toward the Black Gate, where the first disciplined hosts take shape under a hard command.",
+                       "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> The broad machinery of Mordor: armies, monsters, tyranny, and corruption grinding forward through fear and accumulation.",
+                       "variants":  [
+                                        {
+                                            "variantId":  "the_dark_eye",
+                                            "displayName":  "The Dark Eye",
+                                            "description":  "<b>The Dark Eye</b> burns above Barad-dur like a star of malice that never sets, sleepless over Gorgoroth, the Black Gate, and the dead roads beneath Ephel Duath. It is dread made watchful, a will that peers through palantiri, dreams, and trembling rumor until no secrecy feels safe and every hidden movement seems already betrayed.<br><br>This variant is built on exposure, fear, and a suffocating dominion that narrows the enemy's every choice.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> The Eye watching through Nazgul terror: surveillance, revelation, dread, and command pressure that makes every movement feel seen.",
+                                            "subdeckId":  "the_dark_eye"
+                                        },
+                                        {
+                                            "variantId":  "the_deceiver",
+                                            "displayName":  "The Deceiver",
+                                            "description":  "<b>The Deceiver</b> walks in the memory of the Second Age: Annatar, Lord of Gifts, whispering to the smiths of Eregion; corrupter of Celebrimbor's great labor; and dark counselor to the pride of Numenor in its final blasphemy. Fair-seeming, patient, and terrible in wisdom misused, he raises no banner at first, but teaches the mighty to forge their own chains until kingdoms drown, temples burn, and the bent world itself bears witness to his fraud.<br><br>This variant leans into deceit, seduction, false gifts, and the hidden mastery won long before the sword is drawn.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Sauron as Annatar and the Deceiver: false gifts, seductive promises, corrupted loyalties, and domination won through trust before open war.",
+                                            "subdeckId":  "the_deceiver"
+                                        },
+                                        {
+                                            "variantId":  "the_necromancer",
+                                            "displayName":  "The Necromancer",
+                                            "description":  "<b>The Necromancer</b> broods in Dol Guldur, and Greenwood the Great withers into Mirkwood beneath the shadow of his hidden throne. From that hill of sorcery crawl spiders, wraiths, and corrupted things, while fear seeps through root and branch until the very forest seems to remember some older terror returning from forgotten ages.<br><br>This variant favors haunted pressure, monstrous servants, dark sorcery, and corruption that lingers long after the first blow.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Sauron as the Necromancer of Dol Guldur: ruin, occult infestation, cursed creatures, and slow supernatural decay spreading from dark strongholds.",
+                                            "subdeckId":  "the_necromancer"
+                                        }
+                                    ],
                        "subdeckId":  "the_dark_eye",
                        "terrain":  10,
                        "startingCityName":  "Barad-dur",

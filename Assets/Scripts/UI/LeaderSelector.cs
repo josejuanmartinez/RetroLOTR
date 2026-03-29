@@ -3,27 +3,66 @@ using TMPro;
 using System.Collections.Generic;
 using UnityEngine.Video;
 using System.Linq;
+using System;
+using System.Globalization;
+using System.Collections;
+using UnityEngine.UI;
 
-public class LeaderSelector : MonoBehaviour
+public class LeaderSelector : SearcherByName
 {
+    private class LeaderSelectionEntry
+    {
+        public string baseLeaderName;
+        public string displayName;
+        public string variantName;
+        public string assetName;
+        public string description;
+        public string deckIdentity;
+        public string subdeckId;
+    }
+
+    public CircularCardCarousel leaderCarousel;
+    public GameObject carouselItemPrefab;
     public VideoPlayer introVideo;
-    public VideoPlayer leaderVideo;
+    // public VideoPlayer leaderVideo;
     public TypewriterEffect typewriterEffect;
     public TextMeshProUGUI textUI;
     public GameObject progress;
     public GameObject progressText;
+    public GameObject leaderSelectionFullScreen;
 
-    Videos videos;
-    List<TMP_Dropdown.OptionData> options;
-    TMP_Dropdown dropdown;
+    readonly List<LeaderSelectionEntry> selectionEntries = new();
+    readonly List<GameObject> carouselItems = new();
 
     List<string> loadedLeaders = new();
     bool loadedFirst = false;
+    bool introFinished = false;
+    bool selectionScreenShown = false;
+    bool selectionScreenQueued = false;
     void Awake()
     {
-        dropdown = GetComponent<TMP_Dropdown>();
-        options = dropdown.options;
-        videos = FindFirstObjectByType<Videos>();
+        if (introVideo != null)
+        {
+            introVideo.loopPointReached += OnIntroVideoFinished;
+        }
+
+        if (leaderCarousel != null)
+        {
+            leaderCarousel.RegisterOnSelectionChanged(SelectLeader);
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (introVideo != null)
+        {
+            introVideo.loopPointReached -= OnIntroVideoFinished;
+        }
+
+        if (leaderCarousel != null)
+        {
+            leaderCarousel.UnregisterOnSelectionChanged(SelectLeader);
+        }
     }
 
     void Update()
@@ -33,38 +72,341 @@ public class LeaderSelector : MonoBehaviour
         {
             for(int i=0; i<playableLeaders.Count; i++)
             {
-                string leaderName = playableLeaders[i].characterName;
+                PlayableLeader playableLeader = playableLeaders[i];
+                string leaderName = playableLeader.characterName;
                 if (loadedLeaders.Contains(leaderName)) continue;
-                string alignment = playableLeaders[i].alignment.ToString();
-                options.Add(new TMP_Dropdown.OptionData(leaderName, FindFirstObjectByType<Illustrations>().GetIllustrationByName(alignment), Color.white));
+
+                AddLeaderOptions(playableLeader);
                 loadedLeaders.Add(leaderName);
 
                 if (!loadedFirst)
                 {
                     loadedFirst = true;
-                    dropdown.value = 0;
-                    dropdown.RefreshShownValue();
+                    if (leaderCarousel != null)
+                    {
+                        leaderCarousel.SetIndex(0);
+                    }
                     SelectLeader(0);
-                    introVideo.gameObject.SetActive(false);
-                    progress.SetActive(false);
-                    progressText.SetActive(false);
+                    ShowLeaderSelectionIfReady();
                 }
             }
         }
+
+        if (loadedFirst)
+        {
+            ShowLeaderSelectionIfReady();
+        }
+    }
+
+    void OnIntroVideoFinished(VideoPlayer player)
+    {
+        introFinished = true;
+        ShowLeaderSelectionIfReady();
+    }
+
+    void ShowLeaderSelectionIfReady()
+    {
+        if (!loadedFirst)
+        {
+            return;
+        }
+
+        bool introIsBlocking = introVideo != null
+            && introVideo.gameObject.activeInHierarchy
+            && introVideo.isPlaying
+            && !introFinished;
+        if (introIsBlocking)
+        {
+            return;
+        }
+
+        if (selectionScreenShown || selectionScreenQueued)
+        {
+            return;
+        }
+
+        selectionScreenQueued = true;
+        StartCoroutine(ShowLeaderSelectionDeferred());
+    }
+
+    void ForceLeaderSelectionRefresh()
+    {
+        if (leaderCarousel != null)
+        {
+            leaderCarousel.Refresh();
+        }
+
+        if (textUI != null)
+        {
+            textUI.ForceMeshUpdate();
+        }
+
+        RectTransform fullScreenRect = leaderSelectionFullScreen != null
+            ? leaderSelectionFullScreen.transform as RectTransform
+            : null;
+        if (fullScreenRect != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(fullScreenRect);
+        }
+
+        RectTransform carouselRect = leaderCarousel != null
+            ? leaderCarousel.transform as RectTransform
+            : null;
+        if (carouselRect != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(carouselRect);
+        }
+
+        Canvas.ForceUpdateCanvases();
+    }
+
+    IEnumerator ShowLeaderSelectionDeferred()
+    {
+        yield return null;
+        yield return new WaitForEndOfFrame();
+
+        if (introVideo != null)
+        {
+            introVideo.gameObject.SetActive(false);
+        }
+
+        if (progress != null)
+        {
+            progress.SetActive(false);
+        }
+
+        if (progressText != null)
+        {
+            progressText.SetActive(false);
+        }
+
+        if (leaderSelectionFullScreen != null)
+        {
+            leaderSelectionFullScreen.SetActive(false);
+            leaderSelectionFullScreen.SetActive(true);
+        }
+
+        selectionScreenShown = true;
+        selectionScreenQueued = false;
+        ForceLeaderSelectionRefresh();
+    }
+
+    void AddLeaderOptions(PlayableLeader playableLeader)
+    {
+        if (playableLeader == null) return;
+
+        LeaderBiomeConfig biome = FindAnyObjectByType<PlayableLeaders>()?.playableLeaders?.biomes?
+            .Find(x => x.characterName.ToLower() == playableLeader.characterName.ToLower());
+        if (biome == null) return;
+
+        AddSelectionEntry(playableLeader, BuildLeaderDisplayName(playableLeader), string.Concat(biome.description.Replace("<br>","")), biome.deckIdentity, biome.subdeckId);
+
+        foreach (LeaderVariantConfig variant in biome.variants)
+        {
+            string variantName = GetVariantName(playableLeader.characterName, variant.displayName, variant.variantId);
+            string displayName = BuildLeaderDisplayName(playableLeader, variantName);
+            string assetName = ResolveVariantAssetName(playableLeader.characterName, variant.displayName, variant.variantId);
+            string description = string.IsNullOrWhiteSpace(variant.description) ? string.Concat(biome.description.Replace("<br>","")) : string.Concat(biome.description.Replace("<br>",""), "<br><br>", variant.description.Replace("<br>",""));
+            string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? biome.subdeckId : variant.subdeckId;
+            AddSelectionEntry(playableLeader, displayName, description, variant.deckIdentity, subdeckId, variantName, assetName);
+        }
+    }
+
+    string BuildLeaderDisplayName(PlayableLeader playableLeader, string variantName = null)
+    {
+        if (playableLeader == null) return string.Empty;
+
+        string alignmentSprite = GetAlignmentSpriteTag(playableLeader.GetAlignment());
+        if (string.IsNullOrWhiteSpace(variantName))
+        {
+            return $"{alignmentSprite} {playableLeader.characterName}";
+        }
+
+        return $"{alignmentSprite} {playableLeader.characterName}<br>({variantName})";
+    }
+
+    string GetAlignmentSpriteTag(AlignmentEnum alignment)
+    {
+        string spriteName = alignment switch
+        {
+            AlignmentEnum.freePeople => "freePeople",
+            AlignmentEnum.darkServants => "darkServants",
+            _ => "neutral"
+        };
+
+        return $"<sprite name=\"{spriteName}\">";
+    }
+
+    string GetVariantName(string baseLeaderName, string displayName, string variantId)
+    {
+        string suffix = displayName ?? string.Empty;
+
+        suffix = suffix.Replace("_", " ");
+        List<char> chars = new();
+        for (int i = 0; i < suffix.Length; i++)
+        {
+            char c = suffix[i];
+            if (i > 0 && char.IsUpper(c) && !char.IsWhiteSpace(suffix[i - 1]) && !char.IsUpper(suffix[i - 1]))
+            {
+                chars.Add(' ');
+            }
+            chars.Add(c);
+        }
+
+        string formatted = new string(chars.ToArray()).Trim().ToLowerInvariant();
+        return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(formatted);
+    }
+
+    string ResolveVariantAssetName(string baseLeaderName, string displayName, string variantId)
+    {
+        if (string.IsNullOrWhiteSpace(baseLeaderName))
+        {
+            return displayName;
+        }
+
+        Illustrations illustrations = FindFirstObjectByType<Illustrations>();
+        string[] candidates =
+        {
+            $"{baseLeaderName} {displayName}",
+            $"{baseLeaderName} {variantId}",
+            displayName,
+            variantId
+        };
+
+        HashSet<string> seen = new();
+        foreach (string candidate in candidates)
+        {
+            if (string.IsNullOrWhiteSpace(candidate) || !seen.Add(Normalize(candidate)))
+            {
+                continue;
+            }
+
+            if (illustrations == null || illustrations.GetIllustrationByName(candidate) != null)
+            {
+                return candidate;
+            }
+        }
+
+        return $"{baseLeaderName} {displayName}";
+    }
+
+    void AddSelectionEntry(PlayableLeader playableLeader, string displayName, string description, string deckIdentity, string subdeckId, string variantName = null, string assetName = null)
+    {
+        Illustrations illustrations = FindFirstObjectByType<Illustrations>();
+        Sprite carouselSprite = illustrations != null ? illustrations.GetIllustrationByName(assetName) ?? illustrations.GetIllustrationByName(playableLeader.characterName) : null;
+
+        LeaderSelectionEntry selectionEntry = new()
+        {
+            baseLeaderName = playableLeader.characterName,
+            displayName = displayName,
+            variantName = variantName,
+            assetName = assetName,
+            description = description,
+            deckIdentity = deckIdentity,
+            subdeckId = subdeckId
+        };
+        selectionEntries.Add(selectionEntry);
+        CreateCarouselItem(selectionEntry, carouselSprite);
+    }
+
+    string BuildLeaderText(LeaderSelectionEntry selection)
+    {
+        /*if (selection == null) return string.Empty;
+        if (string.IsNullOrWhiteSpace(selection.variantName))
+        {
+            return selection.description;
+        }
+
+        return $"<b>{selection.baseLeaderName}</b><br><i>{selection.variantName}</i><br><br>{selection.description}";
+        */
+        if (selection == null) return string.Empty;
+        if (string.IsNullOrWhiteSpace(selection.deckIdentity))
+        {
+            return selection.description;
+        }
+
+        return $"{selection.description}<br><br>{selection.deckIdentity}";
+    }
+
+    void CreateCarouselItem(LeaderSelectionEntry selection, Sprite sprite)
+    {
+        if (leaderCarousel == null || carouselItemPrefab == null || selection == null)
+        {
+            return;
+        }
+
+        GameObject item = Instantiate(carouselItemPrefab, leaderCarousel.transform);
+        item.name = $"{selection.displayName} Carousel Item";
+        carouselItems.Add(item);
+        PopulateCarouselItem(item, selection, sprite);
+        leaderCarousel.AddItem(item);
+    }
+
+    void PopulateCarouselItem(GameObject item, LeaderSelectionEntry selection, Sprite sprite)
+    {
+        if (item == null || selection == null)
+        {
+            return;
+        }
+
+        CarouselItem carouselItem = item.GetComponent<CarouselItem>();
+        if (carouselItem != null)
+        {
+            carouselItem.SetSprite(sprite);
+            carouselItem.SetLabel(BuildCarouselLabel(selection));
+        }
+    }
+
+    string BuildCarouselLabel(LeaderSelectionEntry selection)
+    {
+        if (selection == null) return string.Empty;
+
+        string alignmentSprite = GetAlignmentSpriteTag(null, selection.baseLeaderName);
+        if (string.IsNullOrWhiteSpace(selection.variantName))
+        {
+            return $"{alignmentSprite} {selection.baseLeaderName}";
+        }
+
+        return $"{alignmentSprite} {selection.baseLeaderName}<br>({selection.variantName})";
+    }
+
+    string GetAlignmentSpriteTag(PlayableLeader playableLeader, string fallbackLeaderName = null)
+    {
+        if (playableLeader != null)
+        {
+            return GetAlignmentSpriteTag(playableLeader.GetAlignment());
+        }
+
+        AlignmentEnum inferredAlignment = fallbackLeaderName switch
+        {
+            "Gandalf" => AlignmentEnum.freePeople,
+            "Sauron" => AlignmentEnum.darkServants,
+            "Saruman" => AlignmentEnum.darkServants,
+            _ => AlignmentEnum.neutral
+        };
+        return GetAlignmentSpriteTag(inferredAlignment);
     }
 
     public void SelectLeader(int value)
     {
-        if (options.Count > value)
+        if (selectionEntries.Count > value)
         {
-            string leaderName = options[value].text;
-            string leaderDescription = FindAnyObjectByType<PlayableLeaders>().playableLeaders.biomes.Find(x => x.characterName.ToLower() == leaderName.ToLower()).description;
+            LeaderSelectionEntry selection = selectionEntries[value];
+            string leaderText = BuildLeaderText(selection);
+            PlayableLeaders playableLeadersConfig = FindAnyObjectByType<PlayableLeaders>();
+            LeaderBiomeConfig leaderBiome = playableLeadersConfig.playableLeaders.biomes
+                .Find(x => x.characterName.ToLower() == selection.baseLeaderName.ToLower());
 
-            leaderVideo.clip = videos.GetVideoByName(leaderName);
+            if (leaderBiome != null)
+            {
+                leaderBiome.description = leaderText;
+                leaderBiome.subdeckId = selection.subdeckId;
+            }
     
-            if (typewriterEffect) typewriterEffect.StartWriting(leaderDescription); else textUI.text = leaderDescription;
+            if (typewriterEffect) typewriterEffect.StartWriting(leaderText); else textUI.text = leaderText;
 
-            PlayableLeader player = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList().Find((x) => x.characterName.ToLower() == leaderName.ToLower());
+            PlayableLeader player = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList()
+                .Find(x => x.characterName.ToLower() == selection.baseLeaderName.ToLower());
             FindFirstObjectByType<Game>().SelectPlayer(player);
         }
     }

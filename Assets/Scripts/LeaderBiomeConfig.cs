@@ -8,10 +8,22 @@ public class LeaderBiomeConfigCollection
 }
 
 [Serializable]
+public class LeaderVariantConfig
+{
+    public string variantId;
+    public string displayName;
+    public string description;
+    public string deckIdentity;
+    public string subdeckId;
+}
+
+[Serializable]
 public class LeaderBiomeConfig: BiomeConfig
 {
     public string description;
+    public string deckIdentity;
     public string subdeckId;
+    public List<LeaderVariantConfig> variants = new();
     public TerrainEnum terrain;
     public FeaturesEnum feature = FeaturesEnum.noFeature;
     public bool isIsland = false;
