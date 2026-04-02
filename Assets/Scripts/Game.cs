@@ -107,6 +107,9 @@ public class Game : MonoBehaviour
 
     public void StartGame(bool skipTutorial)
     {
+        FindFirstObjectByType<LeaderSelector>()?.ApplyCurrentSelection();
+        FindFirstObjectByType<Initialize>()?.UndoInitialState();
+
         turn = 0;
         started = true;
         this.skipTutorial = skipTutorial;

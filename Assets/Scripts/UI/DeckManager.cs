@@ -1165,11 +1165,11 @@ public class DeckManager : MonoBehaviour
     {
         if (leader == null) return null;
 
-        LeaderBiomeConfig biome = leader.GetBiome();
-        if (!string.IsNullOrWhiteSpace(biome?.subdeckId)
-            && deckManifestById.ContainsKey(biome.subdeckId))
+        string selectedSubdeckId = leader.GetSelectedSubdeckId();
+        if (!string.IsNullOrWhiteSpace(selectedSubdeckId)
+            && deckManifestById.ContainsKey(selectedSubdeckId))
         {
-            return biome.subdeckId;
+            return selectedSubdeckId;
         }
 
         DeckManifestEntry byNation = deckManifestById.Values.FirstOrDefault(x =>

@@ -196,12 +196,12 @@ public class Leader : Character
                 yield break;
             }
             // Refresh UI
-            FindFirstObjectByType<StoresManager>().RefreshStores();
+            FindFirstObjectByType<StoresManager>()?.RefreshStores();
             // Refresh hexes
             StartCoroutine(RevealVisibleHexesAsync(() =>
             {
                 // Prompt for action to the player
-                FindFirstObjectByType<Board>().SelectCharacter(this, true, 1.0f, 0.0f);
+                FindFirstObjectByType<Board>()?.SelectCharacter(this, true, 1.0f, 0.0f);
             }
             ));
         }

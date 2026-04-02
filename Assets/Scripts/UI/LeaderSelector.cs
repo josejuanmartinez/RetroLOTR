@@ -393,21 +393,27 @@ public class LeaderSelector : SearcherByName
         {
             LeaderSelectionEntry selection = selectionEntries[value];
             string leaderText = BuildLeaderText(selection);
-            PlayableLeaders playableLeadersConfig = FindAnyObjectByType<PlayableLeaders>();
-            LeaderBiomeConfig leaderBiome = playableLeadersConfig.playableLeaders.biomes
-                .Find(x => x.characterName.ToLower() == selection.baseLeaderName.ToLower());
-
-            if (leaderBiome != null)
-            {
-                leaderBiome.description = leaderText;
-                leaderBiome.subdeckId = selection.subdeckId;
-            }
-    
             if (typewriterEffect) typewriterEffect.StartWriting(leaderText); else textUI.text = leaderText;
 
             PlayableLeader player = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList()
                 .Find(x => x.characterName.ToLower() == selection.baseLeaderName.ToLower());
+            if (player != null)
+            {
+                player.SetDeckSelection(selection.subdeckId, selection.deckIdentity, leaderText, selection.variantName);
+            }
+
             FindFirstObjectByType<Game>().SelectPlayer(player);
         }
+    }
+
+    public void ApplyCurrentSelection()
+    {
+        if (leaderCarousel == null)
+        {
+            SelectLeader(0);
+            return;
+        }
+
+        SelectLeader(leaderCarousel.GetCurrentIndex());
     }
 }

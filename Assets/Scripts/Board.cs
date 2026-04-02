@@ -393,7 +393,7 @@ public class Board : MonoBehaviour
                 if (myCharacters.Count < 1)
                 {
                     SetSelectedCharacter(null);
-                    FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Hide();
+                    HideSelectedCharacterUi();
                     return;
                 }
 
@@ -404,7 +404,7 @@ public class Board : MonoBehaviour
                     hexes[selection].Select(lookAt, duration, delay);
 
                     SetSelectedCharacter(myCharacters[0]);
-                    FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(selectedCharacter);
+                    RefreshSelectedCharacterUi();
                 }
                 else
                 {
@@ -419,10 +419,10 @@ public class Board : MonoBehaviour
                     
                     SetSelectedCharacter(myCharacters[toSelectIndex]);
                     
-                    FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(selectedCharacter);
+                    RefreshSelectedCharacterUi();
                 }
 
-                FindFirstObjectByType<Layout>().GetActionsManager().Refresh(selectedCharacter);
+                RefreshActionsUi();
             }
         }
         catch (Exception e)
@@ -430,25 +430,26 @@ public class Board : MonoBehaviour
             Debug.LogError(e);
             selectedHex = Vector2Int.one * -1;
             SetSelectedCharacter(null);
-            FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Hide();
-            FindFirstObjectByType<Layout>().GetActionsManager().Hide();
+            HideSelectionUi();
             return;
         }
         if (hexes != null && hexes.TryGetValue(selection, out var selected))
         {
             Music.Instance?.UpdateForHex(selected);
         }
-        if(selectedCharacter) FindFirstObjectByType<ActionsManager>().Refresh(selectedCharacter);
+        if(selectedCharacter) FindFirstObjectByType<ActionsManager>()?.Refresh(selectedCharacter);
     }
 
     public void UnselectHex()
     {
-        if (selectedHex != Vector2Int.one * -1) hexes[selectedHex].Unselect();
+        if (selectedHex != Vector2Int.one * -1 && hexes != null && hexes.TryGetValue(selectedHex, out Hex hex))
+        {
+            hex.Unselect();
+        }
         selectedHex = Vector2Int.one * -1;
 
         // Execute these actions after the delay
-        FindFirstObjectByType<Layout>().GetActionsManager().Hide();
-        FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Hide();
+        HideSelectionUi();
         SetSelectedCharacter(null);
         Music.Instance?.UpdateForHex(null);
     }
@@ -456,6 +457,31 @@ public class Board : MonoBehaviour
     public void UnselectCharacter()
     {
         SetSelectedCharacter(null);
+    }
+
+    private void RefreshSelectedCharacterUi()
+    {
+        Layout layout = FindFirstObjectByType<Layout>();
+        layout?.GetSelectedCharacterIcon()?.Refresh(selectedCharacter);
+    }
+
+    private void HideSelectedCharacterUi()
+    {
+        Layout layout = FindFirstObjectByType<Layout>();
+        layout?.GetSelectedCharacterIcon()?.Hide();
+    }
+
+    private void RefreshActionsUi()
+    {
+        Layout layout = FindFirstObjectByType<Layout>();
+        layout?.GetActionsManager()?.Refresh(selectedCharacter);
+    }
+
+    private void HideSelectionUi()
+    {
+        Layout layout = FindFirstObjectByType<Layout>();
+        layout?.GetActionsManager()?.Hide();
+        layout?.GetSelectedCharacterIcon()?.Hide();
     }
 
     public List<Hex> GetHexes()

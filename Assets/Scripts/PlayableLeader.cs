@@ -8,6 +8,10 @@ public class PlayableLeader : Leader
     public VictoryPoints victoryPoints;
     private readonly HashSet<string> playedLandCards = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> playedPcCards = new(StringComparer.OrdinalIgnoreCase);
+    private string selectedSubdeckId;
+    private string selectedDeckIdentity;
+    private string selectedLeaderDescription;
+    private string selectedVariantName;
 
     private static string NormalizeCardName(string cardName)
     {
@@ -21,6 +25,38 @@ public class PlayableLeader : Leader
         victoryPoints = null;
         playedLandCards.Clear();
         playedPcCards.Clear();
+        selectedSubdeckId = playableLeaderBiome?.subdeckId;
+        selectedDeckIdentity = playableLeaderBiome?.deckIdentity;
+        selectedLeaderDescription = playableLeaderBiome?.description;
+        selectedVariantName = null;
+    }
+
+    public void SetDeckSelection(string subdeckId, string deckIdentity = null, string leaderDescription = null, string variantName = null)
+    {
+        selectedSubdeckId = subdeckId;
+        selectedDeckIdentity = deckIdentity;
+        selectedLeaderDescription = leaderDescription;
+        selectedVariantName = variantName;
+    }
+
+    public string GetSelectedSubdeckId()
+    {
+        return string.IsNullOrWhiteSpace(selectedSubdeckId) ? GetBiome()?.subdeckId : selectedSubdeckId;
+    }
+
+    public string GetSelectedDeckIdentity()
+    {
+        return string.IsNullOrWhiteSpace(selectedDeckIdentity) ? GetBiome()?.deckIdentity : selectedDeckIdentity;
+    }
+
+    public string GetSelectedLeaderDescription()
+    {
+        return string.IsNullOrWhiteSpace(selectedLeaderDescription) ? GetBiome()?.description : selectedLeaderDescription;
+    }
+
+    public string GetSelectedVariantName()
+    {
+        return selectedVariantName;
     }
 
     public void RecordPlayedCard(CardData card)
@@ -60,7 +96,8 @@ public class PlayableLeader : Leader
     {
         if (killed) return;
 
-        FindFirstObjectByType<PlayableLeaderIcons>().AddDeadIcon(this);
+        PlayableLeaderIcons leaderIcons = FindFirstObjectByType<PlayableLeaderIcons>();
+        leaderIcons?.AddDeadIcon(this);
 
         health = 0;
         killed = true;
@@ -77,8 +114,8 @@ public class PlayableLeader : Leader
     }
     new public void NewTurn()
     {
-
-        FindFirstObjectByType<PlayableLeaderIcons>().HighlightCurrentlyPlaying(this);
+        PlayableLeaderIcons leaderIcons = FindFirstObjectByType<PlayableLeaderIcons>();
+        leaderIcons?.HighlightCurrentlyPlaying(this);
 
         base.NewTurn();
     }
