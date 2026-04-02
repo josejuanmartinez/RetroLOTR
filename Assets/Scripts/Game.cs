@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 public class Game : MonoBehaviour
 {
+    private const int AlliedTradeChance = 25;
+    private const int AlliedTradeGoldAsk = 5;
+
     [Header("Sound")]
     public AudioSource soundPlayer;
     public AudioSource musicPlayer;
@@ -359,6 +362,7 @@ public class Game : MonoBehaviour
         board.RefreshRelevantHexes();
 
         yield return WaitForNpcEvents();
+        yield return TryOfferAlliedTradeToPlayer();
 
         currentlyPlaying.NewTurn();
 
@@ -375,6 +379,224 @@ public class Game : MonoBehaviour
         while (manager.IsProcessingTurn)
         {
             yield return null;
+        }
+    }
+
+    private IEnumerator TryOfferAlliedTradeToPlayer()
+    {
+        if (player == null || player.killed) yield break;
+        if (UnityEngine.Random.Range(0, AlliedTradeChance) != 0) yield break;
+
+        AlliedTradeOffer offer = BuildAlliedTradeOffer(player);
+        if (offer == null) yield break;
+
+        Task<bool> answerTask = ConfirmationDialog.AskYesNo(offer.BuildPrompt());
+        while (!answerTask.IsCompleted)
+        {
+            yield return null;
+        }
+
+        if (!answerTask.Result)
+        {
+            MessageDisplay.ShowMessage($"{offer.Ally.characterName}'s trade offer was declined.", Color.yellow);
+            yield break;
+        }
+
+        ApplyAlliedTradeOffer(offer);
+    }
+
+    private AlliedTradeOffer BuildAlliedTradeOffer(PlayableLeader buyer)
+    {
+        List<Leader> allies = GetAlliedTradePartners(buyer);
+        if (allies.Count < 1) return null;
+
+        List<AlliedTradeOffer> offers = new();
+        for (int i = 0; i < allies.Count; i++)
+        {
+            Leader ally = allies[i];
+            AlliedTradeOffer buyOffer = BuildGoldForResourcesOffer(buyer, ally);
+            if (buyOffer != null) offers.Add(buyOffer);
+
+            AlliedTradeOffer sellOffer = BuildResourceForGoldOffer(buyer, ally);
+            if (sellOffer != null) offers.Add(sellOffer);
+        }
+
+        if (offers.Count < 1) return null;
+        return offers[UnityEngine.Random.Range(0, offers.Count)];
+    }
+
+    private List<Leader> GetAlliedTradePartners(PlayableLeader buyer)
+    {
+        List<Leader> allies = new();
+        if (buyer == null) return allies;
+
+        AlignmentEnum alignment = buyer.GetAlignment();
+        if (competitors != null)
+        {
+            for (int i = 0; i < competitors.Count; i++)
+            {
+                PlayableLeader competitor = competitors[i];
+                if (competitor == null || competitor == buyer || competitor.killed) continue;
+                if (competitor.GetAlignment() != alignment) continue;
+                allies.Add(competitor);
+            }
+        }
+
+        if (npcs != null)
+        {
+            for (int i = 0; i < npcs.Count; i++)
+            {
+                NonPlayableLeader npc = npcs[i];
+                if (npc == null || npc.killed) continue;
+                if (npc.GetAlignment() != alignment) continue;
+                allies.Add(npc);
+            }
+        }
+
+        return allies;
+    }
+
+    private AlliedTradeOffer BuildGoldForResourcesOffer(Leader buyer, Leader ally)
+    {
+        if (buyer == null || ally == null) return null;
+        if (buyer.goldAmount < AlliedTradeGoldAsk) return null;
+
+        Dictionary<ProducesEnum, int> offered = BuildBestResourceBundle(ally, AlliedTradeGoldAsk, false, buyer);
+        if (offered.Count < 1) return null;
+
+        return new AlliedTradeOffer
+        {
+            Ally = ally,
+            Buyer = buyer,
+            GoldFromBuyer = AlliedTradeGoldAsk,
+            ResourcesFromBuyer = new Dictionary<ProducesEnum, int>(),
+            GoldFromAlly = 0,
+            ResourcesFromAlly = offered
+        };
+    }
+
+    private AlliedTradeOffer BuildResourceForGoldOffer(Leader buyer, Leader ally)
+    {
+        if (buyer == null || ally == null) return null;
+        if (ally.goldAmount < 1) return null;
+
+        int maxGold = Mathf.Min(AlliedTradeGoldAsk, ally.goldAmount);
+        Dictionary<ProducesEnum, int> requested = BuildBestResourceBundle(buyer, maxGold, true, ally);
+        if (requested.Count < 1) return null;
+
+        int goldOffer = GetBundleValue(requested);
+        if (goldOffer < 1) return null;
+
+        return new AlliedTradeOffer
+        {
+            Ally = ally,
+            Buyer = buyer,
+            GoldFromBuyer = 0,
+            ResourcesFromBuyer = requested,
+            GoldFromAlly = goldOffer,
+            ResourcesFromAlly = new Dictionary<ProducesEnum, int>()
+        };
+    }
+
+    private Dictionary<ProducesEnum, int> BuildBestResourceBundle(Leader source, int maxValue, bool requireZeroStockInReceiver, Leader receiver)
+    {
+        Dictionary<ProducesEnum, int> bundle = new();
+        if (source == null || maxValue < 1) return bundle;
+
+        ProducesEnum[] ordered = new[]
+        {
+            ProducesEnum.steel,
+            ProducesEnum.mounts,
+            ProducesEnum.iron,
+            ProducesEnum.timber,
+            ProducesEnum.leather
+        };
+
+        int remaining = maxValue;
+        for (int i = 0; i < ordered.Length; i++)
+        {
+            ProducesEnum resource = ordered[i];
+            if (requireZeroStockInReceiver && receiver != null && receiver.GetResourceAmount(resource) > 0) continue;
+
+            int available = source.GetResourceAmount(resource);
+            if (available < 1) continue;
+
+            int price = GetResourceTradeValue(resource);
+            if (price > remaining) continue;
+
+            int maxUnits = Mathf.Min(available, remaining / price);
+            if (maxUnits < 1) continue;
+
+            bundle[resource] = maxUnits;
+            remaining -= maxUnits * price;
+            if (remaining <= 0) break;
+        }
+
+        return bundle;
+    }
+
+    private int GetBundleValue(Dictionary<ProducesEnum, int> bundle)
+    {
+        if (bundle == null || bundle.Count < 1) return 0;
+
+        int total = 0;
+        foreach (KeyValuePair<ProducesEnum, int> entry in bundle)
+        {
+            total += GetResourceTradeValue(entry.Key) * Mathf.Max(0, entry.Value);
+        }
+
+        return total;
+    }
+
+    private int GetResourceTradeValue(ProducesEnum resource)
+    {
+        return resource switch
+        {
+            ProducesEnum.leather => StoresManager.LeatherSellValue,
+            ProducesEnum.timber => StoresManager.TimberSellValue,
+            ProducesEnum.iron => StoresManager.IronSellValue,
+            ProducesEnum.steel => StoresManager.SteelSellValue,
+            ProducesEnum.mounts => StoresManager.MountsSellValue,
+            ProducesEnum.mithril => StoresManager.MithrilSellValue,
+            ProducesEnum.gold => 1,
+            _ => 0
+        };
+    }
+
+    private void ApplyAlliedTradeOffer(AlliedTradeOffer offer)
+    {
+        if (offer == null || offer.Ally == null || offer.Buyer == null) return;
+
+        if (offer.GoldFromBuyer > 0)
+        {
+            offer.Buyer.RemoveGold(offer.GoldFromBuyer, offer.Buyer == player);
+            offer.Ally.AddGold(offer.GoldFromBuyer);
+        }
+
+        if (offer.GoldFromAlly > 0)
+        {
+            offer.Ally.RemoveGold(offer.GoldFromAlly, false);
+            offer.Buyer.AddGold(offer.GoldFromAlly);
+        }
+
+        TransferResources(offer.Buyer, offer.Ally, offer.ResourcesFromBuyer, true);
+        TransferResources(offer.Ally, offer.Buyer, offer.ResourcesFromAlly, false);
+
+        storesManager?.RefreshStores();
+        MessageDisplay.ShowMessage($"{offer.Ally.characterName} completed a trade with {offer.Buyer.characterName}.", Color.green);
+    }
+
+    private void TransferResources(Leader from, Leader to, Dictionary<ProducesEnum, int> resources, bool showPlayerCost)
+    {
+        if (from == null || to == null || resources == null) return;
+
+        foreach (KeyValuePair<ProducesEnum, int> entry in resources)
+        {
+            int amount = Mathf.Max(0, entry.Value);
+            if (amount < 1) continue;
+
+            from.RemoveResource(entry.Key, amount, showPlayerCost && from == player);
+            to.AddResource(entry.Key, amount);
         }
     }
 
@@ -560,5 +782,39 @@ public class Game : MonoBehaviour
     {
         if (!blockLookAtUntilStartupPopupCloses || !startupPopupShown) return;
         blockLookAtUntilStartupPopupCloses = false;
+    }
+
+    private sealed class AlliedTradeOffer
+    {
+        public Leader Ally;
+        public Leader Buyer;
+        public int GoldFromBuyer;
+        public Dictionary<ProducesEnum, int> ResourcesFromBuyer;
+        public int GoldFromAlly;
+        public Dictionary<ProducesEnum, int> ResourcesFromAlly;
+
+        public string BuildPrompt()
+        {
+            if (GoldFromBuyer > 0)
+            {
+                return $"{Ally.characterName} asks for 5 <sprite name=\"gold\"> and offers {FormatResources(ResourcesFromAlly)}.\nAccept this allied trade?";
+            }
+
+            return $"{Ally.characterName} asks for {FormatResources(ResourcesFromBuyer)} and offers {GoldFromAlly} <sprite name=\"gold\">.\nAccept this allied trade?";
+        }
+
+        private static string FormatResources(Dictionary<ProducesEnum, int> resources)
+        {
+            if (resources == null || resources.Count < 1) return "nothing";
+
+            List<string> parts = new();
+            foreach (KeyValuePair<ProducesEnum, int> entry in resources)
+            {
+                if (entry.Value < 1) continue;
+                parts.Add($"{entry.Value} <sprite name=\"{entry.Key}\">");
+            }
+
+            return string.Join(", ", parts);
+        }
     }
 }

@@ -1145,6 +1145,7 @@ public class Board : MonoBehaviour
                 if (!newHex.armies.Contains(character.GetArmy())) newHex.armies.Add(character.GetArmy());
             }
             character.hex = newHex;
+            character.RefreshKidnappedCharactersPosition();
             Character.RefreshArtifactPcVisibilityForHex(previousHex);
             Character.RefreshArtifactPcVisibilityForHex(newHex);
             if (g != null)
@@ -1236,6 +1237,7 @@ public class Board : MonoBehaviour
             // Set character's hex reference properly
             Hex previousCharacterHex = character.hex;
             character.hex = currentHex;
+            character.RefreshKidnappedCharactersPosition();
             Character.RefreshArtifactPcVisibilityForHex(previousCharacterHex);
             Character.RefreshArtifactPcVisibilityForHex(currentHex);
 
@@ -1311,6 +1313,7 @@ public class Board : MonoBehaviour
             // Set character's hex reference properly
             Hex previousHex = character.hex;
             character.hex = currentHex;
+            character.RefreshKidnappedCharactersPosition();
             Character.RefreshArtifactPcVisibilityForHex(previousHex);
             Character.RefreshArtifactPcVisibilityForHex(currentHex);
 

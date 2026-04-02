@@ -683,6 +683,70 @@ public class Character : MonoBehaviour
         return kidnappedBy != null && !killed;
     }
 
+    public List<Character> GetActiveCaptives()
+    {
+        if (kidnappedCharacters == null || kidnappedCharacters.Count < 1) return new List<Character>();
+
+        return kidnappedCharacters
+            .Where(x => x != null && x.character != null && !x.character.killed && x.character.kidnappedBy == this)
+            .Select(x => x.character)
+            .ToList();
+    }
+
+    public int GetTotalSkillLevel()
+    {
+        return Mathf.Max(0, GetCommander())
+            + Mathf.Max(0, GetAgent())
+            + Mathf.Max(0, GetEmmissary())
+            + Mathf.Max(0, GetMage());
+    }
+
+    public int GetKidnapRansomValue()
+    {
+        return Mathf.Max(2, GetTotalSkillLevel());
+    }
+
+    public bool CanReleaseCaptive(Character target)
+    {
+        return target != null
+            && !killed
+            && !target.killed
+            && target.kidnappedBy == this
+            && target.hex == hex;
+    }
+
+    public bool ReleaseCaptive(Character target, bool escaped = false)
+    {
+        if (!CanReleaseCaptive(target)) return false;
+
+        target.ReleaseFromKidnap(escaped);
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} released {target.characterName}.", Color.yellow);
+        RefreshSelectedCharacterIconIfSelected();
+        RefreshActionsIfSelected();
+        target.RefreshSelectedCharacterIconIfSelected();
+        target.RefreshActionsIfSelected();
+        return true;
+    }
+
+    public bool CanDemandRansom(Character target)
+    {
+        if (!CanReleaseCaptive(target)) return false;
+        Leader targetOwner = target.kidnappedOriginalOwner != null ? target.kidnappedOriginalOwner : target.GetOwner();
+        return targetOwner != null && !targetOwner.killed;
+    }
+
+    public bool ShouldAcceptRansom(Character target, int ransomCost)
+    {
+        if (target == null) return false;
+
+        Leader targetOwner = target.kidnappedOriginalOwner != null ? target.kidnappedOriginalOwner : target.GetOwner();
+        if (targetOwner == null || targetOwner.killed) return false;
+        if (targetOwner.goldAmount < ransomCost) return false;
+
+        int reserveFloor = Mathf.Clamp(ransomCost / 2, 2, 6);
+        return targetOwner.goldAmount - ransomCost >= reserveFloor;
+    }
+
     public bool CanKidnap(Character target)
     {
         if (target == null || target == this || killed || target.killed) return false;
@@ -704,13 +768,15 @@ public class Character : MonoBehaviour
         if (originalOwner == null) return false;
 
         if (originalOwner.controlledCharacters.Contains(target)) originalOwner.controlledCharacters.Remove(target);
-        if (target.hex != null && target.hex.characters.Contains(target)) target.hex.characters.Remove(target);
+        Hex previousHex = target.hex;
+        if (previousHex != null && previousHex.characters.Contains(target)) previousHex.characters.Remove(target);
 
         target.kidnappedBy = this;
         target.kidnappedOriginalOwner = originalOwner;
         target.hex = this.hex;
         target.hasActionedThisTurn = true;
         target.moved = target.GetMaxMovement();
+        if (target.hex != null && !target.hex.characters.Contains(target)) target.hex.characters.Add(target);
 
         kidnappedCharacters.Add(new KidnappedCharacterRecord
         {
@@ -718,9 +784,14 @@ public class Character : MonoBehaviour
             originalOwner = originalOwner
         });
 
+        previousHex?.RedrawCharacters();
+        if (target.hex != null && target.hex != previousHex) target.hex.RedrawCharacters();
+        RefreshKidnappedCharactersPosition();
         MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} kidnapped {target.characterName}!", Color.green);
         RefreshSelectedCharacterIconIfSelected();
         RefreshActionsIfSelected();
+        target.RefreshSelectedCharacterIconIfSelected();
+        target.RefreshActionsIfSelected();
         return true;
     }
 
@@ -741,15 +812,58 @@ public class Character : MonoBehaviour
             originalOwner.controlledCharacters.Add(this);
         }
 
+        Hex currentHex = hex;
         if (hex != null && !hex.characters.Contains(this))
         {
             hex.characters.Add(this);
-            hex.RedrawCharacters();
         }
+        currentHex?.RedrawCharacters();
 
         if (escaped)
         {
             MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} escaped captivity!", Color.yellow);
+        }
+
+        RefreshSelectedCharacterIconIfSelected();
+        RefreshActionsIfSelected();
+    }
+
+    public void RefreshKidnappedCharactersPosition()
+    {
+        if (kidnappedCharacters == null || kidnappedCharacters.Count < 1) return;
+
+        HashSet<Hex> redrawHexes = new();
+        for (int i = kidnappedCharacters.Count - 1; i >= 0; i--)
+        {
+            KidnappedCharacterRecord record = kidnappedCharacters[i];
+            Character prisoner = record != null ? record.character : null;
+            if (record == null || prisoner == null || prisoner.killed || prisoner.kidnappedBy != this)
+            {
+                kidnappedCharacters.RemoveAt(i);
+                continue;
+            }
+
+            Hex previousHex = prisoner.hex;
+            if (previousHex != null && previousHex != hex && previousHex.characters.Contains(prisoner))
+            {
+                previousHex.characters.Remove(prisoner);
+                redrawHexes.Add(previousHex);
+            }
+
+            prisoner.hex = hex;
+            if (hex != null && !hex.characters.Contains(prisoner))
+            {
+                hex.characters.Add(prisoner);
+            }
+
+            prisoner.RefreshSelectedCharacterIconIfSelected();
+            prisoner.RefreshActionsIfSelected();
+        }
+
+        if (hex != null) redrawHexes.Add(hex);
+        foreach (Hex redrawHex in redrawHexes)
+        {
+            redrawHex?.RedrawCharacters();
         }
     }
 

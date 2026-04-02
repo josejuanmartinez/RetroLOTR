@@ -443,6 +443,81 @@ public class Leader : Character
         if (showMessage && goldCost > 0) MessageDisplay.ShowMessage($"{characterName}: -{goldCost} <sprite name=\"gold\">", Color.red);
     }
 
+    public int GetResourceAmount(ProducesEnum resourceType)
+    {
+        return resourceType switch
+        {
+            ProducesEnum.leather => leatherAmount,
+            ProducesEnum.mounts => mountsAmount,
+            ProducesEnum.timber => timberAmount,
+            ProducesEnum.iron => ironAmount,
+            ProducesEnum.steel => steelAmount,
+            ProducesEnum.mithril => mithrilAmount,
+            ProducesEnum.gold => goldAmount,
+            _ => 0
+        };
+    }
+
+    public void AddResource(ProducesEnum resourceType, int amount)
+    {
+        if (amount <= 0) return;
+
+        switch (resourceType)
+        {
+            case ProducesEnum.leather:
+                AddLeather(amount);
+                break;
+            case ProducesEnum.mounts:
+                AddMounts(amount);
+                break;
+            case ProducesEnum.timber:
+                AddTimber(amount);
+                break;
+            case ProducesEnum.iron:
+                AddIron(amount);
+                break;
+            case ProducesEnum.steel:
+                AddSteel(amount);
+                break;
+            case ProducesEnum.mithril:
+                AddMithril(amount);
+                break;
+            case ProducesEnum.gold:
+                AddGold(amount);
+                break;
+        }
+    }
+
+    public void RemoveResource(ProducesEnum resourceType, int amount, bool showMessage = true)
+    {
+        if (amount <= 0) return;
+
+        switch (resourceType)
+        {
+            case ProducesEnum.leather:
+                RemoveLeather(amount, showMessage);
+                break;
+            case ProducesEnum.mounts:
+                RemoveMounts(amount, showMessage);
+                break;
+            case ProducesEnum.timber:
+                RemoveTimber(amount, showMessage);
+                break;
+            case ProducesEnum.iron:
+                RemoveIron(amount, showMessage);
+                break;
+            case ProducesEnum.steel:
+                RemoveSteel(amount, showMessage);
+                break;
+            case ProducesEnum.mithril:
+                RemoveMithril(amount, showMessage);
+                break;
+            case ProducesEnum.gold:
+                RemoveGold(amount, showMessage);
+                break;
+        }
+    }
+
     private void TryPulseStoreResourceGain(ProducesEnum resourceType, int amount)
     {
         if (amount <= 0) return;
