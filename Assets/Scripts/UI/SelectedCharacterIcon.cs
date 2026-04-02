@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using System.Collections.Generic;
+using System.Linq;
 
 [RequireComponent(typeof(Image))]
 [RequireComponent(typeof(CanvasGroup))]
@@ -218,7 +219,11 @@ public class SelectedCharacterIcon : MonoBehaviour
         );
         alignmentIcon.enabled = true;
         alignmentIcon.sprite = GetIllustrationByName(c.GetAlignment().ToString());
-        textWidget.text = $"{c.GetHoverText(true, false, false, true, false, false)}";
+        string baseHoverText = c.GetHoverText(true, false, false, true, false, false);
+        string kidnappingText = BuildKidnappingStatusText(c);
+        textWidget.text = string.IsNullOrWhiteSpace(kidnappingText)
+            ? baseHoverText
+            : $"{baseHoverText}\n{kidnappingText}";
         levelsGameObject.SetActive(true);
         actioned.SetActive(true);
         moved.SetActive(true);
@@ -254,6 +259,26 @@ public class SelectedCharacterIcon : MonoBehaviour
                 PlaySelectionChangeFx();
             }
         }
+    }
+
+    private string BuildKidnappingStatusText(Character c)
+    {
+        if (c == null) return string.Empty;
+
+        List<string> parts = new();
+        int captiveCount = c.kidnappedCharacters != null ? c.kidnappedCharacters.Count(x => x != null && x.character != null && !x.character.killed) : 0;
+        if (captiveCount > 0)
+        {
+            parts.Add($"Captives: {captiveCount}");
+        }
+
+        if (c.IsKidnapped())
+        {
+            string kidnapperName = c.kidnappedBy != null ? c.kidnappedBy.characterName : "Unknown";
+            parts.Add($"Captured by: {kidnapperName}");
+        }
+
+        return string.Join(" | ", parts);
     }
 
     public void RefreshHoverPreview(Character c, string hoverText, bool showHealth, bool showArtifacts)

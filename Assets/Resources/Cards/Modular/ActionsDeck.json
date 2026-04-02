@@ -1081,6 +1081,30 @@
             "tags": [],
             "jokerRequired": 0,
             "spriteName": "StealFood"
+        },
+        {
+            "cardId": 280,
+            "name": "Kidnap Character",
+            "description": "Attempt to kidnap an enemy character. Captives drain 1 gold per turn from their original nation and may escape.",
+            "type": "Action",
+            "actionClassName": "KidnapCharacter",
+            "actionId": 1230,
+            "action": "KidnapCharacter",
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 4,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 65,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 3,
+            "tags": [],
+            "jokerRequired": 0,
+            "spriteName": "KidnapCharacter"
         }
     ]
 }

@@ -49,6 +49,18 @@ public class Character : MonoBehaviour
     public List<Leader> doubledBy = new();
     private Dictionary<Leader, int> doubledByTurns = new();
 
+    [System.Serializable]
+    public class KidnappedCharacterRecord
+    {
+        public Character character;
+        public Leader originalOwner;
+    }
+
+    [Header("Kidnapping")]
+    public List<KidnappedCharacterRecord> kidnappedCharacters = new();
+    public Character kidnappedBy;
+    public Leader kidnappedOriginalOwner;
+
     [Header("Artifacts")]
     public List<Artifact> artifacts = new();
 
@@ -96,6 +108,9 @@ public class Character : MonoBehaviour
         army = null;
         doubledBy = new();
         doubledByTurns = new();
+        kidnappedCharacters = new();
+        kidnappedBy = null;
+        kidnappedOriginalOwner = null;
         reachableHexes = new();
         statusEffects = new();
         InitializeStatusEffects();
@@ -333,6 +348,9 @@ public class Character : MonoBehaviour
     {
         Game game = FindFirstObjectByType<Game>();
         Leader player = game != null ? game.player : null;
+
+        ProcessKidnappedCharacters();
+        if (killed) return;
 
         if (health < 100)
         {
@@ -631,6 +649,110 @@ public class Character : MonoBehaviour
         return army;
     }
 
+    private void ProcessKidnappedCharacters()
+    {
+        if (kidnappedCharacters == null) kidnappedCharacters = new();
+
+        for (int i = kidnappedCharacters.Count - 1; i >= 0; i--)
+        {
+            KidnappedCharacterRecord record = kidnappedCharacters[i];
+            Character prisoner = record != null ? record.character : null;
+            if (record == null || prisoner == null || prisoner.killed || prisoner.kidnappedBy != this)
+            {
+                kidnappedCharacters.RemoveAt(i);
+                continue;
+            }
+
+            Leader ownerToDrain = record.originalOwner != null ? record.originalOwner : prisoner.kidnappedOriginalOwner;
+            if (ownerToDrain != null)
+            {
+                ownerToDrain.RemoveGold(1, ownerToDrain == FindFirstObjectByType<Game>()?.player);
+            }
+
+            int kidnapperAgentLevel = Mathf.Max(0, GetAgent());
+            int escapeRoll = UnityEngine.Random.Range(0, 10);
+            if (escapeRoll >= kidnapperAgentLevel)
+            {
+                prisoner.ReleaseFromKidnap(true);
+            }
+        }
+    }
+
+    public bool IsKidnapped()
+    {
+        return kidnappedBy != null && !killed;
+    }
+
+    public bool CanKidnap(Character target)
+    {
+        if (target == null || target == this || killed || target.killed) return false;
+        if (GetAgent() < 4) return false;
+        if (target.IsArmyCommander()) return false;
+        if (target is Leader) return false;
+        if (target.GetOwner() == GetOwner()) return false;
+        if (target.IsKidnapped()) return false;
+        return true;
+    }
+
+    public bool Kidnap(Character target)
+    {
+        if (!CanKidnap(target)) return false;
+
+        if (kidnappedCharacters == null) kidnappedCharacters = new();
+
+        Leader originalOwner = target.GetOwner();
+        if (originalOwner == null) return false;
+
+        if (originalOwner.controlledCharacters.Contains(target)) originalOwner.controlledCharacters.Remove(target);
+        if (target.hex != null && target.hex.characters.Contains(target)) target.hex.characters.Remove(target);
+
+        target.kidnappedBy = this;
+        target.kidnappedOriginalOwner = originalOwner;
+        target.hex = this.hex;
+        target.hasActionedThisTurn = true;
+        target.moved = target.GetMaxMovement();
+
+        kidnappedCharacters.Add(new KidnappedCharacterRecord
+        {
+            character = target,
+            originalOwner = originalOwner
+        });
+
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} kidnapped {target.characterName}!", Color.green);
+        RefreshSelectedCharacterIconIfSelected();
+        RefreshActionsIfSelected();
+        return true;
+    }
+
+    public void ReleaseFromKidnap(bool escaped)
+    {
+        Character kidnapper = kidnappedBy;
+        if (kidnapper != null && kidnapper.kidnappedCharacters != null)
+        {
+            kidnapper.kidnappedCharacters.RemoveAll(x => x == null || x.character == null || x.character == this);
+        }
+
+        kidnappedBy = null;
+        Leader originalOwner = kidnappedOriginalOwner;
+        kidnappedOriginalOwner = null;
+
+        if (originalOwner != null && !originalOwner.controlledCharacters.Contains(this))
+        {
+            originalOwner.controlledCharacters.Add(this);
+        }
+
+        if (hex != null && !hex.characters.Contains(this))
+        {
+            hex.characters.Add(this);
+            hex.RedrawCharacters();
+        }
+
+        if (escaped)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} escaped captivity!", Color.yellow);
+        }
+    }
+
     virtual public void Killed(Leader killedBy, bool onlyMark=false)
     {
         bool redrawArmies = false;
@@ -638,6 +760,24 @@ public class Character : MonoBehaviour
             army.Killed(killedBy, onlyMark);
             redrawArmies = true;
         }
+        if (kidnappedCharacters != null && kidnappedCharacters.Count > 0)
+        {
+            List<Character> prisoners = kidnappedCharacters
+                .Where(x => x != null && x.character != null)
+                .Select(x => x.character)
+                .ToList();
+            foreach (Character prisoner in prisoners)
+            {
+                prisoner.ReleaseFromKidnap(false);
+            }
+            kidnappedCharacters.Clear();
+        }
+
+        if (IsKidnapped())
+        {
+            ReleaseFromKidnap(false);
+        }
+
         if(!onlyMark)
         {
             if(GetOwner().controlledCharacters.Contains(this)) GetOwner().controlledCharacters.Remove(this);
