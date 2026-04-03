@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Hex : MonoBehaviour
 {
@@ -21,13 +19,7 @@ public class Hex : MonoBehaviour
     private float characterIconOffsetDefault = 0f;
 
     [Header("Rendering")]
-
-    public GameObject pcObject;
-    public SpriteRenderer pcSprite;
     public HoverNoUI pcHover;
-
-    public GameObject fortObject;
-    public SpriteRenderer fortSprite;
 
     [Header("Hover")]
     [SerializeField] private float tooltipFontSize = 2f;
@@ -48,15 +40,12 @@ public class Hex : MonoBehaviour
     public TerrainEnum terrainType;
     public SpriteRenderer terrainTexture;
     public SpriteRenderer terrainOrNoneMinimapTexture;
+    public GameObject cliffGameObject;
+    public GameObject hexTextureWater;
 
-    public GameObject fow;
     public GameObject unseen;
     public GameObject movement;
     public MovementCostManager movementCostManager;
-    public List<SpriteRenderer> decorPlaceholders = new();
-    public List<Sprite> potentialDecors = new();
-    public List<Sprite> desertDecors = new();
-    public List<Sprite> wastelandDecors = new();
 
     public SpriteRenderer freeArmySR;
     public SpriteRenderer neutralArmySR;
@@ -77,6 +66,7 @@ public class Hex : MonoBehaviour
 
     [Header("Data")]
     [SerializeField] private PC pc;
+    [SerializeField] private bool isRevealed;
     [SerializeField] private bool mapOnlyRevealed;
 
     public List<Army> armies = new();
@@ -102,8 +92,9 @@ public class Hex : MonoBehaviour
     private BoardNavigator navigator;
     private Game game;
 
-    private Features features;
     private Illustrations illustrations;
+    private HexTextureMapping hexTextureMapping;
+    private Sprite baseTerrainSprite;
 
     // Reused buffers to avoid GC in UI building / raycasts
     private static readonly StringBuilder sbChars = new(256);
@@ -126,11 +117,11 @@ public class Hex : MonoBehaviour
 
         // Cache singletons once
         game = FindFirstObjectByType<Game>();
-        features = FindFirstObjectByType<Features>();
         colors = FindFirstObjectByType<Colors>();
         board = FindFirstObjectByType<Board>();
         navigator = FindFirstObjectByType<BoardNavigator>();
         illustrations = FindFirstObjectByType<Illustrations>();
+        hexTextureMapping = GetComponent<HexTextureMapping>();
         if (characterIcon != null)
         {
             characterIconZoom = characterIcon.GetComponent<ZoomSpriteRenderer>();
@@ -146,7 +137,7 @@ public class Hex : MonoBehaviour
         UpdateParticles();
     }
 
-    public bool IsHexRevealed() => !fow.activeSelf;
+    public bool IsHexRevealed() => isRevealed;
     public bool IsHexSeen() => IsHexRevealed() && !mapOnlyRevealed && (!unseen || !unseen.activeSelf);
     public List<Hex> GetHexesInRadius(int radius)
     {
@@ -249,7 +240,7 @@ public class Hex : MonoBehaviour
     {
         v2 = new Vector2Int(row, col);
         if (game == null) game = FindFirstObjectByType<Game>();
-        terrainTexture.sortingOrder = row * board.GetWidth() + col;
+        terrainTexture.sortingOrder = int.MaxValue - (col * board.GetHeight() + row);
     }
 
     public SpriteRenderer GetCharacterSpriteRendererOnHex(Character character)
@@ -369,11 +360,18 @@ public class Hex : MonoBehaviour
     public void SetTerrain(TerrainEnum terrainType, Sprite terrainTexture, Color terrainColor)
     {
         this.terrainType = terrainType;
-        this.terrainTexture.sprite = terrainTexture;
+        if (terrainTexture != null)
+        {
+            baseTerrainSprite = terrainTexture;
+        }
+        else
+        {
+            if (hexTextureMapping == null) hexTextureMapping = GetComponent<HexTextureMapping>();
+            baseTerrainSprite = hexTextureMapping != null ? hexTextureMapping.GetTerrainBaseSprite(terrainType) : null;
+        }
+        ApplyHexTextureSprite();
         // this.terrainTexture.color = terrainColor;
         // if(terrainType == TerrainEnum.mountains) this.terrainTexture.sortingOrder += 1000;
-        UpdateMinimapTerrain(IsHexRevealed());
-        UpdateDecorForTerrain();
     }
 
     public void RedrawArmies(bool refreshHoverText = true)
@@ -427,19 +425,9 @@ public class Hex : MonoBehaviour
 
         if (seen) RevealNonPlayableLeadersOnHex(viewingLeader, isHuman);
 
-        bool pcRevealed = seen && IsPCRevealed();
-        bool ownerIsNonPlayableLeader = pc.owner is NonPlayableLeader;
-        bool nplKnownByViewer = ownerIsNonPlayableLeader && viewingLeader != null && (pc.owner as NonPlayableLeader).IsRevealedToLeader(viewingLeader);
-        bool shouldShowPc = seen && (pcRevealed || (ownerIsNonPlayableLeader && nplKnownByViewer));
-        float pcAlpha = pc.isHidden ? 0.35f : 1f;
-        SetPcSpriteAlpha(pcAlpha);
-
-        // PC visibility
-        SetActiveFast(pcObject, shouldShowPc && pc.citySize != PCSizeEnum.NONE);
+        bool shouldShowPc = ShouldShowPcVisual();
+        ApplyHexTextureSprite();
         UpdatePortIcon(shouldShowPc);
-
-        // fort visibility
-        SetActiveFast(fortObject, seen && pc != null && pc.fortSize != FortSizeEnum.NONE);
 
         if (refreshHoverText) RefreshHoverText();
     }
@@ -671,6 +659,7 @@ public class Hex : MonoBehaviour
             }
             RebuildScoutingCache();
         }
+        isRevealed = true;
         if (!mapOnlyRevealed && game.currentlyPlaying == game.player && characters.Find(x => x.GetOwner() == game.player) == null)
         {
             if (IsHexRevealed()) SetActiveFast(unseen, true);
@@ -686,9 +675,9 @@ public class Hex : MonoBehaviour
     public void Obscure(Leader obscuredBy = null)
     {
         Unreveal(obscuredBy);
+        isRevealed = false;
         mapOnlyRevealed = false;
-        SetActiveFast(fow, true);
-        SetActiveFast(unseen, true);
+        if (unseen != null) SetActiveFast(unseen, false);
         UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         RedrawArmies(false);
@@ -859,7 +848,7 @@ public class Hex : MonoBehaviour
 
     private void SetPcSpriteAlpha(float alpha)
     {
-        SetSpriteAlpha(pcSprite, alpha);
+        SetSpriteAlpha(terrainTexture, alpha);
         if (port != null && port.TryGetComponent<SpriteRenderer>(out var portSprite)) SetSpriteAlpha(portSprite, alpha);
     }
 
@@ -874,9 +863,9 @@ public class Hex : MonoBehaviour
     private void UpdateMinimapTerrain(bool revealed)
     {
         if (!terrainOrNoneMinimapTexture) return;
+        terrainOrNoneMinimapTexture.sprite = terrainTexture ? terrainTexture.sprite : null;
         if (revealed)
         {
-            terrainOrNoneMinimapTexture.sprite = terrainTexture ? terrainTexture.sprite : null;
             SetSpriteAlpha(terrainOrNoneMinimapTexture, 1f);
         }
         else
@@ -888,6 +877,7 @@ public class Hex : MonoBehaviour
     private void UpdateVisibilityForFog()
     {
         bool revealed = IsHexRevealed();
+        if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, revealed);
         if (revealed)
         {
             if (isSelected)
@@ -900,25 +890,14 @@ public class Hex : MonoBehaviour
             if (neutralArmiesAtHexHover) SetActiveFast(neutralArmiesAtHexHover.gameObject, true);
             if (darkServantArmiesAtHexHover) SetActiveFast(darkServantArmiesAtHexHover.gameObject, true);
             if (charactersAtHexHover) SetActiveFast(charactersAtHexHover.gameObject, true);
-
-            if (decorPlaceholders != null)
-            {
-                for (int i = 0, n = decorPlaceholders.Count; i < n; i++)
-                {
-                    var placeholder = decorPlaceholders[i];
-                    if (placeholder != null) SetActiveFast(placeholder.gameObject, true);
-                }
-            }
             UpdateArtifactVisibility();
             UpdateParticles();
+            RefreshFrontierRowVisuals();
             return;
         }
 
-        SetActiveFast(pcObject, false);
         SetActiveFast(port, false);
         if (portHover) SetActiveFast(portHover.gameObject, false);
-
-        SetActiveFast(fortObject, false);
 
         SetActiveFast(freeArmy, false);
         SetActiveFast(neutralArmy, false);
@@ -941,16 +920,8 @@ public class Hex : MonoBehaviour
         if (darkServantArmiesAtHexHover) { darkServantArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(darkServantArmiesAtHexHover.gameObject, false); }
         if (charactersAtHexHover) { charactersAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(charactersAtHexHover.gameObject, false); }
 
-        if (decorPlaceholders != null)
-        {
-            for (int i = 0, n = decorPlaceholders.Count; i < n; i++)
-            {
-                var placeholder = decorPlaceholders[i];
-                if (placeholder != null) SetActiveFast(placeholder.gameObject, false);
-            }
-        }
-
         UpdateParticles();
+        RefreshFrontierRowVisuals();
     }
 
     private bool ShouldShowPcPort()
@@ -1060,55 +1031,9 @@ public class Hex : MonoBehaviour
         characterIconZoom.enabled = useZoom;
     }
 
-    private void UpdateDecorForTerrain()
-    {
-        if (decorPlaceholders == null || decorPlaceholders.Count == 0) return;
-
-        bool useDecor = terrainType == TerrainEnum.plains
-            || terrainType == TerrainEnum.grasslands
-            || terrainType == TerrainEnum.shore
-            || terrainType == TerrainEnum.hills
-            || terrainType == TerrainEnum.desert
-            || terrainType == TerrainEnum.wastelands;
-
-        List<Sprite> decorSource = potentialDecors;
-        if (terrainType == TerrainEnum.desert) decorSource = desertDecors;
-        if (terrainType == TerrainEnum.wastelands) decorSource = wastelandDecors;
-
-        if (!useDecor || decorSource == null || decorSource.Count == 0)
-        {
-            for (int i = 0; i < decorPlaceholders.Count; i++)
-            {
-                var placeholder = decorPlaceholders[i];
-                if (!placeholder) continue;
-                placeholder.sprite = null;
-                SetSpriteAlpha(placeholder, 0f);
-            }
-            return;
-        }
-
-        for (int i = 0; i < decorPlaceholders.Count; i++)
-        {
-            var placeholder = decorPlaceholders[i];
-            if (!placeholder) continue;
-            if (terrainTexture != null) placeholder.sortingOrder = terrainTexture.sortingOrder;
-
-            if (UnityEngine.Random.value > 0.5f)
-            {
-                int index = UnityEngine.Random.Range(0, decorSource.Count);
-                placeholder.sprite = decorSource[index];
-                SetSpriteAlpha(placeholder, 1f);
-            }
-            else
-            {
-                placeholder.sprite = null;
-                SetSpriteAlpha(placeholder, 0f);
-            }
-        }
-    }
-
     private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
     {
+        isRevealed = true;
         mapOnlyRevealed = false;
         if (scoutedByPlayer)
         {
@@ -1117,7 +1042,6 @@ public class Hex : MonoBehaviour
         }
         if (isPlayerTurn)
         {
-            SetActiveFast(fow, false);
             SetActiveFast(unseen, false);
         }
         UpdateVisibilityForFog();
@@ -1135,8 +1059,8 @@ public class Hex : MonoBehaviour
 
     private void RevealMapOnlyInternal()
     {
+        isRevealed = true;
         mapOnlyRevealed = true;
-        SetActiveFast(fow, false);
         if (unseen != null) SetActiveFast(unseen, false);
         UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
@@ -1386,6 +1310,20 @@ public class Hex : MonoBehaviour
         return pc != null && pc.citySize != PCSizeEnum.NONE;
     }
 
+    public bool ShouldShowPcVisual()
+    {
+        if (pc == null || pc.citySize == PCSizeEnum.NONE) return false;
+        bool seen = IsHexSeen();
+        if (!seen) return false;
+        if (game == null) game = FindFirstObjectByType<Game>();
+
+        PlayableLeader viewingLeader = game != null ? game.currentlyPlaying : null;
+        bool pcRevealed = IsPCRevealed();
+        bool ownerIsNonPlayableLeader = pc.owner is NonPlayableLeader;
+        bool nplKnownByViewer = ownerIsNonPlayableLeader && viewingLeader != null && (pc.owner as NonPlayableLeader).IsRevealedToLeader(viewingLeader);
+        return pcRevealed || (ownerIsNonPlayableLeader && nplKnownByViewer);
+    }
+
     public PC GetPC()
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return null;
@@ -1398,29 +1336,25 @@ public class Hex : MonoBehaviour
         return pc != null && pc.citySize != PCSizeEnum.NONE ? pc : null;
     }
 
+    public Sprite GetBaseTerrainSprite()
+    {
+        return baseTerrainSprite;
+    }
+
     public void SetPC(PC pc, string pcFeature = "", string fortFeature = "", bool isIsland = false)
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return;
         this.pc = pc;
-        if(pcFeature != "")
-        {
-            Sprite pcFeatureSprite = features.GetFeatureByName(pcFeature);
-            if (pcSprite != null) pcSprite.sprite = pcFeatureSprite;
-        }
-        if(fortFeature != "")
-        {
-            Sprite fortFeatureSprite = features.GetFeatureByName(fortFeature);
-            if (fortSprite != null) fortSprite.sprite = fortFeatureSprite;
-        }
         if(isIsland)
         {
-            terrainTexture.sprite = FindFirstObjectByType<Textures>().island;
+            if (hexTextureMapping == null) hexTextureMapping = GetComponent<HexTextureMapping>();
+            baseTerrainSprite = hexTextureMapping != null ? hexTextureMapping.GetIslandSprite() : baseTerrainSprite;
         }
         if (pc.owner is NonPlayableLeader)
         {
             EnsurePersistentScouting(pc.owner);
         }
-        UpdateMinimapTerrain(IsHexRevealed());
+        ApplyHexTextureSprite();
     }
 
     public void ShowMovementLeft(int movementLeft, Character character)
@@ -1603,5 +1537,50 @@ public class Hex : MonoBehaviour
     private static void SetActiveFast(GameObject go, bool state)
     {
         if (go && go.activeSelf != state) go.SetActive(state);
+    }
+
+    private void RefreshFrontierRowVisuals()
+    {
+        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null || board.hexes == null)
+        {
+            SetActiveFast(cliffGameObject, false);
+            SetActiveFast(hexTextureWater, false);
+            return;
+        }
+
+        foreach (Hex hex in board.hexes.Values)
+        {
+            if (hex == null) continue;
+
+            bool isFrontierHex = false;
+            if (hex.IsHexSeen())
+            {
+                Vector2Int sameY = new Vector2Int(hex.v2.x - 1, hex.v2.y);
+                Vector2Int previousY = new Vector2Int(hex.v2.x - 1, hex.v2.y - 1);
+                Vector2Int nextY = new Vector2Int(hex.v2.x - 1, hex.v2.y + 1);
+                bool hasSameYVisibleHex = board.hexes.TryGetValue(sameY, out Hex sameYHex) && sameYHex != null && sameYHex.IsHexSeen();
+                bool hasPreviousYVisibleHex = board.hexes.TryGetValue(previousY, out Hex previousYHex) && previousYHex != null && previousYHex.IsHexSeen();
+                bool hasNextYVisibleHex = board.hexes.TryGetValue(nextY, out Hex nextYHex) && nextYHex != null && nextYHex.IsHexSeen();
+                isFrontierHex = !hasSameYVisibleHex || !hasPreviousYVisibleHex || !hasNextYVisibleHex;
+            }
+
+            bool showWaterFrontier = isFrontierHex && (hex.terrainType == TerrainEnum.shallowWater || hex.terrainType == TerrainEnum.deepWater);
+            bool showCliffFrontier = isFrontierHex && !showWaterFrontier;
+
+            SetActiveFast(hex.hexTextureWater, showWaterFrontier);
+            SetActiveFast(hex.cliffGameObject, showCliffFrontier);
+        }
+    }
+
+    private void ApplyHexTextureSprite()
+    {
+        if (terrainTexture == null) return;
+        if (hexTextureMapping == null) hexTextureMapping = GetComponent<HexTextureMapping>();
+
+        Sprite sprite = hexTextureMapping != null ? hexTextureMapping.GetSprite(this) : baseTerrainSprite;
+        terrainTexture.sprite = sprite;
+        SetPcSpriteAlpha(ShouldShowPcVisual() && pc != null && pc.isHidden ? 0.35f : 1f);
+        UpdateMinimapTerrain(IsHexRevealed());
     }
 }

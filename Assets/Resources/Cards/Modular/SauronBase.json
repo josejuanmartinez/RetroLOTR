@@ -146,17 +146,17 @@
         },
         {
             "cardId": 35,
-            "name": "Goblin Town",
+            "name": "Goblin Gate",
             "description": "MistyMountains.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
             "type": "PC",
             "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
             "pcEffectId": "goblin_muster",
-            "action": "MaterialRetrievalOrActionGoblinTown",
+            "action": "MaterialRetrievalOrActionGoblinGate",
             "tags": [
                 "MistyMountains"
             ],
             "region": "MistyMountains",
-            "spriteName": "GoblinTown"
+            "spriteName": "GoblinGate"
         },
         {
             "cardId": 43,
@@ -676,7 +676,7 @@
         },
         {
             "cardId": 347,
-            "name": "GoblinGate",
+            "name": "Goblin Gate",
             "description": "MistyMountains.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
             "type": "PC",
             "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",

@@ -98,7 +98,6 @@ public class BoardGenerator : MonoBehaviour
     private Dictionary<Vector2Int, Hex> hexes;
     private ObjectPool<GameObject> hexPool;
     private Dictionary<TerrainEnum, Color> terrainColors;
-    private Dictionary<TerrainEnum, Sprite> terrainTextures;
 
     // Hexes adjacent to rivers (shallowWater cells that are part of rivers)
     public HashSet<Vector2Int> riverCoastHexes = new HashSet<Vector2Int>();
@@ -173,9 +172,9 @@ public class BoardGenerator : MonoBehaviour
 
         this.board = board;
 
-        if (board.colors == null || board.textures == null)
+        if (board.colors == null)
         {
-            Debug.LogError("Board colors or textures are not assigned!");
+            Debug.LogError("Board colors are not assigned!");
             return;
         }
 
@@ -184,14 +183,13 @@ public class BoardGenerator : MonoBehaviour
 
     private void CacheTerrainAssets()
     {
-        if (board == null || board.colors == null || board.textures == null)
+        if (board == null || board.colors == null)
         {
-            Debug.LogError("Cannot cache terrain assets: Board, colors, or textures are null!");
+            Debug.LogError("Cannot cache terrain assets: Board or colors are null!");
             return;
         }
 
         terrainColors = new Dictionary<TerrainEnum, Color>();
-        terrainTextures = new Dictionary<TerrainEnum, Sprite>();
 
         foreach (TerrainEnum terrain in Enum.GetValues(typeof(TerrainEnum)))
         {
@@ -205,16 +203,6 @@ public class BoardGenerator : MonoBehaviour
                 else
                 {
                     Debug.LogWarning($"Color field not found for terrain type: {terrain}");
-                }
-
-                var textureFieldInfo = typeof(Textures).GetField(terrain.ToString());
-                if (textureFieldInfo != null)
-                {
-                    terrainTextures[terrain] = (Sprite)textureFieldInfo.GetValue(board.textures);
-                }
-                else
-                {
-                    Debug.LogWarning($"Texture field not found for terrain type: {terrain}");
                 }
             }
             catch (Exception e)
@@ -300,7 +288,6 @@ public class BoardGenerator : MonoBehaviour
 
         var grid = terrainGrid;
         var colors = terrainColors;
-        var textures = terrainTextures;
         var parentTransform = transform;
 
         var budget = new FrameBudget(() => generationFrameBudgetSeconds);
@@ -323,7 +310,7 @@ public class BoardGenerator : MonoBehaviour
                 var terrainType = grid[row, col];
                 var color = colors[terrainType];
 
-                hex.SetTerrain(terrainType, textures[terrainType], color);
+                hex.SetTerrain(terrainType, null, color);
                 hexes[new Vector2Int(row, col)] = hex;
 
                 hexesProcessed++;

@@ -55,7 +55,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     [SerializeField] private float selectionFxDurationMultiplier = 3f;
     [SerializeField] private float selectionFxDarkenMin = 0.15f;
 
-    private Videos videos;
+    // private Videos videos;
     private Illustrations illustrations;
     private ActionsManager actionsManager;
     private CanvasGroup canvasGroup;
@@ -213,10 +213,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetDropTargetHighlight(false);
         SetVisible(true);
         border.SetActive(true);
-        SetCharacterVisuals(
-            GetVideoByName(c.characterName),
-            GetIllustrationByName(c.characterName)
-        );
+        SetCharacterVisuals(GetIllustrationByName(c.characterName));
         alignmentIcon.enabled = true;
         alignmentIcon.sprite = GetIllustrationByName(c.GetAlignment().ToString());
         string baseHoverText = c.GetHoverText(true, false, false, true, false, false);
@@ -292,10 +289,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetDropTargetHighlight(false);
         SetVisible(true);
         border.SetActive(true);
-        SetCharacterVisuals(
-            GetVideoByName(c.characterName),
-            GetIllustrationByName(c.characterName)
-        );
+        SetCharacterVisuals(GetIllustrationByName(c.characterName));
         alignmentIcon.enabled = true;
         alignmentIcon.sprite = GetIllustrationByName(c.GetAlignment().ToString());
         textWidget.text = hoverText ?? "";
@@ -341,11 +335,13 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetVisible(false);
         border.SetActive(false);
         alignmentIcon.enabled = false;
-        if (video != null)
-        {
-            video.Stop();
-            video.enabled = false;
-        }
+        // Video path disabled for now; static illustrations only.
+        // if (video != null)
+        // {
+        //     video.Stop();
+        //     video.enabled = false;
+        // }
+        if (video != null) video.enabled = false;
         if (rawImage != null) rawImage.enabled = false;
         Image targetImage = GetImageTarget();
         if (targetImage != null) targetImage.enabled = false;
@@ -369,11 +365,11 @@ public class SelectedCharacterIcon : MonoBehaviour
         return illustrations != null ? illustrations.GetIllustrationByName(name) : null;
     }
 
-    private VideoClip GetVideoByName(string name)
-    {
-        if (videos == null) videos = FindFirstObjectByType<Videos>();
-        return videos != null ? videos.GetVideoByName(name) : null;
-    }
+    // private VideoClip GetVideoByName(string name)
+    // {
+    //     if (videos == null) videos = FindFirstObjectByType<Videos>();
+    //     return videos != null ? videos.GetVideoByName(name) : null;
+    // }
 
     private Image GetImageTarget()
     {
@@ -394,35 +390,35 @@ public class SelectedCharacterIcon : MonoBehaviour
         if (rootImage != null) rootImage.enabled = visible;
     }
 
-    private void SetCharacterVisuals(VideoClip clip, Sprite fallbackSprite)
+    private void SetCharacterVisuals(Sprite fallbackSprite)
     {
-        bool hasClip = clip != null && video != null;
-
-        if (video != null)
-        {
-            if (hasClip)
-            {
-                video.enabled = true;
-                video.clip = clip;
-                video.Play();
-            }
-            else
-            {
-                video.Stop();
-                video.enabled = false;
-            }
-        }
-
-        if (rawImage != null) rawImage.enabled = hasClip;
+        // Video path disabled for now; static illustrations only.
+        // bool hasClip = clip != null && video != null;
+        //
+        // if (video != null)
+        // {
+        //     if (hasClip)
+        //     {
+        //         video.enabled = true;
+        //         video.clip = clip;
+        //         video.Play();
+        //     }
+        //     else
+        //     {
+        //         video.Stop();
+        //         video.enabled = false;
+        //     }
+        // }
+        //
+        // if (rawImage != null) rawImage.enabled = hasClip;
+        if (video != null) video.enabled = false;
+        if (rawImage != null) rawImage.enabled = false;
 
         Image targetImage = GetImageTarget();
         if (targetImage != null)
         {
-            targetImage.enabled = !hasClip;
-            if (!hasClip)
-            {
-                targetImage.sprite = fallbackSprite;
-            }
+            targetImage.enabled = true;
+            targetImage.sprite = fallbackSprite;
         }
     }
 

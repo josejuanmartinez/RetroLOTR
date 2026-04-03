@@ -32,12 +32,12 @@ public class PopupManager : MonoBehaviour
     private CanvasGroup containerCanvasGroup;
     private Vector2 initialSize;
     public static bool IsShowing { get; private set; }
-    private Videos videos;
+    // private Videos videos;
     private Coroutine waitForMessagesRoutine;
-    private Coroutine actorPlaybackSequenceRoutine;
-    private Coroutine popupDisplayRoutine;
-    private int actorPlaybackToken;
-    private int popupDisplayToken;
+    // private Coroutine actorPlaybackSequenceRoutine;
+    // private Coroutine popupDisplayRoutine;
+    // private int actorPlaybackToken;
+    // private int popupDisplayToken;
 
     private struct PopupData
     {
@@ -112,10 +112,11 @@ public class PopupManager : MonoBehaviour
 
     public void Hide()
     {
-        popupDisplayToken++;
-        StopPopupDisplayRoutine();
-        actorPlaybackToken++;
-        StopActorPlaybackSequence();
+        // Video popup flow disabled for now; static portraits only.
+        // popupDisplayToken++;
+        // StopPopupDisplayRoutine();
+        // actorPlaybackToken++;
+        // StopActorPlaybackSequence();
         Action onClose = null;
         if (currentIndex >= 0 && currentIndex < queue.Count)
         {
@@ -140,8 +141,8 @@ public class PopupManager : MonoBehaviour
             typeWriterEffect.fullText = "";
         }
 
-        SetActorVisuals(actor1, actor1RawImage, actor1Video, null, null);
-        SetActorVisuals(actor2, actor2RawImage, actor2Video, null, null);
+        SetActorVisuals(actor1, actor1RawImage, actor1Video, null);
+        SetActorVisuals(actor2, actor2RawImage, actor2Video, null);
 
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
         if (actionsManager != null)
@@ -192,45 +193,27 @@ public class PopupManager : MonoBehaviour
         if (index < 0 || index >= queue.Count)
             return;
 
-        popupDisplayToken++;
-        StopPopupDisplayRoutine();
-        actorPlaybackToken++;
-        StopActorPlaybackSequence();
+        // Video popup flow disabled for now; static portraits only.
+        // popupDisplayToken++;
+        // StopPopupDisplayRoutine();
+        // actorPlaybackToken++;
+        // StopActorPlaybackSequence();
         currentIndex = index;
         PopupData data = queue[currentIndex];
         Sounds.Instance?.PlayMessage();
         Music.Instance?.PlayEventMusic();
 
-        StopActorVideo(actor1Video);
-        StopActorVideo(actor2Video);
-        ClearActorOutput(actor1RawImage, actor1Video);
-        ClearActorOutput(actor2RawImage, actor2Video);
+        // StopActorVideo(actor1Video);
+        // StopActorVideo(actor2Video);
+        // ClearActorOutput(actor1RawImage, actor1Video);
+        // ClearActorOutput(actor2RawImage, actor2Video);
 
-        VideoClip actor1Clip = GetVideoByName(data.spriteActor1 != null ? data.spriteActor1.name : null);
-
-        VideoClip actor2Clip = GetVideoByName(data.spriteActor2 != null ? data.spriteActor2.name : null);
-        bool hasActor2 = data.spriteActor2 != null || actor2Clip != null;
+        bool hasActor2 = data.spriteActor2 != null;
         SetActor2Active(hasActor2);
-        if (actor1Clip != null && actor2Clip != null)
-        {
-            int displayTokenSnapshot = popupDisplayToken;
-            popupDisplayRoutine = StartCoroutine(PrepareAndShowDualVideoEntry(
-                displayTokenSnapshot,
-                actor1Clip,
-                data.spriteActor1,
-                actor2Clip,
-                data.spriteActor2));
-        }
-        else
-        {
-            int displayTokenSnapshot = popupDisplayToken;
-            popupDisplayRoutine = StartCoroutine(PrepareAndShowSingleStateEntry(
-                displayTokenSnapshot,
-                actor1Clip,
-                data.spriteActor1,
-                actor2Clip,
-                data.spriteActor2));
-        }
+        SetActorVisuals(actor1, actor1RawImage, actor1Video, data.spriteActor1);
+        SetActorVisuals(actor2, actor2RawImage, actor2Video, data.spriteActor2);
+        ShowContainer();
+        ApplyPopupTextAndTitle(data);
 
         if (rectTransform != null)
         {
@@ -247,12 +230,12 @@ public class PopupManager : MonoBehaviour
         UpdateArrows();
     }
 
-    private void StopPopupDisplayRoutine()
-    {
-        if (popupDisplayRoutine == null) return;
-        StopCoroutine(popupDisplayRoutine);
-        popupDisplayRoutine = null;
-    }
+    // private void StopPopupDisplayRoutine()
+    // {
+    //     if (popupDisplayRoutine == null) return;
+    //     StopCoroutine(popupDisplayRoutine);
+    //     popupDisplayRoutine = null;
+    // }
 
     private bool ShouldDelayPopup()
     {
@@ -291,191 +274,59 @@ public class PopupManager : MonoBehaviour
         if (rightArrow != null) rightArrow.SetActive(hasQueue && currentIndex < queue.Count - 1);
     }
 
-    private VideoClip GetVideoByName(string name)
-    {
-        if (string.IsNullOrEmpty(name)) return null;
-        if (videos == null) videos = FindFirstObjectByType<Videos>();
-        return videos != null ? videos.GetVideoByName(name) : null;
-    }
+    // private VideoClip GetVideoByName(string name)
+    // {
+    //     if (string.IsNullOrEmpty(name)) return null;
+    //     if (videos == null) videos = FindFirstObjectByType<Videos>();
+    //     return videos != null ? videos.GetVideoByName(name) : null;
+    // }
 
     private void SetActor2Active(bool isActive)
     {
         if(!isActive) actor2.sprite = actorReplacement; 
         actor2.gameObject.SetActive(true);
-        actor2RawImage.gameObject.SetActive(true);
-        actor2Video.gameObject.SetActive(true);
+        if (actor2RawImage != null) actor2RawImage.gameObject.SetActive(false);
+        if (actor2Video != null) actor2Video.gameObject.SetActive(false);
     }
 
-    private void StopActorPlaybackSequence()
-    {
-        if (actorPlaybackSequenceRoutine == null) return;
-        StopCoroutine(actorPlaybackSequenceRoutine);
-        actorPlaybackSequenceRoutine = null;
-    }
+    // private void StopActorPlaybackSequence()
+    // {
+    //     if (actorPlaybackSequenceRoutine == null) return;
+    //     StopCoroutine(actorPlaybackSequenceRoutine);
+    //     actorPlaybackSequenceRoutine = null;
+    // }
 
-    private IEnumerator PlayRightActorAfterLeftCompletes(int tokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
-    {
-        if (rightClip == null)
-        {
-            actorPlaybackSequenceRoutine = null;
-            yield break;
-        }
+    // private IEnumerator PlayRightActorAfterLeftCompletes(int tokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
+    // {
+    //     Video popup flow disabled for now.
+    //     yield break;
+    // }
 
-        if (actor1Video != null)
-        {
-            StopActorVideo(actor2Video);
-            // Ensure left popup video only runs once before right starts.
-            actor1Video.isLooping = false;
-            if (actor1Video.clip != leftClip)
-            {
-                actor1Video.clip = leftClip;
-                actor1Video.Play();
-            }
+    // private IEnumerator PrepareAndShowDualVideoEntry(int displayTokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
+    // {
+    //     Video popup flow disabled for now.
+    //     yield break;
+    // }
 
-            // Wait briefly for playback to actually begin.
-            float waitForStart = 0f;
-            const float maxWaitForStart = 0.75f;
-            while (tokenSnapshot == actorPlaybackToken
-                && waitForStart < maxWaitForStart
-                && (!actor1Video.enabled || !actor1Video.isPlaying))
-            {
-                waitForStart += Time.unscaledDeltaTime;
-                yield return null;
-            }
+    // private IEnumerator PrepareAndShowSingleStateEntry(int displayTokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
+    // {
+    //     Video popup flow disabled for now.
+    //     yield break;
+    // }
 
-            // Once started, wait until it finishes.
-            if (actor1Video.enabled && actor1Video.isPlaying)
-            {
-                float safety = 0f;
-                float maxPlaybackWait = leftClip != null ? Mathf.Max(0.75f, (float)leftClip.length + 1f) : 4f;
-                while (tokenSnapshot == actorPlaybackToken
-                    && safety < maxPlaybackWait
-                    && actor1Video.enabled
-                    && actor1Video.isPlaying)
-                {
-                    safety += Time.unscaledDeltaTime;
-                    yield return null;
-                }
-            }
-        }
+    // private IEnumerator PrepareVideo(VideoPlayer video, RawImage rawImage, VideoClip clip)
+    // {
+    //     Video popup flow disabled for now.
+    //     yield break;
+    // }
 
-        if (tokenSnapshot != actorPlaybackToken)
-        {
-            actorPlaybackSequenceRoutine = null;
-            yield break;
-        }
+    // private void ApplyPreparedActorState(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
+    // {
+    // }
 
-        // Enforce single-video playback: left must be stopped before right starts.
-        SetActorVisuals(actor1, actor1RawImage, actor1Video, null, leftFallbackSprite);
-        StopActorVideo(actor1Video);
-        PlayPreparedVideo(actor2, actor2RawImage, actor2Video, rightClip, rightFallbackSprite);
-        actorPlaybackSequenceRoutine = null;
-    }
-
-    private IEnumerator PrepareAndShowDualVideoEntry(int displayTokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
-    {
-        SetContainerVisible(false);
-
-        yield return PrepareVideo(actor1Video, actor1RawImage, leftClip);
-        if (displayTokenSnapshot != popupDisplayToken)
-        {
-            popupDisplayRoutine = null;
-            yield break;
-        }
-
-        yield return PrepareVideo(actor2Video, actor2RawImage, rightClip);
-        if (displayTokenSnapshot != popupDisplayToken)
-        {
-            popupDisplayRoutine = null;
-            yield break;
-        }
-
-        PlayPreparedVideo(actor1, actor1RawImage, actor1Video, leftClip, leftFallbackSprite);
-        SetActorVisuals(actor2, actor2RawImage, actor2Video, null, rightFallbackSprite);
-        ShowContainer();
-        ApplyPopupTextAndTitle(queue[currentIndex]);
-
-        int playbackTokenSnapshot = actorPlaybackToken;
-        actorPlaybackSequenceRoutine = StartCoroutine(PlayRightActorAfterLeftCompletes(playbackTokenSnapshot, leftClip, leftFallbackSprite, rightClip, rightFallbackSprite));
-        popupDisplayRoutine = null;
-    }
-
-    private IEnumerator PrepareAndShowSingleStateEntry(int displayTokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
-    {
-        SetContainerVisible(false);
-
-        yield return PrepareVideo(actor1Video, actor1RawImage, leftClip);
-        if (displayTokenSnapshot != popupDisplayToken)
-        {
-            popupDisplayRoutine = null;
-            yield break;
-        }
-
-        yield return PrepareVideo(actor2Video, actor2RawImage, rightClip);
-        if (displayTokenSnapshot != popupDisplayToken)
-        {
-            popupDisplayRoutine = null;
-            yield break;
-        }
-
-        ApplyPreparedActorState(actor1, actor1RawImage, actor1Video, leftClip, leftFallbackSprite);
-        ApplyPreparedActorState(actor2, actor2RawImage, actor2Video, rightClip, rightFallbackSprite);
-        ShowContainer();
-        ApplyPopupTextAndTitle(queue[currentIndex]);
-        popupDisplayRoutine = null;
-    }
-
-    private IEnumerator PrepareVideo(VideoPlayer video, RawImage rawImage, VideoClip clip)
-    {
-        if (video == null || clip == null)
-        {
-            yield break;
-        }
-
-        StopActorVideo(video);
-        ClearActorOutput(rawImage, video);
-        video.enabled = true;
-        video.clip = clip;
-        video.isLooping = true;
-        video.Prepare();
-
-        float elapsed = 0f;
-        const float maxPrepareWait = 2f;
-        while (!video.isPrepared && elapsed < maxPrepareWait)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            yield return null;
-        }
-    }
-
-    private void ApplyPreparedActorState(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
-    {
-        if (clip != null && video != null && video.isPrepared)
-        {
-            PlayPreparedVideo(image, rawImage, video, clip, fallbackSprite);
-            return;
-        }
-
-        SetActorVisuals(image, rawImage, video, null, fallbackSprite);
-    }
-
-    private void PlayPreparedVideo(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
-    {
-        if (video == null || clip == null)
-        {
-            SetActorVisuals(image, rawImage, video, null, fallbackSprite);
-            return;
-        }
-
-        video.clip = clip;
-        video.enabled = true;
-        video.Play();
-        if (rawImage != null) rawImage.enabled = true;
-        if (image != null)
-        {
-            image.enabled = false;
-        }
-    }
+    // private void PlayPreparedVideo(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
+    // {
+    // }
 
     private void ShowContainer()
     {
@@ -529,57 +380,44 @@ public class PopupManager : MonoBehaviour
         }
     }
 
-    private static void StopActorVideo(VideoPlayer video)
+    // private static void StopActorVideo(VideoPlayer video)
+    // {
+    //     if (video == null) return;
+    //     video.Stop();
+    //     video.enabled = false;
+    // }
+
+    // private static void ClearActorOutput(RawImage rawImage, VideoPlayer video)
+    // {
+    //     if (rawImage != null)
+    //     {
+    //         rawImage.enabled = false;
+    //     }
+    //
+    //     RenderTexture target = video != null ? video.targetTexture : null;
+    //     if (target == null) return;
+    //
+    //     RenderTexture previous = RenderTexture.active;
+    //     RenderTexture.active = target;
+    //     GL.Clear(true, true, Color.clear);
+    //     RenderTexture.active = previous;
+    // }
+
+    private static void SetActorVisuals(Image image, RawImage rawImage, VideoPlayer video, Sprite fallbackSprite)
     {
-        if (video == null) return;
-        video.Stop();
-        video.enabled = false;
-    }
-
-    private static void ClearActorOutput(RawImage rawImage, VideoPlayer video)
-    {
-        if (rawImage != null)
-        {
-            rawImage.enabled = false;
-        }
-
-        RenderTexture target = video != null ? video.targetTexture : null;
-        if (target == null) return;
-
-        RenderTexture previous = RenderTexture.active;
-        RenderTexture.active = target;
-        GL.Clear(true, true, Color.clear);
-        RenderTexture.active = previous;
-    }
-
-    private static void SetActorVisuals(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
-    {
-        bool hasClip = clip != null && video != null;
-
+        // Video popup flow disabled for now; static portraits only.
         if (video != null)
         {
-            if (hasClip)
-            {
-                video.enabled = true;
-                video.clip = clip;
-                video.Play();
-            }
-            else
-            {
-                video.Stop();
-                video.enabled = false;
-            }
+            video.Stop();
+            video.enabled = false;
         }
 
-        if (rawImage != null) rawImage.enabled = hasClip;
+        if (rawImage != null) rawImage.enabled = false;
 
         if (image != null)
         {
-            image.enabled = !hasClip;
-            if (!hasClip)
-            {                
-                image.sprite = fallbackSprite? fallbackSprite: Instance.actorReplacement;
-            }
+            image.enabled = true;
+            image.sprite = fallbackSprite ? fallbackSprite : Instance.actorReplacement;
         }
     }
 }

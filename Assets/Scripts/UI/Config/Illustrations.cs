@@ -2,32 +2,46 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceLocations;
 
 
 public class Illustrations : SearcherByName
 {
     private const string IllustrationsLabel = "default";
+    private const string IllustrationsAddressRoot = "Assets/Art/Cards/";
 
     private Dictionary<string, Sprite> illustrationsByName = new();
-    private AsyncOperationHandle<IList<Sprite>> loadHandle;
+    private AsyncOperationHandle<IList<IResourceLocation>> locationsHandle;
+    private readonly List<AsyncOperationHandle<Sprite>> spriteHandles = new();
+    private int pendingSpriteLoads;
     private bool isLoaded;
     private bool loggedNotReadyWarning;
 
     private void Awake()
     {
-        loadHandle = Addressables.LoadAssetsAsync<Sprite>(IllustrationsLabel, null);
-        loadHandle.Completed += OnIllustrationsLoaded;
+        locationsHandle = Addressables.LoadResourceLocationsAsync(IllustrationsLabel, typeof(Sprite));
+        locationsHandle.Completed += OnIllustrationLocationsLoaded;
     }
 
     private void OnDestroy()
     {
-        if (loadHandle.IsValid())
+        foreach (AsyncOperationHandle<Sprite> handle in spriteHandles)
         {
-            Addressables.Release(loadHandle);
+            if (handle.IsValid())
+            {
+                Addressables.Release(handle);
+            }
+        }
+
+        spriteHandles.Clear();
+
+        if (locationsHandle.IsValid())
+        {
+            Addressables.Release(locationsHandle);
         }
     }
 
-    private void OnIllustrationsLoaded(AsyncOperationHandle<IList<Sprite>> handle)
+    private void OnIllustrationLocationsLoaded(AsyncOperationHandle<IList<IResourceLocation>> handle)
     {
         if (handle.Status != AsyncOperationStatus.Succeeded || handle.Result == null)
         {
@@ -38,15 +52,36 @@ public class Illustrations : SearcherByName
         }
 
         illustrationsByName = new Dictionary<string, Sprite>();
-        int loadedCount = 0;
-        foreach (Sprite sprite in handle.Result)
+        pendingSpriteLoads = 0;
+        int queuedCount = 0;
+        foreach (IResourceLocation location in handle.Result)
         {
-            if (sprite == null) continue;
-            loadedCount += RegisterSpriteLookupKeys(sprite);
+            if (location == null || string.IsNullOrWhiteSpace(location.PrimaryKey)) continue;
+            if (!location.PrimaryKey.StartsWith(IllustrationsAddressRoot)) continue;
+
+            queuedCount++;
+            pendingSpriteLoads++;
+            AsyncOperationHandle<Sprite> spriteHandle = Addressables.LoadAssetAsync<Sprite>(location);
+            spriteHandles.Add(spriteHandle);
+            spriteHandle.Completed += OnIllustrationSpriteLoaded;
         }
 
-        isLoaded = true;
-        Debug.Log($"Illustrations: loaded {loadedCount} sprites from Addressables label '{IllustrationsLabel}'.");
+        isLoaded = pendingSpriteLoads == 0;
+        Debug.Log($"Illustrations: queued {queuedCount} card sprites from Addressables label '{IllustrationsLabel}'.");
+    }
+
+    private void OnIllustrationSpriteLoaded(AsyncOperationHandle<Sprite> handle)
+    {
+        if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
+        {
+            RegisterSpriteLookupKeys(handle.Result);
+        }
+
+        pendingSpriteLoads = Mathf.Max(0, pendingSpriteLoads - 1);
+        if (pendingSpriteLoads == 0)
+        {
+            isLoaded = true;
+        }
     }
 
     private int RegisterSpriteLookupKeys(Sprite sprite)

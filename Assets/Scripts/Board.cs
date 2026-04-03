@@ -47,8 +47,6 @@ public class Board : MonoBehaviour
     [Header("On the fly")]
     // Colors object
     public Colors colors;
-    // Textures object
-    public Textures textures;
     // Board Generator
     public BoardGenerator boardGenerator;
     // Nation Spawner
@@ -96,13 +94,6 @@ public class Board : MonoBehaviour
         if (colors == null)
         {
             Debug.LogError("Colors component not found!");
-            return;
-        }
-
-        textures = FindFirstObjectByType<Textures>();
-        if (textures == null)
-        {
-            Debug.LogError("Textures component not found!");
             return;
         }
 
