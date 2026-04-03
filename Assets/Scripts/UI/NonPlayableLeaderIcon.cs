@@ -13,6 +13,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
     public Image image;
     public CanvasGroup deadCanvasGroup;
     public Image border;
+    public Image alignmentImage;
     
     [HideInInspector]
     public NonPlayableLeader nonPlayableLeader;
@@ -25,14 +26,21 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
 
     private Sprite leaderSprite;
     private bool tempRevealQueued = false;
+    private Illustrations illustrations;
+
+    void Awake()
+    {
+        illustrations = FindFirstObjectByType<Illustrations>();
+    }
 
     public void Initialize(NonPlayableLeader leader)
     {
         game = FindFirstObjectByType<Game>();
         nonPlayableLeader = leader;
-        leaderSprite = FindFirstObjectByType<Illustrations>().GetIllustrationByName(leader.characterName);
+        leaderSprite = illustrations.GetIllustrationByName(leader.characterName);
         alignment = leader.alignment;
         text = $"<sprite name=\"{alignment}\">{leader.characterName}";
+        alignmentImage.sprite = illustrations.GetIllustrationByName(leader.GetAlignment().ToString());
         raycaster.enabled = false;
         canvasGroup.alpha = 0;
     }
@@ -55,6 +63,11 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
     public void SetDead()
     {
         deadCanvasGroup.alpha = 1;
+    }
+
+    public AlignmentEnum GetAlignmentValue()
+    {
+        return alignment;
     }
     public void SetHired()
     {

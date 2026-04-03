@@ -39,6 +39,7 @@ public class LeaderSelector : SearcherByName
     bool introFinished = false;
     bool selectionScreenShown = false;
     bool selectionScreenQueued = false;
+    Coroutine deferredRefreshRoutine;
     void Awake()
     {
         if (introVideo != null)
@@ -89,12 +90,22 @@ public class LeaderSelector : SearcherByName
                     SelectLeader(0);
                     ShowLeaderSelectionIfReady();
                 }
+
+                RequestLeaderSelectionRefresh();
             }
         }
 
         if (loadedFirst)
         {
             ShowLeaderSelectionIfReady();
+        }
+    }
+
+    void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus)
+        {
+            RequestLeaderSelectionRefresh();
         }
     }
 
@@ -157,7 +168,37 @@ public class LeaderSelector : SearcherByName
             LayoutRebuilder.ForceRebuildLayoutImmediate(carouselRect);
         }
 
+        for (int i = 0; i < carouselItems.Count; i++)
+        {
+            if (carouselItems[i] == null) continue;
+            RectTransform itemRect = carouselItems[i].transform as RectTransform;
+            if (itemRect != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(itemRect);
+            }
+        }
+
         Canvas.ForceUpdateCanvases();
+    }
+
+    void RequestLeaderSelectionRefresh()
+    {
+        if (!isActiveAndEnabled) return;
+        if (deferredRefreshRoutine != null) return;
+        deferredRefreshRoutine = StartCoroutine(DeferredLeaderSelectionRefresh());
+    }
+
+    IEnumerator DeferredLeaderSelectionRefresh()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            yield return null;
+            ForceLeaderSelectionRefresh();
+            yield return new WaitForEndOfFrame();
+            ForceLeaderSelectionRefresh();
+        }
+
+        deferredRefreshRoutine = null;
     }
 
     IEnumerator ShowLeaderSelectionDeferred()
@@ -189,6 +230,7 @@ public class LeaderSelector : SearcherByName
         selectionScreenShown = true;
         selectionScreenQueued = false;
         ForceLeaderSelectionRefresh();
+        RequestLeaderSelectionRefresh();
     }
 
     void AddLeaderOptions(PlayableLeader playableLeader)
@@ -281,7 +323,7 @@ public class LeaderSelector : SearcherByName
                 continue;
             }
 
-            if (illustrations == null || illustrations.GetIllustrationByName(candidate) != null)
+            if (illustrations == null || illustrations.TryGetIllustrationByName(candidate, out _))
             {
                 return candidate;
             }
@@ -307,6 +349,7 @@ public class LeaderSelector : SearcherByName
         };
         selectionEntries.Add(selectionEntry);
         CreateCarouselItem(selectionEntry, carouselSprite);
+        RequestLeaderSelectionRefresh();
     }
 
     string BuildLeaderText(LeaderSelectionEntry selection)

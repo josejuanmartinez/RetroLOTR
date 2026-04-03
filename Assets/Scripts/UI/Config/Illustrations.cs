@@ -8,7 +8,11 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 public class Illustrations : SearcherByName
 {
     private const string IllustrationsLabel = "default";
-    private const string IllustrationsAddressRoot = "Assets/Art/Cards/";
+    private static readonly string[] IllustrationsAddressRoots =
+    {
+        "Assets/Art/Cards/",
+        "Assets/Art/UI/"
+    };
 
     private Dictionary<string, Sprite> illustrationsByName = new();
     private AsyncOperationHandle<IList<IResourceLocation>> locationsHandle;
@@ -57,7 +61,7 @@ public class Illustrations : SearcherByName
         foreach (IResourceLocation location in handle.Result)
         {
             if (location == null || string.IsNullOrWhiteSpace(location.PrimaryKey)) continue;
-            if (!location.PrimaryKey.StartsWith(IllustrationsAddressRoot)) continue;
+            if (!IsIllustrationAddress(location.PrimaryKey)) continue;
 
             queuedCount++;
             pendingSpriteLoads++;
@@ -89,29 +93,34 @@ public class Illustrations : SearcherByName
         if (sprite == null) return 0;
 
         int added = 0;
-
-        // Primary key: actual Sprite object name.
-        string spriteKey = Normalize(sprite.name);
-        if (!string.IsNullOrWhiteSpace(spriteKey) && !illustrationsByName.ContainsKey(spriteKey))
+        foreach (string key in EnumerateLookupKeys(sprite.name))
         {
-            illustrationsByName[spriteKey] = sprite;
-            added++;
+            if (TryRegisterKey(key, sprite))
+            {
+                added++;
+            }
         }
 
         // Fallback key: source texture asset name (usually filename).
         // This covers cases where Sprite.name was not updated after image rename.
         string textureName = sprite.texture != null ? sprite.texture.name : null;
-        string textureKey = Normalize(textureName);
-        if (!string.IsNullOrWhiteSpace(textureKey) && !illustrationsByName.ContainsKey(textureKey))
+        foreach (string key in EnumerateLookupKeys(textureName))
         {
-            illustrationsByName[textureKey] = sprite;
-            added++;
+            if (TryRegisterKey(key, sprite))
+            {
+                added++;
+            }
         }
 
         return added;
     }
 
     public Sprite GetIllustrationByName(string name)
+    {
+        return GetIllustrationByName(name, true);
+    }
+
+    public Sprite GetIllustrationByName(string name, bool logMissing)
     {
         if (string.IsNullOrWhiteSpace(name)) return null;
         if (!isLoaded)
@@ -124,18 +133,88 @@ public class Illustrations : SearcherByName
             return null;
         }
 
-        if (illustrationsByName.TryGetValue(Normalize(name), out Sprite sprite))
+        if (TryGetIllustrationByName(name, out Sprite sprite))
         {
             return sprite;
         }
 
-        Debug.LogWarning($"Sprite for {name} is not registered. Typo? Missing Addressables label '{IllustrationsLabel}'?");
+        if (logMissing)
+        {
+            Debug.LogWarning($"Sprite for {name} is not registered. Typo? Missing Addressables label '{IllustrationsLabel}'?");
+        }
         return null;
+    }
+
+    public bool TryGetIllustrationByName(string name, out Sprite sprite)
+    {
+        sprite = null;
+        if (string.IsNullOrWhiteSpace(name) || !isLoaded)
+        {
+            return false;
+        }
+
+        foreach (string key in EnumerateLookupKeys(name))
+        {
+            if (illustrationsByName.TryGetValue(key, out sprite))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsIllustrationAddress(string address)
+    {
+        if (string.IsNullOrWhiteSpace(address)) return false;
+        for (int i = 0; i < IllustrationsAddressRoots.Length; i++)
+        {
+            if (address.StartsWith(IllustrationsAddressRoots[i]))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Sprite GetIllustrationByName(Character character)
     {
         if (character == null) return null;
         return GetIllustrationByName(character.characterName);
+    }
+
+    private bool TryRegisterKey(string normalizedKey, Sprite sprite)
+    {
+        if (string.IsNullOrWhiteSpace(normalizedKey) || sprite == null || illustrationsByName.ContainsKey(normalizedKey))
+        {
+            return false;
+        }
+
+        illustrationsByName[normalizedKey] = sprite;
+        return true;
+    }
+
+    private IEnumerable<string> EnumerateLookupKeys(string rawName)
+    {
+        if (string.IsNullOrWhiteSpace(rawName))
+        {
+            yield break;
+        }
+
+        HashSet<string> seen = new();
+
+        foreach (string candidate in BuildNameCandidates(rawName))
+        {
+            string normalized = Normalize(candidate);
+            if (!string.IsNullOrWhiteSpace(normalized) && seen.Add(normalized))
+            {
+                yield return normalized;
+            }
+        }
+    }
+
+    private IEnumerable<string> BuildNameCandidates(string rawName)
+    {
+        yield return rawName;
     }
 }

@@ -104,6 +104,7 @@ MonoBehaviour:
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -372,6 +373,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -891,7 +893,6 @@ RectTransform:
   - {fileID: 4612026408943630383}
   - {fileID: 3454949597176612420}
   - {fileID: 1435255240408665484}
-  - {fileID: 4613658416885483426}
   - {fileID: 4188314967274476822}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -952,7 +953,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 5727565848962490580}
   video: {fileID: 5443978874189831930}
-  nonPlayableLeaderIcons: {fileID: 5922986159995345847}
+  videoMode: 0
+  nonPlayableLeaderIcons: {fileID: 0}
   deadCanvasGroup: {fileID: 8847494346013140870}
   textWidget: {fileID: 6506552120216860036}
   alignmentImage: {fileID: 7552696260795734234}
@@ -1180,6 +1182,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1534,82 +1537,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!1 &7587639651252219059
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4613658416885483426}
-  - component: {fileID: 5922986159995345847}
-  - component: {fileID: 5998929842078286459}
-  m_Layer: 5
-  m_Name: NonPlayableLeaderIcons
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &4613658416885483426
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7587639651252219059}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 120121.65}
-  m_LocalScale: {x: 0.7096043, y: 0.7096043, z: 1.2418076}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3150723205734035402}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5.0847, y: -126.61}
-  m_SizeDelta: {x: 267.516, y: -4.5311}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5922986159995345847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7587639651252219059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5524cc436e7c30e40b3f64af3493b115, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nonPlayableLeaderIconPrefab: {fileID: 4181293669788447730, guid: 16cb2fbc2816c7f48a743f1850164893, type: 3}
-  nonPlayableLeaderIcons: []
-  playableLeader: {fileID: 0}
---- !u!114 &5998929842078286459
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7587639651252219059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 1
-  m_StartCorner: 0
-  m_StartAxis: 0
-  m_CellSize: {x: 50, y: 50}
-  m_Spacing: {x: 0, y: 0}
-  m_Constraint: 0
-  m_ConstraintCount: 2
 --- !u!1 &8171189065584821524
 GameObject:
   m_ObjectHideFlags: 0
@@ -1864,6 +1791,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

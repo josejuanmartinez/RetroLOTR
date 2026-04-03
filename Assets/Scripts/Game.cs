@@ -722,6 +722,11 @@ public class Game : MonoBehaviour
     {
         if (player == null || board == null) return;
 
+        if (!startupPopupShown)
+        {
+            blockLookAtUntilStartupPopupCloses = false;
+        }
+
         Character firstAlive = player.controlledCharacters
             .FirstOrDefault(c => c != null && !c.killed);
 

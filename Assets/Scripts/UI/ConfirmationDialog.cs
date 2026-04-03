@@ -130,11 +130,31 @@ public class ConfirmationDialog : MonoBehaviour
             tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously)
         };
 
-        queuedRequests.Add(request);
-        if (activeIndex < 0) activeIndex = 0;
+        EventIconsManager iconsManager = EventIconsManager.FindManager();
+        if (iconsManager == null)
+        {
+            EnqueueRequest(request);
+        }
+        else
+        {
+            iconsManager.AddEventIcon(
+                EventIconType.YesNo,
+                singleButton,
+                () => EnqueueRequest(request));
+        }
 
-        ShowActive();
         return request.tcs.Task;
+    }
+
+    private void EnqueueRequest(DialogRequest request)
+    {
+        if (request == null) return;
+        if (!queuedRequests.Contains(request))
+        {
+            queuedRequests.Add(request);
+        }
+        if (activeIndex < 0) activeIndex = 0;
+        ShowActive();
     }
 
     private void Resolve(bool answer)

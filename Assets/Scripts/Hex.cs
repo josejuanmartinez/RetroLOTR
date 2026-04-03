@@ -3,10 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TMPro;
 using UnityEngine;
 
 public class Hex : MonoBehaviour
 {
+    private enum SharedParticleType
+    {
+        Fire,
+        Ice,
+        Poison,
+        Courage,
+        Hope
+    }
+
+    private sealed class SharedParticlePoolState
+    {
+        public GameObject template;
+        public readonly List<GameObject> instances = new();
+        public Vector3 localPosition = Vector3.zero;
+        public Quaternion localRotation = Quaternion.identity;
+        public Vector3 localScale = Vector3.one;
+    }
+
     public Vector2Int v2;
     [Header("References")]
     public Sprite defaultCharacterSprite;
@@ -19,7 +38,9 @@ public class Hex : MonoBehaviour
     private float characterIconOffsetDefault = 0f;
 
     [Header("Rendering")]
-    public HoverNoUI pcHover;
+    public TextMeshPro pcName;
+    public TextMeshPro loyaltyFort;
+    public SpriteRenderer pcTriangle;
 
     [Header("Hover")]
     [SerializeField] private float tooltipFontSize = 2f;
@@ -43,7 +64,6 @@ public class Hex : MonoBehaviour
     public GameObject cliffGameObject;
     public GameObject hexTextureWater;
 
-    public GameObject unseen;
     public GameObject movement;
     public MovementCostManager movementCostManager;
 
@@ -54,13 +74,16 @@ public class Hex : MonoBehaviour
     [Header("Frames")]
     public GameObject hoverHexFrame;
     public GameObject tipHexFrame;
+    public GameObject scoutedHexFrame;
+    public GameObject darknessHexFrame;
 
     [Header("Particles")]
     public GameObject selectedParticles;
-    public GameObject scoutedParticles;
     public GameObject fireParticles;
     public GameObject iceParticles;
-    public GameObject darknessParticles;
+    public GameObject poisonParticles;
+    public GameObject courageParticles;
+    public GameObject hopeParticles;
 
 
 
@@ -68,6 +91,7 @@ public class Hex : MonoBehaviour
     [SerializeField] private PC pc;
     [SerializeField] private bool isRevealed;
     [SerializeField] private bool mapOnlyRevealed;
+    [SerializeField] private bool isCurrentlyUnseen;
 
     public List<Army> armies = new();
     public List<Character> characters = new();
@@ -103,13 +127,18 @@ public class Hex : MonoBehaviour
     private static readonly StringBuilder sbDark = new(256);
     private static readonly Queue<Vector2Int> areaQueue = new(64);
     private static readonly HashSet<Vector2Int> areaVisited = new();
+    private static GameObject sharedSelectedParticles;
+    private static Hex sharedSelectedParticlesOwner;
+    private static Vector3 sharedSelectedParticlesLocalPosition = Vector3.zero;
+    private static Quaternion sharedSelectedParticlesLocalRotation = Quaternion.identity;
+    private static Vector3 sharedSelectedParticlesLocalScale = Vector3.one;
+    private static readonly Dictionary<SharedParticleType, SharedParticlePoolState> sharedParticlePools = new();
+    private static Transform sharedParticlePoolRoot;
 
     private const string Unknown = "Unknown character(s)";
     private const int DarknessTurnsDefault = 2;
-
+    private const int SharedOneShotParticlePoolSize = 3;
     private int darknessTurnsRemaining = 0;
-    private Coroutine fireParticlesRoutine;
-    private Coroutine iceParticlesRoutine;
 
     void Awake()
     {
@@ -122,6 +151,8 @@ public class Hex : MonoBehaviour
         navigator = FindFirstObjectByType<BoardNavigator>();
         illustrations = FindFirstObjectByType<Illustrations>();
         hexTextureMapping = GetComponent<HexTextureMapping>();
+        InitializeSharedSelectedParticles();
+        InitializeSharedOneShotParticles();
         if (characterIcon != null)
         {
             characterIconZoom = characterIcon.GetComponent<ZoomSpriteRenderer>();
@@ -138,7 +169,7 @@ public class Hex : MonoBehaviour
     }
 
     public bool IsHexRevealed() => isRevealed;
-    public bool IsHexSeen() => IsHexRevealed() && !mapOnlyRevealed && (!unseen || !unseen.activeSelf);
+    public bool IsHexSeen() => IsHexRevealed() && !mapOnlyRevealed && !isCurrentlyUnseen;
     public List<Hex> GetHexesInRadius(int radius)
     {
         if (board == null) board = FindFirstObjectByType<Board>();
@@ -428,6 +459,7 @@ public class Hex : MonoBehaviour
         bool shouldShowPc = ShouldShowPcVisual();
         ApplyHexTextureSprite();
         UpdatePortIcon(shouldShowPc);
+        UpdatePcWorldText(shouldShowPc);
 
         if (refreshHoverText) RefreshHoverText();
     }
@@ -453,26 +485,9 @@ public class Hex : MonoBehaviour
     public void RefreshHoverText()
     {
         bool seen = IsHexSeen();
-        bool pcRev = seen && pc != null && IsPCRevealed();
         PlayableLeader viewer = GetPlayer();
         bool isScouted = IsScouted(viewer);
         bool viewerHasCharacter = viewer != null && HasCharacterOfLeader(viewer);
-
-        if (pcHover != null)
-        {
-            if (pcRev && pc != null && pc.citySize != PCSizeEnum.NONE)
-            {
-                int sizeValue = (int)pc.citySize;
-                int fortValue = (int)pc.fortSize;
-                string fortText = pc.fortSize != FortSizeEnum.NONE ? $" <sprite name=\"fort\">[{fortValue}]" : "";
-                string pcTooltip = $"{pc.pcName}<sprite name=\"pc\">[{sizeValue}]{fortText} {GetLoyalty()}";
-                pcHover.Initialize(pcTooltip, tooltipFontSize);
-            }
-            else
-            {
-                pcHover.Initialize("", tooltipFontSize);
-            }
-        }
         
         sbChars.Clear();
         sbFree.Clear();
@@ -567,20 +582,33 @@ public class Hex : MonoBehaviour
             Unhover();
             return;
         }
+
+        if (!IsHexRevealed())
+        {
+            Unhover();
+            return;
+        }
+
+        if (isSelected)
+        {
+            SetActiveFast(hoverHexFrame, false);
+            return;
+        }
+
         SetActiveFast(hoverHexFrame, true);
     }
 
     public void Unhover()
     {
-        if (!isSelected) SetActiveFast(hoverHexFrame, false);
+        SetActiveFast(hoverHexFrame, false);
     }
 
     public void Select(bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
     {
         if (!IsHidden())
         {
-            SetActiveFast(hoverHexFrame, true);
-            SetActiveFast(selectedParticles, true);
+            SetActiveFast(hoverHexFrame, false);
+            SetSharedSelectedParticlesActive(true);
             isSelected = true;
             if (lookAt) LookAt(duration, delay);
         }
@@ -590,7 +618,7 @@ public class Hex : MonoBehaviour
     {
         isSelected = false;
         SetActiveFast(hoverHexFrame, false);
-        SetActiveFast(selectedParticles, false);
+        SetSharedSelectedParticlesActive(false);
     }
 
     public void LookAt(float duration = 1.0f, float delay = 0.0f)
@@ -662,7 +690,7 @@ public class Hex : MonoBehaviour
         isRevealed = true;
         if (!mapOnlyRevealed && game.currentlyPlaying == game.player && characters.Find(x => x.GetOwner() == game.player) == null)
         {
-            if (IsHexRevealed()) SetActiveFast(unseen, true);
+            if (IsHexRevealed()) isCurrentlyUnseen = true;
         }
         UpdateMinimapTerrain(IsHexRevealed());
         
@@ -677,7 +705,7 @@ public class Hex : MonoBehaviour
         Unreveal(obscuredBy);
         isRevealed = false;
         mapOnlyRevealed = false;
-        if (unseen != null) SetActiveFast(unseen, false);
+        isCurrentlyUnseen = false;
         UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         RedrawArmies(false);
@@ -878,14 +906,11 @@ public class Hex : MonoBehaviour
     {
         bool revealed = IsHexRevealed();
         if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, revealed);
+        UpdateTerrainVisualAlpha();
         if (revealed)
         {
-            if (isSelected)
-            {
-                SetActiveFast(hoverHexFrame, true);
-                SetActiveFast(selectedParticles, true);
-            }
-            if (pcHover) SetActiveFast(pcHover.gameObject, true);
+            SetActiveFast(hoverHexFrame, false);
+            if (isSelected) SetSharedSelectedParticlesActive(true);
             if (freeArmiesAtHexHover) SetActiveFast(freeArmiesAtHexHover.gameObject, true);
             if (neutralArmiesAtHexHover) SetActiveFast(neutralArmiesAtHexHover.gameObject, true);
             if (darkServantArmiesAtHexHover) SetActiveFast(darkServantArmiesAtHexHover.gameObject, true);
@@ -893,6 +918,7 @@ public class Hex : MonoBehaviour
             UpdateArtifactVisibility();
             UpdateParticles();
             RefreshFrontierRowVisuals();
+            UpdatePcWorldText(ShouldShowPcVisual());
             return;
         }
 
@@ -908,17 +934,19 @@ public class Hex : MonoBehaviour
 
         SetActiveFast(movement, false);
         SetActiveFast(hoverHexFrame, false);
-        SetActiveFast(selectedParticles, false);
-        StopOneShotParticles(fireParticles, ref fireParticlesRoutine);
-        StopOneShotParticles(iceParticles, ref iceParticlesRoutine);
-        SetActiveFast(scoutedParticles, false);
-        SetActiveFast(darknessParticles, false);
+        if (sharedSelectedParticlesOwner == this)
+        {
+            SetSharedSelectedParticlesActive(false);
+        }
+        StopSharedOneShotParticlesOnThisHex();
+        SetActiveFast(scoutedHexFrame, false);
+        SetActiveFast(darknessHexFrame, false);
 
-        if (pcHover) { pcHover.Initialize("", tooltipFontSize); SetActiveFast(pcHover.gameObject, false); }
         if (freeArmiesAtHexHover) { freeArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(freeArmiesAtHexHover.gameObject, false); }
         if (neutralArmiesAtHexHover) { neutralArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(neutralArmiesAtHexHover.gameObject, false); }
         if (darkServantArmiesAtHexHover) { darkServantArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(darkServantArmiesAtHexHover.gameObject, false); }
         if (charactersAtHexHover) { charactersAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(charactersAtHexHover.gameObject, false); }
+        UpdatePcWorldText(false);
 
         UpdateParticles();
         RefreshFrontierRowVisuals();
@@ -1040,10 +1068,7 @@ public class Hex : MonoBehaviour
             scoutedByTurns[scoutedByPlayer] = Math.Max(2, scoutedByTurns.TryGetValue(scoutedByPlayer, out int current) ? current : 0);
             scoutedBy.Add(scoutedByPlayer);
         }
-        if (isPlayerTurn)
-        {
-            SetActiveFast(unseen, false);
-        }
+        if (isPlayerTurn) isCurrentlyUnseen = false;
         UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         PlayableLeader viewer = scoutedByPlayer as PlayableLeader;
@@ -1061,7 +1086,7 @@ public class Hex : MonoBehaviour
     {
         isRevealed = true;
         mapOnlyRevealed = true;
-        if (unseen != null) SetActiveFast(unseen, false);
+        isCurrentlyUnseen = false;
         UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         RedrawArmies(false);
@@ -1185,8 +1210,8 @@ public class Hex : MonoBehaviour
     public void Hide()
     {
         bool shouldBeUnseen = IsHexRevealed() && !mapOnlyRevealed;
-        bool unseenChanged = unseen != null && unseen.activeSelf != shouldBeUnseen;
-        if (unseenChanged) SetActiveFast(unseen, shouldBeUnseen);
+        bool unseenChanged = isCurrentlyUnseen != shouldBeUnseen;
+        isCurrentlyUnseen = shouldBeUnseen;
         UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         if (game == null) game = FindFirstObjectByType<Game>();
@@ -1451,13 +1476,31 @@ public class Hex : MonoBehaviour
     public void PlayFireParticles()
     {
         if (!ShouldShowPlayerParticles()) return;
-        PlayOneShotParticles(fireParticles, ref fireParticlesRoutine);
+        PlaySharedOneShotParticles(SharedParticleType.Fire);
     }
 
     public void PlayIceParticles()
     {
         if (!ShouldShowPlayerParticles()) return;
-        PlayOneShotParticles(iceParticles, ref iceParticlesRoutine);
+        PlaySharedOneShotParticles(SharedParticleType.Ice);
+    }
+
+    public void PlayStatusEffectParticles(StatusEffectEnum effect)
+    {
+        if (!ShouldShowPlayerParticles()) return;
+
+        switch (effect)
+        {
+            case StatusEffectEnum.Poisoned:
+                PlaySharedOneShotParticles(SharedParticleType.Poison);
+                break;
+            case StatusEffectEnum.Encouraged:
+                PlaySharedOneShotParticles(SharedParticleType.Courage);
+                break;
+            case StatusEffectEnum.Hope:
+                PlaySharedOneShotParticles(SharedParticleType.Hope);
+                break;
+        }
     }
 
     private bool ShouldShowPlayerParticles()
@@ -1473,23 +1516,139 @@ public class Hex : MonoBehaviour
         PlayableLeader player = game != null ? game.player : null;
         bool seen = IsHexSeen();
         bool scoutedByPlayer = player != null && scoutedBy.Contains(player);
-        SetActiveFast(scoutedParticles, seen && scoutedByPlayer);
-        SetActiveFast(darknessParticles, seen && darknessTurnsRemaining > 0);
+        SetActiveFast(scoutedHexFrame, seen && scoutedByPlayer);
+        SetActiveFast(darknessHexFrame, seen && darknessTurnsRemaining > 0);
     }
 
-    private void PlayOneShotParticles(GameObject particlesObject, ref Coroutine routine)
+    // Safe SetActive that avoids redundant calls/dirtying the obj
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    private static void SetActiveFast(GameObject go, bool state)
     {
-        if (!particlesObject) return;
-        if (routine != null)
+        if (go && go.activeSelf != state) go.SetActive(state);
+    }
+
+    private void RefreshFrontierRowVisuals()
+    {
+        bool revealed = IsHexRevealed();
+        bool isWaterHex = terrainType == TerrainEnum.shallowWater || terrainType == TerrainEnum.deepWater;
+
+        if (!revealed)
         {
-            StopCoroutine(routine);
-            routine = null;
+            SetActiveFast(cliffGameObject, false);
+            SetActiveFast(hexTextureWater, false);
+            return;
+        }
+
+        SetActiveFast(hexTextureWater, isWaterHex);
+        SetActiveFast(cliffGameObject, !isWaterHex);
+    }
+
+    private void InitializeSharedSelectedParticles()
+    {
+        if (selectedParticles == null)
+        {
+            return;
+        }
+
+        if (sharedSelectedParticles == null)
+        {
+            sharedSelectedParticlesLocalPosition = selectedParticles.transform.localPosition;
+            sharedSelectedParticlesLocalRotation = selectedParticles.transform.localRotation;
+            sharedSelectedParticlesLocalScale = selectedParticles.transform.localScale;
+            sharedSelectedParticles = Instantiate(selectedParticles, transform);
+            sharedSelectedParticles.name = "SharedSelectedParticles";
+            SetActiveFast(sharedSelectedParticles, false);
+        }
+
+        Destroy(selectedParticles);
+        selectedParticles = null;
+    }
+
+    private void SetSharedSelectedParticlesActive(bool active)
+    {
+        if (sharedSelectedParticles == null)
+        {
+            return;
+        }
+
+        if (!active)
+        {
+            if (sharedSelectedParticlesOwner == this)
+            {
+                sharedSelectedParticlesOwner = null;
+                SetActiveFast(sharedSelectedParticles, false);
+            }
+            return;
+        }
+
+        sharedSelectedParticlesOwner = this;
+        if (sharedSelectedParticles.transform.parent != transform)
+        {
+            sharedSelectedParticles.transform.SetParent(transform, false);
+        }
+
+        sharedSelectedParticles.transform.localPosition = sharedSelectedParticlesLocalPosition;
+        sharedSelectedParticles.transform.localRotation = sharedSelectedParticlesLocalRotation;
+        sharedSelectedParticles.transform.localScale = sharedSelectedParticlesLocalScale;
+        SetActiveFast(sharedSelectedParticles, true);
+    }
+
+    private void InitializeSharedOneShotParticles()
+    {
+        RegisterSharedParticleTemplate(SharedParticleType.Fire, fireParticles);
+        fireParticles = null;
+
+        RegisterSharedParticleTemplate(SharedParticleType.Ice, iceParticles);
+        iceParticles = null;
+
+        RegisterSharedParticleTemplate(SharedParticleType.Poison, poisonParticles);
+        poisonParticles = null;
+
+        RegisterSharedParticleTemplate(SharedParticleType.Courage, courageParticles);
+        courageParticles = null;
+
+        RegisterSharedParticleTemplate(SharedParticleType.Hope, hopeParticles);
+        hopeParticles = null;
+    }
+
+    private void RegisterSharedParticleTemplate(SharedParticleType type, GameObject particlesObject)
+    {
+        if (particlesObject == null)
+        {
+            return;
+        }
+
+        if (!sharedParticlePools.TryGetValue(type, out SharedParticlePoolState state))
+        {
+            state = new SharedParticlePoolState();
+            state.localPosition = particlesObject.transform.localPosition;
+            state.localRotation = particlesObject.transform.localRotation;
+            state.localScale = particlesObject.transform.localScale;
+            state.template = Instantiate(particlesObject, GetSharedParticlePoolRoot());
+            state.template.name = $"{type}SharedParticleTemplate";
+            SetActiveFast(state.template, false);
+            sharedParticlePools[type] = state;
+        }
+
+        Destroy(particlesObject);
+    }
+
+    private void PlaySharedOneShotParticles(SharedParticleType type)
+    {
+        GameObject particlesObject = AcquireSharedParticleInstance(type);
+        if (particlesObject == null)
+        {
+            return;
+        }
+
+        ParticleSystem[] systems = particlesObject.GetComponentsInChildren<ParticleSystem>(true);
+        if (systems.Length == 0)
+        {
+            SetActiveFast(particlesObject, false);
+            return;
         }
 
         SetActiveFast(particlesObject, true);
-        ParticleSystem[] systems = particlesObject.GetComponentsInChildren<ParticleSystem>(true);
-        if (systems.Length == 0) return;
-
         for (int i = 0; i < systems.Length; i++)
         {
             if (systems[i] == null) continue;
@@ -1497,10 +1656,59 @@ public class Hex : MonoBehaviour
             systems[i].Play(true);
         }
 
-        routine = StartCoroutine(DisableParticlesWhenDone(particlesObject, systems));
+        StartCoroutine(DisableSharedParticlesWhenDone(particlesObject, systems));
     }
 
-    private IEnumerator DisableParticlesWhenDone(GameObject particlesObject, ParticleSystem[] systems)
+    private GameObject AcquireSharedParticleInstance(SharedParticleType type)
+    {
+        if (!sharedParticlePools.TryGetValue(type, out SharedParticlePoolState state) || state.template == null)
+        {
+            return null;
+        }
+
+        GameObject instance = null;
+        for (int i = 0; i < state.instances.Count; i++)
+        {
+            GameObject candidate = state.instances[i];
+            if (candidate != null && !candidate.activeSelf)
+            {
+                instance = candidate;
+                break;
+            }
+        }
+
+        if (instance == null)
+        {
+            if (state.instances.Count < SharedOneShotParticlePoolSize)
+            {
+                instance = Instantiate(state.template, transform);
+                instance.name = $"{type}SharedParticle";
+                state.instances.Add(instance);
+            }
+            else
+            {
+                instance = state.instances[0];
+                SetActiveFast(instance, false);
+            }
+        }
+
+        if (instance == null)
+        {
+            return null;
+        }
+
+        if (instance.transform.parent != transform)
+        {
+            instance.transform.SetParent(transform, false);
+        }
+
+        instance.transform.localPosition = state.localPosition;
+        instance.transform.localRotation = state.localRotation;
+        instance.transform.localScale = state.localScale;
+        return instance;
+    }
+
+    private IEnumerator DisableSharedParticlesWhenDone(GameObject particlesObject, ParticleSystem[] systems)
     {
         if (!particlesObject || systems == null || systems.Length == 0) yield break;
 
@@ -1522,55 +1730,38 @@ public class Hex : MonoBehaviour
         SetActiveFast(particlesObject, false);
     }
 
-    private void StopOneShotParticles(GameObject particlesObject, ref Coroutine routine)
+    private void StopSharedOneShotParticlesOnThisHex()
     {
-        if (routine != null)
+        foreach (SharedParticlePoolState state in sharedParticlePools.Values)
         {
-            StopCoroutine(routine);
-            routine = null;
-        }
-        SetActiveFast(particlesObject, false);
-    }
+            if (state == null || state.instances == null) continue;
 
-    // Safe SetActive that avoids redundant calls/dirtying the obj
-    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static void SetActiveFast(GameObject go, bool state)
-    {
-        if (go && go.activeSelf != state) go.SetActive(state);
-    }
-
-    private void RefreshFrontierRowVisuals()
-    {
-        if (board == null) board = FindFirstObjectByType<Board>();
-        if (board == null || board.hexes == null)
-        {
-            SetActiveFast(cliffGameObject, false);
-            SetActiveFast(hexTextureWater, false);
-            return;
-        }
-
-        foreach (Hex hex in board.hexes.Values)
-        {
-            if (hex == null) continue;
-
-            bool isFrontierHex = false;
-            if (hex.IsHexSeen())
+            for (int i = 0; i < state.instances.Count; i++)
             {
-                Vector2Int sameY = new Vector2Int(hex.v2.x - 1, hex.v2.y);
-                Vector2Int previousY = new Vector2Int(hex.v2.x - 1, hex.v2.y - 1);
-                Vector2Int nextY = new Vector2Int(hex.v2.x - 1, hex.v2.y + 1);
-                bool hasSameYVisibleHex = board.hexes.TryGetValue(sameY, out Hex sameYHex) && sameYHex != null && sameYHex.IsHexSeen();
-                bool hasPreviousYVisibleHex = board.hexes.TryGetValue(previousY, out Hex previousYHex) && previousYHex != null && previousYHex.IsHexSeen();
-                bool hasNextYVisibleHex = board.hexes.TryGetValue(nextY, out Hex nextYHex) && nextYHex != null && nextYHex.IsHexSeen();
-                isFrontierHex = !hasSameYVisibleHex || !hasPreviousYVisibleHex || !hasNextYVisibleHex;
+                GameObject instance = state.instances[i];
+                if (instance == null || instance.transform.parent != transform) continue;
+
+                ParticleSystem[] systems = instance.GetComponentsInChildren<ParticleSystem>(true);
+                for (int j = 0; j < systems.Length; j++)
+                {
+                    if (systems[j] == null) continue;
+                    systems[j].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
+
+                SetActiveFast(instance, false);
             }
-
-            bool showWaterFrontier = isFrontierHex && (hex.terrainType == TerrainEnum.shallowWater || hex.terrainType == TerrainEnum.deepWater);
-            bool showCliffFrontier = isFrontierHex && !showWaterFrontier;
-
-            SetActiveFast(hex.hexTextureWater, showWaterFrontier);
-            SetActiveFast(hex.cliffGameObject, showCliffFrontier);
         }
+    }
+
+    private static Transform GetSharedParticlePoolRoot()
+    {
+        if (sharedParticlePoolRoot == null)
+        {
+            GameObject root = new("HexSharedParticlePool");
+            sharedParticlePoolRoot = root.transform;
+        }
+
+        return sharedParticlePoolRoot;
     }
 
     private void ApplyHexTextureSprite()
@@ -1580,7 +1771,127 @@ public class Hex : MonoBehaviour
 
         Sprite sprite = hexTextureMapping != null ? hexTextureMapping.GetSprite(this) : baseTerrainSprite;
         terrainTexture.sprite = sprite;
-        SetPcSpriteAlpha(ShouldShowPcVisual() && pc != null && pc.isHidden ? 0.35f : 1f);
+        UpdateTerrainVisualAlpha();
         UpdateMinimapTerrain(IsHexRevealed());
+    }
+
+    private void UpdateTerrainVisualAlpha()
+    {
+        float terrainAlpha = isCurrentlyUnseen ? 0.1f : 1f;
+        if (!isCurrentlyUnseen && ShouldShowPcVisual() && pc != null && pc.isHidden)
+        {
+            terrainAlpha = 0.35f;
+        }
+
+        SetPcSpriteAlpha(terrainAlpha);
+    }
+
+    private void UpdatePcWorldText(bool shouldShowPc)
+    {
+        bool showText = shouldShowPc && pc != null && pc.citySize != PCSizeEnum.NONE;
+
+        if (pcTriangle != null)
+        {
+            if (showText)
+            {
+                Color triangleColor = ParseHexColorOrWhite(GetPcAlignmentColorHex());
+                triangleColor.a = 0.5f;
+                pcTriangle.color = triangleColor;
+                SetActiveFast(pcTriangle.gameObject, true);
+            }
+            else
+            {
+                SetActiveFast(pcTriangle.gameObject, false);
+            }
+        }
+
+        if (pcName != null)
+        {
+            if (showText)
+            {
+                pcName.text = BuildPcNameLabel();
+                SetActiveFast(pcName.gameObject, true);
+            }
+            else
+            {
+                pcName.text = string.Empty;
+                SetActiveFast(pcName.gameObject, false);
+            }
+        }
+
+        if (loyaltyFort != null)
+        {
+            if (showText)
+            {
+                loyaltyFort.text = BuildLoyaltyFortLabel();
+                SetActiveFast(loyaltyFort.gameObject, true);
+            }
+            else
+            {
+                loyaltyFort.text = string.Empty;
+                SetActiveFast(loyaltyFort.gameObject, false);
+            }
+        }
+    }
+
+    private string BuildPcNameLabel()
+    {
+        if (pc == null) return string.Empty;
+
+        string formattedName = (pc.pcName ?? string.Empty)
+            .Replace("-", "\n")
+            .Replace(" ", "\n");
+
+        string alignmentColor = GetPcAlignmentColorHex();
+        string alignmentValue = pc.owner != null ? pc.owner.GetAlignment().ToString() : "";
+        alignmentValue = alignmentValue != "" ? $"<sprite name=\"{alignmentValue}\">" : "";
+        return $"<color={alignmentColor}>{formattedName}</color>\n{alignmentValue} <sprite name=\"pc\">{(int)pc.citySize}";
+    }
+
+    private string BuildLoyaltyFortLabel()
+    {
+        if (pc == null) return string.Empty;
+
+        StringBuilder builder = new();
+        if (pc.fortSize > FortSizeEnum.NONE)
+        {
+            builder.Append("<sprite name=\"fort\">");
+            builder.Append((int)pc.fortSize);
+            builder.Append(' ');
+        }
+
+        builder.Append("<sprite name=\"loyalty\"><color=");
+        builder.Append(GetLoyaltyColorHex(pc.loyalty));
+        builder.Append('>');
+        builder.Append(Math.Max(0, pc.loyalty));
+        builder.Append("</color>");
+        return builder.ToString();
+    }
+
+    private static string GetLoyaltyColorHex(int loyaltyValue)
+    {
+        if (loyaltyValue <= 33) return "#ff4d4d";
+        if (loyaltyValue <= 66) return "#ffd54f";
+        return "#00c853";
+    }
+
+    private string GetPcAlignmentColorHex()
+    {
+        if (pc?.owner == null || colors == null)
+        {
+            return "#FFFFFF";
+        }
+
+        return colors.GetHexColorByName(pc.owner.GetAlignment().ToString());
+    }
+
+    private static Color ParseHexColorOrWhite(string hexColor)
+    {
+        if (!string.IsNullOrWhiteSpace(hexColor) && ColorUtility.TryParseHtmlString(hexColor, out Color parsed))
+        {
+            return parsed;
+        }
+
+        return Color.white;
     }
 }

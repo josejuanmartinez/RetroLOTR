@@ -129,28 +129,13 @@ public class MessageDisplayNoUI : MonoBehaviour
             }
         }
 
-        // Only show floating text when the human player can see the hex (prevents enemy leakage)
+        // Only queue floating text when the human player can see the hex (prevents enemy leakage)
         if (canDisplayToPlayer)
         {
             Vector3 worldPos = hex.gameObject.transform.position;
             if (instance != null)
             {
-                if (IsNegativeColor(resolved))
-                {
-                    Sounds.Instance?.PlayNegative();
-                }
-                else if (IsPositiveColor(resolved))
-                {
-                    Sounds.Instance?.PlayPositive();
-                }
-                else
-                {
-                    Sounds.Instance?.PlayMessage();
-                }
-                if (instance.CanDisplayNow(hex))
-                    instance.EnqueueMessage(hex, displayMessage, worldPos, resolved);
-                else
-                    instance.EnqueueDeferred(hex, displayMessage, worldPos, resolved);
+                instance.EnqueueViaEventIcon(hex, displayMessage, worldPos, resolved);
             }
         }
 
@@ -207,6 +192,29 @@ public class MessageDisplayNoUI : MonoBehaviour
     private void EnqueueMessage(Hex hex, string message, Vector3 worldPos, Color textColor)
     {
         EnqueueWithFocus(hex, message, worldPos, textColor);
+    }
+
+    private void EnqueueViaEventIcon(Hex hex, string message, Vector3 worldPos, Color textColor)
+    {
+        if (hex == null) return;
+
+        EventIconsManager iconsManager = EventIconsManager.FindManager();
+        if (iconsManager == null)
+        {
+            EnqueueMessage(hex, message, worldPos, textColor);
+            return;
+        }
+
+        EventIcon icon = null;
+        icon = iconsManager.AddEventIcon(
+            EventIconType.HexMessage,
+            true,
+            () =>
+            {
+                PlayMessageSound(textColor);
+                EnqueueMessage(hex, message, worldPos, textColor);
+                icon?.ConsumeAndDestroy();
+            });
     }
 
     private void EnqueueDeferred(Hex hex, string message, Vector3 worldPos, Color textColor)
@@ -328,6 +336,22 @@ public class MessageDisplayNoUI : MonoBehaviour
     private static bool IsPositiveColor(Color color)
     {
         return color.g >= 0.6f && color.b <= 0.6f;
+    }
+
+    private static void PlayMessageSound(Color color)
+    {
+        if (IsNegativeColor(color))
+        {
+            Sounds.Instance?.PlayNegative();
+        }
+        else if (IsPositiveColor(color))
+        {
+            Sounds.Instance?.PlayPositive();
+        }
+        else
+        {
+            Sounds.Instance?.PlayMessage();
+        }
     }
 
     private void SetTextAlpha(float a, Color? baseColor = null)

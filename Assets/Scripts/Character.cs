@@ -307,7 +307,8 @@ public class Character : MonoBehaviour
         if (effect == StatusEffectEnum.Haste && HasStatusEffect(StatusEffectEnum.Frozen)) return;
 
         int current = GetStatusEffectTurns(effect);
-        statusEffectTurns[effect] = Mathf.Max(current, turns);
+        int updatedTurns = Mathf.Max(current, turns);
+        statusEffectTurns[effect] = updatedTurns;
 
         statusEffects ??= new List<StatusEffectEnum>();
         if (!statusEffects.Contains(effect)) statusEffects.Add(effect);
@@ -329,6 +330,11 @@ public class Character : MonoBehaviour
         else if (effect == StatusEffectEnum.Encouraged)
         {
             ClearSuppressedStatusesIfEncouraged();
+        }
+
+        if (updatedTurns > current && hex != null)
+        {
+            hex.PlayStatusEffectParticles(effect);
         }
     }
 

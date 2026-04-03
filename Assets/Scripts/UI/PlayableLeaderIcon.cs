@@ -76,7 +76,11 @@ public class PlayableLeaderIcon : MonoBehaviour
 
     public void AddNonPlayableLeader(NonPlayableLeader nonPlayableLeader)
     {
-        nonPlayableLeaderIcons.Instantiate(nonPlayableLeader, playableLeader);
+        NonPlayableLeaderIcons icons = FindFirstObjectByType<NonPlayableLeaderIcons>();
+        if (icons != null)
+        {
+            icons.Instantiate(nonPlayableLeader, playableLeader);
+        }
     }
 
     public void HighlighNonPlayableLeader(string leaderName, string leaderText)

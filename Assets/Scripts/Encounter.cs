@@ -24,7 +24,8 @@ public static class EncounterResolver
             string.Empty,
             options.Select(GetOptionLabel).ToList(),
             isAi,
-            portrait);
+            portrait,
+            EventIconType.Encounter);
         if (string.IsNullOrWhiteSpace(selection)) return false;
 
         EncounterOptionData chosenOption = options.FirstOrDefault(option => string.Equals(GetOptionLabel(option), selection, StringComparison.Ordinal));
@@ -42,7 +43,8 @@ public static class EncounterResolver
         if (string.IsNullOrWhiteSpace(encounterCard.historyText) || PopupManager.Instance == null) return;
 
         var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        PopupManager.Show(
+        PopupManager.ShowWithIconType(
+            EventIconType.Encounter,
             encounterCard.name,
             ResolvePortrait(encounterCard),
             ResolveActorPortrait(actor),

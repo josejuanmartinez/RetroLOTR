@@ -229,22 +229,31 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return illustrations.GetIllustrationByName(key);
     }
 
+    private Sprite TryGetSprite(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key) || illustrations == null) return null;
+        return illustrations.GetIllustrationByName(key, false);
+    }
+
     private Sprite ResolveCardImage(CardData data)
     {
         if (data == null) return null;
         if (!string.IsNullOrWhiteSpace(data.spriteName))
         {
-            Sprite overrideSprite = GetSprite(data.spriteName);
+            Sprite overrideSprite = TryGetSprite(data.spriteName) ?? GetSprite(data.spriteName);
             if (overrideSprite != null) return overrideSprite;
         }
 
         CardTypeEnum cardType = data.GetCardType();
         if (cardType == CardTypeEnum.Action || cardType == CardTypeEnum.Event || cardType == CardTypeEnum.Encounter)
         {
-            return GetSprite(data.GetActionRef()) ?? GetSprite(data.name);
+            return TryGetSprite(data.name)
+                ?? TryGetSprite(data.GetActionRef())
+                ?? GetSprite(data.name)
+                ?? GetSprite(data.GetActionRef());
         }
 
-        return GetSprite(data.name);
+        return TryGetSprite(data.name) ?? GetSprite(data.name);
     }
 
     private string BuildCardDescriptionText(CardData data, string cardTypeKey, string typeColorHex)

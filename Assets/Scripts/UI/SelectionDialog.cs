@@ -22,7 +22,8 @@ public class SelectionDialog : MonoBehaviour
     [SerializeField] private CanvasGroup portraitCanvasGroup;
     [SerializeField] private Illustrations illustrations;
 
-    private TaskCompletionSource<string> pendingRequest;
+    private readonly List<DialogRequest> queuedRequests = new();
+    private int activeIndex = -1;
     private DialogRequest pendingDisplay;
     private Coroutine waitForMessagesRoutine;
 
@@ -60,50 +61,79 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, isAI, portrait);
+        return Instance.Show(message, yesString, noString, options, isAI, portrait, EventIconType.MultiChoice);
     }
 
-    private Task<string> Show(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait)
+    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait, EventIconType iconType)
     {
-        if (pendingRequest != null && !pendingRequest.Task.IsCompleted)
+        if (Instance == null)
         {
-            Debug.LogWarning("Selection dialog already running. Previous request cancelled.");
-            pendingRequest.TrySetResult(string.Empty);
+            Debug.LogError("Selection dialog  was called before its instance was created.");
+            return Task.FromResult(string.Empty);
         }
 
-        if(options.Count < 1)
+        return Instance.Show(message, yesString, noString, options, isAI, portrait, iconType);
+    }
+
+    private Task<string> Show(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait, EventIconType iconType)
+    {
+        if (options.Count < 1)
         {
             Debug.LogWarning("Unable to show Selection Dialog: options < 1");
-            pendingRequest.TrySetResult(string.Empty);
+            return Task.FromResult(string.Empty);
         }
 
-        pendingRequest = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-        if(isAI) {
+        var request = new DialogRequest
+        {
+            message = message,
+            yesString = yesString,
+            noString = noString,
+            options = options,
+            portrait = portrait,
+            tcs = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously)
+        };
+
+        if (isAI)
+        {
             int index = Random.Range(0, options.Count);
-            pendingRequest.TrySetResult(options[index]);
-        } 
+            request.tcs.TrySetResult(options[index]);
+        }
         else
         {
-            var request = new DialogRequest
+            EventIconsManager iconsManager = EventIconsManager.FindManager();
+            if (iconsManager == null)
             {
-                message = message,
-                yesString = yesString,
-                noString = noString,
-                options = options,
-                portrait = portrait
-            };
-            if (ShouldDelayDialog())
-            {
-                pendingDisplay = request;
-                HideInstant();
-                StartWaitForMessages();
+                QueueRequest(request);
             }
             else
             {
-                ShowInternal(request);
+                iconsManager.AddEventIcon(
+                    iconType,
+                    false,
+                    () => QueueRequest(request));
             }
         }
-        return pendingRequest.Task;
+        return request.tcs.Task;
+    }
+
+    private void QueueRequest(DialogRequest request)
+    {
+        if (request == null) return;
+        if (!queuedRequests.Contains(request))
+        {
+            queuedRequests.Add(request);
+        }
+        activeIndex = queuedRequests.IndexOf(request);
+        if (ShouldDelayDialog())
+        {
+            pendingDisplay = request;
+            HideInstant();
+            StartWaitForMessages();
+        }
+        else
+        {
+            ShowInternal(request);
+        }
     }
 
     private string GetSelectedOptionText()
@@ -119,8 +149,12 @@ public class SelectionDialog : MonoBehaviour
     private void Resolve(string answer)
     {
         HideInstant();
-        pendingRequest?.TrySetResult(answer);
-        pendingRequest = null;
+        if (activeIndex >= 0 && activeIndex < queuedRequests.Count)
+        {
+            queuedRequests[activeIndex].tcs.TrySetResult(answer);
+            queuedRequests.RemoveAt(activeIndex);
+        }
+        activeIndex = -1;
         pendingDisplay = null;
     }
 
@@ -182,6 +216,7 @@ public class SelectionDialog : MonoBehaviour
         public string noString;
         public List<string> options;
         public Sprite portrait;
+        public TaskCompletionSource<string> tcs;
     }
 
     public static void CloseAll()
@@ -197,8 +232,12 @@ public class SelectionDialog : MonoBehaviour
             StopCoroutine(waitForMessagesRoutine);
             waitForMessagesRoutine = null;
         }
-        pendingRequest?.TrySetResult(string.Empty);
-        pendingRequest = null;
+        for (int i = 0; i < queuedRequests.Count; i++)
+        {
+            queuedRequests[i]?.tcs?.TrySetResult(string.Empty);
+        }
+        queuedRequests.Clear();
+        activeIndex = -1;
         pendingDisplay = null;
         HideInstant();
     }
