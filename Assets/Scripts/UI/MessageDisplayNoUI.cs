@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Text.RegularExpressions;
 
 public class MessageDisplayNoUI : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class MessageDisplayNoUI : MonoBehaviour
     [SerializeField] private float fadeDuration = 0.02f;
 
     [Header("Layout")]
-    [SerializeField] private Vector3 worldOffset = new Vector3(0f, 1.5f, 0f);
+    [SerializeField] private Vector3 worldOffset = new Vector3(0f, 0.9f, 0f);
     [SerializeField] private bool faceCamera = true;
     [SerializeField] private float fontScale = 0.5f;
 
@@ -46,6 +47,7 @@ public class MessageDisplayNoUI : MonoBehaviour
 
         if (textMesh != null)
         {
+            EnsureCenteredLayout();
             textMesh.text = "";
             if (fontScale > 0f)
             {
@@ -89,7 +91,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         }
 
         string rawMessage = message ?? string.Empty;
-        string formattedMessage = ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(rawMessage);
+        string formattedMessage = FormatMessageForDisplay(ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(rawMessage));
         string author = $"[{game.currentlyPlaying.characterName}]";
         string characterName = character != game.currentlyPlaying ? $"({character.characterName})" : "";
         string hexText = hex.GetText();
@@ -150,7 +152,7 @@ public class MessageDisplayNoUI : MonoBehaviour
     {
         if (instance == null || hex == null || hex.gameObject == null) return;
 
-        string formattedMessage = ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(message ?? string.Empty);
+        string formattedMessage = FormatMessageForDisplay(ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(message ?? string.Empty));
         Color resolved = color ?? Color.white;
         Vector3 worldPos = hex.gameObject.transform.position;
 
@@ -275,6 +277,7 @@ public class MessageDisplayNoUI : MonoBehaviour
 
         // Set position & color
         transform.position = data.WorldPos + worldOffset;
+        EnsureCenteredLayout();
         textMesh.text = data.Message;
         textMesh.color = new Color(data.TextColor.r, data.TextColor.g, data.TextColor.b, 0f);
 
@@ -359,6 +362,32 @@ public class MessageDisplayNoUI : MonoBehaviour
         if (textMesh == null) return;
         Color c = baseColor ?? textMesh.color;
         textMesh.color = new Color(c.r, c.g, c.b, a);
+    }
+
+    private void EnsureCenteredLayout()
+    {
+        if (textMesh == null) return;
+
+        textMesh.alignment = TextAlignmentOptions.Center;
+        textMesh.overflowMode = TextOverflowModes.Overflow;
+        textMesh.enableWordWrapping = false;
+        textMesh.horizontalAlignment = HorizontalAlignmentOptions.Center;
+        textMesh.verticalAlignment = VerticalAlignmentOptions.Middle;
+
+        RectTransform rectTransform = textMesh.rectTransform;
+        if (rectTransform != null)
+        {
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransform.anchoredPosition = Vector2.zero;
+        }
+    }
+
+    private static string FormatMessageForDisplay(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message)) return string.Empty;
+        return Regex.Replace(message.Trim(), @"\.\s+", ".\n");
     }
 
     private void EnsureCameraReferences()

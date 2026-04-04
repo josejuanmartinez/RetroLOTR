@@ -10,6 +10,8 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
     private PendingPcChoice pendingChoice;
     private static Dictionary<string, PcCardMetadata> pcCardMetadataByActionRef;
     private static Dictionary<string, string> pcNamesBySourceKey;
+    private static int activePcLookupFrame = -1;
+    private static readonly HashSet<string> activePcLookupKeys = new(StringComparer.OrdinalIgnoreCase);
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
@@ -166,7 +168,11 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
 
     private bool HasAssociatedPcInGame(PendingPcChoice choice)
     {
-        return FindAssociatedPc(choice) != null;
+        string targetKey = NormalizePcLookupKey(ResolveAssociatedPcName(choice));
+        if (string.IsNullOrWhiteSpace(targetKey)) return false;
+
+        RefreshActivePcLookup();
+        return activePcLookupKeys.Contains(targetKey);
     }
 
     private PcEffectCatalog.PcEffectDefinition ResolvePcEffectDefinition(PendingPcChoice choice)
@@ -194,6 +200,28 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         }
 
         return null;
+    }
+
+    private static void RefreshActivePcLookup()
+    {
+        if (activePcLookupFrame == Time.frameCount) return;
+
+        activePcLookupFrame = Time.frameCount;
+        activePcLookupKeys.Clear();
+
+        Board board = FindFirstObjectByType<Board>();
+        List<Hex> hexes = board != null ? board.GetHexes() : null;
+        if (hexes == null) return;
+
+        for (int i = 0; i < hexes.Count; i++)
+        {
+            PC candidate = hexes[i]?.GetPCData();
+            string key = NormalizePcLookupKey(candidate != null ? candidate.pcName : null);
+            if (!string.IsNullOrWhiteSpace(key))
+            {
+                activePcLookupKeys.Add(key);
+            }
+        }
     }
 
     private string ResolveAssociatedPcName(PendingPcChoice choice)

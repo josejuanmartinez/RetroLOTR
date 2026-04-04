@@ -50,14 +50,8 @@ public class SelectedCharacterIcon : MonoBehaviour
     [SerializeField] private CanvasGroup card1CanvasGroup;
     [SerializeField] private Image card1;
     
-    [Header("Selection Change Effect")]
-    [SerializeField] private float selectionFxDuration = 0.24f;
-    [SerializeField] private float selectionFxDurationMultiplier = 3f;
-    [SerializeField] private float selectionFxDarkenMin = 0.15f;
-
     // private Videos videos;
     private Illustrations illustrations;
-    private ActionsManager actionsManager;
     private CanvasGroup canvasGroup;
     private Image rootImage;
     private Image borderImage;
@@ -75,9 +69,9 @@ public class SelectedCharacterIcon : MonoBehaviour
     private bool cacheAlignmentEnabled;
     private bool cacheHealthEnabled;
     private int lastRefreshedCharacterId = int.MinValue;
-    private Coroutine selectionFxCoroutine;
-    private Color iconDefaultColor = Color.white;
-    private Color rawImageDefaultColor = Color.white;
+    private Character pendingRefreshCharacter;
+    private bool refreshScheduled;
+    private readonly List<ArtifactRenderer> artifactRenderers = new();
 
     private void Awake()
     {
@@ -85,15 +79,15 @@ public class SelectedCharacterIcon : MonoBehaviour
         borderImage = border != null ? border.GetComponent<Image>() : null;
         if (rootImage != null) rootDefaultColor = rootImage.color;
         if (borderImage != null) borderDefaultColor = borderImage.color;
-        if (icon != null) iconDefaultColor = icon.color;
-        if (rawImage != null) rawImageDefaultColor = rawImage.color;
         defaultScale = transform.localScale;
     }
 
     private void OnDisable()
     {
         SetDropTargetHighlight(false);
-        StopSelectionChangeFx();
+        refreshScheduled = false;
+        pendingRefreshCharacter = null;
+        StopAllCoroutines();
     }
 
     private void Update()
@@ -209,7 +203,28 @@ public class SelectedCharacterIcon : MonoBehaviour
     // Update is called once per frame
     public void Refresh(Character c)
     {
-        bool characterChanged = c != null && c.GetInstanceID() != lastRefreshedCharacterId;
+        pendingRefreshCharacter = c;
+        if (refreshScheduled) return;
+        refreshScheduled = true;
+        StartCoroutine(RefreshNextFrame());
+    }
+
+    private System.Collections.IEnumerator RefreshNextFrame()
+    {
+        yield return null;
+        refreshScheduled = false;
+        Character c = pendingRefreshCharacter;
+        pendingRefreshCharacter = null;
+        if (c == null)
+        {
+            Hide();
+            yield break;
+        }
+        ApplyRefresh(c);
+    }
+
+    private void ApplyRefresh(Character c)
+    {
         SetDropTargetHighlight(false);
         SetVisible(true);
         border.SetActive(true);
@@ -233,17 +248,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         health.gameObject.SetActive(true);
         health.fillAmount = c.health / 100f;
 
-        foreach (Transform artifactChild in artifactsGridLayoutTransform)
-        {
-            Destroy(artifactChild.gameObject);
-        }
-
-        c.artifacts.ForEach(x =>
-        {
-            GameObject artifactGO = Instantiate(artifactPrefab, artifactsGridLayoutTransform);
-            artifactGO.name = x.artifactName;
-            artifactGO.GetComponent<ArtifactRenderer>().Initialize(x);
-        });
+        RefreshArtifacts(c.artifacts);
         
         RefreshMovementLeft(c);
         RefreshPlayedCard(c);
@@ -251,10 +256,6 @@ public class SelectedCharacterIcon : MonoBehaviour
         if (c != null)
         {
             lastRefreshedCharacterId = c.GetInstanceID();
-            if (characterChanged)
-            {
-                PlaySelectionChangeFx();
-            }
         }
     }
 
@@ -308,20 +309,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         health.gameObject.SetActive(showHealth);
         if (showHealth) health.fillAmount = c.health / 100f;
 
-        foreach (Transform artifactChild in artifactsGridLayoutTransform)
-        {
-            Destroy(artifactChild.gameObject);
-        }
-
-        if (showArtifacts)
-        {
-            c.artifacts.ForEach(x =>
-            {
-                GameObject artifactGO = Instantiate(artifactPrefab, artifactsGridLayoutTransform);
-                artifactGO.name = x.artifactName;
-                artifactGO.GetComponent<ArtifactRenderer>().Initialize(x);
-            });
-        }
+        RefreshArtifacts(showArtifacts ? c.artifacts : null);
 
         SetPlayedCardVisible(false);
     }
@@ -331,7 +319,6 @@ public class SelectedCharacterIcon : MonoBehaviour
     public void Hide()
     {
         SetDropTargetHighlight(false);
-        StopSelectionChangeFx();
         SetVisible(false);
         border.SetActive(false);
         alignmentIcon.enabled = false;
@@ -352,6 +339,8 @@ public class SelectedCharacterIcon : MonoBehaviour
         health.gameObject.SetActive(false);
         SetPlayedCardVisible(false);
         lastRefreshedCharacterId = int.MinValue;
+        pendingRefreshCharacter = null;
+        refreshScheduled = false;
     }
 
     public void RefreshMovementLeft(Character c)
@@ -440,10 +429,6 @@ public class SelectedCharacterIcon : MonoBehaviour
         if (playedSprite == null && !string.IsNullOrWhiteSpace(c.lastPlayedActionClassNameThisTurn))
         {
             playedSprite = GetIllustrationByName(c.lastPlayedActionClassNameThisTurn);
-            if (playedSprite == null)
-            {
-                playedSprite = ResolveActionSpriteByClassName(c.lastPlayedActionClassNameThisTurn);
-            }
         }
 
         if (playedSprite == null && !string.IsNullOrWhiteSpace(c.lastPlayedActionNameThisTurn))
@@ -465,23 +450,6 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetPlayedCardVisible(true);
     }
 
-    private Sprite ResolveActionSpriteByClassName(string className)
-    {
-        if (string.IsNullOrWhiteSpace(className)) return null;
-        if (actionsManager == null) actionsManager = FindFirstObjectByType<ActionsManager>();
-        if (actionsManager == null || actionsManager.characterActions == null) return null;
-
-        for (int i = 0; i < actionsManager.characterActions.Length; i++)
-        {
-            CharacterAction action = actionsManager.characterActions[i];
-            if (action == null) continue;
-            if (!string.Equals(action.GetType().Name, className, System.StringComparison.OrdinalIgnoreCase)) continue;
-            if (action.actionSprite != null) return action.actionSprite;
-        }
-
-        return null;
-    }
-
     private void SetPlayedCardVisible(bool visible)
     {
         if (card1CanvasGroup != null)
@@ -496,93 +464,30 @@ public class SelectedCharacterIcon : MonoBehaviour
         }
     }
 
-    private void PlaySelectionChangeFx()
+    private void RefreshArtifacts(List<Artifact> artifacts)
     {
-        if (dropHintActive) return;
-        StopSelectionChangeFx();
-        selectionFxCoroutine = StartCoroutine(SelectionChangeFxCoroutine());
-    }
+        int requiredCount = artifacts != null ? artifacts.Count : 0;
 
-    private void StopSelectionChangeFx()
-    {
-        if (selectionFxCoroutine != null)
+        for (int i = artifactRenderers.Count; i < requiredCount; i++)
         {
-            StopCoroutine(selectionFxCoroutine);
-            selectionFxCoroutine = null;
-        }
-        ResetSelectionFxVisuals();
-    }
-
-    private System.Collections.IEnumerator SelectionChangeFxCoroutine()
-    {
-        float duration = Mathf.Max(0.05f, selectionFxDuration * Mathf.Max(0.1f, selectionFxDurationMultiplier) * 5f);
-        float halfDuration = duration * 0.5f;
-        float elapsed = 0f;
-
-        while (elapsed < halfDuration)
-        {
-            if (dropHintActive)
-            {
-                ResetSelectionFxVisuals();
-                selectionFxCoroutine = null;
-                yield break;
-            }
-
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(elapsed / halfDuration);
-            ApplySelectionFxTint(Mathf.SmoothStep(0f, 1f, t));
-            yield return null;
+            GameObject artifactGO = Instantiate(artifactPrefab, artifactsGridLayoutTransform);
+            ArtifactRenderer renderer = artifactGO.GetComponent<ArtifactRenderer>();
+            artifactRenderers.Add(renderer);
         }
 
-        elapsed = 0f;
-        while (elapsed < halfDuration)
+        for (int i = 0; i < artifactRenderers.Count; i++)
         {
-            if (dropHintActive)
-            {
-                ResetSelectionFxVisuals();
-                selectionFxCoroutine = null;
-                yield break;
-            }
+            ArtifactRenderer renderer = artifactRenderers[i];
+            if (renderer == null) continue;
 
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(elapsed / halfDuration);
-            ApplySelectionFxTint(Mathf.SmoothStep(1f, 0f, t));
-            yield return null;
-        }
+            bool active = i < requiredCount;
+            renderer.gameObject.SetActive(active);
+            if (!active) continue;
 
-        ResetSelectionFxVisuals();
-        selectionFxCoroutine = null;
-    }
-
-    private void ApplySelectionFxTint(float darkenLerp)
-    {
-        float brightness = Mathf.Lerp(1f, Mathf.Clamp01(selectionFxDarkenMin), Mathf.Clamp01(darkenLerp));
-
-        if (icon != null)
-        {
-            icon.color = new Color(
-                iconDefaultColor.r * brightness,
-                iconDefaultColor.g * brightness,
-                iconDefaultColor.b * brightness,
-                iconDefaultColor.a);
-        }
-
-        if (rawImage != null)
-        {
-            rawImage.color = new Color(
-                rawImageDefaultColor.r * brightness,
-                rawImageDefaultColor.g * brightness,
-                rawImageDefaultColor.b * brightness,
-                rawImageDefaultColor.a);
+            Artifact artifact = artifacts[i];
+            renderer.gameObject.name = artifact != null ? artifact.artifactName : $"Artifact {i + 1}";
+            renderer.Initialize(artifact);
         }
     }
 
-    private void ResetSelectionFxVisuals()
-    {
-        transform.localScale = defaultScale;
-        if (rootImage != null) rootImage.color = rootDefaultColor;
-        if (borderImage != null) borderImage.color = borderDefaultColor;
-        if (icon != null) icon.color = iconDefaultColor;
-        if (rawImage != null) rawImage.color = rawImageDefaultColor;
-    }
 }

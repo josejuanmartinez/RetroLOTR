@@ -297,6 +297,126 @@
                       "mithrilRequired":  0,
                       "goldRequired":  1,
                       "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  804,
+                      "name":  "BarrowWightWhisper",
+                      "description":  "Whispers from the Barrow-downs unsettle nearby enemies. In radius 2, enemy units gain Fear for 1 turn, and the weakest enemy is Halted for 1 turn.",
+                      "type":  "Event",
+                      "action":  "BarrowWightWhisperAction",
+                      "actionClassName":  "BarrowWightWhisperAction",
+                      "actionId":  1234,
+                      "spriteName":  "BarrowWightWhisper",
+                      "tags":  [
+                                   "barrow-downs",
+                                   "eerie",
+                                   "fear",
+                                   "control"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  805,
+                      "name":  "MuddyLaneDetour",
+                      "description":  "A bad road and a worse choice of route drains supplies. Choose the strongest enemy in your hex: their side loses 1 random non-gold resource, or 1 gold if no such resource is available.",
+                      "type":  "Event",
+                      "action":  "MuddyLaneDetourAction",
+                      "actionClassName":  "MuddyLaneDetourAction",
+                      "actionId":  1235,
+                      "spriteName":  "MuddyLaneDetour",
+                      "tags":  [
+                                   "roads",
+                                   "travel",
+                                   "supply-loss",
+                                   "frontier"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  1,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  806,
+                      "name":  "LanternsAtBreeGate",
+                      "description":  "Bree gate lanterns expose suspicious movement. Reveal all hidden enemy units in your current hex, then reveal all hexes in radius 2.",
+                      "type":  "Event",
+                      "action":  "LanternsAtBreeGateAction",
+                      "actionClassName":  "LanternsAtBreeGateAction",
+                      "actionId":  1236,
+                      "spriteName":  "LanternsAtBreeGate",
+                      "tags":  [
+                                   "bree-land",
+                                   "checkpoint",
+                                   "reveal",
+                                   "frontier"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  1,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  807,
+                      "name":  "OldForestTurnabout",
+                      "description":  "The paths twist against your foes. Enemy units in your current hex lose the rest of their movement this turn, and one allied unit there gains Haste for 1 turn.",
+                      "type":  "Event",
+                      "action":  "OldForestTurnaboutAction",
+                      "actionClassName":  "OldForestTurnaboutAction",
+                      "actionId":  1237,
+                      "spriteName":  "OldForestTurnabout",
+                      "tags":  [
+                                   "old-forest",
+                                   "movement",
+                                   "paths",
+                                   "tempo"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  808,
+                      "name":  "RoomAtTheLastInn",
+                      "description":  "A shared stop and a warm room restore the road-worn. Heal all characters in your current hex by 15.",
+                      "type":  "Event",
+                      "action":  "RoomAtTheLastInnAction",
+                      "actionClassName":  "RoomAtTheLastInnAction",
+                      "actionId":  1238,
+                      "spriteName":  "RoomAtTheLastInn",
+                      "tags":  [
+                                   "inn",
+                                   "healing",
+                                   "roadside",
+                                   "shelter"
+                               ],
+                      "leatherRequired":  0,
+                      "timberRequired":  0,
+                      "mountsRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
                   }
               ]
 }

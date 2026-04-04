@@ -40,8 +40,10 @@ public class LeaderSelector : SearcherByName
     bool selectionScreenShown = false;
     bool selectionScreenQueued = false;
     Coroutine deferredRefreshRoutine;
+    Canvas rootCanvas;
     void Awake()
     {
+        rootCanvas = GetComponentInParent<Canvas>(true);
         if (introVideo != null)
         {
             introVideo.loopPointReached += OnIntroVideoFinished;
@@ -91,7 +93,10 @@ public class LeaderSelector : SearcherByName
                     ShowLeaderSelectionIfReady();
                 }
 
-                RequestLeaderSelectionRefresh();
+                if (selectionScreenShown || selectionScreenQueued)
+                {
+                    RequestLeaderSelectionRefresh();
+                }
             }
         }
 
@@ -103,7 +108,7 @@ public class LeaderSelector : SearcherByName
 
     void OnApplicationFocus(bool hasFocus)
     {
-        if (hasFocus)
+        if (hasFocus && (selectionScreenShown || selectionScreenQueued))
         {
             RequestLeaderSelectionRefresh();
         }
@@ -124,7 +129,6 @@ public class LeaderSelector : SearcherByName
 
         bool introIsBlocking = introVideo != null
             && introVideo.gameObject.activeInHierarchy
-            && introVideo.isPlaying
             && !introFinished;
         if (introIsBlocking)
         {
@@ -142,9 +146,65 @@ public class LeaderSelector : SearcherByName
 
     void ForceLeaderSelectionRefresh()
     {
+        if (!selectionScreenShown && !selectionScreenQueued)
+        {
+            return;
+        }
+
+        if (rootCanvas == null)
+        {
+            rootCanvas = GetComponentInParent<Canvas>(true);
+        }
+
+        if (rootCanvas != null && rootCanvas.gameObject != null && !rootCanvas.gameObject.activeSelf)
+        {
+            rootCanvas.gameObject.SetActive(true);
+        }
+
+        if (rootCanvas != null)
+        {
+            rootCanvas.enabled = false;
+            rootCanvas.enabled = true;
+        }
+
+        if (leaderSelectionFullScreen != null)
+        {
+            if (!leaderSelectionFullScreen.activeSelf)
+            {
+                leaderSelectionFullScreen.SetActive(true);
+            }
+
+            leaderSelectionFullScreen.transform.SetAsLastSibling();
+
+            CanvasGroup group = leaderSelectionFullScreen.GetComponent<CanvasGroup>();
+            if (group != null)
+            {
+                group.alpha = 1f;
+                group.interactable = true;
+                group.blocksRaycasts = true;
+            }
+
+            Canvas fullScreenCanvas = leaderSelectionFullScreen.GetComponent<Canvas>();
+            if (fullScreenCanvas != null)
+            {
+                fullScreenCanvas.enabled = false;
+                fullScreenCanvas.enabled = true;
+            }
+        }
+
         if (leaderCarousel != null)
         {
+            if (!leaderCarousel.gameObject.activeSelf)
+            {
+                leaderCarousel.gameObject.SetActive(true);
+            }
+
+            leaderCarousel.gameObject.SetActive(false);
+            leaderCarousel.gameObject.SetActive(true);
+            leaderCarousel.enabled = false;
+            leaderCarousel.enabled = true;
             leaderCarousel.Refresh();
+            leaderCarousel.SetIndex(leaderCarousel.GetCurrentIndex());
         }
 
         if (textUI != null)
@@ -190,12 +250,13 @@ public class LeaderSelector : SearcherByName
 
     IEnumerator DeferredLeaderSelectionRefresh()
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 8; i++)
         {
             yield return null;
             ForceLeaderSelectionRefresh();
             yield return new WaitForEndOfFrame();
             ForceLeaderSelectionRefresh();
+            yield return new WaitForSecondsRealtime(0.02f);
         }
 
         deferredRefreshRoutine = null;
@@ -205,6 +266,8 @@ public class LeaderSelector : SearcherByName
     {
         yield return null;
         yield return new WaitForEndOfFrame();
+
+        FindFirstObjectByType<Board>()?.HideGenerationProgressUi();
 
         if (introVideo != null)
         {
@@ -224,13 +287,30 @@ public class LeaderSelector : SearcherByName
         if (leaderSelectionFullScreen != null)
         {
             leaderSelectionFullScreen.SetActive(false);
+            yield return null;
             leaderSelectionFullScreen.SetActive(true);
+            leaderSelectionFullScreen.transform.SetAsLastSibling();
         }
 
         selectionScreenShown = true;
         selectionScreenQueued = false;
+        SelectLeader(leaderCarousel != null ? leaderCarousel.GetCurrentIndex() : 0);
+        FindFirstObjectByType<Board>()?.HideGenerationProgressUi();
         ForceLeaderSelectionRefresh();
         RequestLeaderSelectionRefresh();
+        StartCoroutine(ForceLeaderSelectionVisibleAcrossFrames());
+    }
+
+    IEnumerator ForceLeaderSelectionVisibleAcrossFrames()
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            FindFirstObjectByType<Board>()?.HideGenerationProgressUi();
+            yield return null;
+            ForceLeaderSelectionRefresh();
+            yield return new WaitForEndOfFrame();
+            ForceLeaderSelectionRefresh();
+        }
     }
 
     void AddLeaderOptions(PlayableLeader playableLeader)

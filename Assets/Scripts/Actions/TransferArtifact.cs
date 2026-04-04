@@ -100,8 +100,6 @@ public class TransferArtifact : CharacterAction
                 var layout = FindFirstObjectByType<Layout>();
                 layout.GetSelectedCharacterIcon().Refresh(c);
                 layout.GetSelectedCharacterIcon().Refresh(character);
-                layout.GetActionsManager().Refresh(c);
-                layout.GetActionsManager().Refresh(character);
             }
             return true;
         }

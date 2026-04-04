@@ -16,39 +16,72 @@ public class ActionsManager : MonoBehaviour
     public static readonly char[] ActionHotkeyLetters = "BCEFGHIJKLMOQRTUVWYZ".ToCharArray();
 
     private readonly Dictionary<Type, CharacterAction> actionComponents = new();
+    private readonly Dictionary<string, CharacterAction> actionComponentsByClassName = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, ActionDefinition> actionDefinitionsByClassName = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, ActionDefinition> actionDefinitionsByActionName = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<int, ActionDefinition> actionDefinitionsById = new();
     private readonly List<CharacterAction> availableActions = new();
     private Character currentCharacter;
+    private Game cachedGame;
 
     public void Start()
     {
-        characterActions = LoadActionsFromJson();
-        if (characterActions == null || characterActions.Length == 0)
-        {
-            characterActions = GetComponentsInChildren<CharacterAction>(true);
-        }
+        LoadActionDefinitions();
+        characterActions = Array.Empty<CharacterAction>();
+        DEFAULT = ResolveActionByRef("Pass");
 
-        DEFAULT = characterActions.FirstOrDefault(a => string.Equals(a.GetType().Name, "Pass", StringComparison.OrdinalIgnoreCase));
-        if (DEFAULT == null)
-        {
-            Debug.LogWarning("DEFAULT action not found. Expected action named 'Pass'.");
-            DEFAULT = characterActions.FirstOrDefault(a => NormalizeActionName(a.actionName) == "pass") ?? characterActions.FirstOrDefault();
-        }
-
-        actionComponents.Clear();
-        foreach (CharacterAction component in characterActions)
-        {
-            if (component == null) continue;
-            actionComponents[component.GetType()] = component;
-        }
-
-        Hide();
+        currentCharacter = null;
+        availableActions.Clear();
+        UpdateInteractableState();
     }
 
     public T GetAction<T>() where T : CharacterAction
     {
-        if (actionComponents.TryGetValue(typeof(T), out CharacterAction component)) return component as T;
+        CharacterAction component = GetOrCreateAction(typeof(T));
+        if (component != null) return component as T;
         Debug.LogWarning($"Action of type {typeof(T).Name} not found!");
         return null;
+    }
+
+    public CharacterAction ResolveActionByRef(string actionRef)
+    {
+        string normalizedActionRef = NormalizeActionRef(actionRef);
+        if (string.IsNullOrWhiteSpace(normalizedActionRef)) return null;
+
+        if (actionComponentsByClassName.TryGetValue(normalizedActionRef, out CharacterAction loaded))
+        {
+            return loaded;
+        }
+
+        if (actionDefinitionsByClassName.TryGetValue(normalizedActionRef, out ActionDefinition byClassDefinition))
+        {
+            CharacterAction createdFromClass = GetOrCreateAction(ResolveActionType(byClassDefinition.className), byClassDefinition);
+            if (createdFromClass != null) return createdFromClass;
+        }
+
+        if (actionDefinitionsByActionName.TryGetValue(normalizedActionRef, out ActionDefinition byNameDefinition))
+        {
+            CharacterAction createdFromName = GetOrCreateAction(ResolveActionType(byNameDefinition.className), byNameDefinition);
+            if (createdFromName != null) return createdFromName;
+        }
+
+        Type resolvedType = ResolveActionType(normalizedActionRef);
+        return GetOrCreateAction(resolvedType);
+    }
+
+    public CharacterAction ResolveActionById(int actionId)
+    {
+        if (!actionDefinitionsById.TryGetValue(actionId, out ActionDefinition definition))
+        {
+            return null;
+        }
+
+        return ResolveActionByRef(definition.className);
+    }
+
+    public IReadOnlyList<CharacterAction> GetLoadedActions()
+    {
+        return actionComponents.Values.ToArray();
     }
 
     public void Refresh(Character character)
@@ -61,7 +94,14 @@ public class ActionsManager : MonoBehaviour
 
         currentCharacter = character;
 
-        foreach (CharacterAction component in actionComponents.Values)
+        if (IsHumanPlayerCharacter(character))
+        {
+            availableActions.Clear();
+            UpdateInteractableState();
+            return;
+        }
+
+        foreach (CharacterAction component in GetLoadedActions())
         {
             component.Initialize(character, null, null);
         }
@@ -72,13 +112,6 @@ public class ActionsManager : MonoBehaviour
 
     public void Hide()
     {
-        if (canvasGroup != null)
-        {
-            canvasGroup.alpha = 0f;
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
-        }
-
         foreach (CharacterAction component in actionComponents.Values)
         {
             component.Reset();
@@ -86,6 +119,7 @@ public class ActionsManager : MonoBehaviour
 
         availableActions.Clear();
         currentCharacter = null;
+        UpdateInteractableState();
     }
 
     public int GetDefault()
@@ -101,9 +135,9 @@ public class ActionsManager : MonoBehaviour
     private void BuildAvailableActions()
     {
         availableActions.Clear();
-        if (characterActions == null || currentCharacter == null) return;
+        if (currentCharacter == null) return;
 
-        foreach (CharacterAction action in characterActions)
+        foreach (CharacterAction action in GetLoadedActions())
         {
             if (action == null) continue;
             if (!action.IsRoleEligible(currentCharacter)) continue;
@@ -113,101 +147,6 @@ public class ActionsManager : MonoBehaviour
 
         availableActions.Sort((a, b) => string.Compare(a?.actionName, b?.actionName, StringComparison.OrdinalIgnoreCase));
     }
-
-    private CharacterAction[] LoadActionsFromJson()
-    {
-        TextAsset json = Resources.Load<TextAsset>("Actions");
-        List<CharacterAction> prefabActions = GetComponentsInChildren<CharacterAction>(true).ToList();
-        if (json == null)
-        {
-            Debug.LogWarning("Actions.json not found in Resources. Falling back to prefab actions.");
-            return prefabActions.ToArray();
-        }
-
-        ActionDefinitionCollection definitionCollection = JsonUtility.FromJson<ActionDefinitionCollection>(json.text);
-        if (definitionCollection == null || definitionCollection.actions == null || definitionCollection.actions.Count == 0)
-        {
-            Debug.LogWarning("Actions.json is empty or malformed. Falling back to prefab actions.");
-            return prefabActions.ToArray();
-        }
-
-        if (prefabActions.Count == 0)
-        {
-            Debug.LogWarning("ActionsManager: no CharacterAction components found in scene/prefab. Attempting to create actions from Actions.json.");
-        }
-
-        return UpdateExistingActions(prefabActions, definitionCollection);
-    }
-
-    private CharacterAction[] UpdateExistingActions(List<CharacterAction> prefabActions, ActionDefinitionCollection definitionCollection)
-    {
-        Dictionary<string, CharacterAction> actionsByType = prefabActions
-            .GroupBy(a => a.GetType().Name, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(g => g.Key, g => g.First());
-
-        Dictionary<string, CharacterAction> actionsByName = prefabActions
-            .GroupBy(a => NormalizeActionName(a.actionName))
-            .ToDictionary(g => g.Key, g => g.First());
-
-        List<CharacterAction> ordered = new();
-        foreach (ActionDefinition definition in definitionCollection.actions)
-        {
-            CharacterAction action = null;
-            if (!string.IsNullOrWhiteSpace(definition.className))
-            {
-                actionsByType.TryGetValue(definition.className, out action);
-            }
-            if (action == null)
-            {
-                string normalizedName = NormalizeActionName(definition.actionName);
-                actionsByName.TryGetValue(normalizedName, out action);
-            }
-            if (action == null)
-            {
-                Type resolvedType = ResolveActionType(definition.className);
-                if (resolvedType != null && typeof(CharacterAction).IsAssignableFrom(resolvedType))
-                {
-                    action = gameObject.AddComponent(resolvedType) as CharacterAction;
-                    if (action != null)
-                    {
-                        if (!string.IsNullOrWhiteSpace(definition.className))
-                        {
-                            actionsByType[definition.className] = action;
-                        }
-
-                        string normalizedName = NormalizeActionName(definition.actionName);
-                        if (!string.IsNullOrWhiteSpace(normalizedName))
-                        {
-                            actionsByName[normalizedName] = action;
-                        }
-                    }
-                }
-
-                if (action == null)
-                {
-                    Debug.LogWarning($"ActionsManager: action '{definition.className}'/'{definition.actionName}' is not present as a CharacterAction component.");
-                    continue;
-                }
-            }
-
-            ApplyDefinition(action, definition);
-            ordered.Add(action);
-        }
-
-        foreach (CharacterAction leftover in prefabActions.Where(a => !ordered.Contains(a)))
-        {
-            ordered.Add(leftover);
-        }
-
-        if (ordered.Count == 0)
-        {
-            Debug.LogWarning("No actions matched the entries in Actions.json. Falling back to prefab ordering.");
-            return prefabActions.ToArray();
-        }
-
-        return ordered.ToArray();
-    }
-
     private void ApplyDefinition(CharacterAction action, ActionDefinition definition)
     {
         if (action == null || definition == null) return;
@@ -225,24 +164,124 @@ public class ActionsManager : MonoBehaviour
         action.advisorType = definition.advisorType;
     }
 
+    private void LoadActionDefinitions()
+    {
+        actionDefinitionsByClassName.Clear();
+        actionDefinitionsByActionName.Clear();
+        actionDefinitionsById.Clear();
+
+        TextAsset json = Resources.Load<TextAsset>("Actions");
+        if (json == null)
+        {
+            Debug.LogWarning("Actions.json not found in Resources.");
+            return;
+        }
+
+        ActionDefinitionCollection definitionCollection = JsonUtility.FromJson<ActionDefinitionCollection>(json.text);
+        if (definitionCollection == null || definitionCollection.actions == null || definitionCollection.actions.Count == 0)
+        {
+            Debug.LogWarning("Actions.json is empty or malformed.");
+            return;
+        }
+
+        foreach (ActionDefinition definition in definitionCollection.actions)
+        {
+            if (definition == null) continue;
+
+            if (!string.IsNullOrWhiteSpace(definition.className))
+            {
+                actionDefinitionsByClassName[definition.className.Trim()] = definition;
+            }
+
+            string normalizedActionName = NormalizeActionName(definition.actionName);
+            if (!string.IsNullOrWhiteSpace(normalizedActionName))
+            {
+                actionDefinitionsByActionName[normalizedActionName] = definition;
+            }
+
+            actionDefinitionsById[definition.actionId] = definition;
+        }
+    }
+
     private void UpdateInteractableState()
     {
         if (canvasGroup == null) return;
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = GetGame();
         bool isPlayerTurn = game != null && game.IsPlayerCurrentlyPlaying();
         bool popupBlocking = PopupManager.IsShowing;
+        bool playerUsesCardHandUi = IsHumanPlayerCharacter(currentCharacter) || (currentCharacter == null && isPlayerTurn);
+        bool visible = isPlayerTurn && !popupBlocking;
+        bool enabled = visible && !playerUsesCardHandUi;
+        canvasGroup.alpha = visible ? 1f : 0f;
+        canvasGroup.interactable = visible;
+        canvasGroup.blocksRaycasts = visible;
+    }
 
-        bool enabled = isPlayerTurn && !popupBlocking;
-        canvasGroup.alpha = enabled ? 1f : 0f;
-        canvasGroup.interactable = enabled;
-        canvasGroup.blocksRaycasts = enabled;
+    private Game GetGame()
+    {
+        if (cachedGame == null) cachedGame = FindFirstObjectByType<Game>();
+        return cachedGame;
+    }
+
+    private bool IsHumanPlayerCharacter(Character character)
+    {
+        Game game = GetGame();
+        return character != null && game != null && game.player != null && character.GetOwner() == game.player;
     }
 
     private string NormalizeActionName(string value)
     {
         string stripped = ActionNameUtils.StripShortcut(value);
         return string.IsNullOrWhiteSpace(stripped) ? string.Empty : stripped.Trim().ToLowerInvariant();
+    }
+
+    private static string NormalizeActionRef(string actionRef)
+    {
+        if (string.IsNullOrWhiteSpace(actionRef)) return string.Empty;
+
+        string normalized = actionRef.Trim();
+        if (normalized.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+        {
+            normalized = normalized[..^3];
+        }
+
+        return normalized.Trim();
+    }
+
+    private CharacterAction RegisterActionComponent(CharacterAction action)
+    {
+        if (action == null) return null;
+
+        actionComponents[action.GetType()] = action;
+        actionComponentsByClassName[action.GetType().Name] = action;
+
+        ActionDefinition definition = null;
+        actionDefinitionsByClassName.TryGetValue(action.GetType().Name, out definition);
+        if (definition == null)
+        {
+            string normalizedActionName = NormalizeActionName(action.actionName);
+            actionDefinitionsByActionName.TryGetValue(normalizedActionName, out definition);
+        }
+
+        ApplyDefinition(action, definition);
+        characterActions = actionComponents.Values.ToArray();
+        return action;
+    }
+
+    private CharacterAction GetOrCreateAction(Type actionType, ActionDefinition definition = null)
+    {
+        if (actionType == null || !typeof(CharacterAction).IsAssignableFrom(actionType)) return null;
+        if (actionComponents.TryGetValue(actionType, out CharacterAction loaded)) return loaded;
+        CharacterAction created = Activator.CreateInstance(actionType) as CharacterAction;
+
+        if (definition == null)
+        {
+            actionDefinitionsByClassName.TryGetValue(actionType.Name, out definition);
+        }
+
+        ApplyDefinition(created, definition);
+        return RegisterActionComponent(created);
     }
 
     private static Type ResolveActionType(string className)

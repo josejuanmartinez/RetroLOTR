@@ -616,13 +616,9 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
         HashSet<string> offensiveNames = GetOffensiveActionNames();
         if (offensiveNames.Count == 0) yield break;
 
-        if (actionsManager.characterActions == null || actionsManager.characterActions.Length == 0)
-        {
-            actionsManager.characterActions = actionsManager.GetComponentsInChildren<CharacterAction>(true);
-        }
-
-        List<CharacterAction> offensiveActions = actionsManager.characterActions
-            .Where(action => action != null && offensiveNames.Contains(action.GetType().Name))
+        List<CharacterAction> offensiveActions = offensiveNames
+            .Select(actionsManager.ResolveActionByRef)
+            .Where(action => action != null)
             .ToList();
 
         if (offensiveActions.Count == 0) yield break;
@@ -1701,13 +1697,7 @@ public class NonPlayableLeaderEventManager : MonoBehaviour
     private CharacterAction FindActionByClassName(string className)
     {
         if (string.IsNullOrWhiteSpace(className) || actionsManager == null) return null;
-        if (actionsManager.characterActions == null || actionsManager.characterActions.Length == 0)
-        {
-            actionsManager.characterActions = actionsManager.GetComponentsInChildren<CharacterAction>(true);
-        }
-
-        return actionsManager.characterActions
-            .FirstOrDefault(action => action != null && string.Equals(action.GetType().Name, className, StringComparison.OrdinalIgnoreCase));
+        return actionsManager.ResolveActionByRef(className);
     }
 
     private void ShowSuccessPopup(ActiveEvent active, Hex target)

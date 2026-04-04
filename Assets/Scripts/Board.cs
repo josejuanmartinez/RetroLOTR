@@ -59,6 +59,8 @@ public class Board : MonoBehaviour
     public List<Hex> hexesWithCharacters;
     public List<Hex> hexesWithPCs;
     public List<Hex> hexesWithArtifacts;
+    private Game cachedGame;
+    private Layout cachedLayout;
 
     // Direction vectors for hex neighbors (flat-top)
     public readonly Vector2Int[] evenRowNeighbors = new[] {
@@ -80,6 +82,18 @@ public class Board : MonoBehaviour
     };
 
     private bool initialized = false;
+
+    private Game GetGame()
+    {
+        if (cachedGame == null) cachedGame = FindFirstObjectByType<Game>();
+        return cachedGame;
+    }
+
+    private Layout GetLayout()
+    {
+        if (cachedLayout == null) cachedLayout = FindFirstObjectByType<Layout>();
+        return cachedLayout;
+    }
 
     void Start()
     {
@@ -203,6 +217,43 @@ public class Board : MonoBehaviour
         }
         
         StartCoroutine(SpawnArtifacts());
+        HideGenerationProgressUi();
+    }
+
+    public void HideGenerationProgressUi()
+    {
+        HideGenerationUiObject(progressBar != null ? progressBar.gameObject : null);
+        HideGenerationUiObject(statusText != null ? statusText.gameObject : null);
+
+        if (progressBar != null && statusText != null)
+        {
+            Transform progressParent = progressBar.transform.parent;
+            Transform statusParent = statusText.transform.parent;
+            if (progressParent != null && progressParent == statusParent)
+            {
+                HideGenerationUiObject(progressParent.gameObject);
+            }
+        }
+
+        Canvas.ForceUpdateCanvases();
+    }
+
+    private static void HideGenerationUiObject(GameObject target)
+    {
+        if (target == null) return;
+
+        CanvasGroup group = target.GetComponent<CanvasGroup>();
+        if (group != null)
+        {
+            group.alpha = 0f;
+            group.interactable = false;
+            group.blocksRaycasts = false;
+        }
+
+        if (target.activeSelf)
+        {
+            target.SetActive(false);
+        }
     }
 
     IEnumerator SpawnArtifacts()
@@ -367,7 +418,9 @@ public class Board : MonoBehaviour
     {
         try
         {
-            Leader player = FindFirstObjectByType<Game>().player;
+            Game game = GetGame();
+            Leader player = game != null ? game.player : null;
+            if (player == null) return;
             if (!hexes[selection].IsHidden() && (hexes[selection].HasArmyOfLeader(player) || hexes[selection].HasCharacterOfLeader(player)))
             {
                 // If different hex, I unselect character
@@ -413,7 +466,6 @@ public class Board : MonoBehaviour
                     RefreshSelectedCharacterUi();
                 }
 
-                RefreshActionsUi();
             }
         }
         catch (Exception e)
@@ -428,7 +480,6 @@ public class Board : MonoBehaviour
         {
             Music.Instance?.UpdateForHex(selected);
         }
-        if(selectedCharacter) FindFirstObjectByType<ActionsManager>()?.Refresh(selectedCharacter);
     }
 
     public void UnselectHex()
@@ -452,20 +503,14 @@ public class Board : MonoBehaviour
 
     private void RefreshSelectedCharacterUi()
     {
-        Layout layout = FindFirstObjectByType<Layout>();
+        Layout layout = GetLayout();
         layout?.GetSelectedCharacterIcon()?.Refresh(selectedCharacter);
     }
 
     private void HideSelectedCharacterUi()
     {
-        Layout layout = FindFirstObjectByType<Layout>();
+        Layout layout = GetLayout();
         layout?.GetSelectedCharacterIcon()?.Hide();
-    }
-
-    private void RefreshActionsUi()
-    {
-        Layout layout = FindFirstObjectByType<Layout>();
-        layout?.GetActionsManager()?.Refresh(selectedCharacter);
     }
 
     private void HideSelectionUi()
@@ -1121,7 +1166,6 @@ public class Board : MonoBehaviour
             if (showPlayerUi)
             {
                 selected.RefreshMovementLeft(character);
-                actionsManager.Refresh(character);
             }
         }
         catch (Exception e)
@@ -1136,7 +1180,6 @@ public class Board : MonoBehaviour
         if (showPlayerUi)
         {
             SelectCharacter(character);
-            actionsManager.Refresh(character);
         }
     }
 
@@ -1346,12 +1389,6 @@ public class Board : MonoBehaviour
 
         if (!ShouldShowPlayerUi(character)) return;
 
-        var actionsManager = FindFirstObjectByType<Layout>().GetActionsManager();
-        if (actionsManager != null)
-        {
-            actionsManager.Refresh(character);
-        }
-
         var selected = FindFirstObjectByType<Layout>().GetSelectedCharacterIcon();
         if (selected != null)
         {
@@ -1405,7 +1442,7 @@ public class Board : MonoBehaviour
         SelectedCharacterChanged?.Invoke(previous, value);
         if (value != null)
         {
-            Game g = FindFirstObjectByType<Game>();
+            Game g = GetGame();
             if (g != null && g.player == value.GetOwner())
             {
                 Sounds.Instance?.PlayVoiceExpression(value);

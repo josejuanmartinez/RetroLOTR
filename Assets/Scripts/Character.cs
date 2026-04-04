@@ -216,7 +216,9 @@ public class Character : MonoBehaviour
 
     public async Task Pass()
     {
-        CharacterAction action = FindFirstObjectByType<ActionsManager>().DEFAULT;
+        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef("Pass") : null;
+        if (action == null) return;
         action.Initialize(this);
         await action.Execute();
     }
@@ -555,15 +557,15 @@ public class Character : MonoBehaviour
     {
         List<string> result = new() { };
         if (withColor) result.Add($"<color={colors.GetHexColorByName(alignment.ToString())}>");
+        if (withHealth) result.Add(GetHealthHoverText());
         if(withAlignment) result.Add($"<sprite name=\"{alignment}\">");
         result.Add($"{characterName}");
-        if (withHealth) result.Add(GetHealthHoverText());
         if (withCharInfo)
         {
-            if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? "[" + GetCommander().ToString() + "]" : "")}");
-            if (agent > 0) result.Add($"<sprite name=\"agent\">{(withLevels ? "[" + GetAgent().ToString() + "]" : "")}");
-            if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">{(withLevels ? "[" + GetEmmissary().ToString() + "]" : "")}");
-            if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? "[" + GetMage().ToString() + "]" : "")}");
+            if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? GetCommander().ToString() : "")}");
+            if (agent > 0) result.Add($"<sprite name=\"agent\">{(withLevels ? GetAgent().ToString() : "")}");
+            if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">{(withLevels ? GetEmmissary().ToString() : "")}");
+            if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? GetMage().ToString() : "")}");
         }
 
         if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText());
@@ -571,19 +573,17 @@ public class Character : MonoBehaviour
         return string.Join("", result);
     }
 
-    public string GetHealthHoverText()
+    private string GetHealthHoverText()
     {
-        string healthColor = "#ff4d4d";
-        string noHealthColor = "#000000";
-        StringBuilder sb = new(" ");
-        const int bars = 4;
-        for(int i=0;i<bars;i++)
-        {
-            string color = noHealthColor;
-            if(health >= Mathf.FloorToInt(100 / (bars-i))) color = healthColor;
-            sb.Append($"<color={color}>|</color>");  
-        }
+        const int blocks = 4;
+        int filledBlocks = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(0, health) / 25f), 0, blocks);
 
+        StringBuilder sb = new(" ");
+        if (filledBlocks > 0)
+        {
+            string filledText = new string(' ', filledBlocks);
+            sb.Append($"<mark color=\"#ff0000\">{filledText}</mark>");
+        }
         return sb.ToString();
     }
 
@@ -922,9 +922,6 @@ public class Character : MonoBehaviour
     }
     public void RefreshActionsIfSelected()
     {        
-        Game game = FindAnyObjectByType<Game>();
-        Board board = FindAnyObjectByType<Board>();
-        if(game.IsPlayerCurrentlyPlaying() && board.selectedCharacter == this) FindFirstObjectByType<ActionsManager>().Refresh(this);
     }
 
     public void Wounded(Leader woundedBy, int damage)

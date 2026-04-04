@@ -39,8 +39,6 @@ public class Hex : MonoBehaviour
 
     [Header("Rendering")]
     public TextMeshPro pcName;
-    public TextMeshPro loyaltyFort;
-    public SpriteRenderer pcTriangle;
 
     [Header("Hover")]
     [SerializeField] private float tooltipFontSize = 2f;
@@ -1790,21 +1788,6 @@ public class Hex : MonoBehaviour
     {
         bool showText = shouldShowPc && pc != null && pc.citySize != PCSizeEnum.NONE;
 
-        if (pcTriangle != null)
-        {
-            if (showText)
-            {
-                Color triangleColor = ParseHexColorOrWhite(GetPcAlignmentColorHex());
-                triangleColor.a = 0.5f;
-                pcTriangle.color = triangleColor;
-                SetActiveFast(pcTriangle.gameObject, true);
-            }
-            else
-            {
-                SetActiveFast(pcTriangle.gameObject, false);
-            }
-        }
-
         if (pcName != null)
         {
             if (showText)
@@ -1818,53 +1801,33 @@ public class Hex : MonoBehaviour
                 SetActiveFast(pcName.gameObject, false);
             }
         }
-
-        if (loyaltyFort != null)
-        {
-            if (showText)
-            {
-                loyaltyFort.text = BuildLoyaltyFortLabel();
-                SetActiveFast(loyaltyFort.gameObject, true);
-            }
-            else
-            {
-                loyaltyFort.text = string.Empty;
-                SetActiveFast(loyaltyFort.gameObject, false);
-            }
-        }
     }
 
     private string BuildPcNameLabel()
     {
         if (pc == null) return string.Empty;
 
-        string formattedName = (pc.pcName ?? string.Empty)
-            .Replace("-", "\n")
-            .Replace(" ", "\n");
+        string formattedName = pc.pcName ?? string.Empty;
 
-        string alignmentColor = GetPcAlignmentColorHex();
         string alignmentValue = pc.owner != null ? pc.owner.GetAlignment().ToString() : "";
         alignmentValue = alignmentValue != "" ? $"<sprite name=\"{alignmentValue}\">" : "";
-        return $"<color={alignmentColor}>{formattedName}</color>\n{alignmentValue} <sprite name=\"pc\">{(int)pc.citySize}";
-    }
-
-    private string BuildLoyaltyFortLabel()
-    {
-        if (pc == null) return string.Empty;
-
         StringBuilder builder = new();
+        builder.Append($"<mark={GetPcAlignmentMarkColorHex()}>{formattedName}</color>\n");
+        builder.Append(alignmentValue);
+        builder.Append(" <sprite name=\"pc\">");
+        builder.Append((int)pc.citySize);
+
         if (pc.fortSize > FortSizeEnum.NONE)
         {
-            builder.Append("<sprite name=\"fort\">");
+            builder.Append(" <sprite name=\"fort\">");
             builder.Append((int)pc.fortSize);
-            builder.Append(' ');
         }
 
-        builder.Append("<sprite name=\"loyalty\"><color=");
+        builder.Append(" <sprite name=\"loyalty\"><color=");
         builder.Append(GetLoyaltyColorHex(pc.loyalty));
         builder.Append('>');
         builder.Append(Math.Max(0, pc.loyalty));
-        builder.Append("</color>");
+        builder.Append("</mark>");
         return builder.ToString();
     }
 
@@ -1885,13 +1848,19 @@ public class Hex : MonoBehaviour
         return colors.GetHexColorByName(pc.owner.GetAlignment().ToString());
     }
 
-    private static Color ParseHexColorOrWhite(string hexColor)
+    private string GetPcAlignmentMarkColorHex()
     {
-        if (!string.IsNullOrWhiteSpace(hexColor) && ColorUtility.TryParseHtmlString(hexColor, out Color parsed))
+        string color = GetPcAlignmentColorHex();
+        if (string.IsNullOrWhiteSpace(color)) return "#FFFFFF66";
+
+        string trimmed = color.Trim();
+        if (trimmed.StartsWith("#"))
         {
-            return parsed;
+            string hex = trimmed[1..];
+            if (hex.Length == 6) return $"#{hex}66";
+            if (hex.Length == 8) return $"#{hex[..6]}66";
         }
 
-        return Color.white;
+        return "#FFFFFFAA";
     }
 }

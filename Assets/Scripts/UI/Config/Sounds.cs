@@ -116,6 +116,7 @@ public class Sounds : SearcherByName
     private float speechEndTime;
     private float lastFootstepTime = -999f;
     private readonly Dictionary<int, VoiceSet> voiceSetByCharacterId = new();
+    private Game cachedGame;
 
     private struct SfxRequest
     {
@@ -142,6 +143,9 @@ public class Sounds : SearcherByName
             soundAudioSource.volume = 1f;
             soundAudioSource.spatialBlend = 0f;
         }
+
+        cachedGame = FindFirstObjectByType<Game>();
+        PrewarmVoiceSets();
     }
 
     private void OnValidate()
@@ -667,10 +671,10 @@ public class Sounds : SearcherByName
             or RacesEnum.Southron or RacesEnum.Easterling;
     }
 
-    private static bool PlayerCanSeeHex(Hex hex)
+    private bool PlayerCanSeeHex(Hex hex)
     {
         if (hex == null) return false;
-        Game g = FindFirstObjectByType<Game>();
+        Game g = GetGame();
         if (g == null || g.player == null) return false;
         return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }
@@ -693,6 +697,26 @@ public class Sounds : SearcherByName
         };
         voiceSetByCharacterId[key] = created;
         return created;
+    }
+
+    private Game GetGame()
+    {
+        if (cachedGame == null) cachedGame = FindFirstObjectByType<Game>();
+        return cachedGame;
+    }
+
+    private void PrewarmVoiceSets()
+    {
+        Character[] characters = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        if (characters == null || characters.Length == 0) return;
+
+        for (int i = 0; i < characters.Length; i++)
+        {
+            Character character = characters[i];
+            if (character == null) continue;
+            if (!IsHumanoidRace(character.race)) continue;
+            GetOrCreateVoiceSet(character);
+        }
     }
 
     private void PlayRaceVoice(Character character, float minInterval)

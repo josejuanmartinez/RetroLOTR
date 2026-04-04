@@ -139,8 +139,23 @@ public class Game : MonoBehaviour
         currentlyPlaying.NewTurn();
         BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
+        StartCoroutine(RefreshDeckUiAfterStartup());
         MessageDisplay.ClearPersistent();
 
+    }
+
+    private IEnumerator RefreshDeckUiAfterStartup()
+    {
+        yield return null;
+        yield return new WaitForEndOfFrame();
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) yield break;
+
+        deckManager.InitializeHandsForCurrentGame();
+        deckManager.RefreshHumanPlayerHandUI();
+        FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
+        ShowHumanPlayerWidgetsWidgets();
     }
 
     private void InitializePlayableLeaderIcons()
@@ -701,15 +716,28 @@ public class Game : MonoBehaviour
 
     private void HideHumanPlayerWidgetsWidgets()
     {
-        selectedCharacterIconCanvasGroup.alpha = 0;
-        actionsCanvasGroup.alpha = 0;
+        SetCanvasGroupVisible(selectedCharacterIconCanvasGroup, false);
+        SetCanvasGroupVisible(actionsCanvasGroup, false);
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        deckManager?.SetHumanHandVisible(false);
         nextTurnButton.enabled = false;
     }
     private void ShowHumanPlayerWidgetsWidgets()
     {
-        selectedCharacterIconCanvasGroup.alpha = 1;
-        actionsCanvasGroup.alpha = 1;
+        SetCanvasGroupVisible(selectedCharacterIconCanvasGroup, true);
+        SetCanvasGroupVisible(actionsCanvasGroup, true);
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        deckManager?.SetHumanHandVisible(true);
         nextTurnButton.enabled = true;
+    }
+
+    private static void SetCanvasGroupVisible(CanvasGroup canvasGroup, bool visible)
+    {
+        if (canvasGroup == null) return;
+
+        canvasGroup.alpha = visible ? 1f : 0f;
+        canvasGroup.interactable = visible;
+        canvasGroup.blocksRaycasts = visible;
     }
 
     private void BuildPlayerCharacterIcons()

@@ -99,43 +99,7 @@ public static class AITurnController
             actionsManager = UnityEngine.Object.FindFirstObjectByType<ActionsManager>();
         }
 
-        if (actionsManager != null && actionsManager.characterActions != null && actionsManager.characterActions.Length > 0)
-        {
-            CharacterAction fromManager = actionsManager.characterActions.FirstOrDefault(candidate =>
-                candidate != null && ActionTypeMatchesRef(candidate.GetType(), normalizedActionRef));
-            if (fromManager != null) return fromManager;
-        }
-
-        CharacterAction[] allActions = UnityEngine.Object.FindObjectsByType<CharacterAction>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        if (allActions != null && allActions.Length > 0)
-        {
-            CharacterAction existing = allActions.FirstOrDefault(candidate =>
-                candidate != null && ActionTypeMatchesRef(candidate.GetType(), normalizedActionRef));
-            if (existing != null) return existing;
-        }
-
-        Type resolvedType = ResolveActionType(normalizedActionRef);
-        if (resolvedType == null || !typeof(CharacterAction).IsAssignableFrom(resolvedType)) return null;
-
-        GameObject host = actionsManager != null ? actionsManager.gameObject : null;
-        if (host == null) return null;
-
-        CharacterAction created = host.GetComponent(resolvedType) as CharacterAction;
-        if (created == null)
-        {
-            created = host.AddComponent(resolvedType) as CharacterAction;
-        }
-
-        if (created != null && actionsManager != null)
-        {
-            CharacterAction[] existingArray = actionsManager.characterActions ?? new CharacterAction[0];
-            if (!existingArray.Contains(created))
-            {
-                actionsManager.characterActions = existingArray.Concat(new[] { created }).ToArray();
-            }
-        }
-
-        return created;
+        return actionsManager != null ? actionsManager.ResolveActionByRef(normalizedActionRef) : null;
     }
 
     private static string NormalizeActionRef(string actionRef)
@@ -202,9 +166,10 @@ public static class AITurnController
 
     private static async Task ExecuteCharacterAsync(PlayableLeader leader, Character character, ActionsManager actionsManager)
     {
-        List<CharacterAction> availableActions = GetAvailableActions(character, actionsManager);
+        Dictionary<CharacterAction, CardData> actionCards = new();
+        List<CharacterAction> availableActions = GetAvailableActions(leader, character, actionsManager, actionCards);
         AIContext.AIContextPrecomputedData? precomputed = AIContextCacheManager.Instance != null ? AIContextCacheManager.Instance.GetCached(leader, character) : null;
-        AIContext context = new AIContext(leader, character, availableActions, precomputed);
+        AIContext context = new AIContext(leader, character, availableActions, actionCards, precomputed);
         IBehaviourNode behaviour = AIBehaviourTreeBuilder.BuildDefault();
 
         BehaviourTreeStatus status = await behaviour.Tick(context);
@@ -223,24 +188,36 @@ public static class AITurnController
         actionsManager.Hide();
     }
 
-    private static List<CharacterAction> GetAvailableActions(Character character, ActionsManager actionsManager)
+    private static List<CharacterAction> GetAvailableActions(PlayableLeader leader, Character character, ActionsManager actionsManager, Dictionary<CharacterAction, CardData> actionCards)
     {
         List<CharacterAction> available = new();
-        if (character == null || actionsManager == null) return available;
+        if (leader == null || character == null || actionsManager == null) return available;
 
-        if (actionsManager.characterActions == null || actionsManager.characterActions.Length == 0)
+        DeckManager deckManager = DeckManager.Instance != null
+            ? DeckManager.Instance
+            : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        if (deckManager == null || !deckManager.HasDeckFor(leader)) return available;
+
+        foreach (CardData card in deckManager.GetHand(leader))
         {
-            actionsManager.characterActions = actionsManager.GetComponentsInChildren<CharacterAction>();
-        }
+            if (card == null || card.IsEncounterCard()) continue;
 
-        actionsManager.Refresh(character);
+            string actionRef = NormalizeActionRef(card.GetActionRef());
+            if (string.IsNullOrWhiteSpace(actionRef)) continue;
 
-        foreach (CharacterAction action in actionsManager.characterActions)
-        {
+            CharacterAction action = ResolveActionByRef(actionRef, actionsManager);
             if (action == null) continue;
-            if (!action.IsRoleEligible(character)) continue;
-            bool isEnabled = action.FulfillsConditions();
-            if (isEnabled) available.Add(action);
+
+            action.Initialize(character);
+            action.difficulty = Mathf.Max(0, card.difficulty);
+
+            bool playable = card.EvaluatePlayability(character, null, _ => action.FulfillsConditions());
+            if (!playable) continue;
+
+            if (actionCards.ContainsKey(action)) continue;
+
+            actionCards[action] = card;
+            available.Add(action);
         }
 
         return available;

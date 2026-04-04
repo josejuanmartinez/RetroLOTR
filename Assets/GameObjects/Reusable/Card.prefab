@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 2.626007, y: 2.8350067}
-  m_SizeDelta: {x: 5.251, y: -37.091}
+  m_AnchoredPosition: {x: -0.000015258789, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8574238411866119115
 CanvasRenderer:
@@ -245,14 +245,16 @@ MonoBehaviour:
   button: {fileID: 0}
   disabledReasonHover: {fileID: 3783046166655194279}
   discardButton: {fileID: 1453170216000799904}
-  holdToDragSeconds: 0.08
-  dragScaleMultiplier: 1.15
+  holdToDragSeconds: 0
+  dragScaleMultiplier: 1.5
   dragTiltDegrees: 7
   dragJitterPixels: 4
   dropPreviewRangePixels: 240
   dropSnapRangePixels: 120
   dropSnapLerpSpeed: 16
   dropSnapScaleMultiplier: 1.02
+  HoverScaleMultiplier: 3
+  disabledCanvasGroupAlpha: 0.5
 --- !u!1 &4326284185771693084
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,7 +290,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 2.899994, y: -2.800003}
+  m_AnchoredPosition: {x: -0.000015258789, y: 0}
   m_SizeDelta: {x: 35, y: 35}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1169865189046610719
@@ -419,7 +421,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 0}
+  m_AnchoredPosition: {x: 0.000015258789, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1780255454217534417
@@ -481,7 +483,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.45
+  m_fontSize: 11.85
   m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -560,7 +562,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 2, y: -6.8913}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 35, y: 35}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &4383411863795566757
@@ -712,8 +714,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.1363068, y: 32.378292}
-  m_SizeDelta: {x: -32.4992, y: -117.8586}
+  m_AnchoredPosition: {x: 0.50579834, y: 17.734802}
+  m_SizeDelta: {x: -26.0904, y: -111.0715}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8919440548525024140
 CanvasRenderer:
@@ -845,7 +847,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25
+  m_fontSize: 24.2
   m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -925,8 +927,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -138.83536}
-  m_SizeDelta: {x: -20, y: -297.6707}
+  m_AnchoredPosition: {x: 0.9312973, y: -108.359985}
+  m_SizeDelta: {x: -18.1374, y: -236.73}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8822517443508872784
 CanvasRenderer:
@@ -1162,11 +1164,11 @@ RectTransform:
   - {fileID: 4851194306772535916}
   m_Father: {fileID: 1311209697273033959}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 174.05432}
-  m_SizeDelta: {x: -20, y: -368.1086}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0.0000076293945, y: 0}
+  m_SizeDelta: {x: 0, y: 37.801}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8082586007625640536
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1296,6 +1298,14 @@ PrefabInstance:
     - target: {fileID: 3255782884132336503, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7277439239001770728, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
+      propertyPath: m_fontSize
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7277439239001770728, guid: 1deaf7611c37dff48bd6122efd8dc2a6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

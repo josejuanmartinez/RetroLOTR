@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Text.RegularExpressions;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class MessageDisplay : MonoBehaviour
@@ -45,7 +46,7 @@ public class MessageDisplay : MonoBehaviour
         Game game = FindFirstObjectByType<Game>();
         if (game == null) return;
         if (!game.started || game.currentlyPlaying != game.player) return;
-        string formattedMessage = ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(message);
+        string formattedMessage = FormatMessageForDisplay(ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(message));
         Color resolved = color ?? Color.white;
         if (IsNegativeColor(resolved))
         {
@@ -265,5 +266,11 @@ public class MessageDisplay : MonoBehaviour
     private static bool IsPositiveColor(Color color)
     {
         return color.g >= 0.6f && color.b <= 0.6f;
+    }
+
+    private static string FormatMessageForDisplay(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message)) return string.Empty;
+        return Regex.Replace(message.Trim(), @"\.\s+", ".\n");
     }
 }

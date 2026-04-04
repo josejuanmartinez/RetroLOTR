@@ -2,33 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-[RequireComponent(typeof(GraphicRaycaster))]
-public class CharacterAction : SearcherByName
+public class CharacterAction
 {
     [Header("IDs")]
     public string actionName;
     public string description;
     public int actionId;
     [HideInInspector] public Character character;
-        
-    [Header("Rendering")]
-    [HideInInspector]
-    public string actionInitials;
-    public Image background;
-    public Sprite actionSprite;
-    public Color actionColor;
-
-    [Header("Game Objects")]
-    public Image spriteImage;
-    public Button button;
-    public TextMeshProUGUI textUI;
-
-    [Header("Hover")]
-    public GameObject hoverPrefab;
 
     [Header("Failure rate (0-100) %")]
     public int difficulty = 0;
@@ -72,29 +54,49 @@ public class CharacterAction : SearcherByName
     public Func<Character, Task<bool>> asyncEffect;
 
     public bool LastExecutionSucceeded { get; private set; }
-    
+
     private Game game;
     private StoresManager cachedStoresManager;
-    private Hover hoverComponent;
-    private bool initialized = false;
+    private static int defaultActionNameFrame = -1;
+    private static string cachedDefaultActionName;
+
+    protected static T FindFirstObjectByType<T>() where T : UnityEngine.Object
+    {
+        return UnityEngine.Object.FindFirstObjectByType<T>();
+    }
+
+    protected static T FindAnyObjectByType<T>() where T : UnityEngine.Object
+    {
+        return UnityEngine.Object.FindAnyObjectByType<T>();
+    }
+
+    private Game GetGame()
+    {
+        if (game == null) game = FindFirstObjectByType<Game>();
+        return game;
+    }
+
     private void RefreshVictoryPoints()
     {
-        Game g = game != null ? game : FindFirstObjectByType<Game>();
+        Game g = GetGame();
         VictoryPoints.RecalculateAndAssign(g);
-    }
-    void Awake()
-    {
-        game = FindAnyObjectByType<Game>();
     }
 
     protected virtual AdvisorType DefaultAdvisorType => AdvisorType.None;
 
     private static string GetDefaultActionName()
     {
+        if (defaultActionNameFrame == Time.frameCount)
+        {
+            return cachedDefaultActionName;
+        }
+
+        defaultActionNameFrame = Time.frameCount;
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
-        return actionsManager != null && actionsManager.DEFAULT != null
+        cachedDefaultActionName = actionsManager != null && actionsManager.DEFAULT != null
             ? actionsManager.DEFAULT.actionName
             : null;
+        return cachedDefaultActionName;
     }
 
     public AdvisorType GetAdvisorType()
@@ -119,27 +121,6 @@ public class CharacterAction : SearcherByName
             };
             this.effect = effect;
             this.asyncEffect = asyncEffect;
-
-            if (!initialized)
-            {
-                if (hoverPrefab != null && button != null)
-                {
-                    GameObject hoverInstance = Instantiate(hoverPrefab, button.transform);
-                    hoverComponent = hoverInstance.GetComponent<Hover>();
-                    if (hoverComponent != null)
-                    {
-                        hoverComponent.Initialize(BuildHoverText(), Vector2.one * 40, 18, TextAlignmentOptions.Center);
-                    }
-                }
-
-                actionInitials = ActionNameUtils.StripShortcut(actionName).ToUpperInvariant();
-                if (textUI != null) textUI.text = actionName;
-                initialized = true;
-            }
-            else if (hoverComponent != null)
-            {
-                hoverComponent.Initialize(BuildHoverText(), Vector2.one * 40, 18, TextAlignmentOptions.Center);
-            }
         }
         catch (Exception e)
         {
@@ -165,9 +146,6 @@ public class CharacterAction : SearcherByName
 
     public void UpdateHoverText(bool isAvailable)
     {
-        if (hoverComponent == null) return;
-        string text = isAvailable ? BuildHoverText() : BuildUnavailableHoverText();
-        hoverComponent.Initialize(text, Vector2.one * 40, 18, TextAlignmentOptions.Center);
     }
 
     public void Reset()
@@ -176,10 +154,6 @@ public class CharacterAction : SearcherByName
         condition = null;
         effect = null;
         asyncEffect = null;
-        if (button != null)
-        {
-            button.gameObject.SetActive(false);
-        }
     }
 
     public bool ResourcesAvailable()
@@ -208,8 +182,8 @@ public class CharacterAction : SearcherByName
             BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex, character.GetOwner());
         }
         if (!isAI) game.PointToCharacterWithMissingActions();
-        if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
         if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
+        if (!isAI) Card.RequestInteractionRefreshAll();
         return;
     }
 
@@ -281,8 +255,8 @@ public class CharacterAction : SearcherByName
                 }
             }
             
-            if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
+            if (!isAI) Card.RequestInteractionRefreshAll();
 
             StoresManager storesManager = GetStoresManager();
             if (!isAI && storesManager != null) storesManager.RefreshStores();
@@ -305,8 +279,8 @@ public class CharacterAction : SearcherByName
         catch (Exception e)
         {
             Debug.Log(e);
-            if (!isAI) FindFirstObjectByType<Layout>().GetActionsManager().Refresh(character);
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
+            if (!isAI) Card.RequestInteractionRefreshAll();
 
             // Debug.LogError($"{character.characterName} was unable to Execute action {actionName} {actionId} {actionInitials} {e}");
             character.hasActionedThisTurn = true;
@@ -348,7 +322,7 @@ public class CharacterAction : SearcherByName
     {
         if (leader == null) return false;
         if (leader is NonPlayableLeader) return true;
-        Game g = game != null ? game : FindFirstObjectByType<Game>();
+        Game g = GetGame();
         if (leader is PlayableLeader pl && g != null && g.player != pl) return true;
         return false;
     }
@@ -1425,7 +1399,7 @@ public class CharacterAction : SearcherByName
     private bool PlayerCanSeeHex(Hex hex)
     {
         if (hex == null) return false;
-        Game g = game != null ? game : FindFirstObjectByType<Game>();
+        Game g = GetGame();
         if (g == null || g.player == null) return false;
         return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }

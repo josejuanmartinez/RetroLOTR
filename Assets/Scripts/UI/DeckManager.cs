@@ -284,6 +284,7 @@ public class DeckManager : MonoBehaviour
     [FormerlySerializedAs("cardCameObject")]
     [SerializeField] GameObject cardCameObject;
     [SerializeField] GridLayoutGroup gridLayout;
+    [SerializeField] CanvasGroup handCanvasGroup;
 
     [Header("Config")]
     [SerializeField] private bool initializeOnStart = true;
@@ -318,6 +319,7 @@ public class DeckManager : MonoBehaviour
         }
 
         Instance = this;
+        ResolveHandCanvasGroup();
     }
 
     private void Start()
@@ -782,6 +784,16 @@ public class DeckManager : MonoBehaviour
         ClearHandCardInstances();
     }
 
+    public void SetHumanHandVisible(bool visible)
+    {
+        CanvasGroup target = ResolveHandCanvasGroup();
+        if (target == null) return;
+
+        target.alpha = visible ? 1f : 0f;
+        target.interactable = visible;
+        target.blocksRaycasts = visible;
+    }
+
     private void RefillHandToCount(PlayerDeckState state, int targetCount)
     {
         if (state == null) return;
@@ -1109,17 +1121,40 @@ public class DeckManager : MonoBehaviour
         foreach (DeckData ownedDeck in GetDeckChain(deckId))
         {
             if (ownedDeck?.cards == null) continue;
-            state.drawPile.AddRange(ownedDeck.cards.Select(CloneCard).Where(card => card != null));
+            state.drawPile.AddRange(
+                ownedDeck.cards
+                    .Where(card => ShouldIncludeCardInDeck(state.deckId, ownedDeck.deckId, card))
+                    .Select(CloneCard)
+                    .Where(card => card != null));
         }
 
         foreach (DeckData sharedDeck in GetSharedDecks())
         {
             if (sharedDeck?.cards == null) continue;
-            state.drawPile.AddRange(sharedDeck.cards.Select(CloneCard).Where(card => card != null));
+            state.drawPile.AddRange(
+                sharedDeck.cards
+                    .Where(card => ShouldIncludeCardInDeck(state.deckId, sharedDeck.deckId, card))
+                    .Select(CloneCard)
+                    .Where(card => card != null));
         }
         Shuffle(state.drawPile);
         DrawUpToHandSize(state);
         return state;
+    }
+
+    private static bool ShouldIncludeCardInDeck(string ownerDeckId, string sourceDeckId, CardData card)
+    {
+        if (card == null) return false;
+
+        // Encounters must come only from EncounterDeck.json.
+        // Shared/base modular decks may contain legacy duplicate encounter definitions,
+        // but they are not the source of truth for live encounter gameplay.
+        if (card.IsEncounterCard())
+        {
+            return string.Equals(sourceDeckId, "encounter_shared", StringComparison.OrdinalIgnoreCase);
+        }
+
+        return true;
     }
 
     private IEnumerable<DeckData> GetSharedDecks()
@@ -1343,6 +1378,26 @@ public class DeckManager : MonoBehaviour
         }
 
         return cardCameObject;
+    }
+
+    private CanvasGroup ResolveHandCanvasGroup()
+    {
+        if (handCanvasGroup != null) return handCanvasGroup;
+
+        if (gridLayout != null)
+        {
+            handCanvasGroup = gridLayout.GetComponent<CanvasGroup>();
+            if (handCanvasGroup != null) return handCanvasGroup;
+
+            handCanvasGroup = gridLayout.GetComponentInParent<CanvasGroup>();
+        }
+
+        if (handCanvasGroup == null)
+        {
+            handCanvasGroup = GetComponent<CanvasGroup>();
+        }
+
+        return handCanvasGroup;
     }
 
     private void LoadActionDefinitions()

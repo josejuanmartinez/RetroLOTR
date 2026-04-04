@@ -788,8 +788,7 @@ public class TutorialManager : MonoBehaviour
             if (actionsManager != null)
             {
                 actionsManager.Refresh(actor);
-                CharacterAction action = actionsManager.characterActions
-                    .FirstOrDefault(a => a != null && string.Equals(a.GetType().Name, step.requirements.actionClass, StringComparison.OrdinalIgnoreCase));
+                CharacterAction action = actionsManager.ResolveActionByRef(step.requirements.actionClass);
                 if (action != null)
                 {
                     Task task = action.Execute();

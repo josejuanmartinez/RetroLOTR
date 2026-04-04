@@ -10,6 +10,7 @@ public class AIContext
     private readonly List<AIScoredAction> scoredActions = new();
     private readonly List<ArtifactTransferCandidate> artifactTransferCandidates = new();
     private readonly HashSet<string> scoredActionKeys = new();
+    private readonly Dictionary<CharacterAction, CardData> actionCardsByAction = new();
     private readonly AIContextPrecomputedData? _precomputed;
     private ResourceSnapshot preSnapshot;
     private Dictionary<PlayableLeader, int> preVictoryPoints;
@@ -32,11 +33,17 @@ public class AIContext
     public CharacterAction LastChosenAction { get; private set; }
     public AdvisorType LastAdvisor { get; private set; }
 
-    public AIContext(PlayableLeader leader, Character character, List<CharacterAction> availableActions, AIContextPrecomputedData? precomputed = null)
+    public AIContext(PlayableLeader leader, Character character, List<CharacterAction> availableActions, Dictionary<CharacterAction, CardData> actionCards = null, AIContextPrecomputedData? precomputed = null)
     {
         Leader = leader;
         Character = character;
         AvailableActions = availableActions ?? new List<CharacterAction>();
+        if (actionCards != null)
+        {
+            actionCardsByAction = actionCards
+                .Where(pair => pair.Key != null && pair.Value != null)
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+        }
         board = UnityEngine.Object.FindFirstObjectByType<Board>();
         EconomyStatus = EvaluateEconomy();
 
@@ -57,7 +64,7 @@ public class AIContext
         CharacterAction action = PickBestActionForAdvisor(advisor);
         if (action == null) return false;
 
-        action.difficulty = ResolveCardDifficulty(action);
+        if (!PrepareActionForExecution(action)) return false;
         RecordAction(action, advisor);
         await action.Execute();
         return true;
@@ -72,7 +79,7 @@ public class AIContext
 
         if (action == null) return false;
 
-        action.difficulty = ResolveCardDifficulty(action);
+        if (!PrepareActionForExecution(action)) return false;
         RecordAction(action, action.GetAdvisorType());
         await action.Execute();
         return true;
@@ -214,14 +221,38 @@ public class AIContext
 
     private int ResolveCardDifficulty(CharacterAction action)
     {
-        if (action == null || Leader == null) return 0;
+        if (action == null) return 0;
+        if (actionCardsByAction.TryGetValue(action, out CardData card) && card != null)
+        {
+            return Mathf.Max(0, card.difficulty);
+        }
+        return 0;
+    }
+
+    private bool PrepareActionForExecution(CharacterAction action)
+    {
+        if (action == null || Leader == null) return false;
+
+        if (!actionCardsByAction.TryGetValue(action, out CardData card) || card == null)
+        {
+            return false;
+        }
 
         DeckManager deckManager = DeckManager.Instance != null
             ? DeckManager.Instance
             : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
-        if (deckManager == null) return 0;
+        if (deckManager == null) return false;
 
-        return deckManager.GetActionCardDifficulty(Leader, action.GetType().Name, action.actionId, Character);
+        if (!deckManager.TryConsumeActionCard(Leader, action.GetType().Name, action.actionId, drawReplacement: false, out CardData consumedCard, card.cardId))
+        {
+            return false;
+        }
+
+        consumedCard ??= card;
+        action.difficulty = Mathf.Max(0, consumedCard.difficulty);
+        deckManager.ApplyMapRevealForPlayedCard(Leader, consumedCard);
+        Leader.RecordPlayedCard(consumedCard);
+        return true;
     }
 
     private float GetMilitaryEdgeScore()

@@ -29,6 +29,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] float dropSnapRangePixels = 120f;
     [SerializeField] float dropSnapLerpSpeed = 16f;
     [SerializeField] float dropSnapScaleMultiplier = 1.02f;
+    [SerializeField] float HoverScaleMultiplier = 1.5f;
+    [SerializeField] float disabledCanvasGroupAlpha = 0.5f;
     private Illustrations illustrations;
     private Colors colors;
     private Canvas rootCanvas;
@@ -46,7 +48,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private float pointerDownTime;
     private bool pointerIsDown;
     private bool isDragging;
-    private float nextInteractionRefreshTime;
     private Vector3 defaultScale = Vector3.one;
     private Vector2 defaultPivot = new Vector2(0.5f, 0.5f);
     private bool isHovered;
@@ -56,12 +57,18 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private int hoverCanvasDefaultSortingOrder;
     private SelectedCharacterIcon selectedCharacterIcon;
     private bool dropPreviewLocked;
+    private Game cachedGame;
+    private Board cachedBoard;
+    private DeckManager cachedDeckManager;
+    private ActionsManager cachedActionsManager;
+    private Board subscribedBoard;
+    private string cachedResolvedActionRef;
+    private CharacterAction cachedResolvedAction;
 
-    private const float HoverScaleMultiplier = 1.5f;
-    private const float InteractionRefreshInterval = 0.15f;
     private static readonly Vector2 HoverPivot = new Vector2(0.5f, 0f);
     private static Dictionary<string, string> actionDescriptionsByClass;
     private static Dictionary<int, string> actionDescriptionsById;
+    public static event Action InteractionRefreshRequested;
 
     private void Awake()
     {
@@ -116,12 +123,25 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private void OnDestroy()
     {
+        UnsubscribeFromBoardSelection();
         if (button != null) button.onClick.RemoveListener(OnCardClicked);
         if (discardButton != null) discardButton.onClick.RemoveListener(OnDiscardClicked);
     }
 
+    private void OnEnable()
+    {
+        InteractionRefreshRequested += HandleInteractionRefreshRequested;
+        EnsureBoardSubscription();
+        if (cardData != null)
+        {
+            RefreshInteractionState(force: true);
+        }
+    }
+
     private void OnDisable()
     {
+        InteractionRefreshRequested -= HandleInteractionRefreshRequested;
+        UnsubscribeFromBoardSelection();
         pointerIsDown = false;
         isDragging = false;
         dropPreviewLocked = false;
@@ -174,15 +194,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         RefreshRequirementsText(data);
+        EnsureBoardSubscription();
         RefreshInteractionState(force: true);
-    }
-
-    private void Update()
-    {
-        if (isDragging || cardData == null) return;
-        if (Time.unscaledTime < nextInteractionRefreshTime) return;
-        nextInteractionRefreshTime = Time.unscaledTime + InteractionRefreshInterval;
-        RefreshInteractionState();
     }
 
     private bool TryGetCardTypeColor(CardTypeEnum cardType, out Color color)
@@ -860,7 +873,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private bool TryResolvePlayableAction(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out CharacterAction action)
     {
-        game = FindFirstObjectByType<Game>();
+        game = GetGame();
         playerLeader = game != null ? game.player : null;
         action = null;
         selectedCharacter = null;
@@ -869,7 +882,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (!game.IsPlayerCurrentlyPlaying()) return false;
         if (cardData == null) return false;
 
-        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
+        Board board = GetBoard(game);
         selectedCharacter = board != null ? board.selectedCharacter : null;
         if (selectedCharacter == null) return false;
         if (selectedCharacter.GetOwner() != playerLeader) return false;
@@ -878,7 +891,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         string actionRef = NormalizeActionRef(cardData.GetActionRef());
         if (string.IsNullOrWhiteSpace(actionRef)) return false;
 
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = GetActionsManager();
         action = ResolveActionByRef(actionRef, actionsManager);
         if (action == null) return false;
 
@@ -992,6 +1005,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private void RefreshInteractionState(bool force = false)
     {
+        if (this == null || !gameObject) return;
+
         if (button == null)
         {
             button = GetComponent<Button>();
@@ -1165,8 +1180,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             bool played = await TryPlayCardAsync(promptForConfirmation: false);
             if (played) return;
+            if (this == null || !gameObject) return;
         }
 
+        if (this == null || !gameObject) return;
         RestoreCardTransformAfterDrag();
         RefreshInteractionState(force: true);
     }
@@ -1371,9 +1388,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (isDragging || isConsuming || cardData == null || cardData.IsEncounterCard()) return;
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = GetGame();
         PlayableLeader playerLeader = game != null ? game.player : null;
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = GetDeckManager();
         if (game == null || playerLeader == null || deckManager == null) return;
         if (!game.IsPlayerCurrentlyPlaying()) return;
 
@@ -1395,49 +1412,99 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         string normalizedActionRef = NormalizeActionRef(actionRef);
         if (string.IsNullOrWhiteSpace(normalizedActionRef)) return null;
 
+        if (cachedResolvedAction != null
+            && string.Equals(cachedResolvedActionRef, normalizedActionRef, StringComparison.OrdinalIgnoreCase))
+        {
+            return cachedResolvedAction;
+        }
+
         if (actionsManager == null)
         {
-            actionsManager = FindFirstObjectByType<ActionsManager>();
+            actionsManager = GetActionsManager();
         }
 
-        if (actionsManager != null && actionsManager.characterActions != null && actionsManager.characterActions.Length > 0)
-        {
-            CharacterAction fromManager = actionsManager.characterActions.FirstOrDefault(candidate =>
-                candidate != null && ActionTypeMatchesRef(candidate.GetType(), normalizedActionRef));
-            if (fromManager != null) return fromManager;
-        }
+        CharacterAction created = actionsManager != null ? actionsManager.ResolveActionByRef(normalizedActionRef) : null;
 
-        CharacterAction[] allActions = FindObjectsByType<CharacterAction>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        if (allActions != null && allActions.Length > 0)
-        {
-            CharacterAction existing = allActions.FirstOrDefault(candidate =>
-                candidate != null && ActionTypeMatchesRef(candidate.GetType(), normalizedActionRef));
-            if (existing != null) return existing;
-        }
-
-        // Fallback: class exists but no component instance was pre-attached.
-        Type resolvedType = ResolveActionType(normalizedActionRef);
-        if (resolvedType == null || !typeof(CharacterAction).IsAssignableFrom(resolvedType)) return null;
-
-        GameObject host = actionsManager != null ? actionsManager.gameObject : null;
-        if (host == null) return null;
-
-        CharacterAction created = host.GetComponent(resolvedType) as CharacterAction;
-        if (created == null)
-        {
-            created = host.AddComponent(resolvedType) as CharacterAction;
-        }
-
-        if (created != null && actionsManager != null)
-        {
-            CharacterAction[] existingArray = actionsManager.characterActions ?? Array.Empty<CharacterAction>();
-            if (!existingArray.Contains(created))
-            {
-                actionsManager.characterActions = existingArray.Concat(new[] { created }).ToArray();
-            }
-        }
-
+        cachedResolvedActionRef = normalizedActionRef;
+        cachedResolvedAction = created;
         return created;
+    }
+
+    private Game GetGame()
+    {
+        if (cachedGame == null) cachedGame = FindFirstObjectByType<Game>();
+        return cachedGame;
+    }
+
+    private Board GetBoard(Game game = null)
+    {
+        game ??= GetGame();
+        if (game != null && game.board != null)
+        {
+            cachedBoard = game.board;
+        }
+        else if (cachedBoard == null)
+        {
+            cachedBoard = FindFirstObjectByType<Board>();
+        }
+        return cachedBoard;
+    }
+
+    private void EnsureBoardSubscription()
+    {
+        Board board = GetBoard();
+        if (board == subscribedBoard) return;
+
+        UnsubscribeFromBoardSelection();
+        subscribedBoard = board;
+        if (subscribedBoard != null)
+        {
+            subscribedBoard.SelectedCharacterChanged += HandleSelectedCharacterChanged;
+        }
+    }
+
+    private void UnsubscribeFromBoardSelection()
+    {
+        if (subscribedBoard != null)
+        {
+            subscribedBoard.SelectedCharacterChanged -= HandleSelectedCharacterChanged;
+            subscribedBoard = null;
+        }
+    }
+
+    private DeckManager GetDeckManager()
+    {
+        if (cachedDeckManager == null)
+        {
+            cachedDeckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        }
+        return cachedDeckManager;
+    }
+
+    private ActionsManager GetActionsManager()
+    {
+        if (cachedActionsManager == null)
+        {
+            cachedActionsManager = FindFirstObjectByType<ActionsManager>();
+        }
+        return cachedActionsManager;
+    }
+
+    private void HandleSelectedCharacterChanged(Character previous, Character current)
+    {
+        if (!isActiveAndEnabled || cardData == null) return;
+        RefreshInteractionState(force: true);
+    }
+
+    private void HandleInteractionRefreshRequested()
+    {
+        if (!isActiveAndEnabled || cardData == null) return;
+        RefreshInteractionState(force: true);
+    }
+
+    public static void RequestInteractionRefreshAll()
+    {
+        InteractionRefreshRequested?.Invoke();
     }
 
     private static string NormalizeActionRef(string actionRef)
@@ -1672,7 +1739,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private void SetDisabledOverlayVisible()
     {
         if(!disabledImageCanvasGroup) return;
-        float targetAlpha = disabled ? 0.99f : 0f;
+        float targetAlpha = disabled ? disabledCanvasGroupAlpha : 0f;
         if (!Mathf.Approximately(disabledImageCanvasGroup.alpha, targetAlpha))
         {
             disabledImageCanvasGroup.alpha = targetAlpha;

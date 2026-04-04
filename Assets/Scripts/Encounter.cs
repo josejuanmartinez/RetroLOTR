@@ -10,22 +10,20 @@ public static class EncounterResolver
     {
         if (encounterCard == null || actor == null || actor.killed) return false;
 
-        await ShowHistoryAsync(encounterCard, actor);
-
         List<EncounterOptionData> options = BuildSelectableOptions(encounterCard);
         if (options.Count == 0) return false;
 
         bool isAi = !actor.isPlayerControlled;
-        Sprite portrait = ResolvePortrait(encounterCard);
+        Sprite portrait = await ResolvePortraitAsync(encounterCard);
         string prompt = BuildPrompt(encounterCard);
-        string selection = await SelectionDialog.Ask(
+        List<string> optionLabels = options.Select(GetOptionLabel).ToList();
+        List<string> optionDescriptions = options.Select(GetOptionDescription).ToList();
+        string selection = await AskEncounterSelectionAsync(
             prompt,
-            "Choose",
-            string.Empty,
-            options.Select(GetOptionLabel).ToList(),
+            optionLabels,
+            optionDescriptions,
             isAi,
-            portrait,
-            EventIconType.Encounter);
+            portrait);
         if (string.IsNullOrWhiteSpace(selection)) return false;
 
         EncounterOptionData chosenOption = options.FirstOrDefault(option => string.Equals(GetOptionLabel(option), selection, StringComparison.Ordinal));
@@ -36,23 +34,6 @@ public static class EncounterResolver
 
         ApplyOutcome(actor, outcome);
         return true;
-    }
-
-    private static async Task ShowHistoryAsync(CardData encounterCard, Character actor)
-    {
-        if (string.IsNullOrWhiteSpace(encounterCard.historyText) || PopupManager.Instance == null) return;
-
-        var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        PopupManager.ShowWithIconType(
-            EventIconType.Encounter,
-            encounterCard.name,
-            ResolvePortrait(encounterCard),
-            ResolveActorPortrait(actor),
-            encounterCard.historyText,
-            true,
-            0,
-            () => tcs.TrySetResult(true));
-        await tcs.Task;
     }
 
     private static List<EncounterOptionData> BuildSelectableOptions(CardData encounterCard)
@@ -69,6 +50,63 @@ public static class EncounterResolver
         return options;
     }
 
+    private static async Task<string> AskEncounterSelectionAsync(
+        string prompt,
+        List<string> optionLabels,
+        List<string> optionDescriptions,
+        bool isAi,
+        Sprite portrait)
+    {
+        if (isAi)
+        {
+            return await SelectionDialog.AskImmediate(
+                prompt,
+                "Choose",
+                string.Empty,
+                optionLabels,
+                optionDescriptions,
+                true,
+                portrait,
+                EventIconType.Encounter);
+        }
+
+        EventIconsManager iconsManager = EventIconsManager.FindManager();
+        if (iconsManager == null)
+        {
+            return await SelectionDialog.AskImmediate(
+                prompt,
+                "Choose",
+                string.Empty,
+                optionLabels,
+                optionDescriptions,
+                false,
+                portrait,
+                EventIconType.Encounter);
+        }
+
+        TaskCompletionSource<string> tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        EventIcon icon = null;
+        icon = iconsManager.AddEventIcon(
+            EventIconType.Encounter,
+            false,
+            async () =>
+            {
+                string result = await SelectionDialog.AskImmediate(
+                    prompt,
+                    "Choose",
+                    string.Empty,
+                    optionLabels,
+                    optionDescriptions,
+                    false,
+                    portrait,
+                    EventIconType.Encounter);
+                tcs.TrySetResult(result);
+                icon?.ConsumeAndDestroy();
+            });
+
+        return await tcs.Task;
+    }
+
     private static string BuildPrompt(CardData encounterCard)
     {
         return string.IsNullOrWhiteSpace(encounterCard.description)
@@ -79,9 +117,27 @@ public static class EncounterResolver
     private static string GetOptionLabel(EncounterOptionData option)
     {
         if (option == null) return string.Empty;
-        return string.IsNullOrWhiteSpace(option.description)
-            ? option.label
-            : $"{option.label}: {option.description}";
+        if (!string.IsNullOrWhiteSpace(option.label))
+        {
+            return option.label.Trim();
+        }
+
+        if (string.IsNullOrWhiteSpace(option.description))
+        {
+            return string.Empty;
+        }
+
+        string text = option.description.Trim();
+        const int maxLength = 40;
+        if (text.Length <= maxLength) return text;
+        return $"{text[..(maxLength - 3)].TrimEnd()}...";
+    }
+
+    private static string GetOptionDescription(EncounterOptionData option)
+    {
+        return option == null || string.IsNullOrWhiteSpace(option.description)
+            ? string.Empty
+            : option.description.Trim();
     }
 
     private static EncounterOutcomeData ResolveOutcome(EncounterOptionData option, Character actor)
@@ -177,19 +233,59 @@ public static class EncounterResolver
         return Color.yellow;
     }
 
-    private static Sprite ResolvePortrait(CardData encounterCard)
+    private static async Task<Sprite> ResolvePortraitAsync(CardData encounterCard)
     {
         if (encounterCard == null) return null;
         Illustrations illustrations = UnityEngine.Object.FindFirstObjectByType<Illustrations>();
         if (illustrations == null) return null;
-        string portraitName = !string.IsNullOrWhiteSpace(encounterCard.portraitName) ? encounterCard.portraitName : encounterCard.spriteName;
-        if (string.IsNullOrWhiteSpace(portraitName)) portraitName = encounterCard.name;
-        return illustrations.GetIllustrationByName(portraitName);
+
+        List<string> candidateNames = BuildPortraitLookupNames(encounterCard);
+        Sprite portrait = TryResolvePortrait(illustrations, candidateNames);
+        if (portrait != null) return portrait;
+
+        const int maxWaitFrames = 120;
+        for (int i = 0; i < maxWaitFrames; i++)
+        {
+            await Task.Yield();
+            portrait = TryResolvePortrait(illustrations, candidateNames);
+            if (portrait != null) return portrait;
+        }
+
+        Debug.LogWarning($"Encounter portrait not found or not loaded in time for '{encounterCard.name}'. Tried keys: {string.Join(", ", candidateNames)}");
+        return null;
     }
 
-    private static Sprite ResolveActorPortrait(Character actor)
+    private static Sprite TryResolvePortrait(Illustrations illustrations, List<string> candidateNames)
     {
-        Illustrations illustrations = UnityEngine.Object.FindFirstObjectByType<Illustrations>();
-        return illustrations != null ? illustrations.GetIllustrationByName(actor?.characterName) : null;
+        if (illustrations == null || candidateNames == null) return null;
+
+        for (int i = 0; i < candidateNames.Count; i++)
+        {
+            string candidate = candidateNames[i];
+            if (string.IsNullOrWhiteSpace(candidate)) continue;
+
+            Sprite sprite = illustrations.GetIllustrationByName(candidate, false);
+            if (sprite != null) return sprite;
+        }
+
+        return null;
+    }
+
+    private static List<string> BuildPortraitLookupNames(CardData encounterCard)
+    {
+        List<string> candidates = new();
+        AddCandidate(candidates, encounterCard?.portraitName);
+        AddCandidate(candidates, encounterCard?.spriteName);
+        AddCandidate(candidates, encounterCard?.name);
+        return candidates;
+    }
+
+    private static void AddCandidate(List<string> candidates, string value)
+    {
+        if (candidates == null || string.IsNullOrWhiteSpace(value)) return;
+        if (!candidates.Contains(value))
+        {
+            candidates.Add(value);
+        }
     }
 }
