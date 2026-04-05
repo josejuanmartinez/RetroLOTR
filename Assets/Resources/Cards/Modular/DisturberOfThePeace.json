@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId":  "disturber_of_the_peace",
     "nation":  "Gandalf",
     "alignment":  0,
@@ -21,7 +21,6 @@
                       "artifacts":  [
                                         {
                                             "artifactName":  "Yellow boots",
-                                            "artifactDescription":  "10% chance each turn to gain Haste.",
                                             "hidden":  false,
                                             "commanderBonus":  0,
                                             "agentBonus":  0,
@@ -37,7 +36,6 @@
                                         },
                                         {
                                             "artifactName":  "Blue Jacket",
-                                            "artifactDescription":  "10% chance each turn to gain Hope.",
                                             "hidden":  false,
                                             "commanderBonus":  0,
                                             "agentBonus":  0,
@@ -416,6 +414,90 @@
                       "steelRequired":  0,
                       "mithrilRequired":  0,
                       "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  572,
+                      "name":  "Bounders",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "Bounders",
+                      "tags":  [
+
+                               ],
+                      "troopType":  2,
+                      "race":  3,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  626,
+                      "name":  "Hobbit Archers",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "HobbitArchers",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  3,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  4,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  627,
+                      "name":  "Hobbit Slingers",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "HobbitSlingers",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  3,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  4,
                       "jokerRequired":  0
                   }
               ]

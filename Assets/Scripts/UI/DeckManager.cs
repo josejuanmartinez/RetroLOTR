@@ -702,12 +702,39 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
+    public bool TryReturnCardToHand(Leader leader, int cardId)
+    {
+        if (leader is not PlayableLeader playableLeader) return false;
+        if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
+        if (state.discardPile == null || state.discardPile.Count == 0) return false;
+
+        int discardIndex = state.discardPile.FindLastIndex(card => card != null && card.cardId == cardId);
+        if (discardIndex < 0) return false;
+
+        CardData returnedCard = state.discardPile[discardIndex];
+        state.discardPile.RemoveAt(discardIndex);
+        state.hand.Add(returnedCard);
+        RefreshHumanPlayerHandUIIfHuman(playableLeader);
+        return true;
+    }
+
     public bool SetTutorialActionCards(PlayableLeader leader, IEnumerable<string> actionClassNames)
     {
         if (leader == null) return false;
         if (!loaded && !InitializeFromResources()) return false;
 
         ApplyTutorialActionCardsToState(leader, actionClassNames);
+
+        RefreshHumanPlayerHandUIIfHuman(leader);
+        return true;
+    }
+
+    public bool SetTutorialCardsByName(PlayableLeader leader, IEnumerable<string> cardNames)
+    {
+        if (leader == null) return false;
+        if (!loaded && !InitializeFromResources()) return false;
+
+        ApplyTutorialCardsToStateByName(leader, cardNames);
 
         RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
@@ -825,6 +852,9 @@ public class DeckManager : MonoBehaviour
     {
         if (leader == null || string.IsNullOrWhiteSpace(actionClassName)) return null;
 
+        CardData tutorialMappedCard = ResolveTutorialMappedCardForLeader(leader, actionClassName);
+        if (tutorialMappedCard != null) return tutorialMappedCard;
+
         string deckId = ResolveDeckIdForLeader(leader);
         foreach (DeckData deckData in GetDeckChain(deckId))
         {
@@ -840,6 +870,59 @@ public class DeckManager : MonoBehaviour
             card != null
             && IsConsumableEffectCard(card)
             && string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public CardData FindCardByNameForLeader(PlayableLeader leader, string cardName)
+    {
+        if (leader == null || string.IsNullOrWhiteSpace(cardName)) return null;
+        if (!loaded && !InitializeFromResources()) return null;
+
+        string deckId = ResolveDeckIdForLeader(leader);
+        foreach (DeckData deckData in GetDeckChain(deckId))
+        {
+            if (deckData?.cards == null) continue;
+            CardData inLeaderDeck = deckData.cards.FirstOrDefault(card =>
+                card != null
+                && string.Equals(card.name, cardName, StringComparison.OrdinalIgnoreCase));
+            if (inLeaderDeck != null) return inLeaderDeck;
+        }
+
+        return cards.FirstOrDefault(card =>
+            card != null
+            && string.Equals(card.name, cardName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private CardData ResolveTutorialMappedCardForLeader(PlayableLeader leader, string actionClassName)
+    {
+        if (!string.Equals(actionClassName, "TrainMenAtArms", StringComparison.OrdinalIgnoreCase)) return null;
+
+        if (leader == null) return null;
+
+        if (string.Equals(leader.characterName, "Gandalf", StringComparison.OrdinalIgnoreCase))
+        {
+            return cards.FirstOrDefault(card =>
+                card != null
+                && card.GetCardType() == CardTypeEnum.Army
+                && string.Equals(card.name, "Bounders", StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (string.Equals(leader.characterName, "Saruman", StringComparison.OrdinalIgnoreCase))
+        {
+            return cards.FirstOrDefault(card =>
+                card != null
+                && card.GetCardType() == CardTypeEnum.Army
+                && string.Equals(card.name, "Dunlending Warriors", StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (string.Equals(leader.characterName, "Sauron", StringComparison.OrdinalIgnoreCase))
+        {
+            return cards.FirstOrDefault(card =>
+                card != null
+                && card.GetCardType() == CardTypeEnum.Army
+                && string.Equals(card.name, "Orcs", StringComparison.OrdinalIgnoreCase));
+        }
+
+        return null;
     }
 
     private static CardData CloneCard(CardData card)
@@ -1267,25 +1350,29 @@ public class DeckManager : MonoBehaviour
         TutorialManager tutorial = TutorialManager.Instance;
         if (tutorial == null || !tutorial.IsActiveFor(leader)) return;
 
-        string requiredActionClass = tutorial.GetCurrentRequiredActionClass(leader);
-        List<string> requiredActions = string.IsNullOrWhiteSpace(requiredActionClass)
-            ? new List<string>()
-            : new List<string> { requiredActionClass };
+        List<string> requiredCardNames = tutorial.GetCurrentExpectedCardNames(leader);
 
         if (!playerDecks.TryGetValue(leader, out PlayerDeckState state))
         {
-            SetTutorialActionCards(leader, requiredActions);
+            SetTutorialCardsByName(leader, requiredCardNames);
             return;
         }
 
-        bool sameCount = state.hand.Count == requiredActions.Count;
-        bool allPresent = requiredActions.All(required =>
-            state.hand.Any(card =>
-                card != null && string.Equals(card.GetActionRef(), required, StringComparison.OrdinalIgnoreCase)));
+        bool sameCount = state.hand.Count == requiredCardNames.Count;
+        bool allPresent = requiredCardNames.All(required =>
+        {
+            CardData expectedCard = FindCardByNameForLeader(leader, required);
+            if (expectedCard == null) return false;
+
+            return state.hand.Any(card =>
+                card != null
+                && (card.cardId == expectedCard.cardId
+                    || string.Equals(card.name, required, StringComparison.OrdinalIgnoreCase)));
+        });
 
         if (!sameCount || !allPresent)
         {
-            ApplyTutorialActionCardsToState(leader, requiredActions);
+            ApplyTutorialCardsToStateByName(leader, requiredCardNames);
         }
     }
 
@@ -1325,6 +1412,41 @@ public class DeckManager : MonoBehaviour
             if (card == null)
             {
                 Debug.LogWarning($"DeckManager: Could not find tutorial card for action '{actionClass}' and leader '{leader.characterName}'.");
+                continue;
+            }
+            state.hand.Add(CloneCard(card));
+        }
+
+        return true;
+    }
+
+    private bool ApplyTutorialCardsToStateByName(PlayableLeader leader, IEnumerable<string> cardNames)
+    {
+        if (leader == null) return false;
+
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state))
+        {
+            state = BuildDeckStateForLeader(leader);
+            if (state == null) return false;
+            playerDecks[leader] = state;
+        }
+
+        List<string> required = cardNames?
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList() ?? new List<string>();
+
+        state.hand.Clear();
+        state.drawPile.Clear();
+        state.discardPile.Clear();
+
+        foreach (string cardName in required)
+        {
+            CardData card = FindCardByNameForLeader(leader, cardName);
+            if (card == null)
+            {
+                Debug.LogWarning($"DeckManager: Could not find tutorial card '{cardName}' for leader '{leader.characterName}'.");
                 continue;
             }
             state.hand.Add(CloneCard(card));

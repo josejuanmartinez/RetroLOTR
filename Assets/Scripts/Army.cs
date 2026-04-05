@@ -41,7 +41,7 @@ public class Army
         troopAbilityGroups = new();
     }
 
-    public Army(Character commander, TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, int xp = 25, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null)
+    public Army(Character commander, TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, int xp = 25, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null)
     {
         this.commander = commander;
         this.startingArmy = startingArmy;
@@ -65,7 +65,7 @@ public class Army
         }
 
         if (ws > 0) this.ws += ws;
-        AddSpecialTroopGroup(troopsType, amount, specialAbilities);
+        AddTroopGroup(troopsType, amount, troopName, specialAbilities);
     }
 
     public AlignmentEnum GetAlignment()
@@ -75,6 +75,11 @@ public class Army
 
     public void Recruit(Army otherArmy)
     {
+        if (otherArmy == null) return;
+
+        EnsureTroopGroupsInitialized();
+        otherArmy.EnsureTroopGroupsInitialized();
+
         ma += otherArmy.ma;
         ar += otherArmy.ar;
         li += otherArmy.li;
@@ -94,11 +99,11 @@ public class Army
             {
                 ArmyTroopAbilityGroup group = otherArmy.troopAbilityGroups[i];
                 if (group == null || group.amount <= 0) continue;
-                AddSpecialTroopGroup(group.troopType, group.amount, group.abilities);
+                AddTroopGroup(group.troopType, group.amount, group.troopName, group.abilities);
             }
         }
     }
-    public void Recruit(TroopsTypeEnum troopsType, int amount, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null)
+    public void Recruit(TroopsTypeEnum troopsType, int amount, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null)
     {
         MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\"/>", Color.green);
         if (troopsType == TroopsTypeEnum.ma) ma += amount;
@@ -109,7 +114,7 @@ public class Army
         if (troopsType == TroopsTypeEnum.hc) hc += amount;
         if (troopsType == TroopsTypeEnum.ca) ca += amount;
         if (troopsType == TroopsTypeEnum.ws) ws += amount;
-        AddSpecialTroopGroup(troopsType, amount, specialAbilities);
+        AddTroopGroup(troopsType, amount, troopName, specialAbilities);
     }
 
     public int GetSize(bool withoutWs = false)
@@ -121,17 +126,7 @@ public class Army
 
     public string GetHoverText()
     {
-        LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
-        List<string> result = new() { };
-    
-        if (ma > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ma, ma, biomeConfig.maDescription));
-        if (ar > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ar, ar, biomeConfig.arDescription));
-        if (li > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.li, li, biomeConfig.liDescription));
-        if (hi > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.hi, hi, biomeConfig.hiDescription));
-        if (lc > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.lc, lc, biomeConfig.lcDescription));
-        if (hc > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.hc, hc, biomeConfig.hcDescription));
-        if (ca > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ca, ca, biomeConfig.caDescription));
-        if (ws > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ws, ws, biomeConfig.wsDescription));
+        List<string> result = BuildTroopHoverLines();
 
         string xpText = GetXpHoverText();
 
@@ -140,19 +135,7 @@ public class Army
 
     public string GetHoverTextNoXp()
     {
-        LeaderBiomeConfig biomeConfig = commander.GetOwner().GetBiome();
-        List<string> result = new() { };
-
-        if (ma > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ma, ma, biomeConfig.maDescription));
-        if (ar > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ar, ar, biomeConfig.arDescription));
-        if (li > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.li, li, biomeConfig.liDescription));
-        if (hi > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.hi, hi, biomeConfig.hiDescription));
-        if (lc > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.lc, lc, biomeConfig.lcDescription));
-        if (hc > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.hc, hc, biomeConfig.hcDescription));
-        if (ca > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ca, ca, biomeConfig.caDescription));
-        if (ws > 0) result.Add(BuildTroopHoverLine(TroopsTypeEnum.ws, ws, biomeConfig.wsDescription));
-
-        return $" leading {string.Join(',', result)}";
+        return $" leading {string.Join(',', BuildTroopHoverLines())}";
     }
 
     private string GetXpHoverText()
@@ -217,11 +200,17 @@ public class Army
         hc = 0;
         ca = 0;
         ws = 0;
+        troopAbilityGroups?.Clear();
         commander.Wounded(killedBy, wound);
         commander = null;
     }
 
     public int GetStrength()
+    {
+        return GetStrengthAgainst(null);
+    }
+
+    public int GetStrengthAgainst(Army enemyArmy)
     {
         int strength = 0;
         if (commander.hex.IsWaterTerrain())
@@ -249,6 +238,7 @@ public class Army
         strength = ApplyTrainingBonus(strength);
         strength = ApplyArtifactAttackBonus(strength);
         strength = ApplyStatusAttackBonus(strength);
+        strength = ApplyChargingAttackModifier(strength, enemyArmy);
         return strength;
     }
 
@@ -370,10 +360,40 @@ public class Army
 
     private int ApplyPikemenDefenseModifier(int value, Army enemyArmy)
     {
-        if (!HasSpecialAbility(ArmySpecialAbilityEnum.Pikemen)) return value;
+        int pikemenCount = GetAbilityTroopCount(ArmySpecialAbilityEnum.Pikemen);
+        if (pikemenCount <= 0) return value;
+
+        float pikemenRatio = GetAbilityCoverageRatio(ArmySpecialAbilityEnum.Pikemen);
         bool enemyHasCavalry = enemyArmy != null && enemyArmy.HasCavalryTroops();
-        float multiplier = enemyHasCavalry ? 1.30f : 0.90f;
+        float multiplier = enemyHasCavalry
+            ? Mathf.Lerp(1f, 1.30f, pikemenRatio)
+            : Mathf.Lerp(1f, 0.90f, pikemenRatio);
         return Mathf.Max(0, Mathf.RoundToInt(value * multiplier));
+    }
+
+    private int ApplyChargingAttackModifier(int value, Army enemyArmy)
+    {
+        int chargingCount = GetAbilityTroopCount(ArmySpecialAbilityEnum.Charging);
+        if (chargingCount <= 0) return value;
+        if (enemyArmy == null || commander == null || commander.hex == null || commander.hex.IsWaterTerrain()) return value;
+
+        float chargingRatio = GetAbilityCoverageRatio(ArmySpecialAbilityEnum.Charging);
+        if (enemyArmy.GetAbilityTroopCount(ArmySpecialAbilityEnum.Pikemen) > 0)
+        {
+            float enemyPikemenRatio = enemyArmy.GetAbilityCoverageRatio(ArmySpecialAbilityEnum.Pikemen);
+            float modifier = Mathf.Lerp(1f, 0.80f, Mathf.Max(chargingRatio, enemyPikemenRatio));
+            return Mathf.Max(0, Mathf.RoundToInt(value * modifier));
+        }
+
+        if (enemyArmy.GetAbilityTroopCount(ArmySpecialAbilityEnum.Shielded) > 0)
+        {
+            float enemyShieldedRatio = enemyArmy.GetAbilityCoverageRatio(ArmySpecialAbilityEnum.Shielded);
+            float modifier = Mathf.Lerp(1.30f, 1f, enemyShieldedRatio);
+            modifier = Mathf.Lerp(1f, modifier, chargingRatio);
+            return Mathf.Max(0, Mathf.RoundToInt(value * modifier));
+        }
+
+        return Mathf.Max(0, Mathf.RoundToInt(value * Mathf.Lerp(1f, 1.30f, chargingRatio)));
     }
 
     public TroopsTypeEnum? RemoveRandomTroop()
@@ -581,7 +601,7 @@ public class Army
         TriggerBattleSpecialAbilities(targetHex, defenderArmy, battleAbilityMessages, battleAbilityNarration);
         if (killed || commander == null || commander.killed || defenderArmy == null || defenderArmy.killed || defenderArmy.commander == null || defenderArmy.commander.killed) return;
 
-        attackerStrength = GetStrength();
+        attackerStrength = GetStrengthAgainst(defenderArmy);
         attackerDefence = GetDefenceAgainst(defenderArmy);
         attackerAlliesJoined = 0;
         attackerAlliesStrength = 0;
@@ -595,7 +615,7 @@ public class Army
                 if ((attackerAlignment != AlignmentEnum.neutral && ally.GetAlignment() == attackerAlignment) ||
                     (attackerAlignment == AlignmentEnum.neutral && ally.GetAlignment() == AlignmentEnum.neutral && ally.commander.GetOwner() == commander.GetOwner()))
                 {
-                    int allyStrength = ally.GetStrength();
+                    int allyStrength = ally.GetStrengthAgainst(defenderArmy);
                     int allyDefence = ally.GetDefenceAgainst(defenderArmy);
                     attackerStrength += allyStrength;
                     attackerDefence += allyDefence;
@@ -607,7 +627,7 @@ public class Army
         }
 
         int defenderDefense = defenderArmy.GetDefenceAgainst(this);
-        int defenderStrength = defenderArmy.GetStrength();
+        int defenderStrength = defenderArmy.GetStrengthAgainst(this);
         int attackerArtifactAttack = GetArtifactAttackBonusTotal();
         int attackerArtifactDefense = GetArtifactDefenseBonusTotal();
         int defenderArtifactAttack = defenderArmy.GetArtifactAttackBonusTotal();
@@ -629,7 +649,7 @@ public class Army
                     (defenderAlignment == AlignmentEnum.neutral && ally.GetAlignment() == AlignmentEnum.neutral && ally.commander.GetOwner() == defenderArmy.commander.GetOwner()))
                 {
                     int allyDefence = ally.GetDefenceAgainst(this);
-                    int allyStrength = ally.GetStrength();
+                    int allyStrength = ally.GetStrengthAgainst(this);
                     defenderDefense += allyDefence;
                     defenderStrength += allyStrength;
                     defenderAlliesJoined++;
@@ -700,6 +720,7 @@ public class Army
 
         string battleLocation = targetHex.HasAnyPC() && targetHex.IsPCRevealed() ? targetHex.GetPC().pcName : targetHex.GetHoverV2();
         string title = $"Attack at {battleLocation}";
+        string troopNarrative = BuildTroopBattleNarrative(defenderArmy);
         string text = BuildBattleDescription(
             battleLocation,
             attackerName,
@@ -728,6 +749,7 @@ public class Army
             attackerLossesText,
             defenderLossesText,
             stalemateNote,
+            troopNarrative,
             battleAbilityNarration);
         Illustrations illustrations = GameObject.FindFirstObjectByType<Illustrations>();
         bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(targetHex);
@@ -825,6 +847,7 @@ public class Army
         string attackerLossesText,
         string defenderLossesText,
         string stalemateNote,
+        string troopNarrative,
         List<string> battleAbilityNarration)
     {
         StringBuilder sb = new StringBuilder();
@@ -858,6 +881,10 @@ public class Army
 
         void Abilities()
         {
+            if (!string.IsNullOrWhiteSpace(troopNarrative))
+            {
+                sb.AppendLine(troopNarrative);
+            }
             if (battleAbilityNarration == null || battleAbilityNarration.Count == 0) return;
             sb.AppendLine(BuildBattleAbilityNarration(battleAbilityNarration));
         }
@@ -942,6 +969,107 @@ public class Army
         }
 
         return sb.ToString();
+    }
+
+    private string BuildTroopBattleNarrative(Army defenderArmy)
+    {
+        List<string> lines = new();
+
+        string attackerTroops = BuildArmyTroopNarrativeLine(commander != null ? commander.characterName : "The attackers", GetTroopGroups(), true);
+        if (!string.IsNullOrWhiteSpace(attackerTroops))
+        {
+            lines.Add(attackerTroops);
+        }
+
+        string defenderTroops = defenderArmy != null
+            ? BuildArmyTroopNarrativeLine(defenderArmy.commander != null ? defenderArmy.commander.characterName : "The defenders", defenderArmy.GetTroopGroups(), false)
+            : string.Empty;
+        if (!string.IsNullOrWhiteSpace(defenderTroops))
+        {
+            lines.Add(defenderTroops);
+        }
+
+        return string.Join(" ", lines);
+    }
+
+    private static string BuildArmyTroopNarrativeLine(string armyName, List<ArmyTroopAbilityGroup> groups, bool attacking)
+    {
+        if (string.IsNullOrWhiteSpace(armyName) || groups == null || groups.Count == 0) return string.Empty;
+
+        List<string> clauses = groups
+            .Where(group => group != null && group.amount > 0)
+            .OrderByDescending(group => group.amount)
+            .Select(group => BuildTroopGroupBattleClause(group, attacking))
+            .Where(text => !string.IsNullOrWhiteSpace(text))
+            .ToList();
+
+        if (clauses.Count == 0) return string.Empty;
+
+        string joined = JoinNarrativeClauses(clauses);
+        return attacking
+            ? $"{armyName} unleashes {joined}."
+            : $"{armyName} answers with {joined}.";
+    }
+
+    private static string BuildTroopGroupBattleClause(ArmyTroopAbilityGroup group, bool attacking)
+    {
+        if (group == null || group.amount <= 0) return string.Empty;
+
+        string troopName = !string.IsNullOrWhiteSpace(group.troopName) ? group.troopName : group.troopType.ToString();
+        string amountText = group.amount == 1 ? $"1 {troopName}" : $"{group.amount} {troopName}";
+        List<string> abilityPhrases = (group.abilities ?? new List<ArmySpecialAbilityEnum>())
+            .Distinct()
+            .Select(BuildAbilityBattleClause)
+            .Where(text => !string.IsNullOrWhiteSpace(text))
+            .ToList();
+
+        string action = BuildTroopTypeBattleClause(group.troopType, attacking);
+        if (abilityPhrases.Count == 0) return $"{amountText} {action}";
+        return $"{amountText} {action} while {JoinNarrativeClauses(abilityPhrases)}";
+    }
+
+    private static string BuildTroopTypeBattleClause(TroopsTypeEnum troopType, bool attacking)
+    {
+        return troopType switch
+        {
+            TroopsTypeEnum.ma => attacking ? "press forward at close quarters" : "hold the line with spear and blade",
+            TroopsTypeEnum.ar => attacking ? "send measured flights into the enemy front" : "answer with disciplined volleys",
+            TroopsTypeEnum.li => attacking ? "dart through gaps and worry the flanks" : "skirmish hard in the broken ground",
+            TroopsTypeEnum.hi => attacking ? "drive into the center with crushing weight" : "brace in dense ranks and trade heavy blows",
+            TroopsTypeEnum.lc => attacking ? "wheel fast around the edges of the melee" : "circle wide, guarding the flanks",
+            TroopsTypeEnum.hc => attacking ? "thunder in with mailed force" : "meet the shock with armored momentum",
+            TroopsTypeEnum.ca => attacking ? "hurl ruin from the rear with engines and stones" : "answer from behind the line with smashing shot",
+            TroopsTypeEnum.ws => attacking ? "close over the water under oar and ram" : "maneuver across the waves to answer the strike",
+            _ => attacking ? "surge into the fray" : "stand firm in the clash"
+        };
+    }
+
+    private static string BuildAbilityBattleClause(ArmySpecialAbilityEnum ability)
+    {
+        return ability switch
+        {
+            ArmySpecialAbilityEnum.Pikemen => "lowering a hedge of pikes to break any mounted rush",
+            ArmySpecialAbilityEnum.Shielded => "locking shields into a stubborn wall",
+            ArmySpecialAbilityEnum.Berserker => "giving themselves over to a savage blood-rush",
+            ArmySpecialAbilityEnum.Raid => "slipping aside to plunder, cut loose baggage, and strike from disorder",
+            ArmySpecialAbilityEnum.Encouraging => "lifting banners and hearts with shouted courage",
+            ArmySpecialAbilityEnum.Discouraging => "spreading dread with grim cries and black intent",
+            ArmySpecialAbilityEnum.Poison => "striking with venom-touched blades and darts",
+            ArmySpecialAbilityEnum.Fire => "casting sparks and flame through the press",
+            ArmySpecialAbilityEnum.Cursed => "bringing a black foreboding over the field",
+            ArmySpecialAbilityEnum.Longrange => "arching long volleys over the melee into distant targets",
+            ArmySpecialAbilityEnum.ShortRange => "unleashing vicious close volleys at a stone's throw",
+            ArmySpecialAbilityEnum.Charging => "hurling themselves forward in a thunderous charge",
+            _ => string.Empty
+        };
+    }
+
+    private static string JoinNarrativeClauses(List<string> clauses)
+    {
+        if (clauses == null || clauses.Count == 0) return string.Empty;
+        if (clauses.Count == 1) return clauses[0];
+        if (clauses.Count == 2) return $"{clauses[0]} and {clauses[1]}";
+        return $"{string.Join(", ", clauses.Take(clauses.Count - 1))}, and {clauses[^1]}";
     }
 
     private void TryApplyCommanderArtifactBurningOnSuccessfulAttack(Army defenderArmy, float attackerDamage)
@@ -1475,7 +1603,7 @@ public class Army
     private void TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum ability, int percentChance, List<(string message, Color color)> battleMessages, List<string> battleNarration, Func<(string message, Color color, string narration)> onSuccess)
     {
         if (!HasSpecialAbility(ability) || commander == null || commander.killed) return;
-        if (UnityEngine.Random.Range(0, 100) >= percentChance) return;
+        if (UnityEngine.Random.Range(0f, 100f) >= GetAbilityTriggerChancePercent(ability, percentChance)) return;
         var result = onSuccess.Invoke();
         battleMessages.Add((result.message, result.color));
         if (!string.IsNullOrWhiteSpace(result.narration)) battleNarration.Add(result.narration);
@@ -1484,7 +1612,7 @@ public class Army
     private void TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum ability, int percentChance, Army enemyArmy, List<(string message, Color color)> battleMessages, List<string> battleNarration, Func<(string message, Color color, string narration)> onSuccess)
     {
         if (!HasSpecialAbility(ability) || enemyArmy == null || enemyArmy.killed || enemyArmy.commander == null || enemyArmy.commander.killed) return;
-        if (UnityEngine.Random.Range(0, 100) >= percentChance) return;
+        if (UnityEngine.Random.Range(0f, 100f) >= GetAbilityTriggerChancePercent(ability, percentChance)) return;
         var result = onSuccess.Invoke();
         battleMessages.Add((result.message, result.color));
         if (!string.IsNullOrWhiteSpace(result.narration)) battleNarration.Add(result.narration);
@@ -1493,12 +1621,13 @@ public class Army
     private void TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum ability, int percentChance, Hex battleHex, Army primaryEnemy, int radius, float casualtyPercent, string label, List<(string message, Color color)> battleMessages, List<string> battleNarration)
     {
         if (!HasSpecialAbility(ability) || battleHex == null || commander == null || commander.killed) return;
-        if (UnityEngine.Random.Range(0, 100) >= percentChance) return;
+        if (UnityEngine.Random.Range(0f, 100f) >= GetAbilityTriggerChancePercent(ability, percentChance)) return;
 
         Army target = FindRandomEnemyArmyInRadius(battleHex, radius) ?? primaryEnemy;
         if (target == null || target.killed || target.commander == null || target.commander.killed) return;
 
-        target.ReceiveCasualties(casualtyPercent, commander.GetOwner(), false);
+        float scaledCasualtyPercent = casualtyPercent * Mathf.Max(0.25f, GetAbilityCoverageRatio(ability));
+        target.ReceiveCasualties(scaledCasualtyPercent, commander.GetOwner(), false);
         battleMessages.Add(($"{commander.characterName}'s {label} hits {target.commander.characterName}'s army.", Color.yellow));
         battleNarration.Add(BuildAbilityNarration(ability, commander.characterName, target.commander.characterName, false));
     }
@@ -1809,6 +1938,7 @@ public class Army
 
     public List<ArmySpecialAbilityEnum> GetSpecialAbilities(TroopsTypeEnum troopType)
     {
+        EnsureTroopGroupsInitialized();
         if (troopAbilityGroups == null) return new List<ArmySpecialAbilityEnum>();
         return troopAbilityGroups
             .Where(group => group != null && group.troopType == troopType && group.amount > 0)
@@ -1818,10 +1948,26 @@ public class Army
             .ToList();
     }
 
+    public int GetAbilityTroopCount(ArmySpecialAbilityEnum ability)
+    {
+        EnsureTroopGroupsInitialized();
+        if (troopAbilityGroups == null) return 0;
+
+        return troopAbilityGroups
+            .Where(group => group != null && group.amount > 0 && group.abilities != null && group.abilities.Contains(ability))
+            .Sum(group => group.amount);
+    }
+
+    private float GetAbilityCoverageRatio(ArmySpecialAbilityEnum ability)
+    {
+        int totalTroops = GetSize(false);
+        if (totalTroops <= 0) return 0f;
+        return Mathf.Clamp01(GetAbilityTroopCount(ability) / (float)totalTroops);
+    }
+
     private bool HasSpecialAbility(ArmySpecialAbilityEnum ability)
     {
-        return troopAbilityGroups != null
-            && troopAbilityGroups.Any(group => group != null && group.amount > 0 && group.abilities != null && group.abilities.Contains(ability));
+        return GetAbilityTroopCount(ability) > 0;
     }
 
     private bool HasCavalryTroops()
@@ -1829,10 +1975,39 @@ public class Army
         return lc > 0 || hc > 0;
     }
 
-    private string BuildTroopHoverLine(TroopsTypeEnum troopType, int amount, string description)
+    public List<ArmyTroopAbilityGroup> GetTroopGroups()
     {
-        string line = $"<sprite name=\"{troopType.ToString().ToLower()}\">[{amount}] {description}";
-        List<ArmySpecialAbilityEnum> abilities = GetSpecialAbilities(troopType);
+        EnsureTroopGroupsInitialized();
+        if (troopAbilityGroups == null) return new List<ArmyTroopAbilityGroup>();
+
+        return troopAbilityGroups
+            .Where(group => group != null && group.amount > 0)
+            .Select(group => new ArmyTroopAbilityGroup
+            {
+                troopType = group.troopType,
+                amount = group.amount,
+                troopName = group.troopName,
+                abilities = group.abilities != null ? new List<ArmySpecialAbilityEnum>(group.abilities) : new List<ArmySpecialAbilityEnum>()
+            })
+            .ToList();
+    }
+
+    private List<string> BuildTroopHoverLines()
+    {
+        return GetTroopGroups()
+            .Select(BuildTroopHoverLine)
+            .ToList();
+    }
+
+    private string BuildTroopHoverLine(ArmyTroopAbilityGroup group)
+    {
+        if (group == null || group.amount <= 0) return string.Empty;
+
+        string troopName = !string.IsNullOrWhiteSpace(group.troopName) ? group.troopName : GetDefaultTroopName(group.troopType);
+        string line = $"<sprite name=\"{group.troopType.ToString().ToLower()}\">{group.amount} {troopName}";
+        List<ArmySpecialAbilityEnum> abilities = group.abilities != null
+            ? group.abilities.Distinct().OrderBy(value => (int)value).ToList()
+            : new List<ArmySpecialAbilityEnum>();
         if (abilities.Count == 0) return line;
         return $"{line} ({string.Join(", ", abilities.Select(FormatAbilityLabel))})";
     }
@@ -1847,18 +2022,28 @@ public class Army
         };
     }
 
-    private void AddSpecialTroopGroup(TroopsTypeEnum troopType, int amount, IEnumerable<ArmySpecialAbilityEnum> abilities)
+    private float GetAbilityTriggerChancePercent(ArmySpecialAbilityEnum ability, int basePercentChance)
     {
-        if (amount <= 0 || abilities == null) return;
+        int troopCount = GetAbilityTroopCount(ability);
+        if (troopCount <= 0) return 0f;
 
-        List<ArmySpecialAbilityEnum> normalized = abilities
+        float singleTroopChance = Mathf.Clamp01(basePercentChance / 100f);
+        float combinedChance = 1f - Mathf.Pow(1f - singleTroopChance, troopCount);
+        return Mathf.Clamp(combinedChance * 100f, 0f, 100f);
+    }
+
+    private void AddTroopGroup(TroopsTypeEnum troopType, int amount, string troopName, IEnumerable<ArmySpecialAbilityEnum> abilities)
+    {
+        if (amount <= 0) return;
+
+        List<ArmySpecialAbilityEnum> normalized = (abilities ?? Enumerable.Empty<ArmySpecialAbilityEnum>())
             .Distinct()
             .OrderBy(value => (int)value)
             .ToList();
-        if (normalized.Count == 0) return;
+        string normalizedTroopName = !string.IsNullOrWhiteSpace(troopName) ? troopName : GetDefaultTroopName(troopType);
 
         troopAbilityGroups ??= new List<ArmyTroopAbilityGroup>();
-        ArmyTroopAbilityGroup existing = troopAbilityGroups.FirstOrDefault(group => group != null && group.Matches(troopType, normalized));
+        ArmyTroopAbilityGroup existing = troopAbilityGroups.FirstOrDefault(group => group != null && group.Matches(troopType, normalizedTroopName, normalized));
         if (existing != null)
         {
             existing.amount += amount;
@@ -1869,30 +2054,26 @@ public class Army
         {
             troopType = troopType,
             amount = amount,
+            troopName = normalizedTroopName,
             abilities = normalized
         });
     }
 
     private void RemoveSpecialTroops(TroopsTypeEnum troopType, int amount)
     {
+        EnsureTroopGroupsInitialized();
         if (amount <= 0 || troopAbilityGroups == null || troopAbilityGroups.Count == 0) return;
 
         int remaining = amount;
         while (remaining > 0)
         {
-            int totalTroopsOfType = GetTroopCount(troopType);
-            if (totalTroopsOfType <= 0) break;
-
             List<ArmyTroopAbilityGroup> matchingGroups = troopAbilityGroups
                 .Where(group => group != null && group.troopType == troopType && group.amount > 0)
                 .ToList();
-            int totalSpecial = matchingGroups.Sum(group => group.amount);
-            if (totalSpecial <= 0) break;
+            int totalMatching = matchingGroups.Sum(group => group.amount);
+            if (totalMatching <= 0) break;
 
-            bool removeSpecial = UnityEngine.Random.Range(0, totalTroopsOfType) < totalSpecial;
-            if (!removeSpecial) break;
-
-            int roll = UnityEngine.Random.Range(0, totalSpecial);
+            int roll = UnityEngine.Random.Range(0, totalMatching);
             int cumulative = 0;
             for (int i = 0; i < matchingGroups.Count; i++)
             {
@@ -1927,6 +2108,7 @@ public class Army
 
     private void TrimSpecialTroopGroupsToCurrentCounts()
     {
+        EnsureTroopGroupsInitialized();
         if (troopAbilityGroups == null || troopAbilityGroups.Count == 0) return;
 
         foreach (TroopsTypeEnum troopType in Enum.GetValues(typeof(TroopsTypeEnum)))
@@ -1948,5 +2130,47 @@ public class Army
         }
 
         troopAbilityGroups.RemoveAll(group => group == null || group.amount <= 0);
+    }
+
+    private void EnsureTroopGroupsInitialized()
+    {
+        troopAbilityGroups ??= new List<ArmyTroopAbilityGroup>();
+        EnsureTroopTypeCoverage(TroopsTypeEnum.ma, ma);
+        EnsureTroopTypeCoverage(TroopsTypeEnum.ar, ar);
+        EnsureTroopTypeCoverage(TroopsTypeEnum.li, li);
+        EnsureTroopTypeCoverage(TroopsTypeEnum.hi, hi);
+        EnsureTroopTypeCoverage(TroopsTypeEnum.lc, lc);
+        EnsureTroopTypeCoverage(TroopsTypeEnum.hc, hc);
+        EnsureTroopTypeCoverage(TroopsTypeEnum.ca, ca);
+        EnsureTroopTypeCoverage(TroopsTypeEnum.ws, ws);
+        troopAbilityGroups.RemoveAll(group => group == null || group.amount <= 0);
+    }
+
+    private void EnsureTroopTypeCoverage(TroopsTypeEnum troopType, int totalAmount)
+    {
+        if (totalAmount <= 0) return;
+
+        int groupedAmount = troopAbilityGroups
+            .Where(group => group != null && group.troopType == troopType && group.amount > 0)
+            .Sum(group => group.amount);
+
+        if (groupedAmount >= totalAmount) return;
+        AddTroopGroup(troopType, totalAmount - groupedAmount, null, null);
+    }
+
+    private static string GetDefaultTroopName(TroopsTypeEnum troopType)
+    {
+        return troopType switch
+        {
+            TroopsTypeEnum.ma => "Men-at-arms",
+            TroopsTypeEnum.ar => "Archers",
+            TroopsTypeEnum.li => "Light Infantry",
+            TroopsTypeEnum.hi => "Heavy Infantry",
+            TroopsTypeEnum.lc => "Light Cavalry",
+            TroopsTypeEnum.hc => "Heavy Cavalry",
+            TroopsTypeEnum.ca => "Catapults",
+            TroopsTypeEnum.ws => "Warships",
+            _ => troopType.ToString()
+        };
     }
 }

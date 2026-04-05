@@ -367,7 +367,6 @@ public class Board : MonoBehaviour
         return new Artifact
         {
             artifactName = source.artifactName,
-            artifactDescription = source.artifactDescription,
             hidden = source.hidden,
             alignment = source.alignment,
             commanderBonus = source.commanderBonus,

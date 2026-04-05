@@ -39,10 +39,27 @@ public class TutorialStep
 [Serializable]
 public class TutorialRequirements
 {
-    public string actionClass;
+    public string cardName;
+    public List<TutorialVariantCardRequirement> variantCards = new();
+    public List<string> supportCards = new();
+    public List<TutorialVariantSupportCardsRequirement> variantSupportCards = new();
     public string targetLeader;
     public string targetCharacter;
     public string actorCharacter;
+}
+
+[Serializable]
+public class TutorialVariantCardRequirement
+{
+    public string variantId;
+    public string cardName;
+}
+
+[Serializable]
+public class TutorialVariantSupportCardsRequirement
+{
+    public string variantId;
+    public List<string> cardNames = new();
 }
 
 [Serializable]
@@ -149,6 +166,7 @@ public class TutorialManager : MonoBehaviour
                 Character actor = ResolveStepActor(leader, step) ?? leader;
                 ApplySkipStateAllegiance(step, leader);
                 ApplySkipRewards(step, actor);
+                ApplySkipActionState(step, actor, leader);
             }
         }
 
@@ -180,7 +198,7 @@ public class TutorialManager : MonoBehaviour
         return requiredStepIndex;
     }
 
-    public string GetCurrentRequiredActionClass(PlayableLeader playableLeader)
+    public string GetCurrentRequiredCardName(PlayableLeader playableLeader)
     {
         if (playableLeader == null) return null;
         if (leader != playableLeader) return null;
@@ -188,7 +206,42 @@ public class TutorialManager : MonoBehaviour
         TutorialStep step = GetCurrentRequiredStep();
         if (step == null) return null;
         if (!string.Equals(step.type, "performAction", StringComparison.OrdinalIgnoreCase)) return null;
-        return step.requirements != null ? step.requirements.actionClass : null;
+        return ResolveRequiredCardName(step, playableLeader);
+    }
+
+    public List<string> GetCurrentExpectedCardNames(PlayableLeader playableLeader)
+    {
+        if (playableLeader == null) return new List<string>();
+        if (leader != playableLeader) return new List<string>();
+
+        TutorialStep step = GetCurrentRequiredStep();
+        return ResolveExpectedCardNames(step, playableLeader);
+    }
+
+    public string GetTutorialPlayRestrictionReason(PlayableLeader playableLeader, Character actor, CardData card)
+    {
+        if (playableLeader == null || card == null) return null;
+        if (!IsActiveFor(playableLeader)) return null;
+
+        TutorialStep step = GetCurrentRequiredStep();
+        if (step == null) return null;
+
+        List<string> expectedCards = ResolveExpectedCardNames(step, playableLeader);
+        if (expectedCards.Count > 0
+            && !expectedCards.Any(name => string.Equals(name, card.name, StringComparison.OrdinalIgnoreCase)))
+        {
+            return $"Tutorial expects: {string.Join(", ", expectedCards)}.";
+        }
+
+        if (step.requirements != null
+            && !string.IsNullOrWhiteSpace(step.requirements.actorCharacter)
+            && actor != null
+            && !string.Equals(actor.characterName, step.requirements.actorCharacter, StringComparison.OrdinalIgnoreCase))
+        {
+            return $"Tutorial expects {step.requirements.actorCharacter} to play {card.name}.";
+        }
+
+        return null;
     }
 
     public void HandleActionExecuted(Character actor, string actionClassName, Hex actionHex)
@@ -278,6 +331,7 @@ public class TutorialManager : MonoBehaviour
         if (tutorialSkipped || skipApplied) return;
         TutorialStep step = GetCurrentRequiredStep();
         if (step == null || leader == null) return;
+        EnsureTutorialActorRequirements(step);
         ConfigureTutorialCardsForStep(step);
         ShowStepPopup(step);
         UpdateObjectiveDisplay(step);
@@ -290,15 +344,47 @@ public class TutorialManager : MonoBehaviour
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
         if (deckManager == null) return;
 
-        List<string> actions = new();
-        if (string.Equals(step.type, "performAction", StringComparison.OrdinalIgnoreCase)
-            && step.requirements != null
-            && !string.IsNullOrWhiteSpace(step.requirements.actionClass))
+        List<string> cards = ResolveExpectedCardNames(step, leader);
+
+        deckManager.SetTutorialCardsByName(leader, cards);
+    }
+
+    private void EnsureTutorialActorRequirements(TutorialStep step)
+    {
+        if (step == null || leader == null) return;
+
+        Character actor = ResolveStepActor(leader, step);
+        if (actor == null) return;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return;
+
+        foreach (string cardName in ResolveExpectedCardNames(step, leader))
         {
-            actions.Add(step.requirements.actionClass);
+            if (string.IsNullOrWhiteSpace(cardName)) continue;
+            CardData card = deckManager.FindCardByNameForLeader(leader, cardName);
+            if (card == null) continue;
+
+            if (card.commanderSkillRequired > actor.GetBaseCommander())
+            {
+                actor.SetCommander(card.commanderSkillRequired);
+            }
+            if (card.agentSkillRequired > actor.GetBaseAgent())
+            {
+                actor.SetAgent(card.agentSkillRequired);
+            }
+            if (card.emissarySkillRequired > actor.GetBaseEmmissary())
+            {
+                actor.SetEmmissary(card.emissarySkillRequired);
+            }
+            if (card.mageSkillRequired > actor.GetBaseMage())
+            {
+                actor.SetMage(card.mageSkillRequired);
+            }
         }
 
-        deckManager.SetTutorialActionCards(leader, actions);
+        actor.RefreshSelectedCharacterIconIfSelected();
+        CharacterIcons.RefreshForHumanPlayerCharacter(actor);
     }
 
     private void RestorePostTutorialHand()
@@ -356,9 +442,10 @@ public class TutorialManager : MonoBehaviour
                 return false;
             }
         }
-        if (req != null && !string.IsNullOrWhiteSpace(req.actionClass))
+        string requiredActionRef = ResolveRequiredActionRef(step, actor?.GetOwner() as PlayableLeader);
+        if (!string.IsNullOrWhiteSpace(requiredActionRef))
         {
-            if (!string.Equals(req.actionClass, actionClassName, StringComparison.OrdinalIgnoreCase)) return false;
+            if (!string.Equals(requiredActionRef, actionClassName, StringComparison.OrdinalIgnoreCase)) return false;
         }
 
         if (req != null && !string.IsNullOrWhiteSpace(req.targetLeader))
@@ -374,11 +461,71 @@ public class TutorialManager : MonoBehaviour
                 && string.Equals(c.characterName, req.targetLeader, StringComparison.OrdinalIgnoreCase));
             if (!matchesOwner && !matchesPc && !matchesCharacter)
             {
-                bool isAllegiance = string.Equals(actionClassName, "StateAllegiance", StringComparison.OrdinalIgnoreCase);
+                bool isAllegiance = string.Equals(requiredActionRef, "StateAllegiance", StringComparison.OrdinalIgnoreCase);
                 bool matchesLocation = !string.IsNullOrWhiteSpace(step.targetLocation)
                     && !string.IsNullOrWhiteSpace(pcName)
                     && string.Equals(pcName, step.targetLocation, StringComparison.OrdinalIgnoreCase);
                 if (!(isAllegiance && matchesLocation && pc != null && pc.owner == null))
+                {
+                    return false;
+                }
+            }
+        }
+
+        if (req != null && !string.IsNullOrWhiteSpace(req.targetCharacter))
+        {
+            bool found = actionHex.characters.Any(c => c != null && string.Equals(c.characterName, req.targetCharacter, StringComparison.OrdinalIgnoreCase));
+            if (!found) return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(step.targetLocation))
+        {
+            PC pc = actionHex.GetPCData();
+            if (pc == null || !string.Equals(pc.pcName, step.targetLocation, StringComparison.OrdinalIgnoreCase)) return false;
+        }
+
+        return true;
+    }
+
+    private bool StepMatchesCard(TutorialStep step, Character actor, CardData card, Hex actionHex)
+    {
+        if (step == null || actor == null || card == null || actionHex == null) return false;
+        if (!string.Equals(step.type, "performAction", StringComparison.OrdinalIgnoreCase)) return false;
+
+        TutorialRequirements req = step.requirements;
+        if (req != null && !string.IsNullOrWhiteSpace(req.actorCharacter))
+        {
+            if (!string.Equals(actor.characterName, req.actorCharacter, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        string requiredCardName = ResolveRequiredCardName(step, actor.GetOwner() as PlayableLeader);
+        if (!string.IsNullOrWhiteSpace(requiredCardName)
+            && !string.Equals(card.name, requiredCardName, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (req != null && !string.IsNullOrWhiteSpace(req.targetLeader))
+        {
+            PC pc = actionHex.GetPCData();
+            string ownerName = pc != null && pc.owner != null ? pc.owner.characterName : string.Empty;
+            string pcName = pc != null ? pc.pcName : string.Empty;
+            bool matchesOwner = !string.IsNullOrWhiteSpace(ownerName)
+                && string.Equals(ownerName, req.targetLeader, StringComparison.OrdinalIgnoreCase);
+            bool matchesPc = !string.IsNullOrWhiteSpace(pcName)
+                && string.Equals(pcName, req.targetLeader, StringComparison.OrdinalIgnoreCase);
+            bool matchesCharacter = actionHex.characters.Any(c => c != null
+                && string.Equals(c.characterName, req.targetLeader, StringComparison.OrdinalIgnoreCase));
+            if (!matchesOwner && !matchesPc && !matchesCharacter)
+            {
+                bool isAllegianceCard = string.Equals(requiredCardName, "State Allegiance", StringComparison.OrdinalIgnoreCase);
+                bool matchesLocation = !string.IsNullOrWhiteSpace(step.targetLocation)
+                    && !string.IsNullOrWhiteSpace(pcName)
+                    && string.Equals(pcName, step.targetLocation, StringComparison.OrdinalIgnoreCase);
+                if (!(isAllegianceCard && matchesLocation && pc != null && pc.owner == null))
                 {
                     return false;
                 }
@@ -464,6 +611,31 @@ public class TutorialManager : MonoBehaviour
         if (rewards.grantCharacters != null && rewards.grantCharacters.Count > 0)
         {
             GrantCharacters(rewards.grantCharacters, actor, markAsActionedThisTurn: true);
+        }
+    }
+
+    public void HandleCardPlayed(Character actor, CardData card, Hex actionHex)
+    {
+        if (actor == null || card == null || actionHex == null) return;
+        if (!IsActiveFor(actor.GetOwner())) return;
+
+        TutorialStep step = GetCurrentRequiredStep();
+        if (step != null && StepMatchesCard(step, actor, card, actionHex))
+        {
+            CompleteStep(step, actor);
+            AdvanceRequiredStep();
+            return;
+        }
+
+        if (activeFlow?.steps == null) return;
+        foreach (TutorialStep optional in activeFlow.steps.Where(s => s != null && !s.required && !completedOptionalSteps.Contains(s.stepId)))
+        {
+            if (StepMatchesCard(optional, actor, card, actionHex))
+            {
+                CompleteStep(optional, actor);
+                completedOptionalSteps.Add(optional.stepId);
+                break;
+            }
         }
     }
 
@@ -778,8 +950,27 @@ public class TutorialManager : MonoBehaviour
             }
         }
 
-        if (string.IsNullOrWhiteSpace(step.requirements?.actionClass))
+        string requiredActionRef = ResolveRequiredActionRef(step, actor.GetOwner() as PlayableLeader);
+        string requiredCardName = ResolveRequiredCardName(step, actor.GetOwner() as PlayableLeader);
+
+        if (string.IsNullOrWhiteSpace(requiredActionRef) && string.IsNullOrWhiteSpace(requiredCardName))
         {
+            completed = true;
+        }
+        else if (!string.IsNullOrWhiteSpace(requiredCardName)
+            && TryGetSkipArmyDefinition(actor.GetOwner() as PlayableLeader, requiredCardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName))
+        {
+            if (!actor.IsArmyCommander())
+            {
+                actor.CreateArmy(troopType, 1, false, 0, specialAbilities, troopName);
+            }
+            else
+            {
+                actor.GetArmy()?.Recruit(troopType, 1, specialAbilities, troopName);
+                actor.hex?.RedrawCharacters();
+                actor.hex?.RedrawArmies();
+                actor.RefreshSelectedCharacterIconIfSelected();
+            }
             completed = true;
         }
         else
@@ -788,7 +979,7 @@ public class TutorialManager : MonoBehaviour
             if (actionsManager != null)
             {
                 actionsManager.Refresh(actor);
-                CharacterAction action = actionsManager.ResolveActionByRef(step.requirements.actionClass);
+                CharacterAction action = actionsManager.ResolveActionByRef(requiredActionRef);
                 if (action != null)
                 {
                     Task task = action.Execute();
@@ -827,7 +1018,7 @@ public class TutorialManager : MonoBehaviour
             }
         }
 
-        if (string.Equals(step.requirements?.actionClass, "FindArtifact", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(ResolveRequiredActionRef(step, actor.GetOwner() as PlayableLeader), "FindArtifact", StringComparison.OrdinalIgnoreCase))
         {
             if (actor.hex != null && actor.hex.hiddenArtifacts.Count > 0 && actor.artifacts.Count < Character.MAX_ARTIFACTS)
             {
@@ -935,7 +1126,6 @@ public class TutorialManager : MonoBehaviour
         return new Artifact
         {
             artifactName = source.artifactName,
-            artifactDescription = source.artifactDescription,
             hidden = source.hidden,
             alignment = source.alignment,
             commanderBonus = source.commanderBonus,
@@ -955,7 +1145,7 @@ public class TutorialManager : MonoBehaviour
     {
         if (step == null || playableLeader == null) return;
         if (!string.Equals(step.type, "performAction", StringComparison.OrdinalIgnoreCase)) return;
-        if (!string.Equals(step.requirements?.actionClass, "StateAllegiance", StringComparison.OrdinalIgnoreCase)) return;
+        if (!string.Equals(ResolveRequiredActionRef(step, playableLeader), "StateAllegiance", StringComparison.OrdinalIgnoreCase)) return;
 
         Hex targetHex = ResolveTargetHex(step);
         PC targetPc = targetHex?.GetPCData();
@@ -997,6 +1187,145 @@ public class TutorialManager : MonoBehaviour
             // Skip mode should leave tutorial-granted characters immediately playable.
             GrantCharacters(rewards.grantCharacters, actor, markAsActionedThisTurn: false);
         }
+    }
+
+    private void ApplySkipActionState(TutorialStep step, Character actor, PlayableLeader playableLeader)
+    {
+        if (step == null || actor == null || playableLeader == null) return;
+        if (!string.Equals(step.type, "performAction", StringComparison.OrdinalIgnoreCase)) return;
+
+        string requiredCardName = ResolveRequiredCardName(step, playableLeader);
+        if (string.IsNullOrWhiteSpace(requiredCardName)) return;
+
+        if (!TryGetSkipArmyDefinition(playableLeader, requiredCardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName)) return;
+
+        if (!actor.IsArmyCommander())
+        {
+            actor.CreateArmy(troopType, 1, false, 0, specialAbilities, troopName);
+        }
+        else
+        {
+            actor.GetArmy()?.Recruit(troopType, 1, specialAbilities, troopName);
+            actor.hex?.RedrawCharacters();
+            actor.hex?.RedrawArmies();
+            actor.RefreshSelectedCharacterIconIfSelected();
+        }
+    }
+
+    private static string ResolveRequiredCardName(TutorialStep step, PlayableLeader playableLeader)
+    {
+        if (step?.requirements?.variantCards != null && playableLeader != null)
+        {
+            string selectedSubdeckId = playableLeader.GetSelectedSubdeckId();
+            if (!string.IsNullOrWhiteSpace(selectedSubdeckId))
+            {
+                TutorialVariantCardRequirement variantMatch = step.requirements.variantCards.FirstOrDefault(entry =>
+                    entry != null
+                    && !string.IsNullOrWhiteSpace(entry.variantId)
+                    && string.Equals(entry.variantId, selectedSubdeckId, StringComparison.OrdinalIgnoreCase)
+                    && !string.IsNullOrWhiteSpace(entry.cardName));
+
+                if (variantMatch != null) return variantMatch.cardName;
+            }
+        }
+
+        string explicitCardName = step?.requirements?.cardName;
+        if (!string.IsNullOrWhiteSpace(explicitCardName)) return explicitCardName;
+        return null;
+    }
+
+    private static List<string> ResolveExpectedCardNames(TutorialStep step, PlayableLeader playableLeader)
+    {
+        List<string> result = new();
+        string requiredCardName = ResolveRequiredCardName(step, playableLeader);
+        if (!string.IsNullOrWhiteSpace(requiredCardName))
+        {
+            result.Add(requiredCardName);
+        }
+
+        if (step?.requirements?.supportCards != null)
+        {
+            foreach (string supportCard in step.requirements.supportCards)
+            {
+                if (!string.IsNullOrWhiteSpace(supportCard))
+                {
+                    result.Add(supportCard.Trim());
+                }
+            }
+        }
+
+        if (step?.requirements?.variantSupportCards != null && playableLeader != null)
+        {
+            string selectedSubdeckId = playableLeader.GetSelectedSubdeckId();
+            if (!string.IsNullOrWhiteSpace(selectedSubdeckId))
+            {
+                TutorialVariantSupportCardsRequirement supportMatch = step.requirements.variantSupportCards.FirstOrDefault(entry =>
+                    entry != null
+                    && !string.IsNullOrWhiteSpace(entry.variantId)
+                    && string.Equals(entry.variantId, selectedSubdeckId, StringComparison.OrdinalIgnoreCase));
+
+                if (supportMatch?.cardNames != null)
+                {
+                    foreach (string supportCard in supportMatch.cardNames)
+                    {
+                        if (!string.IsNullOrWhiteSpace(supportCard))
+                        {
+                            result.Add(supportCard.Trim());
+                        }
+                    }
+                }
+            }
+        }
+
+        return result
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private static string ResolveRequiredActionRef(TutorialStep step, PlayableLeader playableLeader)
+    {
+        string cardName = ResolveRequiredCardName(step, playableLeader);
+        if (string.IsNullOrWhiteSpace(cardName)) return null;
+
+        return cardName switch
+        {
+            "State Allegiance" => "StateAllegiance",
+            "Hear Stories" => "RevealRumours",
+            "Find Artifact" => "FindArtifact",
+            "Scout Area" => "ScoutArea",
+            "Perceive Danger" => "PerceiveDanger",
+            "You Shall Not Pass!" => "YouShallNotPass",
+            "Festival Night" => "Fireworks",
+            "Wizard's Fire" => "WizardsFire",
+            "Haste" => "Haste",
+            "WizardsLaugh" => "WizardsLaugh",
+            "Double Character" => "DoubleCharacter",
+            "Words Of Dispair" => "WordsOfDispair",
+            "Summon Men-at-arms" => "SummonMA",
+            "Scry Area" => "ScryArea",
+            "Ice Storm" => "IceStorm",
+            "Cast Darkness" => "CastDarkness",
+            "Reveal PC" => "RevealPC",
+            _ => null
+        };
+    }
+
+    private bool TryGetSkipArmyDefinition(PlayableLeader playableLeader, string cardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName)
+    {
+        troopType = default;
+        specialAbilities = null;
+        troopName = null;
+        if (string.IsNullOrWhiteSpace(cardName)) return false;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        CardData card = deckManager != null ? deckManager.FindCardByNameForLeader(playableLeader, cardName) : null;
+        if (card == null || card.GetCardType() != CardTypeEnum.Army) return false;
+
+        troopType = card.troopType;
+        specialAbilities = card.specialAbilities != null ? new List<ArmySpecialAbilityEnum>(card.specialAbilities) : new List<ArmySpecialAbilityEnum>();
+        troopName = card.name;
+        return true;
     }
 
     private void GrantAllBiomeTutorialArtifacts(PlayableLeader playableLeader)

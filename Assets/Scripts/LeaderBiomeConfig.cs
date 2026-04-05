@@ -41,15 +41,6 @@ public class LeaderBiomeConfig: BiomeConfig
     public List<Artifact> tutorialArtifacts = new();
     public List<string> tutorialAnchors = new();
 
-    public string hcDescription = "Heavy Cavalry";
-    public string lcDescription = "Light Cavalry";
-    public string hiDescription = "Heavy Infantry";
-    public string liDescription = "Light Infantry";
-    public string arDescription = "Archers";
-    public string maDescription = "Men-at-arms";
-    public string wsDescription = "War ships";
-    public string caDescription = "Catapults";
-
     public List<string> newCharacters = new();
     public List<string> newPCs = new();
 

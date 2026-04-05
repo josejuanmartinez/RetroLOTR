@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000015258789, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.000015258789, y: 63.96898}
+  m_SizeDelta: {x: 0, y: -210.0473}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8574238411866119115
 CanvasRenderer:
@@ -239,6 +239,16 @@ MonoBehaviour:
   borderImage: {fileID: 5903473071190277225}
   alignmentImage: {fileID: 7547791778955860486}
   cardTypeImage: {fileID: 2864006980719809781}
+  unknownCardTypeSprite: {fileID: 674226514, guid: b86de0d27e1876a4fbb0aa8ef39c74bb, type: 3}
+  actionCardTypeSprite: {fileID: -2658811187889368998, guid: 516df1a4f714ff24ca3fe6a3ec739f39, type: 3}
+  eventCardTypeSprite: {fileID: 7311014220154246099, guid: b86de0d27e1876a4fbb0aa8ef39c74bb, type: 3}
+  landCardTypeSprite: {fileID: 92673230, guid: 93d9f45a9317bf847874dd6288178b21, type: 3}
+  pcCardTypeSprite: {fileID: -306045793356368144, guid: 516df1a4f714ff24ca3fe6a3ec739f39, type: 3}
+  characterCardTypeSprite: {fileID: 3482843843018904024, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
+  armyCardTypeSprite: {fileID: 8242622823429068648, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
+  restCardTypeSprite: {fileID: 674226514, guid: b86de0d27e1876a4fbb0aa8ef39c74bb, type: 3}
+  encounterCardTypeSprite: {fileID: -316423695, guid: b86de0d27e1876a4fbb0aa8ef39c74bb, type: 3}
+  spellCardTypeSprite: {fileID: 902240045765890844, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
   description: {fileID: 1306340657537249306}
   title: {fileID: 1024046371889023126}
   requirements: {fileID: 5322172942719103064}
@@ -594,7 +604,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 484915eb157cfce4a87df492ec5c4a44, type: 3}
+  m_Sprite: {fileID: 902240045765890844, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -715,8 +725,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.50579834, y: 17.734802}
-  m_SizeDelta: {x: -26.0904, y: -111.0715}
+  m_AnchoredPosition: {x: -0.000030517578, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8919440548525024140
 CanvasRenderer:
@@ -823,7 +833,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Hobbiton
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 673721b59f17bc84c932e73321f8bb18, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
   m_sharedMaterial: {fileID: 6005860808784687186, guid: 673721b59f17bc84c932e73321f8bb18, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -890,7 +900,7 @@ MonoBehaviour:
   m_margin: {x: 15.482422, y: 0, z: 32.246468, w: -0.03978109}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &5705724554912048988
@@ -928,8 +938,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.9312973, y: -108.359985}
-  m_SizeDelta: {x: -18.1374, y: -236.73}
+  m_AnchoredPosition: {x: 0.93130493, y: -100.89845}
+  m_SizeDelta: {x: -18.1374, y: -221.8069}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8822517443508872784
 CanvasRenderer:
@@ -952,7 +962,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.45490196}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1092,7 +1102,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 35, y: 35}
+  m_SizeDelta: {x: 25, y: 25}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &296107682767232087
 CanvasRenderer:
@@ -1167,7 +1177,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0000076293945, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 37.801}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8082586007625640536
@@ -1191,7 +1201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.40784314}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

@@ -638,9 +638,9 @@ public class Character : MonoBehaviour
         return Mathf.Max(0, GetMaxMovement() - moved);
     }
 
-    public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, List<ArmySpecialAbilityEnum> specialAbilities = null)
+    public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, List<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null)
     {
-        army = new Army(this, troopsType, amount, startingArmy, ws, 25, specialAbilities);
+        army = new Army(this, troopsType, amount, startingArmy, ws, 25, specialAbilities, troopName);
         hex.armies.Add(army);
 
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\"/>[{amount}]", Color.green);
@@ -932,6 +932,68 @@ public class Character : MonoBehaviour
         RefreshSelectedCharacterIconIfSelected();
         CharacterIcons.RefreshForHumanPlayerCharacter(this);
         if (health < 1) Killed(woundedBy);
+    }
+
+    public void Revive(Leader revivedOwner, Hex destinationHex, int revivedHealth = 25)
+    {
+        Leader previousOwner = owner;
+        Hex previousHex = hex;
+
+        if (previousOwner != null && previousOwner.controlledCharacters.Contains(this))
+        {
+            previousOwner.controlledCharacters.Remove(this);
+        }
+
+        if (previousHex != null && previousHex.characters.Contains(this))
+        {
+            previousHex.characters.Remove(this);
+        }
+
+        if (army != null)
+        {
+            if (previousHex != null && previousHex.armies.Contains(army))
+            {
+                previousHex.armies.Remove(army);
+            }
+            army = null;
+        }
+
+        owner = revivedOwner;
+        killed = false;
+        health = Mathf.Clamp(revivedHealth, 1, 100);
+        moved = 0;
+        hasActionedThisTurn = false;
+        isEmbarked = false;
+        kidnappedBy = null;
+        kidnappedOriginalOwner = null;
+        kidnappedCharacters ??= new();
+        kidnappedCharacters.Clear();
+        lastPlayedActionClassNameThisTurn = null;
+        lastPlayedActionNameThisTurn = null;
+        lastPlayedCardSpriteNameThisTurn = null;
+
+        hex = destinationHex;
+
+        if (owner != null && !owner.controlledCharacters.Contains(this))
+        {
+            owner.controlledCharacters.Add(this);
+        }
+
+        if (destinationHex != null && !destinationHex.characters.Contains(this))
+        {
+            destinationHex.characters.Add(this);
+        }
+
+        RefreshArtifactPcVisibilityForHex(previousHex);
+        RefreshArtifactPcVisibilityForHex(destinationHex);
+        previousHex?.RedrawCharacters();
+        previousHex?.RedrawArmies();
+        destinationHex?.RedrawCharacters();
+        destinationHex?.RedrawArmies();
+        RefreshSelectedCharacterIconIfSelected();
+        RefreshActionsIfSelected();
+        CharacterIcons.RefreshForHumanPlayerOf(previousOwner);
+        CharacterIcons.RefreshForHumanPlayerOf(owner);
     }
 
     public void ApplyOppositeAlignmentArtifactPenalty(Artifact artifact)

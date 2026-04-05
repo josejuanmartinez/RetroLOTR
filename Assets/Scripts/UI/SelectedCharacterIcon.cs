@@ -207,7 +207,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetCharacterVisuals(GetIllustrationByName(c.characterName));
         alignmentIcon.enabled = true;
         alignmentIcon.sprite = GetIllustrationByName(c.GetAlignment().ToString());
-        string baseHoverText = c.GetHoverText(true, false, false, true, false, false);
+        string baseHoverText = BuildSelectedCharacterTitle(c);
         string kidnappingText = BuildKidnappingStatusText(c);
         textWidget.text = string.IsNullOrWhiteSpace(kidnappingText)
             ? baseHoverText
@@ -269,7 +269,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetCharacterVisuals(GetIllustrationByName(c.characterName));
         alignmentIcon.enabled = true;
         alignmentIcon.sprite = GetIllustrationByName(c.GetAlignment().ToString());
-        textWidget.text = hoverText ?? "";
+        textWidget.text = string.IsNullOrWhiteSpace(hoverText) ? BuildSelectedCharacterTitle(c) : hoverText;
 
         actioned.SetActive(false);
         moved.SetActive(false);
@@ -464,6 +464,31 @@ public class SelectedCharacterIcon : MonoBehaviour
             renderer.gameObject.name = artifact != null ? artifact.artifactName : $"Artifact {i + 1}";
             renderer.Initialize(artifact);
         }
+    }
+
+    private string BuildSelectedCharacterTitle(Character c)
+    {
+        if (c == null) return string.Empty;
+
+        Army army = c.GetArmy();
+        if (army == null || army.GetSize() < 1)
+        {
+            return $"<u>{c.characterName}</u> (wandering)";
+        }
+
+        return $"<u>{c.characterName}</u>, leading an army of {BuildArmyTroopSummary(c, army)}";
+    }
+
+    private string BuildArmyTroopSummary(Character c, Army army)
+    {
+        List<string> troops = army != null
+            ? army.GetTroopGroups()
+                .Where(group => group != null && group.amount > 0)
+                .Select(group => $"{group.amount}<sprite name=\"{group.troopType.ToString().ToLower()}\">{group.troopName}")
+                .ToList()
+            : new List<string>();
+
+        return string.Join(", ", troops);
     }
 
 }

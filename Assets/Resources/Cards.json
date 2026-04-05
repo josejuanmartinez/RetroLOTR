@@ -1,6 +1,6 @@
 ﻿{
     "handSize":  5,
-    "deckCount":  17,
+    "deckCount":  19,
     "decks":  [
                   {
                       "deckId":  "shared_base",
@@ -19,6 +19,22 @@
                       "cardCount":  82,
                       "sharedToAll":  true,
                       "thematic":  "Dedicated encounter package for wandering meetings, hazards, legendary beasts, strange travellers, and one-off narrative tests. Gameplay here is highly situational and event driven: less about deck synergy, more about sudden choices, risk management, rewards, punishments, and the feeling that Middle-earth itself is reacting to your route and timing."
+                  },
+                  {
+                      "deckId":  "actions_deck",
+                      "nation":  "Shared",
+                      "alignment":  2,
+                      "resourcePath":  "Cards/Modular/ActionsDeck",
+                      "cardCount":  47,
+                      "thematic":  "Common action utility deck shared by all factions: stealth, theft, rumors, and practical tactical tricks that are not faction-locked."
+                  },
+                  {
+                      "deckId":  "spells_deck",
+                      "nation":  "Shared",
+                      "alignment":  2,
+                      "resourcePath":  "Cards/Modular/SpellsDeck",
+                      "cardCount":  30,
+                      "thematic":  "Common spell/event deck shared by all factions for lightweight magical or celebratory effects usable beyond faction identity."
                   },
                   {
                       "deckId":  "gandalf_base",

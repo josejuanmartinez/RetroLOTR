@@ -2,7 +2,6 @@
     "artifacts":  [
                       {
                           "artifactName":  "Goblin Cleaver",
-                          "artifactDescription":  "Orcish blade granting +1 attack in battles.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -18,7 +17,6 @@
                       },
                       {
                           "artifactName":  "River Lillies",
-                          "artifactDescription":  "5% chance each turn to gain Hope.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -34,7 +32,6 @@
                       },
                       {
                           "artifactName":  "Oak Shield",
-                          "artifactDescription":  "Sturdy shield adding +1 defense.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -50,7 +47,6 @@
                       },
                       {
                           "artifactName":  "Ring of Wind",
-                          "artifactDescription":  "Whispering ring: +1 \u003csprite name=\"agent\"/\u003e.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  1,
@@ -66,7 +62,6 @@
                       },
                       {
                           "artifactName":  "Tinculin",
-                          "artifactDescription":  "Elven ring: +1 \u003csprite name=\"mage\"/\u003e.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -82,7 +77,6 @@
                       },
                       {
                           "artifactName":  "Staff of Storms",
-                          "artifactDescription":  "Bearer gains Haste while at sea.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -98,7 +92,6 @@
                       },
                       {
                           "artifactName":  "Palantir of Annuminas",
-                          "artifactDescription":  "5% chance each turn to reveal a random hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -114,7 +107,6 @@
                       },
                       {
                           "artifactName":  "Palantir of Amon Sul",
-                          "artifactDescription":  "5% chance each turn to reveal a random hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -130,7 +122,6 @@
                       },
                       {
                           "artifactName":  "Helm of Isildur",
-                          "artifactDescription":  "Ancient helm: +1 \u003csprite name=\"commander\"/\u003e.",
                           "hidden":  true,
                           "commanderBonus":  1,
                           "agentBonus":  0,
@@ -146,7 +137,6 @@
                       },
                       {
                           "artifactName":  "Durin\u0027s Armour",
-                          "artifactDescription":  "Dwarven mail: +1 defense.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -162,7 +152,6 @@
                       },
                       {
                           "artifactName":  "Elfbane",
-                          "artifactDescription":  "Cruel blade and guard: +1 attack and +1 defense.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -178,7 +167,6 @@
                       },
                       {
                           "artifactName":  "Elfbane",
-                          "artifactDescription":  "Cruel blade and guard: +1 attack and +1 defense.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -194,7 +182,6 @@
                       },
                       {
                           "artifactName":  "Durin\u0027s Axe",
-                          "artifactDescription":  "Runed axe: +1 \u003csprite name=\"commander\"/\u003e and +1 attack.",
                           "hidden":  true,
                           "commanderBonus":  1,
                           "agentBonus":  0,
@@ -210,7 +197,6 @@
                       },
                       {
                           "artifactName":  "Orcring",
-                          "artifactDescription":  "Command ring: +1 \u003csprite name=\"commander\"/\u003e.",
                           "hidden":  true,
                           "commanderBonus":  1,
                           "agentBonus":  0,
@@ -226,7 +212,6 @@
                       },
                       {
                           "artifactName":  "Troll Cleaver",
-                          "artifactDescription":  "Oversized cleaver adding +1 attack.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -242,7 +227,6 @@
                       },
                       {
                           "artifactName":  "Horse-tamer",
-                          "artifactDescription":  "5% chance each turn to gain +1 \u003csprite name=\"mounts\"/\u003e.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -258,7 +242,6 @@
                       },
                       {
                           "artifactName":  "Staff of the Wanderer",
-                          "artifactDescription":  "5% chance each turn to gain Haste.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -274,7 +257,6 @@
                       },
                       {
                           "artifactName":  "The Blue Ring",
-                          "artifactDescription":  "Bearer gains +1 Mage.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -290,7 +272,6 @@
                       },
                       {
                           "artifactName":  "Red Robes",
-                          "artifactDescription":  "5% chance each turn to gain +1 \u003csprite name=\"gold\"/\u003e.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -306,7 +287,6 @@
                       },
                       {
                           "artifactName":  "Mantle of Doriath",
-                          "artifactDescription":  "While the bearer is at a population center, that PC is hidden.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -322,7 +302,6 @@
                       },
                       {
                           "artifactName":  "Voice of the Dark Tower",
-                          "artifactDescription":  "Bearer gains +1 Emissary.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -338,7 +317,6 @@
                       },
                       {
                           "artifactName":  "Usriev",
-                          "artifactDescription":  "Bearer\u0027s army gains +1 attack strength in battles.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -354,7 +332,6 @@
                       },
                       {
                           "artifactName":  "Cloak of Duvorn",
-                          "artifactDescription":  "Shadowy cloak: +2 \u003csprite name=\"emmissary\"/\u003e sway.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -370,7 +347,6 @@
                       },
                       {
                           "artifactName":  "Storm dagger",
-                          "artifactDescription":  "Bearer gains +1 Mage.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -386,7 +362,6 @@
                       },
                       {
                           "artifactName":  "Bracers of the Mist",
-                          "artifactDescription":  "Bearer gains +1 Agent.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  1,
@@ -402,7 +377,6 @@
                       },
                       {
                           "artifactName":  "Athelas",
-                          "artifactDescription":  "Passive herb: bearer heals 5 health each turn.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -418,7 +392,6 @@
                       },
                       {
                           "artifactName":  "Athelas",
-                          "artifactDescription":  "Passive herb: bearer heals 5 health each turn.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -434,7 +407,6 @@
                       },
                       {
                           "artifactName":  "Athelas",
-                          "artifactDescription":  "Passive herb: bearer heals 5 health each turn.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -450,7 +422,6 @@
                       },
                       {
                           "artifactName":  "Athelas",
-                          "artifactDescription":  "Passive herb: bearer heals 5 health each turn.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -466,7 +437,6 @@
                       },
                       {
                           "artifactName":  "Athelas",
-                          "artifactDescription":  "Passive herb: bearer heals 5 health each turn.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -482,7 +452,6 @@
                       },
                       {
                           "artifactName":  "Ovir Crown",
-                          "artifactDescription":  "Bearer gains +1 Commander.",
                           "hidden":  true,
                           "commanderBonus":  1,
                           "agentBonus":  0,
@@ -498,7 +467,6 @@
                       },
                       {
                           "artifactName":  "Listening Helm",
-                          "artifactDescription":  "Bearer gains +1 Agent.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  1,
@@ -514,7 +482,6 @@
                       },
                       {
                           "artifactName":  "Ghostbane",
-                          "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -530,7 +497,6 @@
                       },
                       {
                           "artifactName":  "Horn of Fear",
-                          "artifactDescription":  "If the bearer commands an army, enemy armies in the same hex suffer -1 defense strength.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -546,7 +512,6 @@
                       },
                       {
                           "artifactName":  "Dawnsword",
-                          "artifactDescription":  "Holder is immune to harmful environmental card effects.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -562,7 +527,6 @@
                       },
                       {
                           "artifactName":  "Staff of Light",
-                          "artifactDescription":  "Bearer gains +1 Mage.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -578,7 +542,6 @@
                       },
                       {
                           "artifactName":  "Fireworks",
-                          "artifactDescription":  "10% chance each turn to improve morale at an allied PC on the bearer\u0027s hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -594,7 +557,6 @@
                       },
                       {
                           "artifactName":  "The Black Book",
-                          "artifactDescription":  "5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -610,7 +572,6 @@
                       },
                       {
                           "artifactName":  "Trap",
-                          "artifactDescription":  "Enemy characters on the bearer\u0027s hex become Blocked for 1 turn.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -626,7 +587,6 @@
                       },
                       {
                           "artifactName":  "Elven Rope",
-                          "artifactDescription":  "If the bearer is in a forest hex, 10% chance each turn to gain Hidden.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -642,7 +602,6 @@
                       },
                       {
                           "artifactName":  "Wine",
-                          "artifactDescription":  "Bearer gains +1 Emissary.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -658,7 +617,6 @@
                       },
                       {
                           "artifactName":  "Liquour",
-                          "artifactDescription":  "15% chance each turn to gain Courage, and 5% chance each turn to fall asleep and become Blocked.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -674,7 +632,6 @@
                       },
                       {
                           "artifactName":  "Song",
-                          "artifactDescription":  "If the bearer serves the Free People, 5% chance each turn to halt non-men enemy units on the bearer\u0027s hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -690,7 +647,6 @@
                       },
                       {
                           "artifactName":  "Red Book of Westmarch",
-                          "artifactDescription":  "Bearer gains +1 Commander.",
                           "hidden":  true,
                           "commanderBonus":  1,
                           "agentBonus":  0,
@@ -706,7 +662,6 @@
                       },
                       {
                           "artifactName":  "Book of Kings",
-                          "artifactDescription":  "Bearer gains +1 Emmissary.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -722,7 +677,6 @@
                       },
                       {
                           "artifactName":  "Book of Mazarbul",
-                          "artifactDescription":  "Bearer gains +1 Commander.",
                           "hidden":  true,
                           "commanderBonus":  1,
                           "agentBonus":  0,
@@ -738,7 +692,6 @@
                       },
                       {
                           "artifactName":  "Dwarven Key",
-                          "artifactDescription":  "While the bearer is at a hidden enemy PC, that PC is revealed.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -754,7 +707,6 @@
                       },
                       {
                           "artifactName":  "Ithildin Runes",
-                          "artifactDescription":  "While the bearer is on a hidden enemy population center, that PC is temporarily revealed.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -770,7 +722,6 @@
                       },
                       {
                           "artifactName":  "Ring of Binding",
-                          "artifactDescription":  "Bearer gains +1 Agent.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  1,
@@ -786,7 +737,6 @@
                       },
                       {
                           "artifactName":  "Second Age Banner",
-                          "artifactDescription":  "Bearer\u0027s army gains +1 attack strength in battles.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -802,7 +752,6 @@
                       },
                       {
                           "artifactName":  "First Age Banner",
-                          "artifactDescription":  "If the bearer commands an army, that army gains +1 defense strength.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -818,7 +767,6 @@
                       },
                       {
                           "artifactName":  "Staff of Fire",
-                          "artifactDescription":  "5% chance each turn to apply Burning to an enemy on the bearer\u0027s hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -834,7 +782,6 @@
                       },
                       {
                           "artifactName":  "Black Powder",
-                          "artifactDescription":  "If the bearer commands an army, each successful army attack has 10% chance to apply Burning to the enemy army.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -850,7 +797,6 @@
                       },
                       {
                           "artifactName":  "Dorwinion Tobacco",
-                          "artifactDescription":  "5% chance each turn for the bearer to gain Hope.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -866,7 +812,6 @@
                       },
                       {
                           "artifactName":  "Old Tobby",
-                          "artifactDescription":  "5% chance each turn to gain Hope.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -882,7 +827,6 @@
                       },
                       {
                           "artifactName":  "Staff of Secret Fire",
-                          "artifactDescription":  "5% chance each turn to apply Halt to an enemy on the bearer\u0027s hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -898,7 +842,6 @@
                       },
                       {
                           "artifactName":  "Star Powder",
-                          "artifactDescription":  "5% chance each turn to gain Hope.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -914,7 +857,6 @@
                       },
                       {
                           "artifactName":  "Andúril",
-                          "artifactDescription":  "15% chance each turn to gain Courage.",
                           "hidden":  true,
                           "transferable":  true,
                           "commanderBonus":  0,
@@ -931,7 +873,6 @@
                       {
                           "artifactName":  "Black Arrow",
                           "transferable":  true,
-                          "artifactDescription":  "5% chance each turn to apply Halt to an enemy on the bearer\u0027s hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -947,7 +888,6 @@
                       {
                           "artifactName":  "The Arkenstone",
                           "transferable":  true,
-                          "artifactDescription":  "10% chance each turn to gain +1 \u003csprite name=\"gold\"/\u003e, but 5% chance each turn to gain Despair.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -963,7 +903,6 @@
                       {
                           "artifactName":  "Mathom",
                           "transferable":  true,
-                          "artifactDescription":  "5% chance each turn to gain +1 \u003csprite name=\"gold\"/\u003e.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -978,7 +917,6 @@
                       },
                       {
                           "artifactName":  "Crown of Cardolan",
-                          "artifactDescription":  "Bearer\u0027s army gains +1 attack strength in battles.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -994,7 +932,6 @@
                       },
                       {
                           "artifactName":  "TheMirrorOfGaladriel",
-                          "artifactDescription":  "5% chance each turn to reveal a random hex.",
                           "hidden":  true,
                           "commanderBonus":  0,
                           "agentBonus":  0,
@@ -1010,7 +947,6 @@
                       },
                       {
                           "artifactName":  "Cardolan Seal",
-                          "artifactDescription":  "Bearer gets +25% improved success chance on Find Artifact.",
                           "hidden":  true,
                           "transferable":  true,
                           "commanderBonus":  0,
@@ -1026,7 +962,6 @@
                       },
                       {
                           "artifactName":  "Seal of Dawn",
-                          "artifactDescription":  "10% chance each turn to remove Fear and Despair from the bearer.",
                           "hidden":  true,
                           "transferable":  true,
                           "commanderBonus":  0,

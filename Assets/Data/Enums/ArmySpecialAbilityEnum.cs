@@ -15,7 +15,8 @@ public enum ArmySpecialAbilityEnum
     Shielded = 7,
     Encouraging = 8,
     Discouraging = 9,
-    Berserker = 10
+    Berserker = 10,
+    Charging = 11
 }
 
 [Serializable]
@@ -23,11 +24,13 @@ public class ArmyTroopAbilityGroup
 {
     public TroopsTypeEnum troopType = TroopsTypeEnum.ma;
     public int amount = 0;
+    public string troopName = string.Empty;
     public List<ArmySpecialAbilityEnum> abilities = new();
 
-    public bool Matches(TroopsTypeEnum type, IEnumerable<ArmySpecialAbilityEnum> queryAbilities)
+    public bool Matches(TroopsTypeEnum type, string queryTroopName, IEnumerable<ArmySpecialAbilityEnum> queryAbilities)
     {
         if (troopType != type) return false;
+        if (!string.Equals(troopName ?? string.Empty, queryTroopName ?? string.Empty, StringComparison.OrdinalIgnoreCase)) return false;
         return BuildSignature(abilities) == BuildSignature(queryAbilities);
     }
 

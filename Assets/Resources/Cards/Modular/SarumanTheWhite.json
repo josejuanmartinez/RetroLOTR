@@ -1,179 +1,376 @@
 {
-    "deckId": "saruman_the_white",
-    "nation": "Saruman",
-    "alignment": 2,
-    "handSize": 5,
-    "cards": [
-        {
-            "cardId": 2,
-            "name": "Orthanc",
-            "description": "GapOfRohan.<sprite name=\"iron\"/><sprite name=\"steel\"/>\nOR\n<TBD>",
-            "type": "PC",
-            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-            "pcEffectId": "dark_fortress",
-            "action": "MaterialRetrievalOrActionOrthanc",
-            "tags": [
-                "GapOfRohan"
-            ],
-            "region": "GapOfRohan",
-            "spriteName": "Orthanc"
-        },
-        {
-            "cardId": 715,
-            "name": "Storm from Orthanc",
-            "description": "Storm from Orthanc. Unique event logic variant based on Caradhras.",
-            "type": "PC",
-            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-            "pcEffectId": "eagle_watch",
-            "action": "StormfromOrthanc",
-            "spriteName": "StormFromOrthanc",
-            "tags": [
-                "MistyMountains"
-            ],
-            "region": "MistyMountains",
-            "actionClassName": "StormfromOrthanc",
-            "actionId": 320
-        },
-        {
-            "cardId": 745,
-            "name": "Radagast",
-            "description": "",
-            "type": "Character",
-            "spriteName": "Radagast",
-            "tags": [],
-            "commander": 0,
-            "agent": 2,
-            "emmissary": 0,
-            "mage": 2,
-            "race": 4,
-            "artifacts": [
-                {
-                    "artifactName": "Rabbits of Rhosgobel",
-                    "artifactDescription": "10% chance each turn to gain Haste.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "tail",
-                    "alignment": 0,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10
-                },
-                {
-                    "artifactName": "Birds of Mirkwood",
-                    "artifactDescription": "10% chance each turn to reveal a random hex.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "bird",
-                    "alignment": 2,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10
-                }
-            ]
-        },
-        {
-            "cardId": 750,
-            "name": "Pallando",
-            "description": "",
-            "type": "Character",
-            "spriteName": "Pallando",
-            "tags": [],
-            "commander": 0,
-            "agent": 0,
-            "emmissary": 2,
-            "mage": 2,
-            "race": 4,
-            "artifacts": [
-                {
-                    "artifactName": "Robes of Aman",
-                    "artifactDescription": "While the bearer is on a hidden enemy PC, that PC is temporarily revealed.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "cloak",
-                    "alignment": 2,
-                    "passiveEffectId": "RevealHiddenEnemyPcOnOccupiedHex",
-                    "passiveEffectValue": 1,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Hood of Stars",
-                    "artifactDescription": "10% chance each turn to reveal a random hex.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hood",
-                    "alignment": 2,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
-            ]
-        },
-        {
-            "cardId": 751,
-            "name": "Alatar",
-            "description": "",
-            "type": "Character",
-            "spriteName": "Alatar",
-            "tags": [],
-            "commander": 0,
-            "agent": 1,
-            "emmissary": 1,
-            "mage": 2,
-            "race": 4,
-            "artifacts": [
-                {
-                    "artifactName": "Blue Bow",
-                    "artifactDescription": "Grants +2 attack.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 2,
-                    "bonusDefense": 0,
-                    "spriteString": "bow",
-                    "alignment": 2,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Robes of Aman",
-                    "artifactDescription": "While the bearer is on a hidden enemy PC, that PC is temporarily revealed.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "cloak",
-                    "alignment": 2,
-                    "passiveEffectId": "RevealHiddenEnemyPcOnOccupiedHex",
-                    "passiveEffectValue": 1,
-                    "transferable": true
-                }
-            ]
-        }
-    ]
+    "deckId":  "saruman_the_white",
+    "nation":  "Saruman",
+    "alignment":  2,
+    "handSize":  5,
+    "cards":  [
+                  {
+                      "cardId":  2,
+                      "name":  "Orthanc",
+                      "description":  "GapOfRohan.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
+                      "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "dark_fortress",
+                      "action":  "MaterialRetrievalOrActionOrthanc",
+                      "tags":  [
+                                   "GapOfRohan"
+                               ],
+                      "region":  "GapOfRohan",
+                      "spriteName":  "Orthanc"
+                  },
+                  {
+                      "cardId":  715,
+                      "name":  "Storm from Orthanc",
+                      "description":  "Storm from Orthanc. Unique event logic variant based on Caradhras.",
+                      "type":  "PC",
+                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+                      "pcEffectId":  "eagle_watch",
+                      "action":  "StormfromOrthanc",
+                      "spriteName":  "StormFromOrthanc",
+                      "tags":  [
+                                   "MistyMountains"
+                               ],
+                      "region":  "MistyMountains",
+                      "actionClassName":  "StormfromOrthanc",
+                      "actionId":  320
+                  },
+                  {
+                      "cardId":  745,
+                      "name":  "Radagast",
+                      "description":  "",
+                      "type":  "Character",
+                      "spriteName":  "Radagast",
+                      "tags":  [
+
+                               ],
+                      "commander":  0,
+                      "agent":  2,
+                      "emmissary":  0,
+                      "mage":  2,
+                      "race":  4,
+                      "artifacts":  [
+                                        {
+                                            "artifactName":  "Rabbits of Rhosgobel",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "transferable":  false,
+                                            "spriteString":  "tail",
+                                            "alignment":  0,
+                                            "passiveEffectId":  "HasteChancePerTurn",
+                                            "passiveEffectValue":  10
+                                        },
+                                        {
+                                            "artifactName":  "Birds of Mirkwood",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "transferable":  false,
+                                            "spriteString":  "bird",
+                                            "alignment":  2,
+                                            "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                            "passiveEffectValue":  10
+                                        }
+                                    ]
+                  },
+                  {
+                      "cardId":  750,
+                      "name":  "Pallando",
+                      "description":  "",
+                      "type":  "Character",
+                      "spriteName":  "Pallando",
+                      "tags":  [
+
+                               ],
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  2,
+                      "mage":  2,
+                      "race":  4,
+                      "artifacts":  [
+                                        {
+                                            "artifactName":  "Robes of Aman",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "cloak",
+                                            "alignment":  2,
+                                            "passiveEffectId":  "RevealHiddenEnemyPcOnOccupiedHex",
+                                            "passiveEffectValue":  1,
+                                            "transferable":  true
+                                        },
+                                        {
+                                            "artifactName":  "Hood of Stars",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "hood",
+                                            "alignment":  2,
+                                            "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                            "passiveEffectValue":  10,
+                                            "transferable":  true
+                                        }
+                                    ]
+                  },
+                  {
+                      "cardId":  751,
+                      "name":  "Alatar",
+                      "description":  "",
+                      "type":  "Character",
+                      "spriteName":  "Alatar",
+                      "tags":  [
+
+                               ],
+                      "commander":  0,
+                      "agent":  1,
+                      "emmissary":  1,
+                      "mage":  2,
+                      "race":  4,
+                      "artifacts":  [
+                                        {
+                                            "artifactName":  "Blue Bow",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  2,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "bow",
+                                            "alignment":  2,
+                                            "transferable":  true,
+                                            "passiveEffectId":  "",
+                                            "passiveEffectValue":  0
+                                        },
+                                        {
+                                            "artifactName":  "Robes of Aman",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "cloak",
+                                            "alignment":  2,
+                                            "passiveEffectId":  "RevealHiddenEnemyPcOnOccupiedHex",
+                                            "passiveEffectValue":  1,
+                                            "transferable":  true
+                                        }
+                                    ]
+                  },
+                  {
+                      "cardId":  581,
+                      "name":  "Crebain",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "Crebain",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  20,
+                      "specialAbilities":  [
+                                               0,
+                                               9
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  4,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  583,
+                      "name":  "Dorwinion Bowmen",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "DorwinionBowmen",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  0,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  4,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  584,
+                      "name":  "Dorwinion Infantry",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "DorwinionInfantry",
+                      "tags":  [
+
+                               ],
+                      "troopType":  0,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  585,
+                      "name":  "Dorwinion Mariners",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "DorwinionMariners",
+                      "tags":  [
+
+                               ],
+                      "troopType":  7,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  2,
+                      "ironRequired":  0,
+                      "steelRequired":  1,
+                      "mithrilRequired":  0,
+                      "goldRequired":  4,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  586,
+                      "name":  "Dorwinion Riders",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "DorwinionRiders",
+                      "tags":  [
+
+                               ],
+                      "troopType":  4,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  1,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  4,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  660,
+                      "name":  "Rhun Corsairs",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "RhunCorsairs",
+                      "tags":  [
+
+                               ],
+                      "troopType":  7,
+                      "race":  19,
+                      "specialAbilities":  [
+                                               5
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  2,
+                      "ironRequired":  0,
+                      "steelRequired":  1,
+                      "mithrilRequired":  0,
+                      "goldRequired":  5,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  661,
+                      "name":  "Rhun Easterlings",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "RhunEasterlings",
+                      "tags":  [
+
+                               ],
+                      "troopType":  0,
+                      "race":  19,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  }
+              ]
 }

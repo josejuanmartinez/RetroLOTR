@@ -1,196 +1,619 @@
-﻿{
-    "deckId": "mithrandir",
-    "nation": "Gandalf",
-    "alignment": 0,
-    "handSize": 5,
-    "cards": [
-        {
-            "cardId": 716,
-            "name": "Galadriel",
-            "description": "",
-            "type": "Character",
-            "spriteName": "Galadriel",
-            "tags": [],
-            "commander": 0,
-            "agent": 0,
-            "emmissary": 3,
-            "mage": 3,
-            "race": 1,
-            "artifacts": [
-                {
-                    "artifactName": "Nenya",
-                    "artifactDescription": "Bearer gains +1 Mage.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 1,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 0,
-                    "passiveEffectId": "",
-                    "transferable": true,
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Lembas",
-                    "artifactDescription": "Bearer heals 5 health each turn.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "bread",
-                    "alignment": 0,
-                    "passiveEffectId": "HealPerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Light of Earendil",
-                    "artifactDescription": "10% chance each turn to reveal a random hex.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "potion",
-                    "alignment": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
-            ]
-        },
-        {
-            "cardId": 717,
-            "name": "Elrond",
-            "description": "",
-            "type": "Character",
-            "spriteName": "Elrond",
-            "tags": [],
-            "commander": 3,
-            "agent": 0,
-            "emmissary": 2,
-            "mage": 1,
-            "race": 1,
-            "artifacts": [
-                {
-                    "artifactName": "Miruvor",
-                    "artifactDescription": "Bearer heals 5 health each turn.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "potion",
-                    "alignment": 0,
-                    "passiveEffectId": "HealPerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Vilya",
-                    "artifactDescription": "Bearer gets +25% improved success chance on Find Artifact.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 0,
-                    "passiveEffectId": "FindArtifactDifficultyReduction",
-                    "passiveEffectValue": 25,
-                    "transferable": true
-                }
-            ]
-        },
-        {
-            "cardId": 718,
-            "name": "Thranduil",
-            "description": "",
-            "type": "Character",
-            "spriteName": "Thranduil",
-            "tags": [],
-            "commander": 3,
-            "agent": 0,
-            "emmissary": 2,
-            "mage": 0,
-            "race": 1,
-            "artifacts": [
-                {
-                    "artifactName": "Lasgalen Gems",
-                    "artifactDescription": "Grants +1 <sprite name=\"emmissary\"/>.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 1,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "pendant",
-                    "alignment": 0,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Wooden Crown",
-                    "artifactDescription": "Grants +1 <sprite name=\"commander\"/>.",
-                    "hidden": false,
-                    "commanderBonus": 1,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "crown",
-                    "alignment": 0,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                }
-            ]
-        },
-        {
-            "cardId": 739,
-            "name": "Cirdan",
-            "description": "",
-            "type": "Character",
-            "spriteName": "Cirdan",
-            "tags": [],
-            "commander": 2,
-            "agent": 0,
-            "emmissary": 2,
-            "mage": 0,
-            "race": 1,
-            "artifacts": [
-                {
-                    "artifactName": "Palantir of Elostirion",
-                    "artifactDescription": "10% chance each turn to reveal a random hex.",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "palantir",
-                    "alignment": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
-            ]
-        }
-    ]
+{
+    "deckId":  "mithrandir",
+    "nation":  "Gandalf",
+    "alignment":  0,
+    "handSize":  5,
+    "cards":  [
+                  {
+                      "cardId":  716,
+                      "name":  "Galadriel",
+                      "description":  "",
+                      "type":  "Character",
+                      "spriteName":  "Galadriel",
+                      "tags":  [
+
+                               ],
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  3,
+                      "mage":  3,
+                      "race":  1,
+                      "artifacts":  [
+                                        {
+                                            "artifactName":  "Nenya",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  1,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "ring",
+                                            "alignment":  0,
+                                            "passiveEffectId":  "",
+                                            "transferable":  true,
+                                            "passiveEffectValue":  0
+                                        },
+                                        {
+                                            "artifactName":  "Lembas",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "bread",
+                                            "alignment":  0,
+                                            "passiveEffectId":  "HealPerTurn",
+                                            "passiveEffectValue":  5,
+                                            "transferable":  true
+                                        },
+                                        {
+                                            "artifactName":  "Light of Earendil",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "potion",
+                                            "alignment":  0,
+                                            "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                            "passiveEffectValue":  10,
+                                            "transferable":  true
+                                        }
+                                    ]
+                  },
+                  {
+                      "cardId":  717,
+                      "name":  "Elrond",
+                      "description":  "",
+                      "type":  "Character",
+                      "spriteName":  "Elrond",
+                      "tags":  [
+
+                               ],
+                      "commander":  3,
+                      "agent":  0,
+                      "emmissary":  2,
+                      "mage":  1,
+                      "race":  1,
+                      "artifacts":  [
+                                        {
+                                            "artifactName":  "Miruvor",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "potion",
+                                            "alignment":  0,
+                                            "passiveEffectId":  "HealPerTurn",
+                                            "passiveEffectValue":  5,
+                                            "transferable":  true
+                                        },
+                                        {
+                                            "artifactName":  "Vilya",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "ring",
+                                            "alignment":  0,
+                                            "passiveEffectId":  "FindArtifactDifficultyReduction",
+                                            "passiveEffectValue":  25,
+                                            "transferable":  true
+                                        }
+                                    ]
+                  },
+                  {
+                      "cardId":  718,
+                      "name":  "Thranduil",
+                      "description":  "",
+                      "type":  "Character",
+                      "spriteName":  "Thranduil",
+                      "tags":  [
+
+                               ],
+                      "commander":  3,
+                      "agent":  0,
+                      "emmissary":  2,
+                      "mage":  0,
+                      "race":  1,
+                      "artifacts":  [
+                                        {
+                                            "artifactName":  "Lasgalen Gems",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  1,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "pendant",
+                                            "alignment":  0,
+                                            "transferable":  true,
+                                            "passiveEffectId":  "",
+                                            "passiveEffectValue":  0
+                                        },
+                                        {
+                                            "artifactName":  "Wooden Crown",
+                                            "hidden":  false,
+                                            "commanderBonus":  1,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "crown",
+                                            "alignment":  0,
+                                            "transferable":  true,
+                                            "passiveEffectId":  "",
+                                            "passiveEffectValue":  0
+                                        }
+                                    ]
+                  },
+                  {
+                      "cardId":  739,
+                      "name":  "Cirdan",
+                      "description":  "",
+                      "type":  "Character",
+                      "spriteName":  "Cirdan",
+                      "tags":  [
+
+                               ],
+                      "commander":  2,
+                      "agent":  0,
+                      "emmissary":  2,
+                      "mage":  0,
+                      "race":  1,
+                      "artifacts":  [
+                                        {
+                                            "artifactName":  "Palantir of Elostirion",
+                                            "hidden":  false,
+                                            "commanderBonus":  0,
+                                            "agentBonus":  0,
+                                            "emmissaryBonus":  0,
+                                            "mageBonus":  0,
+                                            "bonusAttack":  0,
+                                            "bonusDefense":  0,
+                                            "spriteString":  "palantir",
+                                            "alignment":  0,
+                                            "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                            "passiveEffectValue":  10,
+                                            "transferable":  true
+                                        }
+                                    ]
+                  },
+                  {
+                      "cardId":  564,
+                      "name":  "Bannerlords",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "Bannerlords",
+                      "tags":  [
+
+                               ],
+                      "troopType":  3,
+                      "race":  1,
+                      "specialAbilities":  [
+                                               7,
+                                               8
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  2,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  5,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  601,
+                      "name":  "Elven Archers",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "ElvenArchers",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  1,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  5,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  602,
+                      "name":  "Elven Elk Riders",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "ElvenElkRiders",
+                      "tags":  [
+
+                               ],
+                      "troopType":  4,
+                      "race":  1,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  1,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  5,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  603,
+                      "name":  "Elven Fleet",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "ElvenFleet",
+                      "tags":  [
+
+                               ],
+                      "troopType":  7,
+                      "race":  1,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  2,
+                      "ironRequired":  0,
+                      "steelRequired":  1,
+                      "mithrilRequired":  0,
+                      "goldRequired":  5,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  604,
+                      "name":  "Elvenking Guards",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "ElvenkingGuards",
+                      "tags":  [
+
+                               ],
+                      "troopType":  3,
+                      "race":  1,
+                      "specialAbilities":  [
+                                               7
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  2,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  3,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  610,
+                      "name":  "Galadhrim Archers",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "GaladhrimArchers",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  1,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  5,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  618,
+                      "name":  "Half Elves",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "HalfElves",
+                      "tags":  [
+
+                               ],
+                      "troopType":  0,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  621,
+                      "name":  "Hall Guards Of Thranduil",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "HallGuardsOfThranduil",
+                      "tags":  [
+
+                               ],
+                      "troopType":  3,
+                      "race":  1,
+                      "specialAbilities":  [
+                                               7
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  2,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  3,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  651,
+                      "name":  "Noldo Cavalry",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "NoldoCavalry",
+                      "tags":  [
+
+                               ],
+                      "troopType":  5,
+                      "race":  1,
+                      "specialAbilities":  [
+                                               11
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  1,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  1,
+                      "mithrilRequired":  0,
+                      "goldRequired":  7,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  677,
+                      "name":  "The Golden Host",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "TheGoldenHost",
+                      "tags":  [
+
+                               ],
+                      "troopType":  5,
+                      "race":  1,
+                      "specialAbilities":  [
+                                               8,
+                                               11
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  1,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  1,
+                      "mithrilRequired":  0,
+                      "goldRequired":  8,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  694,
+                      "name":  "Woodelf Archers",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "WoodelfArchers",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  1,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  5,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  695,
+                      "name":  "Woodelf Warriors",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "WoodelfWarriors",
+                      "tags":  [
+
+                               ],
+                      "troopType":  3,
+                      "race":  1,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  1,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  3,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  696,
+                      "name":  "Wood Elves",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "WoodElves",
+                      "tags":  [
+
+                               ],
+                      "troopType":  0,
+                      "race":  1,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  605,
+                      "name":  "Elven Scouts",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "ElvenScouts",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  1,
+                      "specialAbilities":  [
+                                               0,
+                                               5
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  6,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  606,
+                      "name":  "Elven Warriors",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "ElvenWarriors",
+                      "tags":  [
+
+                               ],
+                      "troopType":  3,
+                      "race":  1,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  1,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  3,
+                      "jokerRequired":  0
+                  }
+              ]
 }

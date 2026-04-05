@@ -15,6 +15,16 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] Image borderImage;
     [SerializeField] Image alignmentImage;
     [SerializeField] Image cardTypeImage;
+    public Sprite unknownCardTypeSprite;
+    public Sprite actionCardTypeSprite;
+    public Sprite eventCardTypeSprite;
+    public Sprite landCardTypeSprite;
+    public Sprite pcCardTypeSprite;
+    public Sprite characterCardTypeSprite;
+    public Sprite armyCardTypeSprite;
+    public Sprite restCardTypeSprite;
+    public Sprite encounterCardTypeSprite;
+    public Sprite spellCardTypeSprite;
     [SerializeField] TextMeshProUGUI description;
     [SerializeField] TextMeshProUGUI title;
     [SerializeField] TextMeshProUGUI requirements;
@@ -187,7 +197,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         string alignmentKey = alignmentValue.ToString();
         if (alignmentImage != null) alignmentImage.sprite = GetSprite(alignmentKey);
 
-        if (cardTypeImage != null) cardTypeImage.sprite = GetSprite(cardTypeKey);
+        if (cardTypeImage != null) cardTypeImage.sprite = GetCardTypeSprite(cardType);
 
         if (borderImage != null && TryGetCardTypeColor(cardType, out Color borderColor))
         {
@@ -234,6 +244,34 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             {
                 return false;
             }
+        }
+    }
+
+    private Sprite GetCardTypeSprite(CardTypeEnum cardType)
+    {
+        switch (cardType)
+        {
+            case CardTypeEnum.Action:
+                return actionCardTypeSprite;
+            case CardTypeEnum.Event:
+                return eventCardTypeSprite;
+            case CardTypeEnum.Land:
+                return landCardTypeSprite;
+            case CardTypeEnum.PC:
+                return pcCardTypeSprite;
+            case CardTypeEnum.Character:
+                return characterCardTypeSprite;
+            case CardTypeEnum.Army:
+                return armyCardTypeSprite;
+            case CardTypeEnum.Rest:
+                return restCardTypeSprite;
+            case CardTypeEnum.Encounter:
+                return encounterCardTypeSprite;
+            case CardTypeEnum.Spell:
+                return spellCardTypeSprite;
+            case CardTypeEnum.Unknown:
+            default:
+                return unknownCardTypeSprite;
         }
     }
 
@@ -368,6 +406,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             lines.Add(data.description.Trim());
         }
 
+        string contextualOutcome = BuildCharacterCardOutcomeText(data);
+        if (!string.IsNullOrWhiteSpace(contextualOutcome))
+        {
+            lines.Add(contextualOutcome);
+        }
+
         return string.Join("\n", lines);
     }
 
@@ -442,6 +486,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             ArmySpecialAbilityEnum.Encouraging => "banner",
             ArmySpecialAbilityEnum.Discouraging => "veil",
             ArmySpecialAbilityEnum.Berserker => "axe",
+            ArmySpecialAbilityEnum.Charging => "mounts",
             _ => null
         };
 
@@ -570,6 +615,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
             deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
             playerLeader.RecordPlayedCard(cardData);
+            tutorial?.HandleCardPlayed(selectedCharacter, cardData, selectedCharacter.hex);
         }
 
         if (tutorialActive)
@@ -608,7 +654,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return false;
         }
 
-        bool drawReplacementCard = !(TutorialManager.Instance != null && TutorialManager.Instance.IsActiveFor(playerLeader));
+        TutorialManager tutorial = TutorialManager.Instance;
+        bool tutorialActive = tutorial != null && tutorial.IsActiveFor(playerLeader);
+        int stepIndexBefore = tutorialActive ? tutorial.GetActiveRequiredStepIndex(playerLeader) : -1;
+        bool drawReplacementCard = !tutorialActive;
         if (!deckManager.TryConsumeCard(playerLeader, cardData.cardId, drawReplacementCard, out _))
         {
             RefreshInteractionState();
@@ -651,13 +700,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        CharacterInstantiator instantiator = FindFirstObjectByType<CharacterInstantiator>();
         Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
-        if (deckManager == null || instantiator == null || capitalHex == null || board == null)
+        if (deckManager == null || capitalHex == null || board == null)
         {
             RefreshInteractionState();
             return false;
         }
+
+        Character existingCharacter = FindCharacterByCardName();
 
         bool drawReplacementCard = !(TutorialManager.Instance != null && TutorialManager.Instance.IsActiveFor(playerLeader));
         if (!deckManager.TryConsumeCard(playerLeader, cardData.cardId, drawReplacementCard, out _))
@@ -669,33 +719,92 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         isConsuming = true;
         RefreshInteractionState(force: true);
 
-        BiomeConfig biomeConfig = new()
-        {
-            characterName = cardData.name,
-            alignment = (AlignmentEnum)cardData.alignment,
-            commander = cardData.commander,
-            agent = cardData.agent,
-            emmissary = cardData.emmissary,
-            mage = cardData.mage,
-            race = cardData.race,
-            artifacts = cardData.artifacts != null ? new List<Artifact>(cardData.artifacts) : new List<Artifact>()
-        };
+        Character resolvedCharacter = existingCharacter;
+        bool resolved = false;
+        string message = null;
 
-        Character spawned = instantiator.InstantiateCharacter(playerLeader, capitalHex, biomeConfig);
-        if (spawned != null)
+        if (existingCharacter != null)
         {
-            spawned.startingCharacter = false;
-            spawned.lastPlayedCardSpriteNameThisTurn =
+            if (existingCharacter.killed)
+            {
+                existingCharacter.Revive(playerLeader, capitalHex, 25);
+                existingCharacter.startingCharacter = false;
+                resolved = true;
+                message = $"{existingCharacter.characterName} returns to life at {capitalHex.GetPC().pcName} with 25 health.";
+            }
+            else if (existingCharacter.GetOwner() == playerLeader)
+            {
+                string boostedAbility = GrantRandomCharacterAbility(existingCharacter);
+                resolved = !string.IsNullOrWhiteSpace(boostedAbility);
+                message = resolved
+                    ? $"{existingCharacter.characterName} gains +1 {boostedAbility}."
+                    : $"{existingCharacter.characterName} cannot improve further.";
+            }
+            else if (existingCharacter.GetOwner() != null)
+            {
+                RevealCharacterPositionToPlayer(existingCharacter, playerLeader, board);
+                resolved = true;
+                string location = existingCharacter.hex != null ? existingCharacter.hex.GetHoverV2() : "an unknown hex";
+                message = $"{existingCharacter.characterName} is revealed at {location}.";
+            }
+        }
+        else
+        {
+            CharacterInstantiator instantiator = FindFirstObjectByType<CharacterInstantiator>();
+            if (instantiator != null)
+            {
+                BiomeConfig biomeConfig = new()
+                {
+                    characterName = cardData.name,
+                    alignment = (AlignmentEnum)cardData.alignment,
+                    commander = cardData.commander,
+                    agent = cardData.agent,
+                    emmissary = cardData.emmissary,
+                    mage = cardData.mage,
+                    race = cardData.race,
+                    artifacts = cardData.artifacts != null ? new List<Artifact>(cardData.artifacts) : new List<Artifact>()
+                };
+
+                resolvedCharacter = instantiator.InstantiateCharacter(playerLeader, capitalHex, biomeConfig);
+                if (resolvedCharacter != null)
+                {
+                    resolvedCharacter.startingCharacter = false;
+                    resolved = true;
+                    message = $"{resolvedCharacter.characterName} joins {playerLeader.characterName} at {capitalHex.GetPC().pcName}.";
+                }
+            }
+        }
+
+        if (resolvedCharacter != null)
+        {
+            resolvedCharacter.lastPlayedCardSpriteNameThisTurn =
                 !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
-            board.SelectCharacter(spawned, true, 1.0f, 0.0f);
+            resolvedCharacter.RefreshSelectedCharacterIconIfSelected();
+        }
+
+        if (resolved)
+        {
+            if (resolvedCharacter != null)
+            {
+                board.SelectCharacter(resolvedCharacter, true, 1.0f, 0.0f);
+            }
+
             deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
             playerLeader.RecordPlayedCard(cardData);
-            MessageDisplayNoUI.ShowMessage(capitalHex, spawned, $"{spawned.characterName} joins {playerLeader.characterName} at {capitalHex.GetPC().pcName}.", Color.green);
+
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                MessageDisplayNoUI.ShowMessage(
+                    resolvedCharacter != null ? resolvedCharacter.hex : capitalHex,
+                    resolvedCharacter,
+                    message,
+                    Color.green);
+            }
         }
 
         isConsuming = false;
         RefreshInteractionState(force: true);
-        return spawned != null;
+        return resolved;
     }
 
     private async Task<bool> TryPlayArmyCardAsync(bool promptForConfirmation)
@@ -724,7 +833,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return false;
         }
 
-        bool drawReplacementCard = !(TutorialManager.Instance != null && TutorialManager.Instance.IsActiveFor(playerLeader));
+        TutorialManager tutorial = TutorialManager.Instance;
+        bool tutorialActive = tutorial != null && tutorial.IsActiveFor(playerLeader);
+        int stepIndexBefore = tutorialActive ? tutorial.GetActiveRequiredStepIndex(playerLeader) : -1;
+        bool drawReplacementCard = !tutorialActive;
         if (!deckManager.TryConsumeCard(playerLeader, cardData.cardId, drawReplacementCard, out _))
         {
             RefreshInteractionState();
@@ -740,11 +852,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (!selectedCharacter.IsArmyCommander())
         {
-            selectedCharacter.CreateArmy(cardData.troopType, 1, false, 0, specialAbilities);
+            selectedCharacter.CreateArmy(cardData.troopType, 1, false, 0, specialAbilities, cardData.name);
         }
         else
         {
-            selectedCharacter.GetArmy()?.Recruit(cardData.troopType, 1, specialAbilities);
+            selectedCharacter.GetArmy()?.Recruit(cardData.troopType, 1, specialAbilities, cardData.name);
             selectedCharacter.hex?.RedrawCharacters();
             selectedCharacter.hex?.RedrawArmies();
             selectedCharacter.RefreshSelectedCharacterIconIfSelected();
@@ -755,6 +867,18 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
         playerLeader.RecordPlayedCard(cardData);
         board.SelectCharacter(selectedCharacter, true, 1.0f, 0.0f);
+        tutorial?.HandleCardPlayed(selectedCharacter, cardData, selectedCharacter.hex);
+
+        if (tutorialActive)
+        {
+            int stepIndexAfter = tutorial.GetActiveRequiredStepIndex(playerLeader);
+            bool transitionedToNextStep = stepIndexAfter != stepIndexBefore;
+            if (!transitionedToNextStep)
+            {
+                deckManager.TryReturnCardToHand(playerLeader, cardData.cardId);
+            }
+        }
+
         MessageDisplayNoUI.ShowMessage(
             selectedCharacter.hex,
             selectedCharacter,
@@ -798,17 +922,111 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return false;
         }
 
-        bool duplicateExists = playerLeader.controlledCharacters.Any(ch =>
-            ch != null
-            && !ch.killed
-            && string.Equals(ch.characterName, cardData.name, StringComparison.OrdinalIgnoreCase));
-        if (duplicateExists)
+        if (TryGetTutorialRestrictionReason(playerLeader, null, out string tutorialReason))
         {
-            reason = $"{cardData.name} already serves you.";
+            reason = tutorialReason;
             return false;
         }
 
         return true;
+    }
+
+    private Character FindCharacterByCardName()
+    {
+        if (cardData == null || string.IsNullOrWhiteSpace(cardData.name)) return null;
+
+        return FindCharacterByName(cardData.name);
+    }
+
+    private static Character FindCharacterByName(string characterName)
+    {
+        if (string.IsNullOrWhiteSpace(characterName)) return null;
+
+        Character[] characters = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        for (int i = 0; i < characters.Length; i++)
+        {
+            Character candidate = characters[i];
+            if (candidate == null) continue;
+            if (string.Equals(candidate.characterName, characterName, StringComparison.OrdinalIgnoreCase))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private static string BuildCharacterCardOutcomeText(CardData data)
+    {
+        if (data == null || string.IsNullOrWhiteSpace(data.name)) return null;
+
+        Game game = FindFirstObjectByType<Game>();
+        PlayableLeader playerLeader = game != null ? game.player : null;
+        Character existingCharacter = FindCharacterByName(data.name);
+
+        if (existingCharacter == null)
+        {
+            return "Not in play: instantiates at your capital.";
+        }
+
+        if (existingCharacter.killed)
+        {
+            return "Dead: returns to life at your capital with 25 health.";
+        }
+
+        if (playerLeader != null && existingCharacter.GetOwner() == playerLeader)
+        {
+            return "Already yours: +1 to a random skill.";
+        }
+
+        return "Controlled by another leader: reveals their hex.";
+    }
+
+    private string GrantRandomCharacterAbility(Character target)
+    {
+        if (target == null) return null;
+
+        List<(string label, Action apply)> abilities = new();
+        if (target.GetBaseCommander() > 0 && target.GetBaseCommander() < Character.MAX_SKILL_LEVEL)
+        {
+            abilities.Add(("commander", () => target.AddCommander(1)));
+        }
+        if (target.GetBaseAgent() > 0 && target.GetBaseAgent() < Character.MAX_SKILL_LEVEL)
+        {
+            abilities.Add(("agent", () => target.AddAgent(1)));
+        }
+        if (target.GetBaseEmmissary() > 0 && target.GetBaseEmmissary() < Character.MAX_SKILL_LEVEL)
+        {
+            abilities.Add(("emmissary", () => target.AddEmmissary(1)));
+        }
+        if (target.GetBaseMage() > 0 && target.GetBaseMage() < Character.MAX_SKILL_LEVEL)
+        {
+            abilities.Add(("mage", () => target.AddMage(1)));
+        }
+
+        if (abilities.Count == 0)
+        {
+            return null;
+        }
+
+        int index = UnityEngine.Random.Range(0, abilities.Count);
+        abilities[index].apply();
+        return abilities[index].label;
+    }
+
+    private static void RevealCharacterPositionToPlayer(Character target, PlayableLeader playerLeader, Board board)
+    {
+        if (target == null || target.hex == null || playerLeader == null) return;
+
+        target.hex.RevealArea(0, true, playerLeader);
+        playerLeader.AddTemporarySeenHexes(new[] { target.hex });
+        playerLeader.AddTemporaryScoutCenters(new[] { target.hex });
+        playerLeader.RefreshVisibleHexesImmediate();
+        target.hex.RefreshVisibilityRendering();
+        if (board != null)
+        {
+            board.SelectHex(target.hex, true, 1.0f, 0.0f);
+        }
     }
 
     private bool TryResolveArmyCardContext(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out string reason)
@@ -862,6 +1080,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return false;
         }
 
+        if (TryGetTutorialRestrictionReason(playerLeader, selectedCharacter, out string tutorialReason))
+        {
+            reason = tutorialReason;
+            return false;
+        }
+
         return true;
     }
 
@@ -892,6 +1116,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (selectedCharacter == null) return false;
         if (selectedCharacter.GetOwner() != playerLeader) return false;
         if (selectedCharacter.killed) return false;
+
+        if (TryGetTutorialRestrictionReason(playerLeader, selectedCharacter, out _)) return false;
 
         string actionRef = NormalizeActionRef(cardData.GetActionRef());
         if (string.IsNullOrWhiteSpace(actionRef)) return false;
@@ -1061,6 +1287,16 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             && TryResolvePlayableAction(out _, out _, out Character selectedCharacter, out CharacterAction action)
             && action != null
             && cardData.EvaluatePlayability(selectedCharacter, null, _ => action.FulfillsConditions());
+    }
+
+    private bool TryGetTutorialRestrictionReason(PlayableLeader playerLeader, Character actor, out string reason)
+    {
+        reason = null;
+        TutorialManager tutorial = TutorialManager.Instance;
+        if (playerLeader == null || tutorial == null || !tutorial.IsActiveFor(playerLeader) || cardData == null) return false;
+
+        reason = tutorial.GetTutorialPlayRestrictionReason(playerLeader, actor, cardData);
+        return !string.IsNullOrWhiteSpace(reason);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -1298,6 +1534,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (selectedCharacter.GetOwner() != game.player) return "Selected character is not controlled by you.";
         if (selectedCharacter.killed) return "Selected character is dead.";
 
+        if (TryGetTutorialRestrictionReason(game.player, selectedCharacter, out string tutorialReason))
+        {
+            return tutorialReason;
+        }
+
         string actionRef = NormalizeActionRef(cardData.GetActionRef());
         if (string.IsNullOrWhiteSpace(actionRef)) return "This card has no linked action.";
 
@@ -1415,6 +1656,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if ((cardData.encounterOptions == null || cardData.encounterOptions.Count == 0) && cardData.fleeOption == null)
         {
             reason = "This encounter has no configured choices.";
+            return false;
+        }
+
+        if (TryGetTutorialRestrictionReason(playerLeader, selectedCharacter, out string tutorialReason))
+        {
+            reason = tutorialReason;
             return false;
         }
 

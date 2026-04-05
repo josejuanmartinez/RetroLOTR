@@ -8,18 +8,9 @@
                        "emmissary":  3,
                        "mage":  3,
                        "race":  1,
-                       "hcDescription":  "Galadhrim Riders",
-                       "lcDescription":  "Mounted Dunlendings",
-                       "hiDescription":  "Royal Guards of the Lady",
-                       "liDescription":  "Galadhrim Guards",
-                       "arDescription":  "Galadhrim Bowmen",
-                       "maDescription":  "Galadhrim Wardens",
-                       "wsDescription":  "Swan Boats",
-                       "caDescription":  "Elven Ballistae",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Nenya",
-                                             "artifactDescription":  "Bearer gains +1 Mage.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -35,7 +26,6 @@
                                          },
                                          {
                                              "artifactName":  "Lembas",
-                                             "artifactDescription":  "Bearer heals 5 health each turn.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -51,7 +41,6 @@
                                          },
                                          {
                                              "artifactName":  "Light of Earendil",
-                                             "artifactDescription":  "10% chance each turn to reveal a random hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -118,18 +107,9 @@
                        "emmissary":  2,
                        "mage":  1,
                        "race":  1,
-                       "hcDescription":  "Imladris Knights",
-                       "lcDescription":  "Elven Rivermen",
-                       "hiDescription":  "Guardians of Imladris",
-                       "liDescription":  "Rivendell Sentries",
-                       "arDescription":  "Imladris Archers",
-                       "maDescription":  "Elven Bladesingers",
-                       "wsDescription":  "Greyflood Boats",
-                       "caDescription":  "Elven Ballistae",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Miruvor",
-                                             "artifactDescription":  "Bearer heals 5 health each turn.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -145,7 +125,6 @@
                                          },
                                          {
                                              "artifactName":  "Vilya",
-                                             "artifactDescription":  "Bearer gets +25% improved success chance on Find Artifact.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -211,7 +190,6 @@
                                                       "artifacts":  [
                                                                         {
                                                                             "artifactName":  "Sting",
-                                                                            "artifactDescription":  "Grants +1 attack.",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  0,
                                                                             "agentBonus":  0,
@@ -224,7 +202,6 @@
                                                                         },
                                                                         {
                                                                             "artifactName":  "Mithril coat",
-                                                                            "artifactDescription":  "Grants +1 defense.",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  0,
                                                                             "agentBonus":  0,
@@ -237,7 +214,6 @@
                                                                         },
                                                                         {
                                                                             "artifactName":  "Elven song",
-                                                                            "artifactDescription":  "One-use Oh Elbereth! to damage an enemy character here (halts Nazgul).",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  0,
                                                                             "agentBonus":  0,
@@ -250,7 +226,6 @@
                                                                         },
                                                                         {
                                                                             "artifactName":  "Riddle",
-                                                                            "artifactDescription":  "Halt a target enemy character here for a turn.",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  0,
                                                                             "agentBonus":  0,
@@ -277,18 +252,9 @@
                        "emmissary":  2,
                        "mage":  0,
                        "race":  1,
-                       "hcDescription":  "Elk-Riders",
-                       "lcDescription":  "Woodland Scouts",
-                       "hiDescription":  "Palace Guards",
-                       "liDescription":  "Mirkwood Skirmishers",
-                       "arDescription":  "Mirkwood Archers",
-                       "maDescription":  "Woodland Spearmen",
-                       "wsDescription":  "Forest River Barges",
-                       "caDescription":  "Mirkwood Ballistae",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Lasgalen Gems",
-                                             "artifactDescription":  "Grants +1 \u003csprite name=\"emmissary\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -304,7 +270,6 @@
                                          },
                                          {
                                              "artifactName":  "Wooden Crown",
-                                             "artifactDescription":  "Grants +1 \u003csprite name=\"commander\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  1,
                                              "agentBonus":  0,
@@ -342,7 +307,6 @@
                                                       "artifacts":  [
                                                                         {
                                                                             "artifactName":  "Lembas",
-                                                                            "artifactDescription":  "Consumable Heal herb for a wounded ally sharing your hex.",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  0,
                                                                             "agentBonus":  0,
@@ -355,7 +319,6 @@
                                                                         },
                                                                         {
                                                                             "artifactName":  "Legolas\u0027 Bow",
-                                                                            "artifactDescription":  "Consumable Heal herb for a wounded ally sharing your hex. Grants +1 \u003csprite name=\"commander\"/\u003e.",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  1,
                                                                             "agentBonus":  0,
@@ -381,18 +344,9 @@
                        "emmissary":  0,
                        "mage":  3,
                        "race":  7,
-                       "hcDescription":  "Warg Riders",
-                       "lcDescription":  "Forochel wolves",
-                       "hiDescription":  "Iron Crown Guards",
-                       "liDescription":  "Angmarin",
-                       "arDescription":  "Goblin Archers",
-                       "maDescription":  "Morgul Militia",
-                       "wsDescription":  "Forodwaith Longships",
-                       "caDescription":  "Siege Engines",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Black Horse",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -408,7 +362,6 @@
                                          },
                                          {
                                              "artifactName":  "Iron Crown",
-                                             "artifactDescription":  "Bearer gains +1 Commander.",
                                              "hidden":  false,
                                              "commanderBonus":  1,
                                              "agentBonus":  0,
@@ -424,7 +377,6 @@
                                          },
                                          {
                                              "artifactName":  "Murazor\u0027s Ring",
-                                             "artifactDescription":  "Cast Darkness to unreveal nearby tiles. Grants +1 \u003csprite name=\"mage\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -440,7 +392,6 @@
                                          },
                                          {
                                              "artifactName":  "Morgul\u0027s Blade",
-                                             "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -480,18 +431,9 @@
                        "emmissary":  4,
                        "mage":  0,
                        "race":  7,
-                       "hcDescription":  "Cataphracts of Rhun",
-                       "lcDescription":  "Easterling Horse-Archers",
-                       "hiDescription":  "Black Serpent Guard",
-                       "liDescription":  "Variag Skirmishers",
-                       "arDescription":  "Rhunic Bowmen",
-                       "maDescription":  "Easterling Halberdiers",
-                       "wsDescription":  "Sea of Rhun War-Galleys",
-                       "caDescription":  "Rhunic Siege Towers",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Black Horse",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -507,7 +449,6 @@
                                          },
                                          {
                                              "artifactName":  "Khamul\u0027s Ring",
-                                             "artifactDescription":  "Grants +1 \u003csprite name=\"mage\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -523,7 +464,6 @@
                                          },
                                          {
                                              "artifactName":  "Easterling Helmet",
-                                             "artifactDescription":  "Grants +2 defense.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -539,7 +479,6 @@
                                          },
                                          {
                                              "artifactName":  "Morgul\u0027s Blade",
-                                             "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -579,18 +518,9 @@
                        "emmissary":  0,
                        "mage":  3,
                        "race":  7,
-                       "hcDescription":  "Black Lancers",
-                       "lcDescription":  "Haradrim Raiders",
-                       "hiDescription":  "Luglurak Guards",
-                       "liDescription":  "Desert Skirmishers",
-                       "arDescription":  "Sorcerers",
-                       "maDescription":  "Umbar Spearmen",
-                       "wsDescription":  "Corsair Warships",
-                       "caDescription":  "Siege Engines",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Black Horse",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -606,7 +536,6 @@
                                          },
                                          {
                                              "artifactName":  "Gem eyes",
-                                             "artifactDescription":  "10% chance each turn to reveal a random hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -622,7 +551,6 @@
                                          },
                                          {
                                              "artifactName":  "Akhorahil\u0027s Ring",
-                                             "artifactDescription":  "Scry Artifact to reveal a hidden artifact\u0027s location. Grants +1 \u003csprite name=\"mage\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -638,7 +566,6 @@
                                          },
                                          {
                                              "artifactName":  "Morgul\u0027s Blade",
-                                             "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -679,18 +606,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  7,
-                       "hcDescription":  "Shadowborn Cataphracts",
-                       "lcDescription":  "Sand Riders",
-                       "hiDescription":  "Black Scorpion Guard",
-                       "liDescription":  "Dune Tribesmen",
-                       "arDescription":  "Haradrim Bowmen",
-                       "maDescription":  "Desert Halberdiers",
-                       "wsDescription":  "Sand-Dhow Raiders",
-                       "caDescription":  "Siege Engines",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Black Horse",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -706,7 +624,6 @@
                                          },
                                          {
                                              "artifactName":  "Mumak helmet",
-                                             "artifactDescription":  "Grants +1 attack.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -722,7 +639,6 @@
                                          },
                                          {
                                              "artifactName":  "Indur\u0027s Ring",
-                                             "artifactDescription":  "Grants +1 \u003csprite name=\"agent\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  1,
@@ -738,7 +654,6 @@
                                          },
                                          {
                                              "artifactName":  "Morgul\u0027s Blade",
-                                             "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -778,18 +693,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  7,
-                       "hcDescription":  "Wainrider Cataphracts",
-                       "lcDescription":  "Balchoth Horse-Archers",
-                       "hiDescription":  "Easterling Spearmen",
-                       "liDescription":  "Steppe Skirmishers",
-                       "arDescription":  "Wainrider Bowmen",
-                       "maDescription":  "Tribal Axemen",
-                       "wsDescription":  "Reed-Warboats",
-                       "caDescription":  "Wain Siege Wagons",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Black Horse",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -805,7 +711,6 @@
                                          },
                                          {
                                              "artifactName":  "Ovatha\u0027s Ring",
-                                             "artifactDescription":  "Return To Capital",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  1,
@@ -821,7 +726,6 @@
                                          },
                                          {
                                              "artifactName":  "Morgul\u0027s Blade",
-                                             "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -864,7 +768,6 @@
                                                       "artifacts":  [
                                                                         {
                                                                             "artifactName":  "Black Horse",
-                                                                            "artifactDescription":  "Haste: refund movement to act again (not for army commanders).",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  0,
                                                                             "agentBonus":  0,
@@ -890,18 +793,9 @@
                        "emmissary":  3,
                        "mage":  0,
                        "race":  7,
-                       "hcDescription":  "Khandish Chariots",
-                       "lcDescription":  "Horse-Archers",
-                       "hiDescription":  "Silent Guard",
-                       "liDescription":  "Desert Stalkers",
-                       "arDescription":  "Khandish Bowmen",
-                       "maDescription":  "Variag Spearmen",
-                       "wsDescription":  "Desert Skiffs",
-                       "caDescription":  "War-Chariots",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Black Horse",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -917,7 +811,6 @@
                                          },
                                          {
                                              "artifactName":  "Adunaphel\u0027s Ring",
-                                             "artifactDescription":  "Grants +1 \u003csprite name=\"emmissary\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -933,7 +826,6 @@
                                          },
                                          {
                                              "artifactName":  "Morgul\u0027s Blade",
-                                             "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -974,18 +866,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  7,
-                       "hcDescription":  "Black Trolls",
-                       "lcDescription":  "Plains Reavers",
-                       "hiDescription":  "Ungol Orcs",
-                       "liDescription":  "Slave-Militias",
-                       "arDescription":  "Goblin Archers",
-                       "maDescription":  "Torch-bearers",
-                       "wsDescription":  "War-Barges",
-                       "caDescription":  "Cauldron Engines",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Black Horse",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1001,7 +884,6 @@
                                          },
                                          {
                                              "artifactName":  "Ren\u0027s Ring",
-                                             "artifactDescription":  "Grants +1 \u003csprite name=\"commander\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  1,
                                              "agentBonus":  0,
@@ -1017,7 +899,6 @@
                                          },
                                          {
                                              "artifactName":  "Morgul\u0027s Blade",
-                                             "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1057,18 +938,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  7,
-                       "hcDescription":  "Olog-hai",
-                       "lcDescription":  "Wolf Riders",
-                       "hiDescription":  "Guard of Dir",
-                       "liDescription":  "Mountain Orcs",
-                       "arDescription":  "Goblin Hunters",
-                       "maDescription":  "Ithilien Axemen",
-                       "wsDescription":  "Black Ships",
-                       "caDescription":  "Siege Rams",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Black Horse",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1084,7 +956,6 @@
                                          },
                                          {
                                              "artifactName":  "Hoarmurath\u0027s Ring",
-                                             "artifactDescription":  "Ice Storm: halt a chosen enemy army in your hex. Grants +1 \u003csprite name=\"mage\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1100,7 +971,6 @@
                                          },
                                          {
                                              "artifactName":  "Morgul\u0027s Blade",
-                                             "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1140,18 +1010,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  7,
-                       "hcDescription":  "Warg Riders",
-                       "lcDescription":  "Wolves",
-                       "hiDescription":  "Guard of Morannon",
-                       "liDescription":  "Easterling Spearmen",
-                       "arDescription":  "Goblin Slingers",
-                       "maDescription":  "Easterling Militia",
-                       "wsDescription":  "River-Galleys",
-                       "caDescription":  "Trebuchets",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Black Horse",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1167,7 +1028,6 @@
                                          },
                                          {
                                              "artifactName":  "Dwar\u0027s Ring",
-                                             "artifactDescription":  "5% chance each turn to gain +1 \u003csprite name=\"mounts\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1183,7 +1043,6 @@
                                          },
                                          {
                                              "artifactName":  "Warg\u0027s Helmet",
-                                             "artifactDescription":  "Grants +1 attack.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1199,7 +1058,6 @@
                                          },
                                          {
                                              "artifactName":  "Morgul\u0027s Blade",
-                                             "artifactDescription":  "5% chance each turn to apply Fear, and 5% chance each turn to apply Despair to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1239,18 +1097,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  12,
-                       "hcDescription":  "Knights of the North",
-                       "lcDescription":  "Ranger Outriders",
-                       "hiDescription":  "Guardians of Arnor",
-                       "liDescription":  "Dunedain Rangers",
-                       "arDescription":  "Northern Bowmen",
-                       "maDescription":  "Men of Bree",
-                       "wsDescription":  "Patrol Boats",
-                       "caDescription":  "Siege Ballistae",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Ring of Barahir",
-                                             "artifactDescription":  "Grants +1 \u003csprite name=\"emmissary\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1266,7 +1115,6 @@
                                          },
                                          {
                                              "artifactName":  "Shards of Narsil",
-                                             "artifactDescription":  "Grants +1 \u003csprite name=\"commander\"/\u003e and +1 \u003csprite name=\"emmissary\"/\u003e.",
                                              "hidden":  false,
                                              "commanderBonus":  1,
                                              "agentBonus":  0,
@@ -1282,7 +1130,6 @@
                                          },
                                          {
                                              "artifactName":  "Athelas",
-                                             "artifactDescription":  "Passive herb: bearer heals 5 health each turn.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1347,14 +1194,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  19,
-                       "hcDescription":  "Dunlending Cavalry",
-                       "lcDescription":  "Hill-land Raiders",
-                       "hiDescription":  "Warband Chieftainsguard",
-                       "liDescription":  "Dunlending Warriors",
-                       "arDescription":  "Hill Bowmen",
-                       "maDescription":  "Tribal Axemen",
-                       "wsDescription":  "River Longboats",
-                       "caDescription":  "Siege Rigs",
                        "artifacts":  [
 
                                      ],
@@ -1381,18 +1220,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  13,
-                       "hcDescription":  "Bear-Riders",
-                       "lcDescription":  "Woodland Scouts",
-                       "hiDescription":  "Beornings",
-                       "liDescription":  "Woodland Axemen",
-                       "arDescription":  "Woodland Bowmen",
-                       "maDescription":  "Anduin Shieldmen",
-                       "wsDescription":  "Anduin Riverboats",
-                       "caDescription":  "Battering Rams",
                        "artifacts":  [
                                          {
                                              "artifactName":  "High Pass Toll",
-                                             "artifactDescription":  "5% chance each turn to apply Halt to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1432,14 +1262,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  0,
-                       "hcDescription":  "Forest Riders",
-                       "lcDescription":  "Woodmen Scouts",
-                       "hiDescription":  "Clan Hearthguard",
-                       "liDescription":  "Mirkwood Woodmen",
-                       "arDescription":  "Forest Hunters",
-                       "maDescription":  "Woodland Spearmen",
-                       "wsDescription":  "River-raft Boats",
-                       "caDescription":  "Log Siege Rams",
                        "artifacts":  [
 
                                      ],
@@ -1466,18 +1288,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  8,
-                       "hcDescription":  "The spawn of Ungoliant",
-                       "lcDescription":  "Swift Spiders",
-                       "hiDescription":  "Ungol Guards",
-                       "liDescription":  "Ungol Broodlings",
-                       "arDescription":  "Web-Spitting Spiders",
-                       "maDescription":  "Spider Stalkers",
-                       "wsDescription":  "Spider Creepers",
-                       "caDescription":  "Web Traps",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Poison",
-                                             "artifactDescription":  "5% chance each turn to apply Poison to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1517,18 +1330,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  10,
-                       "hcDescription":  "Warg-Riders",
-                       "lcDescription":  "Goblin Wolf-Riders",
-                       "hiDescription":  "Cave Trolls",
-                       "liDescription":  "Khazad-Dum Orcs",
-                       "arDescription":  "Goblin Archers",
-                       "maDescription":  "Goblins",
-                       "wsDescription":  "Darklake Boats",
-                       "caDescription":  "Moria Siege Drums",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Sword of Flame",
-                                             "artifactDescription":  "Cast Darkness to unreveal nearby tiles. Grants +1 attack.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1544,7 +1348,6 @@
                                          },
                                          {
                                              "artifactName":  "Fire Whip",
-                                             "artifactDescription":  "Grants +1 attack.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1584,18 +1387,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  9,
-                       "hcDescription":  "Wyverns",
-                       "lcDescription":  "Fire Drakes",
-                       "hiDescription":  "Orcs of Erebor",
-                       "liDescription":  "Goblin Thralls",
-                       "arDescription":  "Goblin Slingers",
-                       "maDescription":  "Hoard-Wardens",
-                       "wsDescription":  "Lake-town Boats",
-                       "caDescription":  "Winged Fire",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Dragon Wings",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1635,14 +1429,6 @@
                        "emmissary":  1,
                        "mage":  0,
                        "race":  0,
-                       "hcDescription":  "Dale Royal Cavalry",
-                       "lcDescription":  "Laketown Scouts",
-                       "hiDescription":  "Dale Men-at-Spear",
-                       "liDescription":  "Men of Rhovanion",
-                       "arDescription":  "Black Bowmen",
-                       "maDescription":  "Laketown Fishers",
-                       "wsDescription":  "Esgaroth War-Barges",
-                       "caDescription":  "Black Ballistae",
                        "artifacts":  [
 
                                      ],
@@ -1673,14 +1459,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  19,
-                       "hcDescription":  "Camel-riders",
-                       "lcDescription":  "Khandish Horse-Archers",
-                       "hiDescription":  "Uvathas Desert Guard",
-                       "liDescription":  "Steppe Spear-Militias",
-                       "arDescription":  "Easterling Bowmen",
-                       "maDescription":  "Variag Axemen",
-                       "wsDescription":  "Longboats",
-                       "caDescription":  "Wain Siege Engines",
                        "artifacts":  [
 
                                      ],
@@ -1709,14 +1487,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  18,
-                       "hcDescription":  "Mumak War-Riders",
-                       "lcDescription":  "Haradrim Raiders",
-                       "hiDescription":  "Red Serpent Guard",
-                       "liDescription":  "Desert Spearmen",
-                       "arDescription":  "Southron Bowmen",
-                       "maDescription":  "Harad Halberdiers",
-                       "wsDescription":  "Umbar War-Galleys",
-                       "caDescription":  "Siege Engines",
                        "artifacts":  [
 
                                      ],
@@ -1745,14 +1515,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  18,
-                       "hcDescription":  "Umbar Black Lancers",
-                       "lcDescription":  "Corsair Raider-Cavalry",
-                       "hiDescription":  "Black Numenorean Guard",
-                       "liDescription":  "Corsair Cutthroats",
-                       "arDescription":  "Umbar Crossbowmen",
-                       "maDescription":  "Harbor Spearmen",
-                       "wsDescription":  "Corsair Warships",
-                       "caDescription":  "Harbor Siege Ballistae",
                        "artifacts":  [
 
                                      ],
@@ -1779,18 +1541,9 @@
                        "emmissary":  2,
                        "mage":  0,
                        "race":  1,
-                       "hcDescription":  "Lindon Silver Knights",
-                       "lcDescription":  "Grey Havens Riders",
-                       "hiDescription":  "Havens Sea-Guard",
-                       "liDescription":  "Lindon Spearwardens",
-                       "arDescription":  "Elven Mariners-Bowmen",
-                       "maDescription":  "High Elven Swordsmen",
-                       "wsDescription":  "White Ship Fleet",
-                       "caDescription":  "Harbor Ballistae",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Palantir of Elostirion",
-                                             "artifactDescription":  "10% chance each turn to reveal a random hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1830,18 +1583,9 @@
                        "emmissary":  1,
                        "mage":  0,
                        "race":  0,
-                       "hcDescription":  "Gondor Swan Knights",
-                       "lcDescription":  "Ithilien Outriders",
-                       "hiDescription":  "Guard of the Citadel",
-                       "liDescription":  "Minas Tirith Infantry",
-                       "arDescription":  "Gondor Archers",
-                       "maDescription":  "Gondor Men-at-Arms",
-                       "wsDescription":  "Pelargir Warships",
-                       "caDescription":  "Gondorian Trebuchets",
                        "artifacts":  [
                                          {
                                              "artifactName":  "The White Tree",
-                                             "artifactDescription":  "Courage: encourage a chosen friendly army in this hex for several turns. Grants +1 attack.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1857,7 +1601,6 @@
                                          },
                                          {
                                              "artifactName":  "Palantir of Minas Tirith",
-                                             "artifactDescription":  "10% chance each turn to reveal a random hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1897,7 +1640,6 @@
                                                       "artifacts":  [
                                                                         {
                                                                             "artifactName":  "Horn of Gondor",
-                                                                            "artifactDescription":  "Courage: encourage a chosen friendly army in this hex for several turns.",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  0,
                                                                             "agentBonus":  0,
@@ -1923,14 +1665,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  0,
-                       "hcDescription":  "Gondor Knights",
-                       "lcDescription":  "Patrol Riders",
-                       "hiDescription":  "Border Guardians",
-                       "liDescription":  "Ithilien Rangers",
-                       "arDescription":  "Ithilien Archers",
-                       "maDescription":  "Gondor Skirmishers",
-                       "wsDescription":  "Anduin Patrol Boats",
-                       "caDescription":  "Ranger Sapper Teams",
                        "terrain":  5,
                        "startingCityName":  "Henneth Annun",
                        "startingCitySize":  1,
@@ -1956,18 +1690,9 @@
                        "emmissary":  1,
                        "mage":  0,
                        "race":  0,
-                       "hcDescription":  "Royal Eorlingas",
-                       "lcDescription":  "Scouts of the Mark",
-                       "hiDescription":  "Guard of Meduseld",
-                       "liDescription":  "Westfold Spearmen",
-                       "arDescription":  "Rohan Horse-Archers",
-                       "maDescription":  "Rohan Footmen",
-                       "wsDescription":  "Entwash Riverboats",
-                       "caDescription":  "Siege Rams",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Herugrim",
-                                             "artifactDescription":  "Courage: encourage a chosen friendly army in this hex for several turns. Grants +1 attack.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1983,7 +1708,6 @@
                                          },
                                          {
                                              "artifactName":  "Golden Armor of Rohan",
-                                             "artifactDescription":  "Grants +1 defense.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -1999,7 +1723,6 @@
                                          },
                                          {
                                              "artifactName":  "Snowmane",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2052,7 +1775,6 @@
                                                       "artifacts":  [
                                                                         {
                                                                             "artifactName":  "Firefoot",
-                                                                            "artifactDescription":  "Haste: refund movement to act again (not for army commanders).",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  0,
                                                                             "agentBonus":  0,
@@ -2078,14 +1800,6 @@
                        "emmissary":  1,
                        "mage":  0,
                        "race":  2,
-                       "hcDescription":  "Boar-Riders",
-                       "lcDescription":  "Dwarven Goat-Riders",
-                       "hiDescription":  "Iron Hills Guard",
-                       "liDescription":  "Dwarven Axemen",
-                       "arDescription":  "Dwarf Crossbowmen",
-                       "maDescription":  "Ironfoot Hammerers",
-                       "wsDescription":  "Long Lake Ironclads",
-                       "caDescription":  "Dwarven Machinery",
                        "artifacts":  [
 
                                      ],
@@ -2114,14 +1828,6 @@
                        "emmissary":  1,
                        "mage":  0,
                        "race":  2,
-                       "hcDescription":  "Ram-Riders",
-                       "lcDescription":  "Ered Luin Scouts",
-                       "hiDescription":  "Guardians of Nogrod",
-                       "liDescription":  "Blue Mountain Axemen",
-                       "arDescription":  "Dwarven Crossbowmen",
-                       "maDescription":  "Shieldbearers",
-                       "wsDescription":  "Lune Coast Warships",
-                       "caDescription":  "Dwarven Machinery",
                        "artifacts":  [
 
                                      ],
@@ -2148,7 +1854,6 @@
                                                       "artifacts":  [
                                                                         {
                                                                             "artifactName":  "Gimli\u0027s Axe",
-                                                                            "artifactDescription":  "Grants +1 \u003csprite name=\"commander\"/\u003e.",
                                                                             "hidden":  false,
                                                                             "commanderBonus":  1,
                                                                             "agentBonus":  0,
@@ -2174,18 +1879,9 @@
                        "emmissary":  0,
                        "mage":  2,
                        "race":  4,
-                       "hcDescription":  "Eagles",
-                       "lcDescription":  "Elks",
-                       "hiDescription":  "Bears",
-                       "liDescription":  "Wolves",
-                       "arDescription":  "Porcupines",
-                       "maDescription":  "Boars",
-                       "wsDescription":  "Otter River-Guides",
-                       "caDescription":  "Ents of Fangorn",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Rabbits of Rhosgobel",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2201,7 +1897,6 @@
                                          },
                                          {
                                              "artifactName":  "Birds of Mirkwood",
-                                             "artifactDescription":  "10% chance each turn to reveal a random hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2241,14 +1936,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  15,
-                       "hcDescription":  "Bison Riders",
-                       "lcDescription":  "Druadan Pathfinders",
-                       "hiDescription":  "Stoneface Guardians",
-                       "liDescription":  "Wose Hunters",
-                       "arDescription":  "Poison-Dart Throwers",
-                       "maDescription":  "Woodland Spearmen",
-                       "wsDescription":  "Anduin Reed-Canoes",
-                       "caDescription":  "Rolling Log Traps",
                        "artifacts":  [
 
                                      ],
@@ -2277,18 +1964,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  16,
-                       "hcDescription":  "Cave-Trolls",
-                       "lcDescription":  "Goblin Riders",
-                       "hiDescription":  "Great Goblin Guard",
-                       "liDescription":  "Goblintown Warriors",
-                       "arDescription":  "Bat Swarm Slingers",
-                       "maDescription":  "Tunnel Spearmen",
-                       "wsDescription":  "Underlake Rafts",
-                       "caDescription":  "Goblin Rock-Lobbers",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Goblin Cleaver",
-                                             "artifactDescription":  "Grants +1 attack.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2328,18 +2006,9 @@
                        "emmissary":  1,
                        "mage":  1,
                        "race":  4,
-                       "hcDescription":  "Eagles",
-                       "lcDescription":  "Elks",
-                       "hiDescription":  "Bears",
-                       "liDescription":  "Wolves",
-                       "arDescription":  "Porcupines",
-                       "maDescription":  "Boars",
-                       "wsDescription":  "Otter River-Guides",
-                       "caDescription":  "Willows",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Yellow boots",
-                                             "artifactDescription":  "10% chance each turn to gain Haste.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2355,7 +2024,6 @@
                                          },
                                          {
                                              "artifactName":  "Blue Jacket",
-                                             "artifactDescription":  "10% chance each turn to gain Hope.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2399,14 +2067,6 @@
 
                                      ],
                        "terrain":  0,
-                       "hcDescription":  "Spectral Riders",
-                       "lcDescription":  "Wraith Scouts",
-                       "hiDescription":  "Oathbreaker Guard",
-                       "liDescription":  "Ghostly Warriors",
-                       "arDescription":  "Spirit-Bow Shades",
-                       "maDescription":  "Cursed Bladebearers",
-                       "wsDescription":  "Phantom Ferries",
-                       "caDescription":  "Siege Echoes",
                        "startingCityName":  "Paths of the Dead",
                        "startingCitySize":  2,
                        "startingCityFortSize":  2,
@@ -2431,18 +2091,9 @@
                        "emmissary":  2,
                        "mage":  2,
                        "race":  4,
-                       "hcDescription":  "Star-Riders",
-                       "lcDescription":  "Wind-Scouts",
-                       "hiDescription":  "Mystic Wardens",
-                       "liDescription":  "Blue-Clad Wanderers",
-                       "arDescription":  "Orocarni Archers",
-                       "maDescription":  "Easterling Spearmen",
-                       "wsDescription":  "Rhun Boats",
-                       "caDescription":  "Siege Engines",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Robes of Aman",
-                                             "artifactDescription":  "While the bearer is on a hidden enemy PC, that PC is temporarily revealed.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2458,7 +2109,6 @@
                                          },
                                          {
                                              "artifactName":  "Hood of Stars",
-                                             "artifactDescription":  "10% chance each turn to reveal a random hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2498,18 +2148,9 @@
                        "emmissary":  1,
                        "mage":  2,
                        "race":  4,
-                       "hcDescription":  "Khandish Lancers",
-                       "lcDescription":  "Horse-Archers",
-                       "hiDescription":  "Steel Wardens",
-                       "liDescription":  "Desert Militia",
-                       "arDescription":  "Sharpshooters",
-                       "maDescription":  "Variag Warriors",
-                       "wsDescription":  "Sand River-Barges",
-                       "caDescription":  "Siege Engines",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Blue Bow",
-                                             "artifactDescription":  "Grants +2 attack.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2525,7 +2166,6 @@
                                          },
                                          {
                                              "artifactName":  "Robes of Aman",
-                                             "artifactDescription":  "While the bearer is on a hidden enemy PC, that PC is temporarily revealed.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2565,18 +2205,9 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  17,
-                       "hcDescription":  "Oaks",
-                       "lcDescription":  "Birchs",
-                       "hiDescription":  "Willows",
-                       "liDescription":  "Firs",
-                       "arDescription":  "Pinecones",
-                       "maDescription":  "Beeches",
-                       "wsDescription":  "Boats",
-                       "caDescription":  "Stone-throwing Ents",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Ent-draught",
-                                             "artifactDescription":  "Consumable Heal herb for a wounded ally sharing your hex. Grants +1 defense.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2616,14 +2247,6 @@
                        "emmissary":  1,
                        "mage":  0,
                        "race":  0,
-                       "hcDescription":  "River Riders",
-                       "lcDescription":  "Horse-Scouts",
-                       "hiDescription":  "Ford Guardians",
-                       "liDescription":  "Anduin Woodsmen",
-                       "arDescription":  "River Bowmen",
-                       "maDescription":  "Spearmen",
-                       "wsDescription":  "Anduin Longboats",
-                       "caDescription":  "Log-Raft Rams",
                        "artifacts":  [
 
                                      ],
@@ -2653,18 +2276,9 @@
                        "emmissary":  2,
                        "mage":  0,
                        "race":  0,
-                       "hcDescription":  "Dorwinion Lancers",
-                       "lcDescription":  "Horse-Scouts",
-                       "hiDescription":  "Vineguard Infantry",
-                       "liDescription":  "Dorwinion Militia",
-                       "arDescription":  "Winelands Archers",
-                       "maDescription":  "Men of Rhovanion",
-                       "wsDescription":  "Rhun Galleys",
-                       "caDescription":  "Fortress Rams",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Wine of Dorwinion",
-                                             "artifactDescription":  "10% chance each turn to gain Courage.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2680,7 +2294,6 @@
                                          },
                                          {
                                              "artifactName":  "Dorwinion Grapes",
-                                             "artifactDescription":  "10% chance each turn to gain Courage.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2721,18 +2334,9 @@
                        "emmissary":  0,
                        "mage":  2,
                        "race":  11,
-                       "hcDescription":  "Barrow-Riders",
-                       "lcDescription":  "Gravewind Phantoms",
-                       "hiDescription":  "Tomb-King Guardians",
-                       "liDescription":  "Barrow Wights",
-                       "arDescription":  "Bone-Shard Throwers",
-                       "maDescription":  "Cairn-Axe Deadmen",
-                       "wsDescription":  "Ghost-Ferry Boats",
-                       "caDescription":  "Cairn-Stone Catapults",
                        "artifacts":  [
                                          {
                                              "artifactName":  "Westernesse Blade",
-                                             "artifactDescription":  "Blade of Westernesse: +1 attack.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2748,7 +2352,6 @@
                                          },
                                          {
                                              "artifactName":  "Gripping Bone",
-                                             "artifactDescription":  "5% chance each turn to apply Fear to an enemy on the bearer\u0027s hex.",
                                              "hidden":  false,
                                              "commanderBonus":  0,
                                              "agentBonus":  0,
@@ -2788,14 +2391,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  14,
-                       "hcDescription":  "Golden Eagles",
-                       "lcDescription":  "Wind-Riders",
-                       "hiDescription":  "Aerie Guardians",
-                       "liDescription":  "Mountain Fledglings",
-                       "arDescription":  "Sky-Stone Droppers",
-                       "maDescription":  "Talon-Spear Eagles",
-                       "wsDescription":  "Highlake Eagles",
-                       "caDescription":  "Sabotage Eagles",
                        "artifacts":  [
 
                                      ],
@@ -2824,14 +2419,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  19,
-                       "hcDescription":  "Rhun Cataphracts",
-                       "lcDescription":  "Horse-Archers",
-                       "hiDescription":  "Royal Spear-Guard",
-                       "liDescription":  "Rhunic Footmen",
-                       "arDescription":  "Bowmen of Rhun",
-                       "maDescription":  "Warband Halberdiers",
-                       "wsDescription":  "Rhun Bamboo-Galleys",
-                       "caDescription":  "Siege Towers",
                        "artifacts":  [
 
                                      ],
@@ -2860,14 +2447,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  5,
-                       "hcDescription":  "Warg-Riders",
-                       "lcDescription":  "Wolf-Riders",
-                       "hiDescription":  "Gundabad Trolls",
-                       "liDescription":  "Misty Mountain Orcs",
-                       "arDescription":  "Goblin Slingers",
-                       "maDescription":  "Goblins",
-                       "wsDescription":  "Raider Boats",
-                       "caDescription":  "War-Towers",
                        "artifacts":  [
 
                                      ],
@@ -2908,14 +2487,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  3,
-                       "hcDescription":  "Shire Pony Riders",
-                       "lcDescription":  "Bounders",
-                       "hiDescription":  "Shire Guards",
-                       "liDescription":  "Shirefolk",
-                       "arDescription":  "Hobbit Archers",
-                       "maDescription":  "Shire Militia",
-                       "wsDescription":  "Brandywine Boats",
-                       "caDescription":  "Hobbit Ballistae",
                        "artifacts":  [
 
                                      ],
@@ -2944,14 +2515,6 @@
                        "emmissary":  1,
                        "mage":  0,
                        "race":  3,
-                       "hcDescription":  "Shire Pony Riders",
-                       "lcDescription":  "Bounders",
-                       "hiDescription":  "Shire Guards",
-                       "liDescription":  "Shirefolk",
-                       "arDescription":  "Hobbit Archers",
-                       "maDescription":  "Shire Militia",
-                       "wsDescription":  "Brandywine Boats",
-                       "caDescription":  "Hobbit Ballistae",
                        "artifacts":  [
 
                                      ],
@@ -2980,14 +2543,6 @@
                        "emmissary":  1,
                        "mage":  0,
                        "race":  3,
-                       "hcDescription":  "Shire Pony Riders",
-                       "lcDescription":  "Bounders",
-                       "hiDescription":  "Shire Guards",
-                       "liDescription":  "Shirefolk",
-                       "arDescription":  "Hobbit Archers",
-                       "maDescription":  "Shire Militia",
-                       "wsDescription":  "Brandywine Boats",
-                       "caDescription":  "Hobbit Ballistae",
                        "artifacts":  [
 
                                      ],
@@ -3029,14 +2584,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  4,
-                       "hcDescription":  "Warg Riders",
-                       "lcDescription":  "Wolves",
-                       "hiDescription":  "Uruk-hai",
-                       "liDescription":  "White-hand Orcs",
-                       "arDescription":  "Dunlending Slingers",
-                       "maDescription":  "Dunlending Axemen",
-                       "wsDescription":  "Dunlending Boats",
-                       "caDescription":  "Blasting Fire",
                        "artifacts":  [
 
                                      ],
@@ -3066,14 +2613,6 @@
                        "emmissary":  0,
                        "mage":  0,
                        "race":  4,
-                       "hcDescription":  "Warg Riders",
-                       "lcDescription":  "Easterling Chariots",
-                       "hiDescription":  "Olog-hai",
-                       "liDescription":  "Orcs of Mordor",
-                       "arDescription":  "Goblin Archers",
-                       "maDescription":  "Haradrim Spearmen",
-                       "wsDescription":  "Corsair Ships",
-                       "caDescription":  "Battering Rams",
                        "artifacts":  [
 
                                      ],
@@ -3097,3 +2636,4 @@
                    }
                ]
 }
+

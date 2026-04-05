@@ -39,7 +39,6 @@
                       "artifacts":  [
                                         {
                                             "artifactName":  "The White Tree",
-                                            "artifactDescription":  "Courage: encourage a chosen friendly army in this hex for several turns. Grants +1 attack.",
                                             "hidden":  false,
                                             "commanderBonus":  0,
                                             "agentBonus":  0,
@@ -55,7 +54,6 @@
                                         },
                                         {
                                             "artifactName":  "Palantir of Minas Tirith",
-                                            "artifactDescription":  "10% chance each turn to reveal a random hex.",
                                             "hidden":  false,
                                             "commanderBonus":  0,
                                             "agentBonus":  0,
@@ -106,7 +104,6 @@
                       "artifacts":  [
                                         {
                                             "artifactName":  "Herugrim",
-                                            "artifactDescription":  "Courage: encourage a chosen friendly army in this hex for several turns. Grants +1 attack.",
                                             "hidden":  false,
                                             "commanderBonus":  0,
                                             "agentBonus":  0,
@@ -122,7 +119,6 @@
                                         },
                                         {
                                             "artifactName":  "Golden Armor of Rohan",
-                                            "artifactDescription":  "Grants +1 defense.",
                                             "hidden":  false,
                                             "commanderBonus":  0,
                                             "agentBonus":  0,
@@ -138,7 +134,6 @@
                                         },
                                         {
                                             "artifactName":  "Snowmane",
-                                            "artifactDescription":  "10% chance each turn to gain Haste.",
                                             "hidden":  false,
                                             "commanderBonus":  0,
                                             "agentBonus":  0,
@@ -461,6 +456,286 @@
                       "steelRequired":  0,
                       "mithrilRequired":  0,
                       "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  560,
+                      "name":  "Archers",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "Archers",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  0,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  3,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  568,
+                      "name":  "Black Arrow Men",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "BlackArrowMen",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  0,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  3,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  633,
+                      "name":  "Light Cavalry",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "LightCavalry",
+                      "tags":  [
+
+                               ],
+                      "troopType":  4,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  1,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  4,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  639,
+                      "name":  "Men At Arms",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "MenAtArms",
+                      "tags":  [
+
+                               ],
+                      "troopType":  0,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  642,
+                      "name":  "Men Of Bree",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "MenOfBree",
+                      "tags":  [
+
+                               ],
+                      "troopType":  0,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  663,
+                      "name":  "Rivermen",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "Rivermen",
+                      "tags":  [
+
+                               ],
+                      "troopType":  0,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  668,
+                      "name":  "Spearmen",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "Spearmen",
+                      "tags":  [
+
+                               ],
+                      "troopType":  0,
+                      "race":  0,
+                      "specialAbilities":  [
+                                               6
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  674,
+                      "name":  "Swordmen",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "Swordmen",
+                      "tags":  [
+
+                               ],
+                      "troopType":  0,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  697,
+                      "name":  "Woodmen",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "Woodmen",
+                      "tags":  [
+
+                               ],
+                      "troopType":  2,
+                      "race":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  1,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0
+                  },
+                  {
+                      "cardId":  698,
+                      "name":  "Woodmen Hunters",
+                      "description":  "",
+                      "type":  "Army",
+                      "spriteName":  "WoodmenHunters",
+                      "tags":  [
+
+                               ],
+                      "troopType":  1,
+                      "race":  0,
+                      "specialAbilities":  [
+                                               5
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  4,
                       "jokerRequired":  0
                   }
               ]

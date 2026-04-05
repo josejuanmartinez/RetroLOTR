@@ -8,14 +8,6 @@
                        "emmissary":  2,
                        "mage":  2,
                        "race":  4,
-                       "hcDescription":  "Riders of Rohan",
-                       "lcDescription":  "Elven Horsemen",
-                       "hiDescription":  "Gondorian Infantry",
-                       "liDescription":  "Dwarven axemen",
-                       "arDescription":  "Elven archers",
-                       "maDescription":  "Men of Bree",
-                       "wsDescription":  "Elven Ships",
-                       "caDescription":  "Catapults",
                        "artifacts":  [
 
                                      ],
@@ -97,7 +89,6 @@
                        "tutorialArtifacts":  [
                                                  {
                                                      "artifactName":  "Narya",
-                                                     "artifactDescription":  "Perceive Danger: reveal the nearest enemy army and surroundings.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -105,13 +96,14 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                                     "passiveEffectValue":  10,
                                                      "spriteString":  "ring",
                                                      "transferable":  false,
                                                      "alignment":  0
                                                  },
                                                  {
                                                      "artifactName":  "Wizard Staff",
-                                                     "artifactDescription":  "You Shall Not Pass: halt an enemy character here; harms Balrogs.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -119,26 +111,26 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "HexEnemyHaltChancePerTurn",
+                                                     "passiveEffectValue":  10,
                                                      "spriteString":  "staff",
                                                      "transferable":  false,
                                                      "alignment":  0
                                                  },
                                                  {
                                                      "artifactName":  "Glamdring",
-                                                     "artifactDescription":  "Wizard\u0027s Fire: burn an enemy army in your hex (casualties).",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
                                                      "emmissaryBonus":  0,
                                                      "mageBonus":  0,
-                                                     "bonusAttack":  0,
+                                                     "bonusAttack":  1,
                                                      "bonusDefense":  0,
                                                      "spriteString":  "sword",
                                                      "alignment":  0
                                                  },
                                                  {
                                                      "artifactName":  "Wizard\u0027s Cart",
-                                                     "artifactDescription":  "Fireworks: shift PC loyalty toward your side (or away from foes).",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -146,16 +138,17 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "AlliedPcMoraleChancePerTurn",
+                                                     "passiveEffectValue":  10,
                                                      "spriteString":  "fireworks",
                                                      "alignment":  0
                                                  },
                                                  {
                                                      "artifactName":  "Longpipe",
-                                                     "artifactDescription":  "Wizard\u0027s Laugh: clear doubles on allies or sap loyalty of hostile PCs here.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
-                                                     "emmissaryBonus":  0,
+                                                     "emmissaryBonus":  1,
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
@@ -165,7 +158,6 @@
                                                  },
                                                  {
                                                      "artifactName":  "Shadowfax",
-                                                     "artifactDescription":  "Haste: refund movement to act again (not for army commanders).",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -173,6 +165,8 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "HasteChancePerTurn",
+                                                     "passiveEffectValue":  10,
                                                      "spriteString":  "hc",
                                                      "transferable":  false,
                                                      "alignment":  0
@@ -188,14 +182,6 @@
                        "emmissary":  2,
                        "mage":  3,
                        "race":  4,
-                       "hcDescription":  "Warg Riders",
-                       "lcDescription":  "Wolves",
-                       "hiDescription":  "Uruk-hai",
-                       "liDescription":  "White-hand Orcs",
-                       "arDescription":  "Dunlending Slingers",
-                       "maDescription":  "Dunlending Axemen",
-                       "wsDescription":  "Dunlending Boats",
-                       "caDescription":  "Blasting Fire",
                        "artifacts":  [
 
                                      ],
@@ -261,7 +247,6 @@
                        "tutorialArtifacts":  [
                                                  {
                                                      "artifactName":  "Ring of Orthanc",
-                                                     "artifactDescription":  "Words of Dispair: inflict casualties on an enemy army here. Grants +1 \u003csprite name=\"commander\"/\u003e.",
                                                      "hidden":  false,
                                                      "commanderBonus":  1,
                                                      "agentBonus":  0,
@@ -269,26 +254,26 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "HexEnemyFearAndDespairChancePerTurn",
+                                                     "passiveEffectValue":  5,
                                                      "spriteString":  "ring",
                                                      "transferable":  false,
                                                      "alignment":  2
                                                  },
                                                  {
                                                      "artifactName":  "White Hand Banner",
-                                                     "artifactDescription":  "One-use Summon Men-at-Arms: add 1 \u003csprite name=\"ma\"/\u003e at an owned PC.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
                                                      "emmissaryBonus":  0,
                                                      "mageBonus":  0,
-                                                     "bonusAttack":  0,
+                                                     "bonusAttack":  1,
                                                      "bonusDefense":  0,
                                                      "spriteString":  "banner",
                                                      "alignment":  2
                                                  },
                                                  {
                                                      "artifactName":  "Many-coloured robes",
-                                                     "artifactDescription":  "Perceive Danger: reveal the nearest enemy army and surroundings. Grants +1 \u003csprite name=\"mage\"/\u003e.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -296,16 +281,17 @@
                                                      "mageBonus":  1,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                                     "passiveEffectValue":  10,
                                                      "transferable":  false,
                                                      "spriteString":  "cloak",
                                                      "alignment":  2
                                                  },
                                                  {
                                                      "artifactName":  "Yellow teeth",
-                                                     "artifactDescription":  "Wizard\u0027s Laugh: clear doubles on allies or sap loyalty of hostile PCs here.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
-                                                     "agentBonus":  0,
+                                                     "agentBonus":  1,
                                                      "emmissaryBonus":  0,
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
@@ -316,7 +302,6 @@
                                                  },
                                                  {
                                                      "artifactName":  "Palantir of Orthanc",
-                                                     "artifactDescription":  "Scry a random unseen hex and reveal the area.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -324,12 +309,13 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                                     "passiveEffectValue":  10,
                                                      "spriteString":  "palantir",
                                                      "alignment":  2
                                                  },
                                                  {
                                                      "artifactName":  "Saruman\u0027s Staff",
-                                                     "artifactDescription":  "Ice Storm: halt a chosen enemy army in your hex.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -337,6 +323,8 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "HexEnemyHaltChancePerTurn",
+                                                     "passiveEffectValue":  10,
                                                      "spriteString":  "staff",
                                                      "transferable":  false,
                                                      "alignment":  2
@@ -352,14 +340,6 @@
                        "emmissary":  0,
                        "mage":  3,
                        "race":  4,
-                       "hcDescription":  "Warg Riders",
-                       "lcDescription":  "Easterling Chariots",
-                       "hiDescription":  "Olog-hai",
-                       "liDescription":  "Orcs of Mordor",
-                       "arDescription":  "Goblin Archers",
-                       "maDescription":  "Haradrim Spearmen",
-                       "wsDescription":  "Corsair Ships",
-                       "caDescription":  "Battering Rams",
                        "artifacts":  [
 
                                      ],
@@ -426,20 +406,18 @@
                        "tutorialArtifacts":  [
                                                  {
                                                      "artifactName":  "Dark Lord Banner",
-                                                     "artifactDescription":  "One-use Summon Men-at-Arms: add 1 \u003csprite name=\"ma\"/\u003e at an owned PC.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
                                                      "emmissaryBonus":  0,
                                                      "mageBonus":  0,
-                                                     "bonusAttack":  0,
+                                                     "bonusAttack":  1,
                                                      "bonusDefense":  0,
                                                      "spriteString":  "banner",
                                                      "alignment":  1
                                                  },
                                                  {
                                                      "artifactName":  "Palantir of Ithil",
-                                                     "artifactDescription":  "Scry a random unseen hex and reveal the area.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -447,12 +425,13 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                                     "passiveEffectValue":  10,
                                                      "spriteString":  "palantir",
                                                      "alignment":  1
                                                  },
                                                  {
                                                      "artifactName":  "Morgul Veil",
-                                                     "artifactDescription":  "Cast Darkness to unreveal nearby tiles.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -460,13 +439,14 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "HideOccupiedPcWhilePresent",
+                                                     "passiveEffectValue":  1,
                                                      "transferable":  false,
                                                      "spriteString":  "veil",
                                                      "alignment":  1
                                                  },
                                                  {
                                                      "artifactName":  "Lidless eye",
-                                                     "artifactDescription":  "Reveal PC to expose a hidden population center here.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -474,13 +454,14 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "RevealHiddenEnemyPcOnOccupiedHex",
+                                                     "passiveEffectValue":  1,
                                                      "transferable":  false,
                                                      "spriteString":  "darkServants",
                                                      "alignment":  1
                                                  },
                                                  {
                                                      "artifactName":  "Voice of the Dark Tower",
-                                                     "artifactDescription":  "Words of Dispair: inflict casualties on an enemy army here.",
                                                      "hidden":  false,
                                                      "commanderBonus":  0,
                                                      "agentBonus":  0,
@@ -488,6 +469,8 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
+                                                     "passiveEffectId":  "HexEnemyFearAndDespairChancePerTurn",
+                                                     "passiveEffectValue":  5,
                                                      "transferable":  false,
                                                      "spriteString":  "speech",
                                                      "alignment":  1
@@ -497,3 +480,4 @@
                    }
                ]
 }
+
