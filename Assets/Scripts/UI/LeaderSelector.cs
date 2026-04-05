@@ -16,7 +16,8 @@ public class LeaderSelector : SearcherByName
         public string displayName;
         public string variantName;
         public string assetName;
-        public string description;
+        public string baseDescription;
+        public string variantDescription;
         public string deckIdentity;
         public string subdeckId;
     }
@@ -27,6 +28,8 @@ public class LeaderSelector : SearcherByName
     // public VideoPlayer leaderVideo;
     public TypewriterEffect typewriterEffect;
     public TextMeshProUGUI textUI;
+    public TextMeshProUGUI variantTextUI;
+    public TextMeshProUGUI deckTextUI;
     public GameObject progress;
     public GameObject progressText;
     public GameObject leaderSelectionFullScreen;
@@ -321,16 +324,17 @@ public class LeaderSelector : SearcherByName
             .Find(x => x.characterName.ToLower() == playableLeader.characterName.ToLower());
         if (biome == null) return;
 
-        AddSelectionEntry(playableLeader, BuildLeaderDisplayName(playableLeader), string.Concat(biome.description.Replace("<br>","")), biome.deckIdentity, biome.subdeckId);
+        string baseDescription = NormalizeLeaderDescription(biome.description);
+        AddSelectionEntry(playableLeader, BuildLeaderDisplayName(playableLeader), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
 
         foreach (LeaderVariantConfig variant in biome.variants)
         {
             string variantName = GetVariantName(playableLeader.characterName, variant.displayName, variant.variantId);
             string displayName = BuildLeaderDisplayName(playableLeader, variantName);
             string assetName = ResolveVariantAssetName(playableLeader.characterName, variant.displayName, variant.variantId);
-            string description = string.IsNullOrWhiteSpace(variant.description) ? string.Concat(biome.description.Replace("<br>","")) : string.Concat(biome.description.Replace("<br>",""), "<br><br>", variant.description.Replace("<br>",""));
+            string variantDescription = NormalizeLeaderDescription(variant.description);
             string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? biome.subdeckId : variant.subdeckId;
-            AddSelectionEntry(playableLeader, displayName, description, variant.deckIdentity, subdeckId, variantName, assetName);
+            AddSelectionEntry(playableLeader, displayName, baseDescription, variantDescription, variant.deckIdentity, subdeckId, variantName, assetName);
         }
     }
 
@@ -412,7 +416,7 @@ public class LeaderSelector : SearcherByName
         return $"{baseLeaderName} {displayName}";
     }
 
-    void AddSelectionEntry(PlayableLeader playableLeader, string displayName, string description, string deckIdentity, string subdeckId, string variantName = null, string assetName = null)
+    void AddSelectionEntry(PlayableLeader playableLeader, string displayName, string baseDescription, string variantDescription, string deckIdentity, string subdeckId, string variantName = null, string assetName = null)
     {
         Illustrations illustrations = FindFirstObjectByType<Illustrations>();
         Sprite carouselSprite = illustrations != null ? illustrations.GetIllustrationByName(assetName) ?? illustrations.GetIllustrationByName(playableLeader.characterName) : null;
@@ -423,7 +427,8 @@ public class LeaderSelector : SearcherByName
             displayName = displayName,
             variantName = variantName,
             assetName = assetName,
-            description = description,
+            baseDescription = baseDescription,
+            variantDescription = variantDescription,
             deckIdentity = deckIdentity,
             subdeckId = subdeckId
         };
@@ -434,21 +439,23 @@ public class LeaderSelector : SearcherByName
 
     string BuildLeaderText(LeaderSelectionEntry selection)
     {
-        /*if (selection == null) return string.Empty;
-        if (string.IsNullOrWhiteSpace(selection.variantName))
-        {
-            return selection.description;
-        }
-
-        return $"<b>{selection.baseLeaderName}</b><br><i>{selection.variantName}</i><br><br>{selection.description}";
-        */
         if (selection == null) return string.Empty;
-        if (string.IsNullOrWhiteSpace(selection.deckIdentity))
+
+        List<string> parts = new();
+        if (!string.IsNullOrWhiteSpace(selection.baseDescription))
         {
-            return selection.description;
+            parts.Add(selection.baseDescription);
+        }
+        if (!string.IsNullOrWhiteSpace(selection.variantDescription))
+        {
+            parts.Add(selection.variantDescription);
+        }
+        if (!string.IsNullOrWhiteSpace(selection.deckIdentity))
+        {
+            parts.Add(selection.deckIdentity);
         }
 
-        return $"{selection.description}<br><br>{selection.deckIdentity}";
+        return string.Join("\n\n", parts);
     }
 
     void CreateCarouselItem(LeaderSelectionEntry selection, Sprite sprite)
@@ -516,7 +523,7 @@ public class LeaderSelector : SearcherByName
         {
             LeaderSelectionEntry selection = selectionEntries[value];
             string leaderText = BuildLeaderText(selection);
-            if (typewriterEffect) typewriterEffect.StartWriting(leaderText); else textUI.text = leaderText;
+            ApplyLeaderTexts(selection);
 
             PlayableLeader player = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList()
                 .Find(x => x.characterName.ToLower() == selection.baseLeaderName.ToLower());
@@ -527,6 +534,99 @@ public class LeaderSelector : SearcherByName
 
             FindFirstObjectByType<Game>().SelectPlayer(player);
         }
+    }
+
+    void ApplyLeaderTexts(LeaderSelectionEntry selection)
+    {
+        if (selection == null)
+        {
+            if (typewriterEffect) typewriterEffect.StartWriting(string.Empty);
+            else if (textUI != null) textUI.text = string.Empty;
+            if (variantTextUI != null) variantTextUI.text = string.Empty;
+            if (deckTextUI != null) deckTextUI.text = string.Empty;
+            return;
+        }
+
+        string mainText = selection.baseDescription ?? string.Empty;
+        string variantText = selection.variantDescription ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(selection.variantName) && string.IsNullOrWhiteSpace(variantText))
+        {
+            SplitBaseDescription(mainText, out string topHalf, out string bottomHalf);
+            mainText = topHalf;
+            variantText = bottomHalf;
+        }
+
+        if (typewriterEffect) typewriterEffect.StartWriting(mainText);
+        else if (textUI != null) textUI.text = mainText;
+
+        if (variantTextUI != null)
+        {
+            variantTextUI.text = variantText;
+        }
+
+        if (deckTextUI != null)
+        {
+            deckTextUI.text = selection.deckIdentity ?? string.Empty;
+        }
+    }
+
+    string NormalizeLeaderDescription(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description)) return string.Empty;
+        return description.Replace("<br><br>", "\n\n").Replace("<br>", "\n").Trim();
+    }
+
+    void SplitBaseDescription(string description, out string firstHalf, out string secondHalf)
+    {
+        firstHalf = description ?? string.Empty;
+        secondHalf = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return;
+        }
+
+        string[] paragraphs = description
+            .Split(new[] { "\n\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(part => part.Trim())
+            .Where(part => !string.IsNullOrWhiteSpace(part))
+            .ToArray();
+
+        if (paragraphs.Length >= 2)
+        {
+            int splitIndex = Mathf.CeilToInt(paragraphs.Length / 2f);
+            firstHalf = string.Join("\n\n", paragraphs.Take(splitIndex));
+            secondHalf = string.Join("\n\n", paragraphs.Skip(splitIndex));
+            return;
+        }
+
+        string[] sentences = description
+            .Split(new[] { ". ", "! ", "? " }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(part => part.Trim())
+            .Where(part => !string.IsNullOrWhiteSpace(part))
+            .ToArray();
+
+        if (sentences.Length >= 2)
+        {
+            int splitIndex = Mathf.CeilToInt(sentences.Length / 2f);
+            firstHalf = string.Join(". ", sentences.Take(splitIndex)).Trim();
+            secondHalf = string.Join(". ", sentences.Skip(splitIndex)).Trim();
+            if (!string.IsNullOrWhiteSpace(firstHalf) && !firstHalf.EndsWith(".") && !firstHalf.EndsWith("!") && !firstHalf.EndsWith("?")) firstHalf += ".";
+            if (!string.IsNullOrWhiteSpace(secondHalf) && !secondHalf.EndsWith(".") && !secondHalf.EndsWith("!") && !secondHalf.EndsWith("?")) secondHalf += ".";
+            return;
+        }
+
+        string[] words = description.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length < 2)
+        {
+            secondHalf = string.Empty;
+            return;
+        }
+
+        int wordSplitIndex = Mathf.CeilToInt(words.Length / 2f);
+        firstHalf = string.Join(" ", words.Take(wordSplitIndex));
+        secondHalf = string.Join(" ", words.Skip(wordSplitIndex));
     }
 
     public void ApplyCurrentSelection()

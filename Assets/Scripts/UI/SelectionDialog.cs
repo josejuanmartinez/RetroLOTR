@@ -20,6 +20,7 @@ public class SelectionDialog : MonoBehaviour
     [SerializeField] private CanvasGroup portraitCanvasGroup;
     [SerializeField] private Illustrations illustrations;
     [SerializeField] private TextMeshProUGUI optionDescriptionLabel;
+    [SerializeField] private TextMeshProUGUI title;
 
     private readonly List<DialogRequest> queuedRequests = new();
     private readonly List<TMP_Dropdown.OptionData> dropdownOptions = new();
@@ -65,7 +66,7 @@ public class SelectionDialog : MonoBehaviour
     /// <summary>
     /// Opens a confirmation dialog with a custom message and button labels.
     /// </summary>
-    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait = null)
+    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait = null, string dialogTitle = null)
     {
         if (Instance == null)
         {
@@ -73,10 +74,10 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, EventIconType.MultiChoice, true);
+        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, EventIconType.MultiChoice, true, dialogTitle);
     }
 
-    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait, EventIconType iconType)
+    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null)
     {
         if (Instance == null)
         {
@@ -84,10 +85,10 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, iconType, true);
+        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, iconType, true, dialogTitle);
     }
 
-    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType)
+    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null)
     {
         if (Instance == null)
         {
@@ -95,10 +96,10 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, true);
+        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, true, dialogTitle);
     }
 
-    public static Task<string> AskImmediate(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType)
+    public static Task<string> AskImmediate(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null)
     {
         if (Instance == null)
         {
@@ -106,10 +107,10 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, false);
+        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, false, dialogTitle);
     }
 
-    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, bool useEventIcon)
+    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, bool useEventIcon, string dialogTitle = null)
     {
         if (options.Count < 1)
         {
@@ -119,6 +120,7 @@ public class SelectionDialog : MonoBehaviour
 
         var request = new DialogRequest
         {
+            title = dialogTitle,
             message = message,
             yesString = yesString,
             noString = noString,
@@ -243,10 +245,20 @@ public class SelectionDialog : MonoBehaviour
         IsShowing = true;
         activeRequest = request;
 
-        messageLabel.text = request.message;
+        bool hasCustomTitle = !string.IsNullOrWhiteSpace(request.title);
+        if (messageLabel != null)
+        {
+            messageLabel.text = request.message;
+        }
+        if (title != null)
+        {
+            title.text = hasCustomTitle ? request.title : string.Empty;
+            title.gameObject.SetActive(!string.IsNullOrWhiteSpace(title.text));
+        }
         UpdatePortrait(request.portrait);
         dropdownOptions.Clear();
-        dropdownOptions.Add(new TMP_Dropdown.OptionData(string.Empty));
+        string placeholderText = string.IsNullOrWhiteSpace(request.yesString) ? "Select an option" : request.yesString;
+        dropdownOptions.Add(new TMP_Dropdown.OptionData(placeholderText));
         request.options.ForEach(x =>
         {
             Color optionColor = GetReadableRandomColor();
@@ -255,13 +267,9 @@ public class SelectionDialog : MonoBehaviour
         dropdown.ClearOptions();
         dropdown.AddOptions(dropdownOptions);
         dropdown.SetValueWithoutNotify(0);
-        if (dropdown.captionText != null)
-        {
-            dropdown.captionText.text = string.Empty;
-        }
+        dropdown.RefreshShownValue();
         UpdateCaptionColor();
         UpdateOptionDescription();
-        dropdown.RefreshShownValue();
         UpdateCloseButtonState();
         DebugLogHierarchyState("ShowInternal after");
     }
@@ -355,6 +363,7 @@ public class SelectionDialog : MonoBehaviour
 
     private class DialogRequest
     {
+        public string title;
         public string message;
         public string yesString;
         public string noString;

@@ -23,6 +23,7 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
     public Sprite hexMessageSprite;
 
     [SerializeField] private Image eventImage;
+    [SerializeField] private Image characterImage;
 
     private Action openAction;
     private Action removeAction;
@@ -44,7 +45,7 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void Configure(EventIconType type, bool isDiscardable, Action onOpen, Action onRemove = null)
+    public void Configure(EventIconType type, bool isDiscardable, Action onOpen, Action onRemove = null, Sprite characterPortrait = null)
     {
         discardable = isDiscardable;
         openAction = onOpen;
@@ -54,6 +55,12 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
         {
             eventImage.sprite = GetSprite(type);
             eventImage.enabled = eventImage.sprite != null;
+        }
+
+        if (characterImage != null)
+        {
+            characterImage.sprite = characterPortrait;
+            characterImage.enabled = characterPortrait != null;
         }
     }
 

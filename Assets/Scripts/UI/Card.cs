@@ -18,6 +18,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] TextMeshProUGUI description;
     [SerializeField] TextMeshProUGUI title;
     [SerializeField] TextMeshProUGUI requirements;
+    [SerializeField] private Color requirementsCardColor = Color.yellow;
     [SerializeField] Button button;
     [SerializeField] Hover disabledReasonHover;
     [SerializeField] Button discardButton;
@@ -340,7 +341,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         List<string> lines = new()
         {
-            $"<color=#{typeColorHex}>{cardTypeKey}.</color>Race: {FormatEnumLabel(data.race.ToString())}"
+            $"<color=#{typeColorHex}>{cardTypeKey}.</color>{FormatEnumLabel(data.race.ToString())}"
         };
 
         List<string> skills = new();
@@ -353,10 +354,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             lines.Add(string.Join("  ", skills));
         }
 
-        string artifactText = data.artifacts == null || data.artifacts.Count == 0
-            ? "[]"
-            : $"[{string.Join(", ", data.artifacts.Where(a => a != null && !string.IsNullOrWhiteSpace(a.artifactName)).Select(a => a.artifactName))}]";
-        lines.Add($"<sprite name=\"artifact\"> {artifactText}");
+        List<string> artifactNames = data.artifacts?
+            .Where(a => a != null && !string.IsNullOrWhiteSpace(a.artifactName))
+            .Select(a => a.artifactName)
+            .ToList();
+        if (artifactNames != null && artifactNames.Count > 0)
+        {
+            lines.Add($"<sprite name=\"artifact\"> [{string.Join(", ", artifactNames)}]");
+        }
 
         if (!string.IsNullOrWhiteSpace(data.description))
         {
@@ -910,9 +915,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         string richRequirements = BuildRequirementsText(data);
+        string requirementsColorHex = ColorUtility.ToHtmlStringRGBA(requirementsCardColor);
         requirements.text = string.IsNullOrWhiteSpace(richRequirements)
             ? string.Empty
-            : $"<mark=#ffff00>{richRequirements}</mark>";
+            : $"<mark=#{requirementsColorHex}>{richRequirements}</mark>";
     }
 
     private string BuildRequirementsText(CardData data)
@@ -1168,8 +1174,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         bool droppedOnSelectedCharacter = dropPreviewLocked || IsDroppedOnSelectedCharacter(eventData);
         isDragging = false;
-        dropPreviewLocked = false;
-        SetSelectedCharacterDropHint(false);
 
         if (canvasGroup != null)
         {
@@ -1178,14 +1182,47 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (droppedOnSelectedCharacter)
         {
+            if (TryBuildDropConfirmationPrompt(out string prompt))
+            {
+                bool confirm = await ConfirmationDialog.AskImmediate(prompt, "Yes", "No");
+                if (!confirm)
+                {
+                    if (this == null || !gameObject) return;
+                    dropPreviewLocked = false;
+                    SetSelectedCharacterDropHint(false);
+                    RestoreCardTransformAfterDrag();
+                    RefreshInteractionState(force: true);
+                    return;
+                }
+            }
+
             bool played = await TryPlayCardAsync(promptForConfirmation: false);
+            dropPreviewLocked = false;
+            SetSelectedCharacterDropHint(false);
             if (played) return;
             if (this == null || !gameObject) return;
         }
 
         if (this == null || !gameObject) return;
+        dropPreviewLocked = false;
+        SetSelectedCharacterDropHint(false);
         RestoreCardTransformAfterDrag();
         RefreshInteractionState(force: true);
+    }
+
+    private bool TryBuildDropConfirmationPrompt(out string prompt)
+    {
+        prompt = string.Empty;
+        if (cardData == null) return false;
+
+        Board board = GetBoard();
+        Character selectedCharacter = board != null ? board.selectedCharacter : null;
+        if (selectedCharacter == null) return false;
+
+        string cardLabel = string.IsNullOrWhiteSpace(cardData.name) ? "card" : cardData.name;
+        string characterLabel = string.IsNullOrWhiteSpace(selectedCharacter.characterName) ? "selected character" : selectedCharacter.characterName;
+        prompt = $"Play {cardLabel} on {characterLabel}?";
+        return true;
     }
 
     private void SetDisabled(bool disabled, string reasonText)

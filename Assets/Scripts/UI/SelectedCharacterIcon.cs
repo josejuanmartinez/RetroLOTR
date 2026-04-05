@@ -16,6 +16,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     public GameObject unactionedIcon;
     public GameObject actionedIcon;
     public GameObject border;
+    public GameObject otherCharacters;
 
     [Header("Leader")]
     public Image icon;
@@ -45,16 +46,16 @@ public class SelectedCharacterIcon : MonoBehaviour
     [SerializeField] private float dropHintScaleMultiplier = 1.05f;
     [SerializeField] private float dropReadyScaleMultiplier = 1.13f;
     [SerializeField] private bool hideDetailsWhenDropReady = true;
+    [SerializeField] private Image rootImage;
+    [SerializeField] private Image borderImage;
 
     [Header("Played cards")]
-    [SerializeField] private CanvasGroup card1CanvasGroup;
-    [SerializeField] private Image card1;
+    [SerializeField] private CanvasGroup cardCanvasGroup;
+    [SerializeField] private Image card;
     
     // private Videos videos;
     private Illustrations illustrations;
     private CanvasGroup canvasGroup;
-    private Image rootImage;
-    private Image borderImage;
     private Color rootDefaultColor = Color.white;
     private Color borderDefaultColor = Color.white;
     private Vector3 defaultScale = Vector3.one;
@@ -63,11 +64,6 @@ public class SelectedCharacterIcon : MonoBehaviour
     private bool dropHintLocked;
     private bool detailsHiddenForDropPreview;
     private readonly Dictionary<GameObject, bool> cachedChildActiveStates = new();
-    private bool cacheIconEnabled;
-    private bool cacheRawImageEnabled;
-    private bool cacheTextEnabled;
-    private bool cacheAlignmentEnabled;
-    private bool cacheHealthEnabled;
     private int lastRefreshedCharacterId = int.MinValue;
     private Character pendingRefreshCharacter;
     private bool refreshScheduled;
@@ -75,8 +71,6 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     private void Awake()
     {
-        rootImage = GetComponent<Image>();
-        borderImage = border != null ? border.GetComponent<Image>() : null;
         if (rootImage != null) rootDefaultColor = rootImage.color;
         if (borderImage != null) borderDefaultColor = borderImage.color;
         defaultScale = transform.localScale;
@@ -153,33 +147,21 @@ public class SelectedCharacterIcon : MonoBehaviour
         if (!hideDetailsWhenDropReady) return;
         if (detailsHiddenForDropPreview == hidden) return;
 
+        GameObject artifactsWidget = artifactsGridLayoutTransform != null ? artifactsGridLayoutTransform.gameObject : null;
+
         if (hidden)
         {
-            cacheIconEnabled = icon != null && icon.enabled;
-            cacheRawImageEnabled = rawImage != null && rawImage.enabled;
-            cacheTextEnabled = textWidget != null && textWidget.enabled;
-            cacheAlignmentEnabled = alignmentIcon != null && alignmentIcon.enabled;
-            cacheHealthEnabled = health != null && health.enabled;
-
             cachedChildActiveStates.Clear();
-            int childCount = transform.childCount;
-            for (int i = 0; i < childCount; i++)
+            if (artifactsWidget != null)
             {
-                Transform child = transform.GetChild(i);
-                if (child == null) continue;
-                GameObject childGO = child.gameObject;
-                if (childGO == null) continue;
-                if (border != null && childGO == border) continue; // keep shell visible for magnet feedback
-
-                cachedChildActiveStates[childGO] = childGO.activeSelf;
-                childGO.SetActive(false);
+                cachedChildActiveStates[artifactsWidget] = artifactsWidget.activeSelf;
+                artifactsWidget.SetActive(false);
             }
-
-            if (icon != null) icon.enabled = false;
-            if (rawImage != null) rawImage.enabled = false;
-            if (textWidget != null) textWidget.enabled = false;
-            if (alignmentIcon != null) alignmentIcon.enabled = false;
-            if (health != null) health.enabled = false;
+            if (otherCharacters != null)
+            {
+                cachedChildActiveStates[otherCharacters] = otherCharacters.activeSelf;
+                otherCharacters.SetActive(false);
+            }
         }
         else
         {
@@ -189,12 +171,6 @@ public class SelectedCharacterIcon : MonoBehaviour
                 state.Key.SetActive(state.Value);
             }
             cachedChildActiveStates.Clear();
-
-            if (icon != null) icon.enabled = cacheIconEnabled;
-            if (rawImage != null) rawImage.enabled = cacheRawImageEnabled;
-            if (textWidget != null) textWidget.enabled = cacheTextEnabled;
-            if (alignmentIcon != null) alignmentIcon.enabled = cacheAlignmentEnabled;
-            if (health != null) health.enabled = cacheHealthEnabled;
         }
 
         detailsHiddenForDropPreview = hidden;
@@ -442,25 +418,25 @@ public class SelectedCharacterIcon : MonoBehaviour
             return;
         }
 
-        if (card1 != null)
+        if (card != null)
         {
-            card1.sprite = playedSprite;
-            card1.enabled = true;
+            card.sprite = playedSprite;
+            card.enabled = true;
         }
         SetPlayedCardVisible(true);
     }
 
     private void SetPlayedCardVisible(bool visible)
     {
-        if (card1CanvasGroup != null)
+        if (cardCanvasGroup != null)
         {
-            card1CanvasGroup.alpha = visible ? 1f : 0f;
-            card1CanvasGroup.interactable = visible;
-            card1CanvasGroup.blocksRaycasts = visible;
+            cardCanvasGroup.alpha = visible ? 1f : 0f;
+            cardCanvasGroup.interactable = visible;
+            cardCanvasGroup.blocksRaycasts = visible;
         }
-        if (card1 != null)
+        if (card != null)
         {
-            card1.enabled = visible;
+            card.enabled = visible;
         }
     }
 

@@ -42,7 +42,7 @@ public class EventIconsManager : MonoBehaviour
             icon = iconInstance.AddComponent<EventIcon>();
         }
 
-        icon.Configure(type, discardable, onOpen, () => RemoveIcon(icon));
+        icon.Configure(type, discardable, onOpen, () => RemoveIcon(icon), ResolveCharacterPortraitSprite());
         activeIcons.Add(icon);
         RefreshLayout(parent as RectTransform);
         return icon;
@@ -91,5 +91,36 @@ public class EventIconsManager : MonoBehaviour
         {
             current.UpdateModules();
         }
+    }
+
+    private Sprite ResolveCharacterPortraitSprite()
+    {
+        SelectedCharacterIcon selectedIcon = FindFirstObjectByType<SelectedCharacterIcon>();
+        if (selectedIcon != null)
+        {
+            if (selectedIcon.icon != null && selectedIcon.icon.sprite != null)
+            {
+                return selectedIcon.icon.sprite;
+            }
+
+            if (selectedIcon.rawImage != null && selectedIcon.rawImage.texture is Texture2D texture)
+            {
+                return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            }
+        }
+
+        Game game = FindFirstObjectByType<Game>();
+        Leader leader = null;
+        if (game != null)
+        {
+            leader = game.currentlyPlaying != null ? game.currentlyPlaying : game.player;
+        }
+        if (leader == null || string.IsNullOrWhiteSpace(leader.characterName))
+        {
+            return null;
+        }
+
+        Illustrations illustrations = FindFirstObjectByType<Illustrations>();
+        return illustrations != null ? illustrations.GetIllustrationByName(leader.characterName, false) ?? illustrations.GetIllustrationByName(leader.characterName) : null;
     }
 }

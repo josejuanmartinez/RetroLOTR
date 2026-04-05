@@ -29,6 +29,8 @@ public class MessageDisplayNoUI : MonoBehaviour
     private int focusHoldCount = 0;
     private Camera mainCam;
     private MapBorderDetector mapBorderDetector;
+    private TextMeshPro activeTextMesh;
+    private Transform activeTextTransform;
 
     private void Awake()
     {
@@ -53,7 +55,7 @@ public class MessageDisplayNoUI : MonoBehaviour
             {
                 textMesh.fontSize *= fontScale;
             }
-            SetTextAlpha(0f);
+            SetTextAlpha(textMesh, 0f);
             textMesh.enabled = false;
         }
     }
@@ -62,11 +64,11 @@ public class MessageDisplayNoUI : MonoBehaviour
     {
         EnsureCameraReferences();
 
-        if (faceCamera && mainCam != null && textMesh != null)
+        if (faceCamera && mainCam != null && activeTextTransform != null)
         {
-            // Billboard to camera
-            transform.LookAt(transform.position + mainCam.transform.rotation * Vector3.forward,
-                             mainCam.transform.rotation * Vector3.up);
+            activeTextTransform.LookAt(
+                activeTextTransform.position + mainCam.transform.rotation * Vector3.forward,
+                mainCam.transform.rotation * Vector3.up);
         }
 
         TryPromotePendingMessages();
@@ -156,7 +158,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         Color resolved = color ?? Color.white;
         Vector3 worldPos = hex.gameObject.transform.position;
 
-        instance.messageQueue.Enqueue(new MessageData(null, formattedMessage, worldPos, resolved));
+        instance.messageQueue.Enqueue(new MessageData(hex, formattedMessage, worldPos, resolved));
         if (!instance.isDisplayingMessage)
         {
             instance.ProcessNextMessage();
@@ -273,16 +275,34 @@ public class MessageDisplayNoUI : MonoBehaviour
     private IEnumerator DisplayCoroutine(MessageData data)
     {
         isDisplayingMessage = true;
-        textMesh.enabled = true;
+        TextMeshPro targetText = ResolveTextMesh(data);
+        if (targetText == null)
+        {
+            if (data.RequiresFocus)
+            {
+                focusHoldCount = Mathf.Max(0, focusHoldCount - 1);
+            }
+            isDisplayingMessage = false;
+            ProcessNextMessage();
+            yield break;
+        }
 
-        // Set position & color
-        transform.position = data.WorldPos + worldOffset;
-        EnsureCenteredLayout();
-        textMesh.text = data.Message;
-        textMesh.color = new Color(data.TextColor.r, data.TextColor.g, data.TextColor.b, 0f);
+        activeTextMesh = targetText;
+        activeTextTransform = targetText.transform;
+        activeTextMesh.enabled = true;
+        activeTextMesh.gameObject.SetActive(true);
+
+        if (targetText == textMesh)
+        {
+            transform.position = data.WorldPos + worldOffset;
+            EnsureCenteredLayout();
+        }
+
+        activeTextMesh.text = data.Message;
+        activeTextMesh.color = new Color(data.TextColor.r, data.TextColor.g, data.TextColor.b, 0f);
 
         // Fade in
-        yield return Fade(0f, 1f, fadeDuration, data.TextColor);
+        yield return Fade(activeTextMesh, 0f, 1f, fadeDuration, data.TextColor);
 
         // Wait
         float hold = Mathf.Max(0f, displayDuration - fadeDuration * 2f);
@@ -299,9 +319,13 @@ public class MessageDisplayNoUI : MonoBehaviour
         }
 
         // Fade out
-        yield return Fade(1f, 0f, fadeDuration, data.TextColor);
+        yield return Fade(activeTextMesh, 1f, 0f, fadeDuration, data.TextColor);
 
-        textMesh.enabled = false;
+        activeTextMesh.text = string.Empty;
+        activeTextMesh.enabled = false;
+        activeTextMesh.gameObject.SetActive(false);
+        activeTextMesh = null;
+        activeTextTransform = null;
         if (data.RequiresFocus)
         {
             focusHoldCount = Mathf.Max(0, focusHoldCount - 1);
@@ -313,8 +337,9 @@ public class MessageDisplayNoUI : MonoBehaviour
     // Helpers
     // -------------------------------------------------------------------------
 
-    private IEnumerator Fade(float from, float to, float duration, Color baseColor)
+    private IEnumerator Fade(TextMeshPro targetText, float from, float to, float duration, Color baseColor)
     {
+        if (targetText == null) yield break;
         float t = 0f;
         while (t < duration)
         {
@@ -324,11 +349,11 @@ public class MessageDisplayNoUI : MonoBehaviour
                 continue;
             }
             float a = Mathf.Lerp(from, to, t / duration);
-            SetTextAlpha(a, baseColor);
+            SetTextAlpha(targetText, a, baseColor);
             t += Time.deltaTime;
             yield return null;
         }
-        SetTextAlpha(to, baseColor);
+        SetTextAlpha(targetText, to, baseColor);
     }
 
     private static bool IsNegativeColor(Color color)
@@ -357,11 +382,11 @@ public class MessageDisplayNoUI : MonoBehaviour
         }
     }
 
-    private void SetTextAlpha(float a, Color? baseColor = null)
+    private void SetTextAlpha(TextMeshPro targetText, float a, Color? baseColor = null)
     {
-        if (textMesh == null) return;
-        Color c = baseColor ?? textMesh.color;
-        textMesh.color = new Color(c.r, c.g, c.b, a);
+        if (targetText == null) return;
+        Color c = baseColor ?? targetText.color;
+        targetText.color = new Color(c.r, c.g, c.b, a);
     }
 
     private void EnsureCenteredLayout()
@@ -388,6 +413,33 @@ public class MessageDisplayNoUI : MonoBehaviour
     {
         if (string.IsNullOrWhiteSpace(message)) return string.Empty;
         return Regex.Replace(message.Trim(), @"\.\s+", ".\n");
+    }
+
+    private TextMeshPro ResolveTextMesh(MessageData data)
+    {
+        if (data?.Hex != null && data.Hex.messageNoUI != null)
+        {
+            PrepareHexTextMesh(data.Hex.messageNoUI);
+            return data.Hex.messageNoUI;
+        }
+
+        if (textMesh != null)
+        {
+            EnsureCenteredLayout();
+            return textMesh;
+        }
+
+        return null;
+    }
+
+    private void PrepareHexTextMesh(TextMeshPro targetText)
+    {
+        if (targetText == null) return;
+        targetText.alignment = TextAlignmentOptions.Center;
+        targetText.overflowMode = TextOverflowModes.Overflow;
+        targetText.enableWordWrapping = false;
+        targetText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+        targetText.verticalAlignment = VerticalAlignmentOptions.Middle;
     }
 
     private void EnsureCameraReferences()

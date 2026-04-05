@@ -29,6 +29,7 @@ public class Hex : MonoBehaviour
     public Vector2Int v2;
     [Header("References")]
     public Sprite defaultCharacterSprite;
+    public TextMeshPro messageNoUI;
 
     [Header("Character")]
     public GameObject characterIconPrefab;

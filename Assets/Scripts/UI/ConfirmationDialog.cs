@@ -72,7 +72,18 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(message, yesString, noString, false, onClose);
+        return Instance.Show(message, yesString, noString, false, true, onClose);
+    }
+
+    public static Task<bool> AskImmediate(string message, string yesString, string noString, Action onClose = null)
+    {
+        if (Instance == null)
+        {
+            Debug.LogError("ConfirmationDialog was called before its instance was created.");
+            return Task.FromResult(false);
+        }
+
+        return Instance.Show(message, yesString, noString, false, false, onClose);
     }
 
     /// <summary>
@@ -86,7 +97,7 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(Instance.fallbackMessage, yesString, noString, false, onClose);
+        return Instance.Show(Instance.fallbackMessage, yesString, noString, false, true, onClose);
     }
 
     /// <summary>
@@ -100,7 +111,7 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(message, Instance.defaultYesLabel, Instance.defaultNoLabel, false, onClose);
+        return Instance.Show(message, Instance.defaultYesLabel, Instance.defaultNoLabel, false, true, onClose);
     }
 
     /// <summary>
@@ -115,10 +126,10 @@ public class ConfirmationDialog : MonoBehaviour
         }
 
         string okLabel = string.IsNullOrWhiteSpace(Instance.defaultOkLabel) ? "OK" : Instance.defaultOkLabel;
-        return Instance.Show(message, okLabel, string.Empty, true, onClose);
+        return Instance.Show(message, okLabel, string.Empty, true, true, onClose);
     }
 
-    private Task<bool> Show(string message, string yesString, string noString, bool singleButton = false, Action onClose = null)
+    private Task<bool> Show(string message, string yesString, string noString, bool singleButton = false, bool useEventIcon = true, Action onClose = null)
     {
         var request = new DialogRequest
         {
@@ -130,17 +141,22 @@ public class ConfirmationDialog : MonoBehaviour
             tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously)
         };
 
-        EventIconsManager iconsManager = EventIconsManager.FindManager();
+        EventIconsManager iconsManager = useEventIcon ? EventIconsManager.FindManager() : null;
         if (iconsManager == null)
         {
             EnqueueRequest(request);
         }
         else
         {
-            iconsManager.AddEventIcon(
+            EventIcon icon = null;
+            icon = iconsManager.AddEventIcon(
                 EventIconType.YesNo,
                 singleButton,
-                () => EnqueueRequest(request));
+                () =>
+                {
+                    request.icon = icon;
+                    EnqueueRequest(request);
+                });
         }
 
         return request.tcs.Task;
@@ -162,6 +178,7 @@ public class ConfirmationDialog : MonoBehaviour
         HideInstant();
         pendingRequest?.TrySetResult(answer);
         pendingOnClose?.Invoke();
+        ConsumeActiveRequestIcon();
         pendingRequest = null;
         pendingOnClose = null;
 
@@ -272,6 +289,7 @@ public class ConfirmationDialog : MonoBehaviour
         public bool singleButton;
         public Action onClose;
         public TaskCompletionSource<bool> tcs;
+        public EventIcon icon;
     }
 
     public static void CloseAll()
@@ -291,8 +309,20 @@ public class ConfirmationDialog : MonoBehaviour
         pendingOnClose?.Invoke();
         pendingRequest = null;
         pendingOnClose = null;
+        for (int i = 0; i < queuedRequests.Count; i++)
+        {
+            queuedRequests[i]?.icon?.ConsumeAndDestroy();
+        }
         queuedRequests.Clear();
         activeIndex = -1;
         HideInstant();
+    }
+
+    private void ConsumeActiveRequestIcon()
+    {
+        if (activeIndex < 0 || activeIndex >= queuedRequests.Count) return;
+        DialogRequest activeRequest = queuedRequests[activeIndex];
+        activeRequest?.icon?.ConsumeAndDestroy();
+        if (activeRequest != null) activeRequest.icon = null;
     }
 }

@@ -19,6 +19,7 @@ public static class EncounterResolver
         List<string> optionLabels = options.Select(GetOptionLabel).ToList();
         List<string> optionDescriptions = options.Select(GetOptionDescription).ToList();
         string selection = await AskEncounterSelectionAsync(
+            encounterCard.name,
             prompt,
             optionLabels,
             optionDescriptions,
@@ -51,6 +52,7 @@ public static class EncounterResolver
     }
 
     private static async Task<string> AskEncounterSelectionAsync(
+        string title,
         string prompt,
         List<string> optionLabels,
         List<string> optionDescriptions,
@@ -67,7 +69,8 @@ public static class EncounterResolver
                 optionDescriptions,
                 true,
                 portrait,
-                EventIconType.Encounter);
+                EventIconType.Encounter,
+                title);
         }
 
         EventIconsManager iconsManager = EventIconsManager.FindManager();
@@ -81,7 +84,8 @@ public static class EncounterResolver
                 optionDescriptions,
                 false,
                 portrait,
-                EventIconType.Encounter);
+                EventIconType.Encounter,
+                title);
         }
 
         TaskCompletionSource<string> tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -99,7 +103,8 @@ public static class EncounterResolver
                     optionDescriptions,
                     false,
                     portrait,
-                    EventIconType.Encounter);
+                    EventIconType.Encounter,
+                    title);
                 tcs.TrySetResult(result);
                 icon?.ConsumeAndDestroy();
             });
@@ -109,6 +114,11 @@ public static class EncounterResolver
 
     private static string BuildPrompt(CardData encounterCard)
     {
+        if (!string.IsNullOrWhiteSpace(encounterCard.historyText))
+        {
+            return encounterCard.historyText.Trim();
+        }
+
         return string.IsNullOrWhiteSpace(encounterCard.description)
             ? $"How will you answer {encounterCard.name}?"
             : encounterCard.description.Trim();
