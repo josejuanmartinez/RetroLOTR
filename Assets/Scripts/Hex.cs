@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TMPro;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class Hex : MonoBehaviour
@@ -32,14 +33,14 @@ public class Hex : MonoBehaviour
     public TextMeshPro messageNoUI;
 
     [Header("Character")]
-    public GameObject characterIconPrefab;
-    public SpriteRenderer characterIcon;
-    public ZoomSpriteRenderer characterIconZoom;
     public SpriteRenderer characterSpriteRenderer;
     public SpriteRenderer bannerSpriteRenderer;
-    public SpriteRenderer colorSpriteRenderer;
-    private float characterIconZoomDefault = 1f;
-    private float characterIconOffsetDefault = 0f;
+    public Animator characterAnimator;
+    public AnimatorController commanderAnimatorController;
+    public AnimatorController agentAnimatorController;
+    public AnimatorController emmissaryAnimatorController;
+    public AnimatorController mageAnimatorController;
+    public AnimatorController defaultAnimatorController;
 
     [Header("Rendering")]
     public TextMeshPro pcName;
@@ -137,10 +138,14 @@ public class Hex : MonoBehaviour
     private static Vector3 sharedSelectedParticlesLocalScale = Vector3.one;
     private static readonly Dictionary<SharedParticleType, SharedParticlePoolState> sharedParticlePools = new();
     private static Transform sharedParticlePoolRoot;
+    private static Material sharedCharacterOutlineMaterial;
+    private MaterialPropertyBlock characterOutlinePropertyBlock;
 
     private const string Unknown = "Unknown character(s)";
     private const int DarknessTurnsDefault = 2;
     private const int SharedOneShotParticlePoolSize = 3;
+    private const string CharacterOutlineMaterialPath = "Materials/CharacterOutline";
+    private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
     private int darknessTurnsRemaining = 0;
 
     void Awake()
@@ -154,9 +159,10 @@ public class Hex : MonoBehaviour
         navigator = FindFirstObjectByType<BoardNavigator>();
         illustrations = FindFirstObjectByType<Illustrations>();
         hexTextureMapping = GetComponent<HexTextureMapping>();
+        ApplyCharacterOutlineMaterial();
         InitializeSharedSelectedParticles();
         InitializeSharedOneShotParticles();
-        if (characterIcon != null)
+        /*if (characterIcon != null)
         {
             characterIconZoom = characterIcon.GetComponent<ZoomSpriteRenderer>();
             if (characterIconZoom != null)
@@ -164,7 +170,7 @@ public class Hex : MonoBehaviour
                 characterIconZoomDefault = characterIconZoom.zoomFactor;
                 characterIconOffsetDefault = characterIconZoom.verticalOffset;
             }
-        }
+        }*/
         UpdateMinimapTerrain(IsHexRevealed());
         UpdateVisibilityForFog();
         UpdateParticles();
@@ -276,9 +282,9 @@ public class Hex : MonoBehaviour
         terrainTexture.sortingOrder = int.MaxValue - (col * board.GetHeight() + row);
     }
 
-    public SpriteRenderer GetCharacterSpriteRendererOnHex(Character character)
+    public SpriteRenderer GetCharacterSpriteRendererOnHex()
     {
-        return characterIcon != null ? characterIcon.GetComponent<SpriteRenderer>() : null;
+        return characterSpriteRenderer;
     }
 
     public SpriteRenderer GetArmySpriteRendererOnHex(Character character)
@@ -441,9 +447,16 @@ public class Hex : MonoBehaviour
             }
         }
 
-        SetActiveFast(characterIconPrefab, seen && hasCharacter);
-        if (seen && hasCharacter) UpdateCharacterIconSprite();
-        UpdatePortIcon();
+        SetActiveFast(characterSpriteRenderer.gameObject, seen && hasCharacter);
+        if (seen && hasCharacter)
+        {
+            UpdateCharacterIconSprite();
+        }
+        else
+        {
+            ClearBannerSprite();
+            ClearOutlineColor();
+        }
         if (refreshHoverText) RefreshHoverText();
     }
 
@@ -890,6 +903,26 @@ public class Hex : MonoBehaviour
         sr.color = c;
     }
 
+    private void ApplyCharacterOutlineMaterial()
+    {
+        if (!characterSpriteRenderer) return;
+
+        if (sharedCharacterOutlineMaterial == null)
+        {
+            sharedCharacterOutlineMaterial = Resources.Load<Material>(CharacterOutlineMaterialPath);
+            if (sharedCharacterOutlineMaterial == null)
+            {
+                Debug.LogWarning($"Hex could not load character outline material at Resources/{CharacterOutlineMaterialPath}.");
+                return;
+            }
+        }
+
+        if (characterSpriteRenderer.sharedMaterial != sharedCharacterOutlineMaterial)
+        {
+            characterSpriteRenderer.sharedMaterial = sharedCharacterOutlineMaterial;
+        }
+    }
+
     private void UpdateMinimapTerrain(bool revealed)
     {
         if (!terrainOrNoneMinimapTexture) return;
@@ -930,7 +963,7 @@ public class Hex : MonoBehaviour
         SetActiveFast(freeArmy, false);
         SetActiveFast(neutralArmy, false);
         SetActiveFast(darkArmy, false);
-        SetActiveFast(characterIconPrefab, false);
+        SetActiveFast(characterSpriteRenderer.gameObject, false);
         SetActiveFast(artifact, false);
         if (artifactHover) SetActiveFast(artifactHover.gameObject, false);
 
@@ -1010,23 +1043,21 @@ public class Hex : MonoBehaviour
 
     private void UpdateCharacterIconSprite()
     {
-        if (characterIcon == null) return;
-        SpriteRenderer sr = characterIcon.GetComponent<SpriteRenderer>();
-        if (sr == null) return;
+        if (characterSpriteRenderer == null) return;
 
         if (TryGetKnownCharacterForIcon(out Character known))
         {
-            sr.sprite = GetCharacterIllustrationOrDefault(known);
+            characterAnimator.runtimeAnimatorController = GetAnimatorControllerOrDefault(known);
+            UpdateOutlineColor(known);
             UpdateBannerSprite(known);
-            UpdateOwnerColorSprite(known);
         }
         else
         {
-            sr.sprite = defaultCharacterSprite;
+            characterSpriteRenderer.sprite = defaultCharacterSprite;
+            characterAnimator.runtimeAnimatorController = defaultAnimatorController;
             ClearBannerSprite();
-            ClearOwnerColorSprite();
+            ClearOutlineColor();
         }
-        UpdateCharacterIconZoom(sr.sprite);
     }
 
     private void UpdateBannerSprite(Character character)
@@ -1158,44 +1189,166 @@ public class Hex : MonoBehaviour
         return biome.banner;
     }
 
-    private void UpdateOwnerColorSprite(Character character)
+    private void UpdateOutlineColor(Character character)
     {
-        if (colorSpriteRenderer == null)
-        {
-            return;
-        }
-
         Leader owner = character != null ? character.GetOwner() : null;
         if (owner == null)
         {
-            ClearOwnerColorSprite();
+            ClearOutlineColor();
             return;
         }
 
-        colorSpriteRenderer.color = owner.nationColor;
-        SetActiveFast(colorSpriteRenderer.gameObject, true);
+        string bannerName = ResolveBannerName(owner);
+        if (string.IsNullOrWhiteSpace(bannerName))
+        {
+            ApplyOutlineColorFromBanner(null, owner);
+            return;
+        }
+
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        if (illustrations == null || !illustrations.IsLoaded)
+        {
+            ApplyOutlineColorFromBanner(null, owner);
+            return;
+        }
+
+        Sprite ownerBannerSprite = illustrations.GetIllustrationByName(bannerName, false);
+        ApplyOutlineColorFromBanner(ownerBannerSprite, owner);
     }
 
-    private void ClearOwnerColorSprite()
+    private void ApplyOutlineColorFromBanner(Sprite bannerSprite, Leader owner)
     {
-        if (colorSpriteRenderer == null)
+        if (!characterSpriteRenderer) return;
+
+        Color outlineColor = TryGetDominantBannerColor(bannerSprite, out Color dominantColor)
+            ? dominantColor
+            : (owner != null ? owner.nationColor : Color.white);
+
+        if (characterOutlinePropertyBlock == null)
+        {
+            characterOutlinePropertyBlock = new MaterialPropertyBlock();
+        }
+
+        characterSpriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
+        characterOutlinePropertyBlock.SetColor(OutlineColorShaderId, outlineColor);
+        characterSpriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
+    }
+
+    private void ClearOutlineColor()
+    {
+        if (!characterSpriteRenderer)
         {
             return;
         }
 
-        colorSpriteRenderer.color = Color.white;
-        SetActiveFast(colorSpriteRenderer.gameObject, false);
+        if (characterOutlinePropertyBlock == null)
+        {
+            characterOutlinePropertyBlock = new MaterialPropertyBlock();
+        }
+
+        characterSpriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
+        characterOutlinePropertyBlock.SetColor(OutlineColorShaderId, Color.white);
+        characterSpriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
     }
 
-    private Sprite GetCharacterIllustrationOrDefault(Character character)
+    private static bool TryGetDominantBannerColor(Sprite bannerSprite, out Color dominantColor)
     {
-        if (character == null) return defaultCharacterSprite;
-        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(character.characterName) : null;
-        return sprite != null ? sprite : defaultCharacterSprite;
+        dominantColor = Color.white;
+        if (bannerSprite == null || bannerSprite.texture == null)
+        {
+            return false;
+        }
+
+        try
+        {
+            Texture2D texture = bannerSprite.texture;
+            Rect rect = bannerSprite.textureRect;
+            int startX = Mathf.RoundToInt(rect.x);
+            int startY = Mathf.RoundToInt(rect.y);
+            int width = Mathf.RoundToInt(rect.width);
+            int height = Mathf.RoundToInt(rect.height);
+            if (width <= 0 || height <= 0)
+            {
+                return false;
+            }
+
+            Color[] pixels = texture.GetPixels(startX, startY, width, height);
+            Dictionary<int, (Vector3 sum, int count)> buckets = new();
+
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                Color pixel = pixels[i];
+                if (pixel.a < 0.2f) continue;
+
+                Color.RGBToHSV(pixel, out float hue, out float saturation, out float value);
+                if (saturation < 0.3f) continue;
+                if (value < 0.2f || value > 0.95f) continue;
+
+                int hueBucket = Mathf.Clamp(Mathf.FloorToInt(hue * 12f), 0, 11);
+                int satBucket = Mathf.Clamp(Mathf.FloorToInt(saturation * 4f), 0, 3);
+                int valBucket = Mathf.Clamp(Mathf.FloorToInt(value * 4f), 0, 3);
+                int key = hueBucket | (satBucket << 8) | (valBucket << 16);
+
+                if (buckets.TryGetValue(key, out var bucket))
+                {
+                    bucket.sum += new Vector3(pixel.r, pixel.g, pixel.b);
+                    bucket.count++;
+                    buckets[key] = bucket;
+                }
+                else
+                {
+                    buckets[key] = (new Vector3(pixel.r, pixel.g, pixel.b), 1);
+                }
+            }
+
+            if (buckets.Count == 0)
+            {
+                return false;
+            }
+
+            KeyValuePair<int, (Vector3 sum, int count)> bestBucket = buckets.OrderByDescending(entry => entry.Value.count).First();
+            Vector3 average = bestBucket.Value.sum / Mathf.Max(1, bestBucket.Value.count);
+            dominantColor = new Color(average.x, average.y, average.z, 1f);
+            return true;
+        }
+        catch (UnityException)
+        {
+            return false;
+        }
     }
 
-    private void UpdateCharacterIconZoom(Sprite sprite)
+    private AnimatorController GetAnimatorControllerOrDefault(Character character)
+    {
+        if (character == null) {
+            Debug.Log("Returning default - character or illustrations is null");
+            return defaultAnimatorController;
+        }
+        //Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(character.characterName) : null;
+        string predominantClass = "commander";
+        int predominantClassValue = character.GetCommander();
+        if(character.GetAgent() > predominantClassValue) {
+            predominantClass = "agent";
+            predominantClassValue = character.GetAgent();
+        }
+        if(character.GetEmmissary() > predominantClassValue) {
+            predominantClass = "emmissary";
+            predominantClassValue = character.GetEmmissary();
+        }
+        if(character.GetMage() > predominantClassValue) {
+            predominantClass = "mage";
+            predominantClassValue = character.GetMage();
+        }
+        switch(predominantClass)
+        {
+            case "commander": return commanderAnimatorController;
+            case "agent": return agentAnimatorController;
+            case "emmissary": return emmissaryAnimatorController;
+            case "mage": return mageAnimatorController;
+            default: return defaultAnimatorController;
+        }
+    }
+
+    /*private void UpdateCharacterIconZoom(Sprite sprite)
     {
         if (characterIconZoom == null && characterIcon != null)
         {
@@ -1222,7 +1375,7 @@ public class Hex : MonoBehaviour
         characterIconZoom.Refresh();
         characterIconZoom.enabled = useZoom;
     }
-
+*/
     private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
     {
         isRevealed = true;

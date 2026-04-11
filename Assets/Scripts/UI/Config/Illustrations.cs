@@ -11,7 +11,8 @@ public class Illustrations : SearcherByName
     private static readonly string[] IllustrationsAddressRoots =
     {
         "Assets/Art/Cards/",
-        "Assets/Art/UI/"
+        "Assets/Art/UI/",
+        "Assets/Art/Animation/"
     };
 
     private Dictionary<string, Sprite> illustrationsByName = new();

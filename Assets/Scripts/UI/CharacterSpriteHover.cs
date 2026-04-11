@@ -15,8 +15,8 @@ public class CharacterSpriteHover : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (hex == null || hex.characterIcon == null) return;
-        if (hex.characterIcon.sprite == null || hex.characterIcon.sprite == hex.defaultCharacterSprite) return;
+        if (hex == null || hex.characterSpriteRenderer == null) return;
+        if (hex.characterSpriteRenderer.sprite == null || hex.characterSpriteRenderer.sprite == hex.defaultCharacterSprite) return;
         if (!hex.TryGetKnownCharacterForIcon(out Character character)) return;
         board ??= FindFirstObjectByType<Board>();
         if (board != null && board.selectedCharacter == character) return;

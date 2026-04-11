@@ -1059,8 +1059,8 @@ public class Board : MonoBehaviour
             currentHex = previousHex;
 
             // Get the visible sprites on each hex
-            SpriteRenderer fromSR = previousHex.GetCharacterSpriteRendererOnHex(character);
-            SpriteRenderer toSR = newHex.GetCharacterSpriteRendererOnHex(character);
+            SpriteRenderer fromSR = previousHex.GetCharacterSpriteRendererOnHex();
+            SpriteRenderer toSR = newHex.GetCharacterSpriteRendererOnHex();
             SpriteRenderer fromBg = GetCharacterBackground(fromSR);
             SpriteRenderer toBg = GetCharacterBackground(toSR);
             SpriteRenderer moverBg = characterMoverSR == characterMoverImage ? EnsureMoverBackground(characterMoverSR) : null;
