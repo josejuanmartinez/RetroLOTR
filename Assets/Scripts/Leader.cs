@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class Leader : Character
 {
+    [Header("Visuals")]
+    public Color nationColor = Color.white;
+
     [Header("Nation data")]
     public List<Character> controlledCharacters = new();
     public List<PC> controlledPcs = new();

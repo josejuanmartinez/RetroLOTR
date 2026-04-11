@@ -1,0 +1,728 @@
+fileFormatVersion: 2
+guid: ca045b4b191eb144eb4927a97858aefd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2971188440574139021
+    second: banner_ovatha_0
+  - first:
+      213: -8467865244961248883
+    second: banner_ovatha_1
+  - first:
+      213: 5368327578247318579
+    second: banner_ovatha_2
+  - first:
+      213: -28354064702028552
+    second: banner_ovatha_3
+  - first:
+      213: 5508317619740018517
+    second: banner_ovatha_4
+  - first:
+      213: -4717691359346313013
+    second: banner_ovatha_5
+  - first:
+      213: -1406361824403666113
+    second: banner_ovatha_6
+  - first:
+      213: 2177315419513985950
+    second: banner_ovatha_7
+  - first:
+      213: 6944861209542625061
+    second: banner_ovatha_8
+  - first:
+      213: 3273130881869172770
+    second: banner_ovatha_9
+  - first:
+      213: 628829475259723496
+    second: banner_ovatha_10
+  - first:
+      213: 8956078509061742079
+    second: banner_ovatha_11
+  - first:
+      213: 7687230109758673671
+    second: banner_ovatha_12
+  - first:
+      213: 3558096470126381098
+    second: banner_ovatha_13
+  - first:
+      213: -7010090894505081798
+    second: banner_ovatha_14
+  - first:
+      213: -2843740738307995754
+    second: banner_ovatha_15
+  - first:
+      213: -9071350966782813448
+    second: banner_ovatha_16
+  - first:
+      213: -7333963754833595065
+    second: banner_ovatha_17
+  - first:
+      213: 5833407708947850874
+    second: banner_ovatha_18
+  - first:
+      213: -5275976362880805643
+    second: banner_ovatha_19
+  - first:
+      213: -2151368033803367458
+    second: banner_ovatha_20
+  - first:
+      213: 478290957438991113
+    second: banner_ovatha_21
+  - first:
+      213: -1997759311236812570
+    second: banner_ovatha_22
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: banner_ovatha_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1024
+        height: 1532
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 375e4d6fad734c6d0800000000000000
+      internalID: -2971188440574139021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_1
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 1352
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d896534ac691c7a80800000000000000
+      internalID: -8467865244961248883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_2
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 1353
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33c4d536d71208a40800000000000000
+      internalID: 5368327578247318579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_3
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 1352
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f44f7dd0244b9ff0800000000000000
+      internalID: -28354064702028552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_4
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1353
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55701aad0b9717c40800000000000000
+      internalID: 5508317619740018517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_5
+      rect:
+        serializedVersion: 2
+        x: 926
+        y: 1351
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc8bb3e34b4678eb0800000000000000
+      internalID: -4717691359346313013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_6
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 1354
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3bcfb63f599b7ce0800000000000000
+      internalID: -1406361824403666113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_7
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 1211
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9b9c1096d0673e10800000000000000
+      internalID: 2177315419513985950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_8
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 487
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5278d21897a116060800000000000000
+      internalID: 6944861209542625061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_9
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 417
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2205c2df13f7c6d20800000000000000
+      internalID: 3273130881869172770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_10
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 416
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8eea629731d0ab800800000000000000
+      internalID: 628829475259723496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_11
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 415
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffd9221e3f16a4c70800000000000000
+      internalID: 8956078509061742079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_12
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 416
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7035ade5e078eaa60800000000000000
+      internalID: 7687230109758673671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_13
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 415
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a28447253e5e06130800000000000000
+      internalID: 3558096470126381098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_14
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 415
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3403d5f87727be90800000000000000
+      internalID: -7010090894505081798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_15
+      rect:
+        serializedVersion: 2
+        x: 1002
+        y: 415
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69748d38dd00988d0800000000000000
+      internalID: -2843740738307995754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_16
+      rect:
+        serializedVersion: 2
+        x: 988
+        y: 393
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fa93089b561c1280800000000000000
+      internalID: -9071350966782813448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_17
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 104
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 745bd8d62d6883a90800000000000000
+      internalID: -7333963754833595065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_18
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 104
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a76acd1976d64f050800000000000000
+      internalID: 5833407708947850874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_19
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 106
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f4d1278377f7c6b0800000000000000
+      internalID: -5275976362880805643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_20
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 107
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edb0504fb2ec422e0800000000000000
+      internalID: -2151368033803367458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_21
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 10
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90bbe69771b33a600800000000000000
+      internalID: 478290957438991113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_ovatha_22
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 11
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e03003bd788644e0800000000000000
+      internalID: -1997759311236812570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      banner_ovatha_0: -2971188440574139021
+      banner_ovatha_1: -8467865244961248883
+      banner_ovatha_10: 628829475259723496
+      banner_ovatha_11: 8956078509061742079
+      banner_ovatha_12: 7687230109758673671
+      banner_ovatha_13: 3558096470126381098
+      banner_ovatha_14: -7010090894505081798
+      banner_ovatha_15: -2843740738307995754
+      banner_ovatha_16: -9071350966782813448
+      banner_ovatha_17: -7333963754833595065
+      banner_ovatha_18: 5833407708947850874
+      banner_ovatha_19: -5275976362880805643
+      banner_ovatha_2: 5368327578247318579
+      banner_ovatha_20: -2151368033803367458
+      banner_ovatha_21: 478290957438991113
+      banner_ovatha_22: -1997759311236812570
+      banner_ovatha_3: -28354064702028552
+      banner_ovatha_4: 5508317619740018517
+      banner_ovatha_5: -4717691359346313013
+      banner_ovatha_6: -1406361824403666113
+      banner_ovatha_7: 2177315419513985950
+      banner_ovatha_8: 6944861209542625061
+      banner_ovatha_9: 3273130881869172770
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -35,6 +35,9 @@ public class Hex : MonoBehaviour
     public GameObject characterIconPrefab;
     public SpriteRenderer characterIcon;
     public ZoomSpriteRenderer characterIconZoom;
+    public SpriteRenderer characterSpriteRenderer;
+    public SpriteRenderer bannerSpriteRenderer;
+    public SpriteRenderer colorSpriteRenderer;
     private float characterIconZoomDefault = 1f;
     private float characterIconOffsetDefault = 0f;
 
@@ -118,6 +121,7 @@ public class Hex : MonoBehaviour
     private Illustrations illustrations;
     private HexTextureMapping hexTextureMapping;
     private Sprite baseTerrainSprite;
+    private Coroutine bannerRetryCoroutine;
 
     // Reused buffers to avoid GC in UI building / raycasts
     private static readonly StringBuilder sbChars = new(256);
@@ -161,7 +165,6 @@ public class Hex : MonoBehaviour
                 characterIconOffsetDefault = characterIconZoom.verticalOffset;
             }
         }
-
         UpdateMinimapTerrain(IsHexRevealed());
         UpdateVisibilityForFog();
         UpdateParticles();
@@ -1014,12 +1017,174 @@ public class Hex : MonoBehaviour
         if (TryGetKnownCharacterForIcon(out Character known))
         {
             sr.sprite = GetCharacterIllustrationOrDefault(known);
+            UpdateBannerSprite(known);
+            UpdateOwnerColorSprite(known);
         }
         else
         {
             sr.sprite = defaultCharacterSprite;
+            ClearBannerSprite();
+            ClearOwnerColorSprite();
         }
         UpdateCharacterIconZoom(sr.sprite);
+    }
+
+    private void UpdateBannerSprite(Character character)
+    {
+        if (bannerSpriteRenderer == null) return;
+
+        if (character == null || !character.IsArmyCommander())
+        {
+            ClearBannerSprite();
+            return;
+        }
+
+        Leader owner = character.GetOwner();
+        string bannerName = ResolveBannerName(owner);
+        if (string.IsNullOrWhiteSpace(bannerName))
+        {
+            ClearBannerSprite();
+            return;
+        }
+
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        if (illustrations == null)
+        {
+            ClearBannerSprite();
+            return;
+        }
+
+        if (!illustrations.IsLoaded)
+        {
+            QueueBannerRetry();
+            ClearBannerSprite();
+            return;
+        }
+
+        Sprite ownerBannerSprite = illustrations != null ? illustrations.GetIllustrationByName(bannerName, false) : null;
+        if (ownerBannerSprite == null)
+        {
+            ClearBannerSprite();
+            return;
+        }
+
+        bannerSpriteRenderer.sprite = ownerBannerSprite;
+        SetActiveFast(bannerSpriteRenderer.gameObject, true);
+        CancelBannerRetry();
+    }
+
+    private void ClearBannerSprite()
+    {
+        if (bannerSpriteRenderer == null)
+        {
+            return;
+        }
+
+        SetActiveFast(bannerSpriteRenderer.gameObject, false);
+    }
+
+    private void QueueBannerRetry()
+    {
+        if (bannerRetryCoroutine != null)
+        {
+            return;
+        }
+
+        bannerRetryCoroutine = StartCoroutine(RetryBannerWhenIllustrationsReady());
+    }
+
+    private void CancelBannerRetry()
+    {
+        if (bannerRetryCoroutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(bannerRetryCoroutine);
+        bannerRetryCoroutine = null;
+    }
+
+    private IEnumerator RetryBannerWhenIllustrationsReady()
+    {
+        while (illustrations == null || !illustrations.IsLoaded)
+        {
+            if (illustrations == null)
+            {
+                illustrations = FindFirstObjectByType<Illustrations>();
+            }
+            yield return null;
+        }
+
+        bannerRetryCoroutine = null;
+
+        if (!this || !gameObject.activeInHierarchy)
+        {
+            yield break;
+        }
+
+        RedrawCharacters(false);
+    }
+
+    private static string ResolveBannerName(Leader owner)
+    {
+        if (owner == null)
+        {
+            return null;
+        }
+
+        LeaderBiomeConfig biome = owner.GetBiome();
+        if (biome == null)
+        {
+            return null;
+        }
+
+        if (owner is PlayableLeader playableLeader)
+        {
+            string selectedSubdeckId = playableLeader.GetSelectedSubdeckId();
+            if (!string.IsNullOrWhiteSpace(selectedSubdeckId) && biome.variants != null)
+            {
+                LeaderVariantConfig variant = biome.variants.Find(entry =>
+                    entry != null
+                    && ((!string.IsNullOrWhiteSpace(entry.variantId) && string.Equals(entry.variantId, selectedSubdeckId, StringComparison.OrdinalIgnoreCase))
+                        || (!string.IsNullOrWhiteSpace(entry.subdeckId) && string.Equals(entry.subdeckId, selectedSubdeckId, StringComparison.OrdinalIgnoreCase))));
+
+                if (!string.IsNullOrWhiteSpace(variant?.banner))
+                {
+                    return variant.banner;
+                }
+            }
+        }
+
+        return biome.banner;
+    }
+
+    private void UpdateOwnerColorSprite(Character character)
+    {
+        if (colorSpriteRenderer == null)
+        {
+            return;
+        }
+
+        Leader owner = character != null ? character.GetOwner() : null;
+        if (owner == null)
+        {
+            ClearOwnerColorSprite();
+            return;
+        }
+
+        colorSpriteRenderer.color = owner.nationColor;
+        SetActiveFast(colorSpriteRenderer.gameObject, true);
+    }
+
+    private void ClearOwnerColorSprite()
+    {
+        if (colorSpriteRenderer == null)
+        {
+            return;
+        }
+
+        colorSpriteRenderer.color = Color.white;
+        SetActiveFast(colorSpriteRenderer.gameObject, false);
     }
 
     private Sprite GetCharacterIllustrationOrDefault(Character character)

@@ -15,6 +15,7 @@ public class LeaderVariantConfig
     public string description;
     public string deckIdentity;
     public string subdeckId;
+    public string banner;
 }
 
 [Serializable]
@@ -23,6 +24,7 @@ public class LeaderBiomeConfig: BiomeConfig
     public string description;
     public string deckIdentity;
     public string subdeckId;
+    public string banner;
     public List<LeaderVariantConfig> variants = new();
     public TerrainEnum terrain;
     public FeaturesEnum feature = FeaturesEnum.noFeature;

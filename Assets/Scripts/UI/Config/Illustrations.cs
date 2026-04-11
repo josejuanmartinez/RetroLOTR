@@ -17,9 +17,11 @@ public class Illustrations : SearcherByName
     private Dictionary<string, Sprite> illustrationsByName = new();
     private AsyncOperationHandle<IList<IResourceLocation>> locationsHandle;
     private readonly List<AsyncOperationHandle<Sprite>> spriteHandles = new();
-    private int pendingSpriteLoads;
+    private int pendingLocationLoads;
     private bool isLoaded;
     private bool loggedNotReadyWarning;
+
+    public bool IsLoaded => isLoaded;
 
     private void Awake()
     {
@@ -56,7 +58,7 @@ public class Illustrations : SearcherByName
         }
 
         illustrationsByName = new Dictionary<string, Sprite>();
-        pendingSpriteLoads = 0;
+        pendingLocationLoads = 0;
         int queuedCount = 0;
         foreach (IResourceLocation location in handle.Result)
         {
@@ -64,14 +66,14 @@ public class Illustrations : SearcherByName
             if (!IsIllustrationAddress(location.PrimaryKey)) continue;
 
             queuedCount++;
-            pendingSpriteLoads++;
+            pendingLocationLoads++;
             AsyncOperationHandle<Sprite> spriteHandle = Addressables.LoadAssetAsync<Sprite>(location);
             spriteHandles.Add(spriteHandle);
             spriteHandle.Completed += OnIllustrationSpriteLoaded;
         }
 
-        isLoaded = pendingSpriteLoads == 0;
-        Debug.Log($"Illustrations: queued {queuedCount} card sprites from Addressables label '{IllustrationsLabel}'.");
+        isLoaded = pendingLocationLoads == 0;
+        Debug.Log($"Illustrations: queued {queuedCount} sprites from Addressables label '{IllustrationsLabel}'.");
     }
 
     private void OnIllustrationSpriteLoaded(AsyncOperationHandle<Sprite> handle)
@@ -81,10 +83,11 @@ public class Illustrations : SearcherByName
             RegisterSpriteLookupKeys(handle.Result);
         }
 
-        pendingSpriteLoads = Mathf.Max(0, pendingSpriteLoads - 1);
-        if (pendingSpriteLoads == 0)
+        pendingLocationLoads = Mathf.Max(0, pendingLocationLoads - 1);
+        if (pendingLocationLoads == 0)
         {
             isLoaded = true;
+            Debug.Log($"Illustrations: loaded {illustrationsByName.Count} sprite lookup keys.");
         }
     }
 

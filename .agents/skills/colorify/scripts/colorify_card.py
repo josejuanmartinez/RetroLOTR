@@ -8,6 +8,7 @@ import base64
 import os
 import re
 import sys
+import tempfile
 import time
 from io import BytesIO
 from pathlib import Path
@@ -41,6 +42,7 @@ DEFAULT_PROMPT = (
 MAX_IMAGE_BYTES = 50 * 1024 * 1024
 DEFAULT_GRAYSCALE_THRESHOLD = 0.85
 DEFAULT_CHANNEL_TOLERANCE = 12
+DEFAULT_UPLOAD_MAX_DIM = 512
 
 
 def die(message: str, code: int = 1) -> None:
@@ -88,6 +90,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--size", default=DEFAULT_SIZE)
     parser.add_argument("--quality", default=DEFAULT_QUALITY)
     parser.add_argument("--output-format", default=DEFAULT_OUTPUT_FORMAT)
+    parser.add_argument(
+        "--upload-max-dim",
+        type=int,
+        default=DEFAULT_UPLOAD_MAX_DIM,
+        help="Maximum width/height for the image uploaded to OpenAI. Use 0 to disable downscaling.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--allow-nonbw", action="store_true", help="Process even if the image already appears colorized")
@@ -146,6 +154,33 @@ def analyze_grayscale_ratio(image_path: Path, tolerance: int = DEFAULT_CHANNEL_T
     return grayscale_like / total
 
 
+def prepare_upload_image(image_path: Path, max_dim: int) -> tuple[Path, bool]:
+    if max_dim <= 0:
+        return image_path, False
+
+    try:
+        from PIL import Image
+    except ImportError:
+        die("Pillow is required for upload downscaling. Install it with `uv pip install pillow`.")
+
+    with Image.open(image_path) as img:
+        width, height = img.size
+        if max(width, height) <= max_dim:
+            return image_path, False
+
+        working = img.convert("RGBA") if img.mode not in {"RGB", "RGBA"} else img.copy()
+        working.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
+
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        tmp_path = Path(tmp.name)
+        try:
+            working.save(tmp, format="PNG", optimize=True)
+        finally:
+            tmp.close()
+
+    return tmp_path, True
+
+
 def main() -> int:
     args = parse_args()
     ensure_api_key(args.dry_run)
@@ -175,6 +210,7 @@ def main() -> int:
         die(f"Output already exists: {out_path} (use --force to overwrite)")
 
     final_prompt = build_prompt(args.prompt, image_path, args.card_name)
+    upload_path, upload_is_temp = prepare_upload_image(image_path, args.upload_max_dim)
 
     payload = {
         "model": args.model,
@@ -187,10 +223,15 @@ def main() -> int:
     if args.dry_run:
         print("OpenAI image edit dry-run")
         print(f"image={image_path}")
+        print(f"upload_image={upload_path}")
+        print(f"upload_image_bytes={upload_path.stat().st_size}")
+        print(f"upload_downscaled={upload_is_temp}")
         print(f"out={out_path}")
         print(f"grayscale_ratio={grayscale_ratio:.3f}")
         for key, value in payload.items():
             print(f"{key}={value}")
+        if upload_is_temp and upload_path.exists():
+            upload_path.unlink()
         return 0
 
     client = create_client()
@@ -199,7 +240,7 @@ def main() -> int:
     print("Calling OpenAI image edit API...", file=sys.stderr)
     started = time.time()
     try:
-        with image_path.open("rb") as image_file:
+        with upload_path.open("rb") as image_file:
             result = client.images.edit(
                 image=image_file,
                 **payload,
@@ -214,11 +255,14 @@ def main() -> int:
         )
         payload["prompt"] = args.prompt.strip()
         started = time.time()
-        with image_path.open("rb") as image_file:
+        with upload_path.open("rb") as image_file:
             result = client.images.edit(
                 image=image_file,
                 **payload,
             )
+    finally:
+        if upload_is_temp and upload_path.exists():
+            upload_path.unlink()
     elapsed = time.time() - started
     print(f"Edit completed in {elapsed:.1f}s.", file=sys.stderr)
 
