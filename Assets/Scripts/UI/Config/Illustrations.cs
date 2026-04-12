@@ -105,10 +105,26 @@ public class Illustrations : SearcherByName
             }
         }
 
+        foreach (string key in EnumerateLookupKeys(StripSubSpriteSuffix(sprite.name)))
+        {
+            if (TryRegisterKey(key, sprite))
+            {
+                added++;
+            }
+        }
+
         // Fallback key: source texture asset name (usually filename).
         // This covers cases where Sprite.name was not updated after image rename.
         string textureName = sprite.texture != null ? sprite.texture.name : null;
         foreach (string key in EnumerateLookupKeys(textureName))
+        {
+            if (TryRegisterKey(key, sprite))
+            {
+                added++;
+            }
+        }
+
+        foreach (string key in EnumerateLookupKeys(StripSubSpriteSuffix(textureName)))
         {
             if (TryRegisterKey(key, sprite))
             {
@@ -220,5 +236,25 @@ public class Illustrations : SearcherByName
     private IEnumerable<string> BuildNameCandidates(string rawName)
     {
         yield return rawName;
+    }
+
+    private string StripSubSpriteSuffix(string rawName)
+    {
+        if (string.IsNullOrWhiteSpace(rawName)) return rawName;
+
+        int underscoreIndex = rawName.LastIndexOf('_');
+        if (underscoreIndex < 0 || underscoreIndex == rawName.Length - 1) return rawName;
+
+        bool suffixIsNumeric = true;
+        for (int i = underscoreIndex + 1; i < rawName.Length; i++)
+        {
+            if (!char.IsDigit(rawName[i]))
+            {
+                suffixIsNumeric = false;
+                break;
+            }
+        }
+
+        return suffixIsNumeric ? rawName.Substring(0, underscoreIndex) : rawName;
     }
 }

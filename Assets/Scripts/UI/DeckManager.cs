@@ -331,7 +331,12 @@ public class DeckManager : MonoBehaviour
         if (!initializeOnStart) return;
 
         InitializeFromResources();
-        InitializeHandsForCurrentGame();
+
+        Game game = FindFirstObjectByType<Game>();
+        if (game != null && game.started)
+        {
+            InitializeHandsForCurrentGame();
+        }
     }
 
     public bool InitializeFromResources()
@@ -1117,13 +1122,24 @@ public class DeckManager : MonoBehaviour
     {
         if (revealedPcHexes == null || revealedPcHexes.Count == 0) return;
 
+        EventIconsManager iconsManager = EventIconsManager.FindManager();
         BoardNavigator navigator = BoardNavigator.Instance != null ? BoardNavigator.Instance : FindFirstObjectByType<BoardNavigator>();
         foreach (Hex hex in revealedPcHexes.Distinct())
         {
             if (hex == null) continue;
             string revealText = string.IsNullOrWhiteSpace(message) ? "Lands revealed" : message;
 
-            if (navigator != null)
+            if (iconsManager != null)
+            {
+                iconsManager.AddEventIcon(
+                    EventIconType.HexMessage,
+                    true,
+                    () =>
+                    {
+                        MessageDisplayNoUI.ShowAnchoredMessage(hex, revealText, Color.yellow);
+                    });
+            }
+            else if (navigator != null)
             {
                 navigator.EnqueueFocus(hex, 0.35f, 0.18f, true, () =>
                 {

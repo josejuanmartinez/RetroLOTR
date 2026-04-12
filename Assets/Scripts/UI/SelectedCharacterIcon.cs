@@ -66,6 +66,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     private readonly Dictionary<GameObject, bool> cachedChildActiveStates = new();
     private int lastRefreshedCharacterId = int.MinValue;
     private Character pendingRefreshCharacter;
+    public Character CurrentCharacter { get; private set; }
     private bool refreshScheduled;
     private readonly List<ArtifactRenderer> artifactRenderers = new();
 
@@ -201,6 +202,7 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     private void ApplyRefresh(Character c)
     {
+        CurrentCharacter = c;
         SetDropTargetHighlight(false);
         SetVisible(true);
         border.SetActive(true);
@@ -316,6 +318,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetPlayedCardVisible(false);
         lastRefreshedCharacterId = int.MinValue;
         pendingRefreshCharacter = null;
+        CurrentCharacter = null;
         refreshScheduled = false;
     }
 

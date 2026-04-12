@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(CanvasGroup))]
@@ -26,36 +27,52 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     }
 
     [Header("UI References")]
+    [FormerlySerializedAs("title")]
     [SerializeField] private TextMeshProUGUI titleText;
+    [FormerlySerializedAs("description")]
     [SerializeField] private TextMeshProUGUI descriptionText;
+    [FormerlySerializedAs("type")]
     [SerializeField] private TextMeshProUGUI typeText;
+    [FormerlySerializedAs("requirements")]
     [SerializeField] private TextMeshProUGUI requirementsText;
+    [FormerlySerializedAs("image")]
     [SerializeField] private Image cardArtImage;
+    [FormerlySerializedAs("borderImage")]
     [SerializeField] private Image cardBackgroundImage;
+    [FormerlySerializedAs("disabledReasonHover")]
     [SerializeField] private Image highlightImage;
+    [FormerlySerializedAs("button")]
     [SerializeField] private GameObject playIndicator;
+    [FormerlySerializedAs("discardButton")]
     [SerializeField] private GameObject shadowObject;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject dragProxyPrefab;
 
     [Header("Tuning")]
+    [FormerlySerializedAs("HoverScaleMultiplier")]
     [SerializeField] private float hoverScale = 1.15f;
     [SerializeField] private float hoverSpeed = 10f;
+    [SerializeField] private float hoverLiftMultiplier = 0.5f;
     [SerializeField] private float dragAlpha = 0.6f;
     [SerializeField] private float playDropThresholdY = 200f;
 
     public CardData cardData { get; private set; }
 
     private CanvasGroup canvasGroup;
+    private Canvas dragCanvas;
+    private LayoutElement layoutElement;
     private RectTransform rectTransform;
     private Vector3 originalScale = Vector3.one;
     private Vector3 targetScale = Vector3.one;
+    private Vector2 originalAnchoredPosition = Vector2.zero;
+    private bool hoverPositionAdjusted;
     private bool isHovered;
     private bool isDragging;
     private GameObject dragProxy;
     private int originalSiblingIndex;
     private Transform originalParent;
+    private SelectedCharacterIcon selectedCharacterIcon;
 
     private static Illustrations illustrations;
     private static DeckManager deckManager;
@@ -69,16 +86,55 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
         canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
         canvasGroup.alpha = 1f;
+
+        dragCanvas = GetComponent<Canvas>();
+        if (dragCanvas == null)
+        {
+            dragCanvas = gameObject.AddComponent<Canvas>();
+        }
+        dragCanvas.overrideSorting = false;
+        dragCanvas.sortingOrder = 0;
+
+        layoutElement = GetComponent<LayoutElement>();
+        if (layoutElement == null)
+        {
+            layoutElement = gameObject.AddComponent<LayoutElement>();
+        }
+        layoutElement.ignoreLayout = false;
 
         rectTransform = GetComponent<RectTransform>();
         originalScale = rectTransform.localScale;
         targetScale = originalScale;
+        originalAnchoredPosition = rectTransform.anchoredPosition;
+
+        BindLegacyPrefabReferences();
 
         if (highlightImage != null) highlightImage.enabled = false;
         if (playIndicator != null) playIndicator.SetActive(false);
 
         activeCards.Add(this);
+    }
+
+    private void OnEnable()
+    {
+        if (canvasGroup != null)
+        {
+            canvasGroup.blocksRaycasts = true;
+            canvasGroup.interactable = true;
+        }
+
+        if (layoutElement == null)
+        {
+            layoutElement = GetComponent<LayoutElement>();
+        }
+        if (layoutElement != null)
+        {
+            layoutElement.ignoreLayout = false;
+        }
+
+        BindLegacyPrefabReferences();
     }
 
     private void OnDestroy()
@@ -102,6 +158,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         cardData = data;
         EnsureManagersLoaded();
+        BindLegacyPrefabReferences();
 
         if (titleText != null) titleText.text = data.name;
         if (typeText != null) typeText.text = data.type?.ToUpper();
@@ -116,14 +173,96 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             requirementsText.text = BuildRequirementsText(data);
         }
 
-        if (cardArtImage != null && !string.IsNullOrWhiteSpace(data.spriteName))
+        if (cardArtImage != null)
         {
-            Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(data.spriteName) : null;
+            Sprite sprite = ResolveCardArtwork(data);
             cardArtImage.sprite = sprite;
             cardArtImage.enabled = sprite != null;
         }
 
         UpdateInteractableState();
+    }
+
+    private Sprite ResolveCardArtwork(CardData data)
+    {
+        if (data == null || illustrations == null) return null;
+
+        string[] candidates =
+        {
+            data.spriteName,
+            data.portraitName,
+            data.name,
+            data.actionClassName,
+            data.action
+        };
+
+        foreach (string candidate in candidates)
+        {
+            if (string.IsNullOrWhiteSpace(candidate)) continue;
+            if (illustrations.TryGetIllustrationByName(candidate, out Sprite sprite))
+            {
+                return sprite;
+            }
+        }
+
+        return null;
+    }
+
+    private void BindLegacyPrefabReferences()
+    {
+        if (titleText == null) titleText = FindTextByName("Title");
+        if (descriptionText == null) descriptionText = FindTextByName("Description");
+        if (typeText == null) typeText = FindTextByName("Type (1)") ?? FindTextByName("Type");
+        if (requirementsText == null) requirementsText = FindTextByName("Requirements");
+
+        if (cardArtImage == null) cardArtImage = FindImageByName("Image");
+        if (cardBackgroundImage == null) cardBackgroundImage = FindImageByName("Border");
+        if (highlightImage == null) highlightImage = FindImageByName("TitleBackground");
+
+        if (playIndicator == null) playIndicator = FindChildByName("Discard");
+        if (shadowObject == null) shadowObject = FindChildByName("Hover");
+    }
+
+    private TextMeshProUGUI FindTextByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        TextMeshProUGUI[] texts = GetComponentsInChildren<TextMeshProUGUI>(true);
+        for (int i = 0; i < texts.Length; i++)
+        {
+            if (texts[i] != null && string.Equals(texts[i].gameObject.name, name, StringComparison.OrdinalIgnoreCase))
+            {
+                return texts[i];
+            }
+        }
+        return null;
+    }
+
+    private Image FindImageByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        Image[] images = GetComponentsInChildren<Image>(true);
+        for (int i = 0; i < images.Length; i++)
+        {
+            if (images[i] != null && string.Equals(images[i].gameObject.name, name, StringComparison.OrdinalIgnoreCase))
+            {
+                return images[i];
+            }
+        }
+        return null;
+    }
+
+    private GameObject FindChildByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        Transform[] children = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (children[i] != null && string.Equals(children[i].name, name, StringComparison.OrdinalIgnoreCase))
+            {
+                return children[i].gameObject;
+            }
+        }
+        return null;
     }
 
     private string GetActionDescription(CardData data)
@@ -135,13 +274,13 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             StringBuilder sb = new();
             List<string> grants = new();
-            if (data.leatherGranted > 0) grants.Add(RepeatSprite("leather", data.leatherGranted));
-            if (data.timberGranted > 0) grants.Add(RepeatSprite("timber", data.timberGranted));
-            if (data.mountsGranted > 0) grants.Add(RepeatSprite("mounts", data.mountsGranted));
-            if (data.ironGranted > 0) grants.Add(RepeatSprite("iron", data.ironGranted));
-            if (data.steelGranted > 0) grants.Add(RepeatSprite("steel", data.steelGranted));
-            if (data.mithrilGranted > 0) grants.Add(RepeatSprite("mithril", data.mithrilGranted));
-            if (data.goldGranted > 0) grants.Add(RepeatSprite("gold", data.goldGranted));
+            if (data.leatherGranted > 0) grants.Add(FormatRequirementToken("leather", data.leatherGranted));
+            if (data.timberGranted > 0) grants.Add(FormatRequirementToken("timber", data.timberGranted));
+            if (data.mountsGranted > 0) grants.Add(FormatRequirementToken("mounts", data.mountsGranted));
+            if (data.ironGranted > 0) grants.Add(FormatRequirementToken("iron", data.ironGranted));
+            if (data.steelGranted > 0) grants.Add(FormatRequirementToken("steel", data.steelGranted));
+            if (data.mithrilGranted > 0) grants.Add(FormatRequirementToken("mithril", data.mithrilGranted));
+            if (data.goldGranted > 0) grants.Add(FormatRequirementToken("gold", data.goldGranted));
 
             if (!string.IsNullOrWhiteSpace(data.region))
             {
@@ -167,39 +306,49 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return action != null ? action.GetDescriptionForCard() : string.Empty;
     }
 
-    private string RepeatSprite(string spriteName, int count)
-    {
-        StringBuilder sb = new();
-        for (int i = 0; i < count; i++)
-        {
-            sb.Append($"<sprite name=\"{spriteName}\">");
-        }
-        return sb.ToString();
-    }
-
     private string BuildRequirementsText(CardData data)
     {
         if (data == null) return string.Empty;
-        if (!string.IsNullOrWhiteSpace(data.requirementsText)) return data.requirementsText;
-
         List<string> reqs = new();
 
-        if (data.commanderSkillRequired > 0) reqs.Add($"<sprite name=\"commander\"> {data.commanderSkillRequired}");
-        if (data.agentSkillRequired > 0) reqs.Add($"<sprite name=\"agent\"> {data.agentSkillRequired}");
-        if (data.emissarySkillRequired > 0) reqs.Add($"<sprite name=\"emmissary\"> {data.emissarySkillRequired}");
-        if (data.mageSkillRequired > 0) reqs.Add($"<sprite name=\"mage\"> {data.mageSkillRequired}");
+        AppendRequirement(reqs, "commander", data.commanderSkillRequired);
+        AppendRequirement(reqs, "agent", data.agentSkillRequired);
+        AppendRequirement(reqs, "emmissary", data.emissarySkillRequired);
+        AppendRequirement(reqs, "mage", data.mageSkillRequired);
 
         int totalGold = data.GetTotalGoldCost();
-        if (totalGold > 0) reqs.Add($"<sprite name=\"gold\"> {totalGold}");
+        AppendRequirement(reqs, "gold", totalGold);
 
-        if (data.leatherRequired > 0) reqs.Add($"<sprite name=\"leather\"> {data.leatherRequired}");
-        if (data.timberRequired > 0) reqs.Add($"<sprite name=\"timber\"> {data.timberRequired}");
-        if (data.mountsRequired > 0) reqs.Add($"<sprite name=\"mounts\"> {data.mountsRequired}");
-        if (data.ironRequired > 0) reqs.Add($"<sprite name=\"iron\"> {data.ironRequired}");
-        if (data.steelRequired > 0) reqs.Add($"<sprite name=\"steel\"> {data.steelRequired}");
-        if (data.mithrilRequired > 0) reqs.Add($"<sprite name=\"mithril\"> {data.mithrilRequired}");
+        AppendRequirement(reqs, "leather", data.leatherRequired);
+        AppendRequirement(reqs, "timber", data.timberRequired);
+        AppendRequirement(reqs, "mounts", data.mountsRequired);
+        AppendRequirement(reqs, "iron", data.ironRequired);
+        AppendRequirement(reqs, "steel", data.steelRequired);
+        AppendRequirement(reqs, "mithril", data.mithrilRequired);
 
-        return string.Join("  ", reqs);
+        if (data.GetCardType() == CardTypeEnum.PC)
+        {
+            AppendRequirement(reqs, "gold", 10);
+            reqs.Add("OR");
+            AppendRequirement(reqs, "commander", 2);
+            reqs.Add("OR");
+            AppendRequirement(reqs, "emmissary", 1);
+        }
+
+        if (reqs.Count == 0) return string.Empty;
+        return $"<mark=#ffff00>{string.Join(" ", reqs)}</mark>";
+    }
+
+    private void AppendRequirement(List<string> requirements, string spriteName, int count)
+    {
+        if (requirements == null || string.IsNullOrWhiteSpace(spriteName) || count <= 0) return;
+        requirements.Add(FormatRequirementToken(spriteName, count));
+    }
+
+    private string FormatRequirementToken(string spriteName, int count)
+    {
+        if (string.IsNullOrWhiteSpace(spriteName) || count <= 0) return string.Empty;
+        return $"{count}<sprite name=\"{spriteName}\">";
     }
 
     public void UpdateInteractableState()
@@ -237,8 +386,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (isDragging) return;
         isHovered = true;
         targetScale = originalScale * hoverScale;
-        originalSiblingIndex = transform.GetSiblingIndex();
-        transform.SetAsLastSibling();
+        AdjustHoverPosition(true);
         if (highlightImage != null && cardData != null && cardData.isPlayable) highlightImage.enabled = true;
         Sounds.Instance?.PlayUiHover();
     }
@@ -248,7 +396,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (isDragging) return;
         isHovered = false;
         targetScale = originalScale;
-        transform.SetSiblingIndex(originalSiblingIndex);
+        AdjustHoverPosition(false);
         if (highlightImage != null) highlightImage.enabled = false;
     }
 
@@ -264,10 +412,26 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (cardData == null) return;
+        if (canvasGroup != null && !canvasGroup.interactable) return;
 
         isDragging = true;
+        isHovered = false;
+        targetScale = originalScale;
+        rectTransform.localScale = originalScale;
+        AdjustHoverPosition(false);
         originalParent = transform.parent;
         originalSiblingIndex = transform.GetSiblingIndex();
+
+        if (layoutElement != null)
+        {
+            layoutElement.ignoreLayout = true;
+        }
+
+        if (dragCanvas != null)
+        {
+            dragCanvas.overrideSorting = true;
+            dragCanvas.sortingOrder = 5000;
+        }
 
         canvasGroup.alpha = dragAlpha;
         canvasGroup.blocksRaycasts = false;
@@ -275,7 +439,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (shadowObject != null) shadowObject.SetActive(true);
         if (playIndicator != null) playIndicator.SetActive(true);
 
-        transform.SetParent(transform.root, true);
+        rectTransform.SetAsLastSibling();
+        UpdateSelectedCharacterDragHint(eventData);
         Sounds.Instance?.PlayUiHover();
     }
 
@@ -285,8 +450,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         transform.position = eventData.position;
 
         // Visual feedback if dragged high enough to "play"
-        bool overPlayArea = eventData.position.y > (Screen.height * 0.3f);
+        bool overPlayArea = eventData.position.y > playDropThresholdY;
         if (playIndicator != null) playIndicator.SetActive(overPlayArea);
+        UpdateSelectedCharacterDragHint(eventData);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -299,28 +465,117 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (shadowObject != null) shadowObject.SetActive(false);
         if (playIndicator != null) playIndicator.SetActive(false);
+        if (selectedCharacterIcon != null)
+        {
+            selectedCharacterIcon.SetDropTargetHighlight(false);
+            selectedCharacterIcon = null;
+        }
 
-        bool overPlayArea = eventData.position.y > (Screen.height * 0.3f);
+        bool overPlayArea = eventData.position.y > playDropThresholdY;
+        bool overSelectedCharacter = IsPointerOverSelectedCharacterIcon(eventData);
 
-        if (overPlayArea)
+        if (layoutElement != null)
+        {
+            layoutElement.ignoreLayout = false;
+        }
+        if (dragCanvas != null)
+        {
+            dragCanvas.overrideSorting = false;
+            dragCanvas.sortingOrder = 0;
+        }
+
+        if (overPlayArea || overSelectedCharacter)
         {
             TryPlayCard();
         }
         else
         {
-            // Return to hand
-            transform.SetParent(originalParent, true);
             transform.SetSiblingIndex(originalSiblingIndex);
             targetScale = originalScale;
+            AdjustHoverPosition(false);
+            if (originalParent is RectTransform parentRect)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
+            }
         }
+    }
+
+    private void UpdateSelectedCharacterDragHint(PointerEventData eventData)
+    {
+        if (eventData == null)
+        {
+            return;
+        }
+
+        SelectedCharacterIcon icon = FindFirstObjectByType<SelectedCharacterIcon>();
+        if (icon == null)
+        {
+            if (selectedCharacterIcon != null)
+            {
+                selectedCharacterIcon.SetDropTargetHighlight(false);
+                selectedCharacterIcon = null;
+            }
+            return;
+        }
+
+        if (selectedCharacterIcon != icon)
+        {
+            if (selectedCharacterIcon != null)
+            {
+                selectedCharacterIcon.SetDropTargetHighlight(false);
+            }
+            selectedCharacterIcon = icon;
+            selectedCharacterIcon.SetDropTargetHighlight(true);
+        }
+
+        RectTransform iconRect = selectedCharacterIcon.transform as RectTransform;
+        if (iconRect == null)
+        {
+            selectedCharacterIcon.SetDropTargetProximity(0f, false);
+            return;
+        }
+
+        Vector2 iconCenter = RectTransformUtility.WorldToScreenPoint(eventData.pressEventCamera, iconRect.position);
+        float distance = Vector2.Distance(eventData.position, iconCenter);
+        float radius = Mathf.Max(iconRect.rect.width, iconRect.rect.height) * 0.7f;
+        float proximity = 1f - Mathf.Clamp01(distance / Mathf.Max(1f, radius));
+        bool locked = RectTransformUtility.RectangleContainsScreenPoint(iconRect, eventData.position, eventData.pressEventCamera);
+        selectedCharacterIcon.SetDropTargetProximity(proximity, locked);
+        if (locked)
+        {
+            transform.position = iconRect.position;
+        }
+    }
+
+    private bool IsPointerOverSelectedCharacterIcon(PointerEventData eventData)
+    {
+        if (EventSystem.current == null || eventData == null) return false;
+
+        List<RaycastResult> results = new();
+        EventSystem.current.RaycastAll(eventData, results);
+        for (int i = 0; i < results.Count; i++)
+        {
+            GameObject hitObject = results[i].gameObject;
+            if (hitObject == null) continue;
+            if (hitObject.GetComponentInParent<SelectedCharacterIcon>() != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private async void TryPlayCard()
     {
         if (cardData == null) return;
+        if (canvasGroup != null && !canvasGroup.interactable) return;
 
         Board board = FindFirstObjectByType<Board>();
-        Character selected = board != null ? board.selectedCharacter : null;
+        SelectedCharacterIcon icon = selectedCharacterIcon != null ? selectedCharacterIcon : FindFirstObjectByType<SelectedCharacterIcon>();
+        Character selected = icon != null && icon.CurrentCharacter != null
+            ? icon.CurrentCharacter
+            : board != null ? board.selectedCharacter : null;
 
         if (!cardData.EvaluatePlayability(selected))
         {
@@ -335,10 +590,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             case CardTypeEnum.Action:
             case CardTypeEnum.Event:
-            case CardTypeEnum.Encounter:
             case CardTypeEnum.Land:
             case CardTypeEnum.PC:
                 success = await HandleActionCardPlayed(selected);
+                break;
+            case CardTypeEnum.Encounter:
+                success = await HandleEncounterCardPlayed(selected);
                 break;
             case CardTypeEnum.Character:
                 success = await HandleCharacterCardPlayed(selected);
@@ -350,19 +607,50 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (success)
         {
+            TutorialManager.Instance?.HandleCardPlayed(selected, cardData, selected != null ? selected.hex : null);
             // Card was successfully played, it will be removed from hand by the manager
             Destroy(gameObject);
         }
         else
         {
             // Failed to play (e.g. cancelled target selection), return to hand
+            if (layoutElement != null)
+            {
+                layoutElement.ignoreLayout = false;
+            }
+            if (dragCanvas != null)
+            {
+                dragCanvas.overrideSorting = false;
+                dragCanvas.sortingOrder = 0;
+            }
             if (transform.parent != originalParent)
             {
-                transform.SetParent(originalParent, true);
-                transform.SetSiblingIndex(originalSiblingIndex);
+                transform.SetParent(originalParent, false);
             }
+            transform.SetSiblingIndex(originalSiblingIndex);
             targetScale = originalScale;
+            AdjustHoverPosition(false);
             UpdateInteractableState();
+        }
+    }
+
+    private void AdjustHoverPosition(bool hovered)
+    {
+        if (rectTransform == null) return;
+
+        if (hovered)
+        {
+            if (hoverPositionAdjusted) return;
+            originalAnchoredPosition = rectTransform.anchoredPosition;
+            float lift = rectTransform.rect.height * Mathf.Max(0f, hoverScale - 1f) * hoverLiftMultiplier;
+            rectTransform.anchoredPosition = originalAnchoredPosition + Vector2.up * lift;
+            hoverPositionAdjusted = true;
+        }
+        else
+        {
+            if (!hoverPositionAdjusted) return;
+            rectTransform.anchoredPosition = originalAnchoredPosition;
+            hoverPositionAdjusted = false;
         }
     }
 
@@ -426,16 +714,37 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return true;
     }
 
-    private async Task<bool> HandleCharacterCardPlayed(Character selected)
+    private async Task<bool> HandleEncounterCardPlayed(Character selected)
+    {
+        Game game = FindFirstObjectByType<Game>();
+        PlayableLeader playerLeader = game != null ? game.player : null;
+        if (playerLeader == null) return false;
+
+        bool drawReplacementCard = !TutorialManager.Instance.IsActiveFor(playerLeader);
+        if (!deckManager.TryConsumeCard(playerLeader, cardData.name, drawReplacementCard, out _))
+        {
+            return false;
+        }
+
+        bool resolved = await EncounterResolver.ResolveAsync(cardData, selected);
+        if (!resolved)
+        {
+            deckManager.TryReturnCardToHand(playerLeader, cardData.name);
+        }
+
+        return resolved;
+    }
+
+    private Task<bool> HandleCharacterCardPlayed(Character selected)
     {
         // Character cards usually represent recruiting a specific character
         // This might involve showing a recruitment UI or spawning them at a capital
-        return false;
+        return Task.FromResult(false);
     }
 
-    private async Task<bool> HandleArmyCardPlayed(Character selected)
+    private Task<bool> HandleArmyCardPlayed(Character selected)
     {
         // Army cards represent mustering troops
-        return false;
+        return Task.FromResult(false);
     }
 }

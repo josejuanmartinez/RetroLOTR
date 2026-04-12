@@ -24,7 +24,6 @@ public class SelectionDialog : MonoBehaviour
 
     private readonly List<DialogRequest> queuedRequests = new();
     private readonly List<TMP_Dropdown.OptionData> dropdownOptions = new();
-    private int activeIndex = -1;
     private DialogRequest activeRequest;
     private GameObject optionDescriptionPanel;
 
@@ -388,7 +387,6 @@ public class SelectionDialog : MonoBehaviour
             queuedRequests[i]?.tcs?.TrySetResult(string.Empty);
         }
         queuedRequests.Clear();
-        activeIndex = -1;
         activeRequest = null;
         HideInstant();
     }
@@ -525,7 +523,7 @@ public class SelectionDialog : MonoBehaviour
         optionDescriptionLabel.fontSizeMax = 14f;
         optionDescriptionLabel.color = Color.white;
         optionDescriptionLabel.alignment = TextAlignmentOptions.TopLeft;
-        optionDescriptionLabel.enableWordWrapping = true;
+        optionDescriptionLabel.textWrappingMode = TextWrappingModes.Normal;
         optionDescriptionLabel.raycastTarget = false;
         optionDescriptionLabel.text = string.Empty;
 

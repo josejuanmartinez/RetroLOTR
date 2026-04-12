@@ -395,7 +395,7 @@ public class MessageDisplayNoUI : MonoBehaviour
 
         textMesh.alignment = TextAlignmentOptions.Center;
         textMesh.overflowMode = TextOverflowModes.Overflow;
-        textMesh.enableWordWrapping = false;
+        textMesh.textWrappingMode = TextWrappingModes.NoWrap;
         textMesh.horizontalAlignment = HorizontalAlignmentOptions.Center;
         textMesh.verticalAlignment = VerticalAlignmentOptions.Middle;
 
@@ -437,7 +437,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         if (targetText == null) return;
         targetText.alignment = TextAlignmentOptions.Center;
         targetText.overflowMode = TextOverflowModes.Overflow;
-        targetText.enableWordWrapping = false;
+        targetText.textWrappingMode = TextWrappingModes.NoWrap;
         targetText.horizontalAlignment = HorizontalAlignmentOptions.Center;
         targetText.verticalAlignment = VerticalAlignmentOptions.Middle;
     }
