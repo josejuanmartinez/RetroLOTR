@@ -150,7 +150,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         }
     }
 
-    public static void ShowAnchoredMessage(Hex hex, string message, Color? color = null)
+    public static void ShowAnchoredMessage(Hex hex, string message, Color? color = null, bool forceDisplay = false)
     {
         if (instance == null || hex == null || hex.gameObject == null) return;
 
@@ -158,7 +158,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         Color resolved = color ?? Color.white;
         Vector3 worldPos = hex.gameObject.transform.position;
 
-        instance.messageQueue.Enqueue(new MessageData(hex, formattedMessage, worldPos, resolved));
+        instance.messageQueue.Enqueue(new MessageData(hex, formattedMessage, worldPos, resolved, false, forceDisplay));
         if (!instance.isDisplayingMessage)
         {
             instance.ProcessNextMessage();
@@ -247,7 +247,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         while (messageQueue.Count > 0)
         {
             var next = messageQueue.Dequeue();
-            if (next.Hex != null && ShouldSkipMessageHex(next.Hex))
+            if (next.Hex != null && !next.ForceDisplay && ShouldSkipMessageHex(next.Hex))
             {
                 if (next.RequiresFocus)
                 {
@@ -260,7 +260,7 @@ public class MessageDisplayNoUI : MonoBehaviour
                 StartCoroutine(DisplayCoroutine(next));
                 return;
             }
-            if (CanDisplayNow(next.Hex))
+            if (next.ForceDisplay || CanDisplayNow(next.Hex))
             {
                 StartCoroutine(DisplayCoroutine(next));
                 return;
@@ -647,14 +647,16 @@ public class MessageDisplayNoUI : MonoBehaviour
         public Vector3 WorldPos { get; }
         public Color TextColor { get; }
         public bool RequiresFocus { get; }
+        public bool ForceDisplay { get; }
 
-        public MessageData(Hex hex, string message, Vector3 worldPos, Color textColor, bool requiresFocus = false)
+        public MessageData(Hex hex, string message, Vector3 worldPos, Color textColor, bool requiresFocus = false, bool forceDisplay = false)
         {
             Hex = hex;
             Message = message;
             WorldPos = worldPos;
             TextColor = textColor;
             RequiresFocus = requiresFocus;
+            ForceDisplay = forceDisplay;
         }
     }
 

@@ -37,21 +37,9 @@ public class SelectionDialog : MonoBehaviour
 
         Instance = this;
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        BindUiReferences();
         EnsureOptionDescriptionUi();
-
-        if (noButton != null)
-        {
-            noButton.onClick.AddListener(() => Resolve(GetSelectedOptionText()));
-        }
-        if (dropdown != null)
-        {
-            dropdown.onValueChanged.AddListener(_ =>
-            {
-                UpdateCloseButtonState();
-                UpdateCaptionColor();
-                UpdateOptionDescription();
-            });
-        }
+        WireUiListeners();
 
         DontDestroyOnLoad(gameObject);
         HideInstant();
@@ -111,6 +99,8 @@ public class SelectionDialog : MonoBehaviour
 
     private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, bool useEventIcon, string dialogTitle = null)
     {
+        BindUiReferences();
+        WireUiListeners();
         if (options.Count < 1)
         {
             Debug.LogWarning("Unable to show Selection Dialog: options < 1");
@@ -184,6 +174,11 @@ public class SelectionDialog : MonoBehaviour
         ShowInternal(request);
     }
 
+    public void CloseCurrentSelection()
+    {
+        Resolve(GetSelectedOptionText());
+    }
+
     private string GetSelectedOptionText()
     {
         if (dropdown == null || activeRequest == null || !HasValidSelection())
@@ -239,6 +234,8 @@ public class SelectionDialog : MonoBehaviour
     {
         if (request == null) return;
         DebugLogHierarchyState("ShowInternal before");
+        BindUiReferences();
+        WireUiListeners();
         content.SetActive(true);
         EnsureDialogHierarchyActive();
         IsShowing = true;
@@ -372,6 +369,26 @@ public class SelectionDialog : MonoBehaviour
         public TaskCompletionSource<string> tcs;
     }
 
+    private sealed class CloseButtonFallback : MonoBehaviour, IPointerClickHandler
+    {
+        private SelectionDialog dialog;
+
+        public void Bind(SelectionDialog owner)
+        {
+            dialog = owner;
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData == null || eventData.button != PointerEventData.InputButton.Left)
+            {
+                return;
+            }
+
+            dialog?.CloseCurrentSelection();
+        }
+    }
+
     public static void CloseAll()
     {
         if (Instance == null) return;
@@ -418,6 +435,104 @@ public class SelectionDialog : MonoBehaviour
         {
             noButton.interactable = HasValidSelection();
         }
+    }
+
+    private void BindUiReferences()
+    {
+        if (content == null)
+        {
+            content = FindDialogChild("Content");
+        }
+
+        if (messageLabel == null)
+        {
+            messageLabel = FindTextChild("Text");
+        }
+
+        if (noButton == null)
+        {
+            GameObject closeButton = FindDialogChild("CloseButton") ?? FindDialogChild("NoButton");
+            if (closeButton != null)
+            {
+                noButton = closeButton.GetComponent<Button>();
+            }
+        }
+
+        if (dropdown == null)
+        {
+            GameObject dropdownObject = FindDialogChild("Dropdown");
+            if (dropdownObject != null)
+            {
+                dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
+            }
+        }
+
+        if (portraitImage == null)
+        {
+            GameObject portraitObject = FindDialogChild("CharacterImage");
+            if (portraitObject != null)
+            {
+                portraitImage = portraitObject.GetComponent<Image>();
+            }
+        }
+
+        if (portraitCanvasGroup == null)
+        {
+            GameObject portraitBg = FindDialogChild("CharacterImageBg");
+            if (portraitBg != null)
+            {
+                portraitCanvasGroup = portraitBg.GetComponent<CanvasGroup>();
+            }
+        }
+
+        if (title == null)
+        {
+            title = FindTextChild("Title");
+        }
+
+        if (illustrations == null)
+        {
+            illustrations = FindFirstObjectByType<Illustrations>();
+        }
+    }
+
+    private void WireUiListeners()
+    {
+        if (noButton != null)
+        {
+            noButton.onClick.RemoveAllListeners();
+            noButton.onClick.AddListener(CloseCurrentSelection);
+            EnsureCloseButtonFallback(noButton.gameObject);
+        }
+
+        if (dropdown != null)
+        {
+            dropdown.onValueChanged.RemoveAllListeners();
+            dropdown.onValueChanged.AddListener(_ =>
+            {
+                UpdateCloseButtonState();
+                UpdateCaptionColor();
+                UpdateOptionDescription();
+            });
+        }
+    }
+
+    private void EnsureCloseButtonFallback(GameObject closeButtonObject)
+    {
+        if (closeButtonObject == null) return;
+
+        CloseButtonFallback fallback = closeButtonObject.GetComponent<CloseButtonFallback>();
+        if (fallback == null)
+        {
+            fallback = closeButtonObject.AddComponent<CloseButtonFallback>();
+        }
+        fallback.Bind(this);
+    }
+
+    private TextMeshProUGUI FindTextChild(string name)
+    {
+        GameObject child = FindDialogChild(name);
+        return child != null ? child.GetComponent<TextMeshProUGUI>() : null;
     }
 
     private void UpdateCaptionColor()

@@ -6,6 +6,8 @@ public class CharacterSpriteHover : MonoBehaviour
     private SelectedCharacterIcon selectedIcon;
     private Board board;
     private bool isPreviewing;
+    private Character previewedCharacter;
+    private Hex previewedHex;
 
     private void Awake()
     {
@@ -23,14 +25,65 @@ public class CharacterSpriteHover : MonoBehaviour
         if (!hex.TryGetPreviewTextForCharacter(character, out string hoverText)) return;
 
         isPreviewing = true;
+        previewedCharacter = character;
+        previewedHex = hex;
         bool isScouted = hex.IsScouted();
         selectedIcon.RefreshHoverPreview(character, hoverText, isScouted, isScouted);
     }
 
+    private void Update()
+    {
+        if (!isPreviewing)
+        {
+            return;
+        }
+
+        ValidatePreviewStillValid();
+    }
+
     private void OnMouseExit()
     {
-        if (!isPreviewing) return;
+        ClearPreview();
+    }
+
+    private void OnDisable()
+    {
+        ClearPreview();
+    }
+
+    private void ValidatePreviewStillValid()
+    {
+        if (previewedHex == null || previewedHex.characterSpriteRenderer == null)
+        {
+            ClearPreview();
+            return;
+        }
+
+        if (previewedCharacter == null || previewedCharacter.hex != previewedHex)
+        {
+            ClearPreview();
+            return;
+        }
+
+        if (previewedHex.characterSpriteRenderer.sprite == null ||
+            previewedHex.characterSpriteRenderer.sprite == previewedHex.defaultCharacterSprite ||
+            !previewedHex.TryGetKnownCharacterForIcon(out Character currentCharacter) ||
+            currentCharacter != previewedCharacter)
+        {
+            ClearPreview();
+        }
+    }
+
+    private void ClearPreview()
+    {
+        if (!isPreviewing && selectedIcon == null)
+        {
+            return;
+        }
+
         isPreviewing = false;
+        previewedCharacter = null;
+        previewedHex = null;
 
         if (selectedIcon == null)
         {

@@ -208,19 +208,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5586476855214437397}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1682724068773898877}
-        m_TargetAssemblyTypeName: CharacterIcon, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2525474390236163543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,13 +222,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Evenjt
   storySprite: {fileID: 7853132098695014882, guid: 516df1a4f714ff24ca3fe6a3ec739f39, type: 3}
-  tutorialSprite: {fileID: 5492358153915054038, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
-  yesnoPopupSprite: {fileID: 674226514, guid: b86de0d27e1876a4fbb0aa8ef39c74bb, type: 3}
-  multichoiceSprite: {fileID: -8944875674436814800, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
-  encounterSprite: {fileID: 902240045765890844, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
-  hexMessageSprite: {fileID: 488885547, guid: 516df1a4f714ff24ca3fe6a3ec739f39, type: 3}
-  eventImage: {fileID: 2471115857228804780}
-  characterImage: {fileID: 5586476855214437397}
+  tutorialSprite: {fileID: 18342226, guid: 516df1a4f714ff24ca3fe6a3ec739f39, type: 3}
+  yesnoPopupSprite: {fileID: -3013262675473050049, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
+  multichoiceSprite: {fileID: -3013262675473050049, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
+  encounterSprite: {fileID: 5823903394605040648, guid: 516df1a4f714ff24ca3fe6a3ec739f39, type: 3}
+  hexMessageSprite: {fileID: 674226514, guid: b86de0d27e1876a4fbb0aa8ef39c74bb, type: 3}
+  discoverySprite: {fileID: -316423695, guid: b86de0d27e1876a4fbb0aa8ef39c74bb, type: 3}
 --- !u!1 &7153351280082059876
 GameObject:
   m_ObjectHideFlags: 0

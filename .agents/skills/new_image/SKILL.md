@@ -1,11 +1,11 @@
 ---
 name: new-image
-description: Create new RetroLOTR card art images in a square format and in a retro ink/old-printer black-and-white style. Use when Codex needs to generate any new game image (especially action/spell images), using 2-3 lightweight style references from `Assets/Art/References/CardStyle`, then postprocess with the black&white (bw-postprocess) skill and save to the correct Assets/Art/Cards subfolder by image type.
+description: Create new RetroLOTR card art images in a square format and in a retro painted fantasy style. Use when Codex needs to generate any new game image (especially action/spell images), using 2-3 lightweight style references from `Assets/Art/References/CardStyle` and saving to the correct Assets/Art/Cards subfolder by image type.
 ---
 
 # New Image
 
-Create new game images that match the existing RetroLOTR card style.
+Create new game images that match the existing RetroLOTR color card style.
 
 ## Workflow
 1. Determine image type from the request using `CardTypeEnum` from `Assets/Scripts/Cards/CardTypeEnum.cs` (`Action`, `Event`, `Land`, `PC`, `Character`, `Army`, `Rest`, `Encounter`, `Spell`).
@@ -14,9 +14,8 @@ Create new game images that match the existing RetroLOTR card style.
 4. Generate a square image (`1:1`, recommended `512x512`) using model `gpt-image-1.5`.
 5. If the active image-generation path supports binary image references, send only the curated preview copies from `Assets/Art/References/CardStyle`.
 6. If the active path does not support binary image references, use those same files only as prompt anchors and report that honestly.
-7. Enforce style direction in the prompt: black and white, ink drawing, old printer texture, retro sword-and-sorcery, Conan / MERPG / classic D&D vibe.
-8. Run the result through the `black&white` skill (`bw-postprocess`) to convert to strict pure black/white output (`0/255`).
-9. Save the final image to the correct folder in `Assets/Art/Cards`.
+7. Enforce style direction in the prompt: late-1970s hand-painted cel-animation fantasy, bold ink outlines, flat-to-soft cel shading, painterly watercolor-like backgrounds, moody magical lighting, aged film texture, and a retro illustrated fantasy atmosphere.
+8. Save the final image to the correct folder in `Assets/Art/Cards`.
 
 ## Random Reference Selection
 Use this command to select 3 curated references:
@@ -40,10 +39,12 @@ Get-ChildItem "Assets/Art/References/CardStyle" -File |
 Include all of the following constraints in the image-generation prompt:
 - clearly describe what the image is about (subject, action, setting, mood, and key visual details)
 - square composition, centered focal subject, card-art readability
-- monochrome ink illustration
-- high-contrast linework, cross-hatching, stipple/shading like vintage print
-- gritty retro fantasy tone (Conan / MERPG / classic D&D module art)
-- no modern UI elements, no text overlays, no logos, no color accents
+- late-1970s hand-painted cel-animation fantasy style like vintage animated Lord of the Rings
+- simplified hand-drawn shapes with expressive slightly cartooned anatomy
+- bold dark ink outlines with flat-to-soft cel shading
+- painterly watercolor-like backgrounds and moody magical lighting
+- varied scene-appropriate colors; avoid a flat sepia or uniformly brown cast
+- no modern UI elements, no text overlays, no logos, no extra characters
 
 If there is not enough information to write a good prompt, ask the user for missing details before generating the image.
 
@@ -82,7 +83,6 @@ Prefer `.png` for new outputs unless the user requests another format.
 
 ## Final Checks
 - Image is square (`width == height`).
-- Final output is pure black and white after `bw-postprocess`.
 - File path matches the intended card category.
 - Reference images came from `Assets/Art/References/CardStyle`, not from the final asset folder.
 

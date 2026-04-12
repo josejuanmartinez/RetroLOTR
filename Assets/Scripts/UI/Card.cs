@@ -69,6 +69,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private bool hoverPositionAdjusted;
     private bool isHovered;
     private bool isDragging;
+    private bool hoverSortingRaised;
     private GameObject dragProxy;
     private int originalSiblingIndex;
     private Transform originalParent;
@@ -135,6 +136,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         BindLegacyPrefabReferences();
+        if (cardData != null)
+        {
+            UpdateInteractableState();
+        }
     }
 
     private void OnDestroy()
@@ -326,13 +331,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         AppendRequirement(reqs, "steel", data.steelRequired);
         AppendRequirement(reqs, "mithril", data.mithrilRequired);
 
-        if (data.GetCardType() == CardTypeEnum.PC)
+        if (data.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(data.region))
         {
-            AppendRequirement(reqs, "gold", 10);
-            reqs.Add("OR");
-            AppendRequirement(reqs, "commander", 2);
-            reqs.Add("OR");
-            AppendRequirement(reqs, "emmissary", 1);
+            reqs.Add($"{data.region} required");
         }
 
         if (reqs.Count == 0) return string.Empty;
@@ -363,8 +364,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (canvasGroup != null)
         {
             canvasGroup.alpha = isPlayable ? 1f : 0.5f;
-            // For now, let's keep it interactable so they can see why it's not playable
-            canvasGroup.interactable = true;
+            canvasGroup.interactable = isPlayable;
+            canvasGroup.blocksRaycasts = true;
         }
 
         if (highlightImage != null)
@@ -385,6 +386,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (isDragging) return;
         isHovered = true;
+        SetHoverSorting(true);
         targetScale = originalScale * hoverScale;
         AdjustHoverPosition(true);
         if (highlightImage != null && cardData != null && cardData.isPlayable) highlightImage.enabled = true;
@@ -397,12 +399,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         isHovered = false;
         targetScale = originalScale;
         AdjustHoverPosition(false);
+        SetHoverSorting(false);
         if (highlightImage != null) highlightImage.enabled = false;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         if (isDragging) return;
+        if (canvasGroup != null && !canvasGroup.interactable) return;
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             TryPlayCard();
@@ -471,8 +475,13 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             selectedCharacterIcon = null;
         }
 
-        bool overPlayArea = eventData.position.y > playDropThresholdY;
         bool overSelectedCharacter = IsPointerOverSelectedCharacterIcon(eventData);
+        if (overSelectedCharacter)
+        {
+            SelectedCharacterIcon icon = selectedCharacterIcon != null ? selectedCharacterIcon : FindFirstObjectByType<SelectedCharacterIcon>();
+            RectTransform iconRect = icon != null ? icon.transform as RectTransform : null;
+            SnapToSelectedCharacterIcon(iconRect);
+        }
 
         if (layoutElement != null)
         {
@@ -484,19 +493,22 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             dragCanvas.sortingOrder = 0;
         }
 
-        if (overPlayArea || overSelectedCharacter)
+        if (isHovered)
+        {
+            SetHoverSorting(true);
+        }
+        else
+        {
+            SetHoverSorting(false);
+        }
+
+        if (overSelectedCharacter)
         {
             TryPlayCard();
         }
         else
         {
-            transform.SetSiblingIndex(originalSiblingIndex);
-            targetScale = originalScale;
-            AdjustHoverPosition(false);
-            if (originalParent is RectTransform parentRect)
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
-            }
+            RestoreCardToHandLayout();
         }
     }
 
@@ -535,7 +547,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return;
         }
 
-        Vector2 iconCenter = RectTransformUtility.WorldToScreenPoint(eventData.pressEventCamera, iconRect.position);
+        Vector3 iconWorldCenter = iconRect.TransformPoint(iconRect.rect.center);
+        Vector2 iconCenter = RectTransformUtility.WorldToScreenPoint(eventData.pressEventCamera, iconWorldCenter);
         float distance = Vector2.Distance(eventData.position, iconCenter);
         float radius = Mathf.Max(iconRect.rect.width, iconRect.rect.height) * 0.7f;
         float proximity = 1f - Mathf.Clamp01(distance / Mathf.Max(1f, radius));
@@ -543,8 +556,57 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         selectedCharacterIcon.SetDropTargetProximity(proximity, locked);
         if (locked)
         {
-            transform.position = iconRect.position;
+            SnapToSelectedCharacterIcon(iconRect);
         }
+    }
+
+    private void SnapToSelectedCharacterIcon(RectTransform iconRect)
+    {
+        if (rectTransform == null || iconRect == null) return;
+
+        Vector3 worldCenter = iconRect.TransformPoint(iconRect.rect.center);
+        rectTransform.position = worldCenter;
+        rectTransform.localScale = originalScale;
+    }
+
+    private void RestoreCardToHandLayout()
+    {
+        if (rectTransform == null) return;
+
+        if (transform.parent != originalParent && originalParent != null)
+        {
+            transform.SetParent(originalParent, false);
+        }
+
+        if (layoutElement != null)
+        {
+            layoutElement.ignoreLayout = false;
+        }
+
+        rectTransform.localScale = originalScale;
+        rectTransform.anchoredPosition = originalAnchoredPosition;
+        transform.SetSiblingIndex(originalSiblingIndex);
+        targetScale = originalScale;
+        AdjustHoverPosition(false);
+
+        if (originalParent is RectTransform parentRect)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
+        }
+
+        UpdateInteractableState();
+    }
+
+    private void SetHoverSorting(bool active)
+    {
+        if (dragCanvas == null || isDragging)
+        {
+            return;
+        }
+
+        hoverSortingRaised = active;
+        dragCanvas.overrideSorting = active;
+        dragCanvas.sortingOrder = active ? 1000 : 0;
     }
 
     private bool IsPointerOverSelectedCharacterIcon(PointerEventData eventData)
@@ -576,15 +638,17 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         Character selected = icon != null && icon.CurrentCharacter != null
             ? icon.CurrentCharacter
             : board != null ? board.selectedCharacter : null;
+        CardData playedCard = cardData;
+        Character playedSelected = selected;
 
-        if (!cardData.EvaluatePlayability(selected))
+        if (!playedCard.EvaluatePlayability(playedSelected))
         {
             ShowWhyNotPlayable();
             return;
         }
 
         bool success = false;
-        CardTypeEnum cardType = cardData.GetCardType();
+        CardTypeEnum cardType = playedCard.GetCardType();
 
         switch (cardType)
         {
@@ -592,24 +656,32 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             case CardTypeEnum.Event:
             case CardTypeEnum.Land:
             case CardTypeEnum.PC:
-                success = await HandleActionCardPlayed(selected);
+                success = await HandleActionCardPlayed(playedSelected);
                 break;
             case CardTypeEnum.Encounter:
-                success = await HandleEncounterCardPlayed(selected);
+                success = await HandleEncounterCardPlayed(playedSelected);
                 break;
             case CardTypeEnum.Character:
-                success = await HandleCharacterCardPlayed(selected);
+                success = await HandleCharacterCardPlayed(playedSelected);
                 break;
             case CardTypeEnum.Army:
-                success = await HandleArmyCardPlayed(selected);
+                success = await HandleArmyCardPlayed(playedSelected);
                 break;
+        }
+
+        if (!this)
+        {
+            return;
         }
 
         if (success)
         {
-            TutorialManager.Instance?.HandleCardPlayed(selected, cardData, selected != null ? selected.hex : null);
+            TutorialManager.Instance?.HandleCardPlayed(playedSelected, playedCard, playedSelected != null ? playedSelected.hex : null);
             // Card was successfully played, it will be removed from hand by the manager
-            Destroy(gameObject);
+            if (gameObject != null)
+            {
+                Destroy(gameObject);
+            }
         }
         else
         {
@@ -626,6 +698,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (transform.parent != originalParent)
             {
                 transform.SetParent(originalParent, false);
+            }
+            if (rectTransform != null)
+            {
+                rectTransform.localScale = originalScale;
             }
             transform.SetSiblingIndex(originalSiblingIndex);
             targetScale = originalScale;

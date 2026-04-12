@@ -29,9 +29,11 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
     private bool discardable;
 
     private Image eventImage;
+    private Button button;
 
     private void Awake()
     {
+        button = GetComponent<Button>();
         if (eventImage == null)
         {
             Image[] images = GetComponentsInChildren<Image>(true);
@@ -43,6 +45,25 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
                     break;
                 }
             }
+        }
+
+        EnsureClickRouting();
+    }
+
+    private void EnsureClickRouting()
+    {
+        if (button != null)
+        {
+            button.interactable = true;
+            if (button.image != null)
+            {
+                button.image.raycastTarget = true;
+            }
+        }
+
+        if (eventImage != null)
+        {
+            eventImage.raycastTarget = true;
         }
     }
 
@@ -65,7 +86,11 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
 
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            onOpenAction?.Invoke();
+            HandleOpenClicked();
+            if (discardable)
+            {
+                ConsumeAndDestroy();
+            }
         }
 
         if (eventData.button == PointerEventData.InputButton.Right && discardable)
@@ -78,7 +103,13 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
     {
         onRemoveAction?.Invoke();
         onRemoveAction = null;
+        onOpenAction = null;
         Destroy(gameObject);
+    }
+
+    private void HandleOpenClicked()
+    {
+        onOpenAction?.Invoke();
     }
 
     private Sprite GetSprite(EventIconType type)

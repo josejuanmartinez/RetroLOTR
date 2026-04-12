@@ -39,6 +39,35 @@ public class EventIconsManager : MonoBehaviour
         GameObject iconInstance = Instantiate(eventIcon, parent);
         iconInstance.transform.SetAsLastSibling();
         iconInstance.transform.localScale = Vector3.one;
+
+        CanvasGroup canvasGroup = iconInstance.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = iconInstance.AddComponent<CanvasGroup>();
+        }
+        canvasGroup.alpha = 1f;
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+
+        Image rootImage = iconInstance.GetComponent<Image>();
+        if (rootImage == null)
+        {
+            rootImage = iconInstance.AddComponent<Image>();
+            rootImage.color = new Color(1f, 1f, 1f, 0.001f);
+            rootImage.raycastTarget = true;
+        }
+        else
+        {
+            rootImage.raycastTarget = true;
+        }
+
+        Button button = iconInstance.GetComponent<Button>();
+        if (button == null)
+        {
+            button = iconInstance.AddComponent<Button>();
+        }
+        button.targetGraphic = rootImage;
+
         EventIcon icon = iconInstance.GetComponent<EventIcon>();
         if (icon == null)
         {

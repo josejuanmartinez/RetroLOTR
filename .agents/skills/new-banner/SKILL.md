@@ -13,7 +13,7 @@ Create new banner sprite art that matches the existing RetroLOTR heraldic banner
 3. Generate a new portrait banner sprite using model `gpt-image-1.5`.
 4. If the active image-generation path supports binary image references, send only the curated preview copies from `Assets/Art/References/BannerStyle`.
 5. If the active path is the CLI fallback, do not claim binary references were sent. The CLI `generate` path does not accept them, so use the curated preview files only as prompt anchors and report that honestly.
-6. Match the existing banner family: heraldic fantasy emblem, strong silhouette, readable at small size, limited palette, aged fabric or painted-standard feel, transparent background if supported by the workflow.
+6. Match the existing banner family: heraldic fantasy emblem, strong silhouette, readable at small size, hand-painted retro fantasy feel, moody lighting, and a limited but vibrant palette, with a transparent background if supported by the workflow.
 7. Save the final banner as a standalone PNG under `Assets/Art/UI/Alignment/Banners/<banner_name>.png`.
 8. If the repo expects normal illustration lookup or Addressables registration for new UI art, run the usual import/addressables sync flow after saving.
 
@@ -60,6 +60,9 @@ Include all of the following in the image-generation prompt:
 - portrait banner sprite composition
 - clean transparent or isolated background
 - readable emblem for game UI usage
+- late-1970s hand-painted cel-animation fantasy style like vintage animated Lord of the Rings
+- bold dark ink outlines, flat-to-soft cel shading, painterly texture, and aged film grain
+- retro illustrated fantasy atmosphere with varied scene-appropriate colors
 - retro fantasy heraldry matching the existing `Assets/Art/UI/Alignment/Banners` set
 
 If the request does not provide enough detail for a distinctive banner, infer from nearby game data when possible. Only ask the user if the missing design choice would materially change the result.

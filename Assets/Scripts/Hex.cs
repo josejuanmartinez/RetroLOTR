@@ -347,7 +347,7 @@ public class Hex : MonoBehaviour
             for (int i = 0, n = characters.Count; i < n; i++)
             {
                 Character candidate = characters[i];
-                if (candidate == null || candidate.killed) continue;
+                if (candidate == null || candidate.killed || candidate.hex != this) continue;
                 known = candidate;
                 return true;
             }
@@ -356,7 +356,7 @@ public class Hex : MonoBehaviour
         for (int i = 0, n = characters.Count; i < n; i++)
         {
             Character candidate = characters[i];
-            if (candidate == null || candidate.killed) continue;
+            if (candidate == null || candidate.killed || candidate.hex != this) continue;
             if (IsFriendlyCharacter(candidate, player))
             {
                 known = candidate;
@@ -367,7 +367,7 @@ public class Hex : MonoBehaviour
         for (int i = 0, n = characters.Count; i < n; i++)
         {
             Character candidate = characters[i];
-            if (candidate == null || candidate.killed) continue;
+            if (candidate == null || candidate.killed || candidate.hex != this) continue;
             if (candidate.IsArmyCommander())
             {
                 known = candidate;
@@ -381,7 +381,7 @@ public class Hex : MonoBehaviour
     public bool TryGetPreviewTextForCharacter(Character character, out string text)
     {
         text = null;
-        if (character == null) return false;
+        if (character == null || character.hex != this) return false;
         PlayableLeader viewer = GetPlayer();
         bool canSee = IsScouted(viewer) || IsFriendlyCharacter(character, viewer);
         bool isSeen = IsHexSeen();
@@ -519,6 +519,10 @@ public class Hex : MonoBehaviour
         for (int i = 0, n = characters.Count; i < n; i++)
         {
             var ch = characters[i];
+            if (ch == null || ch.killed || ch.hex != this)
+            {
+                continue;
+            }
             bool isFriendly = IsFriendlyCharacter(ch, viewer);
             bool canSeeNonCommander = isScouted || isFriendly;
             bool canSeeCommander = canSeeNonCommander || viewerHasCharacter || seen;
@@ -580,14 +584,13 @@ public class Hex : MonoBehaviour
                     if (!unkCharsShown) { sbChars.Append(Unknown).Append('\n'); unkCharsShown = true; }
                 }
             }
-            
-
-            // Trim a trailing newline if present
-            if (charactersAtHexHover != null) charactersAtHexHover.Initialize(sbChars.ToString().TrimEnd('\n'), tooltipFontSize);
-            if (freeArmiesAtHexHover != null) freeArmiesAtHexHover.Initialize(sbFree.ToString().TrimEnd('\n'), tooltipFontSize);
-            if (darkServantArmiesAtHexHover != null) darkServantArmiesAtHexHover.Initialize(sbDark.ToString().TrimEnd('\n'), tooltipFontSize);
-            if (neutralArmiesAtHexHover != null) neutralArmiesAtHexHover.Initialize(sbNeutral.ToString().TrimEnd('\n'), tooltipFontSize);
         }
+
+        // Trim trailing newlines and always push an explicit refresh, even when the hex is empty.
+        if (charactersAtHexHover != null) charactersAtHexHover.Initialize(sbChars.ToString().TrimEnd('\n'), tooltipFontSize);
+        if (freeArmiesAtHexHover != null) freeArmiesAtHexHover.Initialize(sbFree.ToString().TrimEnd('\n'), tooltipFontSize);
+        if (darkServantArmiesAtHexHover != null) darkServantArmiesAtHexHover.Initialize(sbDark.ToString().TrimEnd('\n'), tooltipFontSize);
+        if (neutralArmiesAtHexHover != null) neutralArmiesAtHexHover.Initialize(sbNeutral.ToString().TrimEnd('\n'), tooltipFontSize);
     }
 
 

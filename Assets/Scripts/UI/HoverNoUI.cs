@@ -23,9 +23,25 @@ public class HoverNoUI : MonoBehaviour
         tooltipPanel.SetActive(false);
     }
 
+    private void OnDisable()
+    {
+        HideTooltip();
+    }
+
+    private void OnDestroy()
+    {
+        HideTooltip();
+    }
+
     void Update()
     {
         if (rayCamera == null) rayCamera = Camera.main;
+
+        if (textWidget == null || string.IsNullOrWhiteSpace(textWidget.text))
+        {
+            HideTooltip();
+            return;
+        }
 
         bool isHovering = IsMouseOverThis();
         // if (isHovering) Debug.Log($"Hovering over {gameObject.transform.parent.name}->{transform.name}");
@@ -55,10 +71,32 @@ public class HoverNoUI : MonoBehaviour
     public void Initialize(string text, float fontSize = 2f)
     {
         bool textNull = string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text);
-        string markStartStr = mark && !textNull? markStart:"";
-        string markEndStr = mark && !textNull? markEnd:"";
+        if (textWidget == null)
+        {
+            HideTooltip();
+            return;
+        }
+
+        if (textNull)
+        {
+            textWidget.text = string.Empty;
+            HideTooltip();
+            return;
+        }
+
+        string markStartStr = mark ? markStart : "";
+        string markEndStr = mark ? markEnd : "";
         textWidget.text = $"{markStartStr}{text}{markEndStr}";
         textWidget.fontSize = fontSize;
+    }
+
+    public void HideTooltip()
+    {
+        wasHovering = false;
+        if (tooltipPanel != null)
+        {
+            tooltipPanel.SetActive(false);
+        }
     }
 
     private bool IsMouseOverThis()

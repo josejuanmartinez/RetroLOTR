@@ -269,7 +269,7 @@ public class CardData
         if (string.IsNullOrWhiteSpace(region)) return true;
         if (playableLeader.HasPlayedLandCardForRegion(region)) return true;
 
-        reason = $"Play the Land card for {region} first.";
+        reason = $"{region} required.";
         return false;
     }
 }
@@ -428,6 +428,10 @@ public class DeckManager : MonoBehaviour
         if (game.competitors != null) leaders.AddRange(game.competitors.Where(x => x != null));
 
         InitializeHands(leaders);
+        if (game.player != null)
+        {
+            EnsureTutorialHandForPlayer(game.player);
+        }
         RefreshHumanPlayerHandUI();
         return true;
     }
@@ -665,11 +669,11 @@ public class DeckManager : MonoBehaviour
         {
             case CardTypeEnum.Land:
                 revealedPcHexes = RevealRegionOnMapOnly(board, card.name);
-                revealMessage = $"Lands of {card.name}";
+                revealMessage = $"The lands of {card.name} were revealed";
                 break;
             case CardTypeEnum.PC:
                 revealedPcHexes = RevealPcOnMapOnly(board, card.name);
-                revealMessage = $"Lands of {card.region}";
+                revealMessage = $"The lands of {card.region} were revealed";
                 break;
         }
 
@@ -784,7 +788,6 @@ public class DeckManager : MonoBehaviour
 
             Game game = FindFirstObjectByType<Game>();
             if (game == null || game.player == null) return;
-            EnsureTutorialHandForPlayer(game.player);
             if (!playerDecks.TryGetValue(game.player, out PlayerDeckState state) || state.hand == null) return;
 
             foreach (CardData card in state.hand)
@@ -1124,32 +1127,31 @@ public class DeckManager : MonoBehaviour
 
         EventIconsManager iconsManager = EventIconsManager.FindManager();
         BoardNavigator navigator = BoardNavigator.Instance != null ? BoardNavigator.Instance : FindFirstObjectByType<BoardNavigator>();
-        foreach (Hex hex in revealedPcHexes.Distinct())
-        {
-            if (hex == null) continue;
-            string revealText = string.IsNullOrWhiteSpace(message) ? "Lands revealed" : message;
+        Hex anchorHex = revealedPcHexes.FirstOrDefault(hex => hex != null);
+        if (anchorHex == null) return;
 
-            if (iconsManager != null)
-            {
-                iconsManager.AddEventIcon(
-                    EventIconType.HexMessage,
-                    true,
-                    () =>
-                    {
-                        MessageDisplayNoUI.ShowAnchoredMessage(hex, revealText, Color.yellow);
-                    });
-            }
-            else if (navigator != null)
-            {
-                navigator.EnqueueFocus(hex, 0.35f, 0.18f, true, () =>
+        string revealText = string.IsNullOrWhiteSpace(message) ? "The lands were revealed" : message;
+
+        if (iconsManager != null)
+        {
+            iconsManager.AddEventIcon(
+                EventIconType.HexMessage,
+                true,
+                () =>
                 {
-                    MessageDisplayNoUI.ShowAnchoredMessage(hex, revealText, Color.yellow);
+                    MessageDisplay.ShowMessage(revealText, Color.yellow);
                 });
-            }
-            else
+        }
+        else if (navigator != null)
+        {
+            navigator.EnqueueFocus(anchorHex, 0.35f, 0.18f, true, () =>
             {
-                MessageDisplayNoUI.ShowAnchoredMessage(hex, revealText, Color.yellow);
-            }
+                MessageDisplay.ShowMessage(revealText, Color.yellow);
+            });
+        }
+        else
+        {
+            MessageDisplay.ShowMessage(revealText, Color.yellow);
         }
     }
 
