@@ -172,9 +172,7 @@ public class TutorialManager : MonoBehaviour
 
         GrantAllBiomeTutorialArtifacts(leader);
         MarkAiTutorialCompleteForAllLeaders();
-        RestorePostTutorialHand();
-        MoveStartingCharactersToCapitalsForAllLeaders();
-        SyncCharacterControlFlags();
+        FinalizeSkippedTutorialSetup();
 
         requiredStepIndex = GetRequiredSteps().Count;
         activeFlow = null;
@@ -320,7 +318,7 @@ public class TutorialManager : MonoBehaviour
         requiredStepIndex++;
         if (IsCompleted())
         {
-            RestorePostTutorialHand();
+            FinalizeTutorialSetup();
             return;
         }
         ActivateCurrentRequiredStep();
@@ -395,6 +393,22 @@ public class TutorialManager : MonoBehaviour
         deckManager.RestoreStandardHandAfterTutorial(leader, 5);
     }
 
+    private void FinalizeTutorialSetup()
+    {
+        ClaimTutorialStateAllegiancePcs();
+        RestorePostTutorialHand();
+        MoveStartingCharactersToCapitalsForAllLeaders();
+        SyncCharacterControlFlags();
+    }
+
+    private void FinalizeSkippedTutorialSetup()
+    {
+        ClaimPlayerCapitalPc();
+        RestorePostTutorialHand();
+        MovePlayerCharactersToCapital();
+        SyncCharacterControlFlags();
+    }
+
     public void RefreshObjectiveUI()
     {
         if (tutorialSkipped || skipApplied)
@@ -427,6 +441,25 @@ public class TutorialManager : MonoBehaviour
         string title = baseTitle;
         string text = string.IsNullOrWhiteSpace(step.narration) ? step.description : step.narration;
         PopupManager.Show(title, actor1, actor2, text, true);
+    }
+
+    private void ClaimTutorialStateAllegiancePcs()
+    {
+        if (leader == null || activeFlow?.steps == null) return;
+
+        foreach (TutorialStep step in activeFlow.steps.Where(s => s != null && s.required))
+        {
+            if (!string.Equals(ResolveRequiredActionRef(step, leader), "StateAllegiance", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            Hex targetHex = ResolveTargetHex(step);
+            PC targetPc = targetHex?.GetPCData();
+            if (targetPc == null || targetPc.owner != null) continue;
+
+            targetPc.ClaimUnowned(leader);
+        }
     }
 
     private bool StepMatchesAction(TutorialStep step, Character actor, string actionClassName, Hex actionHex)
@@ -1398,6 +1431,36 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    private void MovePlayerCharactersToCapital()
+    {
+        if (leader == null) return;
+        Hex capitalHex = ResolveCapitalHex(leader);
+        if (capitalHex == null) return;
+
+        List<Character> owned = leader.controlledCharacters;
+        if (owned == null || owned.Count == 0) return;
+
+        for (int i = 0; i < owned.Count; i++)
+        {
+            Character character = owned[i];
+            if (character == null || character.killed) continue;
+            if (character.hex == capitalHex) continue;
+            TeleportCharacterToHex(character, capitalHex);
+        }
+    }
+
+    private void ClaimPlayerCapitalPc()
+    {
+        if (leader == null) return;
+        Hex capitalHex = FindCapitalHexForLeader(leader);
+        if (capitalHex == null) return;
+
+        PC capitalPc = capitalHex.GetPCData();
+        if (capitalPc == null || capitalPc.owner != null) return;
+
+        capitalPc.ClaimUnowned(leader);
+    }
+
     private static void MoveStartingCharactersToCapital(Leader targetLeader)
     {
         if (targetLeader == null || targetLeader.killed) return;
@@ -1424,14 +1487,23 @@ public class TutorialManager : MonoBehaviour
         PC capital = targetLeader.controlledPcs?.FirstOrDefault(pc => pc != null && pc.isCapital && pc.hex != null);
         if (capital != null) return capital.hex;
 
+        return FindCapitalHexForLeader(targetLeader);
+    }
+
+    private static Hex FindCapitalHexForLeader(Leader targetLeader)
+    {
+        if (targetLeader == null) return null;
+
         Board board = FindFirstObjectByType<Board>();
         if (board?.hexes == null) return null;
 
+        string capitalName = targetLeader.GetBiome()?.startingCityName;
         foreach (Hex hex in board.hexes.Values)
         {
             if (hex == null) continue;
             PC pc = hex.GetPCData();
-            if (pc == null || !pc.isCapital || pc.owner != targetLeader) continue;
+            if (pc == null || !pc.isCapital) continue;
+            if (!string.IsNullOrWhiteSpace(capitalName) && !string.Equals(pc.pcName, capitalName, StringComparison.OrdinalIgnoreCase)) continue;
             return hex;
         }
 

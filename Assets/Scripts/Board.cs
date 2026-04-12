@@ -31,6 +31,7 @@ public class Board : MonoBehaviour
     public bool moving = false;
     [SerializeField] private SpriteRenderer characterMoverImage;
     [SerializeField] private SpriteRenderer characterMoverBackground;
+    [SerializeField] private SpriteRenderer characterBannerMoverImage;
     [SerializeField] private SpriteRenderer freeArmyMoverImage;
     [SerializeField] private SpriteRenderer darkServantsMoverImage;
     [SerializeField] private SpriteRenderer neutralMoverImage;
@@ -550,40 +551,47 @@ public class Board : MonoBehaviour
     Vector3 endBg,
     float duration,
     Camera followCam = null,
-    AnimationCurve ease = null)
+    AnimationCurve ease = null,
+    SpriteRenderer appearanceFromSR = null,
+    SpriteRenderer appearanceFromBgSR = null,
+    Sprite appearanceFromSprite = null)
     {
+        SpriteRenderer sourceSR = appearanceFromSR != null ? appearanceFromSR : fromSR;
+        SpriteRenderer sourceBgSR = appearanceFromBgSR != null ? appearanceFromBgSR : fromBgSR;
+        Sprite sourceSprite = appearanceFromSprite != null ? appearanceFromSprite : sourceSR.sprite;
+
         // Copy look
-        moverSR.sprite = fromSR.sprite;
-        moverSR.color = fromSR.color;
-        moverSR.flipX = fromSR.flipX;
-        moverSR.flipY = fromSR.flipY;
-        moverSR.sharedMaterial = fromSR.sharedMaterial;
-        CopyPropertyBlock(fromSR, moverSR);
-        if (moverBgSR != null && fromBgSR != null)
+        moverSR.sprite = sourceSprite;
+        moverSR.color = sourceSR.color;
+        moverSR.flipX = sourceSR.flipX;
+        moverSR.flipY = sourceSR.flipY;
+        moverSR.sharedMaterial = sourceSR.sharedMaterial;
+        CopyPropertyBlock(sourceSR, moverSR);
+        if (moverBgSR != null && sourceBgSR != null)
         {
-            moverBgSR.sprite = fromBgSR.sprite;
-            moverBgSR.color = fromBgSR.color;
-            moverBgSR.flipX = fromBgSR.flipX;
-            moverBgSR.flipY = fromBgSR.flipY;
-            moverBgSR.sharedMaterial = fromBgSR.sharedMaterial;
-            CopyPropertyBlock(fromBgSR, moverBgSR);
+            moverBgSR.sprite = sourceBgSR.sprite;
+            moverBgSR.color = sourceBgSR.color;
+            moverBgSR.flipX = sourceBgSR.flipX;
+            moverBgSR.flipY = sourceBgSR.flipY;
+            moverBgSR.sharedMaterial = sourceBgSR.sharedMaterial;
+            CopyPropertyBlock(sourceBgSR, moverBgSR);
         }
 
         // Make sure mover appears above board
         moverSR.sortingLayerID = fromSR.sortingLayerID;
         moverSR.sortingOrder = fromSR.sortingOrder + 100;
-        if (moverBgSR != null && fromBgSR != null)
+        if (moverBgSR != null && sourceBgSR != null)
         {
-            moverBgSR.sortingLayerID = fromBgSR.sortingLayerID;
-            moverBgSR.sortingOrder = fromBgSR.sortingOrder + 99;
+            moverBgSR.sortingLayerID = sourceBgSR.sortingLayerID;
+            moverBgSR.sortingOrder = sourceBgSR.sortingOrder + 99;
         }
 
-        moverSR.transform.localScale = GetLocalScaleForWorldScale(moverSR.transform, GetDesiredWorldScale(fromSR, moverSR));
-        moverSR.transform.rotation = fromSR.transform.rotation;
-        if (moverBgSR != null && fromBgSR != null)
+        moverSR.transform.localScale = GetLocalScaleForWorldScale(moverSR.transform, GetDesiredWorldScale(sourceSR, moverSR));
+        moverSR.transform.rotation = sourceSR.transform.rotation;
+        if (moverBgSR != null && sourceBgSR != null)
         {
-            moverBgSR.transform.localScale = GetLocalScaleForWorldScale(moverBgSR.transform, GetDesiredWorldScale(fromBgSR, moverBgSR));
-            moverBgSR.transform.rotation = fromBgSR.transform.rotation;
+            moverBgSR.transform.localScale = GetLocalScaleForWorldScale(moverBgSR.transform, GetDesiredWorldScale(sourceBgSR, moverBgSR));
+            moverBgSR.transform.rotation = sourceBgSR.transform.rotation;
         }
 
         // Hide the static icons during tween so you don't see the destination early
@@ -666,6 +674,9 @@ public class Board : MonoBehaviour
     SpriteRenderer fromCharBgSR,
     SpriteRenderer toCharBgSR,
     SpriteRenderer moverCharBgSR,
+    SpriteRenderer fromBannerSR,
+    SpriteRenderer toBannerSR,
+    SpriteRenderer moverBannerSR,
     SpriteRenderer fromArmySR,
     SpriteRenderer toArmySR,
     SpriteRenderer moverArmySR,
@@ -683,45 +694,69 @@ public class Board : MonoBehaviour
     bool hideStaticPort,
     float duration,
     Camera followCam = null,
-    AnimationCurve ease = null)
+    AnimationCurve ease = null,
+    SpriteRenderer appearanceFromCharSR = null,
+    SpriteRenderer appearanceFromCharBgSR = null,
+    SpriteRenderer appearanceFromBannerSR = null,
+    Sprite appearanceFromCharSprite = null,
+    Vector3 appearanceFromBannerOffset = default)
     {
         bool useChar = moverCharSR != null && fromCharSR != null;
         bool useArmy = moverArmySR != null && fromArmySR != null;
         bool usePort = moverPortSR != null && fromPortSR != null;
+        SpriteRenderer sourceCharSR = appearanceFromCharSR != null ? appearanceFromCharSR : fromCharSR;
+        SpriteRenderer sourceCharBgSR = appearanceFromCharBgSR != null ? appearanceFromCharBgSR : fromCharBgSR;
+        SpriteRenderer sourceBannerSR = appearanceFromBannerSR != null ? appearanceFromBannerSR : fromBannerSR;
+        Sprite sourceCharSprite = appearanceFromCharSprite != null ? appearanceFromCharSprite : sourceCharSR.sprite;
+        bool useBanner = moverBannerSR != null && sourceBannerSR != null && sourceBannerSR.sprite != null;
 
         if (useChar)
         {
-            moverCharSR.sprite = fromCharSR.sprite;
-            moverCharSR.color = fromCharSR.color;
-            moverCharSR.flipX = fromCharSR.flipX;
-            moverCharSR.flipY = fromCharSR.flipY;
-            moverCharSR.sharedMaterial = fromCharSR.sharedMaterial;
-            CopyPropertyBlock(fromCharSR, moverCharSR);
-            if (moverCharBgSR != null && fromCharBgSR != null)
+            moverCharSR.sprite = sourceCharSprite;
+            moverCharSR.color = sourceCharSR.color;
+            moverCharSR.flipX = sourceCharSR.flipX;
+            moverCharSR.flipY = sourceCharSR.flipY;
+            moverCharSR.sharedMaterial = sourceCharSR.sharedMaterial;
+            CopyPropertyBlock(sourceCharSR, moverCharSR);
+            if (moverCharBgSR != null && sourceCharBgSR != null)
             {
-                moverCharBgSR.sprite = fromCharBgSR.sprite;
-                moverCharBgSR.color = fromCharBgSR.color;
-                moverCharBgSR.flipX = fromCharBgSR.flipX;
-                moverCharBgSR.flipY = fromCharBgSR.flipY;
-                moverCharBgSR.sharedMaterial = fromCharBgSR.sharedMaterial;
-                CopyPropertyBlock(fromCharBgSR, moverCharBgSR);
+                moverCharBgSR.sprite = sourceCharBgSR.sprite;
+                moverCharBgSR.color = sourceCharBgSR.color;
+                moverCharBgSR.flipX = sourceCharBgSR.flipX;
+                moverCharBgSR.flipY = sourceCharBgSR.flipY;
+                moverCharBgSR.sharedMaterial = sourceCharBgSR.sharedMaterial;
+                CopyPropertyBlock(sourceCharBgSR, moverCharBgSR);
             }
 
             moverCharSR.sortingLayerID = fromCharSR.sortingLayerID;
             moverCharSR.sortingOrder = fromCharSR.sortingOrder + 100;
-            if (moverCharBgSR != null && fromCharBgSR != null)
+            if (moverCharBgSR != null && sourceCharBgSR != null)
             {
-                moverCharBgSR.sortingLayerID = fromCharBgSR.sortingLayerID;
-                moverCharBgSR.sortingOrder = fromCharBgSR.sortingOrder + 99;
+                moverCharBgSR.sortingLayerID = sourceCharBgSR.sortingLayerID;
+                moverCharBgSR.sortingOrder = sourceCharBgSR.sortingOrder + 99;
             }
 
-            moverCharSR.transform.localScale = GetLocalScaleForWorldScale(moverCharSR.transform, GetDesiredWorldScale(fromCharSR, moverCharSR));
-            moverCharSR.transform.rotation = fromCharSR.transform.rotation;
-            if (moverCharBgSR != null && fromCharBgSR != null)
+            moverCharSR.transform.localScale = GetLocalScaleForWorldScale(moverCharSR.transform, GetDesiredWorldScale(sourceCharSR, moverCharSR));
+            moverCharSR.transform.rotation = sourceCharSR.transform.rotation;
+            if (moverCharBgSR != null && sourceCharBgSR != null)
             {
-                moverCharBgSR.transform.localScale = GetLocalScaleForWorldScale(moverCharBgSR.transform, GetDesiredWorldScale(fromCharBgSR, moverCharBgSR));
-                moverCharBgSR.transform.rotation = fromCharBgSR.transform.rotation;
+                moverCharBgSR.transform.localScale = GetLocalScaleForWorldScale(moverCharBgSR.transform, GetDesiredWorldScale(sourceCharBgSR, moverCharBgSR));
+                moverCharBgSR.transform.rotation = sourceCharBgSR.transform.rotation;
             }
+        }
+
+        if (useBanner)
+        {
+            moverBannerSR.sprite = sourceBannerSR.sprite;
+            moverBannerSR.color = sourceBannerSR.color;
+            moverBannerSR.flipX = sourceBannerSR.flipX;
+            moverBannerSR.flipY = sourceBannerSR.flipY;
+            moverBannerSR.sharedMaterial = sourceBannerSR.sharedMaterial;
+            CopyPropertyBlock(sourceBannerSR, moverBannerSR);
+            moverBannerSR.sortingLayerID = sourceBannerSR.sortingLayerID;
+            moverBannerSR.sortingOrder = sourceBannerSR.sortingOrder + 101;
+            moverBannerSR.transform.localScale = GetLocalScaleForWorldScale(moverBannerSR.transform, GetDesiredWorldScale(sourceBannerSR, moverBannerSR));
+            moverBannerSR.transform.rotation = sourceBannerSR.transform.rotation;
         }
 
         if (useArmy)
@@ -762,6 +797,11 @@ public class Board : MonoBehaviour
         if (toCharSR != null) toCharSR.enabled = false;
         if (fromCharBgSR != null) fromCharBgSR.enabled = false;
         if (toCharBgSR != null) toCharBgSR.enabled = false;
+
+        bool fromBannerPrevEnabled = fromBannerSR != null && fromBannerSR.enabled;
+        bool toBannerPrevEnabled = toBannerSR != null && toBannerSR.enabled;
+        if (fromBannerSR != null) fromBannerSR.enabled = false;
+        if (toBannerSR != null) toBannerSR.enabled = false;
 
         bool fromArmyPrevEnabled = fromArmySR != null && fromArmySR.enabled;
         bool toArmyPrevEnabled = toArmySR != null && toArmySR.enabled;
@@ -818,6 +858,16 @@ public class Board : MonoBehaviour
             moverPortSR.gameObject.SetActive(false);
         }
 
+        if (useBanner)
+        {
+            moverBannerSR.gameObject.SetActive(true);
+            moverBannerSR.transform.position = charStart + appearanceFromBannerOffset;
+        }
+        else if (moverBannerSR != null)
+        {
+            moverBannerSR.gameObject.SetActive(false);
+        }
+
         Vector3 camOffset = Vector3.zero;
         if (followCam != null)
         {
@@ -857,6 +907,11 @@ public class Board : MonoBehaviour
                 moverPortSR.transform.position = pos;
             }
 
+            if (useBanner)
+            {
+                moverBannerSR.transform.position = Vector3.Lerp(charStart, charEnd, e) + appearanceFromBannerOffset;
+            }
+
             if (followCam != null)
             {
                 Vector3 anchor = useChar ? moverCharSR.transform.position : moverArmySR.transform.position;
@@ -891,10 +946,18 @@ public class Board : MonoBehaviour
             moverPortSR.gameObject.SetActive(false);
         }
 
+        if (useBanner)
+        {
+            moverBannerSR.transform.position = charEnd + appearanceFromBannerOffset;
+            moverBannerSR.gameObject.SetActive(false);
+        }
+
         if (fromCharSR != null) fromCharSR.enabled = fromCharPrevEnabled;
         if (toCharSR != null) toCharSR.enabled = toCharPrevEnabled;
         if (fromCharBgSR != null) fromCharBgSR.enabled = fromCharBgPrevEnabled;
         if (toCharBgSR != null) toCharBgSR.enabled = toCharBgPrevEnabled;
+        if (fromBannerSR != null) fromBannerSR.enabled = fromBannerPrevEnabled;
+        if (toBannerSR != null) toBannerSR.enabled = toBannerPrevEnabled;
 
         if (fromArmySR != null) fromArmySR.enabled = fromArmyPrevEnabled;
         if (toArmySR != null) toArmySR.enabled = toArmyPrevEnabled;
@@ -1009,6 +1072,29 @@ public class Board : MonoBehaviour
         return portMoverImage;
     }
 
+    private SpriteRenderer EnsureCharacterBannerMover(SpriteRenderer mover)
+    {
+        if (mover == null) return null;
+        if (characterBannerMoverImage != null) return characterBannerMoverImage;
+
+        Transform parent = mover.transform.parent;
+        if (parent != null)
+        {
+            Transform existing = parent.Find("bannerMover");
+            if (existing != null)
+            {
+                characterBannerMoverImage = existing.GetComponent<SpriteRenderer>();
+                if (characterBannerMoverImage != null) return characterBannerMoverImage;
+            }
+        }
+
+        GameObject bannerMover = new("bannerMover");
+        bannerMover.transform.SetParent(mover.transform.parent, false);
+        characterBannerMoverImage = bannerMover.AddComponent<SpriteRenderer>();
+        characterBannerMoverImage.gameObject.SetActive(false);
+        return characterBannerMoverImage;
+    }
+
     private static float SafeDivide(float numerator, float denominator)
     {
         return Mathf.Abs(denominator) < 0.0001f ? numerator : numerator / denominator;
@@ -1052,6 +1138,23 @@ public class Board : MonoBehaviour
             }
         }
 
+        SpriteRenderer appearanceFromCharSR = null;
+        SpriteRenderer appearanceFromCharBgSR = null;
+        SpriteRenderer appearanceFromBannerSR = null;
+        Sprite appearanceFromCharSprite = null;
+        Vector3 appearanceBannerOffset = Vector3.zero;
+        if (path.Count > 0 && hexes.TryGetValue(path[0], out Hex initialHex))
+        {
+            appearanceFromCharSR = initialHex != null ? initialHex.GetCharacterSpriteRendererOnHex() : null;
+            appearanceFromCharBgSR = GetCharacterBackground(appearanceFromCharSR);
+            appearanceFromBannerSR = initialHex != null ? initialHex.bannerSpriteRenderer : null;
+            appearanceFromCharSprite = appearanceFromCharSR != null ? appearanceFromCharSR.sprite : null;
+            if (appearanceFromCharSR != null && appearanceFromBannerSR != null)
+            {
+                appearanceBannerOffset = appearanceFromBannerSR.transform.position - appearanceFromCharSR.transform.position;
+            }
+        }
+
         for (int i = 0; i < path.Count - 1; i++)
         {
             Hex previousHex = hexes[path[i]];
@@ -1064,6 +1167,9 @@ public class Board : MonoBehaviour
             SpriteRenderer fromBg = GetCharacterBackground(fromSR);
             SpriteRenderer toBg = GetCharacterBackground(toSR);
             SpriteRenderer moverBg = characterMoverSR == characterMoverImage ? EnsureMoverBackground(characterMoverSR) : null;
+            SpriteRenderer fromBannerSR = previousHex.bannerSpriteRenderer;
+            SpriteRenderer toBannerSR = newHex.bannerSpriteRenderer;
+            SpriteRenderer bannerMoverSR = character.IsArmyCommander() ? EnsureCharacterBannerMover(characterMoverSR) : null;
 
             SpriteRenderer fromArmySR = previousHex.GetArmySpriteRendererOnHex(character);
             SpriteRenderer toArmySR = newHex.GetArmySpriteRendererOnHex(character);
@@ -1090,12 +1196,12 @@ public class Board : MonoBehaviour
                     bool hasAny = (characterMoverSR != null && fromSR != null) || (armyMoverSR != null && fromArmySR != null);
                     if (hasAny)
                     {
-                        bool hasWarships = character.GetArmy() != null && character.GetArmy().ws > 0;
-                        bool fromWarshipPort = previousHex.ShouldShowWarshipPort();
-                        bool toWarshipPort = newHex.ShouldShowWarshipPort();
-                        bool hasPcPort = previousHex.HasPcPort() || newHex.HasPcPort();
-                        bool usePort = hasWarships && fromWarshipPort && toWarshipPort && !hasPcPort;
-                        SpriteRenderer portMover = usePort ? EnsurePortMover(characterMoverSR) : null;
+                    bool hasWarships = character.GetArmy() != null && character.GetArmy().ws > 0;
+                    bool fromWarshipPort = previousHex.ShouldShowWarshipPort();
+                    bool toWarshipPort = newHex.ShouldShowWarshipPort();
+                    bool hasPcPort = previousHex.HasPcPort() || newHex.HasPcPort();
+                    bool usePort = hasWarships && fromWarshipPort && toWarshipPort && !hasPcPort;
+                    SpriteRenderer portMover = usePort ? EnsurePortMover(characterMoverSR) : null;
 
                         tween = AnimateSpriteBetweenDual(
                             fromSR,
@@ -1104,6 +1210,9 @@ public class Board : MonoBehaviour
                             fromBg,
                             toBg,
                             moverBg,
+                            fromBannerSR,
+                            toBannerSR,
+                            bannerMoverSR,
                             fromArmySR,
                             toArmySR,
                             armyMoverSR,
@@ -1119,7 +1228,14 @@ public class Board : MonoBehaviour
                             startPortPos,
                             endPortPos,
                             usePort,
-                            0.35f);
+                            0.35f,
+                            null,
+                            null,
+                            appearanceFromCharSR,
+                            appearanceFromCharBgSR,
+                            appearanceFromBannerSR,
+                            appearanceFromCharSprite,
+                            appearanceBannerOffset);
                         canAnimate = true;
                     }
                 }
@@ -1128,7 +1244,7 @@ public class Board : MonoBehaviour
                     canAnimate = characterMoverSR != null && fromSR != null;
                     if (canAnimate)
                     {
-                        tween = AnimateSpriteBetween(fromSR, toSR, characterMoverSR, fromBg, toBg, moverBg, startPos, endPos, startBgPos, endBgPos, 0.35f);
+                        tween = AnimateSpriteBetween(fromSR, toSR, characterMoverSR, fromBg, toBg, moverBg, startPos, endPos, startBgPos, endBgPos, 0.35f, null, null, appearanceFromCharSR, appearanceFromCharBgSR, appearanceFromCharSprite);
                     }
                 }
             }

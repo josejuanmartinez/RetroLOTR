@@ -333,6 +333,12 @@ public class SelectedCharacterIcon : MonoBehaviour
         return illustrations != null ? illustrations.GetIllustrationByName(name) : null;
     }
 
+    private Sprite GetIllustrationByName(string name, bool logMissing)
+    {
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        return illustrations != null ? illustrations.GetIllustrationByName(name, logMissing) : null;
+    }
+
     // private VideoClip GetVideoByName(string name)
     // {
     //     if (videos == null) videos = FindFirstObjectByType<Videos>();
@@ -402,17 +408,17 @@ public class SelectedCharacterIcon : MonoBehaviour
 
         if (!string.IsNullOrWhiteSpace(c.lastPlayedCardSpriteNameThisTurn))
         {
-            playedSprite = GetIllustrationByName(c.lastPlayedCardSpriteNameThisTurn);
+            playedSprite = GetIllustrationByName(c.lastPlayedCardSpriteNameThisTurn, false);
         }
 
         if (playedSprite == null && !string.IsNullOrWhiteSpace(c.lastPlayedActionClassNameThisTurn))
         {
-            playedSprite = GetIllustrationByName(c.lastPlayedActionClassNameThisTurn);
+            playedSprite = GetPlayedCardIllustrationByActionName(c.lastPlayedActionClassNameThisTurn);
         }
 
         if (playedSprite == null && !string.IsNullOrWhiteSpace(c.lastPlayedActionNameThisTurn))
         {
-            playedSprite = GetIllustrationByName(c.lastPlayedActionNameThisTurn);
+            playedSprite = GetIllustrationByName(c.lastPlayedActionNameThisTurn, false);
         }
 
         if (playedSprite == null)
@@ -427,6 +433,22 @@ public class SelectedCharacterIcon : MonoBehaviour
             card.enabled = true;
         }
         SetPlayedCardVisible(true);
+    }
+
+    private Sprite GetPlayedCardIllustrationByActionName(string actionClassName)
+    {
+        if (string.IsNullOrWhiteSpace(actionClassName)) return null;
+
+        Sprite sprite = GetIllustrationByName(actionClassName, false);
+        if (sprite != null) return sprite;
+
+        if (!actionClassName.EndsWith("OrAction", System.StringComparison.OrdinalIgnoreCase))
+        {
+            sprite = GetIllustrationByName($"{actionClassName}OrAction", false);
+            if (sprite != null) return sprite;
+        }
+
+        return null;
     }
 
     private void SetPlayedCardVisible(bool visible)

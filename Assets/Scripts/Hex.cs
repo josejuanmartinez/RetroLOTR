@@ -52,8 +52,6 @@ public class Hex : MonoBehaviour
     public HoverNoUI neutralArmiesAtHexHover;
     public HoverNoUI darkServantArmiesAtHexHover;
     public HoverNoUI charactersAtHexHover;
-    public GameObject port;
-    public HoverNoUI portHover;
     public GameObject artifact;
     public HoverNoUI artifactHover;
 
@@ -302,24 +300,13 @@ public class Hex : MonoBehaviour
 
     public SpriteRenderer GetPortSpriteRenderer()
     {
-        return port != null ? port.GetComponent<SpriteRenderer>() : null;
+        return null;
     }
 
     public bool HasPcPort() => pc != null && pc.hasPort;
 
     public bool ShouldShowWarshipPort()
     {
-        if (!IsHexSeen()) return false;
-        if (anchoredWarshipsTotal > 0) return true;
-        bool validWarshipHex = IsWaterTerrain() || terrainType == TerrainEnum.shore || HasPcPort();
-        if (!validWarshipHex) return false;
-        for (int i = 0, n = characters.Count; i < n; i++)
-        {
-            var ch = characters[i];
-            if (ch == null || ch.killed || !ch.IsArmyCommander()) continue;
-            Army army = ch.GetArmy();
-            if (army != null && army.ws > 0) return true;
-        }
         return false;
     }
 
@@ -896,7 +883,6 @@ public class Hex : MonoBehaviour
     private void SetPcSpriteAlpha(float alpha)
     {
         SetSpriteAlpha(terrainTexture, alpha);
-        if (port != null && port.TryGetComponent<SpriteRenderer>(out var portSprite)) SetSpriteAlpha(portSprite, alpha);
     }
 
     private static void SetSpriteAlpha(SpriteRenderer sr, float alpha)
@@ -961,9 +947,6 @@ public class Hex : MonoBehaviour
             return;
         }
 
-        SetActiveFast(port, false);
-        if (portHover) SetActiveFast(portHover.gameObject, false);
-
         SetActiveFast(freeArmy, false);
         SetActiveFast(neutralArmy, false);
         SetActiveFast(darkArmy, false);
@@ -1007,42 +990,7 @@ public class Hex : MonoBehaviour
 
     private void UpdatePortIcon(bool? shouldShowPcOverride = null)
     {
-        bool showPcPort = (shouldShowPcOverride ?? ShouldShowPcPort()) && pc != null && pc.hasPort;
-        bool showWarshipPort = ShouldShowWarshipPort();
-        bool showPort = showPcPort || showWarshipPort;
-        SetActiveFast(port, showPort);
-        if (portHover) SetActiveFast(portHover.gameObject, showPort);
-        UpdatePortHoverText(showPort);
-    }
-
-    private void UpdatePortHoverText(bool showPort)
-    {
-        if (portHover == null) return;
-        if (!showPort)
-        {
-            portHover.Initialize("", tooltipFontSize);
-            return;
-        }
-
-        string anchoredText = BuildAnchoredWarshipsTooltip();
-        portHover.Initialize(anchoredText, tooltipFontSize);
-    }
-
-    private string BuildAnchoredWarshipsTooltip()
-    {
-        if (anchoredWarshipsTotal <= 0) return "";
-        StringBuilder sb = new StringBuilder(64);
-        sb.Append("Anchored warships:");
-        foreach (var entry in anchoredWarships)
-        {
-            if (entry.Key == null || entry.Value <= 0) continue;
-            sb.Append('\n');
-            sb.Append("<sprite name=\"ws\">[");
-            sb.Append(entry.Value);
-            sb.Append("] ");
-            sb.Append(entry.Key.characterName);
-        }
-        return sb.ToString();
+        return;
     }
 
     private void UpdateCharacterIconSprite()
@@ -2140,7 +2088,7 @@ public class Hex : MonoBehaviour
 
     private void UpdatePcWorldText(bool shouldShowPc)
     {
-        bool showText = shouldShowPc && pc != null && pc.citySize != PCSizeEnum.NONE;
+        bool showText = shouldShowPc && pc != null && (pc.citySize != PCSizeEnum.NONE || pc.hasPort);
 
         if (pcName != null)
         {
@@ -2163,26 +2111,53 @@ public class Hex : MonoBehaviour
 
         string formattedName = pc.pcName ?? string.Empty;
 
-        string alignmentValue = pc.owner != null ? pc.owner.GetAlignment().ToString() : "";
-        alignmentValue = alignmentValue != "" ? $"<sprite name=\"{alignmentValue}\">" : "";
         StringBuilder builder = new();
-        builder.Append($"<mark={GetPcAlignmentMarkColorHex()}>{formattedName}</color>\n");
-        builder.Append(alignmentValue);
-        builder.Append(" <sprite name=\"pc\">");
-        builder.Append((int)pc.citySize);
+        builder.Append("<mark=");
+        builder.Append(GetPcAlignmentMarkColorHex());
+        builder.Append("><color=");
+        builder.Append(GetPcNationColorHex());
+        builder.Append('>');
+        builder.Append(formattedName);
+        builder.Append("</color>\n");
+
+        if (pc.citySize != PCSizeEnum.NONE)
+        {
+            builder.Append("<sprite name=\"pc\"><color=");
+            builder.Append(GetGradientColorHex((int)pc.citySize, (int)PCSizeEnum.camp, (int)PCSizeEnum.city));
+            builder.Append('>');
+            builder.Append((int)pc.citySize);
+            builder.Append("</color>");
+        }
+
+        if (pc.hasPort)
+        {
+            if (pc.citySize != PCSizeEnum.NONE) builder.Append(' ');
+            builder.Append("<sprite name=\"port\">");
+        }
 
         if (pc.fortSize > FortSizeEnum.NONE)
         {
-            builder.Append(" <sprite name=\"fort\">");
+            if (pc.citySize != PCSizeEnum.NONE || pc.hasPort) builder.Append(' ');
+            builder.Append("<sprite name=\"fort\"><color=");
+            builder.Append(GetGradientColorHex((int)pc.fortSize, (int)FortSizeEnum.tower, (int)FortSizeEnum.citadel));
+            builder.Append('>');
             builder.Append((int)pc.fortSize);
+            builder.Append("</color>");
         }
 
-        builder.Append(" <sprite name=\"loyalty\"><color=");
+        builder.Append("\n<sprite name=\"loyalty\"><color=");
         builder.Append(GetLoyaltyColorHex(pc.loyalty));
         builder.Append('>');
         builder.Append(Math.Max(0, pc.loyalty));
-        builder.Append("</mark>");
+        builder.Append("</color></mark>");
         return builder.ToString();
+    }
+
+    private static string GetGradientColorHex(int value, int minValue, int maxValue)
+    {
+        float t = Mathf.InverseLerp(minValue, maxValue, value);
+        Color blended = Color.Lerp(new Color(1f, 0.85f, 0.2f, 1f), new Color(0.2f, 0.8f, 0.2f, 1f), t);
+        return $"#{ColorUtility.ToHtmlStringRGB(blended)}";
     }
 
     private static string GetLoyaltyColorHex(int loyaltyValue)
@@ -2192,19 +2167,22 @@ public class Hex : MonoBehaviour
         return "#00c853";
     }
 
-    private string GetPcAlignmentColorHex()
+    private string GetPcNationColorHex()
     {
         if (pc?.owner == null || colors == null)
         {
             return "#FFFFFF";
         }
 
-        return colors.GetHexColorByName(pc.owner.GetAlignment().ToString());
+        Color nationColor = pc.owner.nationColor;
+        return $"#{ColorUtility.ToHtmlStringRGB(nationColor)}";
     }
 
     private string GetPcAlignmentMarkColorHex()
     {
-        string color = GetPcAlignmentColorHex();
+        string color = pc?.owner == null || colors == null
+            ? "#FFFFFF"
+            : colors.GetHexColorByName(pc.owner.GetAlignment().ToString());
         if (string.IsNullOrWhiteSpace(color)) return "#FFFFFF66";
 
         string trimmed = color.Trim();

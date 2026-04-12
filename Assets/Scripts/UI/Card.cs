@@ -333,7 +333,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (data.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(data.region))
         {
-            reqs.Add($"{data.region} required");
+            reqs.Add($"{data.region} not discovered yet");
         }
 
         if (reqs.Count == 0) return string.Empty;

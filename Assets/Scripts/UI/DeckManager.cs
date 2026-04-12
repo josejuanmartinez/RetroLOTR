@@ -269,7 +269,7 @@ public class CardData
         if (string.IsNullOrWhiteSpace(region)) return true;
         if (playableLeader.HasPlayedLandCardForRegion(region)) return true;
 
-        reason = $"{region} required.";
+        reason = $"{region} not discovered yet.";
         return false;
     }
 }
