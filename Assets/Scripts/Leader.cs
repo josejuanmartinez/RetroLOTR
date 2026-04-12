@@ -252,10 +252,10 @@ public class Leader : Character
     {
         Game g = FindFirstObjectByType<Game>();
         if (g == null || g.player != this) return;
-        Board board = FindFirstObjectByType<Board>();
-        if (board == null || board.hexes == null) return;
+        Board currentBoard = FindFirstObjectByType<Board>();
+        if (currentBoard == null || currentBoard.hexes == null) return;
 
-        List<Hex> allHexes = board.hexes.Values.ToList();
+        List<Hex> allHexes = currentBoard.hexes.Values.ToList();
         allHexes.FindAll(x => !visibleHexes.Contains(x) && !IsTemporarilySeen(x) && !IsScoutedForLeader(x)).ForEach(x => x.Hide());
         var scoutCenters = GetTemporaryScoutCenters().ToList();
         var scoutedHexes = allHexes.Where(IsScoutedForLeader).ToList();
@@ -371,39 +371,39 @@ public class Leader : Character
         return false;
     }
 
-    public void AddLeather(int amount) 
+    public void AddLeather(int amount, bool showMessage = true) 
     {
         leatherAmount += amount;
         TryPulseStoreResourceGain(ProducesEnum.leather, amount);
     }
-    public void AddTimber(int amount)
+    public void AddTimber(int amount, bool showMessage = true)
     {
         timberAmount += amount;
         TryPulseStoreResourceGain(ProducesEnum.timber, amount);
     }
-    public void AddMounts(int amount)
+    public void AddMounts(int amount, bool showMessage = true)
     {
         mountsAmount += amount;
         TryPulseStoreResourceGain(ProducesEnum.mounts, amount);
     }
-    public void AddIron(int amount)
+    public void AddIron(int amount, bool showMessage = true)
     {
         ironAmount += amount;
         TryPulseStoreResourceGain(ProducesEnum.iron, amount);
     }
 
-    public void AddSteel(int amount)
+    public void AddSteel(int amount, bool showMessage = true)
     {
         steelAmount += amount;
         TryPulseStoreResourceGain(ProducesEnum.steel, amount);
     }
 
-    public void AddMithril(int amount)
+    public void AddMithril(int amount, bool showMessage = true)
     {
         mithrilAmount += amount;
         TryPulseStoreResourceGain(ProducesEnum.mithril, amount);
     }
-    public void AddGold(int amount)
+    public void AddGold(int amount, bool showMessage = true)
     {
         goldAmount += amount;
         TryPulseStoreGoldGain(amount);
@@ -461,32 +461,32 @@ public class Leader : Character
         };
     }
 
-    public void AddResource(ProducesEnum resourceType, int amount)
+    public void AddResource(ProducesEnum resourceType, int amount, bool showMessage = true)
     {
         if (amount <= 0) return;
 
         switch (resourceType)
         {
             case ProducesEnum.leather:
-                AddLeather(amount);
+                AddLeather(amount, showMessage);
                 break;
             case ProducesEnum.mounts:
-                AddMounts(amount);
+                AddMounts(amount, showMessage);
                 break;
             case ProducesEnum.timber:
-                AddTimber(amount);
+                AddTimber(amount, showMessage);
                 break;
             case ProducesEnum.iron:
-                AddIron(amount);
+                AddIron(amount, showMessage);
                 break;
             case ProducesEnum.steel:
-                AddSteel(amount);
+                AddSteel(amount, showMessage);
                 break;
             case ProducesEnum.mithril:
-                AddMithril(amount);
+                AddMithril(amount, showMessage);
                 break;
             case ProducesEnum.gold:
-                AddGold(amount);
+                AddGold(amount, showMessage);
                 break;
         }
     }
@@ -586,9 +586,7 @@ public class Leader : Character
         return GetCharacterPoints() + GetPCPoints() + GetArmyPoints() + GetStorePoints();
     }
 
-    private static ActionDefinitionCollection cachedActionDefinitions;
-
-    private static string BuildCreationCostHint(bool characterSlotAdded, bool pcSlotAdded)
+    private string BuildCreationCostHint(bool characterSlotAdded, bool pcSlotAdded)
     {
         List<string> parts = new();
         if (pcSlotAdded)
@@ -610,7 +608,7 @@ public class Leader : Character
         return string.Join(" ", parts);
     }
 
-    private static (int min, int max)? GetActionGoldCostRange(params string[] classNames)
+    private (int min, int max)? GetActionGoldCostRange(params string[] classNames)
     {
         if (classNames == null || classNames.Length == 0) return null;
         List<int> costs = new();
@@ -626,29 +624,14 @@ public class Leader : Character
         return (min, max);
     }
 
-    private static int? GetActionGoldCost(string className)
+    private int? GetActionGoldCost(string className)
     {
         if (string.IsNullOrWhiteSpace(className)) return null;
-        ActionDefinitionCollection defs = GetActionDefinitions();
-        if (defs?.actions == null) return null;
-        ActionDefinition match = defs.actions.Find(a => string.Equals(a.className, className, StringComparison.OrdinalIgnoreCase));
-        return match != null ? match.goldCost : null;
-    }
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null || deckManager.cards == null) return null;
 
-    public static List<ActionDefinition> GetOffensiveActions()
-    {
-        ActionDefinitionCollection defs = GetActionDefinitions();
-        if (defs?.actions == null) return new List<ActionDefinition>();
-        return defs.actions.Where(action => action != null && action.isOffensive).ToList();
-    }
-
-    private static ActionDefinitionCollection GetActionDefinitions()
-    {
-        if (cachedActionDefinitions != null) return cachedActionDefinitions;
-        TextAsset json = Resources.Load<TextAsset>("Actions");
-        if (json == null) return null;
-        cachedActionDefinitions = JsonUtility.FromJson<ActionDefinitionCollection>(json.text);
-        return cachedActionDefinitions;
+        CardData card = deckManager.cards.FirstOrDefault(c => string.Equals(c.GetActionRef(), className, StringComparison.OrdinalIgnoreCase));
+        return card != null ? card.GetTotalGoldCost() : null;
     }
 
     public override void Killed(Leader killedBy, bool onlyMask = false)

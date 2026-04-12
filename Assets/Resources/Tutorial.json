@@ -1,4 +1,4 @@
-﻿{
+{
     "version": 1,
     "tutorials": [
         {
@@ -34,7 +34,9 @@
                     "actor1": "Gandalf",
                     "requirements": {
                         "cardName": "Hear Stories",
-                        "supportCards": [ ]
+                        "supportCards": [
+                            "Cardolan"
+                        ]
                     }
                 },
                 {
@@ -48,7 +50,9 @@
                     "actor1": "Gandalf",
                     "requirements": {
                         "cardName": "Find Artifact",
-                        "supportCards": [ ]
+                        "supportCards": [
+                            "Rivendell"
+                        ]
                     }
                 },
                 {
@@ -62,7 +66,9 @@
                     "requirements": {
                         "actorCharacter": "Sam",
                         "cardName": "Scout Area",
-                        "supportCards": [ ]
+                        "supportCards": [
+                            "Rhudaur"
+                        ]
                     }
                 },
                 {
@@ -77,7 +83,8 @@
                         "actorCharacter": "Frodo",
                         "cardName": "Bounders",
                         "supportCards": [
-                            "The Shire"
+                            "TheShire",
+                            "Bree"
                         ],
                         "variantCards": [
                             {
@@ -100,56 +107,50 @@
                                 "variantId": "gandalf_the_white",
                                 "cardName": "Swordmen"
                             }
-                        ]
-                    }
-                },
-                {
-                    "stepId": "Gandalf_Buckland",
-                    "title": "Visit Buckland",
-                    "type": "travel",
-                    "targetLocation": "Buckland",
-                    "required": false,
-                    "description": "Optional: travel to Buckland to find Merry.",
-                    "narration": "Buckland sits by the river and the hedge, a place of warmth that does not yet know the full weight of the road. Go there and find Merry, for a journey that starts in friendship endures longer than one carried alone. This is not a demand but an invitation, a chance to bring a trusted heart into the company before the path grows dark. Walk the lanes, speak plainly, and offer him a place at your side. The ally gained here will steady the miles ahead and lighten the burdens that are yet to come.",
-                    "actor1": "Gandalf",
-                    "actor2": "Merry",
-                    "rewards": {
-                        "grantCharacters": [
+                        ],
+                        "variantSupportCards": [
                             {
-                                "characterName": "Merry",
-                                "commander": 0,
-                                "agent": 1,
-                                "emmissary": 0,
-                                "mage": 0,
-                                "race": 3,
-                                "sex": 0
+                                "variantId": "mithrandir",
+                                "cardNames": [
+                                    "The Grey Havens",
+                                    "Lindon"
+                                ]
+                            },
+                            {
+                                "variantId": "stormcrow",
+                                "cardNames": [
+                                    "Bree",
+                                    "Lindon"
+                                ]
+                            },
+                            {
+                                "variantId": "tharkun",
+                                "cardNames": [
+                                    "EredLuin",
+                                    "Lindon",
+                                    "Bree"
+                                ]
+                            },
+                            {
+                                "variantId": "gandalf_the_white",
+                                "cardNames": [
+                                    "Minas Tirith",
+                                    "Lindon",
+                                    "Bree"
+                                ]
                             }
                         ]
                     }
                 },
                 {
-                    "stepId": "Gandalf_MichelDelving",
-                    "title": "Visit Michel Delving",
-                    "type": "travel",
-                    "targetLocation": "Michel Delving",
+                    "stepId": "Gandalf_Final",
+                    "title": "The Road Ahead",
+                    "type": "explore",
                     "required": false,
-                    "description": "Optional: travel to Michel Delving to find Pippin.",
-                    "narration": "Michel Delving is full of laughter and restless curiosity, and it is there that Pippin waits. Go to the town and seek him out, for bold spirits thrive when given a purpose worthy of their courage. This is the moment to widen the circle, to bring another friend into the fold before the world begins to close in. Speak honestly, invite him to the road, and let him choose it with a clear heart. The joy he brings will become a strength when the journey grows heavy.",
+                    "description": "Explore beyond the Shire and find your own path.",
+                    "narration": "The Shire is behind you, and the world ahead is wide and uncertain. You have the first of your company, a few tools, and the knowledge that shadows are moving in the east. Now you must choose where the road leads, whether to seek more allies, uncover deeper secrets, or face the threats that wait in the dark. Trust your instincts and the friends at your side, for the true test of a wizard is not in knowing the way, but in finding it when the light is dim. Go forth with courage, and let your purpose be your guide. The story is yours to write, and every choice matters.",
                     "actor1": "Gandalf",
-                    "actor2": "Pippin",
-                    "rewards": {
-                        "grantCharacters": [
-                            {
-                                "characterName": "Pippin",
-                                "commander": 0,
-                                "agent": 0,
-                                "emmissary": 1,
-                                "mage": 0,
-                                "race": 3,
-                                "sex": 0
-                            }
-                        ]
-                    }
+                    "rewards": {}
                 }
             ]
         },
@@ -170,7 +171,8 @@
                         "targetLeader": "Orthanc",
                         "cardName": "State Allegiance",
                         "supportCards": [
-                            "GapOfRohan"
+                            "GapOfRohan",
+                            "Dunland"
                         ]
                     },
                     "rewards": {}
@@ -209,7 +211,9 @@
                     "actor1": "Saruman",
                     "requirements": {
                         "cardName": "Hear Stories",
-                        "supportCards": [ ]
+                        "supportCards": [
+                            "GapOfRohan"
+                        ]
                     }
                 },
                 {
@@ -223,7 +227,9 @@
                     "actor1": "Saruman",
                     "requirements": {
                         "cardName": "Find Artifact",
-                        "supportCards": [ ]
+                        "supportCards": [
+                            "Rohan"
+                        ]
                     }
                 },
                 {
@@ -239,7 +245,7 @@
                         "targetCharacter": "Grima",
                         "cardName": "Double Character",
                         "supportCards": [
-                            "Dunland"
+                            "BrownLands"
                         ]
                     }
                 },
@@ -254,7 +260,9 @@
                     "requirements": {
                         "actorCharacter": "Grima",
                         "cardName": "Scout Area",
-                        "supportCards": [ ]
+                        "supportCards": [
+                            "Eregion"
+                        ]
                     }
                 },
                 {
@@ -296,94 +304,28 @@
                         "actorCharacter": "Ugluk",
                         "cardName": "Dunlending Warriors",
                         "supportCards": [
-                            "Dunland"
+                            "Dunland",
+                            "GapOfRohan"
                         ],
                         "variantCards": [
                             {
-                                "variantId": "saruman_the_white",
-                                "cardName": "Dunlending Warriors"
-                            },
-                            {
-                                "variantId": "of_many_colours",
-                                "cardName": "Dunlending Warriors"
-                            },
-                            {
                                 "variantId": "the_white_hand",
-                                "cardName": "Orcs"
+                                "cardName": "Dunlending Warriors"
+                            },
+                            {
+                                "variantId": "sharkey",
+                                "cardName": "Men Of Bree"
+                            }
+                        ],
+                        "variantSupportCards": [
+                            {
+                                "variantId": "sharkey",
+                                "cardNames": [
+                                    "TheShire",
+                                    "Bree"
+                                ]
                             }
                         ]
-                    }
-                },
-                {
-                    "stepId": "Saruman_UseRobes",
-                    "title": "Many-Coloured Sight",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the Many-coloured robes to reveal nearby threats.",
-                    "narration": "The many colored robes sharpen your sight and make the nearby world easier to read. Use them to reveal the nearest threat, because a clear view turns uncertainty into control. This is not a spell of destruction but of preparation, and it should be used before you commit to a risky move. The robes are a reminder that knowledge is a weapon, and that a well-timed reveal can save an army. Do not use them out of impatience; use them when the next choice matters. Let the vision settle, choose your response, and move while the enemy is still exposed.",
-                    "actor1": "Saruman",
-                    "requirements": {
-                        "cardName": "Perceive Danger"
-                    }
-                },
-                {
-                    "stepId": "Saruman_UseTeeth",
-                    "title": "Whispered Corruption",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the Yellow teeth to twist loyalties.",
-                    "narration": "The yellow teeth are a subtle tool, meant to corrode loyalty without a single sword drawn. Use them to twist minds and plant doubt where confidence once stood. This is the kind of power that works best in the quiet spaces between open moves, because it makes your enemies weaker before you face them. A single rumor sharpened by this token can spread like rot, turning strong positions into brittle ones. Use it deliberately, not in rage, and then watch how quickly a plan unravels. When loyalties crack, opportunities appear. Let this whisper do the work that force cannot.",
-                    "actor1": "Saruman",
-                    "requirements": {
-                        "cardName": "WizardsLaugh"
-                    }
-                },
-                {
-                    "stepId": "Saruman_UseRing",
-                    "title": "Words of Despair",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the Ring of Orthanc against an enemy army.",
-                    "narration": "The Ring of Orthanc is a weapon of despair, and it should be used when your enemies gather and think themselves strong. Speak the words and let their courage collapse, because a broken host cannot hold a line. This is not a power for idle intimidation; it is for moments when a decisive blow can be struck without blades crossing. Use it with purpose, then exploit the weakness it creates. A single act of despair can turn a siege or scatter a stubborn army. Do not waste its edge on small prey; wait for the moment that matters, and then strike.",
-                    "actor1": "Saruman",
-                    "requirements": {
-                        "cardName": "Words Of Dispair"
-                    }
-                },
-                {
-                    "stepId": "Saruman_UseBanner",
-                    "title": "Raise the White Hand",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the White Hand Banner to muster troops.",
-                    "narration": "The White Hand Banner is a clear command made visible, and soldiers answer when the symbol is raised. Use it to muster troops quickly at a place that matters, because a host formed early can decide the shape of the campaign. This is the act of turning influence into action, and it should be done without hesitation. A banner raised at the right time binds new recruits to your cause and tells the land that the war has begun. Do not hide it; let it be seen. When the ranks gather, move them with confidence and keep their purpose clear.",
-                    "actor1": "Saruman",
-                    "requirements": {
-                        "cardName": "Summon Men-at-arms"
-                    }
-                },
-                {
-                    "stepId": "Saruman_UsePalantir",
-                    "title": "Stone of Orthanc",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the Palantir of Orthanc to reveal the map.",
-                    "narration": "The Palantir of Orthanc peers beyond the walls and folds distance into a single view. Use it to reveal far ground and to choose your next move with knowledge rather than guesswork. The stone is a tool of clarity, but it demands discipline, because lingering too long invites distraction. Take the vision you need and step away, then act while the information is fresh. A glimpse of unseen ground can save an army or open a path that changes the game. Use it when the map feels uncertain, and let the stone answer. Knowledge is the first conquest, and the palantir gives it.",
-                    "actor1": "Saruman",
-                    "requirements": {
-                        "cardName": "Scry Area"
-                    }
-                },
-                {
-                    "stepId": "Saruman_UseStaff",
-                    "title": "Storm of Ice",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use Saruman's Staff to freeze an enemy host.",
-                    "narration": "Saruman's staff commands the cold, and it is best used to halt a strong enemy at a critical moment. When the foe gathers, call the ice and bind their movement, because a stopped army is an army that can be bypassed or broken. This is a precise tool, not a blunt one, and it should be saved for targets that matter. Use it to steal momentum from the enemy and give it to yourself. Once the freeze takes hold, choose whether to strike or reposition; either path is yours. Let the storm answer your will and leave your foes trapped in it.",
-                    "actor1": "Saruman",
-                    "requirements": {
-                        "cardName": "Ice Storm"
                     }
                 }
             ]
@@ -394,42 +336,42 @@
             "steps": [
                 {
                     "stepId": "Sauron_BaradDur",
-                    "title": "Claim Barad-dur",
+                    "title": "The Shadow Stirs",
                     "type": "performAction",
-                    "targetLocation": "Barad-dur",
+                    "targetLocation": "Barad-dûr",
                     "required": true,
-                    "description": "State allegiance at Barad-dur to secure the Dark Tower.",
-                    "narration": "Barad-dur is the heart of your will, and its shadow must fall under your command before the hunt begins. State your allegiance here to seal the tower to your purpose, as if placing your hand upon a blade you forged long ago. The act is both symbol and force, the first tightening of the chain that binds the land. Let the Dark Tower answer, and let the world feel the weight of that answer. This is the moment the Age remembers, the moment your return is not rumor but fact.",
+                    "description": "State allegiance at Barad-dûr to assert your dominion over Mordor.",
+                    "narration": "Barad-dûr is the heart of your power, and from here your shadow must stretch across the world. State your allegiance within its walls so every stone and slave knows the master has returned, and let the declaration be felt in the very air of Mordor. This is not a beginning but a resumption of your iron rule. When you bind the tower to your will, the machinery of war begins to turn and the dark places of the world grow restless. Let your command be absolute and your purpose unwavering. The dark tower is your eye and your fist, and it is time to use both.",
                     "actor1": "Sauron",
                     "requirements": {
-                        "targetLeader": "Barad-dur",
+                        "targetLeader": "Barad-dûr",
                         "cardName": "State Allegiance",
                         "supportCards": [
-                            "Nurn",
-                            "Gorgoroth"
+                            "Udun",
+                            "Nurn"
                         ]
                     },
                     "rewards": {}
                 },
                 {
                     "stepId": "Sauron_MinasMorgul",
-                    "title": "Secure Minas Morgul",
+                    "title": "Summon the Witch-king",
                     "type": "travel",
                     "targetLocation": "Minas Morgul",
                     "required": true,
-                    "description": "Travel to Minas Morgul to secure the trail and find Gollum.",
-                    "narration": "The road to Minas Morgul is steeped in old fear, and the air itself seems to recoil from what waits within. Travel there to secure the trail and draw the creature of the depths into your service, because the hunt cannot proceed without its knowledge. This is not an open conquest but a retrieval of a tool, and you will take it whether it comes willingly or not. The city knows your name, and its stones are ready to bow. When you arrive, make the claim and take what you need, then move before the shadow grows familiar.",
+                    "description": "Travel to Minas Morgul and find the Witch-king.",
+                    "narration": "Minas Morgul is a city of rot and memory, and it is there your most faithful servant waits. Go to the city of the wraiths and find the Witch-king, for his blade is your own and his terror is your herald. This is a journey through your own domain, a reminder of the fear you command and the reach of your influence. When you find him, do not speak of loyalty, for he is bound to you beyond any choice. The strength he brings is the first real weapon of your conquest, and with him at your side, the world will truly begin to tremble.",
                     "actor1": "Sauron",
-                    "actor2": "Gollum",
+                    "actor2": "The Witch-king",
                     "rewards": {
                         "grantCharacters": [
                             {
-                                "characterName": "Gollum",
-                                "commander": 0,
-                                "agent": 1,
+                                "characterName": "The Witch-king",
+                                "commander": 1,
+                                "agent": 0,
                                 "emmissary": 0,
-                                "mage": 0,
-                                "race": 3,
+                                "mage": 1,
+                                "race": 6,
                                 "sex": 0
                             }
                         ]
@@ -437,65 +379,66 @@
                 },
                 {
                     "stepId": "Sauron_HearRumours",
-                    "title": "Gather Fearful Whispers",
+                    "title": "Eyes in the Dark",
                     "type": "performAction",
                     "required": true,
-                    "description": "Use Hear Stories to gather rumours and learn where your foes are weakest.",
-                    "narration": "Fear loosens every tongue, and in your realm even whispers become useful weapons. Use Hear Stories to gather rumors of movement, weakness, and opportunity, because every murmur can point to a target. Listen without mercy and sort what you hear into patterns, for patterns reveal where the enemy is most exposed. The frightened will talk, and their talk will lead you if you let it. This is not idle chatter; it is a map drawn in fear. When you finish, you should know where to press next and where your grip can tighten. Let the rumors guide your hunt and sharpen your next move.",
+                    "description": "Use Hear Stories to gather intelligence from your spies across the land.",
+                    "narration": "Your spies are everywhere, and their whispers are the lifeblood of your strategy. Listen to the reports they bring of weak defenses, hidden alliances, and the movements of your enemies. Rumours are not just gossip to you; they are targets and opportunities. Gather every scrap of information, no matter how small, and let it feed your grand design. A well-placed ear can be more dangerous than a thousand blades if you know how to use what it hears. Do not dismiss any tale until you have weighed its worth. When you are done, the board should be clearer and your next move more certain.",
                     "actor1": "Sauron",
                     "requirements": {
                         "cardName": "Hear Stories",
                         "supportCards": [
-                            "Nurn",
-                            "Gorgoroth"
+                            "BaradHarn"
                         ]
                     }
                 },
                 {
                     "stepId": "Sauron_FindArtifact",
-                    "title": "Claim a Buried Relic",
+                    "title": "Search for the Ring",
                     "type": "performAction",
                     "targetLocation": "Minas Morgul",
                     "required": true,
-                    "description": "Use Find Artifact in Minas Morgul to claim a relic of power.",
-                    "narration": "Minas Morgul is steeped in malice, and its ground hides relics that respond to your will. Use Find Artifact to draw out what lies buried, because power left in the earth is power wasted. Search with purpose and patience, and let the curse of the place work for you rather than against you. A relic found here carries the weight of old darkness and will strengthen your hand. Take it without hesitation and feel its pull, then decide how best to wield it. This is a deliberate act of reclamation, not a lucky stumble. The hunt grows darker from here, and you should grow stronger with it.",
+                    "description": "Use Find Artifact in Minas Morgul to search for lost relics of power.",
+                    "narration": "The world has stolen much from you, and it is time to take it back. Use your craft to search for relics in the city of wraiths, for even in the shadows of Mordor, power can be found and bent to your will. The act of searching is a refinement of your focus, a sharpening of your intent to reclaim what was yours. Be relentless, for the land itself tries to hide what it fears you will use. A single relic can be the key to a greater victory, and every tool you recover is a step toward total dominion. Find what is hidden, claim it, and let it serve your glory.",
                     "actor1": "Sauron",
                     "requirements": {
                         "cardName": "Find Artifact",
                         "supportCards": [
-                            "Nurn",
-                            "Gorgoroth"
+                            "Nurn"
                         ]
                     }
                 },
                 {
-                    "stepId": "Sauron_GollumScout",
-                    "title": "Gollum Scouts",
+                    "stepId": "Sauron_WitchKingScout",
+                    "title": "The Nazgûl Hunt",
                     "type": "performAction",
                     "required": true,
-                    "description": "Have Gollum scout the area to sniff out enemies and secrets.",
-                    "narration": "Gollum moves like a shadow and knows how to slip between the cracks of attention. Send him to scout, because he sees what armies overlook and hears what soldiers cannot. A single scouting run can reveal a hidden path, a weak target, or a threat that needs immediate response. Keep him leashed by fear and reward, because his loyalty is thin and his usefulness is sharp. When he returns, listen closely, then move with the knowledge he brings. The creature is a tool, and tools must be used. Let his report guide your next action and keep the hunt closing in.",
-                    "actor1": "Gollum",
+                    "description": "Have the Witch-king scout the area to locate your enemies.",
+                    "narration": "The Witch-king rides on wings of shadow, and nothing escapes his sight for long. Send him to scout the land, not to fight but to mark the paths of those who would oppose you. A scout from Morgul is a shadow that precedes the storm, revealing the secrets of the terrain and the positions of your foes. Let him move with the speed of fear and return with a clear report that leaves no doubt where your fist should fall. His eyes are your own, and the knowledge he brings is the first step of the hunt. Use his report to choose your next victim and prepare the way for your host.",
+                    "actor1": "The Witch-king",
                     "requirements": {
-                        "actorCharacter": "Gollum",
+                        "actorCharacter": "The Witch-king",
                         "cardName": "Scout Area",
                         "supportCards": [
-                            "Nurn",
-                            "Gorgoroth"
+                            "Gorgoroth",
+                            "Nurn"
                         ]
                     }
                 },
                 {
-                    "stepId": "Sauron_Morannon",
-                    "title": "Summon Gothmog",
+                    "stepId": "Sauron_ReturnBaradDur",
+                    "title": "Return to the Dark Tower",
                     "type": "travel",
-                    "targetLocation": "Morannon",
+                    "targetLocation": "Barad-dûr",
                     "required": true,
-                    "description": "Travel to Morannon to rally Gothmog and begin raising armies.",
-                    "narration": "The Black Gate is the mouth of war, and its iron teeth must open at your command. Travel to Morannon and rally Gothmog, for a host needs a commander who can make it march. The journey is a declaration that open conflict has begun, and the return of your armies will be heard across the plains. When the gate answers, bind it to your purpose and let the first ranks gather beneath its shadow. This is the moment the march becomes real, when fear hardens into discipline.",
+                    "description": "Return to Barad-dûr to begin your open war.",
+                    "narration": "Return to the Dark Tower and let the fires of Orodruin burn brighter. Here you cast aside the shadows of secrecy and embrace the reality of your war, calling your armies to muster and your servants to prepare. This step is the culmination of your return, the moment when intent becomes inescapable force. Let the world see your banner and let the ground tremble under the weight of your purpose. Unlock the means to recruit the host of Mordor, and bring Gothmog into your service to lead the vanguard. Do not wait; the time of the shadow is over, and the time of the eye has begun.",
                     "actor1": "Sauron",
-                    "actor2": "Gothmog",
+                    "actor2": "The Witch-king",
                     "rewards": {
+                        "unlockRecruitmentTags": [
+                            "mordor"
+                        ],
                         "grantCharacters": [
                             {
                                 "characterName": "Gothmog",
@@ -511,93 +454,42 @@
                 },
                 {
                     "stepId": "Sauron_GothmogTrain",
-                    "title": "Gothmog Raises the Host",
+                    "title": "Gothmog Musters the Host",
                     "type": "performAction",
                     "required": true,
-                    "description": "Have Gothmog train Men-at-arms to begin raising the armies of Mordor.",
-                    "narration": "Gothmog understands only strength and order, and that makes him ideal for raising the first ranks. Command him to train men at arms and begin the mustering of Mordor's host. The act of training is the act of building fear, and every disciplined soldier is another step toward domination. Let the drills be ruthless and the standards unforgiving, because a weak host is worse than none. This is how wars are built, not with speeches but with ranks that hold. When he finishes, you will feel the army begin to breathe. Then you may decide where its first blow will land.",
+                    "description": "Have Gothmog train Orcs to build your army.",
+                    "narration": "Gothmog is a brute who knows the value of iron and blood, and he will forge your orcs into a weapon of terror. Order him to train the ranks and begin the mustering of your host, for an army of Mordor is built on fear and enforced discipline. The act of training is the forging of a collective will, a sharpening of the blades that will soon carve your name into the world. Let the whips crack and the forges roar, for an idle orc is a useless orc. This is the first step of your total war, and it should be felt by every slave in the pits. When the host is ready, the world will fall.",
                     "actor1": "Gothmog",
                     "requirements": {
                         "actorCharacter": "Gothmog",
                         "cardName": "Orcs",
                         "supportCards": [
                             "Nurn",
-                            "Gorgoroth"
+                            "Udun"
                         ],
                         "variantCards": [
+                            {
+                                "variantId": "the_necromancer",
+                                "cardName": "Orcs"
+                            },
                             {
                                 "variantId": "the_dark_eye",
                                 "cardName": "Orcs"
                             },
                             {
                                 "variantId": "the_deceiver",
-                                "cardName": "Black Numenoreans"
-                            },
+                                "cardName": "Swordmen"
+                            }
+                        ],
+                        "variantSupportCards": [
                             {
-                                "variantId": "the_necromancer",
-                                "cardName": "Forest Orcs"
+                                "variantId": "the_deceiver",
+                                "cardNames": [
+                                    "Khand",
+                                    "NearHarad"
+                                ]
                             }
                         ]
-                    }
-                },
-                {
-                    "stepId": "Sauron_UseVeil",
-                    "title": "Cloak the Land",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the Morgul Veil to cover nearby ground.",
-                    "narration": "The Morgul Veil spreads darkness over the land and bends sight to your will. Use it to conceal your movements or to blind your enemies, because confusion is as deadly as any blade. The veil turns open ground into uncertainty and forces your foes to guess, and in that guessing they fail. This is a power for moments when you need to move unseen or to deny your enemy a clear plan. Do not cast it idly; cast it when the next step matters. Let the darkness settle, then strike from it with certainty. The land itself will feel the weight of your shadow.",
-                    "actor1": "Sauron",
-                    "requirements": {
-                        "cardName": "Cast Darkness"
-                    }
-                },
-                {
-                    "stepId": "Sauron_UseEye",
-                    "title": "Reveal the Hidden",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the Lidless eye to expose what is concealed.",
-                    "narration": "The Lidless Eye sees what hides, and its gaze is enough to strip away false safety. Use it to reveal a concealed population center or to expose a hidden threat, because nothing should remain unseen by you. The moment the Eye opens, fear rises, and fear forces mistakes. This is a tool of discovery and domination, and it should be used when you need a target to make your will felt. Do not let enemies linger in the shadows; bring them into the open and bind them with your attention. The Eye is your claim made visible, and the world bends under it. Reveal what is hidden, then move to take it.",
-                    "actor1": "Sauron",
-                    "requirements": {
-                        "cardName": "Reveal PC"
-                    }
-                },
-                {
-                    "stepId": "Sauron_UsePalantir",
-                    "title": "Stone of Ithil",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the Palantir of Ithil to reveal distant lands.",
-                    "narration": "The Palantir of Ithil answers to you and shows what distance would otherwise hide. Use it to reveal far ground and choose the next target of your hunt, because a clear map is a chain on your enemies. The stone is a tool of control, but it demands discipline; take the vision you need and step away. A single glimpse can change a plan, save a march, or open a new route. Use it when uncertainty threatens to slow you, and let it sharpen your resolve. Knowledge is the first blow in any campaign. Take the sight and act on it without delay.",
-                    "actor1": "Sauron",
-                    "requirements": {
-                        "cardName": "Scry Area"
-                    }
-                },
-                {
-                    "stepId": "Sauron_UseBanner",
-                    "title": "Call the Host",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the Dark Lord Banner to muster troops.",
-                    "narration": "The Dark Lord Banner is a visible command, and when it rises the host gathers. Use it to muster troops quickly and swell your ranks at a place that matters. A banner is more than cloth; it is an order that soldiers can see and obey. This is a moment to commit, not to hesitate, because momentum is built on decisive calls. Let the ranks gather and feel the weight of their number, then move while the fear is fresh. A large host ends arguments and makes cities reconsider their loyalty. Raise the banner and let the land tremble beneath it.",
-                    "actor1": "Sauron",
-                    "requirements": {
-                        "cardName": "Summon Men-at-arms"
-                    }
-                },
-                {
-                    "stepId": "Sauron_UseVoice",
-                    "title": "Voice of the Dark Tower",
-                    "type": "performAction",
-                    "required": false,
-                    "description": "Use the Voice of the Dark Tower against an enemy army.",
-                    "narration": "Your voice is a weapon of despair, and it should be used when an enemy host stands within reach. Speak and let their courage collapse, because fear is older and stronger than steel. This is not a warning; it is a breaking, a moment where willpower drains from their ranks. Use it when the stakes are high and the payoff is decisive. Once they falter, press the advantage without mercy, because a broken army can be shattered quickly. Let your words haunt them, and let the memory of them weaken the next line as well. The tower's voice is final, and they will learn it.",
-                    "actor1": "Sauron",
-                    "requirements": {
-                        "cardName": "Words Of Dispair"
                     }
                 }
             ]

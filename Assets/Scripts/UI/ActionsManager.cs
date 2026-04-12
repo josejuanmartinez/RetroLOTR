@@ -17,16 +17,12 @@ public class ActionsManager : MonoBehaviour
 
     private readonly Dictionary<Type, CharacterAction> actionComponents = new();
     private readonly Dictionary<string, CharacterAction> actionComponentsByClassName = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, ActionDefinition> actionDefinitionsByClassName = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, ActionDefinition> actionDefinitionsByActionName = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<int, ActionDefinition> actionDefinitionsById = new();
     private readonly List<CharacterAction> availableActions = new();
     private Character currentCharacter;
     private Game cachedGame;
 
     public void Start()
     {
-        LoadActionDefinitions();
         characterActions = Array.Empty<CharacterAction>();
         DEFAULT = ResolveActionByRef("Pass");
 
@@ -43,7 +39,7 @@ public class ActionsManager : MonoBehaviour
         return null;
     }
 
-    public CharacterAction ResolveActionByRef(string actionRef)
+    public CharacterAction ResolveActionByRef(string actionRef, CardData card = null)
     {
         string normalizedActionRef = NormalizeActionRef(actionRef);
         if (string.IsNullOrWhiteSpace(normalizedActionRef)) return null;
@@ -53,30 +49,8 @@ public class ActionsManager : MonoBehaviour
             return loaded;
         }
 
-        if (actionDefinitionsByClassName.TryGetValue(normalizedActionRef, out ActionDefinition byClassDefinition))
-        {
-            CharacterAction createdFromClass = GetOrCreateAction(ResolveActionType(byClassDefinition.className), byClassDefinition);
-            if (createdFromClass != null) return createdFromClass;
-        }
-
-        if (actionDefinitionsByActionName.TryGetValue(normalizedActionRef, out ActionDefinition byNameDefinition))
-        {
-            CharacterAction createdFromName = GetOrCreateAction(ResolveActionType(byNameDefinition.className), byNameDefinition);
-            if (createdFromName != null) return createdFromName;
-        }
-
         Type resolvedType = ResolveActionType(normalizedActionRef);
-        return GetOrCreateAction(resolvedType);
-    }
-
-    public CharacterAction ResolveActionById(int actionId)
-    {
-        if (!actionDefinitionsById.TryGetValue(actionId, out ActionDefinition definition))
-        {
-            return null;
-        }
-
-        return ResolveActionByRef(definition.className);
+        return GetOrCreateAction(resolvedType, card);
     }
 
     public IReadOnlyList<CharacterAction> GetLoadedActions()
@@ -103,7 +77,7 @@ public class ActionsManager : MonoBehaviour
 
         foreach (CharacterAction component in GetLoadedActions())
         {
-            component.Initialize(character, null, null);
+            component.Initialize(character, condition: null, effect: null, asyncEffect: null);
         }
 
         BuildAvailableActions();
@@ -120,11 +94,6 @@ public class ActionsManager : MonoBehaviour
         availableActions.Clear();
         currentCharacter = null;
         UpdateInteractableState();
-    }
-
-    public int GetDefault()
-    {
-        return DEFAULT != null ? DEFAULT.actionId : 0;
     }
 
     public void RefreshInteractableState()
@@ -146,61 +115,6 @@ public class ActionsManager : MonoBehaviour
         }
 
         availableActions.Sort((a, b) => string.Compare(a?.actionName, b?.actionName, StringComparison.OrdinalIgnoreCase));
-    }
-    private void ApplyDefinition(CharacterAction action, ActionDefinition definition)
-    {
-        if (action == null || definition == null) return;
-
-        action.actionName = definition.actionName;
-        action.description = definition.description;
-        action.actionId = definition.actionId;
-        action.isBuyCaravans = definition.isBuyCaravans;
-        action.isSellCaravans = definition.isSellCaravans;
-        action.commanderXP = definition.commanderXP;
-        action.agentXP = definition.agentXP;
-        action.emmissaryXP = definition.emmissaryXP;
-        action.mageXP = definition.mageXP;
-        action.reward = definition.reward;
-        action.advisorType = definition.advisorType;
-    }
-
-    private void LoadActionDefinitions()
-    {
-        actionDefinitionsByClassName.Clear();
-        actionDefinitionsByActionName.Clear();
-        actionDefinitionsById.Clear();
-
-        TextAsset json = Resources.Load<TextAsset>("Actions");
-        if (json == null)
-        {
-            Debug.LogWarning("Actions.json not found in Resources.");
-            return;
-        }
-
-        ActionDefinitionCollection definitionCollection = JsonUtility.FromJson<ActionDefinitionCollection>(json.text);
-        if (definitionCollection == null || definitionCollection.actions == null || definitionCollection.actions.Count == 0)
-        {
-            Debug.LogWarning("Actions.json is empty or malformed.");
-            return;
-        }
-
-        foreach (ActionDefinition definition in definitionCollection.actions)
-        {
-            if (definition == null) continue;
-
-            if (!string.IsNullOrWhiteSpace(definition.className))
-            {
-                actionDefinitionsByClassName[definition.className.Trim()] = definition;
-            }
-
-            string normalizedActionName = NormalizeActionName(definition.actionName);
-            if (!string.IsNullOrWhiteSpace(normalizedActionName))
-            {
-                actionDefinitionsByActionName[normalizedActionName] = definition;
-            }
-
-            actionDefinitionsById[definition.actionId] = definition;
-        }
     }
 
     private void UpdateInteractableState()
@@ -256,31 +170,28 @@ public class ActionsManager : MonoBehaviour
         actionComponents[action.GetType()] = action;
         actionComponentsByClassName[action.GetType().Name] = action;
 
-        ActionDefinition definition = null;
-        actionDefinitionsByClassName.TryGetValue(action.GetType().Name, out definition);
-        if (definition == null)
-        {
-            string normalizedActionName = NormalizeActionName(action.actionName);
-            actionDefinitionsByActionName.TryGetValue(normalizedActionName, out definition);
-        }
-
-        ApplyDefinition(action, definition);
         characterActions = actionComponents.Values.ToArray();
         return action;
     }
 
-    private CharacterAction GetOrCreateAction(Type actionType, ActionDefinition definition = null)
+    private CharacterAction GetOrCreateAction(Type actionType, CardData card = null)
     {
         if (actionType == null || !typeof(CharacterAction).IsAssignableFrom(actionType)) return null;
-        if (actionComponents.TryGetValue(actionType, out CharacterAction loaded)) return loaded;
-        CharacterAction created = Activator.CreateInstance(actionType) as CharacterAction;
-
-        if (definition == null)
+        if (actionComponents.TryGetValue(actionType, out CharacterAction loaded))
         {
-            actionDefinitionsByClassName.TryGetValue(actionType.Name, out definition);
+            if (card != null)
+            {
+                // Re-initialize with card data if provided
+                loaded.Initialize(loaded.character, card);
+            }
+            return loaded;
         }
-
-        ApplyDefinition(created, definition);
+        
+        CharacterAction created = Activator.CreateInstance(actionType) as CharacterAction;
+        if (card != null)
+        {
+            created.Initialize(null, card);
+        }
         return RegisterActionComponent(created);
     }
 

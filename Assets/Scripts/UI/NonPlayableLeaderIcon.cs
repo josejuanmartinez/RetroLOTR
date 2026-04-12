@@ -124,6 +124,27 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
             sb.ToString(),
             true
         );
+
+        EventIconsManager iconsManager = EventIconsManager.FindManager();
+        if (iconsManager != null)
+        {
+            iconsManager.AddEventIcon(
+                EventIconType.Discovery,
+                true,
+                () => {
+                    PopupManager.Show(
+                        $"{nonPlayableLeader.characterName} discovered",
+                        FindFirstObjectByType<Illustrations>().GetIllustrationByName(player.characterName),
+                        FindFirstObjectByType<Illustrations>().GetIllustrationByName(nonPlayableLeader.characterName),
+                        sb.ToString(),
+                        true
+                    );
+                },
+                null,
+                leaderSprite
+            );
+        }
+
         isUnrevealed = false;
     }
 

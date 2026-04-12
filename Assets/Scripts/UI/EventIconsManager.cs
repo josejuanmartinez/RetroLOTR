@@ -24,6 +24,9 @@ public class EventIconsManager : MonoBehaviour
     }
 
     public EventIcon AddEventIcon(EventIconType type, bool discardable, Action onOpen)
+        => AddEventIcon(type, discardable, onOpen, null, null);
+
+    public EventIcon AddEventIcon(EventIconType type, bool discardable, Action onOpen, Action onRemove, Sprite characterPortrait = null)
     {
         if (eventIcon == null)
         {
@@ -42,7 +45,9 @@ public class EventIconsManager : MonoBehaviour
             icon = iconInstance.AddComponent<EventIcon>();
         }
 
-        icon.Configure(type, discardable, onOpen, () => RemoveIcon(icon), ResolveCharacterPortraitSprite());
+        Action removal = onRemove ?? (() => RemoveIcon(icon));
+        Sprite portrait = characterPortrait ?? ResolveCharacterPortraitSprite();
+        icon.Configure(type, discardable, onOpen, removal, portrait);
         activeIcons.Add(icon);
         RefreshLayout(parent as RectTransform);
         return icon;

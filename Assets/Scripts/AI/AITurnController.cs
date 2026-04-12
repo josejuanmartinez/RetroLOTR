@@ -60,7 +60,7 @@ public static class AITurnController
         {
             if (card == null) continue;
             if (!card.EvaluatePlayability(actor)) continue;
-            if (!deckManager.TryConsumeCard(leader, card.cardId, drawReplacement: false, out CardData consumedCard)) continue;
+            if (!deckManager.TryConsumeCard(leader, card.name, drawReplacement: false, out CardData consumedCard)) continue;
             bool succeeded = await ExecuteCardEffectForAiAsync(consumedCard, actor, actionsManager);
             if (succeeded)
             {
@@ -80,7 +80,7 @@ public static class AITurnController
         CharacterAction action = ResolveActionByRef(actionRef, actionsManager);
         if (action == null) return false;
 
-        action.Initialize(actor);
+        action.Initialize(actor, condition: null, effect: null, asyncEffect: null);
         action.difficulty = Mathf.Max(0, card.difficulty);
 
         bool ok = true;

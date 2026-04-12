@@ -1,2089 +1,2297 @@
 {
-    "deckId":  "sauron_base",
-    "nation":  "Sauron",
-    "alignment":  1,
-    "handSize":  5,
-    "cards":  [
-                  {
-                      "cardId":  7,
-                      "name":  "Minas Morgul",
-                      "description":  "Ungol.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ungol_venom",
-                      "action":  "MaterialRetrievalOrActionMinasMorgul",
-                      "tags":  [
-                                   "Ungol"
-                               ],
-                      "region":  "Ungol",
-                      "spriteName":  "MinasMorgul"
-                  },
-                  {
-                      "cardId":  9,
-                      "name":  "Luglurak",
-                      "description":  "Nurn.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "nurn_war_camp",
-                      "action":  "MaterialRetrievalOrActionLuglurak",
-                      "tags":  [
-                                   "Nurn"
-                               ],
-                      "region":  "Nurn",
-                      "spriteName":  "Luglurak"
-                  },
-                  {
-                      "cardId":  10,
-                      "name":  "Kal Nargil",
-                      "description":  "Nurn.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"gold\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "nurn_war_camp",
-                      "action":  "MaterialRetrievalOrActionKalNargil",
-                      "tags":  [
-                                   "Nurn"
-                               ],
-                      "region":  "Nurn",
-                      "spriteName":  "KalNargil"
-                  },
-                  {
-                      "cardId":  11,
-                      "name":  "Tol Buruth",
-                      "description":  "SeaOfRhun.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "harad_port",
-                      "action":  "MaterialRetrievalOrActionTolBuruth",
-                      "tags":  [
-                                   "SeaOfRhun"
-                               ],
-                      "region":  "SeaOfRhun",
-                      "spriteName":  "TolBuruth"
-                  },
-                  {
-                      "cardId":  12,
-                      "name":  "Lugarlur",
-                      "description":  "FarHarad.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "harad_port",
-                      "action":  "MaterialRetrievalOrActionLugarlur",
-                      "tags":  [
-                                   "FarHarad"
-                               ],
-                      "region":  "FarHarad",
-                      "spriteName":  "Lugarlur"
-                  },
-                  {
-                      "cardId":  14,
-                      "name":  "Durthang",
-                      "description":  "Ithilien.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "dark_fortress",
-                      "action":  "MaterialRetrievalOrActionDurthang",
-                      "tags":  [
-                                   "Ithilien"
-                               ],
-                      "region":  "Ithilien",
-                      "spriteName":  "Durthang"
-                  },
-                  {
-                      "cardId":  15,
-                      "name":  "Morannon",
-                      "description":  "Udun.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "mordor_gate",
-                      "action":  "MaterialRetrievalOrActionMorannon",
-                      "tags":  [
-                                   "Udun"
-                               ],
-                      "region":  "Udun",
-                      "spriteName":  "Morannon"
-                  },
-                  {
-                      "cardId":  20,
-                      "name":  "Shelob\u0027s Lair",
-                      "description":  "Ungol.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ungol_venom",
-                      "action":  "MaterialRetrievalOrActionShelobSLair",
-                      "tags":  [
-                                   "Ungol"
-                               ],
-                      "region":  "Ungol",
-                      "spriteName":  "ShelobSLair"
-                  },
-                  {
-                      "cardId":  21,
-                      "name":  "Khazad-Dum",
-                      "description":  "MistyMountains.\u003csprite name=\"mithril\"/\u003e\u003csprite name=\"mithril\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "dwarven_forge_hall",
-                      "action":  "MaterialRetrievalOrActionKhazadDum",
-                      "tags":  [
-                                   "MistyMountains"
-                               ],
-                      "region":  "MistyMountains",
-                      "spriteName":  "KhazadDum"
-                  },
-                  {
-                      "cardId":  22,
-                      "name":  "Erebor (Lost)",
-                      "description":  "Rhovanion.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mithril\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionEreborLost",
-                      "tags":  [
-                                   "Rhovanion"
-                               ],
-                      "region":  "Rhovanion",
-                      "spriteName":  "EreborLost"
-                  },
-                  {
-                      "cardId":  35,
-                      "name":  "Goblin Gate",
-                      "description":  "MistyMountains.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "goblin_muster",
-                      "action":  "MaterialRetrievalOrActionGoblinGate",
-                      "tags":  [
-                                   "MistyMountains"
-                               ],
-                      "region":  "MistyMountains",
-                      "spriteName":  "GoblinGate"
-                  },
-                  {
-                      "cardId":  43,
-                      "name":  "Barrow-downs",
-                      "description":  "Cardolan.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "forgotten_barrows",
-                      "action":  "MaterialRetrievalOrActionBarrowDowns",
-                      "tags":  [
-                                   "Cardolan"
-                               ],
-                      "region":  "Cardolan",
-                      "spriteName":  "BarrowDowns"
-                  },
-                  {
-                      "cardId":  46,
-                      "name":  "Gundabad",
-                      "description":  "Angmar.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "goblin_muster",
-                      "action":  "MaterialRetrievalOrActionGundabad",
-                      "tags":  [
-                                   "Angmar"
-                               ],
-                      "region":  "Angmar",
-                      "spriteName":  "Gundabad"
-                  },
-                  {
-                      "cardId":  242,
-                      "name":  "Sabotage Port",
-                      "description":  "",
-                      "type":  "Action",
-                      "actionClassName":  "SabotagePort",
-                      "actionId":  177,
-                      "action":  "SabotagePort",
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  4,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  70,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  1,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  245,
-                      "name":  "Destroy Fortifications",
-                      "description":  "",
-                      "type":  "Action",
-                      "actionClassName":  "DestroyFortifications",
-                      "actionId":  175,
-                      "action":  "DestroyFortifications",
-                      "commanderSkillRequired":  4,
-                      "agentSkillRequired":  0,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  70,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  1,
-                      "ironRequired":  1,
-                      "steelRequired":  1,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  251,
-                      "name":  "Angmar",
-                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"mithril\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalAngmar",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  252,
-                      "name":  "BrownLands",
-                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"mounts\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalBrownlands",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  253,
-                      "name":  "Dagorlad",
-                      "description":  "\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalDagorlad",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  254,
-                      "name":  "Bay of Forochel",
-                      "description":  "\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"gold\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalForochel",
-                      "spriteName":  "BayOfForochel",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  255,
-                      "name":  "Gorgoroth",
-                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"steel\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalGorgoroth",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  256,
-                      "name":  "Ithilien",
-                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"mounts\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalIthilien",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  257,
-                      "name":  "MistyMountains",
-                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"mithril\"\u003e\u003csprite name=\"mithril\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalMistymountains",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  258,
-                      "name":  "Nurn",
-                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"mounts\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalNurn",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  259,
-                      "name":  "Rhudaur",
-                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"leather\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalRhudaur",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  260,
-                      "name":  "Rhun",
-                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"gold\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"mounts\"\u003e\u003csprite name=\"leather\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalSeaofrhun",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  261,
-                      "name":  "SouthernMirkwood",
-                      "description":  "\u003csprite name=\"gold\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"timber\"\u003e\u003csprite name=\"mounts\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalSouthernmirkwood",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  262,
-                      "name":  "Nindalf",
-                      "description":  "\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"timber\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalThedeadmarshes",
-                      "spriteName":  "Nindalf",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  263,
-                      "name":  "TheNorthDowns",
-                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"timber\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalThenorthdowns",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  264,
-                      "name":  "Udun",
-                      "description":  "\u003csprite name=\"mounts\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"leather\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalUdun",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  265,
-                      "name":  "Ungol",
-                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"iron\"\u003e\u003csprite name=\"leather\"\u003e\u003csprite name=\"steel\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalUngol",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  266,
-                      "name":  "WitheredHeath",
-                      "description":  "\u003csprite name=\"iron\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"steel\"\u003e\u003csprite name=\"mithril\"\u003e\u003csprite name=\"mithril\"\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalWitheredheath",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  267,
-                      "name":  "Doors of Night",
-                      "description":  "Grants Courage to all Dark Servants units for 1 turn and dispels Dawn.",
-                      "type":  "Event",
-                      "action":  "DoorsOfNight",
-                      "actionClassName":  "DoorsOfNight",
-                      "actionId":  184,
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  0,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  75,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  268,
-                      "name":  "Full Moon",
-                      "description":  "Environmental event. Grants Haste to all Nazgul for 1 turn.",
-                      "type":  "Event",
-                      "action":  "FullMoon",
-                      "actionClassName":  "FullMoon",
-                      "actionId":  187,
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  1,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  269,
-                      "name":  "Long Shadows",
-                      "description":  "Environmental event. Grants Courage to all beasts for 1 turn.",
-                      "type":  "Event",
-                      "action":  "LongShadows",
-                      "actionClassName":  "LongShadows",
-                      "actionId":  190,
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  271,
-                      "name":  "Cruel Winter",
-                      "description":  "Environmental event. All mountain enemy units have 7.5% chance to become Frozen.",
-                      "type":  "Event",
-                      "action":  "CruelWinter",
-                      "actionClassName":  "CruelWinter",
-                      "actionId":  192,
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  272,
-                      "name":  "Fury of Ulmo",
-                      "description":  "Environmental event. Halts all navy or embarked units.",
-                      "type":  "Event",
-                      "action":  "FuryOfUlmo",
-                      "actionClassName":  "FuryOfUlmo",
-                      "actionId":  193,
-                      "spriteName":  "RageOfUlmo",
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  277,
-                      "name":  "Secrets from a Lost Tome",
-                      "description":  "Reveal hidden artifacts in radius 2 and gain +1 Mage for 1 turn.",
-                      "type":  "Event",
-                      "action":  "ABookOfLostMagic",
-                      "actionClassName":  "ABookOfLostMagic",
-                      "actionId":  197,
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  1,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  278,
-                      "name":  "Struck by a Morgul Blade",
-                      "description":  "Target enemy character in your hex: apply Poisoned (2 turns) and Fear (1 turn).",
-                      "type":  "Action",
-                      "action":  "AMorgulBlade",
-                      "actionClassName":  "AMorgulBlade",
-                      "actionId":  198,
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  1,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  294,
-                      "name":  "AmonLhaw",
-                      "description":  "Nindalf.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionAmonLhaw",
-                      "spriteName":  "AmonLhaw",
-                      "tags":  [
-                                   "Nindalf"
-                               ],
-                      "region":  "Nindalf"
-                  },
-                  {
-                      "cardId":  297,
-                      "name":  "AmonSul",
-                      "description":  "Cardolan.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionAmonSul",
-                      "spriteName":  "AmonSul",
-                      "tags":  [
-                                   "Cardolan"
-                               ],
-                      "region":  "Cardolan"
-                  },
-                  {
-                      "cardId":  304,
-                      "name":  "BaradWath",
-                      "description":  "Gorgoroth.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "dark_fortress",
-                      "action":  "MaterialRetrievalOrActionBaradWath",
-                      "spriteName":  "BaradWath",
-                      "tags":  [
-                                   "Gorgoroth"
-                               ],
-                      "region":  "Gorgoroth"
-                  },
-                  {
-                      "cardId":  309,
-                      "name":  "ButhOvaisa",
-                      "description":  "Khand.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "khand_rider_camp",
-                      "action":  "MaterialRetrievalOrActionButhOvaisa",
-                      "spriteName":  "ButhOvaisa",
-                      "tags":  [
-                                   "Khand"
-                               ],
-                      "region":  "Khand"
-                  },
-                  {
-                      "cardId":  312,
-                      "name":  "CamethBrin",
-                      "description":  "Rhudaur.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionCamethBrin",
-                      "spriteName":  "CamethBrin",
-                      "tags":  [
-                                   "Rhudaur"
-                               ],
-                      "region":  "Rhudaur"
-                  },
-                  {
-                      "cardId":  318,
-                      "name":  "CarnDum",
-                      "description":  "Angmar.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "goblin_muster",
-                      "action":  "MaterialRetrievalOrActionCarnDum",
-                      "spriteName":  "CarnDum",
-                      "tags":  [
-                                   "Angmar"
-                               ],
-                      "region":  "Angmar"
-                  },
-                  {
-                      "cardId":  323,
-                      "name":  "CirithUngol",
-                      "description":  "Ungol.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ungol_venom",
-                      "action":  "MaterialRetrievalOrActionCirithUngol",
-                      "spriteName":  "CirithUngol",
-                      "tags":  [
-                                   "Ungol"
-                               ],
-                      "region":  "Ungol"
-                  },
-                  {
-                      "cardId":  326,
-                      "name":  "DeadMarshes",
-                      "description":  "Dagorlad.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ashen_wastes",
-                      "action":  "MaterialRetrievalOrActionDeadMarshes",
-                      "spriteName":  "DeadMarshes",
-                      "tags":  [
-                                   "Dagorlad"
-                               ],
-                      "region":  "Dagorlad"
-                  },
-                  {
-                      "cardId":  337,
-                      "name":  "FennasDrunin",
-                      "description":  "Rhudaur.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionFennasDrunin",
-                      "spriteName":  "FennasDrunin",
-                      "tags":  [
-                                   "Rhudaur"
-                               ],
-                      "region":  "Rhudaur"
-                  },
-                  {
-                      "cardId":  340,
-                      "name":  "FornostErain",
-                      "description":  "TheNorthDowns.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "dwarven_forge_hall",
-                      "action":  "MaterialRetrievalOrActionFornostErain",
-                      "spriteName":  "FornostErain",
-                      "tags":  [
-                                   "TheNorthDowns"
-                               ],
-                      "region":  "TheNorthDowns"
-                  },
-                  {
-                      "cardId":  343,
-                      "name":  "Framsburg",
-                      "description":  "Anduin.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "beorning_hall",
-                      "action":  "MaterialRetrievalOrActionFramsburg",
-                      "spriteName":  "Framsburg",
-                      "tags":  [
-                                   "Anduin"
-                               ],
-                      "region":  "Anduin"
-                  },
-                  {
-                      "cardId":  346,
-                      "name":  "GladdenFields",
-                      "description":  "Anduin.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "beorning_hall",
-                      "action":  "MaterialRetrievalOrActionGladdenFields",
-                      "spriteName":  "GladdenFields",
-                      "tags":  [
-                                   "Anduin"
-                               ],
-                      "region":  "Anduin"
-                  },
-                  {
-                      "cardId":  347,
-                      "name":  "Goblin Gate",
-                      "description":  "MistyMountains.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "goblin_muster",
-                      "action":  "MaterialRetrievalOrActionGoblinGate",
-                      "spriteName":  "GoblinGate",
-                      "tags":  [
-                                   "MistyMountains"
-                               ],
-                      "region":  "MistyMountains"
-                  },
-                  {
-                      "cardId":  348,
-                      "name":  "Gondmaeglon",
-                      "description":  "WitheredHeath.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"mithril\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionGondmaeglon",
-                      "spriteName":  "Gondmaeglon",
-                      "tags":  [
-                                   "WitheredHeath"
-                               ],
-                      "region":  "WitheredHeath"
-                  },
-                  {
-                      "cardId":  354,
-                      "name":  "JugRijeisha",
-                      "description":  "FarHarad.\u003csprite name=\"gold\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "harad_port",
-                      "action":  "MaterialRetrievalOrActionJugRijeisha",
-                      "spriteName":  "JugRijeisha",
-                      "tags":  [
-                                   "FarHarad"
-                               ],
-                      "region":  "FarHarad"
-                  },
-                  {
-                      "cardId":  356,
-                      "name":  "KhandAmu",
-                      "description":  "Khand.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "khand_rider_camp",
-                      "action":  "MaterialRetrievalOrActionKhandAmu",
-                      "spriteName":  "KhandAmu",
-                      "tags":  [
-                                   "Khand"
-                               ],
-                      "region":  "Khand"
-                  },
-                  {
-                      "cardId":  358,
-                      "name":  "LagScara",
-                      "description":  "Ithilien.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionLagScara",
-                      "spriteName":  "LagScara",
-                      "tags":  [
-                                   "Ithilien"
-                               ],
-                      "region":  "Ithilien"
-                  },
-                  {
-                      "cardId":  359,
-                      "name":  "LagVrasfotak",
-                      "description":  "Gorgoroth.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ashen_wastes",
-                      "action":  "MaterialRetrievalOrActionLagVrasfotak",
-                      "spriteName":  "LagVrasfotak",
-                      "tags":  [
-                                   "Gorgoroth"
-                               ],
-                      "region":  "Gorgoroth"
-                  },
-                  {
-                      "cardId":  363,
-                      "name":  "Carach Angren",
-                      "description":  "Udun.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "dunland_raid_camp",
-                      "action":  "MaterialRetrievalOrActionLugGhurzun",
-                      "spriteName":  "CarachAngren",
-                      "tags":  [
-                                   "Udun"
-                               ],
-                      "region":  "Udun"
-                  },
-                  {
-                      "cardId":  368,
-                      "name":  "MountainsOfMirkwood",
-                      "description":  "\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "Land",
-                      "action":  "MaterialRetrievalOrActionMountainsOfMirkwood",
-                      "spriteName":  "MountainsOfMirkwood",
-                      "tags":  [
-
-                               ]
-                  },
-                  {
-                      "cardId":  369,
-                      "name":  "MountDoom",
-                      "description":  "Gorgoroth.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"steel\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "dark_fortress",
-                      "action":  "MaterialRetrievalOrActionMountDoom",
-                      "spriteName":  "MountDoom",
-                      "tags":  [
-                                   "Gorgoroth"
-                               ],
-                      "region":  "Gorgoroth"
-                  },
-                  {
-                      "cardId":  370,
-                      "name":  "MtGram",
-                      "description":  "Angmar.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "goblin_muster",
-                      "action":  "MaterialRetrievalOrActionMtGram",
-                      "spriteName":  "MtGram",
-                      "tags":  [
-                                   "Angmar"
-                               ],
-                      "region":  "Angmar"
-                  },
-                  {
-                      "cardId":  373,
-                      "name":  "Nurumurl",
-                      "description":  "Nurn.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "nurn_war_camp",
-                      "action":  "MaterialRetrievalOrActionNurumurl",
-                      "spriteName":  "Nurumurl",
-                      "tags":  [
-                                   "Nurn"
-                               ],
-                      "region":  "Nurn"
-                  },
-                  {
-                      "cardId":  374,
-                      "name":  "Olbamarl",
-                      "description":  "Ungol.\u003csprite name=\"iron\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionOlbamarl",
-                      "spriteName":  "Olbamarl",
-                      "tags":  [
-                                   "Ungol"
-                               ],
-                      "region":  "Ungol"
-                  },
-                  {
-                      "cardId":  375,
-                      "name":  "Ongushar",
-                      "description":  "BrownLands.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionOngushar",
-                      "spriteName":  "Ongushar",
-                      "tags":  [
-                                   "BrownLands"
-                               ],
-                      "region":  "BrownLands"
-                  },
-                  {
-                      "cardId":  376,
-                      "name":  "OrdugaAivaisa",
-                      "description":  "Nurn.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "nurn_war_camp",
-                      "action":  "MaterialRetrievalOrActionOrdugaAivaisa",
-                      "spriteName":  "OrdugaAivaisa",
-                      "tags":  [
-                                   "Nurn"
-                               ],
-                      "region":  "Nurn"
-                  },
-                  {
-                      "cardId":  378,
-                      "name":  "Ostigurth",
-                      "description":  "Gorgoroth.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"iron\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ashen_wastes",
-                      "action":  "MaterialRetrievalOrActionOstigurth",
-                      "spriteName":  "Ostigurth",
-                      "tags":  [
-                                   "Gorgoroth"
-                               ],
-                      "region":  "Gorgoroth"
-                  },
-                  {
-                      "cardId":  384,
-                      "name":  "Rul",
-                      "description":  "Nurn.\u003csprite name=\"leather\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "nurn_war_camp",
-                      "action":  "MaterialRetrievalOrActionRul",
-                      "spriteName":  "Rul",
-                      "tags":  [
-                                   "Nurn"
-                               ],
-                      "region":  "Nurn"
-                  },
-                  {
-                      "cardId":  385,
-                      "name":  "SarnGoriwing",
-                      "description":  "MountainsOfMirkwood.\u003csprite name=\"steel\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ranger_ambush",
-                      "action":  "MaterialRetrievalOrActionSarnGoriwing",
-                      "spriteName":  "SarnGoriwing",
-                      "tags":  [
-                                   "MountainsOfMirkwood"
-                               ],
-                      "region":  "MountainsOfMirkwood"
-                  },
-                  {
-                      "cardId":  389,
-                      "name":  "Thuringwathost",
-                      "description":  "Dagorlad.\u003csprite name=\"timber\"/\u003e\u003csprite name=\"leather\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "ashen_wastes",
-                      "action":  "MaterialRetrievalOrActionThuringwathost",
-                      "spriteName":  "Thuringwathost",
-                      "tags":  [
-                                   "Dagorlad"
-                               ],
-                      "region":  "Dagorlad"
-                  },
-                  {
-                      "cardId":  391,
-                      "name":  "UrlurtsuNurn",
-                      "description":  "Nurn.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"timber\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "nurn_war_camp",
-                      "action":  "MaterialRetrievalOrActionUrlurtsuNurn",
-                      "spriteName":  "UrlurtsuNurn",
-                      "tags":  [
-                                   "Nurn"
-                               ],
-                      "region":  "Nurn"
-                  },
-                  {
-                      "cardId":  392,
-                      "name":  "Wathduin",
-                      "description":  "NearHarad.\u003csprite name=\"mounts\"/\u003e\u003csprite name=\"mounts\"/\u003e\nOR\n\u003cTBD\u003e",
-                      "type":  "PC",
-                      "requirementsText":  "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
-                      "pcEffectId":  "harad_port",
-                      "action":  "MaterialRetrievalOrActionWathduin",
-                      "spriteName":  "Wathduin",
-                      "tags":  [
-                                   "NearHarad"
-                               ],
-                      "region":  "NearHarad"
-                  },
-                  {
-                      "cardId":  393,
-                      "name":  "Lake Town Arsenal",
-                      "description":  "Gain +1 Iron, +1 Steel, +1 Timber.",
-                      "type":  "Action",
-                      "action":  "Arsenal",
-                      "actionClassName":  "Arsenal",
-                      "actionId":  213,
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  1,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  396,
-                      "name":  "Dragon-fire",
-                      "description":  "Enemy units in radius 1 gain Burning (1 turn); enemies on forest tiles also gain Fear (1 turn).",
-                      "type":  "Action",
-                      "action":  "DragonBreath",
-                      "actionClassName":  "DragonBreath",
-                      "actionId":  223,
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  1,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  1,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  397,
-                      "name":  "ElvesGoingWest",
-                      "description":  "Apply Despair (1 turn) to all elves in radius 2.",
-                      "type":  "Action",
-                      "action":  "ElvesGoingWest",
-                      "actionClassName":  "ElvesGoingWest",
-                      "actionId":  226,
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  409,
-                      "name":  "BorderPatrolling",
-                      "description":  "Reveal the surrounding area in a radius based on the higher of Agent or Commander skill, detect nearby enemies, and halt an enemy army commander in your hex if present.",
-                      "type":  "Action",
-                      "action":  "BorderPatrolling",
-                      "actionClassName":  "BorderPatrolling",
-                      "actionId":  232,
-                      "spriteName":  "BorderPatrolling",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  414,
-                      "name":  "AshesOfGorgoroth",
-                      "description":  "Create a corruption pulse in radius 1-3 based on caster Mage: enemies gain Despair (1 turn), and allied evil characters remove Fear.",
-                      "type":  "Action",
-                      "action":  "AshesOfGorgoroth",
-                      "actionClassName":  "AshesOfGorgoroth",
-                      "actionId":  236,
-                      "spriteName":  "AshesOfGorgoroth",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  1,
-                      "mithrilRequired":  1,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  415,
-                      "name":  "A Knife in the Dark",
-                      "description":  "Target enemy character in your hex: apply Poisoned (2 turns) and Fear (1 turn).",
-                      "type":  "Action",
-                      "action":  "KalNargilDagger",
-                      "actionClassName":  "KalNargilDagger",
-                      "actionId":  237,
-                      "spriteName":  "A Knife in the Dark",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  1,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  416,
-                      "name":  "DreadOfTheNoldor",
-                      "description":  "Apply Despair (1 turn) to all Elf characters in radius 2, and apply Fear (1 turn) to enemy elves in the caster\u0027s hex.",
-                      "type":  "Event",
-                      "action":  "DreadOfTheNoldor",
-                      "actionClassName":  "DreadOfTheNoldor",
-                      "actionId":  238,
-                      "spriteName":  "DreadOfTheNoldor",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  419,
-                      "name":  "FiresOfDoom",
-                      "description":  "Environmental event: apply Burning (1 turn) to all enemy units on wastelands tiles.",
-                      "type":  "Event",
-                      "action":  "FiresOfDoom",
-                      "actionClassName":  "FiresOfDoom",
-                      "actionId":  240,
-                      "spriteName":  "FiresOfDoom",
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  1,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  1,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  421,
-                      "name":  "Rain",
-                      "description":  "Environmental event: remove Burning from all units, reduce movement in radius 2, and reduce visibility nearby.",
-                      "type":  "Event",
-                      "action":  "Rain",
-                      "actionClassName":  "Rain",
-                      "actionId":  241,
-                      "spriteName":  "Rain",
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  423,
-                      "name":  "Twilight",
-                      "description":  "Environmental event: in radius 2, reduce visibility and clear scouting; allied dark-aligned PCs there become temporarily hidden.",
-                      "type":  "Event",
-                      "action":  "Twilight",
-                      "actionClassName":  "Twilight",
-                      "actionId":  242,
-                      "spriteName":  "Twilight",
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  427,
-                      "name":  "Flame of Udun",
-                      "description":  "In radius 2, apply Burning (1 turn) and Fear (1 turn) to all enemy units.",
-                      "type":  "Action",
-                      "action":  "FlameOfUdun",
-                      "actionClassName":  "FlameOfUdun",
-                      "actionId":  245,
-                      "spriteName":  "Flame of Udun",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  1,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  436,
-                      "name":  "The Blow of Gorgoroth",
-                      "description":  "Target enemy character in your hex: deal moderate damage and apply Fear (1 turn).",
-                      "type":  "Action",
-                      "action":  "GorgorothMorningStar",
-                      "actionClassName":  "GorgorothMorningStar",
-                      "actionId":  252,
-                      "spriteName":  "The Blow of Gorgoroth",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  1,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  437,
-                      "name":  "Scents of the Haradrim",
-                      "description":  "Target enemy character in your hex: deal moderate damage and apply Poisoned (2 turns).",
-                      "type":  "Action",
-                      "action":  "HaradrimScenticMace",
-                      "actionClassName":  "HaradrimScenticMace",
-                      "actionId":  253,
-                      "spriteName":  "Scents of the Haradrim",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  440,
-                      "name":  "War spoils",
-                      "description":  "Target allied character in your hex: gain Fortified (1 turn).",
-                      "type":  "Action",
-                      "action":  "HelmOfArnor",
-                      "actionClassName":  "HelmOfArnor",
-                      "actionId":  254,
-                      "spriteName":  "War spoils",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  1,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  443,
-                      "name":  "Healing Herbs",
-                      "description":  "Target allied character in your hex: heal a moderate amount.",
-                      "type":  "Action",
-                      "action":  "Herbs",
-                      "actionClassName":  "Herbs",
-                      "actionId":  255,
-                      "spriteName":  "Healing Herbs",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  448,
-                      "name":  "Mounts",
-                      "description":  "Target allied character in your hex: gain Haste (1 turn).",
-                      "type":  "Action",
-                      "action":  "Horses",
-                      "actionClassName":  "Horses",
-                      "actionId":  258,
-                      "spriteName":  "Mounts",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  0,
-                      "mountsRequired":  1,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  449,
-                      "name":  "Shadows of Ithilien",
-                      "description":  "Target allied character in your hex: gain Hidden (1 turn), and reveal enemies in radius 1 around the caster.",
-                      "type":  "Action",
-                      "action":  "IthilienRangerHood",
-                      "actionClassName":  "IthilienRangerHood",
-                      "actionId":  259,
-                      "spriteName":  "Shadows of Ithilien",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  450,
-                      "name":  "Luglurak Dark Magic",
-                      "description":  "Enemy characters in radius 1 gain Fear (1 turn).",
-                      "type":  "Action",
-                      "action":  "LuglurakStaff",
-                      "actionClassName":  "LuglurakStaff",
-                      "actionId":  263,
-                      "spriteName":  "Luglurak Dark Magic",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  451,
-                      "name":  "A Mithril coat",
-                      "description":  "Target allied character in your hex: gain Fortified (3 turns).",
-                      "type":  "Action",
-                      "action":  "MithrilCoat",
-                      "actionClassName":  "MithrilCoat",
-                      "actionId":  266,
-                      "spriteName":  "A Mithril coat",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  1,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  452,
-                      "name":  "Marked by a Nazgul",
-                      "description":  "Target enemy character in your hex: apply Fear (1 turn) and Halted (1 turn).",
-                      "type":  "Action",
-                      "action":  "NazgulMark",
-                      "actionClassName":  "NazgulMark",
-                      "actionId":  267,
-                      "spriteName":  "Marked by a Nazgul",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  453,
-                      "name":  "Orc Draught",
-                      "description":  "Target allied character in your hex: heal a small amount and gain Haste (1 turn).",
-                      "type":  "Action",
-                      "action":  "OrcDraughts",
-                      "actionClassName":  "OrcDraughts",
-                      "actionId":  270,
-                      "spriteName":  "Orc Draught",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  1,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  454,
-                      "name":  "OrcRebellion",
-                      "description":  "Target allied army commander in your hex: gain +1 permanent Commander and lose 1 unit of the weakest army troop type.",
-                      "type":  "Action",
-                      "action":  "OrcRebellion",
-                      "actionClassName":  "OrcRebellion",
-                      "actionId":  271,
-                      "spriteName":  "OrcRebellion",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  455,
-                      "name":  "RageOfUlmo",
-                      "description":  "All naval or embarked units on water/shore tiles take moderate damage and are Halted (1 turn).",
-                      "type":  "Event",
-                      "action":  "RageOfUlmo",
-                      "actionClassName":  "RageOfUlmo",
-                      "actionId":  272,
-                      "spriteName":  "RageOfUlmo",
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  456,
-                      "name":  "Healing Herbs",
-                      "description":  "Target allied character: heal 15 HP and remove Poisoned/Burning.",
-                      "type":  "Action",
-                      "action":  "HealingHerbs",
-                      "actionClassName":  "HealingHerbs",
-                      "actionId":  277,
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  462,
-                      "name":  "Hidden in Hides",
-                      "description":  "Enemy units in your hex are Halted (1 turn); caster gains Hidden (2 turns).",
-                      "type":  "Event",
-                      "action":  "HiddenInHides",
-                      "actionClassName":  "HiddenInHides",
-                      "actionId":  281,
-                      "spriteName":  "HiddenInHides",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  465,
-                      "name":  "Raid From The Mountains",
-                      "description":  "All allied army commanders in mountains or hills gain Haste (1 turn) and Courage (1 turn).",
-                      "type":  "Event",
-                      "action":  "RaidFromTheMountains",
-                      "actionClassName":  "RaidFromTheMountains",
-                      "actionId":  283,
-                      "spriteName":  "RaidFromTheMountains",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  1,
-                      "mountsRequired":  1,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  468,
-                      "name":  "Rallied Men",
-                      "description":  "Allied Human units gain Strengthened (1 turn).",
-                      "type":  "Event",
-                      "action":  "RalliedMen",
-                      "actionClassName":  "RalliedMen",
-                      "actionId":  284,
-                      "spriteName":  "RalliedMen",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  480,
-                      "name":  "Empalisades",
-                      "description":  "If you are on an allied population center, increase its fortification by 1.",
-                      "type":  "Action",
-                      "action":  "FortifyPC",
-                      "actionClassName":  "FortifyPC",
-                      "actionId":  126,
-                      "spriteName":  "Empalisades",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  1,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  484,
-                      "name":  "Shielded",
-                      "description":  "Target allied character in your hex: gain Fortified (1 turn), and if the target has Fear remove it.",
-                      "type":  "Action",
-                      "action":  "GondorianTowerShield",
-                      "actionClassName":  "GondorianTowerShield",
-                      "actionId":  251,
-                      "spriteName":  "Shielded",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  1,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  486,
-                      "name":  "Sniped!",
-                      "description":  "Target enemy in same/adjacent hex: inflict small wound and Fear (1 turn).",
-                      "type":  "Action",
-                      "action":  "DunlendingShortBow",
-                      "actionClassName":  "DunlendingShortBow",
-                      "actionId":  225,
-                      "spriteName":  "Sniped!",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  1,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  490,
-                      "name":  "TheIronCrownRidesAgain",
-                      "description":  "Target allied Nazgul in your hex gains +1 Commander and +1 Mage.",
-                      "type":  "Action",
-                      "action":  "TheIronCrownRidesAgain",
-                      "actionClassName":  "TheIronCrownRidesAgain",
-                      "actionId":  294,
-                      "spriteName":  "TheIronCrownRidesAgain",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  1,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  491,
-                      "name":  "Chopping the Trees",
-                      "description":  "If you are on a forest hex, gain +3 timber; beast- or Ent-race characters here are moderately wounded.",
-                      "type":  "Event",
-                      "action":  "ChoppingTheTrees",
-                      "actionClassName":  "ChoppingTheTrees",
-                      "actionId":  295,
-                      "spriteName":  "Chopping the Trees",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  495,
-                      "name":  "TheNineRideAgain",
-                      "description":  "All Nazgul gain Haste (3 turns).",
-                      "type":  "Event",
-                      "action":  "TheNineRideAgain",
-                      "actionClassName":  "TheNineRideAgain",
-                      "actionId":  297,
-                      "spriteName":  "TheNineRideAgain",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  1,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  498,
-                      "name":  "Traps",
-                      "description":  "Target enemy character in your hex: apply Blocked (1 turn) and Poisoned (2 turns).",
-                      "type":  "Event",
-                      "action":  "Traps",
-                      "actionClassName":  "Traps",
-                      "actionId":  298,
-                      "spriteName":  "Traps",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  505,
-                      "name":  "Well-equiped Army",
-                      "description":  "All allied armies in radius 2 gain Fortified (1 turn).",
-                      "type":  "Event",
-                      "action":  "WellEquipedArmy",
-                      "actionClassName":  "WellEquipedArmy",
-                      "actionId":  303,
-                      "spriteName":  "Well-equiped Army",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  1,
-                      "mountsRequired":  0,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  508,
-                      "name":  "WhenThereIsAWhip",
-                      "description":  "All allied armies in radius 2 gain Haste (3 turns).",
-                      "type":  "Event",
-                      "action":  "WhenThereIsAWhip",
-                      "actionClassName":  "WhenThereIsAWhip",
-                      "actionId":  305,
-                      "spriteName":  "WhenThereIsAWhip",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  0,
-                      "mountsRequired":  1,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  546,
-                      "name":  "Araudagul",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "Araudagul",
-                      "tags":  [
-
-                               ],
-                      "commander":  1,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  0,
-                      "race":  18,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  547,
-                      "name":  "Barrow King of Rhudaur",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "BarrowKingOfRhudaur",
-                      "tags":  [
-
-                               ],
-                      "commander":  1,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  1,
-                      "race":  11,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  548,
-                      "name":  "Ethacali",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "Ethacali",
-                      "tags":  [
-
-                               ],
-                      "commander":  1,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  0,
-                      "race":  0,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  550,
-                      "name":  "Gorthog",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "Gorthog",
-                      "tags":  [
-
-                               ],
-                      "commander":  2,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  0,
-                      "race":  5,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  551,
-                      "name":  "Gothmog",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "Gothmog",
-                      "tags":  [
-
-                               ],
-                      "commander":  1,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  0,
-                      "race":  5,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  552,
-                      "name":  "Gwyllion",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "Gwyllion",
-                      "tags":  [
-
-                               ],
-                      "commander":  0,
-                      "agent":  1,
-                      "emmissary":  0,
-                      "mage":  1,
-                      "race":  11,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  553,
-                      "name":  "Hill Lord of Rhudaur",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "HillLordOfRhudaur",
-                      "tags":  [
-
-                               ],
-                      "commander":  1,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  0,
-                      "race":  0,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  555,
-                      "name":  "Lurtz",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "Lurtz",
-                      "tags":  [
-
-                               ],
-                      "commander":  2,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  0,
-                      "race":  5,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  557,
-                      "name":  "Shagrat",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "Shagrat",
-                      "tags":  [
-
-                               ],
-                      "commander":  1,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  0,
-                      "race":  5,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  558,
-                      "name":  "The Grimburgoth",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "TheGrimburgoth",
-                      "tags":  [
-
-                               ],
-                      "commander":  2,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  0,
-                      "race":  0,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  706,
-                      "name":  "Morgul Tithe",
-                      "description":  "Morgul Tithe. Unique event logic variant based on ReachOfBaradUngol.",
-                      "type":  "Event",
-                      "action":  "MorgulTithe",
-                      "actionClassName":  "MorgulTithe",
-                      "actionId":  311,
-                      "spriteName":  "MorgulTithe",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  0,
-                      "timberRequired":  0,
-                      "mountsRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  708,
-                      "name":  "Black Gate Sortie",
-                      "description":  "Black Gate Sortie. Unique event logic variant based on RaidFromTheMountains.",
-                      "type":  "Event",
-                      "action":  "BlackGateSortie",
-                      "actionClassName":  "BlackGateSortie",
-                      "actionId":  313,
-                      "spriteName":  "BlackGateSortie",
-                      "tags":  [
-
-                               ],
-                      "leatherRequired":  1,
-                      "timberRequired":  1,
-                      "mountsRequired":  1,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "jokerRequired":  0
-                  },
-                  {
-                      "cardId":  709,
-                      "name":  "Shroud of Gorgoroth",
-                      "description":  "Shroud of Gorgoroth. Unique event logic variant based on DoorsOfNight.",
-                      "type":  "Event",
-                      "action":  "ShroudofGorgoroth",
-                      "actionClassName":  "ShroudofGorgoroth",
-                      "actionId":  314,
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  0,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  75,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "tags":  [
-                                   "environmental"
-                               ],
-                      "jokerRequired":  0,
-                      "spriteName":  "ShroudOfGorgoroth"
-                  },
-                  {
-                      "cardId":  762,
-                      "name":  "Orthanc",
-                      "description":  "",
-                      "type":  "Character",
-                      "spriteName":  "Orthanc",
-                      "tags":  [
-
-                               ],
-                      "commander":  0,
-                      "agent":  0,
-                      "emmissary":  0,
-                      "mage":  0,
-                      "race":  4,
-                      "artifacts":  [
-
-                                    ]
-                  },
-                  {
-                      "cardId":  798,
-                      "name":  "Release Character",
-                      "description":  "Release one captive currently held by this character in the same hex.",
-                      "type":  "Action",
-                      "actionClassName":  "ReleaseCharacter",
-                      "actionId":  1231,
-                      "action":  "ReleaseCharacter",
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  1,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  0,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  0,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0,
-                      "spriteName":  "ReleaseCharacter"
-                  },
-                  {
-                      "cardId":  799,
-                      "name":  "Ask Ransom",
-                      "description":  "Demand ransom for a captive in the same hex. If the captive\u0027s owner pays, the captive is released.",
-                      "type":  "Action",
-                      "actionClassName":  "AskRansom",
-                      "actionId":  1232,
-                      "action":  "AskRansom",
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  1,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  0,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  0,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0,
-                      "spriteName":  "AskRansom"
-                  },
-                  {
-                      "cardId":  800,
-                      "name":  "Free Character",
-                      "description":  "Attempt to free an allied captive of the same nation in the same hex. Enemy agents hold captives more securely, and critical failure is dangerous.",
-                      "type":  "Action",
-                      "actionClassName":  "FreeCharacter",
-                      "actionId":  1233,
-                      "action":  "FreeCharacter",
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  4,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  0,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  0,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0,
-                      "spriteName":  "FreeCharacter"
-                  }
-              ]
+    "deckId": "sauron_base",
+    "nation": "Sauron",
+    "alignment": 1,
+    "handSize": 5,
+    "cards": [
+        {
+            "cardId": 7,
+            "name": "Minas Morgul",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ungol_venom",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "Ungol"
+            ],
+            "region": "Ungol",
+            "spriteName": "MinasMorgul",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 2,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 9,
+            "name": "Luglurak",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "nurn_war_camp",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "Nurn"
+            ],
+            "region": "Nurn",
+            "spriteName": "Luglurak",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 1,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 10,
+            "name": "Kal Nargil",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "nurn_war_camp",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "Nurn"
+            ],
+            "region": "Nurn",
+            "spriteName": "KalNargil",
+            "goldGranted": 2,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 11,
+            "name": "Tol Buruth",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "harad_port",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "SeaOfRhun"
+            ],
+            "region": "SeaOfRhun",
+            "spriteName": "TolBuruth",
+            "goldGranted": 1,
+            "leatherGranted": 0,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 12,
+            "name": "Lugarlur",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "harad_port",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "FarHarad"
+            ],
+            "region": "FarHarad",
+            "spriteName": "Lugarlur",
+            "goldGranted": 1,
+            "leatherGranted": 0,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 14,
+            "name": "Durthang",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "dark_fortress",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "Ithilien"
+            ],
+            "region": "Ithilien",
+            "spriteName": "Durthang",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 2,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 15,
+            "name": "Morannon",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "mordor_gate",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "Udun"
+            ],
+            "region": "Udun",
+            "spriteName": "Morannon",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 2,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 20,
+            "name": "Shelob's Lair",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ungol_venom",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "Ungol"
+            ],
+            "region": "Ungol",
+            "spriteName": "ShelobSLair",
+            "goldGranted": 0,
+            "leatherGranted": 2,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 21,
+            "name": "Khazad-Dum",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "dwarven_forge_hall",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "MistyMountains"
+            ],
+            "region": "MistyMountains",
+            "spriteName": "KhazadDum",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 2
+        },
+        {
+            "cardId": 22,
+            "name": "Erebor (Lost)",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "Rhovanion"
+            ],
+            "region": "Rhovanion",
+            "spriteName": "EreborLost",
+            "goldGranted": 1,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 1
+        },
+        {
+            "cardId": 35,
+            "name": "Goblin Gate",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "goblin_muster",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "MistyMountains"
+            ],
+            "region": "MistyMountains",
+            "spriteName": "GoblinGate",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 43,
+            "name": "Barrow-downs",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "forgotten_barrows",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "Cardolan"
+            ],
+            "region": "Cardolan",
+            "spriteName": "BarrowDowns",
+            "goldGranted": 1,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 46,
+            "name": "Gundabad",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "goblin_muster",
+            "action": "MaterialRetrievalOrAction",
+            "tags": [
+                "Angmar"
+            ],
+            "region": "Angmar",
+            "spriteName": "Gundabad",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 242,
+            "name": "Sabotage Port",
+            "description": "",
+            "type": "Action",
+            "actionClassName": "SabotagePort",
+            "actionId": 177,
+            "action": "SabotagePort",
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 4,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 70,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 1,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "tags": [],
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 245,
+            "name": "Destroy Fortifications",
+            "description": "",
+            "type": "Action",
+            "actionClassName": "DestroyFortifications",
+            "actionId": 175,
+            "action": "DestroyFortifications",
+            "commanderSkillRequired": 4,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 70,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 1,
+            "ironRequired": 1,
+            "steelRequired": 1,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "tags": [],
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 251,
+            "name": "Angmar",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 2,
+            "steelGranted": 2,
+            "mithrilGranted": 1
+        },
+        {
+            "cardId": 252,
+            "name": "BrownLands",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 1,
+            "leatherGranted": 2,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 1,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 253,
+            "name": "Dagorlad",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 3,
+            "timberGranted": 2,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 254,
+            "name": "Bay of Forochel",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "spriteName": "BayOfForochel",
+            "tags": [],
+            "goldGranted": 1,
+            "leatherGranted": 3,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 255,
+            "name": "Gorgoroth",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 2,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 2,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 256,
+            "name": "Ithilien",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 2,
+            "leatherGranted": 2,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 257,
+            "name": "MistyMountains",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 2,
+            "mithrilGranted": 2
+        },
+        {
+            "cardId": 258,
+            "name": "Nurn",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 2,
+            "leatherGranted": 0,
+            "timberGranted": 2,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 259,
+            "name": "Rhudaur",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 1,
+            "leatherGranted": 1,
+            "timberGranted": 2,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 260,
+            "name": "Rhun",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 2,
+            "leatherGranted": 1,
+            "timberGranted": 1,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 261,
+            "name": "SouthernMirkwood",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 1,
+            "leatherGranted": 0,
+            "timberGranted": 3,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 262,
+            "name": "Nindalf",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "spriteName": "Nindalf",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 3,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 263,
+            "name": "TheNorthDowns",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 2,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 264,
+            "name": "Udun",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 2,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 2,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 265,
+            "name": "Ungol",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 3,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 266,
+            "name": "WitheredHeath",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 2,
+            "mithrilGranted": 2
+        },
+        {
+            "cardId": 267,
+            "name": "Doors of Night",
+            "description": "Grants Courage to all Dark Servants units for 1 turn and dispels Dawn.",
+            "type": "Event",
+            "action": "DoorsOfNight",
+            "actionClassName": "DoorsOfNight",
+            "actionId": 184,
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 75,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "tags": [
+                "environmental"
+            ],
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 268,
+            "name": "Full Moon",
+            "description": "Environmental event. Grants Haste to all Nazgul for 1 turn.",
+            "type": "Event",
+            "action": "FullMoon",
+            "actionClassName": "FullMoon",
+            "actionId": 187,
+            "tags": [
+                "environmental"
+            ],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 1,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 269,
+            "name": "Long Shadows",
+            "description": "Environmental event. Grants Courage to all beasts for 1 turn.",
+            "type": "Event",
+            "action": "LongShadows",
+            "actionClassName": "LongShadows",
+            "actionId": 190,
+            "tags": [
+                "environmental"
+            ],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 271,
+            "name": "Cruel Winter",
+            "description": "Environmental event. All mountain enemy units have 7.5% chance to become Frozen.",
+            "type": "Event",
+            "action": "CruelWinter",
+            "actionClassName": "CruelWinter",
+            "actionId": 192,
+            "tags": [
+                "environmental"
+            ],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 272,
+            "name": "Fury of Ulmo",
+            "description": "Environmental event. Halts all navy or embarked units.",
+            "type": "Event",
+            "action": "FuryOfUlmo",
+            "actionClassName": "FuryOfUlmo",
+            "actionId": 193,
+            "spriteName": "RageOfUlmo",
+            "tags": [
+                "environmental"
+            ],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 277,
+            "name": "Secrets from a Lost Tome",
+            "description": "Reveal hidden artifacts in radius 2 and gain +1 Mage for 1 turn.",
+            "type": "Event",
+            "action": "ABookOfLostMagic",
+            "actionClassName": "ABookOfLostMagic",
+            "actionId": 197,
+            "tags": [
+                "environmental"
+            ],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 1,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 278,
+            "name": "Struck by a Morgul Blade",
+            "description": "Target enemy character in your hex: apply Poisoned (2 turns) and Fear (1 turn).",
+            "type": "Action",
+            "action": "AMorgulBlade",
+            "actionClassName": "AMorgulBlade",
+            "actionId": 198,
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 1,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 294,
+            "name": "AmonLhaw",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "AmonLhaw",
+            "tags": [
+                "Nindalf"
+            ],
+            "region": "Nindalf",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 1,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 297,
+            "name": "AmonSul",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "AmonSul",
+            "tags": [
+                "Cardolan"
+            ],
+            "region": "Cardolan",
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 304,
+            "name": "BaradWath",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "dark_fortress",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "BaradWath",
+            "tags": [
+                "Gorgoroth"
+            ],
+            "region": "Gorgoroth",
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 309,
+            "name": "ButhOvaisa",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "khand_rider_camp",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "ButhOvaisa",
+            "tags": [
+                "Khand"
+            ],
+            "region": "Khand",
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 312,
+            "name": "CamethBrin",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "CamethBrin",
+            "tags": [
+                "Rhudaur"
+            ],
+            "region": "Rhudaur",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 318,
+            "name": "CarnDum",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "goblin_muster",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "CarnDum",
+            "tags": [
+                "Angmar"
+            ],
+            "region": "Angmar",
+            "goldGranted": 1,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 323,
+            "name": "CirithUngol",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ungol_venom",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "CirithUngol",
+            "tags": [
+                "Ungol"
+            ],
+            "region": "Ungol",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 2,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 326,
+            "name": "DeadMarshes",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ashen_wastes",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "DeadMarshes",
+            "tags": [
+                "Dagorlad"
+            ],
+            "region": "Dagorlad",
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 337,
+            "name": "FennasDrunin",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "FennasDrunin",
+            "tags": [
+                "Rhudaur"
+            ],
+            "region": "Rhudaur",
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 340,
+            "name": "FornostErain",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "dwarven_forge_hall",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "FornostErain",
+            "tags": [
+                "TheNorthDowns"
+            ],
+            "region": "TheNorthDowns",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 343,
+            "name": "Framsburg",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "beorning_hall",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "Framsburg",
+            "tags": [
+                "Anduin"
+            ],
+            "region": "Anduin",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 346,
+            "name": "GladdenFields",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "beorning_hall",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "GladdenFields",
+            "tags": [
+                "Anduin"
+            ],
+            "region": "Anduin",
+            "goldGranted": 0,
+            "leatherGranted": 2,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 347,
+            "name": "Goblin Gate",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "goblin_muster",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "GoblinGate",
+            "tags": [
+                "MistyMountains"
+            ],
+            "region": "MistyMountains",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 348,
+            "name": "Gondmaeglon",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "Gondmaeglon",
+            "tags": [
+                "WitheredHeath"
+            ],
+            "region": "WitheredHeath",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 1,
+            "mithrilGranted": 1
+        },
+        {
+            "cardId": 354,
+            "name": "JugRijeisha",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "harad_port",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "JugRijeisha",
+            "tags": [
+                "FarHarad"
+            ],
+            "region": "FarHarad",
+            "goldGranted": 1,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 356,
+            "name": "KhandAmu",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "khand_rider_camp",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "KhandAmu",
+            "tags": [
+                "Khand"
+            ],
+            "region": "Khand",
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 358,
+            "name": "LagScara",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "LagScara",
+            "tags": [
+                "Ithilien"
+            ],
+            "region": "Ithilien",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 1,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 359,
+            "name": "LagVrasfotak",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ashen_wastes",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "LagVrasfotak",
+            "tags": [
+                "Gorgoroth"
+            ],
+            "region": "Gorgoroth",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 2,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 363,
+            "name": "Carach Angren",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "dunland_raid_camp",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "CarachAngren",
+            "tags": [
+                "Udun"
+            ],
+            "region": "Udun",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 1,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 368,
+            "name": "MountainsOfMirkwood",
+            "type": "Land",
+            "action": "MaterialRetrieval",
+            "spriteName": "MountainsOfMirkwood",
+            "tags": [],
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 369,
+            "name": "MountDoom",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "dark_fortress",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "MountDoom",
+            "tags": [
+                "Gorgoroth"
+            ],
+            "region": "Gorgoroth",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 1,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 370,
+            "name": "MtGram",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "goblin_muster",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "MtGram",
+            "tags": [
+                "Angmar"
+            ],
+            "region": "Angmar",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 373,
+            "name": "Nurumurl",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "nurn_war_camp",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "Nurumurl",
+            "tags": [
+                "Nurn"
+            ],
+            "region": "Nurn",
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 374,
+            "name": "Olbamarl",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "Olbamarl",
+            "tags": [
+                "Ungol"
+            ],
+            "region": "Ungol",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 2,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 375,
+            "name": "Ongushar",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "Ongushar",
+            "tags": [
+                "BrownLands"
+            ],
+            "region": "BrownLands",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 2,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 376,
+            "name": "OrdugaAivaisa",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "nurn_war_camp",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "OrdugaAivaisa",
+            "tags": [
+                "Nurn"
+            ],
+            "region": "Nurn",
+            "goldGranted": 0,
+            "leatherGranted": 2,
+            "timberGranted": 0,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 378,
+            "name": "Ostigurth",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ashen_wastes",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "Ostigurth",
+            "tags": [
+                "Gorgoroth"
+            ],
+            "region": "Gorgoroth",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 1,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 384,
+            "name": "Rul",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "nurn_war_camp",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "Rul",
+            "tags": [
+                "Nurn"
+            ],
+            "region": "Nurn",
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 0,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 385,
+            "name": "SarnGoriwing",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ranger_ambush",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "SarnGoriwing",
+            "tags": [
+                "MountainsOfMirkwood"
+            ],
+            "region": "MountainsOfMirkwood",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 1,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 389,
+            "name": "Thuringwathost",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "ashen_wastes",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "Thuringwathost",
+            "tags": [
+                "Dagorlad"
+            ],
+            "region": "Dagorlad",
+            "goldGranted": 0,
+            "leatherGranted": 1,
+            "timberGranted": 1,
+            "mountsGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 391,
+            "name": "UrlurtsuNurn",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "nurn_war_camp",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "UrlurtsuNurn",
+            "tags": [
+                "Nurn"
+            ],
+            "region": "Nurn",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 1,
+            "mountsGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 392,
+            "name": "Wathduin",
+            "type": "PC",
+            "requirementsText": "If absent: 10 gold to found here. Need Commander 2 OR Emmissary 1.",
+            "pcEffectId": "harad_port",
+            "action": "MaterialRetrievalOrAction",
+            "spriteName": "Wathduin",
+            "tags": [
+                "NearHarad"
+            ],
+            "region": "NearHarad",
+            "goldGranted": 0,
+            "leatherGranted": 0,
+            "timberGranted": 0,
+            "mountsGranted": 2,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0
+        },
+        {
+            "cardId": 393,
+            "name": "Lake Town Arsenal",
+            "description": "Gain +1 Iron, +1 Steel, +1 Timber.",
+            "type": "Action",
+            "action": "Arsenal",
+            "actionClassName": "Arsenal",
+            "actionId": 213,
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 1,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 396,
+            "name": "Dragon-fire",
+            "description": "Enemy units in radius 1 gain Burning (1 turn); enemies on forest tiles also gain Fear (1 turn).",
+            "type": "Action",
+            "action": "DragonBreath",
+            "actionClassName": "DragonBreath",
+            "actionId": 223,
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 1,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 1,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 397,
+            "name": "ElvesGoingWest",
+            "description": "Apply Despair (1 turn) to all elves in radius 2.",
+            "type": "Action",
+            "action": "ElvesGoingWest",
+            "actionClassName": "ElvesGoingWest",
+            "actionId": 226,
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 409,
+            "name": "BorderPatrolling",
+            "description": "Reveal the surrounding area in a radius based on the higher of Agent or Commander skill, detect nearby enemies, and halt an enemy army commander in your hex if present.",
+            "type": "Action",
+            "action": "BorderPatrolling",
+            "actionClassName": "BorderPatrolling",
+            "actionId": 232,
+            "spriteName": "BorderPatrolling",
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 414,
+            "name": "AshesOfGorgoroth",
+            "description": "Create a corruption pulse in radius 1-3 based on caster Mage: enemies gain Despair (1 turn), and allied evil characters remove Fear.",
+            "type": "Action",
+            "action": "AshesOfGorgoroth",
+            "actionClassName": "AshesOfGorgoroth",
+            "actionId": 236,
+            "spriteName": "AshesOfGorgoroth",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 1,
+            "mithrilRequired": 1,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 415,
+            "name": "A Knife in the Dark",
+            "description": "Target enemy character in your hex: apply Poisoned (2 turns) and Fear (1 turn).",
+            "type": "Action",
+            "action": "KalNargilDagger",
+            "actionClassName": "KalNargilDagger",
+            "actionId": 237,
+            "spriteName": "A Knife in the Dark",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 1,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 416,
+            "name": "DreadOfTheNoldor",
+            "description": "Apply Despair (1 turn) to all Elf characters in radius 2, and apply Fear (1 turn) to enemy elves in the caster's hex.",
+            "type": "Event",
+            "action": "DreadOfTheNoldor",
+            "actionClassName": "DreadOfTheNoldor",
+            "actionId": 238,
+            "spriteName": "DreadOfTheNoldor",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 419,
+            "name": "FiresOfDoom",
+            "description": "Environmental event: apply Burning (1 turn) to all enemy units on wastelands tiles.",
+            "type": "Event",
+            "action": "FiresOfDoom",
+            "actionClassName": "FiresOfDoom",
+            "actionId": 240,
+            "spriteName": "FiresOfDoom",
+            "tags": [
+                "environmental"
+            ],
+            "leatherRequired": 0,
+            "timberRequired": 1,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 1,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 421,
+            "name": "Rain",
+            "description": "Environmental event: remove Burning from all units, reduce movement in radius 2, and reduce visibility nearby.",
+            "type": "Event",
+            "action": "Rain",
+            "actionClassName": "Rain",
+            "actionId": 241,
+            "spriteName": "Rain",
+            "tags": [
+                "environmental"
+            ],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 423,
+            "name": "Twilight",
+            "description": "Environmental event: in radius 2, reduce visibility and clear scouting; allied dark-aligned PCs there become temporarily hidden.",
+            "type": "Event",
+            "action": "Twilight",
+            "actionClassName": "Twilight",
+            "actionId": 242,
+            "spriteName": "Twilight",
+            "tags": [
+                "environmental"
+            ],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 427,
+            "name": "Flame of Udun",
+            "description": "In radius 2, apply Burning (1 turn) and Fear (1 turn) to all enemy units.",
+            "type": "Action",
+            "action": "FlameOfUdun",
+            "actionClassName": "FlameOfUdun",
+            "actionId": 245,
+            "spriteName": "Flame of Udun",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 1,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 436,
+            "name": "The Blow of Gorgoroth",
+            "description": "Target enemy character in your hex: deal moderate damage and apply Fear (1 turn).",
+            "type": "Action",
+            "action": "GorgorothMorningStar",
+            "actionClassName": "GorgorothMorningStar",
+            "actionId": 252,
+            "spriteName": "The Blow of Gorgoroth",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 1,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 437,
+            "name": "Scents of the Haradrim",
+            "description": "Target enemy character in your hex: deal moderate damage and apply Poisoned (2 turns).",
+            "type": "Action",
+            "action": "HaradrimScenticMace",
+            "actionClassName": "HaradrimScenticMace",
+            "actionId": 253,
+            "spriteName": "Scents of the Haradrim",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 440,
+            "name": "War spoils",
+            "description": "Target allied character in your hex: gain Fortified (1 turn).",
+            "type": "Action",
+            "action": "HelmOfArnor",
+            "actionClassName": "HelmOfArnor",
+            "actionId": 254,
+            "spriteName": "War spoils",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 1,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 443,
+            "name": "Healing Herbs",
+            "description": "Target allied character in your hex: heal a moderate amount.",
+            "type": "Action",
+            "action": "Herbs",
+            "actionClassName": "Herbs",
+            "actionId": 255,
+            "spriteName": "Healing Herbs",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 448,
+            "name": "Mounts",
+            "description": "Target allied character in your hex: gain Haste (1 turn).",
+            "type": "Action",
+            "action": "Horses",
+            "actionClassName": "Horses",
+            "actionId": 258,
+            "spriteName": "Mounts",
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 0,
+            "mountsRequired": 1,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 449,
+            "name": "Shadows of Ithilien",
+            "description": "Target allied character in your hex: gain Hidden (1 turn), and reveal enemies in radius 1 around the caster.",
+            "type": "Action",
+            "action": "IthilienRangerHood",
+            "actionClassName": "IthilienRangerHood",
+            "actionId": 259,
+            "spriteName": "Shadows of Ithilien",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 450,
+            "name": "Luglurak Dark Magic",
+            "description": "Enemy characters in radius 1 gain Fear (1 turn).",
+            "type": "Action",
+            "action": "LuglurakStaff",
+            "actionClassName": "LuglurakStaff",
+            "actionId": 263,
+            "spriteName": "Luglurak Dark Magic",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 451,
+            "name": "A Mithril coat",
+            "description": "Target allied character in your hex: gain Fortified (3 turns).",
+            "type": "Action",
+            "action": "MithrilCoat",
+            "actionClassName": "MithrilCoat",
+            "actionId": 266,
+            "spriteName": "A Mithril coat",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 1,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 452,
+            "name": "Marked by a Nazgul",
+            "description": "Target enemy character in your hex: apply Fear (1 turn) and Halted (1 turn).",
+            "type": "Action",
+            "action": "NazgulMark",
+            "actionClassName": "NazgulMark",
+            "actionId": 267,
+            "spriteName": "Marked by a Nazgul",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 453,
+            "name": "Orc Draught",
+            "description": "Target allied character in your hex: heal a small amount and gain Haste (1 turn).",
+            "type": "Action",
+            "action": "OrcDraughts",
+            "actionClassName": "OrcDraughts",
+            "actionId": 270,
+            "spriteName": "Orc Draught",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 1,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 454,
+            "name": "OrcRebellion",
+            "description": "Target allied army commander in your hex: gain +1 permanent Commander and lose 1 unit of the weakest army troop type.",
+            "type": "Action",
+            "action": "OrcRebellion",
+            "actionClassName": "OrcRebellion",
+            "actionId": 271,
+            "spriteName": "OrcRebellion",
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 455,
+            "name": "RageOfUlmo",
+            "description": "All naval or embarked units on water/shore tiles take moderate damage and are Halted (1 turn).",
+            "type": "Event",
+            "action": "RageOfUlmo",
+            "actionClassName": "RageOfUlmo",
+            "actionId": 272,
+            "spriteName": "RageOfUlmo",
+            "tags": [
+                "environmental"
+            ],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 456,
+            "name": "Healing Herbs",
+            "description": "Target allied character: heal 15 HP and remove Poisoned/Burning.",
+            "type": "Action",
+            "action": "HealingHerbs",
+            "actionClassName": "HealingHerbs",
+            "actionId": 277,
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 462,
+            "name": "Hidden in Hides",
+            "description": "Enemy units in your hex are Halted (1 turn); caster gains Hidden (2 turns).",
+            "type": "Event",
+            "action": "HiddenInHides",
+            "actionClassName": "HiddenInHides",
+            "actionId": 281,
+            "spriteName": "HiddenInHides",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 465,
+            "name": "Raid From The Mountains",
+            "description": "All allied army commanders in mountains or hills gain Haste (1 turn) and Courage (1 turn).",
+            "type": "Event",
+            "action": "RaidFromTheMountains",
+            "actionClassName": "RaidFromTheMountains",
+            "actionId": 283,
+            "spriteName": "RaidFromTheMountains",
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 1,
+            "mountsRequired": 1,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 468,
+            "name": "Rallied Men",
+            "description": "Allied Human units gain Strengthened (1 turn).",
+            "type": "Event",
+            "action": "RalliedMen",
+            "actionClassName": "RalliedMen",
+            "actionId": 284,
+            "spriteName": "RalliedMen",
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 480,
+            "name": "Empalisades",
+            "description": "If you are on an allied population center, increase its fortification by 1.",
+            "type": "Action",
+            "action": "FortifyPC",
+            "actionClassName": "FortifyPC",
+            "actionId": 126,
+            "spriteName": "Empalisades",
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 1,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 484,
+            "name": "Shielded",
+            "description": "Target allied character in your hex: gain Fortified (1 turn), and if the target has Fear remove it.",
+            "type": "Action",
+            "action": "GondorianTowerShield",
+            "actionClassName": "GondorianTowerShield",
+            "actionId": 251,
+            "spriteName": "Shielded",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 1,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 486,
+            "name": "Sniped!",
+            "description": "Target enemy in same/adjacent hex: inflict small wound and Fear (1 turn).",
+            "type": "Action",
+            "action": "DunlendingShortBow",
+            "actionClassName": "DunlendingShortBow",
+            "actionId": 225,
+            "spriteName": "Sniped!",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 1,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 490,
+            "name": "TheIronCrownRidesAgain",
+            "description": "Target allied Nazgul in your hex gains +1 Commander and +1 Mage.",
+            "type": "Action",
+            "action": "TheIronCrownRidesAgain",
+            "actionClassName": "TheIronCrownRidesAgain",
+            "actionId": 294,
+            "spriteName": "TheIronCrownRidesAgain",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 1,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 491,
+            "name": "Chopping the Trees",
+            "description": "If you are on a forest hex, gain +3 timber; beast- or Ent-race characters here are moderately wounded.",
+            "type": "Event",
+            "action": "ChoppingTheTrees",
+            "actionClassName": "ChoppingTheTrees",
+            "actionId": 295,
+            "spriteName": "Chopping the Trees",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 495,
+            "name": "TheNineRideAgain",
+            "description": "All Nazgul gain Haste (3 turns).",
+            "type": "Event",
+            "action": "TheNineRideAgain",
+            "actionClassName": "TheNineRideAgain",
+            "actionId": 297,
+            "spriteName": "TheNineRideAgain",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 1,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 498,
+            "name": "Traps",
+            "description": "Target enemy character in your hex: apply Blocked (1 turn) and Poisoned (2 turns).",
+            "type": "Event",
+            "action": "Traps",
+            "actionClassName": "Traps",
+            "actionId": 298,
+            "spriteName": "Traps",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 505,
+            "name": "Well-equiped Army",
+            "description": "All allied armies in radius 2 gain Fortified (1 turn).",
+            "type": "Event",
+            "action": "WellEquipedArmy",
+            "actionClassName": "WellEquipedArmy",
+            "actionId": 303,
+            "spriteName": "Well-equiped Army",
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 1,
+            "mountsRequired": 0,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 508,
+            "name": "WhenThereIsAWhip",
+            "description": "All allied armies in radius 2 gain Haste (3 turns).",
+            "type": "Event",
+            "action": "WhenThereIsAWhip",
+            "actionClassName": "WhenThereIsAWhip",
+            "actionId": 305,
+            "spriteName": "WhenThereIsAWhip",
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 0,
+            "mountsRequired": 1,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 546,
+            "name": "Araudagul",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Araudagul",
+            "tags": [],
+            "commander": 1,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 18,
+            "artifacts": []
+        },
+        {
+            "cardId": 547,
+            "name": "Barrow King of Rhudaur",
+            "description": "",
+            "type": "Character",
+            "spriteName": "BarrowKingOfRhudaur",
+            "tags": [],
+            "commander": 1,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 1,
+            "race": 11,
+            "artifacts": []
+        },
+        {
+            "cardId": 548,
+            "name": "Ethacali",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Ethacali",
+            "tags": [],
+            "commander": 1,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 0,
+            "artifacts": []
+        },
+        {
+            "cardId": 550,
+            "name": "Gorthog",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Gorthog",
+            "tags": [],
+            "commander": 2,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 5,
+            "artifacts": []
+        },
+        {
+            "cardId": 551,
+            "name": "Gothmog",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Gothmog",
+            "tags": [],
+            "commander": 1,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 5,
+            "artifacts": []
+        },
+        {
+            "cardId": 552,
+            "name": "Gwyllion",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Gwyllion",
+            "tags": [],
+            "commander": 0,
+            "agent": 1,
+            "emmissary": 0,
+            "mage": 1,
+            "race": 11,
+            "artifacts": []
+        },
+        {
+            "cardId": 553,
+            "name": "Hill Lord of Rhudaur",
+            "description": "",
+            "type": "Character",
+            "spriteName": "HillLordOfRhudaur",
+            "tags": [],
+            "commander": 1,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 0,
+            "artifacts": []
+        },
+        {
+            "cardId": 555,
+            "name": "Lurtz",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Lurtz",
+            "tags": [],
+            "commander": 2,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 5,
+            "artifacts": []
+        },
+        {
+            "cardId": 557,
+            "name": "Shagrat",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Shagrat",
+            "tags": [],
+            "commander": 1,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 5,
+            "artifacts": []
+        },
+        {
+            "cardId": 558,
+            "name": "The Grimburgoth",
+            "description": "",
+            "type": "Character",
+            "spriteName": "TheGrimburgoth",
+            "tags": [],
+            "commander": 2,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 0,
+            "artifacts": []
+        },
+        {
+            "cardId": 706,
+            "name": "Morgul Tithe",
+            "description": "Morgul Tithe. Unique event logic variant based on ReachOfBaradUngol.",
+            "type": "Event",
+            "action": "MorgulTithe",
+            "actionClassName": "MorgulTithe",
+            "actionId": 311,
+            "spriteName": "MorgulTithe",
+            "tags": [],
+            "leatherRequired": 0,
+            "timberRequired": 0,
+            "mountsRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 708,
+            "name": "Black Gate Sortie",
+            "description": "Black Gate Sortie. Unique event logic variant based on RaidFromTheMountains.",
+            "type": "Event",
+            "action": "BlackGateSortie",
+            "actionClassName": "BlackGateSortie",
+            "actionId": 313,
+            "spriteName": "BlackGateSortie",
+            "tags": [],
+            "leatherRequired": 1,
+            "timberRequired": 1,
+            "mountsRequired": 1,
+            "ironRequired": 1,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 2,
+            "jokerRequired": 0
+        },
+        {
+            "cardId": 709,
+            "name": "Shroud of Gorgoroth",
+            "description": "Shroud of Gorgoroth. Unique event logic variant based on DoorsOfNight.",
+            "type": "Event",
+            "action": "ShroudofGorgoroth",
+            "actionClassName": "ShroudofGorgoroth",
+            "actionId": 314,
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 75,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 1,
+            "tags": [
+                "environmental"
+            ],
+            "jokerRequired": 0,
+            "spriteName": "ShroudOfGorgoroth"
+        },
+        {
+            "cardId": 762,
+            "name": "Orthanc",
+            "description": "",
+            "type": "Character",
+            "spriteName": "Orthanc",
+            "tags": [],
+            "commander": 0,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 4,
+            "artifacts": []
+        },
+        {
+            "cardId": 798,
+            "name": "Release Character",
+            "description": "Release one captive currently held by this character in the same hex.",
+            "type": "Action",
+            "actionClassName": "ReleaseCharacter",
+            "actionId": 1231,
+            "action": "ReleaseCharacter",
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 1,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "tags": [],
+            "jokerRequired": 0,
+            "spriteName": "ReleaseCharacter"
+        },
+        {
+            "cardId": 799,
+            "name": "Ask Ransom",
+            "description": "Demand ransom for a captive in the same hex. If the captive's owner pays, the captive is released.",
+            "type": "Action",
+            "actionClassName": "AskRansom",
+            "actionId": 1232,
+            "action": "AskRansom",
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 1,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "tags": [],
+            "jokerRequired": 0,
+            "spriteName": "AskRansom"
+        },
+        {
+            "cardId": 800,
+            "name": "Free Character",
+            "description": "Attempt to free an allied captive of the same nation in the same hex. Enemy agents hold captives more securely, and critical failure is dangerous.",
+            "type": "Action",
+            "actionClassName": "FreeCharacter",
+            "actionId": 1233,
+            "action": "FreeCharacter",
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 4,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "tags": [],
+            "jokerRequired": 0,
+            "spriteName": "FreeCharacter"
+        }
+    ]
 }

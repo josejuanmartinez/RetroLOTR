@@ -1,95 +1,68 @@
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+[RequireComponent(typeof(CanvasGroup))]
+public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    [SerializeField] Image image;
-    [SerializeField] CanvasGroup disabledImageCanvasGroup;
-    [SerializeField] Image borderImage;
-    [SerializeField] Image alignmentImage;
-    [SerializeField] Image cardTypeImage;
-    public Sprite unknownCardTypeSprite;
-    public Sprite actionCardTypeSprite;
-    public Sprite eventCardTypeSprite;
-    public Sprite landCardTypeSprite;
-    public Sprite pcCardTypeSprite;
-    public Sprite characterCardTypeSprite;
-    public Sprite armyCardTypeSprite;
-    public Sprite restCardTypeSprite;
-    public Sprite encounterCardTypeSprite;
-    public Sprite spellCardTypeSprite;
-    [SerializeField] TextMeshProUGUI description;
-    [SerializeField] TextMeshProUGUI title;
-    [SerializeField] TextMeshProUGUI requirements;
-    [SerializeField] private Color requirementsCardColor = Color.yellow;
-    [SerializeField] Button button;
-    [SerializeField] Hover disabledReasonHover;
-    [SerializeField] Button discardButton;
-    [SerializeField] float holdToDragSeconds = 0.08f;
-    [SerializeField] float dragScaleMultiplier = 1.15f;
-    [SerializeField] float dragTiltDegrees = 7f;
-    [SerializeField] float dragJitterPixels = 4f;
-    [SerializeField] float dropPreviewRangePixels = 240f;
-    [SerializeField] float dropSnapRangePixels = 120f;
-    [SerializeField] float dropSnapLerpSpeed = 16f;
-    [SerializeField] float dropSnapScaleMultiplier = 1.02f;
-    [SerializeField] float HoverScaleMultiplier = 1.5f;
-    [SerializeField] float disabledCanvasGroupAlpha = 0.5f;
-    private Illustrations illustrations;
-    private Colors colors;
-    private Canvas rootCanvas;
+    private static readonly List<Card> activeCards = new();
+
+    public static void RequestInteractionRefreshAll()
+    {
+        for (int i = 0; i < activeCards.Count; i++)
+        {
+            if (activeCards[i] != null)
+            {
+                activeCards[i].UpdateInteractableState();
+            }
+        }
+    }
+
+    [Header("UI References")]
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private TextMeshProUGUI typeText;
+    [SerializeField] private TextMeshProUGUI requirementsText;
+    [SerializeField] private Image cardArtImage;
+    [SerializeField] private Image cardBackgroundImage;
+    [SerializeField] private Image highlightImage;
+    [SerializeField] private GameObject playIndicator;
+    [SerializeField] private GameObject shadowObject;
+
+    [Header("Prefabs")]
+    [SerializeField] private GameObject dragProxyPrefab;
+
+    [Header("Tuning")]
+    [SerializeField] private float hoverScale = 1.15f;
+    [SerializeField] private float hoverSpeed = 10f;
+    [SerializeField] private float dragAlpha = 0.6f;
+    [SerializeField] private float playDropThresholdY = 200f;
+
+    public CardData cardData { get; private set; }
+
     private CanvasGroup canvasGroup;
-
-    private CardData cardData;
-    private bool isConsuming;
     private RectTransform rectTransform;
-    private Transform originalParent;
-    private int originalSiblingIndexBeforeDrag = -1;
-    private Vector3 originalWorldPositionBeforeDrag;
-    private Quaternion originalRotationBeforeDrag;
-    private Vector3 originalScaleBeforeDrag = Vector3.one;
-    private Vector3 dragPointerOffsetWorld;
-    private float pointerDownTime;
-    private bool pointerIsDown;
-    private bool isDragging;
-    private Vector3 defaultScale = Vector3.one;
-    private Vector2 defaultPivot = new Vector2(0.5f, 0.5f);
+    private Vector3 originalScale = Vector3.one;
+    private Vector3 targetScale = Vector3.one;
     private bool isHovered;
-    private bool disabled = false;
-    private Canvas hoverCanvas;
-    private bool hoverCanvasDefaultOverrideSorting;
-    private int hoverCanvasDefaultSortingOrder;
-    private SelectedCharacterIcon selectedCharacterIcon;
-    private bool dropPreviewLocked;
-    private Game cachedGame;
-    private Board cachedBoard;
-    private DeckManager cachedDeckManager;
-    private ActionsManager cachedActionsManager;
-    private Board subscribedBoard;
-    private string cachedResolvedActionRef;
-    private CharacterAction cachedResolvedAction;
+    private bool isDragging;
+    private GameObject dragProxy;
+    private int originalSiblingIndex;
+    private Transform originalParent;
 
-    private static readonly Vector2 HoverPivot = new Vector2(0.5f, 0f);
-    private static Dictionary<string, string> actionDescriptionsByClass;
-    private static Dictionary<int, string> actionDescriptionsById;
-    public static event Action InteractionRefreshRequested;
+    private static Illustrations illustrations;
+    private static DeckManager deckManager;
+    private static ActionsManager actionsManager;
 
     private void Awake()
     {
-        rectTransform = transform as RectTransform;
-        if (rectTransform != null)
-        {
-            defaultScale = rectTransform.localScale;
-            defaultPivot = rectTransform.pivot;
-        }
-        rootCanvas = GetComponentInParent<Canvas>()?.rootCanvas;
         canvasGroup = GetComponent<CanvasGroup>();
         if (canvasGroup == null)
         {
@@ -98,1935 +71,371 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
 
-        if (button == null) button = GetComponent<Button>();
-        if (button != null)
-        {
-            button.onClick.RemoveListener(OnCardClicked);
-            button.onClick.AddListener(OnCardClicked);
-        }
-        if (discardButton != null)
-        {
-            discardButton.onClick.RemoveListener(OnDiscardClicked);
-            discardButton.onClick.AddListener(OnDiscardClicked);
-        }
+        rectTransform = GetComponent<RectTransform>();
+        originalScale = rectTransform.localScale;
+        targetScale = originalScale;
 
-        if (disabledReasonHover == null)
-        {
-            disabledReasonHover = GetComponent<Hover>();
-        }
-        hoverCanvas = GetComponent<Canvas>();
-        if (hoverCanvas != null)
-        {
-            hoverCanvasDefaultOverrideSorting = hoverCanvas.overrideSorting;
-            hoverCanvasDefaultSortingOrder = hoverCanvas.sortingOrder;
-        }
-        else
-        {
-            hoverCanvasDefaultOverrideSorting = false;
-            hoverCanvasDefaultSortingOrder = 0;
-        }
-        if (disabledReasonHover != null)
-        {
-            disabledReasonHover.gameObject.SetActive(false);
-        }
+        if (highlightImage != null) highlightImage.enabled = false;
+        if (playIndicator != null) playIndicator.SetActive(false);
 
+        activeCards.Add(this);
     }
 
     private void OnDestroy()
     {
-        UnsubscribeFromBoardSelection();
-        if (button != null) button.onClick.RemoveListener(OnCardClicked);
-        if (discardButton != null) discardButton.onClick.RemoveListener(OnDiscardClicked);
+        activeCards.Remove(this);
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        InteractionRefreshRequested += HandleInteractionRefreshRequested;
-        EnsureBoardSubscription();
-        if (cardData != null)
-        {
-            RefreshInteractionState(force: true);
-        }
+        EnsureManagersLoaded();
     }
 
-    private void OnDisable()
+    private static void EnsureManagersLoaded()
     {
-        InteractionRefreshRequested -= HandleInteractionRefreshRequested;
-        UnsubscribeFromBoardSelection();
-        pointerIsDown = false;
-        isDragging = false;
-        dropPreviewLocked = false;
-        SetSelectedCharacterDropHint(false);
-        RestoreHoverVisuals();
-        RestoreCardTransformAfterDrag();
-        SetDisabled(false, null);
-        SetDisabledOverlayVisible();
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        if (deckManager == null) deckManager = FindFirstObjectByType<DeckManager>();
+        if (actionsManager == null) actionsManager = FindFirstObjectByType<ActionsManager>();
     }
 
     public void Initialize(CardData data)
     {
         cardData = data;
-        if (data == null)
+        EnsureManagersLoaded();
+
+        if (titleText != null) titleText.text = data.name;
+        if (typeText != null) typeText.text = data.type?.ToUpper();
+
+        if (descriptionText != null)
         {
-            ClearVisuals();
-            return;
+            descriptionText.text = GetActionDescription(data);
         }
 
-        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        if (colors == null) colors = FindFirstObjectByType<Colors>();
-
-        if (title != null) title.text = data.name ?? string.Empty;
-        CardTypeEnum cardType = data.GetCardType();
-        string cardTypeKey = cardType.ToString();
-        if (description != null)
+        if (requirementsText != null)
         {
-            string typeColorHex = "FFFFFF";
-            if (TryGetCardTypeColor(cardType, out Color typeColor))
-            {
-                typeColorHex = ColorUtility.ToHtmlStringRGB(typeColor);
-            }
-            description.text = BuildCardDescriptionText(data, cardTypeKey, typeColorHex.ToLower());
+            requirementsText.text = BuildRequirementsText(data);
         }
 
-        if (image != null)
+        if (cardArtImage != null && !string.IsNullOrWhiteSpace(data.spriteName))
         {
-            image.sprite = ResolveCardImage(data);
+            Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(data.spriteName) : null;
+            cardArtImage.sprite = sprite;
+            cardArtImage.enabled = sprite != null;
         }
 
-        AlignmentEnum alignmentValue = (AlignmentEnum)data.alignment;
-        string alignmentKey = alignmentValue.ToString();
-        if (alignmentImage != null) alignmentImage.sprite = GetSprite(alignmentKey);
-
-        if (cardTypeImage != null) cardTypeImage.sprite = GetCardTypeSprite(cardType);
-
-        if (borderImage != null && TryGetCardTypeColor(cardType, out Color borderColor))
-        {
-            borderImage.color = new Color (borderColor.r, borderColor.g, borderColor.g, 0.25f);
-        }
-
-        RefreshRequirementsText(data);
-        EnsureBoardSubscription();
-        RefreshInteractionState(force: true);
+        UpdateInteractableState();
     }
 
-    private bool TryGetCardTypeColor(CardTypeEnum cardType, out Color color)
-    {
-        color = Color.white;
-        if (colors == null) return false;
-
-        switch (cardType)
-        {
-            case CardTypeEnum.Action:
-                color = colors.actionCard;
-                return true;
-            case CardTypeEnum.Army:
-                color = colors.armyCard;
-                return true;
-            case CardTypeEnum.Character:
-                color = colors.characterCard;
-                return true;
-            case CardTypeEnum.Event:
-                color = colors.eventCard;
-                return true;
-            case CardTypeEnum.Encounter:
-                color = colors.eventCard;
-                return true;
-            case CardTypeEnum.Land:
-                color = colors.landCard;
-                return true;
-            case CardTypeEnum.PC:
-                color = colors.pcCard;
-                return true;
-            case CardTypeEnum.Rest:
-                color = colors.spellCard;
-                return true;
-            default:
-            {
-                return false;
-            }
-        }
-    }
-
-    private Sprite GetCardTypeSprite(CardTypeEnum cardType)
-    {
-        switch (cardType)
-        {
-            case CardTypeEnum.Action:
-                return actionCardTypeSprite;
-            case CardTypeEnum.Event:
-                return eventCardTypeSprite;
-            case CardTypeEnum.Land:
-                return landCardTypeSprite;
-            case CardTypeEnum.PC:
-                return pcCardTypeSprite;
-            case CardTypeEnum.Character:
-                return characterCardTypeSprite;
-            case CardTypeEnum.Army:
-                return armyCardTypeSprite;
-            case CardTypeEnum.Rest:
-                return restCardTypeSprite;
-            case CardTypeEnum.Encounter:
-                return encounterCardTypeSprite;
-            case CardTypeEnum.Spell:
-                return spellCardTypeSprite;
-            case CardTypeEnum.Unknown:
-            default:
-                return unknownCardTypeSprite;
-        }
-    }
-
-    private Sprite GetSprite(string key)
-    {
-        if (string.IsNullOrWhiteSpace(key) || illustrations == null) return null;
-        return illustrations.GetIllustrationByName(key);
-    }
-
-    private Sprite TryGetSprite(string key)
-    {
-        if (string.IsNullOrWhiteSpace(key) || illustrations == null) return null;
-        return illustrations.GetIllustrationByName(key, false);
-    }
-
-    private Sprite ResolveCardImage(CardData data)
-    {
-        if (data == null) return null;
-        if (!string.IsNullOrWhiteSpace(data.spriteName))
-        {
-            Sprite overrideSprite = TryGetSprite(data.spriteName) ?? GetSprite(data.spriteName);
-            if (overrideSprite != null) return overrideSprite;
-        }
-
-        CardTypeEnum cardType = data.GetCardType();
-        if (cardType == CardTypeEnum.Action || cardType == CardTypeEnum.Event || cardType == CardTypeEnum.Encounter)
-        {
-            return TryGetSprite(data.name)
-                ?? TryGetSprite(data.GetActionRef())
-                ?? GetSprite(data.name)
-                ?? GetSprite(data.GetActionRef());
-        }
-
-        return TryGetSprite(data.name) ?? GetSprite(data.name);
-    }
-
-    private string BuildCardDescriptionText(CardData data, string cardTypeKey, string typeColorHex)
+    private string GetActionDescription(CardData data)
     {
         if (data == null) return string.Empty;
 
-        if (data.GetCardType() == CardTypeEnum.Character)
+        CardTypeEnum cardType = data.GetCardType();
+        if (cardType == CardTypeEnum.Land || cardType == CardTypeEnum.PC)
         {
-            return BuildCharacterCardDescriptionText(data, cardTypeKey, typeColorHex);
-        }
-        if (data.GetCardType() == CardTypeEnum.Army)
-        {
-            return BuildArmyCardDescriptionText(data, cardTypeKey, typeColorHex);
-        }
+            StringBuilder sb = new();
+            List<string> grants = new();
+            if (data.leatherGranted > 0) grants.Add(RepeatSprite("leather", data.leatherGranted));
+            if (data.timberGranted > 0) grants.Add(RepeatSprite("timber", data.timberGranted));
+            if (data.mountsGranted > 0) grants.Add(RepeatSprite("mounts", data.mountsGranted));
+            if (data.ironGranted > 0) grants.Add(RepeatSprite("iron", data.ironGranted));
+            if (data.steelGranted > 0) grants.Add(RepeatSprite("steel", data.steelGranted));
+            if (data.mithrilGranted > 0) grants.Add(RepeatSprite("mithril", data.mithrilGranted));
+            if (data.goldGranted > 0) grants.Add(RepeatSprite("gold", data.goldGranted));
 
-        string actionDescription = TryGetActionDescription(data);
-        string jsonDescription = data.description ?? string.Empty;
-        if (data.GetCardType() == CardTypeEnum.PC
-            && !string.IsNullOrWhiteSpace(actionDescription)
-            && jsonDescription.Contains("<TBD>", StringComparison.Ordinal))
-        {
-            string resolved = jsonDescription.Replace("<TBD>", actionDescription);
-            return $"<color=#{typeColorHex}>{cardTypeKey}.</color>{resolved}";
-        }
-
-        if (!string.IsNullOrWhiteSpace(actionDescription))
-        {
-            return $"<color=#{typeColorHex}>{cardTypeKey}.</color>{actionDescription}";
-        }
-
-        return $"<color=#{typeColorHex}>{cardTypeKey}.</color>{jsonDescription}";
-    }
-
-    private string TryGetActionDescription(CardData data)
-    {
-        if (data == null) return null;
-        string actionRef = NormalizeActionRef(data.GetActionRef());
-        if (string.IsNullOrWhiteSpace(actionRef) && data.actionId <= 0) return null;
-
-        // Prefer runtime descriptions when available so generated card text stays in sync with action logic.
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
-        CharacterAction runtimeAction = ResolveActionByRef(actionRef, actionsManager);
-        if (runtimeAction != null)
-        {
-            Board board = FindFirstObjectByType<Board>();
-            Character selected = board != null ? board.selectedCharacter : null;
-            runtimeAction.character = selected;
-
-            string runtimeDescription = runtimeAction.GetDescriptionForCard();
-            if (!string.IsNullOrWhiteSpace(runtimeDescription))
+            if (!string.IsNullOrWhiteSpace(data.region))
             {
-                return runtimeDescription;
+                sb.Append(data.region).Append(". ");
             }
-        }
+            
+            sb.Append(string.Join("", grants));
 
-        EnsureActionDescriptionsLoaded();
-        if (!string.IsNullOrWhiteSpace(actionRef) && actionDescriptionsByClass.TryGetValue(actionRef, out string byClass))
-        {
-            return byClass;
-        }
-
-        if (data.actionId > 0 && actionDescriptionsById.TryGetValue(data.actionId, out string byId))
-        {
-            return byId;
-        }
-
-        return null;
-    }
-
-    private string BuildCharacterCardDescriptionText(CardData data, string cardTypeKey, string typeColorHex)
-    {
-        List<string> lines = new()
-        {
-            $"<color=#{typeColorHex}>{cardTypeKey}.</color>{FormatEnumLabel(data.race.ToString())}"
-        };
-
-        List<string> skills = new();
-        AddCharacterSkill(skills, "commander", data.commander);
-        AddCharacterSkill(skills, "agent", data.agent);
-        AddCharacterSkill(skills, "emmissary", data.emmissary);
-        AddCharacterSkill(skills, "mage", data.mage);
-        if (skills.Count > 0)
-        {
-            lines.Add(string.Join("  ", skills));
-        }
-
-        List<string> artifactNames = data.artifacts?
-            .Where(a => a != null && !string.IsNullOrWhiteSpace(a.artifactName))
-            .Select(a => a.artifactName)
-            .ToList();
-        if (artifactNames != null && artifactNames.Count > 0)
-        {
-            lines.Add($"<sprite name=\"artifact\"> [{string.Join(", ", artifactNames)}]");
-        }
-
-        if (!string.IsNullOrWhiteSpace(data.description))
-        {
-            lines.Add(data.description.Trim());
-        }
-
-        string contextualOutcome = BuildCharacterCardOutcomeText(data);
-        if (!string.IsNullOrWhiteSpace(contextualOutcome))
-        {
-            lines.Add(contextualOutcome);
-        }
-
-        return string.Join("\n", lines);
-    }
-
-    private string BuildArmyCardDescriptionText(CardData data, string cardTypeKey, string typeColorHex)
-    {
-        List<string> lines = new()
-        {
-            $"<color=#{typeColorHex}>{cardTypeKey}.</color>Race: {FormatEnumLabel(data.race.ToString())}"
-        };
-
-        lines.Add($"Troop: <sprite name=\"{data.troopType.ToString().ToLowerInvariant()}\"> {data.troopType.ToString().ToUpperInvariant()}");
-        if (data.specialAbilities != null && data.specialAbilities.Count > 0)
-        {
-            lines.Add($"Abilities: {string.Join("  ", data.specialAbilities.Select(FormatArmyAbilityRichLabel))}");
-        }
-
-        if (!string.IsNullOrWhiteSpace(data.description))
-        {
-            lines.Add(data.description.Trim());
-        }
-
-        return string.Join("\n", lines);
-    }
-
-    private static string FormatEnumLabel(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
-
-        List<char> chars = new(value.Length + 4);
-        for (int i = 0; i < value.Length; i++)
-        {
-            char current = value[i];
-            if (i > 0 && char.IsUpper(current) && !char.IsUpper(value[i - 1]))
+            if (cardType == CardTypeEnum.PC)
             {
-                chars.Add(' ');
-            }
-            chars.Add(current);
-        }
-
-        return new string(chars.ToArray());
-    }
-
-    private static string FormatArmyAbilityLabel(ArmySpecialAbilityEnum ability)
-    {
-        return ability switch
-        {
-            ArmySpecialAbilityEnum.Longrange => "longrange",
-            ArmySpecialAbilityEnum.ShortRange => "shortrange",
-            _ => ability.ToString().ToLowerInvariant()
-        };
-    }
-
-    private static void AddCharacterSkill(List<string> parts, string spriteName, int value)
-    {
-        if (parts == null || value <= 0) return;
-        parts.Add($"<sprite name=\"{spriteName}\">{value}");
-    }
-
-    private static string FormatArmyAbilityRichLabel(ArmySpecialAbilityEnum ability)
-    {
-        string label = FormatArmyAbilityLabel(ability);
-        string spriteName = ability switch
-        {
-            ArmySpecialAbilityEnum.Longrange => "ar",
-            ArmySpecialAbilityEnum.ShortRange => "sword",
-            ArmySpecialAbilityEnum.Poison => "poison",
-            ArmySpecialAbilityEnum.Fire => "fire_sword",
-            ArmySpecialAbilityEnum.Cursed => "darkness",
-            ArmySpecialAbilityEnum.Raid => "boots",
-            ArmySpecialAbilityEnum.Pikemen => "sword",
-            ArmySpecialAbilityEnum.Shielded => "shield",
-            ArmySpecialAbilityEnum.Encouraging => "banner",
-            ArmySpecialAbilityEnum.Discouraging => "veil",
-            ArmySpecialAbilityEnum.Berserker => "axe",
-            ArmySpecialAbilityEnum.Charging => "mounts",
-            _ => null
-        };
-
-        return string.IsNullOrWhiteSpace(spriteName)
-            ? label
-            : $"<sprite name=\"{spriteName}\"> {label}";
-    }
-
-    private static void EnsureActionDescriptionsLoaded()
-    {
-        if (actionDescriptionsByClass != null && actionDescriptionsById != null) return;
-
-        actionDescriptionsByClass = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
-        actionDescriptionsById = new Dictionary<int, string>();
-
-        TextAsset actionsAsset = Resources.Load<TextAsset>("Actions");
-        if (actionsAsset == null) return;
-
-        ActionDefinitionCollection collection = JsonUtility.FromJson<ActionDefinitionCollection>(actionsAsset.text);
-        if (collection?.actions == null) return;
-
-        foreach (ActionDefinition definition in collection.actions)
-        {
-            if (definition == null || string.IsNullOrWhiteSpace(definition.description)) continue;
-            if (!string.IsNullOrWhiteSpace(definition.className))
-            {
-                actionDescriptionsByClass[definition.className] = definition.description;
-            }
-            if (definition.actionId > 0)
-            {
-                actionDescriptionsById[definition.actionId] = definition.description;
-            }
-        }
-    }
-
-    private void ClearVisuals()
-    {
-        if (title != null) title.text = string.Empty;
-        if (description != null) description.text = string.Empty;
-
-        if (image != null) image.sprite = null;
-        if (borderImage != null) borderImage.sprite = null;
-        if (alignmentImage != null) alignmentImage.sprite = null;
-        if (cardTypeImage != null) cardTypeImage.sprite = null;
-        if (requirements != null) requirements.text = string.Empty;
-        if (button != null) button.interactable = false;
-    }
-
-    private async void OnCardClicked()
-    {
-        if (isDragging || isConsuming || cardData == null) return;
-        await TryPlayCardAsync(promptForConfirmation: true);
-    }
-
-    private async void OnDiscardClicked()
-    {
-        await TryDiscardCardAsync();
-    }
-
-    public void Discard()
-    {
-        _ = TryDiscardCardAsync();
-    }
-
-    private async Task<bool> TryPlayCardAsync(bool promptForConfirmation)
-    {
-        if (isDragging || isConsuming || cardData == null) return false;
-
-        if (cardData.GetCardType() == CardTypeEnum.Character)
-        {
-            return await TryPlayCharacterCardAsync(promptForConfirmation);
-        }
-        if (cardData.GetCardType() == CardTypeEnum.Army)
-        {
-            return await TryPlayArmyCardAsync(promptForConfirmation);
-        }
-        if (cardData.GetCardType() == CardTypeEnum.Encounter)
-        {
-            return await TryPlayEncounterCardAsync(promptForConfirmation);
-        }
-
-        if (!TryResolvePlayableAction(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out CharacterAction action))
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        bool canUse = cardData.EvaluatePlayability(selectedCharacter, null, _ => action.FulfillsConditions());
-        if (!canUse)
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        if (promptForConfirmation)
-        {
-            string cardLabel = string.IsNullOrWhiteSpace(cardData.name) ? action.actionName : cardData.name;
-            bool confirm = await ConfirmationDialog.Ask($"Use {cardLabel} ?", "Yes", "No");
-            if (!confirm) return false;
-        }
-
-        TutorialManager tutorial = TutorialManager.Instance;
-        bool tutorialActive = tutorial != null && tutorial.IsActiveFor(playerLeader);
-        int stepIndexBefore = tutorialActive ? tutorial.GetActiveRequiredStepIndex(playerLeader) : -1;
-        bool drawReplacementCard = !tutorialActive;
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        if (deckManager == null)
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        if (!deckManager.TryConsumeActionCard(playerLeader, cardData.GetActionRef(), cardData.actionId, drawReplacementCard, out _, cardData.cardId))
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        isConsuming = true;
-        RefreshInteractionState(force: true);
-
-        await action.Execute();
-        if (action.LastExecutionSucceeded && selectedCharacter != null)
-        {
-            selectedCharacter.lastPlayedCardSpriteNameThisTurn =
-                !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
-            deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
-            playerLeader.RecordPlayedCard(cardData);
-            tutorial?.HandleCardPlayed(selectedCharacter, cardData, selectedCharacter.hex);
-        }
-
-        if (tutorialActive)
-        {
-            int stepIndexAfter = tutorial.GetActiveRequiredStepIndex(playerLeader);
-            bool transitionedToNextStep = stepIndexAfter != stepIndexBefore;
-            if (!transitionedToNextStep)
-            {
-                deckManager.TryReturnActionCardToHand(playerLeader, cardData.GetActionRef(), cardData.actionId);
-            }
-        }
-
-        isConsuming = false;
-        RefreshInteractionState(force: true);
-        return true;
-    }
-
-    private async Task<bool> TryPlayEncounterCardAsync(bool promptForConfirmation)
-    {
-        if (!TryResolveEncounterCardContext(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out _))
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        if (promptForConfirmation)
-        {
-            bool confirm = await ConfirmationDialog.Ask($"Face {cardData.name}?", "Yes", "No");
-            if (!confirm) return false;
-        }
-
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        if (deckManager == null)
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        TutorialManager tutorial = TutorialManager.Instance;
-        bool tutorialActive = tutorial != null && tutorial.IsActiveFor(playerLeader);
-        int stepIndexBefore = tutorialActive ? tutorial.GetActiveRequiredStepIndex(playerLeader) : -1;
-        bool drawReplacementCard = !tutorialActive;
-        if (!deckManager.TryConsumeCard(playerLeader, cardData.cardId, drawReplacementCard, out _))
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        isConsuming = true;
-        RefreshInteractionState(force: true);
-
-        bool resolved = await EncounterResolver.ResolveAsync(cardData, selectedCharacter);
-        if (resolved)
-        {
-            selectedCharacter.lastPlayedCardSpriteNameThisTurn =
-                !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
-            deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
-            playerLeader.RecordPlayedCard(cardData);
-        }
-
-        isConsuming = false;
-        RefreshInteractionState(force: true);
-        return resolved;
-    }
-
-    private async Task<bool> TryPlayCharacterCardAsync(bool promptForConfirmation)
-    {
-        if (!TryResolveCharacterCardContext(out Game game, out PlayableLeader playerLeader, out Hex capitalHex, out string failureReason))
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        int totalGoldCost = cardData.GetTotalGoldCost();
-        if (promptForConfirmation)
-        {
-            string prompt = totalGoldCost > 0
-                ? $"Recruit {cardData.name} for {totalGoldCost} gold?"
-                : $"Recruit {cardData.name}?";
-            bool confirm = await ConfirmationDialog.Ask(prompt, "Yes", "No");
-            if (!confirm) return false;
-        }
-
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
-        if (deckManager == null || capitalHex == null || board == null)
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        Character existingCharacter = FindCharacterByCardName();
-
-        bool drawReplacementCard = !(TutorialManager.Instance != null && TutorialManager.Instance.IsActiveFor(playerLeader));
-        if (!deckManager.TryConsumeCard(playerLeader, cardData.cardId, drawReplacementCard, out _))
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        isConsuming = true;
-        RefreshInteractionState(force: true);
-
-        Character resolvedCharacter = existingCharacter;
-        bool resolved = false;
-        string message = null;
-
-        if (existingCharacter != null)
-        {
-            if (existingCharacter.killed)
-            {
-                existingCharacter.Revive(playerLeader, capitalHex, 25);
-                existingCharacter.startingCharacter = false;
-                resolved = true;
-                message = $"{existingCharacter.characterName} returns to life at {capitalHex.GetPC().pcName} with 25 health.";
-            }
-            else if (existingCharacter.GetOwner() == playerLeader)
-            {
-                string boostedAbility = GrantRandomCharacterAbility(existingCharacter);
-                resolved = !string.IsNullOrWhiteSpace(boostedAbility);
-                message = resolved
-                    ? $"{existingCharacter.characterName} gains +1 {boostedAbility}."
-                    : $"{existingCharacter.characterName} cannot improve further.";
-            }
-            else if (existingCharacter.GetOwner() != null)
-            {
-                RevealCharacterPositionToPlayer(existingCharacter, playerLeader, board);
-                resolved = true;
-                string location = existingCharacter.hex != null ? existingCharacter.hex.GetHoverV2() : "an unknown hex";
-                message = $"{existingCharacter.characterName} is revealed at {location}.";
-            }
-        }
-        else
-        {
-            CharacterInstantiator instantiator = FindFirstObjectByType<CharacterInstantiator>();
-            if (instantiator != null)
-            {
-                BiomeConfig biomeConfig = new()
-                {
-                    characterName = cardData.name,
-                    alignment = (AlignmentEnum)cardData.alignment,
-                    commander = cardData.commander,
-                    agent = cardData.agent,
-                    emmissary = cardData.emmissary,
-                    mage = cardData.mage,
-                    race = cardData.race,
-                    artifacts = cardData.artifacts != null ? new List<Artifact>(cardData.artifacts) : new List<Artifact>()
-                };
-
-                resolvedCharacter = instantiator.InstantiateCharacter(playerLeader, capitalHex, biomeConfig);
-                if (resolvedCharacter != null)
-                {
-                    resolvedCharacter.startingCharacter = false;
-                    resolved = true;
-                    message = $"{resolvedCharacter.characterName} joins {playerLeader.characterName} at {capitalHex.GetPC().pcName}.";
-                }
-            }
-        }
-
-        if (resolvedCharacter != null)
-        {
-            resolvedCharacter.lastPlayedCardSpriteNameThisTurn =
-                !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
-            resolvedCharacter.RefreshSelectedCharacterIconIfSelected();
-        }
-
-        if (resolved)
-        {
-            if (resolvedCharacter != null)
-            {
-                board.SelectCharacter(resolvedCharacter, true, 1.0f, 0.0f);
+                sb.Append("\nOR\nLocal Effect");
             }
 
-            deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
-            playerLeader.RecordPlayedCard(cardData);
-
-            if (!string.IsNullOrWhiteSpace(message))
-            {
-                MessageDisplayNoUI.ShowMessage(
-                    resolvedCharacter != null ? resolvedCharacter.hex : capitalHex,
-                    resolvedCharacter,
-                    message,
-                    Color.green);
-            }
+            return sb.ToString();
         }
 
-        isConsuming = false;
-        RefreshInteractionState(force: true);
-        return resolved;
+        if (!string.IsNullOrWhiteSpace(data.description)) return data.description;
+
+        string actionRef = data.GetActionRef();
+        if (string.IsNullOrWhiteSpace(actionRef)) return string.Empty;
+
+        CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef(actionRef, data) : null;
+        return action != null ? action.GetDescriptionForCard() : string.Empty;
     }
 
-    private async Task<bool> TryPlayArmyCardAsync(bool promptForConfirmation)
+    private string RepeatSprite(string spriteName, int count)
     {
-        if (!TryResolveArmyCardContext(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out string failureReason))
+        StringBuilder sb = new();
+        for (int i = 0; i < count; i++)
         {
-            RefreshInteractionState();
-            return false;
+            sb.Append($"<sprite name=\"{spriteName}\">");
         }
-
-        int totalGoldCost = cardData.GetTotalGoldCost();
-        if (promptForConfirmation)
-        {
-            string prompt = totalGoldCost > 0
-                ? $"Recruit {cardData.name} for {totalGoldCost} gold?"
-                : $"Recruit {cardData.name}?";
-            bool confirm = await ConfirmationDialog.Ask(prompt, "Yes", "No");
-            if (!confirm) return false;
-        }
-
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
-        if (deckManager == null || board == null)
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        TutorialManager tutorial = TutorialManager.Instance;
-        bool tutorialActive = tutorial != null && tutorial.IsActiveFor(playerLeader);
-        int stepIndexBefore = tutorialActive ? tutorial.GetActiveRequiredStepIndex(playerLeader) : -1;
-        bool drawReplacementCard = !tutorialActive;
-        if (!deckManager.TryConsumeCard(playerLeader, cardData.cardId, drawReplacementCard, out _))
-        {
-            RefreshInteractionState();
-            return false;
-        }
-
-        isConsuming = true;
-        RefreshInteractionState(force: true);
-
-        List<ArmySpecialAbilityEnum> specialAbilities = cardData.specialAbilities != null
-            ? new List<ArmySpecialAbilityEnum>(cardData.specialAbilities)
-            : new List<ArmySpecialAbilityEnum>();
-
-        if (!selectedCharacter.IsArmyCommander())
-        {
-            selectedCharacter.CreateArmy(cardData.troopType, 1, false, 0, specialAbilities, cardData.name);
-        }
-        else
-        {
-            selectedCharacter.GetArmy()?.Recruit(cardData.troopType, 1, specialAbilities, cardData.name);
-            selectedCharacter.hex?.RedrawCharacters();
-            selectedCharacter.hex?.RedrawArmies();
-            selectedCharacter.RefreshSelectedCharacterIconIfSelected();
-        }
-
-        selectedCharacter.lastPlayedCardSpriteNameThisTurn =
-            !string.IsNullOrWhiteSpace(cardData.spriteName) ? cardData.spriteName : cardData.name;
-        deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
-        playerLeader.RecordPlayedCard(cardData);
-        board.SelectCharacter(selectedCharacter, true, 1.0f, 0.0f);
-        tutorial?.HandleCardPlayed(selectedCharacter, cardData, selectedCharacter.hex);
-
-        if (tutorialActive)
-        {
-            int stepIndexAfter = tutorial.GetActiveRequiredStepIndex(playerLeader);
-            bool transitionedToNextStep = stepIndexAfter != stepIndexBefore;
-            if (!transitionedToNextStep)
-            {
-                deckManager.TryReturnCardToHand(playerLeader, cardData.cardId);
-            }
-        }
-
-        MessageDisplayNoUI.ShowMessage(
-            selectedCharacter.hex,
-            selectedCharacter,
-            $"{selectedCharacter.characterName} recruits 1 <sprite name=\"{cardData.troopType.ToString().ToLowerInvariant()}\"/> from {cardData.name}.",
-            Color.green);
-
-        isConsuming = false;
-        RefreshInteractionState(force: true);
-        return true;
-    }
-
-    private bool TryResolveCharacterCardContext(out Game game, out PlayableLeader playerLeader, out Hex capitalHex, out string reason)
-    {
-        game = FindFirstObjectByType<Game>();
-        playerLeader = game != null ? game.player : null;
-        capitalHex = null;
-        reason = null;
-
-        if (game == null || playerLeader == null)
-        {
-            reason = "Game is not initialized.";
-            return false;
-        }
-
-        if (!game.IsPlayerCurrentlyPlaying())
-        {
-            reason = "It is not your turn.";
-            return false;
-        }
-
-        capitalHex = ResolveCapitalHex(playerLeader);
-        if (capitalHex == null)
-        {
-            reason = "Your capital was not found.";
-            return false;
-        }
-
-        if (!cardData.MeetsResourceRequirements(playerLeader))
-        {
-            reason = BuildMissingResourcesReason(playerLeader);
-            return false;
-        }
-
-        if (TryGetTutorialRestrictionReason(playerLeader, null, out string tutorialReason))
-        {
-            reason = tutorialReason;
-            return false;
-        }
-
-        return true;
-    }
-
-    private Character FindCharacterByCardName()
-    {
-        if (cardData == null || string.IsNullOrWhiteSpace(cardData.name)) return null;
-
-        return FindCharacterByName(cardData.name);
-    }
-
-    private static Character FindCharacterByName(string characterName)
-    {
-        if (string.IsNullOrWhiteSpace(characterName)) return null;
-
-        Character[] characters = FindObjectsByType<Character>(FindObjectsSortMode.None);
-        for (int i = 0; i < characters.Length; i++)
-        {
-            Character candidate = characters[i];
-            if (candidate == null) continue;
-            if (string.Equals(candidate.characterName, characterName, StringComparison.OrdinalIgnoreCase))
-            {
-                return candidate;
-            }
-        }
-
-        return null;
-    }
-
-    private static string BuildCharacterCardOutcomeText(CardData data)
-    {
-        if (data == null || string.IsNullOrWhiteSpace(data.name)) return null;
-
-        Game game = FindFirstObjectByType<Game>();
-        PlayableLeader playerLeader = game != null ? game.player : null;
-        Character existingCharacter = FindCharacterByName(data.name);
-
-        if (existingCharacter == null)
-        {
-            return "Not in play: instantiates at your capital.";
-        }
-
-        if (existingCharacter.killed)
-        {
-            return "Dead: returns to life at your capital with 25 health.";
-        }
-
-        if (playerLeader != null && existingCharacter.GetOwner() == playerLeader)
-        {
-            return "Already yours: +1 to a random skill.";
-        }
-
-        return "Controlled by another leader: reveals their hex.";
-    }
-
-    private string GrantRandomCharacterAbility(Character target)
-    {
-        if (target == null) return null;
-
-        List<(string label, Action apply)> abilities = new();
-        if (target.GetBaseCommander() > 0 && target.GetBaseCommander() < Character.MAX_SKILL_LEVEL)
-        {
-            abilities.Add(("commander", () => target.AddCommander(1)));
-        }
-        if (target.GetBaseAgent() > 0 && target.GetBaseAgent() < Character.MAX_SKILL_LEVEL)
-        {
-            abilities.Add(("agent", () => target.AddAgent(1)));
-        }
-        if (target.GetBaseEmmissary() > 0 && target.GetBaseEmmissary() < Character.MAX_SKILL_LEVEL)
-        {
-            abilities.Add(("emmissary", () => target.AddEmmissary(1)));
-        }
-        if (target.GetBaseMage() > 0 && target.GetBaseMage() < Character.MAX_SKILL_LEVEL)
-        {
-            abilities.Add(("mage", () => target.AddMage(1)));
-        }
-
-        if (abilities.Count == 0)
-        {
-            return null;
-        }
-
-        int index = UnityEngine.Random.Range(0, abilities.Count);
-        abilities[index].apply();
-        return abilities[index].label;
-    }
-
-    private static void RevealCharacterPositionToPlayer(Character target, PlayableLeader playerLeader, Board board)
-    {
-        if (target == null || target.hex == null || playerLeader == null) return;
-
-        target.hex.RevealArea(0, true, playerLeader);
-        playerLeader.AddTemporarySeenHexes(new[] { target.hex });
-        playerLeader.AddTemporaryScoutCenters(new[] { target.hex });
-        playerLeader.RefreshVisibleHexesImmediate();
-        target.hex.RefreshVisibilityRendering();
-        if (board != null)
-        {
-            board.SelectHex(target.hex, true, 1.0f, 0.0f);
-        }
-    }
-
-    private bool TryResolveArmyCardContext(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out string reason)
-    {
-        game = FindFirstObjectByType<Game>();
-        playerLeader = game != null ? game.player : null;
-        selectedCharacter = null;
-        reason = null;
-
-        if (game == null || playerLeader == null)
-        {
-            reason = "Game is not initialized.";
-            return false;
-        }
-
-        if (!game.IsPlayerCurrentlyPlaying())
-        {
-            reason = "It is not your turn.";
-            return false;
-        }
-
-        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
-        selectedCharacter = board != null ? board.selectedCharacter : null;
-        if (selectedCharacter == null)
-        {
-            reason = "Select a commander first.";
-            return false;
-        }
-
-        if (selectedCharacter.GetOwner() != playerLeader || selectedCharacter.killed)
-        {
-            reason = "Selected character is not controlled by you.";
-            return false;
-        }
-
-        if (selectedCharacter.GetCommander() <= 0)
-        {
-            reason = $"{selectedCharacter.characterName} is not a commander.";
-            return false;
-        }
-
-        if (cardData.troopType == TroopsTypeEnum.ws && (selectedCharacter.hex?.GetPC() == null || !selectedCharacter.hex.GetPC().hasPort))
-        {
-            reason = "Warships require a port.";
-            return false;
-        }
-
-        if (!cardData.MeetsResourceRequirements(playerLeader))
-        {
-            reason = BuildMissingResourcesReason(playerLeader);
-            return false;
-        }
-
-        if (TryGetTutorialRestrictionReason(playerLeader, selectedCharacter, out string tutorialReason))
-        {
-            reason = tutorialReason;
-            return false;
-        }
-
-        return true;
-    }
-
-    private static Hex ResolveCapitalHex(Leader leader)
-    {
-        if (leader == null) return null;
-
-        PC capital = leader.controlledPcs?.FirstOrDefault(pc => pc != null && pc.isCapital && pc.hex != null);
-        if (capital != null) return capital.hex;
-
-        Board board = FindFirstObjectByType<Board>();
-        return board?.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == leader && x.GetPC().isCapital);
-    }
-
-    private bool TryResolvePlayableAction(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out CharacterAction action)
-    {
-        game = GetGame();
-        playerLeader = game != null ? game.player : null;
-        action = null;
-        selectedCharacter = null;
-
-        if (game == null || playerLeader == null) return false;
-        if (!game.IsPlayerCurrentlyPlaying()) return false;
-        if (cardData == null) return false;
-
-        Board board = GetBoard(game);
-        selectedCharacter = board != null ? board.selectedCharacter : null;
-        if (selectedCharacter == null) return false;
-        if (selectedCharacter.GetOwner() != playerLeader) return false;
-        if (selectedCharacter.killed) return false;
-
-        if (TryGetTutorialRestrictionReason(playerLeader, selectedCharacter, out _)) return false;
-
-        string actionRef = NormalizeActionRef(cardData.GetActionRef());
-        if (string.IsNullOrWhiteSpace(actionRef)) return false;
-
-        ActionsManager actionsManager = GetActionsManager();
-        action = ResolveActionByRef(actionRef, actionsManager);
-        if (action == null) return false;
-
-        action.Initialize(selectedCharacter);
-        action.difficulty = Mathf.Max(0, cardData.difficulty);
-        return true;
-    }
-
-    private void RefreshRequirementsText(CardData data)
-    {
-        if (requirements == null) return;
-        if (data == null)
-        {
-            requirements.text = string.Empty;
-            return;
-        }
-
-        string richRequirements = BuildRequirementsText(data);
-        string requirementsColorHex = ColorUtility.ToHtmlStringRGBA(requirementsCardColor);
-        requirements.text = string.IsNullOrWhiteSpace(richRequirements)
-            ? string.Empty
-            : $"<mark=#{requirementsColorHex}>{richRequirements}</mark>";
+        return sb.ToString();
     }
 
     private string BuildRequirementsText(CardData data)
     {
-        if (TryBuildConditionalPcFoundingRequirements(data, out string conditionalRequirements))
-        {
-            return conditionalRequirements;
-        }
+        if (data == null) return string.Empty;
+        if (!string.IsNullOrWhiteSpace(data.requirementsText)) return data.requirementsText;
 
-        if (!string.IsNullOrWhiteSpace(data.requirementsText))
-        {
-            return data.requirementsText.Trim();
-        }
+        List<string> reqs = new();
 
-        return BuildRequirementSprites(data);
+        if (data.commanderSkillRequired > 0) reqs.Add($"<sprite name=\"commander\"> {data.commanderSkillRequired}");
+        if (data.agentSkillRequired > 0) reqs.Add($"<sprite name=\"agent\"> {data.agentSkillRequired}");
+        if (data.emissarySkillRequired > 0) reqs.Add($"<sprite name=\"emmissary\"> {data.emissarySkillRequired}");
+        if (data.mageSkillRequired > 0) reqs.Add($"<sprite name=\"mage\"> {data.mageSkillRequired}");
+
+        int totalGold = data.GetTotalGoldCost();
+        if (totalGold > 0) reqs.Add($"<sprite name=\"gold\"> {totalGold}");
+
+        if (data.leatherRequired > 0) reqs.Add($"<sprite name=\"leather\"> {data.leatherRequired}");
+        if (data.timberRequired > 0) reqs.Add($"<sprite name=\"timber\"> {data.timberRequired}");
+        if (data.mountsRequired > 0) reqs.Add($"<sprite name=\"mounts\"> {data.mountsRequired}");
+        if (data.ironRequired > 0) reqs.Add($"<sprite name=\"iron\"> {data.ironRequired}");
+        if (data.steelRequired > 0) reqs.Add($"<sprite name=\"steel\"> {data.steelRequired}");
+        if (data.mithrilRequired > 0) reqs.Add($"<sprite name=\"mithril\"> {data.mithrilRequired}");
+
+        return string.Join("  ", reqs);
     }
 
-    private string BuildRequirementSprites(CardData data)
+    public void UpdateInteractableState()
     {
-        List<string> parts = new();
-        AddRequirement(parts, "commander", data.commanderSkillRequired);
-        AddRequirement(parts, "agent", data.agentSkillRequired);
-        AddRequirement(parts, "emmissary", data.emissarySkillRequired);
-        AddRequirement(parts, "mage", data.mageSkillRequired);
-        AddRequirement(parts, "leather", data.leatherRequired);
-        AddRequirement(parts, "timber", data.timberRequired);
-        AddRequirement(parts, "mounts", data.mountsRequired);
-        AddRequirement(parts, "iron", data.ironRequired);
-        AddRequirement(parts, "steel", data.steelRequired);
-        AddRequirement(parts, "mithril", data.mithrilRequired);
-        AddRequirement(parts, "gold", data.GetTotalGoldCost());
-        if (data.jokerRequired > 0 && data.GetTotalGoldCost() <= 0)
-        {
-            AddRequirement(parts, "gold", 1);
-        }
-        AddRequirement(parts, "joker", data.jokerRequired);
-        return string.Join(" ", parts);
-    }
-
-    private bool TryBuildConditionalPcFoundingRequirements(CardData data, out string requirementsTextValue)
-    {
-        requirementsTextValue = null;
-        if (data == null || data.GetCardType() != CardTypeEnum.PC) return false;
-        if (!IsConditionalPcFoundingCard(data)) return false;
-
-        string baseRequirement = "2<sprite name=\"commander\"> OR 1<sprite name=\"emmissary\">";
-        requirementsTextValue = IsPcAbsentFromBoard(data.name)
-            ? $"{baseRequirement} 10<sprite name=\"gold\">"
-            : baseRequirement;
-        return true;
-    }
-
-    private bool IsConditionalPcFoundingCard(CardData data)
-    {
-        if (data == null) return false;
-
-        string actionRef = NormalizeActionRef(data.GetActionRef());
-        if (string.IsNullOrWhiteSpace(actionRef)) return false;
-
-        Type actionType = ResolveActionType(actionRef);
-        return actionType != null && typeof(MaterialRetrievalOrAction).IsAssignableFrom(actionType);
-    }
-
-    private bool IsPcAbsentFromBoard(string pcName)
-    {
-        if (string.IsNullOrWhiteSpace(pcName)) return true;
+        if (cardData == null) return;
 
         Board board = FindFirstObjectByType<Board>();
-        List<Hex> hexes = board?.GetHexes();
-        if (hexes == null || hexes.Count == 0) return true;
+        Character selected = board != null ? board.selectedCharacter : null;
 
-        for (int i = 0; i < hexes.Count; i++)
+        bool isPlayable = cardData.EvaluatePlayability(selected);
+
+        if (canvasGroup != null)
         {
-            PC pc = hexes[i]?.GetPCData();
-            if (pc == null || string.IsNullOrWhiteSpace(pc.pcName)) continue;
-            if (string.Equals(pc.pcName.Trim(), pcName.Trim(), StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
+            canvasGroup.alpha = isPlayable ? 1f : 0.5f;
+            // For now, let's keep it interactable so they can see why it's not playable
+            canvasGroup.interactable = true;
         }
 
-        return true;
+        if (highlightImage != null)
+        {
+            highlightImage.enabled = isPlayable && isHovered;
+        }
     }
 
-    private static void AddRequirement(List<string> parts, string spriteName, int amount)
+    private void Update()
     {
-        if (parts == null || string.IsNullOrWhiteSpace(spriteName) || amount <= 0) return;
-        parts.Add($"{amount}<sprite name=\"{spriteName}\">");
-    }
-
-    private void RefreshInteractionState(bool force = false)
-    {
-        if (this == null || !gameObject) return;
-
-        if (button == null)
+        if (rectTransform.localScale != targetScale)
         {
-            button = GetComponent<Button>();
+            rectTransform.localScale = Vector3.Lerp(rectTransform.localScale, targetScale, Time.deltaTime * hoverSpeed);
         }
-
-        bool isPlayableNow = IsPlayableNow();
-        if (button != null)
-        {
-            button.interactable = !isDragging && !isConsuming && isPlayableNow;
-        }
-        if (discardButton != null)
-        {
-            discardButton.interactable = !isDragging && !isConsuming && cardData != null && !cardData.IsEncounterCard();
-        }
-
-        if (canvasGroup != null && !isDragging)
-        {
-            if (force || !Mathf.Approximately(canvasGroup.alpha, 1f))
-            {
-                canvasGroup.alpha = 1f;
-            }
-            canvasGroup.blocksRaycasts = true;
-        }
-
-        string unavailableReason = isPlayableNow || isConsuming || isDragging ? null : BuildUnavailableReason();
-        SetDisabled(!isPlayableNow && !isConsuming && !isDragging, unavailableReason);
-    }
-
-    private bool IsPlayableNow()
-    {
-        if (cardData != null && cardData.GetCardType() == CardTypeEnum.Character)
-        {
-            return TryResolveCharacterCardContext(out _, out _, out _, out _);
-        }
-        if (cardData != null && cardData.GetCardType() == CardTypeEnum.Army)
-        {
-            return TryResolveArmyCardContext(out _, out _, out _, out _);
-        }
-        if (cardData != null && cardData.GetCardType() == CardTypeEnum.Encounter)
-        {
-            return TryResolveEncounterCardContext(out _, out _, out Character encounterCharacter, out _)
-                && cardData.EvaluatePlayability(encounterCharacter);
-        }
-
-        return cardData != null
-            && TryResolvePlayableAction(out _, out _, out Character selectedCharacter, out CharacterAction action)
-            && action != null
-            && cardData.EvaluatePlayability(selectedCharacter, null, _ => action.FulfillsConditions());
-    }
-
-    private bool TryGetTutorialRestrictionReason(PlayableLeader playerLeader, Character actor, out string reason)
-    {
-        reason = null;
-        TutorialManager tutorial = TutorialManager.Instance;
-        if (playerLeader == null || tutorial == null || !tutorial.IsActiveFor(playerLeader) || cardData == null) return false;
-
-        reason = tutorial.GetTutorialPlayRestrictionReason(playerLeader, actor, cardData);
-        return !string.IsNullOrWhiteSpace(reason);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (isDragging) return;
-        ApplyHoverVisuals();
+        isHovered = true;
+        targetScale = originalScale * hoverScale;
+        originalSiblingIndex = transform.GetSiblingIndex();
+        transform.SetAsLastSibling();
+        if (highlightImage != null && cardData != null && cardData.isPlayable) highlightImage.enabled = true;
+        Sounds.Instance?.PlayUiHover();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         if (isDragging) return;
-        RestoreHoverVisuals();
+        isHovered = false;
+        targetScale = originalScale;
+        transform.SetSiblingIndex(originalSiblingIndex);
+        if (highlightImage != null) highlightImage.enabled = false;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData)
     {
-        pointerIsDown = true;
-        pointerDownTime = Time.unscaledTime;
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        pointerIsDown = false;
+        if (isDragging) return;
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            TryPlayCard();
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (rectTransform == null) return;
-        if (isConsuming || cardData == null) return;
-        if (!pointerIsDown) return;
-        if (Time.unscaledTime - pointerDownTime < holdToDragSeconds) return;
-        if (!IsPlayableNow())
-        {
-            RefreshInteractionState();
-            return;
-        }
+        if (cardData == null) return;
 
-        RestoreHoverVisuals();
         isDragging = true;
-        pointerIsDown = false;
-        originalParent = rectTransform.parent;
-        originalSiblingIndexBeforeDrag = rectTransform.GetSiblingIndex();
-        originalWorldPositionBeforeDrag = rectTransform.position;
-        originalRotationBeforeDrag = rectTransform.rotation;
-        originalScaleBeforeDrag = rectTransform.localScale;
+        originalParent = transform.parent;
+        originalSiblingIndex = transform.GetSiblingIndex();
 
-        if (rootCanvas == null)
-        {
-            rootCanvas = GetComponentInParent<Canvas>()?.rootCanvas;
-        }
+        canvasGroup.alpha = dragAlpha;
+        canvasGroup.blocksRaycasts = false;
 
-        Camera eventCamera = ResolveEventCamera(eventData);
-        if (rootCanvas != null)
-        {
-            rectTransform.SetParent(rootCanvas.transform, true);
-        }
-        rectTransform.SetAsLastSibling();
+        if (shadowObject != null) shadowObject.SetActive(true);
+        if (playIndicator != null) playIndicator.SetActive(true);
 
-        if (TryGetPointerWorldPosition(eventData.position, eventCamera, out Vector3 pointerWorld))
-        {
-            dragPointerOffsetWorld = rectTransform.position - pointerWorld;
-        }
-        else
-        {
-            dragPointerOffsetWorld = Vector3.zero;
-        }
-
-        if (canvasGroup != null)
-        {
-            canvasGroup.blocksRaycasts = false;
-            canvasGroup.alpha = 1f;
-        }
-
-        dropPreviewLocked = false;
-        SetSelectedCharacterDropHint(true);
-        SetDisabled(false, null);
+        transform.SetParent(transform.root, true);
+        Sounds.Instance?.PlayUiHover();
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!isDragging || rectTransform == null) return;
-        Camera eventCamera = ResolveEventCamera(eventData);
-        if (!TryGetPointerWorldPosition(eventData.position, eventCamera, out Vector3 pointerWorld)) return;
+        if (!isDragging) return;
+        transform.position = eventData.position;
 
-        float jitterScale = rootCanvas != null ? Mathf.Max(1f, rootCanvas.scaleFactor) : 1f;
-        Vector3 jitter = new Vector3(
-            Mathf.Sin(Time.unscaledTime * 47f) * dragJitterPixels / jitterScale,
-            Mathf.Cos(Time.unscaledTime * 39f) * dragJitterPixels / jitterScale,
-            0f
-        );
-
-        dropPreviewLocked = UpdateDropPreview(eventData, eventCamera);
-        if (dropPreviewLocked && TryGetSelectedCharacterTargetCenter(out Vector3 targetCenter))
-        {
-            float lerp = 1f - Mathf.Exp(-dropSnapLerpSpeed * Time.unscaledDeltaTime);
-            rectTransform.position = Vector3.Lerp(rectTransform.position, targetCenter, lerp);
-            rectTransform.localScale = originalScaleBeforeDrag * dragScaleMultiplier * dropSnapScaleMultiplier;
-            rectTransform.rotation = Quaternion.Slerp(rectTransform.rotation, originalRotationBeforeDrag, lerp * 0.9f);
-        }
-        else
-        {
-            rectTransform.position = pointerWorld + dragPointerOffsetWorld + jitter;
-            rectTransform.localScale = originalScaleBeforeDrag * dragScaleMultiplier;
-            rectTransform.rotation = Quaternion.Euler(0f, 0f, Mathf.Sin(Time.unscaledTime * 20f) * dragTiltDegrees);
-        }
+        // Visual feedback if dragged high enough to "play"
+        bool overPlayArea = eventData.position.y > (Screen.height * 0.3f);
+        if (playIndicator != null) playIndicator.SetActive(overPlayArea);
     }
 
-    public async void OnEndDrag(PointerEventData eventData)
+    public void OnEndDrag(PointerEventData eventData)
     {
         if (!isDragging) return;
-
-        bool droppedOnSelectedCharacter = dropPreviewLocked || IsDroppedOnSelectedCharacter(eventData);
         isDragging = false;
 
-        if (canvasGroup != null)
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = true;
+
+        if (shadowObject != null) shadowObject.SetActive(false);
+        if (playIndicator != null) playIndicator.SetActive(false);
+
+        bool overPlayArea = eventData.position.y > (Screen.height * 0.3f);
+
+        if (overPlayArea)
         {
-            canvasGroup.blocksRaycasts = true;
-        }
-
-        if (droppedOnSelectedCharacter)
-        {
-            if (TryBuildDropConfirmationPrompt(out string prompt))
-            {
-                bool confirm = await ConfirmationDialog.AskImmediate(prompt, "Yes", "No");
-                if (!confirm)
-                {
-                    if (this == null || !gameObject) return;
-                    dropPreviewLocked = false;
-                    SetSelectedCharacterDropHint(false);
-                    RestoreCardTransformAfterDrag();
-                    RefreshInteractionState(force: true);
-                    return;
-                }
-            }
-
-            bool played = await TryPlayCardAsync(promptForConfirmation: false);
-            dropPreviewLocked = false;
-            SetSelectedCharacterDropHint(false);
-            if (played) return;
-            if (this == null || !gameObject) return;
-        }
-
-        if (this == null || !gameObject) return;
-        dropPreviewLocked = false;
-        SetSelectedCharacterDropHint(false);
-        RestoreCardTransformAfterDrag();
-        RefreshInteractionState(force: true);
-    }
-
-    private bool TryBuildDropConfirmationPrompt(out string prompt)
-    {
-        prompt = string.Empty;
-        if (cardData == null) return false;
-
-        Board board = GetBoard();
-        Character selectedCharacter = board != null ? board.selectedCharacter : null;
-        if (selectedCharacter == null) return false;
-
-        string cardLabel = string.IsNullOrWhiteSpace(cardData.name) ? "card" : cardData.name;
-        string characterLabel = string.IsNullOrWhiteSpace(selectedCharacter.characterName) ? "selected character" : selectedCharacter.characterName;
-        prompt = $"Play {cardLabel} on {characterLabel}?";
-        return true;
-    }
-
-    private void SetDisabled(bool disabled, string reasonText)
-    {
-        this.disabled = disabled;
-        SetDisabledOverlayVisible();
-
-        if (!disabledReasonHover) return;
-        disabledReasonHover.Initialize(reasonText, Vector2.one * 40f, 14, TextAlignmentOptions.Center);
-        if (disabled && isHovered)
-        {
-            ShowDisabledReasonHover();
+            TryPlayCard();
         }
         else
         {
-            HideDisabledReasonHover();
+            // Return to hand
+            transform.SetParent(originalParent, true);
+            transform.SetSiblingIndex(originalSiblingIndex);
+            targetScale = originalScale;
         }
-
     }
 
-    private string BuildUnavailableReason()
+    private async void TryPlayCard()
     {
-        if (cardData == null) return "Card data is missing.";
+        if (cardData == null) return;
 
-        if (cardData.GetCardType() == CardTypeEnum.Character)
+        Board board = FindFirstObjectByType<Board>();
+        Character selected = board != null ? board.selectedCharacter : null;
+
+        if (!cardData.EvaluatePlayability(selected))
         {
-            if (TryResolveCharacterCardContext(out _, out _, out _, out string characterReason)) return string.Empty;
-            return string.IsNullOrWhiteSpace(characterReason) ? "Requirements are not met." : characterReason;
-        }
-        if (cardData.GetCardType() == CardTypeEnum.Army)
-        {
-            if (TryResolveArmyCardContext(out _, out _, out _, out string armyReason)) return string.Empty;
-            return string.IsNullOrWhiteSpace(armyReason) ? "Requirements are not met." : armyReason;
-        }
-        if (cardData.GetCardType() == CardTypeEnum.Encounter)
-        {
-            if (!TryResolveEncounterCardContext(out _, out _, out Character encounterCharacter, out string encounterReason))
-            {
-                return string.IsNullOrWhiteSpace(encounterReason) ? "Requirements are not met." : encounterReason;
-            }
-
-            bool encounterPlayable = cardData.EvaluatePlayability(encounterCharacter);
-            if (encounterPlayable) return string.Empty;
-
-            List<string> encounterReasons = new();
-            CardPlayabilityResult encounterResult = cardData.playability;
-            if (encounterResult != null)
-            {
-                if (encounterResult.failsLevelRequirements)
-                {
-                    string levelReason = BuildMissingLevelsReason(encounterCharacter);
-                    if (!string.IsNullOrWhiteSpace(levelReason)) encounterReasons.Add(levelReason);
-                }
-
-                if (encounterResult.failsResourceRequirements)
-                {
-                    string resourceReason = BuildMissingResourcesReason(encounterCharacter.GetOwner());
-                    if (!string.IsNullOrWhiteSpace(resourceReason)) encounterReasons.Add(resourceReason);
-                }
-            }
-
-            if (encounterReasons.Count == 0) encounterReasons.Add("Requirements are not met.");
-            return string.Join("<br>", encounterReasons);
-        }
-
-        Game game = FindFirstObjectByType<Game>();
-        if (game == null || game.player == null) return "Game is not initialized.";
-        if (!game.IsPlayerCurrentlyPlaying()) return "It is not your turn.";
-
-        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
-        Character selectedCharacter = board != null ? board.selectedCharacter : null;
-        if (selectedCharacter == null) return "Select one of your characters first.";
-        if (selectedCharacter.GetOwner() != game.player) return "Selected character is not controlled by you.";
-        if (selectedCharacter.killed) return "Selected character is dead.";
-
-        if (TryGetTutorialRestrictionReason(game.player, selectedCharacter, out string tutorialReason))
-        {
-            return tutorialReason;
-        }
-
-        string actionRef = NormalizeActionRef(cardData.GetActionRef());
-        if (string.IsNullOrWhiteSpace(actionRef)) return "This card has no linked action.";
-
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
-        CharacterAction action = ResolveActionByRef(actionRef, actionsManager);
-        if (action == null) return $"Linked action '{actionRef}' was not found.";
-
-        action.Initialize(selectedCharacter);
-        action.difficulty = Mathf.Max(0, cardData.difficulty);
-
-        bool playable = cardData.EvaluatePlayability(selectedCharacter, null, _ => action.FulfillsConditions());
-        if (playable) return string.Empty;
-
-        List<string> reasons = new();
-        CardPlayabilityResult result = cardData.playability;
-        if (result != null)
-        {
-            if (result.failsLevelRequirements)
-            {
-                string levelReason = BuildMissingLevelsReason(selectedCharacter);
-                if (!string.IsNullOrWhiteSpace(levelReason)) reasons.Add(levelReason);
-            }
-
-            if (result.failsResourceRequirements)
-            {
-                string resourceReason = BuildMissingResourcesReason(selectedCharacter.GetOwner());
-                if (!string.IsNullOrWhiteSpace(resourceReason)) reasons.Add(resourceReason);
-            }
-
-            if (result.failsActionConditions)
-            {
-                reasons.Add("No valid target or action condition is not met.");
-            }
-
-            if (result.failsCardHistoryRequirements && !string.IsNullOrWhiteSpace(result.cardHistoryReason))
-            {
-                reasons.Add(result.cardHistoryReason);
-            }
-        }
-
-        if (reasons.Count == 0) reasons.Add("Requirements are not met.");
-        return string.Join("<br>", reasons);
-    }
-
-    private string BuildMissingLevelsReason(Character selectedCharacter)
-    {
-        if (selectedCharacter == null || cardData == null) return string.Empty;
-
-        List<string> parts = new();
-        AddMissingRequirement(parts, "Commander", cardData.commanderSkillRequired, selectedCharacter.GetCommander());
-        AddMissingRequirement(parts, "Agent", cardData.agentSkillRequired, selectedCharacter.GetAgent());
-        AddMissingRequirement(parts, "Emmissary", cardData.emissarySkillRequired, selectedCharacter.GetEmmissary());
-        AddMissingRequirement(parts, "Mage", cardData.mageSkillRequired, selectedCharacter.GetMage());
-        if (parts.Count == 0) return string.Empty;
-        return $"Need levels: {string.Join(", ", parts)}";
-    }
-
-    private string BuildMissingResourcesReason(Leader owner)
-    {
-        if (owner == null || cardData == null) return "Not enough resources.";
-
-        List<string> parts = new();
-        AddMissingRequirement(parts, "Leather", cardData.leatherRequired, owner.leatherAmount);
-        AddMissingRequirement(parts, "Timber", cardData.timberRequired, owner.timberAmount);
-        AddMissingRequirement(parts, "Mounts", cardData.mountsRequired, owner.mountsAmount);
-        AddMissingRequirement(parts, "Iron", cardData.ironRequired, owner.ironAmount);
-        AddMissingRequirement(parts, "Steel", cardData.steelRequired, owner.steelAmount);
-        AddMissingRequirement(parts, "Mithril", cardData.mithrilRequired, owner.mithrilAmount);
-        AddMissingRequirement(parts, "Gold", cardData.GetTotalGoldCost(), owner.goldAmount);
-        if (parts.Count == 0) return "Not enough resources.";
-        return $"Need resources: {string.Join(", ", parts)}";
-    }
-
-    private static void AddMissingRequirement(List<string> parts, string label, int required, int current)
-    {
-        if (parts == null || required <= 0 || current >= required) return;
-        parts.Add($"{label} {required} (have {current})");
-    }
-
-    private bool TryResolveEncounterCardContext(out Game game, out PlayableLeader playerLeader, out Character selectedCharacter, out string reason)
-    {
-        game = FindFirstObjectByType<Game>();
-        playerLeader = game != null ? game.player : null;
-        selectedCharacter = null;
-        reason = null;
-
-        if (game == null || playerLeader == null)
-        {
-            reason = "Game is not initialized.";
-            return false;
-        }
-        if (!game.IsPlayerCurrentlyPlaying())
-        {
-            reason = "It is not your turn.";
-            return false;
-        }
-
-        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
-        selectedCharacter = board != null ? board.selectedCharacter : null;
-        if (selectedCharacter == null)
-        {
-            reason = "Select one of your characters first.";
-            return false;
-        }
-        if (selectedCharacter.GetOwner() != playerLeader)
-        {
-            reason = "Selected character is not controlled by you.";
-            return false;
-        }
-        if (selectedCharacter.killed)
-        {
-            reason = "Selected character is dead.";
-            return false;
-        }
-        if ((cardData.encounterOptions == null || cardData.encounterOptions.Count == 0) && cardData.fleeOption == null)
-        {
-            reason = "This encounter has no configured choices.";
-            return false;
-        }
-
-        if (TryGetTutorialRestrictionReason(playerLeader, selectedCharacter, out string tutorialReason))
-        {
-            reason = tutorialReason;
-            return false;
-        }
-
-        return true;
-    }
-
-    private async Task TryDiscardCardAsync()
-    {
-        if (isDragging || isConsuming || cardData == null || cardData.IsEncounterCard()) return;
-
-        Game game = GetGame();
-        PlayableLeader playerLeader = game != null ? game.player : null;
-        DeckManager deckManager = GetDeckManager();
-        if (game == null || playerLeader == null || deckManager == null) return;
-        if (!game.IsPlayerCurrentlyPlaying()) return;
-
-        bool confirm = await ConfirmationDialog.Ask($"Discard {cardData.name} and draw another card?", "Yes", "No");
-        if (!confirm) return;
-
-        if (!deckManager.TryDiscardCard(playerLeader, cardData.cardId, out _))
-        {
-            RefreshInteractionState(force: true);
+            ShowWhyNotPlayable();
             return;
         }
 
-        deckManager.TryDrawCard(playerLeader, out _);
-        deckManager.RefreshHumanPlayerHandUI();
-    }
+        bool success = false;
+        CardTypeEnum cardType = cardData.GetCardType();
 
-    private CharacterAction ResolveActionByRef(string actionRef, ActionsManager actionsManager = null)
-    {
-        string normalizedActionRef = NormalizeActionRef(actionRef);
-        if (string.IsNullOrWhiteSpace(normalizedActionRef)) return null;
-
-        if (cachedResolvedAction != null
-            && string.Equals(cachedResolvedActionRef, normalizedActionRef, StringComparison.OrdinalIgnoreCase))
+        switch (cardType)
         {
-            return cachedResolvedAction;
+            case CardTypeEnum.Action:
+            case CardTypeEnum.Event:
+            case CardTypeEnum.Encounter:
+            case CardTypeEnum.Land:
+            case CardTypeEnum.PC:
+                success = await HandleActionCardPlayed(selected);
+                break;
+            case CardTypeEnum.Character:
+                success = await HandleCharacterCardPlayed(selected);
+                break;
+            case CardTypeEnum.Army:
+                success = await HandleArmyCardPlayed(selected);
+                break;
         }
 
-        if (actionsManager == null)
+        if (success)
         {
-            actionsManager = GetActionsManager();
+            // Card was successfully played, it will be removed from hand by the manager
+            Destroy(gameObject);
         }
-
-        CharacterAction created = actionsManager != null ? actionsManager.ResolveActionByRef(normalizedActionRef) : null;
-
-        cachedResolvedActionRef = normalizedActionRef;
-        cachedResolvedAction = created;
-        return created;
-    }
-
-    private Game GetGame()
-    {
-        if (cachedGame == null) cachedGame = FindFirstObjectByType<Game>();
-        return cachedGame;
-    }
-
-    private Board GetBoard(Game game = null)
-    {
-        game ??= GetGame();
-        if (game != null && game.board != null)
+        else
         {
-            cachedBoard = game.board;
-        }
-        else if (cachedBoard == null)
-        {
-            cachedBoard = FindFirstObjectByType<Board>();
-        }
-        return cachedBoard;
-    }
-
-    private void EnsureBoardSubscription()
-    {
-        Board board = GetBoard();
-        if (board == subscribedBoard) return;
-
-        UnsubscribeFromBoardSelection();
-        subscribedBoard = board;
-        if (subscribedBoard != null)
-        {
-            subscribedBoard.SelectedCharacterChanged += HandleSelectedCharacterChanged;
-        }
-    }
-
-    private void UnsubscribeFromBoardSelection()
-    {
-        if (subscribedBoard != null)
-        {
-            subscribedBoard.SelectedCharacterChanged -= HandleSelectedCharacterChanged;
-            subscribedBoard = null;
-        }
-    }
-
-    private DeckManager GetDeckManager()
-    {
-        if (cachedDeckManager == null)
-        {
-            cachedDeckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        }
-        return cachedDeckManager;
-    }
-
-    private ActionsManager GetActionsManager()
-    {
-        if (cachedActionsManager == null)
-        {
-            cachedActionsManager = FindFirstObjectByType<ActionsManager>();
-        }
-        return cachedActionsManager;
-    }
-
-    private void HandleSelectedCharacterChanged(Character previous, Character current)
-    {
-        if (!isActiveAndEnabled || cardData == null) return;
-        RefreshInteractionState(force: true);
-    }
-
-    private void HandleInteractionRefreshRequested()
-    {
-        if (!isActiveAndEnabled || cardData == null) return;
-        RefreshInteractionState(force: true);
-    }
-
-    public static void RequestInteractionRefreshAll()
-    {
-        InteractionRefreshRequested?.Invoke();
-    }
-
-    private static string NormalizeActionRef(string actionRef)
-    {
-        if (string.IsNullOrWhiteSpace(actionRef)) return string.Empty;
-
-        string normalized = actionRef.Trim();
-        if (normalized.EndsWith(".cs", System.StringComparison.OrdinalIgnoreCase))
-        {
-            normalized = normalized.Substring(0, normalized.Length - 3).Trim();
-        }
-
-        int lastDotIndex = normalized.LastIndexOf('.');
-        if (lastDotIndex >= 0 && lastDotIndex < normalized.Length - 1)
-        {
-            normalized = normalized.Substring(lastDotIndex + 1).Trim();
-        }
-
-        return normalized;
-    }
-
-    private static bool ActionTypeMatchesRef(System.Type candidateType, string normalizedActionRef)
-    {
-        if (candidateType == null || string.IsNullOrWhiteSpace(normalizedActionRef)) return false;
-
-        if (string.Equals(candidateType.Name, normalizedActionRef, System.StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        return !string.IsNullOrWhiteSpace(candidateType.FullName)
-            && string.Equals(candidateType.FullName, normalizedActionRef, System.StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static Type ResolveActionType(string className)
-    {
-        if (string.IsNullOrWhiteSpace(className)) return null;
-
-        Type direct = Type.GetType(className, false, true);
-        if (direct != null) return direct;
-
-        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            Type candidate = assembly.GetType(className, false, true);
-            if (candidate != null) return candidate;
-
-            Type[] types;
-            try
+            // Failed to play (e.g. cancelled target selection), return to hand
+            if (transform.parent != originalParent)
             {
-                types = assembly.GetTypes();
+                transform.SetParent(originalParent, true);
+                transform.SetSiblingIndex(originalSiblingIndex);
             }
-            catch (ReflectionTypeLoadException ex)
-            {
-                types = ex.Types.Where(t => t != null).ToArray();
-            }
-
-            candidate = types.FirstOrDefault(t =>
-                string.Equals(t.Name, className, StringComparison.OrdinalIgnoreCase));
-            if (candidate != null) return candidate;
+            targetScale = originalScale;
+            UpdateInteractableState();
         }
-
-        return null;
     }
 
-    private void ApplyHoverVisuals()
+    private void ShowWhyNotPlayable()
     {
-        if (isHovered || rectTransform == null) return;
+        if (cardData == null || cardData.playability == null) return;
 
-        defaultScale = rectTransform.localScale;
-        defaultPivot = rectTransform.pivot;
+        StringBuilder sb = new();
+        if (cardData.playability.failsLevelRequirements) sb.AppendLine("- Insufficient character level.");
+        if (cardData.playability.failsResourceRequirements) sb.AppendLine("- Missing required resources.");
+        if (cardData.playability.failsActionConditions) sb.AppendLine("- Action conditions not met.");
+        if (cardData.playability.failsCardHistoryRequirements) sb.AppendLine($"- {cardData.playability.cardHistoryReason}");
 
-        rectTransform.pivot = HoverPivot;
-        rectTransform.localScale = defaultScale * HoverScaleMultiplier;
-        if (hoverCanvas == null)
+        if (sb.Length == 0) sb.Append("Cannot play this card right now.");
+
+        // We can show a temporary message or tooltip here
+        Board board = FindFirstObjectByType<Board>();
+        if (board != null && board.selectedCharacter != null)
         {
-            hoverCanvas = gameObject.AddComponent<Canvas>();
-            hoverCanvasDefaultOverrideSorting = false;
-            hoverCanvasDefaultSortingOrder = 0;
+            MessageDisplayNoUI.ShowMessage(board.selectedCharacter.hex, board.selectedCharacter, sb.ToString().Trim(), Color.red);
         }
-        if (GetComponent<GraphicRaycaster>() == null)
+        
+        Sounds.Instance?.PlayActionFail();
+    }
+
+    private async Task<bool> HandleActionCardPlayed(Character selected)
+    {
+        string actionRef = cardData.GetActionRef();
+        if (string.IsNullOrWhiteSpace(actionRef)) return false;
+
+        CharacterAction action = actionsManager.ResolveActionByRef(actionRef, cardData);
+        if (action == null) return false;
+
+        Game game = FindFirstObjectByType<Game>();
+        PlayableLeader playerLeader = game != null ? game.player : null;
+        if (playerLeader == null) return false;
+
+        // Try to consume the card from hand first
+        // We use the card name now as the ID
+        bool drawReplacementCard = !TutorialManager.Instance.IsActiveFor(playerLeader);
+        if (!deckManager.TryConsumeActionCard(playerLeader, actionRef, drawReplacementCard, out _, cardData.name))
         {
-            gameObject.AddComponent<GraphicRaycaster>();
+            return false;
         }
-        if (hoverCanvas != null)
+
+        // Apply any map reveals immediately if it's a Land or PC card
+        deckManager.ApplyMapRevealForPlayedCard(playerLeader, cardData);
+
+        // Execute the action
+        action.Initialize(selected, cardData);
+        await action.Execute();
+
+        if (!action.LastExecutionSucceeded)
         {
-            hoverCanvas.overrideSorting = true;
-            hoverCanvas.sortingOrder = 1001;
+            // If the action failed or was cancelled, we should probably return the card to hand,
+            // but the current game design usually consumes it anyway on fail.
+            // If we want to return it:
+            // deckManager.TryReturnActionCardToHand(playerLeader, actionRef);
         }
 
-        isHovered = true;
-        if (disabled) ShowDisabledReasonHover();
-    }
-
-    private void RestoreHoverVisuals()
-    {
-        if (!isHovered || rectTransform == null) return;
-
-        rectTransform.localScale = defaultScale;
-        rectTransform.pivot = defaultPivot;
-        if (hoverCanvas != null)
-        {
-            hoverCanvas.overrideSorting = hoverCanvasDefaultOverrideSorting;
-            hoverCanvas.sortingOrder = hoverCanvasDefaultSortingOrder;
-        }
-
-        isHovered = false;
-        HideDisabledReasonHover();
-    }
-
-    private void ShowDisabledReasonHover()
-    {
-        if (!disabledReasonHover) return;
-        disabledReasonHover.gameObject.SetActive(true);
-        if (disabledReasonHover.tooltipPanel != null)
-        {
-            disabledReasonHover.tooltipPanel.SetActive(true);
-        }
-    }
-
-    private void HideDisabledReasonHover()
-    {
-        if (!disabledReasonHover) return;
-        if (disabledReasonHover.tooltipPanel != null)
-        {
-            disabledReasonHover.tooltipPanel.SetActive(false);
-        }
-        disabledReasonHover.gameObject.SetActive(false);
-    }
-
-    private Camera ResolveEventCamera(PointerEventData eventData)
-    {
-        if (rootCanvas != null && rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-        {
-            return rootCanvas.worldCamera;
-        }
-        return eventData != null ? eventData.pressEventCamera : null;
-    }
-
-    private bool TryGetPointerWorldPosition(Vector2 pointerPosition, Camera eventCamera, out Vector3 worldPosition)
-    {
-        worldPosition = Vector3.zero;
-        RectTransform canvasRect = rootCanvas != null ? rootCanvas.transform as RectTransform : null;
-        if (canvasRect == null) return false;
-        return RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRect, pointerPosition, eventCamera, out worldPosition);
-    }
-
-    private bool IsDroppedOnSelectedCharacter(PointerEventData eventData)
-    {
-        if (eventData == null) return false;
-        SelectedCharacterIcon selectedIcon = GetSelectedCharacterIcon();
-        if (selectedIcon == null || !selectedIcon.gameObject.activeInHierarchy) return false;
-
-        RectTransform targetRect = selectedIcon.transform as RectTransform;
-        if (targetRect == null) return false;
-
-        Camera eventCamera = ResolveEventCamera(eventData);
-        return RectTransformUtility.RectangleContainsScreenPoint(targetRect, eventData.position, eventCamera);
-    }
-
-    private bool UpdateDropPreview(PointerEventData eventData, Camera eventCamera)
-    {
-        if (eventData == null) return false;
-        SelectedCharacterIcon icon = GetSelectedCharacterIcon();
-        if (icon == null || !icon.gameObject.activeInHierarchy) return false;
-
-        RectTransform targetRect = icon.transform as RectTransform;
-        if (targetRect == null) return false;
-
-        Vector2 targetCenterScreen = RectTransformUtility.WorldToScreenPoint(eventCamera, targetRect.TransformPoint(targetRect.rect.center));
-        float distanceToCenter = Vector2.Distance(eventData.position, targetCenterScreen);
-        bool isInside = RectTransformUtility.RectangleContainsScreenPoint(targetRect, eventData.position, eventCamera);
-        bool isNear = distanceToCenter <= dropPreviewRangePixels;
-        bool lockDrop = isInside || distanceToCenter <= dropSnapRangePixels;
-
-        float proximity = 0f;
-        if (isNear)
-        {
-            proximity = 1f - Mathf.Clamp01(distanceToCenter / Mathf.Max(1f, dropPreviewRangePixels));
-        }
-        icon.SetDropTargetProximity(proximity, lockDrop);
-        return lockDrop;
-    }
-
-    private bool TryGetSelectedCharacterTargetCenter(out Vector3 centerWorld)
-    {
-        centerWorld = Vector3.zero;
-        SelectedCharacterIcon selectedIcon = GetSelectedCharacterIcon();
-        if (selectedIcon == null || !selectedIcon.gameObject.activeInHierarchy) return false;
-
-        RectTransform targetRect = selectedIcon.transform as RectTransform;
-        if (targetRect == null) return false;
-
-        centerWorld = targetRect.TransformPoint(targetRect.rect.center);
         return true;
     }
 
-    private SelectedCharacterIcon GetSelectedCharacterIcon()
+    private async Task<bool> HandleCharacterCardPlayed(Character selected)
     {
-        if (selectedCharacterIcon == null)
-        {
-            selectedCharacterIcon = FindFirstObjectByType<SelectedCharacterIcon>();
-        }
-        return selectedCharacterIcon;
+        // Character cards usually represent recruiting a specific character
+        // This might involve showing a recruitment UI or spawning them at a capital
+        return false;
     }
 
-    private void SetSelectedCharacterDropHint(bool enabled)
+    private async Task<bool> HandleArmyCardPlayed(Character selected)
     {
-        SelectedCharacterIcon icon = GetSelectedCharacterIcon();
-        if (icon == null) return;
-        icon.SetDropTargetHighlight(enabled);
-        if (!enabled)
-        {
-            icon.SetDropTargetProximity(0f, false);
-        }
-    }
-
-    private void RestoreCardTransformAfterDrag()
-    {
-        if (rectTransform == null || originalParent == null) return;
-
-        rectTransform.SetParent(originalParent, true);
-        int maxIndex = originalParent.childCount - 1;
-        rectTransform.SetSiblingIndex(Mathf.Clamp(originalSiblingIndexBeforeDrag, 0, Mathf.Max(0, maxIndex)));
-        rectTransform.position = originalWorldPositionBeforeDrag;
-        rectTransform.rotation = originalRotationBeforeDrag;
-        rectTransform.localScale = originalScaleBeforeDrag;
-        originalParent = null;
-        originalSiblingIndexBeforeDrag = -1;
-    }
-
-
-    private void SetDisabledOverlayVisible()
-    {
-        if(!disabledImageCanvasGroup) return;
-        float targetAlpha = disabled ? disabledCanvasGroupAlpha : 0f;
-        if (!Mathf.Approximately(disabledImageCanvasGroup.alpha, targetAlpha))
-        {
-            disabledImageCanvasGroup.alpha = targetAlpha;
-        }
+        // Army cards represent mustering troops
+        return false;
     }
 }

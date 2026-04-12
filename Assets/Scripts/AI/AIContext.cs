@@ -243,7 +243,7 @@ public class AIContext
             : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
         if (deckManager == null) return false;
 
-        if (!deckManager.TryConsumeActionCard(Leader, action.GetType().Name, action.actionId, drawReplacement: false, out CardData consumedCard, card.cardId))
+        if (!deckManager.TryConsumeActionCard(Leader, action.GetType().Name, drawReplacement: false, out CardData consumedCard, card.name))
         {
             return false;
         }

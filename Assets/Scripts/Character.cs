@@ -219,7 +219,7 @@ public class Character : MonoBehaviour
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
         CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef("Pass") : null;
         if (action == null) return;
-        action.Initialize(this);
+        action.Initialize(this, condition: null, effect: null, asyncEffect: null);
         await action.Execute();
     }
 

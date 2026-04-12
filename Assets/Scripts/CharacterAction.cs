@@ -9,8 +9,8 @@ public class CharacterAction
     [Header("IDs")]
     public string actionName;
     public string description;
-    public int actionId;
     [HideInInspector] public Character character;
+    [HideInInspector] public CardData card;
 
     [Header("Failure rate (0-100) %")]
     public int difficulty = 0;
@@ -30,6 +30,15 @@ public class CharacterAction
     public int goldCost;
     public bool isBuyCaravans;
     public bool isSellCaravans;
+
+    [Header("Granted")]
+    public int leatherGranted;
+    public int mountsGranted;
+    public int timberGranted;
+    public int ironGranted;
+    public int steelGranted;
+    public int mithrilGranted;
+    public int goldGranted;
 
     [Header("XP Chance (0-100) %")]
     public int commanderXP;
@@ -111,6 +120,7 @@ public class CharacterAction
         {
             var originalCondition = condition;
             this.character = character;
+
             if (advisorType == AdvisorType.None) advisorType = DefaultAdvisorType;
             string defaultActionName = GetDefaultActionName();
 
@@ -126,7 +136,48 @@ public class CharacterAction
         {
             Debug.LogError($"Unable to Initialize CharacterAction {actionName}");
             Debug.LogError(e.ToString());
-        }        
+        }
+    }
+
+    public virtual void Initialize(Character character, CardData card, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
+    {
+        try
+        {
+            this.character = character;
+            this.card = card;
+
+            if (card != null)
+            {
+                this.actionName = card.name;
+                this.description = card.description;
+                this.difficulty = card.difficulty;
+                this.commanderSkillRequired = card.commanderSkillRequired;
+                this.agentSkillRequired = card.agentSkillRequired;
+                this.emissarySkillRequired = card.emissarySkillRequired;
+                this.mageSkillRequired = card.mageSkillRequired;
+                this.leatherCost = card.leatherRequired;
+                this.mountsCost = card.mountsRequired;
+                this.timberCost = card.timberRequired;
+                this.ironCost = card.ironRequired;
+                this.steelCost = card.steelRequired;
+                this.mithrilCost = card.mithrilRequired;
+                this.goldCost = card.goldRequired;
+                this.leatherGranted = card.leatherGranted;
+                this.mountsGranted = card.mountsGranted;
+                this.timberGranted = card.timberGranted;
+                this.ironGranted = card.ironGranted;
+                this.steelGranted = card.steelGranted;
+                this.mithrilGranted = card.mithrilGranted;
+                this.goldGranted = card.goldGranted;
+            }
+
+            Initialize(character, condition, effect, asyncEffect);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Unable to Initialize CharacterAction {actionName}");
+            Debug.LogError(e.ToString());
+        }
     }
 
     public bool FulfillsConditions()
@@ -151,6 +202,7 @@ public class CharacterAction
     public void Reset()
     {
         character = null;
+        card = null;
         condition = null;
         effect = null;
         asyncEffect = null;
@@ -1406,6 +1458,20 @@ public class CharacterAction
 
     private ResourceCostProfile GetResourceCostProfile(Leader owner)
     {
+        if (card != null)
+        {
+            return new ResourceCostProfile
+            {
+                leather = card.leatherRequired,
+                timber = card.timberRequired,
+                mounts = card.mountsRequired,
+                iron = card.ironRequired,
+                steel = card.steelRequired,
+                mithril = card.mithrilRequired,
+                gold = card.GetTotalGoldCost()
+            };
+        }
+
         return new ResourceCostProfile
         {
             leather = leatherCost,
@@ -1418,4 +1484,3 @@ public class CharacterAction
         };
     }
 }
-

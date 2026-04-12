@@ -127,20 +127,40 @@ public static class EncounterResolver
     private static string GetOptionLabel(EncounterOptionData option)
     {
         if (option == null) return string.Empty;
+
+        string abilityPrefix = BuildAbilityPrefix(option);
         if (!string.IsNullOrWhiteSpace(option.label))
         {
-            return option.label.Trim();
+            return $"{abilityPrefix}{option.label.Trim()}";
         }
 
         if (string.IsNullOrWhiteSpace(option.description))
         {
-            return string.Empty;
+            return abilityPrefix.Trim();
         }
 
         string text = option.description.Trim();
         const int maxLength = 40;
-        if (text.Length <= maxLength) return text;
-        return $"{text[..(maxLength - 3)].TrimEnd()}...";
+        if (text.Length <= maxLength) return $"{abilityPrefix}{text}";
+        return $"{abilityPrefix}{text[..(maxLength - 3)].TrimEnd()}...";
+    }
+
+    private static string BuildAbilityPrefix(EncounterOptionData option)
+    {
+        if (option?.outcomes == null || option.outcomes.Count == 0) return string.Empty;
+
+        bool requiresCommander = option.outcomes.Any(outcome => outcome != null && outcome.minCommander > 0);
+        bool requiresAgent = option.outcomes.Any(outcome => outcome != null && outcome.minAgent > 0);
+        bool requiresEmmissary = option.outcomes.Any(outcome => outcome != null && outcome.minEmmissary > 0);
+        bool requiresMage = option.outcomes.Any(outcome => outcome != null && outcome.minMage > 0);
+
+        List<string> prefixes = new();
+        if (requiresCommander) prefixes.Add("<sprite name=\"commander\">");
+        if (requiresAgent) prefixes.Add("<sprite name=\"agent\">");
+        if (requiresEmmissary) prefixes.Add("<sprite name=\"emmissary\">");
+        if (requiresMage) prefixes.Add("<sprite name=\"mage\">");
+
+        return prefixes.Count > 0 ? string.Join("", prefixes) + " " : string.Empty;
     }
 
     private static string GetOptionDescription(EncounterOptionData option)
@@ -191,13 +211,13 @@ public static class EncounterResolver
 
         if (owner != null)
         {
-            ApplyResourceDelta(owner, outcome.goldDelta, owner.AddGold, owner.RemoveGold);
-            ApplyResourceDelta(owner, outcome.leatherDelta, owner.AddLeather, owner.RemoveLeather);
-            ApplyResourceDelta(owner, outcome.timberDelta, owner.AddTimber, owner.RemoveTimber);
-            ApplyResourceDelta(owner, outcome.mountsDelta, owner.AddMounts, owner.RemoveMounts);
-            ApplyResourceDelta(owner, outcome.ironDelta, owner.AddIron, owner.RemoveIron);
-            ApplyResourceDelta(owner, outcome.steelDelta, owner.AddSteel, owner.RemoveSteel);
-            ApplyResourceDelta(owner, outcome.mithrilDelta, owner.AddMithril, owner.RemoveMithril);
+            ApplyResourceDelta(owner, outcome.goldDelta, amount => owner.AddGold(amount, false), amount => owner.RemoveGold(amount, false));
+            ApplyResourceDelta(owner, outcome.leatherDelta, amount => owner.AddLeather(amount, false), amount => owner.RemoveLeather(amount, false));
+            ApplyResourceDelta(owner, outcome.timberDelta, amount => owner.AddTimber(amount, false), amount => owner.RemoveTimber(amount, false));
+            ApplyResourceDelta(owner, outcome.mountsDelta, amount => owner.AddMounts(amount, false), amount => owner.RemoveMounts(amount, false));
+            ApplyResourceDelta(owner, outcome.ironDelta, amount => owner.AddIron(amount, false), amount => owner.RemoveIron(amount, false));
+            ApplyResourceDelta(owner, outcome.steelDelta, amount => owner.AddSteel(amount, false), amount => owner.RemoveSteel(amount, false));
+            ApplyResourceDelta(owner, outcome.mithrilDelta, amount => owner.AddMithril(amount, false), amount => owner.RemoveMithril(amount, false));
         }
 
         if (outcome.statuses != null)
@@ -216,7 +236,7 @@ public static class EncounterResolver
         }
     }
 
-    private static void ApplyResourceDelta(Leader owner, int delta, Action<int> add, Action<int, bool> remove)
+    private static void ApplyResourceDelta(Leader owner, int delta, Action<int> add, Action<int> remove)
     {
         if (owner == null || delta == 0) return;
         if (delta > 0)
@@ -224,7 +244,7 @@ public static class EncounterResolver
             add?.Invoke(delta);
             return;
         }
-        remove?.Invoke(-delta, false);
+        remove?.Invoke(-delta);
     }
 
     private static Color ResolveOutcomeColor(EncounterOutcomeData outcome)

@@ -7,13 +7,10 @@ using UnityEngine;
 public class MaterialRetrievalOrAction : MaterialRetrieval
 {
     private const int FoundingGoldCost = 10;
-    private PendingPcChoice pendingChoice;
-    private static Dictionary<string, PcCardMetadata> pcCardMetadataByActionRef;
-    private static Dictionary<string, string> pcNamesBySourceKey;
     private static int activePcLookupFrame = -1;
     private static readonly HashSet<string> activePcLookupKeys = new(StringComparer.OrdinalIgnoreCase);
 
-    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
+    public override void Initialize(Character c, CardData card = null, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
@@ -29,7 +26,7 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null) return false;
-            return HasAssociatedPcInGame(null) || CanFoundAssociatedPc(character);
+            return HasAssociatedPcInGame() || CanFoundAssociatedPc(character);
         };
 
         asyncEffect = async (character) =>
@@ -38,27 +35,12 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
             return await ResolvePendingChoiceAsync(character);
         };
 
-        base.Initialize(c, condition, effect, asyncEffect);
-    }
-
-    protected bool GrantResources(Character c, ProducesEnum first, int firstAmount, ProducesEnum second, int secondAmount, string sourceName)
-    {
-        if (c == null) return false;
-
-        pendingChoice = new PendingPcChoice
-        {
-            sourceName = sourceName,
-            first = first,
-            firstAmount = firstAmount,
-            second = second,
-            secondAmount = secondAmount
-        };
-        return true;
+        base.Initialize(c, card, condition, effect, asyncEffect);
     }
 
     protected override string GetDescription()
     {
-        PcEffectCatalog.PcEffectDefinition definition = ResolvePcEffectDefinition(null);
+        PcEffectCatalog.PcEffectDefinition definition = ResolvePcEffectDefinition();
         string effectDescription = definition != null
             ? definition.description
             : "Activate this place's local effect instead of taking its resources.";
@@ -67,16 +49,14 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
 
     private async Task<bool> ResolvePendingChoiceAsync(Character character)
     {
-        PendingPcChoice choice = pendingChoice;
-        pendingChoice = null;
-        if (choice == null || character == null) return false;
+        if (character == null) return false;
 
-        if (!HasAssociatedPcInGame(choice))
+        if (!HasAssociatedPcInGame())
         {
-            return TryFoundAssociatedPc(character, choice);
+            return TryFoundAssociatedPc(character);
         }
 
-        PcEffectCatalog.PcEffectDefinition definition = ResolvePcEffectDefinition(choice);
+        PcEffectCatalog.PcEffectDefinition definition = ResolvePcEffectDefinition();
         bool canUseEffect = definition != null && definition.CanExecute(character);
         bool useResources = true;
 
@@ -86,8 +66,8 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
             {
                 string effectLabel = string.IsNullOrWhiteSpace(definition.title) ? "Activate the local effect" : $"Activate {definition.title}";
                 string prompt =
-                    $"Choose for {choice.GetLabel()}:\n" +
-                    $"{choice.GetResourceSummary()}\nOR\n{effectLabel}";
+                    $"Choose for {ResolveAssociatedPcName()}:\n" +
+                    $"{GetResourceSummary()}\nOR\n{effectLabel}";
                 useResources = await ConfirmationDialog.Ask(prompt, "Resources", "Effect");
             }
             else
@@ -98,25 +78,45 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
 
         if (useResources || !canUseEffect)
         {
-            return ApplyResources(character, choice);
+            return ApplyResources(character);
         }
 
         return definition.Execute(character);
     }
 
-    private bool ApplyResources(Character character, PendingPcChoice choice)
+    private string GetResourceSummary()
     {
-        if (character == null) return false;
+        if (card == null) return "Resources";
+        List<string> parts = new();
+        if (card.leatherGranted > 0) parts.Add($"+{card.leatherGranted} <sprite name=\"leather\"/>");
+        if (card.mountsGranted > 0) parts.Add($"+{card.mountsGranted} <sprite name=\"mounts\"/>");
+        if (card.timberGranted > 0) parts.Add($"+{card.timberGranted} <sprite name=\"timber\"/>");
+        if (card.ironGranted > 0) parts.Add($"+{card.ironGranted} <sprite name=\"iron\"/>");
+        if (card.steelGranted > 0) parts.Add($"+{card.steelGranted} <sprite name=\"steel\"/>");
+        if (card.mithrilGranted > 0) parts.Add($"+{card.mithrilGranted} <sprite name=\"mithril\"/>");
+        if (card.goldGranted > 0) parts.Add($"+{card.goldGranted} <sprite name=\"gold\"/>");
+        return string.Join("  ", parts);
+    }
+
+    private bool ApplyResources(Character character)
+    {
+        if (character == null || card == null) return false;
         Leader owner = character.GetOwner();
         if (owner == null) return false;
 
-        AddResource(owner, choice.first, choice.firstAmount);
-        AddResource(owner, choice.second, choice.secondAmount);
-        MessageDisplayNoUI.ShowMessage(character.hex, character, $"{choice.GetLabel()}: {choice.GetResourceSummary()}", Color.yellow);
+        if (card.leatherGranted > 0) owner.AddLeather(card.leatherGranted, false);
+        if (card.mountsGranted > 0) owner.AddMounts(card.mountsGranted, false);
+        if (card.timberGranted > 0) owner.AddTimber(card.timberGranted, false);
+        if (card.ironGranted > 0) owner.AddIron(card.ironGranted, false);
+        if (card.steelGranted > 0) owner.AddSteel(card.steelGranted, false);
+        if (card.mithrilGranted > 0) owner.AddMithril(card.mithrilGranted, false);
+        if (card.goldGranted > 0) owner.AddGold(card.goldGranted, false);
+
+        MessageDisplayNoUI.ShowMessage(character.hex, character, $"{ResolveAssociatedPcName()}: {GetResourceSummary()}", Color.yellow);
         return true;
     }
 
-    private bool TryFoundAssociatedPc(Character character, PendingPcChoice choice)
+    private bool TryFoundAssociatedPc(Character character)
     {
         if (!CanFoundAssociatedPc(character)) return false;
 
@@ -125,7 +125,7 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
 
         owner.RemoveGold(FoundingGoldCost);
 
-        string pcName = ResolveAssociatedPcName(choice);
+        string pcName = ResolveAssociatedPcName();
         PC foundedPc = new(owner, pcName, PCSizeEnum.camp, FortSizeEnum.NONE, false, false, character.hex, false, 75);
         character.hex.RedrawPC();
         MessageDisplayNoUI.ShowMessage(character.hex, character, $"{pcName} is founded.", Color.green);
@@ -166,40 +166,19 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         return targetAlignment != sourceAlignment;
     }
 
-    private bool HasAssociatedPcInGame(PendingPcChoice choice)
+    private bool HasAssociatedPcInGame()
     {
-        string targetKey = NormalizePcLookupKey(ResolveAssociatedPcName(choice));
+        string targetKey = NormalizePcLookupKey(ResolveAssociatedPcName());
         if (string.IsNullOrWhiteSpace(targetKey)) return false;
 
         RefreshActivePcLookup();
         return activePcLookupKeys.Contains(targetKey);
     }
 
-    private PcEffectCatalog.PcEffectDefinition ResolvePcEffectDefinition(PendingPcChoice choice)
+    private PcEffectCatalog.PcEffectDefinition ResolvePcEffectDefinition()
     {
-        string effectId = ResolveAssociatedPcEffectId(choice);
+        string effectId = ResolveAssociatedPcEffectId();
         return PcEffectCatalog.GetDefinition(effectId);
-    }
-
-    private PC FindAssociatedPc(PendingPcChoice choice)
-    {
-        Board board = FindFirstObjectByType<Board>();
-        if (board == null) return null;
-
-        string targetKey = NormalizePcLookupKey(ResolveAssociatedPcName(choice));
-        if (string.IsNullOrWhiteSpace(targetKey)) return null;
-
-        List<Hex> hexes = board.GetHexes();
-        if (hexes == null) return null;
-
-        for (int i = 0; i < hexes.Count; i++)
-        {
-            PC candidate = hexes[i]?.GetPCData();
-            if (candidate == null) continue;
-            if (NormalizePcLookupKey(candidate.pcName) == targetKey) return candidate;
-        }
-
-        return null;
     }
 
     private static void RefreshActivePcLookup()
@@ -224,97 +203,16 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         }
     }
 
-    private string ResolveAssociatedPcName(PendingPcChoice choice)
+    private string ResolveAssociatedPcName()
     {
-        EnsurePcCardLookupLoaded();
-
-        string actionKey = NormalizePcLookupKey(GetType().Name);
-        if (!string.IsNullOrWhiteSpace(actionKey)
-            && pcCardMetadataByActionRef.TryGetValue(actionKey, out PcCardMetadata metadataByAction)
-            && !string.IsNullOrWhiteSpace(metadataByAction.pcName))
-        {
-            return metadataByAction.pcName;
-        }
-
-        string sourceKey = NormalizePcLookupKey(choice != null ? choice.sourceName : null);
-        if (!string.IsNullOrWhiteSpace(sourceKey) && pcNamesBySourceKey.TryGetValue(sourceKey, out string nameBySource))
-        {
-            return nameBySource;
-        }
-
-        string fallback = choice != null ? choice.GetLabel() : actionName;
-        return HumanizeSourceName(fallback);
+        if (card != null && !string.IsNullOrWhiteSpace(card.name)) return card.name;
+        return HumanizeSourceName(GetType().Name);
     }
 
-    private string ResolveAssociatedPcEffectId(PendingPcChoice choice)
+    private string ResolveAssociatedPcEffectId()
     {
-        EnsurePcCardLookupLoaded();
-
-        string actionKey = NormalizePcLookupKey(GetType().Name);
-        if (!string.IsNullOrWhiteSpace(actionKey)
-            && pcCardMetadataByActionRef.TryGetValue(actionKey, out PcCardMetadata metadataByAction))
-        {
-            return metadataByAction.pcEffectId;
-        }
-
+        if (card != null && !string.IsNullOrWhiteSpace(card.pcEffectId)) return card.pcEffectId;
         return null;
-    }
-
-    private static void EnsurePcCardLookupLoaded()
-    {
-        if (pcCardMetadataByActionRef != null && pcNamesBySourceKey != null) return;
-
-        pcCardMetadataByActionRef = new Dictionary<string, PcCardMetadata>(StringComparer.OrdinalIgnoreCase);
-        pcNamesBySourceKey = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        TextAsset manifestAsset = Resources.Load<TextAsset>("Cards");
-        if (manifestAsset == null) return;
-
-        CardsManifest manifest = JsonUtility.FromJson<CardsManifest>(manifestAsset.text);
-        if (manifest?.decks == null) return;
-
-        for (int i = 0; i < manifest.decks.Count; i++)
-        {
-            DeckManifestEntry entry = manifest.decks[i];
-            if (entry == null || string.IsNullOrWhiteSpace(entry.resourcePath)) continue;
-
-            TextAsset deckAsset = Resources.Load<TextAsset>(entry.resourcePath);
-            if (deckAsset == null) continue;
-
-            DeckData deck = JsonUtility.FromJson<DeckData>(deckAsset.text);
-            if (deck?.cards == null) continue;
-
-            for (int j = 0; j < deck.cards.Count; j++)
-            {
-                CardData card = deck.cards[j];
-                if (card == null || card.GetCardType() != CardTypeEnum.PC || string.IsNullOrWhiteSpace(card.name)) continue;
-
-                string actionKey = NormalizePcLookupKey(card.GetActionRef());
-                if (!string.IsNullOrWhiteSpace(actionKey) && !pcCardMetadataByActionRef.ContainsKey(actionKey))
-                {
-                    pcCardMetadataByActionRef[actionKey] = new PcCardMetadata
-                    {
-                        pcName = card.name,
-                        pcEffectId = card.pcEffectId
-                    };
-                }
-
-                if (!string.IsNullOrWhiteSpace(card.spriteName))
-                {
-                    string sourceKey = NormalizePcLookupKey(card.spriteName);
-                    if (!string.IsNullOrWhiteSpace(sourceKey) && !pcNamesBySourceKey.ContainsKey(sourceKey))
-                    {
-                        pcNamesBySourceKey[sourceKey] = card.name;
-                    }
-                }
-
-                string fallbackKey = NormalizePcLookupKey(card.name);
-                if (!string.IsNullOrWhiteSpace(fallbackKey) && !pcNamesBySourceKey.ContainsKey(fallbackKey))
-                {
-                    pcNamesBySourceKey[fallbackKey] = card.name;
-                }
-            }
-        }
     }
 
     private static string NormalizePcLookupKey(string value)
@@ -339,59 +237,5 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
             chars.Add(current);
         }
         return new string(chars.ToArray());
-    }
-
-    private static void AddResource(Leader owner, ProducesEnum resource, int amount)
-    {
-        if (owner == null || amount <= 0) return;
-        switch (resource)
-        {
-            case ProducesEnum.leather:
-                owner.AddLeather(amount);
-                break;
-            case ProducesEnum.mounts:
-                owner.AddMounts(amount);
-                break;
-            case ProducesEnum.timber:
-                owner.AddTimber(amount);
-                break;
-            case ProducesEnum.iron:
-                owner.AddIron(amount);
-                break;
-            case ProducesEnum.steel:
-                owner.AddSteel(amount);
-                break;
-            case ProducesEnum.mithril:
-                owner.AddMithril(amount);
-                break;
-            case ProducesEnum.gold:
-                owner.AddGold(amount);
-                break;
-        }
-    }
-
-    private sealed class PendingPcChoice
-    {
-        public string sourceName;
-        public ProducesEnum first;
-        public int firstAmount;
-        public ProducesEnum second;
-        public int secondAmount;
-
-        public string GetLabel()
-        {
-            return string.IsNullOrWhiteSpace(sourceName) ? "PC" : sourceName;
-        }
-
-        public string GetResourceSummary()
-        {
-            return $"+{firstAmount} <sprite name=\"{first}\"/>  +{secondAmount} <sprite name=\"{second}\"/>";
-        }
-    }
-
-    private sealed class PcCardMetadata
-    {
-        public string pcName;
-        public string pcEffectId;
     }
 }

@@ -140,6 +140,7 @@ public class Hex : MonoBehaviour
     private static Transform sharedParticlePoolRoot;
     private static Material sharedCharacterOutlineMaterial;
     private MaterialPropertyBlock characterOutlinePropertyBlock;
+    private Color? lastAppliedOutlineColor;
 
     private const string Unknown = "Unknown character(s)";
     private const int DarknessTurnsDefault = 2;
@@ -1047,14 +1048,21 @@ public class Hex : MonoBehaviour
 
         if (TryGetKnownCharacterForIcon(out Character known))
         {
-            characterAnimator.runtimeAnimatorController = GetAnimatorControllerOrDefault(known);
+            var controller = GetAnimatorControllerOrDefault(known);
+            if (characterAnimator.runtimeAnimatorController != controller)
+            {
+                characterAnimator.runtimeAnimatorController = controller;
+            }
             UpdateOutlineColor(known);
             UpdateBannerSprite(known);
         }
         else
         {
             characterSpriteRenderer.sprite = defaultCharacterSprite;
-            characterAnimator.runtimeAnimatorController = defaultAnimatorController;
+            if (characterAnimator.runtimeAnimatorController != defaultAnimatorController)
+            {
+                characterAnimator.runtimeAnimatorController = defaultAnimatorController;
+            }
             ClearBannerSprite();
             ClearOutlineColor();
         }
@@ -1099,7 +1107,10 @@ public class Hex : MonoBehaviour
             return;
         }
 
-        bannerSpriteRenderer.sprite = ownerBannerSprite;
+        if (bannerSpriteRenderer.sprite != ownerBannerSprite)
+        {
+            bannerSpriteRenderer.sprite = ownerBannerSprite;
+        }
         SetActiveFast(bannerSpriteRenderer.gameObject, true);
         CancelBannerRetry();
     }
@@ -1224,6 +1235,9 @@ public class Hex : MonoBehaviour
             ? dominantColor
             : (owner != null ? owner.nationColor : Color.white);
 
+        if (lastAppliedOutlineColor == outlineColor) return;
+        lastAppliedOutlineColor = outlineColor;
+
         if (characterOutlinePropertyBlock == null)
         {
             characterOutlinePropertyBlock = new MaterialPropertyBlock();
@@ -1241,6 +1255,9 @@ public class Hex : MonoBehaviour
             return;
         }
 
+        if (lastAppliedOutlineColor == Color.white) return;
+        lastAppliedOutlineColor = Color.white;
+
         if (characterOutlinePropertyBlock == null)
         {
             characterOutlinePropertyBlock = new MaterialPropertyBlock();
@@ -1251,10 +1268,23 @@ public class Hex : MonoBehaviour
         characterSpriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
     }
 
+    private static readonly Dictionary<Sprite, Color> dominantColorCache = new();
+
     private static bool TryGetDominantBannerColor(Sprite bannerSprite, out Color dominantColor)
     {
         dominantColor = Color.white;
-        if (bannerSprite == null || bannerSprite.texture == null)
+        if (bannerSprite == null)
+        {
+            return false;
+        }
+
+        if (dominantColorCache.TryGetValue(bannerSprite, out Color cachedColor))
+        {
+            dominantColor = cachedColor;
+            return true;
+        }
+
+        if (bannerSprite.texture == null)
         {
             return false;
         }
@@ -1303,12 +1333,14 @@ public class Hex : MonoBehaviour
 
             if (buckets.Count == 0)
             {
+                dominantColorCache[bannerSprite] = Color.white;
                 return false;
             }
 
             KeyValuePair<int, (Vector3 sum, int count)> bestBucket = buckets.OrderByDescending(entry => entry.Value.count).First();
             Vector3 average = bestBucket.Value.sum / Mathf.Max(1, bestBucket.Value.count);
             dominantColor = new Color(average.x, average.y, average.z, 1f);
+            dominantColorCache[bannerSprite] = dominantColor;
             return true;
         }
         catch (UnityException)

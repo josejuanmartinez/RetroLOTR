@@ -10,7 +10,8 @@ public enum EventIconType
     YesNo,
     MultiChoice,
     Encounter,
-    HexMessage
+    HexMessage,
+    Discovery
 }
 
 public class EventIcon : MonoBehaviour, IPointerClickHandler
@@ -21,13 +22,13 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
     public Sprite multichoiceSprite;
     public Sprite encounterSprite;
     public Sprite hexMessageSprite;
+    public Sprite discoverySprite;
 
-    [SerializeField] private Image eventImage;
-    [SerializeField] private Image characterImage;
-
-    private Action openAction;
-    private Action removeAction;
+    private Action onOpenAction;
+    private Action onRemoveAction;
     private bool discardable;
+
+    private Image eventImage;
 
     private void Awake()
     {
@@ -47,20 +48,14 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
 
     public void Configure(EventIconType type, bool isDiscardable, Action onOpen, Action onRemove = null, Sprite characterPortrait = null)
     {
+        onOpenAction = onOpen;
+        onRemoveAction = onRemove;
         discardable = isDiscardable;
-        openAction = onOpen;
-        removeAction = onRemove;
 
         if (eventImage != null)
         {
-            eventImage.sprite = GetSprite(type);
+            eventImage.sprite = characterPortrait != null ? characterPortrait : GetSprite(type);
             eventImage.enabled = eventImage.sprite != null;
-        }
-
-        if (characterImage != null)
-        {
-            characterImage.sprite = characterPortrait;
-            characterImage.enabled = characterPortrait != null;
         }
     }
 
@@ -70,20 +65,19 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
 
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            openAction?.Invoke();
-            return;
+            onOpenAction?.Invoke();
         }
 
         if (eventData.button == PointerEventData.InputButton.Right && discardable)
         {
-            removeAction?.Invoke();
-            Destroy(gameObject);
+            ConsumeAndDestroy();
         }
     }
 
     public void ConsumeAndDestroy()
     {
-        removeAction?.Invoke();
+        onRemoveAction?.Invoke();
+        onRemoveAction = null;
         Destroy(gameObject);
     }
 
@@ -91,12 +85,14 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
     {
         return type switch
         {
+            EventIconType.Story => storySprite,
             EventIconType.Tutorial => tutorialSprite,
             EventIconType.YesNo => yesnoPopupSprite,
             EventIconType.MultiChoice => multichoiceSprite,
             EventIconType.Encounter => encounterSprite,
             EventIconType.HexMessage => hexMessageSprite,
-            _ => storySprite
+            EventIconType.Discovery => discoverySprite,
+            _ => null
         };
     }
 }
