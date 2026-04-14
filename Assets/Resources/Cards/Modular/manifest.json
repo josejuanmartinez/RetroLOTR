@@ -1,603 +1,582 @@
-{
-    "version":  1,
-    "generatedFrom":  "single-deck split dry-run v1",
-    "decks":  [
-                  {
-                      "id":  "SharedBase",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SharedBase.json",
-                      "thematic":  "Shared world layer of neutral encounters, roaming creatures, opportunistic events, and generic pressures that can touch any faction. This is less about tribe or race identity and more about map texture, uncertainty, travel danger, and emergent stories; it adds flexible utility, surprise pivots, and world-state moments that make every run feel less scripted.",
-                      "fantasy":  "Neutral Middle-earth world texture: roads, wilderness, chance meetings, danger, and emergent travel stories that sit outside any single faction identity.",
-                      "mechanicalPillars":  [
-                                                "travel friction and route pressure",
-                                                "flexible utility and generic interaction",
-                                                "surprise pivots and reactive events",
-                                                "neutral encounters that change board texture"
-                                            ],
-                      "themeLanes":  [
-                                         "roads and crossings",
-                                         "weather and terrain trouble",
-                                         "wandering creatures",
-                                         "chance meetings",
-                                         "rumors and discoveries",
-                                         "small crises and interruptions"
-                                     ],
-                      "avoidThemes":  [
-                                          "overcommitting to one race identity",
-                                          "faction-specific signature moments",
-                                          "too many cards built around one creature type",
-                                          "generic filler that lacks travel-story flavor"
-                                      ],
-                      "visualDirections":  [
-                                               "roadside encounters",
-                                               "wild landscape pressure",
-                                               "small figures in large terrain",
-                                               "unexpected danger at travel distance"
-                                           ],
-                      "count":  0
-                  },
-                  {
-                      "id":  "ActionsDeck",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\ActionsDeck.json",
-                      "count":  47,
-                      "thematic":  "Common action utility deck shared by all factions: stealth, theft, rumors, and practical tactical tricks that are not faction-locked.",
-                      "fantasy":  "Universal low-magic action deck for cunning, opportunism, and practical tricks anyone in Middle-earth might attempt.",
-                      "mechanicalPillars":  [
-                                                "short-window tactical plays",
-                                                "mobility and positioning tricks",
-                                                "stealth and evasion",
-                                                "resourceful utility effects"
-                                            ],
-                      "themeLanes":  [
-                                         "theft and smuggling",
-                                         "misdirection",
-                                         "rumor and information flow",
-                                         "escape tools",
-                                         "small ambushes",
-                                         "practical improvisation"
-                                     ],
-                      "avoidThemes":  [
-                                          "faction-specific heroics",
-                                          "large-scale battle identity",
-                                          "high wizardry as the primary focus",
-                                          "overly ornamental effects with no tactical purpose"
-                                      ],
-                      "visualDirections":  [
-                                               "hands, tools, and close-quarters action",
-                                               "night movement",
-                                               "furtive exchanges",
-                                               "small tactical incidents"
-                                           ]
-                  },
-                  {
-                      "id":  "SpellsDeck",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SpellsDeck.json",
-                      "count":  30,
-                      "thematic":  "Common spell/event deck shared by all factions for lightweight magical or celebratory effects usable beyond faction identity.",
-                      "fantasy":  "Shared light-magic and wonder layer: blessings, festival effects, omens, and broadly usable magical moments not owned by one faction.",
-                      "mechanicalPillars":  [
-                                                "lightweight magic",
-                                                "short celebratory or mystical boosts",
-                                                "cross-faction utility",
-                                                "small wonder moments"
-                                            ],
-                      "themeLanes":  [
-                                         "blessings",
-                                         "minor enchantments",
-                                         "songs and celebrations",
-                                         "omens and signs",
-                                         "wards and charms",
-                                         "brief supernatural intervention"
-                                     ],
-                      "avoidThemes":  [
-                                          "deep faction identity",
-                                          "grim industrial themes",
-                                          "overly brutal combat emphasis",
-                                          "single-school spell repetition"
-                                      ],
-                      "visualDirections":  [
-                                               "ritual gestures",
-                                               "symbolic light and smoke",
-                                               "festive scenes",
-                                               "compact magical incidents"
-                                           ]
-                  },
-                  {
-                      "id":  "GandalfBase",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\GandalfBase.json",
-                      "count":  183,
-                      "thematic":  "Core Free Peoples deck built around Men, Elves, Dwarves, Hobbits, Eagles, and other allied peoples working in concert. Its gameplay favors balanced development, card quality, scouting, diplomacy, defensive resilience, region access, and reliable utility over brute specialization; it should feel like the broad strategic foundation from which the more sharply themed Gandalf subdecks branch outward.",
-                      "fantasy":  "Broad alliance-of-the-Free-Peoples foundation: cooperation, guidance, resilience, and adaptable responses across many races and regions.",
-                      "mechanicalPillars":  [
-                                                "balanced development",
-                                                "card quality and scouting",
-                                                "defensive resilience",
-                                                "diplomacy and reliable utility"
-                                            ],
-                      "themeLanes":  [
-                                         "allied races in concert",
-                                         "safe roads and guidance",
-                                         "regional access",
-                                         "protection and morale",
-                                         "counsel and preparation",
-                                         "measured responses to threat"
-                                     ],
-                      "avoidThemes":  [
-                                          "single-race tunnel vision",
-                                          "overly goofy rural-only themes",
-                                          "pure spell-slinging identity",
-                                          "brute-force military specialization"
-                                      ],
-                      "visualDirections":  [
-                                               "mixed fellowship groups",
-                                               "council and guidance scenes",
-                                               "protective stands",
-                                               "travel readiness across varied regions"
-                                           ]
-                  },
-                  {
-                      "id":  "GandalfTheGrey",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\GandalfTheGrey.json",
-                      "count":  10,
-                      "thematic":  "Subtle wandering-archetype deck centered on the Grey Pilgrim as counsellor, traveller, scout, and quiet problem solver. Expect low-profile setup tools, route manipulation, information, light protection, and clever tempo plays rather than direct force; thematically it fits Rangers, hidden roads, small fellowships, and patient positioning before a larger turn of fate.",
-                      "fantasy":  "The Grey Pilgrim as a quiet mover through the edges of the world, solving danger through foresight, travel craft, and understated intervention.",
-                      "mechanicalPillars":  [
-                                                "route manipulation",
-                                                "information advantage",
-                                                "light protection",
-                                                "tempo through subtle repositioning"
-                                            ],
-                      "themeLanes":  [
-                                         "hidden roads",
-                                         "ranger companionship",
-                                         "watchfires and signs",
-                                         "small fellowship movement",
-                                         "timely advice",
-                                         "arrive-then-depart wizard moments"
-                                     ],
-                      "avoidThemes":  [
-                                          "loud battlefield dominance",
-                                          "too much regal authority",
-                                          "single-scene Shire comedy loops",
-                                          "flashy spell spectacle as the whole identity"
-                                      ],
-                      "visualDirections":  [
-                                               "lonely roads and distant horizons",
-                                               "campfire counsel",
-                                               "shadowed travel scenes",
-                                               "small interventions at critical moments"
-                                           ]
-                  },
-                  {
-                      "id":  "GandalfTheWhite",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\GandalfTheWhite.json",
-                      "count":  10,
-                      "thematic":  "High-authority comeback deck built around renewal, courage, cleansing, and open leadership after the return in white. This deck should reward stabilization, morale swings, anti-fear and anti-corruption play, stronger army support, and decisive rally turns; it suits players who want to absorb pressure, reclaim control, and then swing the board through righteous momentum.",
-                      "fantasy":  "Returned white authority: cleansing light, restored morale, command presence, and decisive renewal after despair.",
-                      "mechanicalPillars":  [
-                                                "stabilization after pressure",
-                                                "anti-fear and anti-corruption",
-                                                "army support and rallying",
-                                                "decisive momentum swings"
-                                            ],
-                      "themeLanes":  [
-                                         "renewal after ruin",
-                                         "command and proclamation",
-                                         "horse-lord alliance moments",
-                                         "light against shadow",
-                                         "restoration of courage",
-                                         "turning retreat into advance"
-                                     ],
-                      "avoidThemes":  [
-                                          "sneaky low-profile travel identity",
-                                          "petty prank energy",
-                                          "purely contemplative lore with no board impact",
-                                          "overuse of resurrection imagery on every card"
-                                      ],
-                      "visualDirections":  [
-                                               "radiant mounted command",
-                                               "cleansing confrontations",
-                                               "armies rallied under light",
-                                               "post-despair renewal scenes"
-                                           ]
-                  },
-                  {
-                      "id":  "Mithrandir",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\Mithrandir.json",
-                      "count":  18,
-                      "thematic":  "Pure wizardry deck focused on refined spellcraft, insight, wards, lore, and precise magical intervention. Elven wisdom, hidden knowledge, vision, revelation, and tightly targeted magic all belong here; in gameplay it emphasizes selective control, information advantage, safe setup, and elegant spell resolution rather than broad swarm or raw military output.",
-                      "fantasy":  "Gandalf as sage-mage: hidden lore, wards, visions, and exact magical responses grounded in wisdom rather than spectacle.",
-                      "mechanicalPillars":  [
-                                                "selective control",
-                                                "information advantage",
-                                                "wards and protection",
-                                                "precise spell resolution"
-                                            ],
-                      "themeLanes":  [
-                                         "lore study",
-                                         "runes and wards",
-                                         "visions and revelation",
-                                         "Elven wisdom",
-                                         "measured magical duels",
-                                         "unlocking hidden knowledge"
-                                     ],
-                      "avoidThemes":  [
-                                          "swarm combat identity",
-                                          "repetitive fireworks-only magic",
-                                          "too much rural comedy",
-                                          "high-chaos random spell effects"
-                                      ],
-                      "visualDirections":  [
-                                               "libraries, glyphs, and study",
-                                               "contained magical light",
-                                               "protective circles and warding marks",
-                                               "visionary revelations"
-                                           ]
-                  },
-                  {
-                      "id":  "Stormcrow",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\Stormcrow.json",
-                      "count":  27,
-                      "thematic":  "Stormcrow is the Gandalf subdeck of uneasy wartime pressure among Men. It should frame the Grey Pilgrim not only as an ill omen or unwelcome counselor, but as the unsettling force who appears when Mannish realms are strained by encroaching evil and must harden themselves for survival. This includes fronts such as Rohan against the White Hand, Gondor against Mordor, the Northmen of Rhovanion against Easterlings, the Anduin Vale against Dol Guldur, Bree and wider Eriador under the long memory of Angmar, and similar regions where roads, ports, fords, courts, and frontier settlements live under gathering shadow. Gandalf is trying to help, organize, and strengthen resistance, yet many still see him as the sign that peace has already failed. In gameplay the deck should lean into morale strain, defensive hardening, political tension, frontier vigilance, war-readiness, movement pressure, intelligence and concealment, loyalty under stress, and reputation-based disruption rather than reducing itself to repeated warnings or bad-news delivery.",
-                      "fantasy":  "Gandalf as Stormcrow in the wars of Men: a mistrusted but necessary presence who unsettles courts, hardens defenses, stirs movement, and marks the moment when ordinary peace gives way to border fear, mobilization, and survival under shadow.",
-                      "mechanicalPillars":  [
-                                                "war-readiness and defensive hardening",
-                                                "morale pressure in contested frontiers",
-                                                "reputation-driven disruption among Men and their foes",
-                                                "intelligence, concealment, and timing advantage under gathering shadow"
-                                            ],
-                      "themeLanes":  [
-                                         "wars of Men against evil powers on threatened frontiers",
-                                         "suspicion toward Gandalf\u0027s unsettling presence",
-                                         "ports, roads, fords, courts, and border holds under strain",
-                                         "political tension and loyalty under wartime pressure",
-                                         "uneasy mobilization, watchfulness, and defensive preparation",
-                                         "grim aid that strengthens resistance while spreading unease"
-                                     ],
-                      "avoidThemes":  [
-                                          "reducing the deck to generic weather magic",
-                                          "collapsing every card into warnings, messages, rumors, or tidings",
-                                          "soft cozy Shire motifs",
-                                          "same storm image repeated endlessly",
-                                          "overly clean high-authority leadership detached from wartime pressure"
-                                      ],
-                      "visualDirections":  [
-                                               "windswept arrivals at halls, gates, fords, ports, and border holds",
-                                               "ominous silhouettes before wary Men under arms",
-                                               "roads, courts, musters, harbors, and frontier war watches under uneasy shadow",
-                                               "mobilization, defensive preparation, and strained human settlements facing the dark"
-                                           ]
-                  },
-                  {
-                      "id":  "DisturberOfThePeace",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\DisturberOfThePeace.json",
-                      "count":  20,
-                      "thematic":  "Mischief, adventure, and social-chaos deck built around hobbits, roadside incidents, strange meetings, awkward interruptions, and unexpectedly powerful small-scale plays. Its regional flavor should stretch across Eriador, especially Bree-land, the roads and inns of the North, the Old Forest, the Barrow-downs, scattered settlements, and out toward Cardolan, so the deck can hold wandering locals, petty troublemakers, rural rumors, travel incidents, eerie borderland hazards, and small but meaningful frontier entanglements. It is less martial than other branches and more about quirky utility, board disturbance, off-angle events, and playful disruption that feels fair but annoying for the opponent.",
-                      "fantasy":  "A wandering Eriador trouble deck where hobbit-scale mischief, awkward meetings, rumors, inns, hedgerow hazards, and strange little interruptions reshape the journey.",
-                      "mechanicalPillars":  [
-                                                "playful disruption",
-                                                "off-angle utility",
-                                                "social and travel interference",
-                                                "small pieces causing outsized impact"
-                                            ],
-                      "themeLanes":  [
-                                         "hobbit antics and social mishaps",
-                                         "inns, roads, and roadside quarrels",
-                                         "Bree-land locals and wanderers",
-                                         "rural rumor and gossip",
-                                         "Old Forest and Barrow-down eeriness",
-                                         "frontier nuisances and awkward encounters",
-                                         "unexpected help from small hands"
-                                     ],
-                      "avoidThemes":  [
-                                          "repeating food-party-fireworks jokes as the dominant identity",
-                                          "making every card a hobbit feast variant",
-                                          "generic military combat cards",
-                                          "art prompts that keep reusing the same table, mug, or party scene"
-                                      ],
-                      "visualDirections":  [
-                                               "crooked roads and inn-yard incidents",
-                                               "hedges, rain, and village clutter",
-                                               "small figures causing larger confusion",
-                                               "borderland eeriness",
-                                               "awkward social scenes instead of pure celebration"
-                                           ]
-                  },
-                  {
-                      "id":  "Tharkun",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\Tharkun.json",
-                      "count":  15,
-                      "thematic":  "Dwarf-friend archetype rooted in mountains, halls, treasure, mithril, endurance, and old alliances with the Durin folk. Expect Dwarven races, Erebor and Khazad themes, defensive economy, sturdy progression, fortress-like value, and reward for treasure or mountain cards; this deck suits slow-building players who want resilience, gear, and hard-to-shift board presence.",
-                      "fantasy":  "Gandalf as dwarf-friend: mountain roads, ancient halls, treasure-lore, and hard endurance tied to the houses of Durin.",
-                      "mechanicalPillars":  [
-                                                "sturdy progression",
-                                                "defensive economy",
-                                                "treasure and mountain synergy",
-                                                "hard-to-shift board presence"
-                                            ],
-                      "themeLanes":  [
-                                         "Khazad halls",
-                                         "mithril and crafted gear",
-                                         "old alliances",
-                                         "mountain caravans",
-                                         "fortress endurance",
-                                         "treasure-guarded advances"
-                                     ],
-                      "avoidThemes":  [
-                                          "soft prank-heavy tone",
-                                          "pure open-field cavalry identity",
-                                          "overusing one treasure object repeatedly",
-                                          "thin gimmicks without mountain or dwarf resonance"
-                                      ],
-                      "visualDirections":  [
-                                               "stone halls and gates",
-                                               "lamplit forges and treasure chambers",
-                                               "mountain passes",
-                                               "sturdy shieldwall and crafted relic imagery"
-                                           ]
-                  },
-                  {
-                      "id":  "SarumanBase",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SarumanBase.json",
-                      "count":  132,
-                      "thematic":  "Core Isengard strategy deck blending manipulation, coercion, industrial preparation, mixed evil-men support, and practical force. Its races and allies can include Dunlendings, opportunistic Men, Orcs, and wizard-led control pieces; in play it is about pressure through planning, resource leverage, positioning, political influence, and midrange control before committing to a sharper Saruman identity.",
-                      "fantasy":  "The broad Isengard foundation: planning, coercion, furnaces, mixed servants, and practical cruelty in service of controlled expansion.",
-                      "mechanicalPillars":  [
-                                                "resource leverage",
-                                                "positioning and midrange control",
-                                                "political and social pressure",
-                                                "prepared force backed by industry"
-                                            ],
-                      "themeLanes":  [
-                                         "Orthanc planning",
-                                         "industrial preparation",
-                                         "Dunlending and evil-men leverage",
-                                         "Orc labor and war buildup",
-                                         "coercive bargains",
-                                         "staged military pressure"
-                                     ],
-                      "avoidThemes":  [
-                                          "single-note Uruk aggression everywhere",
-                                          "too much pure wizard vanity",
-                                          "mindless swarm without planning flavor",
-                                          "visual repetition of furnaces only"
-                                      ],
-                      "visualDirections":  [
-                                               "workshops and mustering grounds",
-                                               "tower oversight",
-                                               "mixed war assets in preparation",
-                                               "smoke, stone, and logistical menace"
-                                           ]
-                  },
-                  {
-                      "id":  "SarumanTheWhite",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SarumanTheWhite.json",
-                      "count":  12,
-                      "thematic":  "Orthanc mastermind deck focused on rhetoric, control, persuasion, voice, and polished strategic dominance. This is Saruman as the calculating high wizard who bends choices and states rather than simply rushing with troops; players should expect influence, deception, mind-affecting actions, elegant tactical denial, and carefully timed control cards.",
-                      "fantasy":  "Saruman as silver-tongued master of Orthanc, winning by voice, status, and controlled perception rather than raw rush.",
-                      "mechanicalPillars":  [
-                                                "choice control",
-                                                "mind-affecting influence",
-                                                "elegant tactical denial",
-                                                "timed strategic manipulation"
-                                            ],
-                      "themeLanes":  [
-                                         "the Voice of Saruman",
-                                         "false offers and persuasion",
-                                         "courtly deception",
-                                         "wizard authority turned corrupt",
-                                         "mental pressure",
-                                         "careful state manipulation"
-                                     ],
-                      "avoidThemes":  [
-                                          "mindless furnace aggression",
-                                          "too much robe-color spectacle",
-                                          "repeating speech-from-balcony scenes",
-                                          "simple brute-force combat as core identity"
-                                      ],
-                      "visualDirections":  [
-                                               "tower chambers and high vantage persuasion",
-                                               "speaking figures under pressure",
-                                               "controlled, polished menace",
-                                               "intimate scenes of corrupted counsel"
-                                           ]
-                  },
-                  {
-                      "id":  "OfManyColours",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\OfManyColours.json",
-                      "count":  18,
-                      "thematic":  "Arcane self-reinvention deck expressing Saruman\u0027s many-coloured identity: layered wizardry, vanity, broad magical reach, and power drawn from synthesis rather than purity. This subdeck is ideal for spell-oriented play with multi-axis magical effects, buffs and debuffs in the same action, symbolic robes-and-voice flavor, and flashy board manipulation that feels sophisticated and dangerous.",
-                      "fantasy":  "Saruman\u0027s fractured many-coloured persona: self-stylized wizardry, synthesis, vanity, illusion, and magical excess presented as sophistication.",
-                      "mechanicalPillars":  [
-                                                "multi-axis spell effects",
-                                                "combined buffs and debuffs",
-                                                "flashy board manipulation",
-                                                "arcane self-enhancement"
-                                            ],
-                      "themeLanes":  [
-                                         "robes, mirrors, and self-image",
-                                         "many-layered spells",
-                                         "borrowed traditions remixed",
-                                         "color as symbolism and corruption",
-                                         "illusion and refracted magic",
-                                         "wizardly overreach"
-                                     ],
-                      "avoidThemes":  [
-                                          "reducing the deck to robe jokes only",
-                                          "repeating one beam-or-burst spell composition",
-                                          "generic industrial Isengard material",
-                                          "plain military cards without arcane vanity"
-                                      ],
-                      "visualDirections":  [
-                                               "fractured or mirrored compositions",
-                                               "robes and layered magical textures",
-                                               "ritual displays of self-magnification",
-                                               "refracted symbols and ornamental menace"
-                                           ]
-                  },
-                  {
-                      "id":  "TheWhiteHand",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheWhiteHand.json",
-                      "count":  16,
-                      "thematic":  "War engine of Isengard built around Uruk-hai, Orc industry, furnaces, intimidation, and relentless production-to-pressure conversion. This is the aggressive Saruman branch: siege tools, military events, battlefield force multiplication, and sustained assault through disciplined evil infantry and industrial throughput rather than finesse.",
-                      "fantasy":  "Isengard\u0027s forged war machine: Uruk discipline, furnace output, siege craft, and fear-driven aggression made systematic.",
-                      "mechanicalPillars":  [
-                                                "production into pressure",
-                                                "battlefield force multiplication",
-                                                "siege support",
-                                                "sustained aggressive assault"
-                                            ],
-                      "themeLanes":  [
-                                         "Uruk-hai companies",
-                                         "furnaces and foundries",
-                                         "war tools and blasting",
-                                         "march discipline",
-                                         "intimidation and terror",
-                                         "industrialized assault"
-                                     ],
-                      "avoidThemes":  [
-                                          "soft wizard rhetoric as the main emphasis",
-                                          "repeating furnace-only imagery",
-                                          "too many identical infantry charge cards",
-                                          "playful or whimsical subthemes"
-                                      ],
-                      "visualDirections":  [
-                                               "massed infantry and siege lines",
-                                               "forge heat and smoke",
-                                               "marching formations",
-                                               "industrial violence at scale"
-                                           ]
-                  },
-                  {
-                      "id":  "SauronBase",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SauronBase.json",
-                      "count":  123,
-                      "thematic":  "Foundational Shadow empire deck covering Mordor\u0027s broad military, corruption, fear, conquest, and attrition game plan. Orcs, evil men, monsters, siege assets, and oppressive utility belong here, giving a reliable shell for expansion into more specialized Sauron identities; it rewards steady pressure, resource denial, battlefield cruelty, and inevitability through accumulation.",
-                      "fantasy":  "The broad machinery of Mordor: armies, monsters, tyranny, and corruption grinding forward through fear and accumulation.",
-                      "mechanicalPillars":  [
-                                                "steady pressure",
-                                                "resource denial",
-                                                "attrition and inevitability",
-                                                "oppressive battlefield utility"
-                                            ],
-                      "themeLanes":  [
-                                         "Mordor armies",
-                                         "evil men and monsters",
-                                         "siege and conquest",
-                                         "fear and cruelty",
-                                         "corruption pressure",
-                                         "relentless accumulation"
-                                     ],
-                      "avoidThemes":  [
-                                          "too much Nazgul-only focus",
-                                          "too much occult horror at the expense of empire",
-                                          "isolated gimmicks with no oppressive throughline",
-                                          "visual sameness of one fortress angle"
-                                      ],
-                      "visualDirections":  [
-                                               "mass armies and siege shapes",
-                                               "dark fortifications",
-                                               "cruel domination scenes",
-                                               "monstrous support to imperial force"
-                                           ]
-                  },
-                  {
-                      "id":  "TheDarkEye",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheDarkEye.json",
-                      "count":  32,
-                      "thematic":  "Lidless surveillance and Nazgul command deck centered on dread presence, revelation, control auras, and the feeling that no movement escapes Mordor\u0027s notice. It favors fear, despair, board locking, command projection, cursed riders, and oppressive events that squeeze the opponent\u0027s options turn by turn until resistance becomes inefficient.",
-                      "fantasy":  "The Eye watching through Nazgul terror: surveillance, revelation, dread, and command pressure that makes every movement feel seen.",
-                      "mechanicalPillars":  [
-                                                "board locking",
-                                                "fear and despair pressure",
-                                                "command projection",
-                                                "option squeezing through revelation"
-                                            ],
-                      "themeLanes":  [
-                                         "Nazgul riders",
-                                         "watchfulness and sight",
-                                         "cursed pursuit",
-                                         "aura-based dread",
-                                         "exposed movement",
-                                         "will-breaking command"
-                                     ],
-                      "avoidThemes":  [
-                                          "generic Orc infantry focus",
-                                          "too much necromantic monster clutter",
-                                          "repeating a single eye symbol without scene variety",
-                                          "comic or lighthearted beats"
-                                      ],
-                      "visualDirections":  [
-                                               "distant surveillance",
-                                               "mounted wraith pursuit",
-                                               "silhouettes under oppressive gaze",
-                                               "unseen domination spreading across space"
-                                           ]
-                  },
-                  {
-                      "id":  "TheDeceiver",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheDeceiver.json",
-                      "count":  13,
-                      "thematic":  "Subversion-and-false-gifts deck for Sauron as Annatar and corrupter: persuasive command, fallen Numenorean legacy, palantir theft, temptation, and domination achieved through trust, seduction, and crooked counsel before open conquest.",
-                      "fantasy":  "Sauron as Annatar and the Deceiver: false gifts, seductive promises, corrupted loyalties, and domination won through trust before open war.",
-                      "mechanicalPillars":  [
-                                                "temptation and character disruption",
-                                                "emissary pressure and command shaping",
-                                                "palantir and relic corruption",
-                                                "elite fallen-men support"
-                                            ],
-                      "themeLanes":  [
-                                         "false gifts and promises",
-                                         "Black Numenorean legacy",
-                                         "the Mouth of Sauron and crooked diplomacy",
-                                         "palantiri and stolen relics",
-                                         "seduction and entrapment",
-                                         "command disguised as counsel"
-                                     ],
-                      "avoidThemes":  [
-                                          "Nazgul surveillance as the dominant identity",
-                                          "monster-horror swamping the social corruption theme",
-                                          "brute-force Orc swarm gameplay",
-                                          "siege-industrial visuals taking over the deck"
-                                      ],
-                      "visualDirections":  [
-                                               "courtly corruption and false ceremony",
-                                               "Black Numenorean regalia",
-                                               "persuasive emissaries in tense audiences",
-                                               "treasured objects turned dangerous"
-                                           ]
-                  },
-                  {
-                      "id":  "TheNecromancer",
-                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheNecromancer.json",
-                      "count":  31,
-                      "thematic":  "Dol Guldur horror deck built around dark sorcery, ruined strongholds, cursed creatures, lingering effects, and monster-heavy occult pressure. Goblins, spirits, spiders, dragons, undead presences, and slow magical decay all fit here; gameplay leans toward attrition, haunting pressure, corruption-adjacent status play, and a more monstrous, supernatural style than the disciplined Dark Eye branch.",
-                      "fantasy":  "Sauron as the Necromancer of Dol Guldur: ruin, occult infestation, cursed creatures, and slow supernatural decay spreading from dark strongholds.",
-                      "mechanicalPillars":  [
-                                                "haunting pressure",
-                                                "lingering dark effects",
-                                                "monster-heavy occult play",
-                                                "slow magical decay and attrition"
-                                            ],
-                      "themeLanes":  [
-                                         "ruined towers and dark woods",
-                                         "spirits and undead presences",
-                                         "spiders, monsters, and corrupted beasts",
-                                         "curses and hexes",
-                                         "sorcerous remnants",
-                                         "slow rot and contamination"
-                                     ],
-                      "avoidThemes":  [
-                                          "too much imperial military neatness",
-                                          "repeating one spider or ghost image endlessly",
-                                          "plain battlefield combat with no horror tone",
-                                          "eye-surveillance themes overtaking the horror identity"
-                                      ],
-                      "visualDirections":  [
-                                               "ruined strongholds and hanging shadows",
-                                               "webs, grave textures, and rot",
-                                               "haunting apparitions",
-                                               "monstrous occult scenes"
-                                           ]
-                  }
-              ]
+﻿{
+    "version": 1,
+    "generatedFrom": "single-deck split dry-run v1",
+    "decks": [
+        {
+            "id": "SharedBase",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SharedBase.json",
+            "thematic": "Shared world layer of neutral encounters, roaming creatures, opportunistic events, and generic pressures that can touch any faction. This is less about tribe or race identity and more about map texture, uncertainty, travel danger, and emergent stories; it adds flexible utility, surprise pivots, and world-state moments that make every run feel less scripted.",
+            "fantasy": "Neutral Middle-earth world texture: roads, wilderness, chance meetings, danger, and emergent travel stories that sit outside any single faction identity.",
+            "mechanicalPillars": [
+                "travel friction and route pressure",
+                "flexible utility and generic interaction",
+                "surprise pivots and reactive events",
+                "neutral encounters that change board texture"
+            ],
+            "themeLanes": [
+                "roads and crossings",
+                "weather and terrain trouble",
+                "wandering creatures",
+                "chance meetings",
+                "rumors and discoveries",
+                "small crises and interruptions"
+            ],
+            "avoidThemes": [
+                "overcommitting to one race identity",
+                "faction-specific signature moments",
+                "too many cards built around one creature type",
+                "generic filler that lacks travel-story flavor"
+            ],
+            "visualDirections": [
+                "roadside encounters",
+                "wild landscape pressure",
+                "small figures in large terrain",
+                "unexpected danger at travel distance"
+            ],
+            "count": 0
+        },
+        {
+            "id": "ActionsDeck",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\ActionsDeck.json",
+            "count": 47,
+            "thematic": "Common action utility deck shared by all factions: stealth, theft, rumors, and practical tactical tricks that are not faction-locked.",
+            "fantasy": "Universal low-magic action deck for cunning, opportunism, and practical tricks anyone in Middle-earth might attempt.",
+            "mechanicalPillars": [
+                "short-window tactical plays",
+                "mobility and positioning tricks",
+                "stealth and evasion",
+                "resourceful utility effects"
+            ],
+            "themeLanes": [
+                "theft and smuggling",
+                "misdirection",
+                "rumor and information flow",
+                "escape tools",
+                "small ambushes",
+                "practical improvisation"
+            ],
+            "avoidThemes": [
+                "faction-specific heroics",
+                "large-scale battle identity",
+                "high wizardry as the primary focus",
+                "overly ornamental effects with no tactical purpose"
+            ],
+            "visualDirections": [
+                "hands, tools, and close-quarters action",
+                "night movement",
+                "furtive exchanges",
+                "small tactical incidents"
+            ]
+        },
+        {
+            "id": "SpellsDeck",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SpellsDeck.json",
+            "count": 30,
+            "thematic": "Common spell/event deck shared by all factions for lightweight magical or celebratory effects usable beyond faction identity.",
+            "fantasy": "Shared light-magic and wonder layer: blessings, festival effects, omens, and broadly usable magical moments not owned by one faction.",
+            "mechanicalPillars": [
+                "lightweight magic",
+                "short celebratory or mystical boosts",
+                "cross-faction utility",
+                "small wonder moments"
+            ],
+            "themeLanes": [
+                "blessings",
+                "minor enchantments",
+                "songs and celebrations",
+                "omens and signs",
+                "wards and charms",
+                "brief supernatural intervention"
+            ],
+            "avoidThemes": [
+                "deep faction identity",
+                "grim industrial themes",
+                "overly brutal combat emphasis",
+                "single-school spell repetition"
+            ],
+            "visualDirections": [
+                "ritual gestures",
+                "symbolic light and smoke",
+                "festive scenes",
+                "compact magical incidents"
+            ]
+        },
+        {
+            "id": "GandalfBase",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\GandalfBase.json",
+            "count": 137,
+            "thematic": "Core Free Peoples deck built around Men, Elves, Dwarves, Hobbits, Eagles, and other allied peoples working in concert. Its gameplay favors balanced development, card quality, scouting, diplomacy, defensive resilience, region access, and reliable utility over brute specialization; it should feel like the broad strategic foundation from which the more sharply themed Gandalf subdecks branch outward.",
+            "fantasy": "Broad alliance-of-the-Free-Peoples foundation: cooperation, guidance, resilience, and adaptable responses across many races and regions.",
+            "mechanicalPillars": [
+                "balanced development",
+                "card quality and scouting",
+                "defensive resilience",
+                "diplomacy and reliable utility"
+            ],
+            "themeLanes": [
+                "allied races in concert",
+                "safe roads and guidance",
+                "regional access",
+                "protection and morale",
+                "counsel and preparation",
+                "measured responses to threat"
+            ],
+            "avoidThemes": [
+                "single-race tunnel vision",
+                "overly goofy rural-only themes",
+                "pure spell-slinging identity",
+                "brute-force military specialization"
+            ],
+            "visualDirections": [
+                "mixed fellowship groups",
+                "council and guidance scenes",
+                "protective stands",
+                "travel readiness across varied regions"
+            ]
+        },
+        {
+            "id": "GandalfTheWhite",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\GandalfTheWhite.json",
+            "count": 34,
+            "thematic": "High-authority comeback deck built around renewal, courage, cleansing, and open leadership after the return in white. This deck should reward stabilization, morale swings, anti-fear and anti-corruption play, stronger army support, and decisive rally turns; it suits players who want to absorb pressure, reclaim control, and then swing the board through righteous momentum.",
+            "fantasy": "Returned white authority: cleansing light, restored morale, command presence, and decisive renewal after despair.",
+            "mechanicalPillars": [
+                "stabilization after pressure",
+                "anti-fear and anti-corruption",
+                "army support and rallying",
+                "decisive momentum swings"
+            ],
+            "themeLanes": [
+                "renewal after ruin",
+                "command and proclamation",
+                "horse-lord alliance moments",
+                "light against shadow",
+                "restoration of courage",
+                "turning retreat into advance"
+            ],
+            "avoidThemes": [
+                "sneaky low-profile travel identity",
+                "petty prank energy",
+                "purely contemplative lore with no board impact",
+                "overuse of resurrection imagery on every card"
+            ],
+            "visualDirections": [
+                "radiant mounted command",
+                "cleansing confrontations",
+                "armies rallied under light",
+                "post-despair renewal scenes"
+            ]
+        },
+        {
+            "id": "Mithrandir",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\Mithrandir.json",
+            "count": 42,
+            "thematic": "Pure wizardry deck focused on refined spellcraft, insight, wards, lore, and precise magical intervention. Elven wisdom, hidden knowledge, vision, revelation, and tightly targeted magic all belong here; in gameplay it emphasizes selective control, information advantage, safe setup, and elegant spell resolution rather than broad swarm or raw military output.",
+            "fantasy": "Gandalf as sage-mage: hidden lore, wards, visions, and exact magical responses grounded in wisdom rather than spectacle.",
+            "mechanicalPillars": [
+                "selective control",
+                "information advantage",
+                "wards and protection",
+                "precise spell resolution"
+            ],
+            "themeLanes": [
+                "lore study",
+                "runes and wards",
+                "visions and revelation",
+                "Elven wisdom",
+                "measured magical duels",
+                "unlocking hidden knowledge"
+            ],
+            "avoidThemes": [
+                "swarm combat identity",
+                "repetitive fireworks-only magic",
+                "too much rural comedy",
+                "high-chaos random spell effects"
+            ],
+            "visualDirections": [
+                "libraries, glyphs, and study",
+                "contained magical light",
+                "protective circles and warding marks",
+                "visionary revelations"
+            ]
+        },
+        {
+            "id": "Stormcrow",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\Stormcrow.json",
+            "count": 51,
+            "thematic": "Stormcrow is the Gandalf subdeck of uneasy wartime pressure among Men. It should frame the Grey Pilgrim not only as an ill omen or unwelcome counselor, but as the unsettling force who appears when Mannish realms are strained by encroaching evil and must harden themselves for survival. This includes fronts such as Rohan against the White Hand, Gondor against Mordor, the Northmen of Rhovanion against Easterlings, the Anduin Vale against Dol Guldur, Bree and wider Eriador under the long memory of Angmar, and similar regions where roads, ports, fords, courts, and frontier settlements live under gathering shadow. Gandalf is trying to help, organize, and strengthen resistance, yet many still see him as the sign that peace has already failed. In gameplay the deck should lean into morale strain, defensive hardening, political tension, frontier vigilance, war-readiness, movement pressure, intelligence and concealment, loyalty under stress, and reputation-based disruption rather than reducing itself to repeated warnings or bad-news delivery.",
+            "fantasy": "Gandalf as Stormcrow in the wars of Men: a mistrusted but necessary presence who unsettles courts, hardens defenses, stirs movement, and marks the moment when ordinary peace gives way to border fear, mobilization, and survival under shadow.",
+            "mechanicalPillars": [
+                "war-readiness and defensive hardening",
+                "morale pressure in contested frontiers",
+                "reputation-driven disruption among Men and their foes",
+                "intelligence, concealment, and timing advantage under gathering shadow"
+            ],
+            "themeLanes": [
+                "wars of Men against evil powers on threatened frontiers",
+                "suspicion toward Gandalf's unsettling presence",
+                "ports, roads, fords, courts, and border holds under strain",
+                "political tension and loyalty under wartime pressure",
+                "uneasy mobilization, watchfulness, and defensive preparation",
+                "grim aid that strengthens resistance while spreading unease"
+            ],
+            "avoidThemes": [
+                "reducing the deck to generic weather magic",
+                "collapsing every card into warnings, messages, rumors, or tidings",
+                "soft cozy Shire motifs",
+                "same storm image repeated endlessly",
+                "overly clean high-authority leadership detached from wartime pressure"
+            ],
+            "visualDirections": [
+                "windswept arrivals at halls, gates, fords, ports, and border holds",
+                "ominous silhouettes before wary Men under arms",
+                "roads, courts, musters, harbors, and frontier war watches under uneasy shadow",
+                "mobilization, defensive preparation, and strained human settlements facing the dark"
+            ]
+        },
+        {
+            "id": "DisturberOfThePeace",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\DisturberOfThePeace.json",
+            "count": 55,
+            "thematic": "Mischief, adventure, and social-chaos deck built around hobbits and the wider road-story tradition of Middle-earth: Bilbo's unexpected wanderings, Frodo's early misadventures, Gandalf's intrusive arrivals, and the hobbit-side companionship of the Fellowship as seen in the first book. Its regional flavor should stretch across Eriador and beyond, especially Bree-land, the roads and inns of the North, the Greenway and other long roads, the Old Forest, the Barrow-downs, the Misty Mountains, Rivendell, the Anduin River, Lothlorien-adjacent journeys, the Lonely Mountain road toward Lake-town and the Woodland Realm, and the far reaches of the story such as Saruman's taking of the Shire, hobbits in Isengard, and the lonely trip to Mordor. The deck should hold wandering locals, petty troublemakers, rural rumors, travel incidents, river crossings, mountain passes, elf-halls, eerie borderland hazards, captivity, and small but meaningful frontier entanglements. It is less martial than other branches and more about quirky utility, board disturbance, off-angle events, and playful disruption that feels fair but annoying for the opponent.",
+            "fantasy": "A wandering road-story deck where Bilbo-style detours, Frodo's long journey, Gandalf's inconvenient meddling, the company of the first book, and the hobbits' far-flung adventures from the Shire to Mordor turn small interruptions into meaningful mischief.",
+            "mechanicalPillars": [
+                "playful disruption",
+                "off-angle utility",
+                "social and travel interference",
+                "small pieces causing outsized impact"
+            ],
+            "themeLanes": [
+                "Bilbo-style wandering adventures",
+                "Frodo's first-road misadventures",
+                "hobbit antics and social mishaps",
+                "Gandalf's inconvenient arrivals",
+                "the Fellowship's first-book road tone",
+                "the Greenway and other long roads",
+                "Misty Mountains passes and peril",
+                "Rivendell rest and counsel",
+                "the Anduin River journey",
+                "Lake-town and the Woodland Realm",
+                "the lonely road to Mordor",
+                "the Shire under Saruman's taking",
+                "hobbits in Isengard",
+                "inns, roads, and roadside quarrels",
+                "Bree-land locals and wanderers",
+                "rural rumor and gossip",
+                "Old Forest and Barrow-down eeriness",
+                "frontier nuisances and awkward encounters",
+                "unexpected help from small hands"
+            ],
+            "avoidThemes": [
+                "repeating food-party-fireworks jokes as the dominant identity",
+                "making every card a hobbit feast variant",
+                "generic military combat cards",
+                "art prompts that keep reusing the same table, mug, or party scene"
+            ],
+            "visualDirections": [
+                "crooked roads and inn-yard incidents",
+                "hedges, rain, and village clutter",
+                "small figures causing larger confusion",
+                "borderland eeriness",
+                "awkward social scenes instead of pure celebration"
+            ]
+        },
+        {
+            "id": "Tharkun",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\Tharkun.json",
+            "count": 29,
+            "thematic": "Dwarf-friend archetype rooted in mountains, halls, treasure, mithril, endurance, and old alliances with the Durin folk. Expect Dwarven races, Erebor and Khazad themes, defensive economy, sturdy progression, fortress-like value, and reward for treasure or mountain cards; this deck suits slow-building players who want resilience, gear, and hard-to-shift board presence.",
+            "fantasy": "Gandalf as dwarf-friend: mountain roads, ancient halls, treasure-lore, and hard endurance tied to the houses of Durin.",
+            "mechanicalPillars": [
+                "sturdy progression",
+                "defensive economy",
+                "treasure and mountain synergy",
+                "hard-to-shift board presence"
+            ],
+            "themeLanes": [
+                "Khazad halls",
+                "mithril and crafted gear",
+                "old alliances",
+                "mountain caravans",
+                "fortress endurance",
+                "treasure-guarded advances"
+            ],
+            "avoidThemes": [
+                "soft prank-heavy tone",
+                "pure open-field cavalry identity",
+                "overusing one treasure object repeatedly",
+                "thin gimmicks without mountain or dwarf resonance"
+            ],
+            "visualDirections": [
+                "stone halls and gates",
+                "lamplit forges and treasure chambers",
+                "mountain passes",
+                "sturdy shieldwall and crafted relic imagery"
+            ]
+        },
+        {
+            "id": "SarumanBase",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SarumanBase.json",
+            "count": 132,
+            "thematic": "Core Isengard strategy deck blending manipulation, coercion, industrial preparation, mixed evil-men support, and practical force. Its races and allies can include Dunlendings, opportunistic Men, Orcs, and wizard-led control pieces; in play it is about pressure through planning, resource leverage, positioning, political influence, and midrange control before committing to a sharper Saruman identity.",
+            "fantasy": "The broad Isengard foundation: planning, coercion, furnaces, mixed servants, and practical cruelty in service of controlled expansion.",
+            "mechanicalPillars": [
+                "resource leverage",
+                "positioning and midrange control",
+                "political and social pressure",
+                "prepared force backed by industry"
+            ],
+            "themeLanes": [
+                "Orthanc planning",
+                "industrial preparation",
+                "Dunlending and evil-men leverage",
+                "Orc labor and war buildup",
+                "coercive bargains",
+                "staged military pressure"
+            ],
+            "avoidThemes": [
+                "single-note Uruk aggression everywhere",
+                "too much pure wizard vanity",
+                "mindless swarm without planning flavor",
+                "visual repetition of furnaces only"
+            ],
+            "visualDirections": [
+                "workshops and mustering grounds",
+                "tower oversight",
+                "mixed war assets in preparation",
+                "smoke, stone, and logistical menace"
+            ]
+        },
+        {
+            "id": "SarumanTheWhite",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SarumanTheWhite.json",
+            "count": 12,
+            "thematic": "Orthanc mastermind deck focused on rhetoric, control, persuasion, voice, and polished strategic dominance. This is Saruman as the calculating high wizard who bends choices and states rather than simply rushing with troops; players should expect influence, deception, mind-affecting actions, elegant tactical denial, and carefully timed control cards.",
+            "fantasy": "Saruman as silver-tongued master of Orthanc, winning by voice, status, and controlled perception rather than raw rush.",
+            "mechanicalPillars": [
+                "choice control",
+                "mind-affecting influence",
+                "elegant tactical denial",
+                "timed strategic manipulation"
+            ],
+            "themeLanes": [
+                "the Voice of Saruman",
+                "false offers and persuasion",
+                "courtly deception",
+                "wizard authority turned corrupt",
+                "mental pressure",
+                "careful state manipulation"
+            ],
+            "avoidThemes": [
+                "mindless furnace aggression",
+                "too much robe-color spectacle",
+                "repeating speech-from-balcony scenes",
+                "simple brute-force combat as core identity"
+            ],
+            "visualDirections": [
+                "tower chambers and high vantage persuasion",
+                "speaking figures under pressure",
+                "controlled, polished menace",
+                "intimate scenes of corrupted counsel"
+            ]
+        },
+        {
+            "id": "OfManyColours",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\OfManyColours.json",
+            "count": 18,
+            "thematic": "Arcane self-reinvention deck expressing Saruman's many-coloured identity: layered wizardry, vanity, broad magical reach, and power drawn from synthesis rather than purity. This subdeck is ideal for spell-oriented play with multi-axis magical effects, buffs and debuffs in the same action, symbolic robes-and-voice flavor, and flashy board manipulation that feels sophisticated and dangerous.",
+            "fantasy": "Saruman's fractured many-coloured persona: self-stylized wizardry, synthesis, vanity, illusion, and magical excess presented as sophistication.",
+            "mechanicalPillars": [
+                "multi-axis spell effects",
+                "combined buffs and debuffs",
+                "flashy board manipulation",
+                "arcane self-enhancement"
+            ],
+            "themeLanes": [
+                "robes, mirrors, and self-image",
+                "many-layered spells",
+                "borrowed traditions remixed",
+                "color as symbolism and corruption",
+                "illusion and refracted magic",
+                "wizardly overreach"
+            ],
+            "avoidThemes": [
+                "reducing the deck to robe jokes only",
+                "repeating one beam-or-burst spell composition",
+                "generic industrial Isengard material",
+                "plain military cards without arcane vanity"
+            ],
+            "visualDirections": [
+                "fractured or mirrored compositions",
+                "robes and layered magical textures",
+                "ritual displays of self-magnification",
+                "refracted symbols and ornamental menace"
+            ]
+        },
+        {
+            "id": "TheWhiteHand",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheWhiteHand.json",
+            "count": 16,
+            "thematic": "War engine of Isengard built around Uruk-hai, Orc industry, furnaces, intimidation, and relentless production-to-pressure conversion. This is the aggressive Saruman branch: siege tools, military events, battlefield force multiplication, and sustained assault through disciplined evil infantry and industrial throughput rather than finesse.",
+            "fantasy": "Isengard's forged war machine: Uruk discipline, furnace output, siege craft, and fear-driven aggression made systematic.",
+            "mechanicalPillars": [
+                "production into pressure",
+                "battlefield force multiplication",
+                "siege support",
+                "sustained aggressive assault"
+            ],
+            "themeLanes": [
+                "Uruk-hai companies",
+                "furnaces and foundries",
+                "war tools and blasting",
+                "march discipline",
+                "intimidation and terror",
+                "industrialized assault"
+            ],
+            "avoidThemes": [
+                "soft wizard rhetoric as the main emphasis",
+                "repeating furnace-only imagery",
+                "too many identical infantry charge cards",
+                "playful or whimsical subthemes"
+            ],
+            "visualDirections": [
+                "massed infantry and siege lines",
+                "forge heat and smoke",
+                "marching formations",
+                "industrial violence at scale"
+            ]
+        },
+        {
+            "id": "SauronBase",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\SauronBase.json",
+            "count": 123,
+            "thematic": "Foundational Shadow empire deck covering Mordor's broad military, corruption, fear, conquest, and attrition game plan. Orcs, evil men, monsters, siege assets, and oppressive utility belong here, giving a reliable shell for expansion into more specialized Sauron identities; it rewards steady pressure, resource denial, battlefield cruelty, and inevitability through accumulation.",
+            "fantasy": "The broad machinery of Mordor: armies, monsters, tyranny, and corruption grinding forward through fear and accumulation.",
+            "mechanicalPillars": [
+                "steady pressure",
+                "resource denial",
+                "attrition and inevitability",
+                "oppressive battlefield utility"
+            ],
+            "themeLanes": [
+                "Mordor armies",
+                "evil men and monsters",
+                "siege and conquest",
+                "fear and cruelty",
+                "corruption pressure",
+                "relentless accumulation"
+            ],
+            "avoidThemes": [
+                "too much Nazgul-only focus",
+                "too much occult horror at the expense of empire",
+                "isolated gimmicks with no oppressive throughline",
+                "visual sameness of one fortress angle"
+            ],
+            "visualDirections": [
+                "mass armies and siege shapes",
+                "dark fortifications",
+                "cruel domination scenes",
+                "monstrous support to imperial force"
+            ]
+        },
+        {
+            "id": "TheDarkEye",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheDarkEye.json",
+            "count": 32,
+            "thematic": "Lidless surveillance and Nazgul command deck centered on dread presence, revelation, control auras, and the feeling that no movement escapes Mordor's notice. It favors fear, despair, board locking, command projection, cursed riders, and oppressive events that squeeze the opponent's options turn by turn until resistance becomes inefficient.",
+            "fantasy": "The Eye watching through Nazgul terror: surveillance, revelation, dread, and command pressure that makes every movement feel seen.",
+            "mechanicalPillars": [
+                "board locking",
+                "fear and despair pressure",
+                "command projection",
+                "option squeezing through revelation"
+            ],
+            "themeLanes": [
+                "Nazgul riders",
+                "watchfulness and sight",
+                "cursed pursuit",
+                "aura-based dread",
+                "exposed movement",
+                "will-breaking command"
+            ],
+            "avoidThemes": [
+                "generic Orc infantry focus",
+                "too much necromantic monster clutter",
+                "repeating a single eye symbol without scene variety",
+                "comic or lighthearted beats"
+            ],
+            "visualDirections": [
+                "distant surveillance",
+                "mounted wraith pursuit",
+                "silhouettes under oppressive gaze",
+                "unseen domination spreading across space"
+            ]
+        },
+        {
+            "id": "TheDeceiver",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheDeceiver.json",
+            "count": 13,
+            "thematic": "Subversion-and-false-gifts deck for Sauron as Annatar and corrupter: persuasive command, fallen Numenorean legacy, palantir theft, temptation, and domination achieved through trust, seduction, and crooked counsel before open conquest.",
+            "fantasy": "Sauron as Annatar and the Deceiver: false gifts, seductive promises, corrupted loyalties, and domination won through trust before open war.",
+            "mechanicalPillars": [
+                "temptation and character disruption",
+                "emissary pressure and command shaping",
+                "palantir and relic corruption",
+                "elite fallen-men support"
+            ],
+            "themeLanes": [
+                "false gifts and promises",
+                "Black Numenorean legacy",
+                "the Mouth of Sauron and crooked diplomacy",
+                "palantiri and stolen relics",
+                "seduction and entrapment",
+                "command disguised as counsel"
+            ],
+            "avoidThemes": [
+                "Nazgul surveillance as the dominant identity",
+                "monster-horror swamping the social corruption theme",
+                "brute-force Orc swarm gameplay",
+                "siege-industrial visuals taking over the deck"
+            ],
+            "visualDirections": [
+                "courtly corruption and false ceremony",
+                "Black Numenorean regalia",
+                "persuasive emissaries in tense audiences",
+                "treasured objects turned dangerous"
+            ]
+        },
+        {
+            "id": "TheNecromancer",
+            "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheNecromancer.json",
+            "count": 31,
+            "thematic": "Dol Guldur horror deck built around dark sorcery, ruined strongholds, cursed creatures, lingering effects, and monster-heavy occult pressure. Goblins, spirits, spiders, dragons, undead presences, and slow magical decay all fit here; gameplay leans toward attrition, haunting pressure, corruption-adjacent status play, and a more monstrous, supernatural style than the disciplined Dark Eye branch.",
+            "fantasy": "Sauron as the Necromancer of Dol Guldur: ruin, occult infestation, cursed creatures, and slow supernatural decay spreading from dark strongholds.",
+            "mechanicalPillars": [
+                "haunting pressure",
+                "lingering dark effects",
+                "monster-heavy occult play",
+                "slow magical decay and attrition"
+            ],
+            "themeLanes": [
+                "ruined towers and dark woods",
+                "spirits and undead presences",
+                "spiders, monsters, and corrupted beasts",
+                "curses and hexes",
+                "sorcerous remnants",
+                "slow rot and contamination"
+            ],
+            "avoidThemes": [
+                "too much imperial military neatness",
+                "repeating one spider or ghost image endlessly",
+                "plain battlefield combat with no horror tone",
+                "eye-surveillance themes overtaking the horror identity"
+            ],
+            "visualDirections": [
+                "ruined strongholds and hanging shadows",
+                "webs, grave textures, and rot",
+                "haunting apparitions",
+                "monstrous occult scenes"
+            ]
+        }
+    ]
 }

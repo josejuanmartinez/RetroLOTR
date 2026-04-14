@@ -276,6 +276,37 @@ public class CardData
 
 public class DeckManager : MonoBehaviour
 {
+    private enum BalancedDeckBucket
+    {
+        Army,
+        Event,
+        PC,
+        Land,
+        Encounter,
+        Character,
+        ActionSpell,
+        Misc
+    }
+
+    private static readonly BalancedDeckBucket[] BalancedDrawPattern =
+    {
+        BalancedDeckBucket.Army,
+        BalancedDeckBucket.Army,
+        BalancedDeckBucket.Event,
+        BalancedDeckBucket.Event,
+        BalancedDeckBucket.Event,
+        BalancedDeckBucket.PC,
+        BalancedDeckBucket.Land,
+        BalancedDeckBucket.Land,
+        BalancedDeckBucket.Land,
+        BalancedDeckBucket.Encounter,
+        BalancedDeckBucket.Character,
+        BalancedDeckBucket.ActionSpell,
+        BalancedDeckBucket.ActionSpell,
+        BalancedDeckBucket.ActionSpell,
+        BalancedDeckBucket.ActionSpell
+    };
+
     private class PlayerDeckState
     {
         public string deckId;
@@ -479,7 +510,7 @@ public class DeckManager : MonoBehaviour
         {
             state.drawPile.AddRange(state.discardPile);
             state.discardPile.Clear();
-            Shuffle(state.drawPile);
+            ApplyBalancedDrawOrdering(state.drawPile);
         }
 
         if (state.drawPile.Count == 0) return false;
@@ -842,12 +873,12 @@ public class DeckManager : MonoBehaviour
 
         while (state.hand.Count < targetCount)
         {
-            if (state.drawPile.Count == 0 && state.discardPile.Count > 0)
-            {
-                state.drawPile.AddRange(state.discardPile);
-                state.discardPile.Clear();
-                Shuffle(state.drawPile);
-            }
+        if (state.drawPile.Count == 0 && state.discardPile.Count > 0)
+        {
+            state.drawPile.AddRange(state.discardPile);
+            state.discardPile.Clear();
+            ApplyBalancedDrawOrdering(state.drawPile);
+        }
 
             if (state.drawPile.Count == 0) break;
             CardData card = state.drawPile[0];
@@ -1174,33 +1205,302 @@ public class DeckManager : MonoBehaviour
         string deckId = ResolveDeckIdForLeader(leader);
         if (string.IsNullOrWhiteSpace(deckId)) return null;
 
+        bool isVariantSelection = leader != null && !string.IsNullOrWhiteSpace(leader.GetSelectedVariantName());
         PlayerDeckState state = new PlayerDeckState
         {
             deckId = deckId
         };
 
-        foreach (DeckData ownedDeck in GetDeckChain(deckId))
+        List<CardData> basePool = new();
+        List<CardData> subdeckPool = new();
+
+        if (isVariantSelection)
         {
-            if (ownedDeck?.cards == null) continue;
-            state.drawPile.AddRange(
-                ownedDeck.cards
-                    .Where(card => ShouldIncludeCardInDeck(state.deckId, ownedDeck.deckId, card))
-                    .Select(CloneCard)
-                    .Where(card => card != null));
+            List<DeckData> ownedChain = GetDeckChain(deckId).ToList();
+            if (ownedChain.Count == 0) return null;
+
+            DeckData leafDeck = ownedChain[ownedChain.Count - 1];
+            List<DeckData> ancestorDecks = ownedChain.Take(Mathf.Max(0, ownedChain.Count - 1)).ToList();
+
+            foreach (DeckData ownedDeck in ancestorDecks)
+            {
+                if (ownedDeck?.cards == null) continue;
+                basePool.AddRange(
+                    ownedDeck.cards
+                        .Where(card => ShouldIncludeCardInDeck(state.deckId, ownedDeck.deckId, card))
+                        .Select(CloneCard)
+                        .Where(card => card != null));
+            }
+
+            if (leafDeck?.cards != null)
+            {
+                subdeckPool.AddRange(
+                    leafDeck.cards
+                        .Where(card => ShouldIncludeCardInDeck(state.deckId, leafDeck.deckId, card))
+                        .Select(CloneCard)
+                        .Where(card => card != null));
+            }
+
+            AddVariantMergedPool(state.drawPile, basePool, subdeckPool);
+        }
+        else
+        {
+            List<DeckData> expandedDecks = GetDeckTree(deckId).ToList();
+            if (expandedDecks.Count == 0) return null;
+
+            DeckData baseDeck = expandedDecks[0];
+            List<DeckData> descendantDecks = expandedDecks.Skip(1).ToList();
+
+            if (baseDeck?.cards != null)
+            {
+                basePool.AddRange(
+                    baseDeck.cards
+                        .Where(card => ShouldIncludeCardInDeck(state.deckId, baseDeck.deckId, card))
+                        .Select(CloneCard)
+                        .Where(card => card != null));
+            }
+
+            foreach (DeckData descendantDeck in descendantDecks)
+            {
+                if (descendantDeck?.cards == null) continue;
+                subdeckPool.AddRange(
+                    descendantDeck.cards
+                        .Where(card => ShouldIncludeCardInDeck(state.deckId, descendantDeck.deckId, card))
+                        .Select(CloneCard)
+                        .Where(card => card != null));
+            }
+
+            AddBalancedMergedPool(state.drawPile, basePool, subdeckPool);
         }
 
+        List<CardData> sharedPool = new();
         foreach (DeckData sharedDeck in GetSharedDecks())
         {
             if (sharedDeck?.cards == null) continue;
-            state.drawPile.AddRange(
+            sharedPool.AddRange(
                 sharedDeck.cards
                     .Where(card => ShouldIncludeCardInDeck(state.deckId, sharedDeck.deckId, card))
                     .Select(CloneCard)
                     .Where(card => card != null));
         }
-        Shuffle(state.drawPile);
+        Shuffle(sharedPool);
+        foreach (CardData sharedCard in sharedPool)
+        {
+            int insertIndex = UnityEngine.Random.Range(0, state.drawPile.Count + 1);
+            state.drawPile.Insert(insertIndex, sharedCard);
+        }
+
+        ApplyBalancedDrawOrdering(state.drawPile);
         DrawUpToHandSize(state);
         return state;
+    }
+
+    private static void AddBalancedMergedPool(List<CardData> destination, List<CardData> basePool, List<CardData> leafPool)
+    {
+        if (destination == null) return;
+
+        List<CardData> baseCards = basePool != null ? new List<CardData>(basePool) : new List<CardData>();
+        List<CardData> leafCards = leafPool != null ? new List<CardData>(leafPool) : new List<CardData>();
+
+        Shuffle(baseCards);
+        Shuffle(leafCards);
+
+        while (baseCards.Count > 0 || leafCards.Count > 0)
+        {
+            bool takeLeaf = baseCards.Count == 0
+                ? true
+                : leafCards.Count == 0
+                    ? false
+                    : UnityEngine.Random.value < 0.5f;
+
+            if (takeLeaf && leafCards.Count > 0)
+            {
+                destination.Add(TakeRandomCard(leafCards));
+            }
+            else if (baseCards.Count > 0)
+            {
+                destination.Add(TakeRandomCard(baseCards));
+            }
+        }
+    }
+
+    private static void AddVariantMergedPool(List<CardData> destination, List<CardData> basePool, List<CardData> leafPool)
+    {
+        if (destination == null) return;
+
+        List<CardData> baseCards = basePool != null ? new List<CardData>(basePool) : new List<CardData>();
+        List<CardData> leafCards = leafPool != null ? new List<CardData>(leafPool) : new List<CardData>();
+
+        Shuffle(baseCards);
+        Shuffle(leafCards);
+
+        // Variant leaders should see one selected-subdeck card in every five draws when possible.
+        while (baseCards.Count > 0 || leafCards.Count > 0)
+        {
+            if (leafCards.Count > 0)
+            {
+                destination.Add(TakeRandomCard(leafCards));
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (baseCards.Count > 0)
+                {
+                    destination.Add(TakeRandomCard(baseCards));
+                }
+                else if (leafCards.Count > 0)
+                {
+                    destination.Add(TakeRandomCard(leafCards));
+                }
+            }
+        }
+    }
+
+    private static CardData TakeRandomCard(List<CardData> cards)
+    {
+        if (cards == null || cards.Count == 0) return null;
+        int index = UnityEngine.Random.Range(0, cards.Count);
+        CardData card = cards[index];
+        cards.RemoveAt(index);
+        return card;
+    }
+
+    private static void ApplyBalancedDrawOrdering(List<CardData> cards)
+    {
+        if (cards == null || cards.Count < 2) return;
+
+        List<CardData> shuffled = new(cards);
+        Shuffle(shuffled);
+
+        Dictionary<BalancedDeckBucket, List<CardData>> buckets = new();
+        foreach (BalancedDeckBucket bucket in Enum.GetValues(typeof(BalancedDeckBucket)))
+        {
+            buckets[bucket] = new List<CardData>();
+        }
+
+        foreach (CardData card in shuffled)
+        {
+            buckets[GetBalancedDeckBucket(card)].Add(card);
+        }
+
+        foreach (List<CardData> bucketCards in buckets.Values)
+        {
+            Shuffle(bucketCards);
+        }
+
+        List<CardData> ordered = new(cards.Count);
+        while (HasBalancedTargetCards(buckets))
+        {
+            List<BalancedDeckBucket> cycleSlots = new(BalancedDrawPattern);
+            Shuffle(cycleSlots);
+
+            foreach (BalancedDeckBucket preferredBucket in cycleSlots)
+            {
+                CardData next = TakeBalancedCard(buckets, preferredBucket);
+                if (next == null) break;
+                ordered.Add(next);
+            }
+        }
+
+        List<CardData> miscCards = buckets[BalancedDeckBucket.Misc];
+        for (int i = 0; i < miscCards.Count; i++)
+        {
+            int insertIndex = UnityEngine.Random.Range(0, ordered.Count + 1);
+            ordered.Insert(insertIndex, miscCards[i]);
+        }
+
+        cards.Clear();
+        cards.AddRange(ordered);
+    }
+
+    private static bool HasBalancedTargetCards(Dictionary<BalancedDeckBucket, List<CardData>> buckets)
+    {
+        foreach (BalancedDeckBucket bucket in BalancedDrawPattern)
+        {
+            if (buckets.TryGetValue(bucket, out List<CardData> cards) && cards.Count > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static BalancedDeckBucket GetBalancedDeckBucket(CardData card)
+    {
+        if (card == null) return BalancedDeckBucket.Misc;
+
+        return card.GetCardType() switch
+        {
+            CardTypeEnum.Army => BalancedDeckBucket.Army,
+            CardTypeEnum.Event => BalancedDeckBucket.Event,
+            CardTypeEnum.PC => BalancedDeckBucket.PC,
+            CardTypeEnum.Land => BalancedDeckBucket.Land,
+            CardTypeEnum.Encounter => BalancedDeckBucket.Encounter,
+            CardTypeEnum.Character => BalancedDeckBucket.Character,
+            CardTypeEnum.Action => BalancedDeckBucket.ActionSpell,
+            CardTypeEnum.Spell => BalancedDeckBucket.ActionSpell,
+            _ => BalancedDeckBucket.Misc
+        };
+    }
+
+    private static CardData TakeBalancedCard(Dictionary<BalancedDeckBucket, List<CardData>> buckets, BalancedDeckBucket preferredBucket)
+    {
+        if (buckets.TryGetValue(preferredBucket, out List<CardData> preferredCards) && preferredCards.Count > 0)
+        {
+            return TakeRandomCard(preferredCards);
+        }
+
+        BalancedDeckBucket? fallbackBucket = null;
+        int fallbackCount = 0;
+        foreach (BalancedDeckBucket bucket in BalancedDrawPattern.Distinct())
+        {
+            if (bucket == preferredBucket) continue;
+            if (!buckets.TryGetValue(bucket, out List<CardData> cards) || cards.Count <= 0) continue;
+            if (cards.Count > fallbackCount)
+            {
+                fallbackBucket = bucket;
+                fallbackCount = cards.Count;
+            }
+        }
+
+        if (fallbackBucket.HasValue && buckets.TryGetValue(fallbackBucket.Value, out List<CardData> fallbackCards) && fallbackCards.Count > 0)
+        {
+            return TakeRandomCard(fallbackCards);
+        }
+
+        if (buckets.TryGetValue(BalancedDeckBucket.Misc, out List<CardData> miscCards) && miscCards.Count > 0)
+        {
+            return TakeRandomCard(miscCards);
+        }
+
+        return null;
+    }
+
+    private IEnumerable<DeckData> GetDeckTree(string deckId)
+    {
+        if (string.IsNullOrWhiteSpace(deckId)) yield break;
+
+        HashSet<string> visited = new(StringComparer.OrdinalIgnoreCase);
+        Queue<string> queue = new();
+        queue.Enqueue(deckId);
+
+        while (queue.Count > 0)
+        {
+            string currentDeckId = queue.Dequeue();
+            if (string.IsNullOrWhiteSpace(currentDeckId) || !visited.Add(currentDeckId)) continue;
+            if (!loadedDecksById.TryGetValue(currentDeckId, out DeckData deckData) || deckData == null) continue;
+            yield return deckData;
+
+            foreach (DeckManifestEntry entry in deckManifestById.Values)
+            {
+                if (entry == null || string.IsNullOrWhiteSpace(entry.parentDeckId)) continue;
+                if (!string.Equals(entry.parentDeckId, currentDeckId, StringComparison.OrdinalIgnoreCase)) continue;
+                if (string.IsNullOrWhiteSpace(entry.deckId)) continue;
+                if (entry.sharedToAll) continue;
+                queue.Enqueue(entry.deckId);
+            }
+        }
     }
 
     private static bool ShouldIncludeCardInDeck(string ownerDeckId, string sourceDeckId, CardData card)

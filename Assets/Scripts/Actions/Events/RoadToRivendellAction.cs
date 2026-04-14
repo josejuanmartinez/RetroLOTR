@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class RoadToRivendellAction : EventAction
+{
+    private const int Radius = 2;
+
+    private static bool IsAffected(Character character)
+    {
+        if (character == null || character.killed) return false;
+        return character.race == RacesEnum.Hobbit || character.race == RacesEnum.Dwarf;
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+
+            List<Character> targets = character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Where(IsAffected)
+                .Distinct()
+                .ToList();
+
+            if (targets.Count == 0) return false;
+
+            int inspired = 0;
+            int fearCleared = 0;
+            int haltedCleared = 0;
+
+            for (int i = 0; i < targets.Count; i++)
+            {
+                Character target = targets[i];
+                target.ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+                target.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                inspired++;
+
+                if (target.HasStatusEffect(StatusEffectEnum.Fear))
+                {
+                    target.ClearStatusEffect(StatusEffectEnum.Fear);
+                    fearCleared++;
+                }
+
+                if (target.HasStatusEffect(StatusEffectEnum.Halted))
+                {
+                    target.ClearStatusEffect(StatusEffectEnum.Halted);
+                    haltedCleared++;
+                }
+            }
+
+            MessageDisplayNoUI.ShowMessage(
+                character.hex,
+                character,
+                $"Road to Rivendell: {inspired} Hobbit/Dwarf unit(s) gain Courage and Haste (1), {fearCleared} Fear and {haltedCleared} Halted removed.",
+                Color.yellow);
+
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null) return false;
+
+            return character.hex.GetHexesInRadius(Radius)
+                .Any(h => h != null && h.characters != null && h.characters.Any(IsAffected));
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}

@@ -1,175 +1,166 @@
 ﻿{
-    "handSize":  5,
-    "deckCount":  19,
-    "decks":  [
-                  {
-                      "deckId":  "shared_base",
-                      "nation":  "Shared",
-                      "alignment":  2,
-                      "resourcePath":  "Cards/Modular/SharedBase",
-                      "cardCount":  48,
-                      "sharedToAll":  true,
-                      "thematic":  "Shared world layer of neutral encounters, roaming creatures, opportunistic events, and generic pressures that can touch any faction. This is less about tribe or race identity and more about map texture, uncertainty, travel danger, and emergent stories; it adds flexible utility, surprise pivots, and world-state moments that make every run feel less scripted."
-                  },
-                  {
-                      "deckId":  "encounter_shared",
-                      "nation":  "Encounter",
-                      "alignment":  2,
-                      "resourcePath":  "Cards/EncounterDeck",
-                      "cardCount":  82,
-                      "sharedToAll":  true,
-                      "thematic":  "Dedicated encounter package for wandering meetings, hazards, legendary beasts, strange travellers, and one-off narrative tests. Gameplay here is highly situational and event driven: less about deck synergy, more about sudden choices, risk management, rewards, punishments, and the feeling that Middle-earth itself is reacting to your route and timing."
-                  },
-                  {
-                      "deckId":  "actions_deck",
-                      "nation":  "Shared",
-                      "alignment":  2,
-                      "resourcePath":  "Cards/Modular/ActionsDeck",
-                      "cardCount":  47,
-                      "thematic":  "Common action utility deck shared by all factions: stealth, theft, rumors, and practical tactical tricks that are not faction-locked."
-                  },
-                  {
-                      "deckId":  "spells_deck",
-                      "nation":  "Shared",
-                      "alignment":  2,
-                      "resourcePath":  "Cards/Modular/SpellsDeck",
-                      "cardCount":  30,
-                      "thematic":  "Common spell/event deck shared by all factions for lightweight magical or celebratory effects usable beyond faction identity."
-                  },
-                  {
-                      "deckId":  "gandalf_base",
-                      "nation":  "Gandalf",
-                      "alignment":  0,
-                      "resourcePath":  "Cards/Modular/GandalfBase",
-                      "cardCount":  282,
-                      "isBaseDeck":  true,
-                      "thematic":  "Core Free Peoples deck built around Men, Elves, Dwarves, Hobbits, Eagles, and other allied peoples working in concert. Its gameplay favors balanced development, card quality, scouting, diplomacy, defensive resilience, region access, and reliable utility over brute specialization; it should feel like the broad strategic foundation from which the more sharply themed Gandalf subdecks branch outward."
-                  },
-                  {
-                      "deckId":  "gandalf_the_grey",
-                      "nation":  "Gandalf",
-                      "alignment":  0,
-                      "resourcePath":  "Cards/Modular/GandalfTheGrey",
-                      "cardCount":  1,
-                      "parentDeckId":  "gandalf_base",
-                      "thematic":  "Subtle wandering-archetype deck centered on the Grey Pilgrim as counsellor, traveller, scout, and quiet problem solver. Expect low-profile setup tools, route manipulation, information, light protection, and clever tempo plays rather than direct force; thematically it fits Rangers, hidden roads, small fellowships, and patient positioning before a larger turn of fate."
-                  },
-                  {
-                      "deckId":  "gandalf_the_white",
-                      "nation":  "Gandalf",
-                      "alignment":  0,
-                      "resourcePath":  "Cards/Modular/GandalfTheWhite",
-                      "cardCount":  0,
-                      "parentDeckId":  "gandalf_base",
-                      "thematic":  "High-authority comeback deck built around renewal, courage, cleansing, and open leadership after the return in white. This deck should reward stabilization, morale swings, anti-fear and anti-corruption play, stronger army support, and decisive rally turns; it suits players who want to absorb pressure, reclaim control, and then swing the board through righteous momentum."
-                  },
-                  {
-                      "deckId":  "mithrandir",
-                      "nation":  "Gandalf",
-                      "alignment":  0,
-                      "resourcePath":  "Cards/Modular/Mithrandir",
-                      "cardCount":  4,
-                      "parentDeckId":  "gandalf_base",
-                      "thematic":  "Pure wizardry deck focused on refined spellcraft, insight, wards, lore, and precise magical intervention. Elven wisdom, hidden knowledge, vision, revelation, and tightly targeted magic all belong here; in gameplay it emphasizes selective control, information advantage, safe setup, and elegant spell resolution rather than broad swarm or raw military output."
-                  },
-                  {
-                      "deckId":  "stormcrow",
-                      "nation":  "Gandalf",
-                      "alignment":  0,
-                      "resourcePath":  "Cards/Modular/Stormcrow",
-                      "cardCount":  4,
-                      "parentDeckId":  "gandalf_base",
-                      "thematic":  "Stormcrow is the Gandalf subdeck of uneasy wartime pressure among Men. It should frame the Grey Pilgrim not only as an ill omen or unwelcome counselor, but as the unsettling force who appears when Mannish realms are strained by encroaching evil and must harden themselves for survival. This includes fronts such as Rohan against the White Hand, Gondor against Mordor, the Northmen of Rhovanion against Easterlings, the Anduin Vale against Dol Guldur, Bree and wider Eriador under the long memory of Angmar, and similar regions where roads, ports, fords, courts, and frontier settlements live under gathering shadow. Gandalf is trying to help, organize, and strengthen resistance, yet many still see him as the sign that peace has already failed. In gameplay the deck should lean into morale strain, defensive hardening, political tension, frontier vigilance, war-readiness, movement pressure, intelligence and concealment, loyalty under stress, and reputation-based disruption rather than reducing itself to repeated warnings or bad-news delivery."
-                  },
-                  {
-                      "deckId":  "disturber_of_the_peace",
-                      "nation":  "Gandalf",
-                      "alignment":  0,
-                      "resourcePath":  "Cards/Modular/DisturberOfThePeace",
-                      "cardCount":  30,
-                      "parentDeckId":  "gandalf_base",
-                      "thematic":  "Mischief, adventure, and social-chaos deck built around hobbits, roadside incidents, strange meetings, awkward interruptions, and unexpectedly powerful small-scale plays. Its regional flavor should stretch across Eriador, especially Bree-land, the roads and inns of the North, the Old Forest, the Barrow-downs, scattered settlements, and out toward Cardolan, so the deck can hold wandering locals, petty troublemakers, rural rumors, travel incidents, eerie borderland hazards, and small but meaningful frontier entanglements. It is less martial than other branches and more about quirky utility, board disturbance, off-angle events, and playful disruption that feels fair but annoying for the opponent."
-                  },
-                  {
-                      "deckId":  "tharkun",
-                      "nation":  "Gandalf",
-                      "alignment":  0,
-                      "resourcePath":  "Cards/Modular/Tharkun",
-                      "cardCount":  2,
-                      "parentDeckId":  "gandalf_base",
-                      "thematic":  "Dwarf-friend archetype rooted in mountains, halls, treasure, mithril, endurance, and old alliances with the Durin folk. Expect Dwarven races, Erebor and Khazad themes, defensive economy, sturdy progression, fortress-like value, and reward for treasure or mountain cards; this deck suits slow-building players who want resilience, gear, and hard-to-shift board presence."
-                  },
-                  {
-                      "deckId":  "saruman_base",
-                      "nation":  "Saruman",
-                      "alignment":  2,
-                      "resourcePath":  "Cards/Modular/SarumanBase",
-                      "cardCount":  236,
-                      "isBaseDeck":  true,
-                      "thematic":  "Core Isengard strategy deck blending manipulation, coercion, industrial preparation, mixed evil-men support, and practical force. Its races and allies can include Dunlendings, opportunistic Men, Orcs, and wizard-led control pieces; in play it is about pressure through planning, resource leverage, positioning, political influence, and midrange control before committing to a sharper Saruman identity."
-                  },
-                  {
-                      "deckId":  "saruman_the_white",
-                      "nation":  "Saruman",
-                      "alignment":  2,
-                      "resourcePath":  "Cards/Modular/SarumanTheWhite",
-                      "cardCount":  6,
-                      "parentDeckId":  "saruman_base",
-                      "thematic":  "Orthanc mastermind deck focused on rhetoric, control, persuasion, voice, and polished strategic dominance. This is Saruman as the calculating high wizard who bends choices and states rather than simply rushing with troops; players should expect influence, deception, mind-affecting actions, elegant tactical denial, and carefully timed control cards."
-                  },
-                  {
-                      "deckId":  "of_many_colours",
-                      "nation":  "Saruman",
-                      "alignment":  2,
-                      "resourcePath":  "Cards/Modular/OfManyColours",
-                      "cardCount":  1,
-                      "parentDeckId":  "saruman_base",
-                      "thematic":  "Arcane self-reinvention deck expressing Saruman\u0027s many-coloured identity: layered wizardry, vanity, broad magical reach, and power drawn from synthesis rather than purity. This subdeck is ideal for spell-oriented play with multi-axis magical effects, buffs and debuffs in the same action, symbolic robes-and-voice flavor, and flashy board manipulation that feels sophisticated and dangerous."
-                  },
-                  {
-                      "deckId":  "the_white_hand",
-                      "nation":  "Saruman",
-                      "alignment":  2,
-                      "resourcePath":  "Cards/Modular/TheWhiteHand",
-                      "cardCount":  4,
-                      "parentDeckId":  "saruman_base",
-                      "thematic":  "War engine of Isengard built around Uruk-hai, Orc industry, furnaces, intimidation, and relentless production-to-pressure conversion. This is the aggressive Saruman branch: siege tools, military events, battlefield force multiplication, and sustained assault through disciplined evil infantry and industrial throughput rather than finesse."
-                  },
-                  {
-                      "deckId":  "sauron_base",
-                      "nation":  "Sauron",
-                      "alignment":  1,
-                      "resourcePath":  "Cards/Modular/SauronBase",
-                      "cardCount":  234,
-                      "isBaseDeck":  true,
-                      "thematic":  "Foundational Shadow empire deck covering Mordor\u0027s broad military, corruption, fear, conquest, and attrition game plan. Orcs, evil men, monsters, siege assets, and oppressive utility belong here, giving a reliable shell for expansion into more specialized Sauron identities; it rewards steady pressure, resource denial, battlefield cruelty, and inevitability through accumulation."
-                  },
-                  {
-                      "deckId":  "the_dark_eye",
-                      "nation":  "Sauron",
-                      "alignment":  1,
-                      "resourcePath":  "Cards/Modular/TheDarkEye",
-                      "cardCount":  17,
-                      "parentDeckId":  "sauron_base",
-                      "thematic":  "Lidless surveillance and Nazgul command deck centered on dread presence, revelation, control auras, and the feeling that no movement escapes Mordor\u0027s notice. It favors fear, despair, board locking, command projection, cursed riders, and oppressive events that squeeze the opponent\u0027s options turn by turn until resistance becomes inefficient."
-                  },
-                  {
-                      "deckId":  "the_deceiver",
-                      "nation":  "Sauron",
-                      "alignment":  1,
-                      "resourcePath":  "Cards/Modular/TheDeceiver",
-                      "cardCount":  6,
-                      "parentDeckId":  "sauron_base",
-                      "thematic":  "Subversion-and-false-gifts deck for Sauron as Annatar and corrupter: persuasive command, fallen Numenorean legacy, palantir theft, temptation, and domination achieved through trust, seduction, and crooked counsel before open conquest."
-                  },
-                  {
-                      "deckId":  "the_necromancer",
-                      "nation":  "Sauron",
-                      "alignment":  1,
-                      "resourcePath":  "Cards/Modular/TheNecromancer",
-                      "cardCount":  8,
-                      "parentDeckId":  "sauron_base",
-                      "thematic":  "Dol Guldur horror deck built around dark sorcery, ruined strongholds, cursed creatures, lingering effects, and monster-heavy occult pressure. Goblins, spirits, spiders, dragons, undead presences, and slow magical decay all fit here; gameplay leans toward attrition, haunting pressure, corruption-adjacent status play, and a more monstrous, supernatural style than the disciplined Dark Eye branch."
-                  }
-              ]
+    "handSize": 5,
+    "deckCount": 18,
+    "decks": [
+        {
+            "deckId": "shared_base",
+            "nation": "Shared",
+            "alignment": 2,
+            "resourcePath": "Cards/Modular/SharedBase",
+            "cardCount": 48,
+            "sharedToAll": true,
+            "thematic": "Shared world layer of neutral encounters, roaming creatures, opportunistic events, and generic pressures that can touch any faction. This is less about tribe or race identity and more about map texture, uncertainty, travel danger, and emergent stories; it adds flexible utility, surprise pivots, and world-state moments that make every run feel less scripted."
+        },
+        {
+            "deckId": "encounter_shared",
+            "nation": "Encounter",
+            "alignment": 2,
+            "resourcePath": "Cards/EncounterDeck",
+            "cardCount": 82,
+            "sharedToAll": true,
+            "thematic": "Dedicated encounter package for wandering meetings, hazards, legendary beasts, strange travellers, and one-off narrative tests. Gameplay here is highly situational and event driven: less about deck synergy, more about sudden choices, risk management, rewards, punishments, and the feeling that Middle-earth itself is reacting to your route and timing."
+        },
+        {
+            "deckId": "actions_deck",
+            "nation": "Shared",
+            "alignment": 2,
+            "resourcePath": "Cards/Modular/ActionsDeck",
+            "cardCount": 47,
+            "thematic": "Common action utility deck shared by all factions: stealth, theft, rumors, and practical tactical tricks that are not faction-locked."
+        },
+        {
+            "deckId": "spells_deck",
+            "nation": "Shared",
+            "alignment": 2,
+            "resourcePath": "Cards/Modular/SpellsDeck",
+            "cardCount": 48,
+            "thematic": "Common spell/event deck shared by all factions for lightweight magical or celebratory effects usable beyond faction identity."
+        },
+        {
+            "deckId": "gandalf_base",
+            "nation": "Gandalf",
+            "alignment": 0,
+            "resourcePath": "Cards/Modular/GandalfBase",
+            "cardCount": 137,
+            "isBaseDeck": true,
+            "thematic": "Core Free Peoples deck built around Men, Elves, Dwarves, Hobbits, Eagles, and other allied peoples working in concert. Its gameplay favors balanced development, card quality, scouting, diplomacy, defensive resilience, region access, and reliable utility over brute specialization; it should feel like the broad strategic foundation from which the more sharply themed Gandalf subdecks branch outward."
+        },
+        {
+            "deckId": "gandalf_the_white",
+            "nation": "Gandalf",
+            "alignment": 0,
+            "resourcePath": "Cards/Modular/GandalfTheWhite",
+            "cardCount": 34,
+            "parentDeckId": "gandalf_base",
+            "thematic": "High-authority comeback deck built around renewal, courage, cleansing, and open leadership after the return in white. This deck should reward stabilization, morale swings, anti-fear and anti-corruption play, stronger army support, and decisive rally turns; it suits players who want to absorb pressure, reclaim control, and then swing the board through righteous momentum."
+        },
+        {
+            "deckId": "mithrandir",
+            "nation": "Gandalf",
+            "alignment": 0,
+            "resourcePath": "Cards/Modular/Mithrandir",
+            "cardCount": 42,
+            "parentDeckId": "gandalf_base",
+            "thematic": "Pure wizardry deck focused on refined spellcraft, insight, wards, lore, and precise magical intervention. Elven wisdom, hidden knowledge, vision, revelation, and tightly targeted magic all belong here; in gameplay it emphasizes selective control, information advantage, safe setup, and elegant spell resolution rather than broad swarm or raw military output."
+        },
+        {
+            "deckId": "stormcrow",
+            "nation": "Gandalf",
+            "alignment": 0,
+            "resourcePath": "Cards/Modular/Stormcrow",
+            "cardCount": 51,
+            "parentDeckId": "gandalf_base",
+            "thematic": "Stormcrow is the Gandalf subdeck of uneasy wartime pressure among Men. It should frame the Grey Pilgrim not only as an ill omen or unwelcome counselor, but as the unsettling force who appears when Mannish realms are strained by encroaching evil and must harden themselves for survival. This includes fronts such as Rohan against the White Hand, Gondor against Mordor, the Northmen of Rhovanion against Easterlings, the Anduin Vale against Dol Guldur, Bree and wider Eriador under the long memory of Angmar, and similar regions where roads, ports, fords, courts, and frontier settlements live under gathering shadow. Gandalf is trying to help, organize, and strengthen resistance, yet many still see him as the sign that peace has already failed. In gameplay the deck should lean into morale strain, defensive hardening, political tension, frontier vigilance, war-readiness, movement pressure, intelligence and concealment, loyalty under stress, and reputation-based disruption rather than reducing itself to repeated warnings or bad-news delivery."
+        },
+        {
+            "deckId": "disturber_of_the_peace",
+            "nation": "Gandalf",
+            "alignment": 0,
+            "resourcePath": "Cards/Modular/DisturberOfThePeace",
+            "cardCount": 55,
+            "parentDeckId": "gandalf_base",
+            "thematic": "Mischief, adventure, and social-chaos deck built around hobbits, roadside incidents, strange meetings, awkward interruptions, and unexpectedly powerful small-scale plays. Its regional flavor should stretch across Eriador, especially Bree-land, the roads and inns of the North, the Old Forest, the Barrow-downs, scattered settlements, and out toward Cardolan, so the deck can hold wandering locals, petty troublemakers, rural rumors, travel incidents, eerie borderland hazards, and small but meaningful frontier entanglements. It is less martial than other branches and more about quirky utility, board disturbance, off-angle events, and playful disruption that feels fair but annoying for the opponent."
+        },
+        {
+            "deckId": "tharkun",
+            "nation": "Gandalf",
+            "alignment": 0,
+            "resourcePath": "Cards/Modular/Tharkun",
+            "cardCount": 29,
+            "parentDeckId": "gandalf_base",
+            "thematic": "Dwarf-friend archetype rooted in mountains, halls, treasure, mithril, endurance, and old alliances with the Durin folk. Expect Dwarven races, Erebor and Khazad themes, defensive economy, sturdy progression, fortress-like value, and reward for treasure or mountain cards; this deck suits slow-building players who want resilience, gear, and hard-to-shift board presence."
+        },
+        {
+            "deckId": "saruman_base",
+            "nation": "Saruman",
+            "alignment": 2,
+            "resourcePath": "Cards/Modular/SarumanBase",
+            "cardCount": 236,
+            "isBaseDeck": true,
+            "thematic": "Core Isengard strategy deck blending manipulation, coercion, industrial preparation, mixed evil-men support, and practical force. Its races and allies can include Dunlendings, opportunistic Men, Orcs, and wizard-led control pieces; in play it is about pressure through planning, resource leverage, positioning, political influence, and midrange control before committing to a sharper Saruman identity."
+        },
+        {
+            "deckId": "saruman_the_white",
+            "nation": "Saruman",
+            "alignment": 2,
+            "resourcePath": "Cards/Modular/SarumanTheWhite",
+            "cardCount": 6,
+            "parentDeckId": "saruman_base",
+            "thematic": "Orthanc mastermind deck focused on rhetoric, control, persuasion, voice, and polished strategic dominance. This is Saruman as the calculating high wizard who bends choices and states rather than simply rushing with troops; players should expect influence, deception, mind-affecting actions, elegant tactical denial, and carefully timed control cards."
+        },
+        {
+            "deckId": "of_many_colours",
+            "nation": "Saruman",
+            "alignment": 2,
+            "resourcePath": "Cards/Modular/OfManyColours",
+            "cardCount": 1,
+            "parentDeckId": "saruman_base",
+            "thematic": "Arcane self-reinvention deck expressing Saruman's many-coloured identity: layered wizardry, vanity, broad magical reach, and power drawn from synthesis rather than purity. This subdeck is ideal for spell-oriented play with multi-axis magical effects, buffs and debuffs in the same action, symbolic robes-and-voice flavor, and flashy board manipulation that feels sophisticated and dangerous."
+        },
+        {
+            "deckId": "the_white_hand",
+            "nation": "Saruman",
+            "alignment": 2,
+            "resourcePath": "Cards/Modular/TheWhiteHand",
+            "cardCount": 4,
+            "parentDeckId": "saruman_base",
+            "thematic": "War engine of Isengard built around Uruk-hai, Orc industry, furnaces, intimidation, and relentless production-to-pressure conversion. This is the aggressive Saruman branch: siege tools, military events, battlefield force multiplication, and sustained assault through disciplined evil infantry and industrial throughput rather than finesse."
+        },
+        {
+            "deckId": "sauron_base",
+            "nation": "Sauron",
+            "alignment": 1,
+            "resourcePath": "Cards/Modular/SauronBase",
+            "cardCount": 234,
+            "isBaseDeck": true,
+            "thematic": "Foundational Shadow empire deck covering Mordor's broad military, corruption, fear, conquest, and attrition game plan. Orcs, evil men, monsters, siege assets, and oppressive utility belong here, giving a reliable shell for expansion into more specialized Sauron identities; it rewards steady pressure, resource denial, battlefield cruelty, and inevitability through accumulation."
+        },
+        {
+            "deckId": "the_dark_eye",
+            "nation": "Sauron",
+            "alignment": 1,
+            "resourcePath": "Cards/Modular/TheDarkEye",
+            "cardCount": 17,
+            "parentDeckId": "sauron_base",
+            "thematic": "Lidless surveillance and Nazgul command deck centered on dread presence, revelation, control auras, and the feeling that no movement escapes Mordor's notice. It favors fear, despair, board locking, command projection, cursed riders, and oppressive events that squeeze the opponent's options turn by turn until resistance becomes inefficient."
+        },
+        {
+            "deckId": "the_deceiver",
+            "nation": "Sauron",
+            "alignment": 1,
+            "resourcePath": "Cards/Modular/TheDeceiver",
+            "cardCount": 6,
+            "parentDeckId": "sauron_base",
+            "thematic": "Subversion-and-false-gifts deck for Sauron as Annatar and corrupter: persuasive command, fallen Numenorean legacy, palantir theft, temptation, and domination achieved through trust, seduction, and crooked counsel before open conquest."
+        },
+        {
+            "deckId": "the_necromancer",
+            "nation": "Sauron",
+            "alignment": 1,
+            "resourcePath": "Cards/Modular/TheNecromancer",
+            "cardCount": 8,
+            "parentDeckId": "sauron_base",
+            "thematic": "Dol Guldur horror deck built around dark sorcery, ruined strongholds, cursed creatures, lingering effects, and monster-heavy occult pressure. Goblins, spirits, spiders, dragons, undead presences, and slow magical decay all fit here; gameplay leans toward attrition, haunting pressure, corruption-adjacent status play, and a more monstrous, supernatural style than the disciplined Dark Eye branch."
+        }
+    ]
 }

@@ -11,8 +11,8 @@ Audit card coverage and action wiring card-by-card with minimal noise.
 - `Assets/Resources/Cards/GandalfDeck.json`
 - `Assets/Resources/Cards/SauronDeck.json`
 - `Assets/Resources/Cards/SarumanDeck.json`
-- `Assets/Resources/Actions.json`
 - `Assets/Scripts/Actions`
+- The owning deck/card JSON entry for action-linked cards
 - Card files folder to scan: `Assets/Art/Cards` (full tree), including:
   - `Assets/Art/Cards/Actions`
   - `Assets/Art/Cards/Actions/Spells`
@@ -32,7 +32,7 @@ Audit card coverage and action wiring card-by-card with minimal noise.
 - Use numbered options whenever asking for confirmation or a choice.
 - Use deck-card schema as source of truth: action cards use `actionClassName`, `actionId`, `action`, and card-owned requirements (`*SkillRequired`, `*Required`).
 - For action validation, require both:
-  - action metadata exists in `Assets/Resources/Actions.json`
+  - action linkage exists on the card JSON entry and is internally coherent
   - action class exists under `Assets/Scripts/Actions` (including subfolders)
 - Before proposing effects, verify required resources/mechanics exist in code. If missing (for example a new resource type), ask whether to map to existing mechanics or expand core systems.
 - Prefer data-driven requirement rendering (card fields) over hardcoded UI checks tied to specific card/action names.
@@ -49,7 +49,7 @@ Audit card coverage and action wiring card-by-card with minimal noise.
    - `actionId` (if derivable from name/action)
    - support camel/pascal/spacing equivalence (e.g. `SellIron`, `Sell Iron`, `sell_iron`, `sell-iron`).
 5. If card exists in at least one deck:
-   - If the card has valid linkage (action metadata + action class), continue silently.
+   - If the card has valid linkage (card JSON linkage + action class), continue silently.
    - If linkage exists but is invalid, ask how to fix (reuse existing action, create new action, or skip).
    - **Never ask alignment/deck assignment for existing cards.**
 6. If card is not assigned to any deck after the full presence resolution, ask alignment using numbered options.
@@ -109,7 +109,7 @@ Use these meanings when proposing card effects, durations, and balance. Prefer e
 - `Fortified`: about `+10%` army defense for army commanders.
 
 ## Suggestion Rules
-- Base suggestions on existing `Actions.json` patterns (cost, target, reward, risk).
+- Base suggestions on existing card-linkage patterns (cost, target, reward, risk).
 - Keep effects implementable in current action architecture.
 - Prefer simple, testable effects over novel mechanics.
 - If uncertain, present a conservative default as recommended.
@@ -121,7 +121,7 @@ Use these meanings when proposing card effects, durations, and balance. Prefer e
   - card name
   - deck/alignment decision
   - whether action logic was created, linked, reused, or skipped
-  - concrete artifacts changed (deck JSON entry, `Actions.json` entry, action class file path) when applicable
+  - concrete artifacts changed (deck JSON entry, action class file path) when applicable
 
 ## Final Summary Format
 At the end of a run, provide:
@@ -145,7 +145,7 @@ After each resolved card, provide:
 
 ## Integration Notes
 - Use `new-card` skill for deck JSON edits.
-- Use `new-character-action` skill for action class + `Actions.json` edits.
-- Keep names consistent across card name, image name, action metadata, and class mapping.
+- Use `new-character-action` skill for action class edits and the owning card JSON linkage.
+- Keep names consistent across card name, image name, card linkage, and class mapping.
 - When a dynamic-cost card needs symbolic requirements, encode them in card data fields (for example `jokerRequired`) and keep UI logic generic.
 - For cards not present in any deck, default to creating/linking an action when action logic is implied by the card image/category; do not ask a separate proceed/confirm question before presenting effect options.

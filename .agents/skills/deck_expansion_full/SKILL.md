@@ -1,6 +1,6 @@
 ---
 name: deck-expansion-full
-description: Add fully integrated RetroLOTR cards (deck entries + action logic + action metadata + original art pipeline) across Gandalf/Sauron/Saruman decks. Use when expanding decks with complete, playable card content.
+description: Add fully integrated RetroLOTR cards (deck entries + action logic + card linkage + original art pipeline) across Gandalf/Sauron/Saruman decks. Use when expanding decks with complete, playable card content.
 ---
 
 # Deck Expansion (Full: Card + Logic + Art)
@@ -8,7 +8,7 @@ description: Add fully integrated RetroLOTR cards (deck entries + action logic +
 Use this skill when the user wants **new cards fully implemented** (not placeholders):
 - Deck JSON entries
 - Action class logic wiring
-- `Actions.json` metadata wiring
+- Card-embedded action linkage wiring
 - New card art files in proper folders
 
 ## Scope
@@ -18,7 +18,6 @@ Use this skill when the user wants **new cards fully implemented** (not placehol
 
 ## Source of Truth
 - Decks: `Assets/Resources/Cards/*.json`
-- Action metadata: `Assets/Resources/Actions.json`
 - Action classes: `Assets/Scripts/Actions/**`
 - Art: `Assets/Art/Cards/**`
 
@@ -39,10 +38,9 @@ Use this skill when the user wants **new cards fully implemented** (not placehol
    - Minimum valid implementation: wrapper class inheriting existing stable action logic.
    - Preferred implementation: custom logic in `Initialize(...)` following project pattern.
 
-4. **Register actions in Actions.json**
-   - Add one metadata entry per new action.
-   - Ensure unique `actionId` and matching `className`.
-   - Keep required fields consistent with existing action schema.
+4. **Wire action linkage in the card JSON**
+   - Add or update the card entry so `actionClassName`, `action`, and `actionId` point at the new class.
+   - Ensure the linkage is unique and consistent with existing deck-card patterns.
 
 5. **Generate original art**
    - Use `gpt-image-1.5` via `skills/openai-image-gen/scripts/gen.py` with explicit prompts.
@@ -58,8 +56,8 @@ Use this skill when the user wants **new cards fully implemented** (not placehol
 
 7. **Validation checklist**
    - Card IDs unique across alignment decks.
-   - Every new card points to an existing action class and action metadata entry.
-   - Every new action metadata entry resolves to class in code.
+   - Every new card points to an existing action class and coherent card linkage.
+   - Every new action linkage resolves to class in code.
    - Every new card has an image file with matching `spriteName`.
    - JSON remains valid.
 
@@ -75,6 +73,6 @@ Use this skill when the user wants **new cards fully implemented** (not placehol
 After completion, report:
 1. Cards created per deck (name + cardId)
 2. New action classes created (paths)
-3. New `Actions.json` IDs
+3. New card-linkage IDs
 4. Art files created (paths)
 5. Any remaining TODOs (balance pass, custom logic pass, VFX, etc.)

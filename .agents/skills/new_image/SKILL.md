@@ -1,6 +1,6 @@
 ---
 name: new-image
-description: Create new RetroLOTR card art images in a square format and in a retro painted fantasy style. Use when Codex needs to generate any new game image (especially action/spell images), using 2-3 lightweight style references from `Assets/Art/References/CardStyle` and saving to the correct Assets/Art/Cards subfolder by image type.
+description: Create new RetroLOTR card art images in a square format and in a retro painted fantasy style. Use when Codex needs to generate any new game image (especially action/spell images), using 3 randomly chosen shipped card images as uploaded binary reference inputs through the Responses API, then saving to the correct Assets/Art/Cards subfolder by image type.
 ---
 
 # New Image
@@ -9,31 +9,34 @@ Create new game images that match the existing RetroLOTR color card style.
 
 ## Workflow
 1. Determine image type from the request using `CardTypeEnum` from `Assets/Scripts/Cards/CardTypeEnum.cs` (`Action`, `Event`, `Land`, `PC`, `Character`, `Army`, `Rest`, `Encounter`, `Spell`).
-2. Pick 2 or 3 reference images from `Assets/Art/References/CardStyle` to anchor style.
-3. Never use full-size production card assets as references when smaller curated previews are available.
-4. Generate a square image (`1:1`, recommended `512x512`) using model `gpt-image-1.5`.
-5. If the active image-generation path supports binary image references, send only the curated preview copies from `Assets/Art/References/CardStyle`.
-6. If the active path does not support binary image references, use those same files only as prompt anchors and report that honestly.
-7. Enforce style direction in the prompt: late-1970s hand-painted cel-animation fantasy, bold ink outlines, flat-to-soft cel shading, painterly watercolor-like backgrounds, moody magical lighting, aged film texture, and a retro illustrated fantasy atmosphere.
+2. Use the bundled script `scripts/new_image_card.py` to select 3 random shipped card images from `Assets/Art/Cards` on every run.
+3. The script uploads those selected card images as binary file inputs through the Responses API and reports them explicitly.
+4. Give the prompt a card-specific name when possible. The script can derive a name from the output filename if one is not passed explicitly.
+5. By default, generate in three steps: first create the image, then run the old strict black-and-white postprocess helper (`scripts/bw_postprocess.py`), then send that B&W result into the `colorify`-style edit pass. This is the preferred workflow and should be treated as the standard way to make new RetroLOTR art.
+6. Enforce style direction in the prompt: 1:1 square painted fantasy card illustration with a strong centered subject, clear silhouette, Bakshi-era Lord of the Rings mood, D&D cover art energy, MERP-style roleplaying-game illustration, rough hand-painted gouache/watercolor texture, visible brush strokes, heavy printed grain, jagged dark contour lines, earthy muted colors, strong shadows, and a real scanned fantasy-card look that matches the shipped RetroLOTR art.
+7. The uploaded images are style, texture, and print-look guides only. Do not echo the reference files back into the prompt as a separate section or subject list.
 8. Save the final image to the correct folder in `Assets/Art/Cards`.
 
 ## Random Reference Selection
-Use this command to select 3 curated references:
+The script handles random selection automatically, but this command matches its candidate pool:
 
 ```powershell
-Get-ChildItem "Assets/Art/References/CardStyle" -File |
-  Where-Object { $_.Extension -in ".png", ".jpg", ".jpeg" } |
+Get-ChildItem "Assets/Art/Cards" -Recurse -File |
+  Where-Object { $_.Extension -in ".png", ".jpg", ".jpeg" -and $_.Name -notlike "CardFrame*" } |
   Get-Random -Count 3 |
   Select-Object -ExpandProperty FullName
 ```
 
 ## Model And Input Contract
-- Always use model `gpt-image-1.5`.
-- Use 2 or 3 references, not 5.
-- Keep references in a dedicated lightweight source folder instead of the final asset folder.
-- Never send full-size originals as references when resized preview copies exist.
-- If the active image-generation path supports binary image references, send only the preview copies.
-- If the active path does not support binary references, mention the curated reference files in the prompt/report instead of pretending they were uploaded.
+- Use the Responses API helper, which defaults to `gpt-5` in this workspace.
+- Use exactly 3 references.
+- Keep references limited to 3 randomly selected shipped card images.
+- The script uploads the chosen card images as binary file inputs through the Responses API.
+- The default workflow is generate, then strict B&W postprocess, then colorify using `gpt-image-1.5`.
+- The default workflow is generate, then strict B&W postprocess, then colorify using `gpt-image-1.5`; this is the standard process for matching the shipped RetroLOTR art.
+- Pass `--card-name` when you want the final prompt to emphasize the card name explicitly.
+- The prompt text should read like `colorify`: card name first, then the art brief, then the style block, with a tighter card-art composition lock.
+- Use `--single-pass` only when you intentionally want to bypass the two-pass process.
 
 ## Prompt Requirements
 Include all of the following constraints in the image-generation prompt:
@@ -84,13 +87,35 @@ Prefer `.png` for new outputs unless the user requests another format.
 ## Final Checks
 - Image is square (`width == height`).
 - File path matches the intended card category.
-- Reference images came from `Assets/Art/References/CardStyle`, not from the final asset folder.
+- Reference images came from `Assets/Art/Cards`, not from the final asset folder.
+- The image handed to `colorify` is the strict black-and-white output of `scripts/bw_postprocess.py`, not the raw generation output.
 
 ## Completion Report (Mandatory)
 After finishing image generation, always report:
 - Final output file path.
-- Model used (`gpt-image-1.5`).
+- Model used (the helper's current default model, usually `gpt-5`).
 - Exact reference images used (list full paths).
 - Number of references used.
-- Input format used for references in the generation call (for example base64 or bytes).
+- Input format used for references in the generation call (uploaded file IDs via Responses API).
 - The exact final prompt text used for generation.
+
+## CLI Contract
+Use the bundled wrapper instead of writing one-off OpenAI runners.
+
+Dry-run example:
+
+```powershell
+.\.agents\skills\new_image\scripts\new_image_card.ps1 `
+  -Out Assets/Art/Cards/Actions/MyNewCard.png `
+  -Prompt "A ranger crossing a stormy ridge with a glowing sword" `
+  -DryRun
+```
+
+Live run example:
+
+```powershell
+.\.agents\skills\new_image\scripts\new_image_card.ps1 `
+  -Out Assets/Art/Cards/Actions/MyNewCard.png `
+  -Prompt "A ranger crossing a stormy ridge with a glowing sword" `
+  -Force
+```

@@ -27,9 +27,16 @@ public class BarrowWightWhisperAction : EventAction
 
             if (enemies.Count == 0) return false;
 
+            int revealed = 0;
             for (int i = 0; i < enemies.Count; i++)
             {
-                enemies[i].ApplyStatusEffect(StatusEffectEnum.Fear, 1);
+                if (enemies[i].HasStatusEffect(StatusEffectEnum.Hidden))
+                {
+                    enemies[i].ClearStatusEffect(StatusEffectEnum.Hidden);
+                    revealed++;
+                }
+
+                enemies[i].ApplyStatusEffect(StatusEffectEnum.Despair, 1);
             }
 
             Character weakest = enemies
@@ -45,7 +52,7 @@ public class BarrowWightWhisperAction : EventAction
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Barrow-Wight Whisper: {enemies.Count} enemy unit(s) gain Fear (1), and the weakest is Halted (1).",
+                $"Barrow-Wight Whisper: {revealed} hidden enemy unit(s) are exposed, {enemies.Count} enemy unit(s) gain Despair (1), and the weakest is Halted (1).",
                 Color.gray);
 
             return true;
