@@ -693,6 +693,7 @@ public class DeckManager : MonoBehaviour
 
         Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
         if (board == null || board.hexes == null || board.hexes.Count == 0) return;
+        board.nationSpawner?.EnsureLandRegionsAssigned();
 
         List<Hex> revealedPcHexes = null;
         string revealMessage = null;
@@ -703,13 +704,18 @@ public class DeckManager : MonoBehaviour
                 revealMessage = $"The lands of {card.name} were revealed";
                 break;
             case CardTypeEnum.PC:
-                revealedPcHexes = RevealPcOnMapOnly(board, card.name);
-                revealMessage = $"The lands of {card.region} were revealed";
+                string pcRegion = !string.IsNullOrWhiteSpace(card.region) ? card.region : card.name;
+                revealedPcHexes = RevealRegionOnMapOnly(board, pcRegion);
+                revealMessage = $"The lands of {pcRegion} were revealed";
                 break;
         }
 
         leader.RefreshVisibleHexesImmediate();
         MinimapManager.RefreshMinimap();
+        if (revealedPcHexes == null || revealedPcHexes.Count == 0)
+        {
+            Debug.LogWarning($"DeckManager: No hexes matched reveal region '{(card.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(card.region) ? card.region : card.name)}'.");
+        }
         QueueRevealMessages(revealedPcHexes, revealMessage);
     }
 
@@ -1089,12 +1095,20 @@ public class DeckManager : MonoBehaviour
         string normalizedRegion = NormalizeCardName(region);
         foreach (Hex hex in board.hexes.Values)
         {
-            PC pc = hex?.GetPCData();
-            if (pc == null) continue;
+            if (hex == null) continue;
 
-            string pcRegion = ResolveRegionForPc(pc);
-            if (string.IsNullOrWhiteSpace(pcRegion)) continue;
-            if (!string.Equals(NormalizeCardName(pcRegion), normalizedRegion, StringComparison.Ordinal)) continue;
+            string hexRegion = hex.GetLandRegion();
+            if (string.IsNullOrWhiteSpace(hexRegion))
+            {
+                PC pc = hex.GetPCData();
+                if (pc != null)
+                {
+                    hexRegion = ResolveRegionForPc(pc);
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(hexRegion)) continue;
+            if (!string.Equals(NormalizeCardName(hexRegion), normalizedRegion, StringComparison.Ordinal)) continue;
 
             hex.RevealMapOnlyArea(1, false, false);
             revealedHexes.Add(hex);
@@ -1123,7 +1137,7 @@ public class DeckManager : MonoBehaviour
         return revealedHexes;
     }
 
-    private string ResolveRegionForPc(PC pc)
+    public string ResolveRegionForPc(PC pc)
     {
         if (pc == null) return null;
 

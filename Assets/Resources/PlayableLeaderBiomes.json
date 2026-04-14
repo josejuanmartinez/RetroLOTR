@@ -12,14 +12,14 @@
                        "artifacts":  [
 
                                      ],
-                       "description":  "<u>Gandalf</u> is the grey pilgrim, a wanderer of hidden roads and quiet counsel. He walks the edge between shadow and hope, guiding the small and the humble because he knows their courage can outlast any sword. He trusts in patience, in wisdom earned by travel, and in the spark that lights when others have given in to fear.<br><br>The Shire lies under his watch, and the first steps of his journey begin among its green lanes, where he gathers trusted companions, listens for the first uneasy rumors, and searches old ground for relics that have waited too long. His path starts in quiet places, but it will not remain quiet.",
-                       "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Broad alliance-of-the-Free-Peoples foundation: cooperation, guidance, resilience, and adaptable responses across many races and regions.",
+                       "description":  "<u>Gandalf</u> is the grey pilgrim, a wanderer of hidden roads and quiet counsel. He walks the edge between shadow and hope, guiding the small and the humble because he knows their courage can outlast any sword. He trusts in patience, in wisdom earned by travel, and in the spark that lights when others have given in to fear.<br><br>His road stretches beyond the Shire into the wider lanes of Eriador and the scattered strongholds of the Free Peoples. He gathers trusted companions, listens for uneasy rumors, and searches old ground for relics and allies that still matter long after the first road is taken.",
+                       "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Shared Gandalf foundation: road support, frontier PCs, and flexible utility. It leans on a balanced spread of gold <sprite name=\"gold\">, leather <sprite name=\"leather\">, timber <sprite name=\"timber\">, iron <sprite name=\"iron\">, steel <sprite name=\"steel\">, and a little mithril <sprite name=\"mithril\">, and it supports guides, hobbits, Dunedain, and other road-wise allies before the variants specialize.",
                        "variants":  [
                                         {
                                             "variantId":  "mithrandir",
                                             "displayName":  "Mithrandir",
                                             "description":  "<u>Mithrandir</u>, pilgrim of the West, passes like an old song through Rivendell, Lothlorien, and the hidden paths where the Wise still keep watch against the ancient Shadow. In him abide memory, mercy, and the secret fire set against a darkness older than the kingdoms of Men, and where he treads, veils are lifted and the designs of the Enemy are read before they ripen to ruin.<br><br>Under <b>Mithrandir</b>, the game turns toward revelation, warding, foresight, and spellcraft wielded with patient precision rather than open might.",
-                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as sage-mage: hidden lore, wards, visions, and exact magical responses grounded in wisdom rather than spectacle.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as sage-mage: timber <sprite name=\"timber\">- and steel <sprite name=\"steel\">-rich elven havens, gold <sprite name=\"gold\"> for high craft, and armies of Elves, scouts, wardens, archers, fleets, and lore-keepers acting with patient magical precision.",
                                             "subdeckId":  "mithrandir",
                                             "banner": "banner_gandalf_mithrandir"
                                         },
@@ -27,15 +27,15 @@
                                             "variantId":  "stormcrow",
                                             "displayName":  "Stormcrow",
                                             "description":  "<u>Stormcrow</u> they name him in the troubled halls of kings, for his coming is the whisper before the war-horn, the black wing against a paling sky. He is seen where Rohan wavers, where Gondor keeps weary watch, and where the old roads of the North begin once more to feel the breath of Angmar, Isengard, and Mordor upon their stones.<br><br>This variant carries the weight of vigilance, strained loyalties, bitter choices, and endurance beneath a darkening sky.",
-                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as Stormcrow in the wars of Men: a mistrusted but necessary presence who unsettles courts, hardens defenses, stirs movement, and marks the moment when ordinary peace gives way to border fear, mobilization, and survival under shadow.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as Stormcrow in the wars of Men: leather <sprite name=\"leather\">, mounts <sprite name=\"mounts\">, and hard-won gold <sprite name=\"gold\">, with armies of riders, archers, garrisons, and frontier levies drawn from Rohan, Gondor, and the North.",
                                             "subdeckId":  "stormcrow",
                                             "banner": "banner_gandalf_stormcrow"
                                         },
                                         {
                                             "variantId":  "disturber_of_the_peace",
                                             "displayName":  "Disturber of Peace",
-                                            "description":  "At Bag End and along the Bree-road, in fireworks, whispers, and the sudden knock at dusk, <u>the Disturber of the Peace</u> unsettles the comfortable world. From those small provocations spring journeys, riddles, unlikely fellowships, and the turning of humble lives toward deeds that will outlast towers and crowns.<br><br>This variant delights in disruption, strange meetings, roadside wonders, and the unruly mischief from which great tales are born.",
-                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> A wandering Eriador trouble deck where hobbit-scale mischief, awkward meetings, rumors, inns, hedgerow hazards, and strange little interruptions reshape the journey.",
+                                            "description":  "At Bag End and along the Bree-road, in fireworks, whispers, and the sudden knock at dusk, <u>the Disturber of the Peace</u> unsettles the comfortable world. From those small provocations spring journeys, riddles, unlikely fellowships, and the turning of humble lives toward deeds that will outlast towers and crowns.<br><br>This variant leans into the Shire, Bree-land, and the long road through Eriador: hobbit-scale mischief, roadside wonders, strange meetings, and the little interruptions that reroute an entire tale.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> A hobbit-and-road trouble deck where gold <sprite name=\"gold\">, leather <sprite name=\"leather\">, timber <sprite name=\"timber\">, mounts <sprite name=\"mounts\">, and a touch of iron <sprite name=\"iron\"> fuel mischief. Hobbits, wanderers, dwarf companions, and small-folk allies turn Bree-land, the Shire, and Eriador detours into awkward encounters rather than clean conquest.",
                                             "subdeckId":  "disturber_of_the_peace",
                                             "banner": "banner_gandalf_disturber_of_the_peace"
                                         },
@@ -43,7 +43,7 @@
                                             "variantId":  "tharkun",
                                             "displayName":  "Tharkun",
                                             "description":  "<u>Tharkun</u> is the name the Dwarves remember: friend of the House of Durin, walker in the deeps, and counselor in halls where stone keeps faith longer than flesh. He knows the grief buried in Khazad-dum, the splendor of Erebor restored, and the peril that lies ever beside gold, mithril, and the pride of mountain kings.<br><br>This variant turns toward hidden wealth, mountain fortitude, and alliances tempered in the dark under stone.",
-                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as dwarf-friend: mountain roads, ancient halls, treasure-lore, and hard endurance tied to the houses of Durin.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as dwarf-friend: steel <sprite name=\"steel\"> and mithril <sprite name=\"mithril\"> above all, with gold <sprite name=\"gold\"> and iron <sprite name=\"iron\"> behind them. Dwarven miners, explorers, axemen, siege crews, goat riders, and ancient hall-keepers grind out hard endurance under stone.",
                                             "subdeckId":  "tharkun",
                                             "banner": "banner_gandalf_tharkun"
                                         },
@@ -51,7 +51,7 @@
                                             "variantId":  "gandalf_the_white",
                                             "displayName":  "The White",
                                             "description":  "Clothed in white and returned from death, <u>the White Rider</u> comes from Fangorn like a judgment upon despair. He breaks the pride of Saruman, scatters the poison of Wormtongue, and stands in the last defence of the West as hidden wisdom is transfigured into open command beneath the sunlit banners of hope.<br><br>This variant is one of cleansing, renewal, fearless command, and the sudden turning of darkness beneath a greater light.",
-                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Returned white authority: cleansing light, restored morale, command presence, and decisive renewal after despair.",
+                                            "deckIdentity":  "<sprite name=\"deck\"> <i>Deck identity:</i> Returned white authority: gold <sprite name=\"gold\"> and iron <sprite name=\"iron\">, with disciplined commanders, shieldwalls, riders, and fleets of Gondor and Rohan gathered beneath banners of renewal.",
                                             "subdeckId":  "gandalf_the_white",
                                             "banner": "banner_gandalf_gandalf_the_white"
                                         }

@@ -90,6 +90,7 @@ public class Hex : MonoBehaviour
 
     [Header("Data")]
     [SerializeField] private PC pc;
+    [SerializeField] private string assignedLandRegion;
     [SerializeField] private bool isRevealed;
     [SerializeField] private bool mapOnlyRevealed;
     [SerializeField] private bool isCurrentlyUnseen;
@@ -277,6 +278,7 @@ public class Hex : MonoBehaviour
     public void Initialize(int row, int col)
     {
         v2 = new Vector2Int(row, col);
+        assignedLandRegion = null;
         if (game == null) game = FindFirstObjectByType<Game>();
         terrainTexture.sortingOrder = int.MaxValue - (col * board.GetHeight() + row);
     }
@@ -1664,6 +1666,16 @@ public class Hex : MonoBehaviour
     public Sprite GetBaseTerrainSprite()
     {
         return baseTerrainSprite;
+    }
+
+    public void SetLandRegion(string region)
+    {
+        assignedLandRegion = string.IsNullOrWhiteSpace(region) ? null : region.Trim();
+    }
+
+    public string GetLandRegion()
+    {
+        return assignedLandRegion;
     }
 
     public void SetPC(PC pc, string pcFeature = "", string fortFeature = "", bool isIsland = false)
