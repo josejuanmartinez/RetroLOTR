@@ -161,10 +161,31 @@ public class PC
     public bool ClaimUnowned(Leader leader)
     {
         if (leader == null || owner != null) return false;
+        return ClaimByAllegiance(leader);
+    }
+
+    public bool ClaimByAllegiance(Leader leader)
+    {
+        if (leader == null) return false;
+        if (owner == leader) return false;
+
+        Leader previousOwner = owner;
+        if (previousOwner != null)
+        {
+            previousOwner.controlledPcs.Remove(this);
+            previousOwner.visibleHexes.Remove(hex);
+        }
+
         owner = leader;
         acquisitionType = PCAcquisitionType.Joined;
-        leader.controlledPcs.Add(this);
-        leader.visibleHexes.Add(hex);
+        if (!leader.controlledPcs.Contains(this))
+        {
+            leader.controlledPcs.Add(this);
+        }
+        if (!leader.visibleHexes.Contains(hex))
+        {
+            leader.visibleHexes.Add(hex);
+        }
         loyalty = UnityEngine.Random.Range(50, 75);
         hex.RedrawPC();
         if (owner is NonPlayableLeader && hex != null)

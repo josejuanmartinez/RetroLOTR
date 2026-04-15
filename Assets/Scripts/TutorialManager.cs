@@ -440,7 +440,7 @@ public class TutorialManager : MonoBehaviour
         //string title = totalSteps > 0 ? $"{baseTitle} ({stepNumber}/{totalSteps})" : baseTitle;
         string title = baseTitle;
         string text = string.IsNullOrWhiteSpace(step.narration) ? step.description : step.narration;
-        PopupManager.Show(title, actor1, actor2, text, true);
+        PopupManager.ShowImmediate(title, actor1, actor2, text, true);
     }
 
     private void ClaimTutorialStateAllegiancePcs()
@@ -554,7 +554,8 @@ public class TutorialManager : MonoBehaviour
                 && string.Equals(c.characterName, req.targetLeader, StringComparison.OrdinalIgnoreCase));
             if (!matchesOwner && !matchesPc && !matchesCharacter)
             {
-                bool isAllegianceCard = string.Equals(requiredCardName, "State Allegiance", StringComparison.OrdinalIgnoreCase);
+                bool isAllegianceCard = string.Equals(requiredCardName, "AFriendOrThree", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(requiredCardName, "State Allegiance", StringComparison.OrdinalIgnoreCase);
                 bool matchesLocation = !string.IsNullOrWhiteSpace(step.targetLocation)
                     && !string.IsNullOrWhiteSpace(pcName)
                     && string.Equals(pcName, step.targetLocation, StringComparison.OrdinalIgnoreCase);
@@ -1324,6 +1325,7 @@ public class TutorialManager : MonoBehaviour
         return cardName switch
         {
             "State Allegiance" => "StateAllegiance",
+            "AFriendOrThree" => "StateAllegiance",
             "Hear Stories" => "RevealRumours",
             "Find Artifact" => "FindArtifact",
             "Scout Area" => "ScoutArea",

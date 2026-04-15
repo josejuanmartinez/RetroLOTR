@@ -23,6 +23,12 @@ public class CharacterSpriteHover : MonoBehaviour
         board ??= FindFirstObjectByType<Board>();
         if (board != null && board.selectedCharacter == character) return;
         if (!hex.TryGetPreviewTextForCharacter(character, out string hoverText)) return;
+        if (selectedIcon == null)
+        {
+            Layout layout = FindFirstObjectByType<Layout>();
+            selectedIcon = layout != null ? layout.GetSelectedCharacterIcon() : null;
+        }
+        if (selectedIcon == null) return;
 
         isPreviewing = true;
         previewedCharacter = character;

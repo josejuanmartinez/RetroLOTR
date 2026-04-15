@@ -13,7 +13,7 @@ public class InfluenceDownPC : EmmissaryEnemyPCAction
             if (c.hex.GetPC() == null) return false;
             PC pc = c.hex.GetPC();
             if (pc == null) return false;
-            int loyalty = UnityEngine.Random.Range(1, 3) * c.GetEmmissary();
+            int loyalty = Mathf.Max(4, UnityEngine.Random.Range(1, 3) * Mathf.Max(1, c.GetEmmissary()) + 2);
             pc.DecreaseLoyalty(loyalty, c);
             // MessageDisplayNoUI.ShowMessage(pc.hex, c, $"{pc.pcName} -{loyalty} loyalty", Color.green);
             return true;

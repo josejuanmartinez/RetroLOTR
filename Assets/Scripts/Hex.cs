@@ -882,7 +882,7 @@ public class Hex : MonoBehaviour
         }
     }
 
-    private void SetPcSpriteAlpha(float alpha)
+    private void SetHexSpriteAlpha(float alpha)
     {
         SetSpriteAlpha(terrainTexture, alpha);
     }
@@ -2095,7 +2095,7 @@ public class Hex : MonoBehaviour
             terrainAlpha = 0.35f;
         }
 
-        SetPcSpriteAlpha(terrainAlpha);
+        SetHexSpriteAlpha(terrainAlpha);
     }
 
     private void UpdatePcWorldText(bool shouldShowPc)

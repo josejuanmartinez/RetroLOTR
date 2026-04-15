@@ -62,13 +62,13 @@ public class NonPlayableLeader : Leader
             && !string.IsNullOrWhiteSpace(capitalName)
             && playableLeader.HasPlayedPcCard(capitalName);
 
-        sb.Append($"<b>{characterName}</b> only accepts State Allegiance from a leader of the same alignment.<br>");
+        sb.Append($"<b>{characterName}</b> only accepts AFriendOrThree from a leader of the same alignment.<br>");
         sb.Append(FormatRequirement("Alignment matches", sameAlignment));
 
         if (!string.IsNullOrWhiteSpace(capitalName))
         {
             sb.Append(FormatRequirement($"Play the PC card '{capitalName}' first", hasCapitalCard));
-            sb.Append($"Then send an emissary to {capitalName} and issue State Allegiance.");
+            sb.Append($"Then send an emissary to {capitalName} and issue AFriendOrThree.");
         }
         else
         {

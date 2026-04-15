@@ -277,7 +277,7 @@ public class Game : MonoBehaviour
         }
 
         // No characters with free actions; offer to finish turn
-        bool finish = await ConfirmationDialog.Ask(
+        bool finish = await ConfirmationDialog.AskImmediate(
             "No more characters with free actions are available. You may still have movement left. Finish the turn?",
             "Finish Turn",
             "Cancel");
@@ -336,7 +336,7 @@ public class Game : MonoBehaviour
                 ? "Some characters have not actioned yet. End turn?"
                 : "End turn?";
 
-            bool finishTurn = await ConfirmationDialog.Ask(message, "Finish Turn", "Cancel");
+            bool finishTurn = await ConfirmationDialog.AskImmediate(message, "Finish Turn", "Cancel");
             if (!finishTurn)
             {
                 Character nextCharacter = player.controlledCharacters.Find(x => !x.killed && !x.hasActionedThisTurn);
@@ -400,7 +400,7 @@ public class Game : MonoBehaviour
         AdvanceTemporaryPcVisibility();
         board?.ClearAllScouting();
         AnnounceScoutingStatus();
-        MessageDisplay.ShowMessage($"Turn {turn}", Color.green);
+        MessageDisplay.ShowMessage($"Turn {turn}", Color.green, true);
         NewTurnStarted?.Invoke(turn);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         storesManager.AdvanceTurn();

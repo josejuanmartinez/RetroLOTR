@@ -20,21 +20,38 @@ public class StateAllegiance : EmmissaryAction
 
             PC pc = character.hex.GetPC();
             if (pc == null) return false;
+            Leader actorOwner = character.GetOwner();
+            if (actorOwner == null) return false;
 
             if (pc.owner == null)
             {
-                return pc.ClaimUnowned(character.GetOwner());
+                return pc.ClaimUnowned(actorOwner);
             }
 
-            if (!pc.isCapital) return false;
-            if (pc.owner is not NonPlayableLeader nonPlayableLeader) return false;
+            if (pc.owner == actorOwner || pc.owner.GetAlignment() == actorOwner.GetAlignment())
+            {
+                if (pc.isCapital && pc.owner is NonPlayableLeader nonPlayableLeader)
+                {
+                    if (nonPlayableLeader.joined || nonPlayableLeader.killed) return false;
+                    if (actorOwner is not PlayableLeader playableLeader) return false;
+                    if (!nonPlayableLeader.CanJoinWithStateAllegiance(playableLeader)) return false;
 
-            Leader leader = character.GetOwner();
-            if (nonPlayableLeader.joined || nonPlayableLeader.killed) return false;
-            if (leader is not PlayableLeader playableLeader) return false;
-            if (!nonPlayableLeader.CanJoinWithStateAllegiance(playableLeader)) return false;
+                    return nonPlayableLeader.Joined(playableLeader);
+                }
 
-            return nonPlayableLeader.Joined(playableLeader);
+                int loyalty = UnityEngine.Random.Range(1, 5);
+                pc.IncreaseLoyalty(loyalty, character);
+                return true;
+            }
+
+            if (pc.owner.GetAlignment() != actorOwner.GetAlignment())
+            {
+                int loyalty = UnityEngine.Random.Range(1, 5);
+                pc.DecreaseLoyalty(loyalty, character);
+                return true;
+            }
+
+            return false;
         };
 
         condition = (character) =>
@@ -43,12 +60,7 @@ public class StateAllegiance : EmmissaryAction
 
             PC pc = character.hex.GetPC();
             if (pc == null) return false;
-            if (pc.owner == null) return true;
-            if (!pc.isCapital) return false;
-            if (pc.owner is not NonPlayableLeader nonPlayableLeader) return false;
-            if (nonPlayableLeader.joined || nonPlayableLeader.killed) return false;
-            if (character.GetOwner() is not PlayableLeader playableLeader) return false;
-            return nonPlayableLeader.CanJoinWithStateAllegiance(playableLeader);
+            return true;
         };
 
         asyncEffect = async (character) =>

@@ -700,12 +700,12 @@ public class DeckManager : MonoBehaviour
         switch (card.GetCardType())
         {
             case CardTypeEnum.Land:
-                revealedPcHexes = RevealRegionOnMapOnly(board, card.name);
+                revealedPcHexes = RevealRegion(board, card.name, leader);
                 revealMessage = $"The lands of {card.name} were revealed";
                 break;
             case CardTypeEnum.PC:
                 string pcRegion = !string.IsNullOrWhiteSpace(card.region) ? card.region : card.name;
-                revealedPcHexes = RevealRegionOnMapOnly(board, pcRegion);
+                revealedPcHexes = RevealRegion(board, pcRegion, leader);
                 revealMessage = $"The lands of {pcRegion} were revealed";
                 break;
         }
@@ -1087,7 +1087,7 @@ public class DeckManager : MonoBehaviour
         return !string.IsNullOrWhiteSpace(card.GetActionRef());
     }
 
-    private List<Hex> RevealRegionOnMapOnly(Board board, string region)
+    private List<Hex> RevealRegion(Board board, string region, Leader owner)
     {
         List<Hex> revealedHexes = new();
         if (board == null || string.IsNullOrWhiteSpace(region)) return revealedHexes;
@@ -1110,7 +1110,7 @@ public class DeckManager : MonoBehaviour
             if (string.IsNullOrWhiteSpace(hexRegion)) continue;
             if (!string.Equals(NormalizeCardName(hexRegion), normalizedRegion, StringComparison.Ordinal)) continue;
 
-            hex.RevealMapOnlyArea(1, false, false);
+            hex.RevealArea(1, false, owner);
             revealedHexes.Add(hex);
         }
 
@@ -1172,11 +1172,12 @@ public class DeckManager : MonoBehaviour
 
         EventIconsManager iconsManager = EventIconsManager.FindManager();
         BoardNavigator navigator = BoardNavigator.Instance != null ? BoardNavigator.Instance : FindFirstObjectByType<BoardNavigator>();
-        Hex anchorHex = revealedPcHexes.FirstOrDefault(hex => hex != null);
+        Hex anchorHex = ChooseFocusHex(revealedPcHexes);
         if (anchorHex == null) return;
 
         string revealText = string.IsNullOrWhiteSpace(message) ? "The lands were revealed" : message;
 
+        Action showRevealMessage = () => MessageDisplay.ShowMessage(revealText, Color.yellow, true);
         if (iconsManager != null)
         {
             iconsManager.AddEventIcon(
@@ -1184,20 +1185,53 @@ public class DeckManager : MonoBehaviour
                 true,
                 () =>
                 {
-                    MessageDisplay.ShowMessage(revealText, Color.yellow);
+                    if (navigator != null)
+                    {
+                        navigator.EnqueueFocus(anchorHex, 0.5f, 0.18f, true, showRevealMessage);
+                    }
+                    else
+                    {
+                        showRevealMessage();
+                    }
                 });
         }
         else if (navigator != null)
         {
-            navigator.EnqueueFocus(anchorHex, 0.35f, 0.18f, true, () =>
-            {
-                MessageDisplay.ShowMessage(revealText, Color.yellow);
-            });
+            navigator.EnqueueFocus(anchorHex, 0.5f, 0.18f, true, showRevealMessage);
         }
         else
         {
-            MessageDisplay.ShowMessage(revealText, Color.yellow);
+            showRevealMessage();
         }
+    }
+
+    private static Hex ChooseFocusHex(List<Hex> hexes)
+    {
+        if (hexes == null || hexes.Count == 0) return null;
+
+        List<Hex> validHexes = hexes.Where(hex => hex != null).ToList();
+        if (validHexes.Count == 0) return null;
+        if (validHexes.Count == 1) return validHexes[0];
+
+        float averageX = (float)validHexes.Average(hex => hex.v2.x);
+        float averageY = (float)validHexes.Average(hex => hex.v2.y);
+
+        Hex bestHex = validHexes[0];
+        float bestDistance = float.MaxValue;
+        for (int i = 0; i < validHexes.Count; i++)
+        {
+            Hex hex = validHexes[i];
+            float dx = hex.v2.x - averageX;
+            float dy = hex.v2.y - averageY;
+            float distance = dx * dx + dy * dy;
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestHex = hex;
+            }
+        }
+
+        return bestHex;
     }
 
     private static void ApplyCardCosts(Leader owner, CardData card)

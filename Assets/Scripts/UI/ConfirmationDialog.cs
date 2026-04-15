@@ -72,7 +72,7 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(message, yesString, noString, false, true, onClose);
+        return Instance.Show(message, yesString, noString, false, true, false, onClose);
     }
 
     public static Task<bool> AskImmediate(string message, string yesString, string noString, Action onClose = null)
@@ -83,7 +83,7 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(message, yesString, noString, false, false, onClose);
+        return Instance.Show(message, yesString, noString, false, false, true, onClose);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(Instance.fallbackMessage, yesString, noString, false, true, onClose);
+        return Instance.Show(Instance.fallbackMessage, yesString, noString, false, true, false, onClose);
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public class ConfirmationDialog : MonoBehaviour
             return Task.FromResult(false);
         }
 
-        return Instance.Show(message, Instance.defaultYesLabel, Instance.defaultNoLabel, false, true, onClose);
+        return Instance.Show(message, Instance.defaultYesLabel, Instance.defaultNoLabel, false, true, false, onClose);
     }
 
     /// <summary>
@@ -126,10 +126,10 @@ public class ConfirmationDialog : MonoBehaviour
         }
 
         string okLabel = string.IsNullOrWhiteSpace(Instance.defaultOkLabel) ? "OK" : Instance.defaultOkLabel;
-        return Instance.Show(message, okLabel, string.Empty, true, true, onClose);
+        return Instance.Show(message, okLabel, string.Empty, true, true, false, onClose);
     }
 
-    private Task<bool> Show(string message, string yesString, string noString, bool singleButton = false, bool useEventIcon = true, Action onClose = null)
+    private Task<bool> Show(string message, string yesString, string noString, bool singleButton = false, bool useEventIcon = true, bool forceImmediate = false, Action onClose = null)
     {
         var request = new DialogRequest
         {
@@ -140,6 +140,25 @@ public class ConfirmationDialog : MonoBehaviour
             onClose = onClose,
             tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously)
         };
+
+        if (forceImmediate)
+        {
+            if (!queuedRequests.Contains(request))
+            {
+                queuedRequests.Add(request);
+            }
+            if (activeIndex < 0)
+            {
+                activeIndex = 0;
+            }
+            if (waitForMessagesRoutine != null)
+            {
+                StopCoroutine(waitForMessagesRoutine);
+                waitForMessagesRoutine = null;
+            }
+            ShowActiveImmediate();
+            return request.tcs.Task;
+        }
 
         EventIconsManager iconsManager = useEventIcon ? EventIconsManager.FindManager() : null;
         if (iconsManager == null)
@@ -265,6 +284,46 @@ public class ConfirmationDialog : MonoBehaviour
         }
         waitForMessagesRoutine = null;
         ShowActive();
+    }
+
+    private void ShowActiveImmediate()
+    {
+        if (queuedRequests.Count == 0)
+        {
+            HideInstant();
+            return;
+        }
+
+        if (waitForMessagesRoutine != null)
+        {
+            StopCoroutine(waitForMessagesRoutine);
+            waitForMessagesRoutine = null;
+        }
+
+        activeIndex = Mathf.Clamp(activeIndex, 0, queuedRequests.Count - 1);
+        var activeRequest = queuedRequests[activeIndex];
+
+        pendingRequest = activeRequest.tcs;
+        pendingOnClose = activeRequest.onClose;
+
+        content.SetActive(true);
+        IsShowing = true;
+
+        messageLabel.text = string.IsNullOrWhiteSpace(activeRequest.message) ? fallbackMessage : activeRequest.message;
+        yesButtonText.text = string.IsNullOrWhiteSpace(activeRequest.yesString) ? defaultYesLabel : activeRequest.yesString;
+        yesButton.gameObject.SetActive(true);
+
+        bool showNo = !activeRequest.singleButton;
+        noButton.gameObject.SetActive(showNo);
+        if (showNo)
+        {
+            noButtonText.text = string.IsNullOrWhiteSpace(activeRequest.noString) ? defaultNoLabel : activeRequest.noString;
+        }
+
+        bool canPrev = activeIndex > 0;
+        bool canNext = activeIndex < queuedRequests.Count - 1;
+        if (previousButton != null) previousButton.gameObject.SetActive(canPrev);
+        if (nextButton != null) nextButton.gameObject.SetActive(canNext);
     }
 
     private void ShowPrevious()

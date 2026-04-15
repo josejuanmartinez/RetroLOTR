@@ -175,24 +175,40 @@ public class NationSpawner : MonoBehaviour
         if (board == null || board.hexes == null || board.hexes.Count == 0) return;
 
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        if (deckManager == null)
+        List<string> allLandRegions;
+        Dictionary<string, string> pcRegionsByName = new(StringComparer.OrdinalIgnoreCase);
+
+        if (deckManager != null)
         {
-            Debug.LogWarning("NationSpawner: DeckManager not found; skipping land region assignment.");
+            if (deckManager.cards == null || deckManager.cards.Count == 0)
+            {
+                deckManager.InitializeFromResources();
+            }
+
+            allLandRegions = deckManager.cards != null
+                ? deckManager.cards
+                    .Where(card => card != null && card.GetCardType() == CardTypeEnum.Land && !string.IsNullOrWhiteSpace(card.name))
+                    .Select(card => card.name.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList()
+                : new List<string>();
+
+            foreach (CardData card in deckManager.cards ?? new List<CardData>())
+            {
+                if (card == null || string.IsNullOrWhiteSpace(card.name) || string.IsNullOrWhiteSpace(card.region)) continue;
+                if (card.GetCardType() != CardTypeEnum.PC) continue;
+                string key = card.name.Trim();
+                if (!pcRegionsByName.ContainsKey(key))
+                {
+                    pcRegionsByName[key] = card.region.Trim();
+                }
+            }
+        }
+        else if (!TryLoadRegionDataFromResources(out allLandRegions, out pcRegionsByName))
+        {
+            Debug.LogWarning("NationSpawner: Could not load card data for land region assignment.");
             return;
         }
-
-        if (deckManager.cards == null || deckManager.cards.Count == 0)
-        {
-            deckManager.InitializeFromResources();
-        }
-
-        List<string> allLandRegions = deckManager.cards != null
-            ? deckManager.cards
-                .Where(card => card != null && card.GetCardType() == CardTypeEnum.Land && !string.IsNullOrWhiteSpace(card.name))
-                .Select(card => card.name.Trim())
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList()
-            : new List<string>();
 
         if (allLandRegions.Count == 0) return;
 
@@ -211,14 +227,14 @@ public class NationSpawner : MonoBehaviour
             PC pc = hex.GetPCData();
             if (pc == null) continue;
 
-            string region = deckManager.ResolveRegionForPc(pc);
+            string region = deckManager != null
+                ? deckManager.ResolveRegionForPc(pc)
+                : ResolveRegionForPcFromLookup(pc, pcRegionsByName);
             if (string.IsNullOrWhiteSpace(region)) continue;
 
             seedQueue.Enqueue(new RegionSeed(hex.v2, region.Trim()));
             seededRegions.Add(region.Trim());
         }
-
-        FloodAssignRegions(seedQueue, assignedPositions);
 
         List<string> fallbackRegions = allLandRegions
             .Where(region => !seededRegions.Contains(region))
@@ -228,31 +244,28 @@ public class NationSpawner : MonoBehaviour
             .Where(hex => hex != null && string.IsNullOrWhiteSpace(hex.GetLandRegion()))
             .ToList();
 
-        int remainingRegions = fallbackRegions.Count;
         foreach (string region in fallbackRegions)
         {
             if (unassignedHexes.Count == 0) break;
 
-            int targetSize = Mathf.Max(1, Mathf.CeilToInt((float)unassignedHexes.Count / Mathf.Max(1, remainingRegions)));
             Hex startHex = unassignedHexes.FirstOrDefault(hex => hex != null && !hex.HasAnyPC() && !hex.IsWaterTerrain())
                 ?? unassignedHexes.FirstOrDefault(hex => hex != null && !hex.HasAnyPC())
                 ?? unassignedHexes.FirstOrDefault();
 
             if (startHex == null)
             {
-                remainingRegions--;
                 continue;
             }
 
-            Queue<RegionSeed> fallbackQueue = new();
-            fallbackQueue.Enqueue(new RegionSeed(startHex.v2, region));
-            FloodAssignRegions(fallbackQueue, assignedPositions, targetSize);
+            startHex.SetLandRegion(region.Trim());
+            seedQueue.Enqueue(new RegionSeed(startHex.v2, region.Trim()));
 
             unassignedHexes = board.GetHexes()
                 .Where(hex => hex != null && string.IsNullOrWhiteSpace(hex.GetLandRegion()))
                 .ToList();
-            remainingRegions--;
         }
+
+        FloodAssignRegions(seedQueue, assignedPositions);
 
         if (board.GetHexes().Any(hex => hex != null && string.IsNullOrWhiteSpace(hex.GetLandRegion())))
         {
@@ -265,6 +278,63 @@ public class NationSpawner : MonoBehaviour
         }
 
         landRegionsAssigned = board.GetHexes().All(hex => hex != null && !string.IsNullOrWhiteSpace(hex.GetLandRegion()));
+    }
+
+    private static bool TryLoadRegionDataFromResources(out List<string> landRegions, out Dictionary<string, string> pcRegionsByName)
+    {
+        landRegions = new List<string>();
+        pcRegionsByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        TextAsset manifestAsset = Resources.Load<TextAsset>("Cards");
+        if (manifestAsset == null) return false;
+
+        CardsManifest manifest = JsonUtility.FromJson<CardsManifest>(manifestAsset.text);
+        if (manifest?.decks == null || manifest.decks.Count == 0) return false;
+
+        foreach (DeckManifestEntry entry in manifest.decks)
+        {
+            if (entry == null || string.IsNullOrWhiteSpace(entry.resourcePath)) continue;
+
+            TextAsset deckAsset = Resources.Load<TextAsset>(entry.resourcePath);
+            if (deckAsset == null) continue;
+
+            DeckData deckData = JsonUtility.FromJson<DeckData>(deckAsset.text);
+            if (deckData?.cards == null || deckData.cards.Count == 0) continue;
+
+            foreach (CardData card in deckData.cards)
+            {
+                if (card == null || string.IsNullOrWhiteSpace(card.name)) continue;
+                if (card.GetCardType() == CardTypeEnum.Land)
+                {
+                    landRegions.Add(card.name.Trim());
+                    continue;
+                }
+
+                if (card.GetCardType() != CardTypeEnum.PC || string.IsNullOrWhiteSpace(card.region)) continue;
+                string key = card.name.Trim();
+                if (!pcRegionsByName.ContainsKey(key))
+                {
+                    pcRegionsByName[key] = card.region.Trim();
+                }
+            }
+        }
+
+        landRegions = landRegions
+            .Where(region => !string.IsNullOrWhiteSpace(region))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        return landRegions.Count > 0;
+    }
+
+    private static string ResolveRegionForPcFromLookup(PC pc, IReadOnlyDictionary<string, string> pcRegionsByName)
+    {
+        if (pc == null || pcRegionsByName == null) return null;
+        if (!string.IsNullOrWhiteSpace(pc.pcName) && pcRegionsByName.TryGetValue(pc.pcName.Trim(), out string region))
+        {
+            return region;
+        }
+
+        return null;
     }
 
     private void FloodAssignRegions(Queue<RegionSeed> seeds, HashSet<Vector2Int> assignedPositions, int maxAssignmentsPerRegion = int.MaxValue)
@@ -288,8 +358,28 @@ public class NationSpawner : MonoBehaviour
             }
             if (count >= maxAssignmentsPerRegion) continue;
 
-            if (!string.IsNullOrWhiteSpace(hex.GetLandRegion()))
+            string existingRegion = hex.GetLandRegion();
+            if (!string.IsNullOrWhiteSpace(existingRegion))
             {
+                if (!string.Equals(existingRegion.Trim(), regionKey, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                if (assignedPositions.Add(current.position))
+                {
+                    regionCounts[regionKey] = count + 1;
+                }
+
+                var matchingNeighbors = ((current.position.x & 1) == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+                for (int i = 0; i < matchingNeighbors.Length; i++)
+                {
+                    Vector2Int next = new(current.position.x + matchingNeighbors[i].x, current.position.y + matchingNeighbors[i].y);
+                    if (!visited.Add(next)) continue;
+                    if (!board.hexes.ContainsKey(next)) continue;
+                    queue.Enqueue(new RegionSeed(next, regionKey));
+                }
+
                 continue;
             }
 

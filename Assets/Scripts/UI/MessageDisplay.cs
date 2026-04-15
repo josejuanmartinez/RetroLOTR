@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 [RequireComponent(typeof(CanvasGroup))]
 public class MessageDisplay : MonoBehaviour
 {
+    private const float MinimumVisibleDuration = 2f;
     private static MessageDisplay instance;
     private static bool displayPaused;
     private CanvasGroup canvasGroup;
@@ -41,7 +42,7 @@ public class MessageDisplay : MonoBehaviour
     /// </summary>
     /// <param name="message">Text message to display</param>
     /// <param name="color">Color for the text (defaults to white if not specified)</param>
-    public static void ShowMessage(string message, Color? color = null)
+    public static void ShowMessage(string message, Color? color = null, bool forceImmediate = false)
     {
         Game game = FindFirstObjectByType<Game>();
         if (game == null) return;
@@ -59,6 +60,11 @@ public class MessageDisplay : MonoBehaviour
         else
         {
             Sounds.Instance?.PlayMessage();
+        }
+        if (forceImmediate)
+        {
+            instance.ShowNow(formattedMessage, resolved);
+            return;
         }
         instance.EnqueueMessage(formattedMessage, resolved);
     }
@@ -140,6 +146,21 @@ public class MessageDisplay : MonoBehaviour
         }
     }
 
+    private void ShowNow(string message, Color textColor)
+    {
+        if (displayPaused || persistentActive) return;
+        if (waitForSyncRoutine != null)
+        {
+            StopCoroutine(waitForSyncRoutine);
+            waitForSyncRoutine = null;
+        }
+
+        StopAllCoroutines();
+        messageQueue.Clear();
+        isDisplayingMessage = false;
+        StartCoroutine(DisplayCoroutine(message, textColor));
+    }
+
     private IEnumerator WaitForSyncThenProcess()
     {
         while (ShouldDelayForFocusOrWorldMessages())
@@ -177,7 +198,9 @@ public class MessageDisplay : MonoBehaviour
         yield return FadeCanvasGroup(canvasGroup, 0f, 1f, fadeDuration);
 
         // Wait for display duration
-        yield return new WaitForSeconds(displayDuration - (fadeDuration * 2));
+        float visibleDuration = Mathf.Max(displayDuration, MinimumVisibleDuration);
+        float waitDuration = Mathf.Max(0f, visibleDuration - (fadeDuration * 2));
+        yield return new WaitForSeconds(waitDuration);
 
         // Fade out
         yield return FadeCanvasGroup(canvasGroup, 1f, 0f, fadeDuration);

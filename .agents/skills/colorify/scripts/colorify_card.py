@@ -99,6 +99,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--allow-nonbw", action="store_true", help="Process even if the image already appears colorized")
+    parser.add_argument(
+        "--preserve-source-alpha",
+        action="store_true",
+        help="Reapply the source image alpha channel to the generated output.",
+    )
+    parser.add_argument(
+        "--match-source-size",
+        action="store_true",
+        help="Choose an edit size that matches the source image aspect ratio.",
+    )
     return parser.parse_args()
 
 
@@ -181,6 +191,52 @@ def prepare_upload_image(image_path: Path, max_dim: int) -> tuple[Path, bool]:
     return tmp_path, True
 
 
+def infer_edit_size(image_path: Path) -> str:
+    try:
+        from PIL import Image
+    except ImportError:
+        die("Pillow is required for source-size matching. Install it with `uv pip install pillow`.")
+
+    with Image.open(image_path) as img:
+        width, height = img.size
+
+    if width == height:
+        return "1024x1024"
+    if height > width:
+        return "1024x1536"
+    return "1536x1024"
+
+
+def extract_source_alpha(image_path: Path):
+    try:
+        from PIL import Image
+    except ImportError:
+        die("Pillow is required for alpha preservation. Install it with `uv pip install pillow`.")
+
+    with Image.open(image_path) as img:
+        if "A" not in img.getbands() and "transparency" not in img.info:
+            return None
+        return img.convert("RGBA").getchannel("A")
+
+
+def apply_source_alpha(image_path: Path, alpha_channel) -> None:
+    try:
+        from PIL import Image
+    except ImportError:
+        die("Pillow is required for alpha preservation. Install it with `uv pip install pillow`.")
+
+    if alpha_channel is None:
+        die("Source image does not contain transparency.")
+
+    with Image.open(image_path) as img:
+        working = img.convert("RGBA")
+        alpha = alpha_channel
+        if working.size != alpha.size:
+            alpha = alpha.resize(working.size, Image.Resampling.LANCZOS)
+        working.putalpha(alpha)
+        working.save(image_path, format="PNG", optimize=True)
+
+
 def main() -> int:
     args = parse_args()
     ensure_api_key(args.dry_run)
@@ -211,11 +267,13 @@ def main() -> int:
 
     final_prompt = build_prompt(args.prompt, image_path, args.card_name)
     upload_path, upload_is_temp = prepare_upload_image(image_path, args.upload_max_dim)
+    resolved_size = infer_edit_size(image_path) if args.match_source_size else args.size
+    source_alpha = extract_source_alpha(image_path) if args.preserve_source_alpha else None
 
     payload = {
         "model": args.model,
         "prompt": final_prompt,
-        "size": args.size,
+        "size": resolved_size,
         "quality": args.quality,
         "output_format": output_format,
     }
@@ -228,6 +286,10 @@ def main() -> int:
         print(f"upload_downscaled={upload_is_temp}")
         print(f"out={out_path}")
         print(f"grayscale_ratio={grayscale_ratio:.3f}")
+        print(f"preserve_source_alpha={args.preserve_source_alpha}")
+        print(f"match_source_size={args.match_source_size}")
+        print(f"resolved_size={resolved_size}")
+        print(f"has_source_alpha={source_alpha is not None}")
         for key, value in payload.items():
             print(f"{key}={value}")
         if upload_is_temp and upload_path.exists():
@@ -274,6 +336,10 @@ def main() -> int:
         die("OpenAI response did not include b64_json output.")
 
     out_path.write_bytes(base64.b64decode(image_b64))
+
+    if args.preserve_source_alpha:
+        apply_source_alpha(out_path, source_alpha)
+
     print(f"Wrote {out_path}")
     return 0
 

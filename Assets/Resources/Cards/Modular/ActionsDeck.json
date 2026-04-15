@@ -690,7 +690,7 @@
             "commanderSkillRequired": 0,
             "agentSkillRequired": 0,
             "emissarySkillRequired": 0,
-            "mageSkillRequired": 0,
+            "mageSkillRequired": 1,
             "difficulty": 0,
             "leatherRequired": 0,
             "mountsRequired": 0,
@@ -753,8 +753,8 @@
         },
         {
             "cardId": 103,
-            "name": "State Allegiance",
-            "description": "",
+            "name": "AFriendOrThree",
+            "description": "Claim the unowned, gently sway the uncertain, and if a capital still remembers old oaths, try to bring its ruler to your side.",
             "type": "Action",
             "actionClassName": "StateAllegiance",
             "actionId": 163,
@@ -773,7 +773,7 @@
             "goldRequired": 2,
             "tags": [],
             "jokerRequired": 0,
-            "spriteName": "StateAllegiance"
+            "spriteName": "AFriendOrThree"
         },
         {
             "cardId": 105,

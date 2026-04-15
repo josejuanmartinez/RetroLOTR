@@ -79,6 +79,9 @@ public class PopupManager : MonoBehaviour
     }
 
     public void Initialize(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
+        => InitializeInternal(title, spriteActor1, spriteActor2, text, typeWrite, restrictHeight, onClose, false);
+
+    private void InitializeInternal(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null, bool immediate = false)
     {
         FindFirstObjectByType<Game>()?.NotifyStartupPopupShown();
 
@@ -95,7 +98,7 @@ public class PopupManager : MonoBehaviour
 
         if (currentIndex == -1)
         {
-            if (ShouldDelayPopup())
+            if (!immediate && ShouldDelayPopup())
             {
                 StartWaitForMessages();
             }
@@ -157,6 +160,12 @@ public class PopupManager : MonoBehaviour
     public static void Show(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
     {
         ShowWithIconType(EventIconType.Story, title, spriteActor1, spriteActor2, text, typeWrite, restrictHeight, onClose);
+    }
+
+    public static void ShowImmediate(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
+    {
+        if (Instance == null) return;
+        Instance.InitializeInternal(title, spriteActor1, spriteActor2, text, typeWrite, restrictHeight, onClose, true);
     }
 
     public static void ShowWithIconType(EventIconType iconType, string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
