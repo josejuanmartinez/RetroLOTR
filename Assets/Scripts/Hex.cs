@@ -139,13 +139,18 @@ public class Hex : MonoBehaviour
     private static Transform sharedParticlePoolRoot;
     private static Material sharedCharacterOutlineMaterial;
     private MaterialPropertyBlock characterOutlinePropertyBlock;
-    private Color? lastAppliedOutlineColor;
+    private Color? lastAppliedCharacterOutlineColor;
+    private float? lastAppliedCharacterOutlineSize;
+    private Color? lastAppliedBannerOutlineColor;
+    private float? lastAppliedBannerOutlineSize;
 
     private const string Unknown = "Unknown character(s)";
     private const int DarknessTurnsDefault = 2;
     private const int SharedOneShotParticlePoolSize = 3;
     private const string CharacterOutlineMaterialPath = "Materials/CharacterOutline";
     private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
+    private static readonly int OutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
+    private const float BannerOutlineSize = 10f;
     private int darknessTurnsRemaining = 0;
 
     void Awake()
@@ -444,9 +449,9 @@ public class Hex : MonoBehaviour
         }
         else
         {
-            ClearBannerSprite();
             ClearOutlineColor();
         }
+        UpdateBannerSpriteForKnownCharacter();
         if (refreshHoverText) RefreshHoverText();
     }
 
@@ -913,6 +918,10 @@ public class Hex : MonoBehaviour
         {
             characterSpriteRenderer.sharedMaterial = sharedCharacterOutlineMaterial;
         }
+        if (bannerSpriteRenderer && bannerSpriteRenderer.sharedMaterial != sharedCharacterOutlineMaterial)
+        {
+            bannerSpriteRenderer.sharedMaterial = sharedCharacterOutlineMaterial;
+        }
     }
 
     private void UpdateMinimapTerrain(bool revealed)
@@ -1016,18 +1025,74 @@ public class Hex : MonoBehaviour
             {
                 characterAnimator.runtimeAnimatorController = defaultAnimatorController;
             }
-            ClearBannerSprite();
             ClearOutlineColor();
         }
+    }
+
+    private void UpdateBannerSpriteForKnownCharacter()
+    {
+        if (bannerSpriteRenderer == null)
+        {
+            return;
+        }
+
+        if (!TryGetKnownCharacterForBanner(out Character known))
+        {
+            ClearBannerSprite();
+            return;
+        }
+
+        UpdateBannerSprite(known);
+    }
+
+    private bool TryGetKnownCharacterForBanner(out Character known)
+    {
+        known = null;
+        if (TryGetKnownCharacterForIcon(out known))
+        {
+            return true;
+        }
+
+        if (board == null) board = FindFirstObjectByType<Board>();
+
+        PlayableLeader player = GetPlayer();
+        bool isScouted = IsScouted(player);
+        Character selected = board != null ? board.selectedCharacter : null;
+
+        if (selected != null && selected.hex == this &&
+            (isScouted || IsFriendlyCharacter(selected, player) || selected.GetOwner() == player))
+        {
+            known = selected;
+            return true;
+        }
+
+        for (int i = 0, n = characters.Count; i < n; i++)
+        {
+            Character candidate = characters[i];
+            if (candidate == null || candidate.killed || candidate.hex != this) continue;
+            if (IsFriendlyCharacter(candidate, player) || candidate.GetOwner() == player)
+            {
+                known = candidate;
+                return true;
+            }
+            if (isScouted && candidate.GetOwner() != null)
+            {
+                known = candidate;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void UpdateBannerSprite(Character character)
     {
         if (bannerSpriteRenderer == null) return;
 
-        if (character == null || !character.IsArmyCommander())
+        if (character == null)
         {
             ClearBannerSprite();
+            ClearBannerOutline();
             return;
         }
 
@@ -1043,6 +1108,7 @@ public class Hex : MonoBehaviour
         if (illustrations == null)
         {
             ClearBannerSprite();
+            ClearBannerOutline();
             return;
         }
 
@@ -1050,6 +1116,7 @@ public class Hex : MonoBehaviour
         {
             QueueBannerRetry();
             ClearBannerSprite();
+            ClearBannerOutline();
             return;
         }
 
@@ -1057,6 +1124,7 @@ public class Hex : MonoBehaviour
         if (ownerBannerSprite == null)
         {
             ClearBannerSprite();
+            ClearBannerOutline();
             return;
         }
 
@@ -1065,6 +1133,7 @@ public class Hex : MonoBehaviour
             bannerSpriteRenderer.sprite = ownerBannerSprite;
         }
         SetActiveFast(bannerSpriteRenderer.gameObject, true);
+        UpdateBannerOutline(character.GetOwner());
         CancelBannerRetry();
     }
 
@@ -1076,6 +1145,22 @@ public class Hex : MonoBehaviour
         }
 
         SetActiveFast(bannerSpriteRenderer.gameObject, false);
+    }
+
+    private void UpdateBannerOutline(Leader owner)
+    {
+        if (!bannerSpriteRenderer) return;
+        ApplyOutlineSettings(
+            bannerSpriteRenderer,
+            owner != null ? owner.nationColor : Color.white,
+            BannerOutlineSize,
+            isBanner: true);
+    }
+
+    private void ClearBannerOutline()
+    {
+        if (!bannerSpriteRenderer) return;
+        ApplyOutlineSettings(bannerSpriteRenderer, Color.white, BannerOutlineSize, isBanner: true);
     }
 
     private void QueueBannerRetry()
@@ -1159,66 +1244,58 @@ public class Hex : MonoBehaviour
         if (owner == null)
         {
             ClearOutlineColor();
+            ClearBannerOutline();
             return;
         }
-
-        string bannerName = ResolveBannerName(owner);
-        if (string.IsNullOrWhiteSpace(bannerName))
-        {
-            ApplyOutlineColorFromBanner(null, owner);
-            return;
-        }
-
-        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        if (illustrations == null || !illustrations.IsLoaded)
-        {
-            ApplyOutlineColorFromBanner(null, owner);
-            return;
-        }
-
-        Sprite ownerBannerSprite = illustrations.GetIllustrationByName(bannerName, false);
-        ApplyOutlineColorFromBanner(ownerBannerSprite, owner);
+        ApplyOutlineColorFromBanner(null, owner);
+        UpdateBannerOutline(owner);
     }
 
     private void ApplyOutlineColorFromBanner(Sprite bannerSprite, Leader owner)
     {
-        if (!characterSpriteRenderer) return;
-
-        Color outlineColor = TryGetDominantBannerColor(bannerSprite, out Color dominantColor)
-            ? dominantColor
-            : (owner != null ? owner.nationColor : Color.white);
-
-        if (lastAppliedOutlineColor == outlineColor) return;
-        lastAppliedOutlineColor = outlineColor;
-
-        if (characterOutlinePropertyBlock == null)
+        ApplyOutlineSettings(characterSpriteRenderer, owner != null ? owner.nationColor : Color.white, BannerOutlineSize, isBanner: false);
+        if (bannerSpriteRenderer)
         {
-            characterOutlinePropertyBlock = new MaterialPropertyBlock();
+            ApplyOutlineSettings(bannerSpriteRenderer, owner != null ? owner.nationColor : Color.white, BannerOutlineSize, isBanner: true);
         }
-
-        characterSpriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
-        characterOutlinePropertyBlock.SetColor(OutlineColorShaderId, outlineColor);
-        characterSpriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
     }
 
     private void ClearOutlineColor()
     {
-        if (!characterSpriteRenderer)
-        {
-            return;
-        }
+        ApplyOutlineSettings(characterSpriteRenderer, Color.white, BannerOutlineSize, isBanner: false);
+    }
 
-        if (lastAppliedOutlineColor == Color.white) return;
-        lastAppliedOutlineColor = Color.white;
+    private void ApplyOutlineSettings(SpriteRenderer spriteRenderer, Color outlineColor, float outlineSize, bool isBanner)
+    {
+        if (!spriteRenderer) return;
+
+        Color? lastColor = isBanner ? lastAppliedBannerOutlineColor : lastAppliedCharacterOutlineColor;
+        float? lastSize = isBanner ? lastAppliedBannerOutlineSize : lastAppliedCharacterOutlineSize;
+
+        bool colorChanged = !lastColor.HasValue || lastColor.Value != outlineColor;
+        bool sizeChanged = !lastSize.HasValue || !Mathf.Approximately(lastSize.Value, outlineSize);
+        if (!colorChanged && !sizeChanged) return;
+
+        if (isBanner)
+        {
+            lastAppliedBannerOutlineColor = outlineColor;
+            lastAppliedBannerOutlineSize = outlineSize;
+        }
+        else
+        {
+            lastAppliedCharacterOutlineColor = outlineColor;
+            lastAppliedCharacterOutlineSize = outlineSize;
+        }
 
         if (characterOutlinePropertyBlock == null)
         {
             characterOutlinePropertyBlock = new MaterialPropertyBlock();
         }
 
-        characterSpriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
-        characterOutlinePropertyBlock.SetColor(OutlineColorShaderId, Color.white);
-        characterSpriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
+        spriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
+        characterOutlinePropertyBlock.SetColor(OutlineColorShaderId, outlineColor);
+        characterOutlinePropertyBlock.SetFloat(OutlineSizeShaderId, outlineSize);
+        spriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
     }
 
     private static readonly Dictionary<Sprite, Color> dominantColorCache = new();

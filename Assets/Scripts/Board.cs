@@ -1169,7 +1169,7 @@ public class Board : MonoBehaviour
             SpriteRenderer moverBg = characterMoverSR == characterMoverImage ? EnsureMoverBackground(characterMoverSR) : null;
             SpriteRenderer fromBannerSR = previousHex.bannerSpriteRenderer;
             SpriteRenderer toBannerSR = newHex.bannerSpriteRenderer;
-            SpriteRenderer bannerMoverSR = character.IsArmyCommander() ? EnsureCharacterBannerMover(characterMoverSR) : null;
+            SpriteRenderer bannerMoverSR = EnsureCharacterBannerMover(characterMoverSR);
 
             SpriteRenderer fromArmySR = previousHex.GetArmySpriteRendererOnHex(character);
             SpriteRenderer toArmySR = newHex.GetArmySpriteRendererOnHex(character);
