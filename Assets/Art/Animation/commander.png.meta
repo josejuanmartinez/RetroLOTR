@@ -218,793 +218,793 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_0
+      name: commander_0
       rect:
         serializedVersion: 2
-        x: 82
-        y: 2551
-        width: 367
-        height: 508
+        x: 0
+        y: 2550
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4f1798215834b0e40800000000000000
-      internalID: 5623662798522905076
+      spriteID: dedc9634c5d7d874e87790660531551e
+      internalID: 2046924419
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_1
+      name: commander_1
       rect:
         serializedVersion: 2
-        x: 612
-        y: 2551
-        width: 368
-        height: 508
+        x: 532
+        y: 2550
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 1f73e3cc2845a6ab0800000000000000
-      internalID: -5014102314374514703
+      spriteID: 4e18f2c7eaeb78247abb3c4336e82f02
+      internalID: 16458674
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_2
+      name: commander_2
       rect:
         serializedVersion: 2
-        x: 1142
-        y: 2551
-        width: 370
-        height: 508
+        x: 1064
+        y: 2550
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 117b497735555e560800000000000000
-      internalID: 7342368584474343185
+      spriteID: 6a500d7e89daecd418a44dc9671100b9
+      internalID: 641694725
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_3
+      name: commander_3
       rect:
         serializedVersion: 2
-        x: 1668
-        y: 2551
-        width: 375
-        height: 508
+        x: 1596
+        y: 2550
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4d82f50b1144fb920800000000000000
-      internalID: 3008197918870939860
+      spriteID: ba4551fdb51415e40b37ebcd88fb53e6
+      internalID: -87412276
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_4
+      name: commander_4
       rect:
         serializedVersion: 2
-        x: 2195
-        y: 2551
-        width: 380
-        height: 507
+        x: 2128
+        y: 2550
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 96af77110cb55b330800000000000000
-      internalID: 3725985147203877481
+      spriteID: 0ca6f2352633efe488e8a88f10b976f1
+      internalID: 1485985291
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_5
+      name: commander_5
       rect:
         serializedVersion: 2
-        x: 2722
-        y: 2551
-        width: 386
-        height: 507
+        x: 2660
+        y: 2550
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b91a4bbadd32a4e00800000000000000
-      internalID: 1029674899783066011
+      spriteID: ef84e4f0e926b494296ec94b7510cdd1
+      internalID: 1556349013
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_6
+      name: commander_6
       rect:
         serializedVersion: 2
-        x: 51
-        y: 2041
-        width: 399
-        height: 506
+        x: 0
+        y: 2040
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 72e6d71491c7ef5d0800000000000000
-      internalID: -3026845451631628761
+      spriteID: 591828088d508b944b799c1c5557f021
+      internalID: -160825896
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_7
+      name: commander_7
       rect:
         serializedVersion: 2
-        x: 577
-        y: 2041
-        width: 406
-        height: 505
+        x: 532
+        y: 2040
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4bb707d283b52aad0800000000000000
-      internalID: -2692489330375492684
+      spriteID: 7faaa3451949f434490864fee82c74bb
+      internalID: 1604893952
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_8
+      name: commander_8
       rect:
         serializedVersion: 2
-        x: 1102
-        y: 2041
-        width: 415
-        height: 505
+        x: 1064
+        y: 2040
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 368c29cc5a3827d00800000000000000
-      internalID: 968981617963092067
+      spriteID: 8d46fbc49ac21eb4f9e2d476b7847e52
+      internalID: 919434337
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_9
+      name: commander_9
       rect:
         serializedVersion: 2
-        x: 1617
-        y: 2041
-        width: 435
-        height: 503
+        x: 1596
+        y: 2040
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 1d67c6f849c4cebe0800000000000000
-      internalID: -1446697179347650863
+      spriteID: 0b9de64cd6145a14b975f70e211de7a4
+      internalID: -168399000
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_10
+      name: commander_10
       rect:
         serializedVersion: 2
-        x: 2144
-        y: 2041
-        width: 440
-        height: 503
+        x: 2128
+        y: 2040
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 62cf365ce0f5e4de0800000000000000
-      internalID: -1347034721491354586
+      spriteID: 2b993e4a5231c6c4ca6f7504197db47b
+      internalID: 1113690386
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_11
+      name: commander_11
       rect:
         serializedVersion: 2
-        x: 2671
-        y: 2041
-        width: 445
-        height: 503
+        x: 2660
+        y: 2040
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d8b9cba808e806f90800000000000000
-      internalID: -6962408341180212339
+      spriteID: af1b8787509754440b8e8466fbb7d7bb
+      internalID: 1673444608
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_12
+      name: commander_12
       rect:
         serializedVersion: 2
-        x: 6
-        y: 1531
-        width: 450
-        height: 503
+        x: 0
+        y: 1530
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3a462be8ce57ee760800000000000000
-      internalID: 7489052889230501027
+      spriteID: 57f6f9bd017b90646b870c6e3b93f495
+      internalID: 2072090924
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_13
+      name: commander_13
       rect:
         serializedVersion: 2
-        x: 533
-        y: 1531
-        width: 456
-        height: 503
+        x: 532
+        y: 1530
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bdab1df88c7d943b0800000000000000
-      internalID: -5527649811214255397
+      spriteID: 4bee37986d280444e96baa7b6f3afb68
+      internalID: 1899259698
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_14
+      name: commander_14
       rect:
         serializedVersion: 2
-        x: 1065
-        y: 1531
-        width: 456
-        height: 503
+        x: 1064
+        y: 1530
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e8c028a2730263020800000000000000
-      internalID: 2321078079264525454
+      spriteID: 272abc599d68e074c8c0ce8cb6ff5d13
+      internalID: -173643436
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_15
+      name: commander_15
       rect:
         serializedVersion: 2
-        x: 1597
-        y: 1531
-        width: 456
-        height: 503
+        x: 1596
+        y: 1530
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a773a0751feb1a1b0800000000000000
-      internalID: -5647022513989208198
+      spriteID: 6061c754384dc5f4aa3059646fe0be49
+      internalID: -588637167
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_16
+      name: commander_16
       rect:
         serializedVersion: 2
-        x: 2133
-        y: 1531
-        width: 451
-        height: 503
+        x: 2128
+        y: 1530
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: be840170b640ec3f0800000000000000
-      internalID: -878760019564148501
+      spriteID: bf2be2cbc9f7f99459452dbef552f018
+      internalID: -1513704843
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_17
+      name: commander_17
       rect:
         serializedVersion: 2
-        x: 2667
-        y: 1531
-        width: 449
-        height: 504
+        x: 2660
+        y: 1530
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7a5023647b53450c0800000000000000
-      internalID: -4587983059110722137
+      spriteID: 8d245aa9522686444aeba52c222d1a2a
+      internalID: 303745243
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_18
+      name: commander_18
       rect:
         serializedVersion: 2
-        x: 11
-        y: 1021
-        width: 444
-        height: 504
+        x: 0
+        y: 1020
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e73ee7541b979fb80800000000000000
-      internalID: -8360517430954499202
+      spriteID: f57bd8f0b3d1f6048a8d94283f785a55
+      internalID: 297921683
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_19
+      name: commander_19
       rect:
         serializedVersion: 2
-        x: 551
-        y: 1021
-        width: 434
-        height: 505
+        x: 532
+        y: 1020
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c1315a3c3b2b97b90800000000000000
-      internalID: -7243562040497466596
+      spriteID: 7c2f0beb81eceea4d98b3a84dc29302f
+      internalID: 408049087
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_20
+      name: commander_20
       rect:
         serializedVersion: 2
-        x: 1087
-        y: 1021
-        width: 429
-        height: 506
+        x: 1064
+        y: 1020
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7a117654af19456b0800000000000000
-      internalID: -5308457556670738009
+      spriteID: b5adcb9a2737fec4fb0d6619ed21876b
+      internalID: 1101502944
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_21
+      name: commander_21
       rect:
         serializedVersion: 2
-        x: 1624
-        y: 1021
-        width: 423
-        height: 507
+        x: 1596
+        y: 1020
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4277d306df8fb8aa0800000000000000
-      internalID: -6157554298373966044
+      spriteID: 3e50b995570f51a4eb1a13bd0a7bd101
+      internalID: 502896708
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_22
+      name: commander_22
       rect:
         serializedVersion: 2
-        x: 2168
-        y: 1021
-        width: 409
-        height: 508
+        x: 2128
+        y: 1020
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 789a31f9c6fa7c290800000000000000
-      internalID: -7870128942746457721
+      spriteID: 00403f216aa81bc42b2cabdc86d506ee
+      internalID: -805131452
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_23
+      name: commander_23
       rect:
         serializedVersion: 2
-        x: 2704
-        y: 1021
-        width: 404
-        height: 508
+        x: 2660
+        y: 1020
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: aa2652481158f5a70800000000000000
-      internalID: 8817912905692701354
+      spriteID: 9ecd4a53bc26b674cb6a8c42f5cdbee0
+      internalID: -249015763
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_24
+      name: commander_24
       rect:
         serializedVersion: 2
-        x: 49
-        y: 511
-        width: 398
-        height: 508
+        x: 0
+        y: 510
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 667e8c377cf4e5e30800000000000000
-      internalID: 4494117196221966182
+      spriteID: a6e5708269571694d9ca5807d828ff3c
+      internalID: -266130008
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_25
+      name: commander_25
       rect:
         serializedVersion: 2
-        x: 585
-        y: 511
-        width: 394
-        height: 508
+        x: 532
+        y: 510
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 939128735da1c8630800000000000000
-      internalID: 3930546077849229625
+      spriteID: 70513c3b20ca4884580a4cf7ba49af6a
+      internalID: -1539642453
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_26
+      name: commander_26
       rect:
         serializedVersion: 2
-        x: 1125
-        y: 511
-        width: 385
-        height: 508
+        x: 1064
+        y: 510
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 58eb4458756dfd770800000000000000
-      internalID: 8637858281706274437
+      spriteID: 2daa9040496e7144693611a6fdbbacb4
+      internalID: 1777204527
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_27
+      name: commander_27
       rect:
         serializedVersion: 2
-        x: 1661
-        y: 511
-        width: 381
-        height: 508
+        x: 1596
+        y: 510
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e44ea0c89394ba3f0800000000000000
-      internalID: -888535989964053426
+      spriteID: 113d15d60c1347e4da8fe3112b606565
+      internalID: -1028329098
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_28
+      name: commander_28
       rect:
         serializedVersion: 2
-        x: 2197
-        y: 511
-        width: 377
-        height: 508
+        x: 2128
+        y: 510
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: be4d7c178af21caf0800000000000000
-      internalID: -377968493212478229
+      spriteID: 46d21ee5b56094b41ba0e0441f12ad5a
+      internalID: 1483575931
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_29
+      name: commander_29
       rect:
         serializedVersion: 2
-        x: 2736
-        y: 511
-        width: 375
-        height: 508
+        x: 2660
+        y: 510
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 937df6fca201dcd20800000000000000
-      internalID: 3300311877987325753
+      spriteID: 5ac3b0d02dc0ba2499873f4d72a0dcf9
+      internalID: 1638861841
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_30
+      name: commander_30
       rect:
         serializedVersion: 2
-        x: 80
-        y: 1
-        width: 374
-        height: 508
+        x: 0
+        y: 0
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f02a71461201adad0800000000000000
-      internalID: -2676809292919102961
+      spriteID: 5e2c1ba4d8bfcaf45bea756ede9f4232
+      internalID: 1119269400
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_31
+      name: commander_31
       rect:
         serializedVersion: 2
-        x: 614
-        y: 1
-        width: 374
-        height: 508
+        x: 532
+        y: 0
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8d15f455964b50220800000000000000
-      internalID: 2451563936668930520
+      spriteID: c9257aca7792f3b4e98d06d330dd12a1
+      internalID: 907524174
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_32
+      name: commander_32
       rect:
         serializedVersion: 2
-        x: 1150
-        y: 1
-        width: 371
-        height: 508
+        x: 1064
+        y: 0
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a8386309b86e01980800000000000000
-      internalID: -8570096603791719542
+      spriteID: 5479ef8c28bdf444fa42a8afcdb43082
+      internalID: -1557796556
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_33
+      name: commander_33
       rect:
         serializedVersion: 2
-        x: 1682
-        y: 1
-        width: 371
-        height: 508
+        x: 1596
+        y: 0
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8254aec6cbe0129e0800000000000000
-      internalID: -1648019786196957912
+      spriteID: f00725129cbc3d94fb9b981282183f1f
+      internalID: 2135061809
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_34
+      name: commander_34
       rect:
         serializedVersion: 2
-        x: 2214
-        y: 1
-        width: 370
-        height: 508
+        x: 2128
+        y: 0
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a864243c765a03c10800000000000000
-      internalID: 2031305297020208778
+      spriteID: d746213bb82ddd54aa2d00b0e3c3c235
+      internalID: -1479109954
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-front-facing-commander-sprite-designed-with-the--max-px-36_35
+      name: commander_35
       rect:
         serializedVersion: 2
-        x: 2742
-        y: 1
-        width: 368
-        height: 508
+        x: 2660
+        y: 0
+        width: 532
+        height: 510
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 12d3ea5436ca21ed0800000000000000
-      internalID: -2444702105337971423
+      spriteID: f5e2070b3940ab14fa65e261ab750f49
+      internalID: 513611673
       vertices: []
       indices: 
       edges: []
@@ -1013,7 +1013,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 57612fbd91627f14d9ac48a7ab398625
     internalID: 0
     vertices: []
     indices: 
@@ -1021,44 +1021,46 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":6.0,"y":6.0},"gridSpriteSize":{"x":532.0,"y":510.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_0: 5623662798522905076
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_1: -5014102314374514703
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_10: -1347034721491354586
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_11: -6962408341180212339
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_12: 7489052889230501027
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_13: -5527649811214255397
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_14: 2321078079264525454
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_15: -5647022513989208198
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_16: -878760019564148501
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_17: -4587983059110722137
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_18: -8360517430954499202
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_19: -7243562040497466596
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_2: 7342368584474343185
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_20: -5308457556670738009
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_21: -6157554298373966044
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_22: -7870128942746457721
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_23: 8817912905692701354
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_24: 4494117196221966182
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_25: 3930546077849229625
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_26: 8637858281706274437
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_27: -888535989964053426
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_28: -377968493212478229
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_29: 3300311877987325753
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_3: 3008197918870939860
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_30: -2676809292919102961
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_31: 2451563936668930520
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_32: -8570096603791719542
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_33: -1648019786196957912
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_34: 2031305297020208778
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_35: -2444702105337971423
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_4: 3725985147203877481
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_5: 1029674899783066011
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_6: -3026845451631628761
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_7: -2692489330375492684
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_8: 968981617963092067
-      A-front-facing-commander-sprite-designed-with-the--max-px-36_9: -1446697179347650863
+      commander_0: 2046924419
+      commander_1: 16458674
+      commander_10: 1113690386
+      commander_11: 1673444608
+      commander_12: 2072090924
+      commander_13: 1899259698
+      commander_14: -173643436
+      commander_15: -588637167
+      commander_16: -1513704843
+      commander_17: 303745243
+      commander_18: 297921683
+      commander_19: 408049087
+      commander_2: 641694725
+      commander_20: 1101502944
+      commander_21: 502896708
+      commander_22: -805131452
+      commander_23: -249015763
+      commander_24: -266130008
+      commander_25: -1539642453
+      commander_26: 1777204527
+      commander_27: -1028329098
+      commander_28: 1483575931
+      commander_29: 1638861841
+      commander_3: -87412276
+      commander_30: 1119269400
+      commander_31: 907524174
+      commander_32: -1557796556
+      commander_33: 2135061809
+      commander_34: -1479109954
+      commander_35: 513611673
+      commander_4: 1485985291
+      commander_5: 1556349013
+      commander_6: -160825896
+      commander_7: 1604893952
+      commander_8: 919434337
+      commander_9: -168399000
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -138,6 +138,7 @@ public class Hex : MonoBehaviour
     private static readonly Dictionary<SharedParticleType, SharedParticlePoolState> sharedParticlePools = new();
     private static Transform sharedParticlePoolRoot;
     private static Material sharedCharacterOutlineMaterial;
+    private static Material sharedBannerOutlineMaterial;
     private MaterialPropertyBlock characterOutlinePropertyBlock;
     private Color? lastAppliedCharacterOutlineColor;
     private float? lastAppliedCharacterOutlineSize;
@@ -148,9 +149,12 @@ public class Hex : MonoBehaviour
     private const int DarknessTurnsDefault = 2;
     private const int SharedOneShotParticlePoolSize = 3;
     private const string CharacterOutlineMaterialPath = "Materials/CharacterOutline";
+    private const string BannerOutlineMaterialPath = "Materials/BannerOutline";
     private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
     private static readonly int OutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
-    private const float BannerOutlineSize = 10f;
+    [Header("Outline")]
+    public float characterOutlineSize = 10f;
+    public float bannerOutlineSize = 70f;
     private int darknessTurnsRemaining = 0;
 
     void Awake()
@@ -285,7 +289,7 @@ public class Hex : MonoBehaviour
         v2 = new Vector2Int(row, col);
         assignedLandRegion = null;
         if (game == null) game = FindFirstObjectByType<Game>();
-        terrainTexture.sortingOrder = int.MaxValue - (col * board.GetHeight() + row);
+        terrainTexture.sortingOrder = int.MaxValue - row;
     }
 
     public SpriteRenderer GetCharacterSpriteRendererOnHex()
@@ -596,7 +600,7 @@ public class Hex : MonoBehaviour
             return;
         }
 
-        if (!IsHexRevealed())
+        if (!IsHexSeen())
         {
             Unhover();
             return;
@@ -918,9 +922,20 @@ public class Hex : MonoBehaviour
         {
             characterSpriteRenderer.sharedMaterial = sharedCharacterOutlineMaterial;
         }
-        if (bannerSpriteRenderer && bannerSpriteRenderer.sharedMaterial != sharedCharacterOutlineMaterial)
+
+        if (sharedBannerOutlineMaterial == null)
         {
-            bannerSpriteRenderer.sharedMaterial = sharedCharacterOutlineMaterial;
+            sharedBannerOutlineMaterial = Resources.Load<Material>(BannerOutlineMaterialPath);
+            if (sharedBannerOutlineMaterial == null)
+            {
+                Debug.LogWarning($"Hex could not load banner outline material at Resources/{BannerOutlineMaterialPath}.");
+                return;
+            }
+        }
+
+        if (bannerSpriteRenderer && bannerSpriteRenderer.sharedMaterial != sharedBannerOutlineMaterial)
+        {
+            bannerSpriteRenderer.sharedMaterial = sharedBannerOutlineMaterial;
         }
     }
 
@@ -930,7 +945,7 @@ public class Hex : MonoBehaviour
         terrainOrNoneMinimapTexture.sprite = terrainTexture ? terrainTexture.sprite : null;
         if (revealed)
         {
-            SetSpriteAlpha(terrainOrNoneMinimapTexture, 1f);
+            SetSpriteAlpha(terrainOrNoneMinimapTexture, isCurrentlyUnseen ? 0.1f : 1f);
         }
         else
         {
@@ -941,16 +956,17 @@ public class Hex : MonoBehaviour
     private void UpdateVisibilityForFog()
     {
         bool revealed = IsHexRevealed();
+        bool seen = IsHexSeen();
         if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, revealed);
         UpdateTerrainVisualAlpha();
         if (revealed)
         {
             SetActiveFast(hoverHexFrame, false);
-            if (isSelected) SetSharedSelectedParticlesActive(true);
-            if (freeArmiesAtHexHover) SetActiveFast(freeArmiesAtHexHover.gameObject, true);
-            if (neutralArmiesAtHexHover) SetActiveFast(neutralArmiesAtHexHover.gameObject, true);
-            if (darkServantArmiesAtHexHover) SetActiveFast(darkServantArmiesAtHexHover.gameObject, true);
-            if (charactersAtHexHover) SetActiveFast(charactersAtHexHover.gameObject, true);
+            SetSharedSelectedParticlesActive(seen && isSelected);
+            if (freeArmiesAtHexHover) SetActiveFast(freeArmiesAtHexHover.gameObject, seen);
+            if (neutralArmiesAtHexHover) SetActiveFast(neutralArmiesAtHexHover.gameObject, seen);
+            if (darkServantArmiesAtHexHover) SetActiveFast(darkServantArmiesAtHexHover.gameObject, seen);
+            if (charactersAtHexHover) SetActiveFast(charactersAtHexHover.gameObject, seen);
             UpdateArtifactVisibility();
             UpdateParticles();
             RefreshFrontierRowVisuals();
@@ -1153,14 +1169,14 @@ public class Hex : MonoBehaviour
         ApplyOutlineSettings(
             bannerSpriteRenderer,
             owner != null ? owner.nationColor : Color.white,
-            BannerOutlineSize,
+            bannerOutlineSize,
             isBanner: true);
     }
 
     private void ClearBannerOutline()
     {
         if (!bannerSpriteRenderer) return;
-        ApplyOutlineSettings(bannerSpriteRenderer, Color.white, BannerOutlineSize, isBanner: true);
+        ApplyOutlineSettings(bannerSpriteRenderer, Color.white, bannerOutlineSize, isBanner: true);
     }
 
     private void QueueBannerRetry()
@@ -1253,16 +1269,16 @@ public class Hex : MonoBehaviour
 
     private void ApplyOutlineColorFromBanner(Sprite bannerSprite, Leader owner)
     {
-        ApplyOutlineSettings(characterSpriteRenderer, owner != null ? owner.nationColor : Color.white, BannerOutlineSize, isBanner: false);
+        ApplyOutlineSettings(characterSpriteRenderer, owner != null ? owner.nationColor : Color.white, characterOutlineSize, isBanner: false);
         if (bannerSpriteRenderer)
         {
-            ApplyOutlineSettings(bannerSpriteRenderer, owner != null ? owner.nationColor : Color.white, BannerOutlineSize, isBanner: true);
+            ApplyOutlineSettings(bannerSpriteRenderer, owner != null ? owner.nationColor : Color.white, bannerOutlineSize, isBanner: true);
         }
     }
 
     private void ClearOutlineColor()
     {
-        ApplyOutlineSettings(characterSpriteRenderer, Color.white, BannerOutlineSize, isBanner: false);
+        ApplyOutlineSettings(characterSpriteRenderer, Color.white, characterOutlineSize, isBanner: false);
     }
 
     private void ApplyOutlineSettings(SpriteRenderer spriteRenderer, Color outlineColor, float outlineSize, bool isBanner)
@@ -1465,7 +1481,7 @@ public class Hex : MonoBehaviour
     {
         isRevealed = true;
         mapOnlyRevealed = true;
-        isCurrentlyUnseen = false;
+        isCurrentlyUnseen = !(game != null && game.player != null && game.player.LeaderSeesHex(this));
         UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         RedrawArmies(false);
@@ -1588,7 +1604,7 @@ public class Hex : MonoBehaviour
 
     public void Hide()
     {
-        bool shouldBeUnseen = IsHexRevealed() && !mapOnlyRevealed;
+        bool shouldBeUnseen = IsHexRevealed() && mapOnlyRevealed;
         bool unseenChanged = isCurrentlyUnseen != shouldBeUnseen;
         isCurrentlyUnseen = shouldBeUnseen;
         UpdateVisibilityForFog();
@@ -1920,6 +1936,7 @@ public class Hex : MonoBehaviour
     {
         bool revealed = IsHexRevealed();
         bool isWaterHex = terrainType == TerrainEnum.shallowWater || terrainType == TerrainEnum.deepWater;
+        float frontierAlpha = isCurrentlyUnseen ? 0.1f : 1f;
 
         if (!revealed)
         {
@@ -1930,6 +1947,7 @@ public class Hex : MonoBehaviour
 
         SetActiveFast(hexTextureWater, isWaterHex);
         SetActiveFast(cliffGameObject, !isWaterHex);
+        SetFrontierRowAlpha(frontierAlpha);
     }
 
     private void InitializeSharedSelectedParticles()
@@ -2173,6 +2191,19 @@ public class Hex : MonoBehaviour
         }
 
         SetHexSpriteAlpha(terrainAlpha);
+    }
+
+    private void SetFrontierRowAlpha(float alpha)
+    {
+        if (cliffGameObject != null)
+        {
+            SetSpriteAlpha(cliffGameObject.GetComponent<SpriteRenderer>(), alpha);
+        }
+
+        if (hexTextureWater != null)
+        {
+            SetSpriteAlpha(hexTextureWater.GetComponent<SpriteRenderer>(), alpha);
+        }
     }
 
     private void UpdatePcWorldText(bool shouldShowPc)

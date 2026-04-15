@@ -701,16 +701,15 @@ public class DeckManager : MonoBehaviour
         {
             case CardTypeEnum.Land:
                 revealedPcHexes = RevealRegion(board, card.name, leader);
-                revealMessage = $"The lands of {card.name} were revealed";
+                revealMessage = $"The lands of {card.name} were discovered";
                 break;
             case CardTypeEnum.PC:
                 string pcRegion = !string.IsNullOrWhiteSpace(card.region) ? card.region : card.name;
                 revealedPcHexes = RevealRegion(board, pcRegion, leader);
-                revealMessage = $"The lands of {pcRegion} were revealed";
+                revealMessage = $"The lands of {pcRegion} were discovered";
                 break;
         }
 
-        leader.RefreshVisibleHexesImmediate();
         MinimapManager.RefreshMinimap();
         if (revealedPcHexes == null || revealedPcHexes.Count == 0)
         {
@@ -1110,7 +1109,7 @@ public class DeckManager : MonoBehaviour
             if (string.IsNullOrWhiteSpace(hexRegion)) continue;
             if (!string.Equals(NormalizeCardName(hexRegion), normalizedRegion, StringComparison.Ordinal)) continue;
 
-            hex.RevealArea(1, false, owner);
+            hex.RevealMapOnlyArea(1, false, false);
             revealedHexes.Add(hex);
         }
 

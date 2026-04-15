@@ -631,7 +631,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   v2: {x: 0, y: 0}
-  defaultCharacterSprite: {fileID: 5623662798522905076, guid: 217f3d8542b734c478889e25c321dfe9, type: 3}
+  defaultCharacterSprite: {fileID: -1787505746, guid: fe4841de91130284f8bc74d7305770e6, type: 3}
   messageNoUI: {fileID: 4510516640989347010}
   characterSpriteRenderer: {fileID: 970823944743101251}
   bannerSpriteRenderer: {fileID: 1254883462521043516}
@@ -697,6 +697,8 @@ MonoBehaviour:
   characters: []
   hiddenArtifacts: []
   isSelected: 0
+  characterOutlineSize: 5
+  bannerOutlineSize: 70
 --- !u!114 &8419863931886288814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -955,7 +957,7 @@ SpriteRenderer:
   m_Size: {x: 3.2809548, y: 5.1499996}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!95 &3745175909043423831
 Animator:
@@ -1072,7 +1074,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 28b9eb2ad33a4434a5b547f50d18b675, type: 2}
+  - {fileID: 2100000, guid: 7f3f2a1d73d34e3d9a2d8d7f1c94b0ce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1095,7 +1097,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 718c7bdb9f669744cbc51f740488a10c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 46830afc8560d584d868804d29a9bb1a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -218,793 +218,793 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_0
+      name: mage_0
       rect:
         serializedVersion: 2
-        x: 12
-        y: 2565
-        width: 409
-        height: 503
+        x: 0
+        y: 2560
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a2033ffc86a695d20800000000000000
-      internalID: 3267760003031969834
+      spriteID: a8a3ad8a644e28b458242e8d5001566e
+      internalID: 1524277432
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_1
+      name: mage_1
       rect:
         serializedVersion: 2
-        x: 447
-        y: 2565
-        width: 407
-        height: 503
+        x: 436
+        y: 2560
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 5e06824fba1a07820800000000000000
-      internalID: 2914006718816477413
+      spriteID: 241b884cefcf7ca42be5fdef655db665
+      internalID: 275198712
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_2
+      name: mage_2
       rect:
         serializedVersion: 2
-        x: 881
-        y: 2565
-        width: 406
-        height: 504
+        x: 872
+        y: 2560
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b96d82fd1cdc36480800000000000000
-      internalID: -8907049405452331365
+      spriteID: 2d0aa0b09c55be542ae8bdea82e38d90
+      internalID: 1053403721
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_3
+      name: mage_3
       rect:
         serializedVersion: 2
-        x: 1316
-        y: 2565
-        width: 404
-        height: 504
+        x: 1308
+        y: 2560
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e8f216f750fe947b0800000000000000
-      internalID: -5239393884577910898
+      spriteID: 3009b4366c1cfbf428d2a8333fc2e4c2
+      internalID: -461154224
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_4
+      name: mage_4
       rect:
         serializedVersion: 2
-        x: 1751
-        y: 2565
-        width: 403
-        height: 504
+        x: 1744
+        y: 2560
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 5e95cdca19746f360800000000000000
-      internalID: 7203023345021639141
+      spriteID: 21b3f331df8721340a52e942953da89a
+      internalID: 1022081622
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_5
+      name: mage_5
       rect:
         serializedVersion: 2
-        x: 2186
-        y: 2565
-        width: 401
-        height: 505
+        x: 2180
+        y: 2560
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f83124fc592033500800000000000000
-      internalID: 374646036452479887
+      spriteID: 7fff1a2995300894caceb78fa4b14c20
+      internalID: -2077801340
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_6
+      name: mage_6
       rect:
         serializedVersion: 2
-        x: 5
-        y: 2053
-        width: 401
-        height: 505
+        x: 0
+        y: 2048
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c3dc5bb3665b88c60800000000000000
-      internalID: 7820700203621928252
+      spriteID: 8e0a1b57c0bef0e46b7a5de9e2cd9a72
+      internalID: -329064844
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_7
+      name: mage_7
       rect:
         serializedVersion: 2
-        x: 441
-        y: 2053
-        width: 400
-        height: 505
+        x: 436
+        y: 2048
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 341a133c2c86fcbc0800000000000000
-      internalID: -3760671978123321021
+      spriteID: 0522f5af92b35a34f92ad0ae0bd5fb09
+      internalID: 2004391682
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_8
+      name: mage_8
       rect:
         serializedVersion: 2
-        x: 876
-        y: 2053
-        width: 401
-        height: 505
+        x: 872
+        y: 2048
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bb79918cf4a340670800000000000000
-      internalID: 8503986110716286907
+      spriteID: c068eb26e2cd85446a703081e4d3dbea
+      internalID: 95205618
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_9
+      name: mage_9
       rect:
         serializedVersion: 2
-        x: 1313
-        y: 2053
-        width: 400
-        height: 505
+        x: 1308
+        y: 2048
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: aceb41cc5ab8a9cd0800000000000000
-      internalID: -2550572694742188342
+      spriteID: d41cf7e5fb347b04dad64d4c0d3a6df2
+      internalID: -1853611385
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_10
+      name: mage_10
       rect:
         serializedVersion: 2
-        x: 1750
-        y: 2053
-        width: 401
-        height: 505
+        x: 1744
+        y: 2048
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d2d92df5898f91490800000000000000
-      internalID: -7774909948352094931
+      spriteID: 8c1dbd0c21e9d014bb900c09706839c3
+      internalID: -1934080462
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_11
+      name: mage_11
       rect:
         serializedVersion: 2
-        x: 2184
-        y: 2053
-        width: 405
-        height: 505
+        x: 2180
+        y: 2048
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8c93ee266e3835530800000000000000
-      internalID: 3842559932602661320
+      spriteID: 60b963efc26788743a4c178b79163411
+      internalID: 1972268690
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_12
+      name: mage_12
       rect:
         serializedVersion: 2
-        x: 4
-        y: 1541
-        width: 407
-        height: 505
+        x: 0
+        y: 1536
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 74288b62e4e65e870800000000000000
-      internalID: 8711490336154223175
+      spriteID: d1575135f2901ab48810e1286a7f2baf
+      internalID: 1950354680
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_13
+      name: mage_13
       rect:
         serializedVersion: 2
-        x: 441
-        y: 1541
-        width: 408
-        height: 505
+        x: 436
+        y: 1536
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f540eaab1d61a11b0800000000000000
-      internalID: -5685206489565887393
+      spriteID: 10062291585a65c49b75d9e37e2f723d
+      internalID: 1149066746
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_14
+      name: mage_14
       rect:
         serializedVersion: 2
-        x: 877
-        y: 1541
-        width: 411
-        height: 505
+        x: 872
+        y: 1536
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a4cb74389546e4690800000000000000
-      internalID: -7616039584219546550
+      spriteID: 115fcc60db49647448b179ba7966477a
+      internalID: -257215485
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_15
+      name: mage_15
       rect:
         serializedVersion: 2
-        x: 1318
-        y: 1541
-        width: 409
-        height: 505
+        x: 1308
+        y: 1536
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 482ee22c6f0a5a280800000000000000
-      internalID: -9032636495941410172
+      spriteID: 9bd20916ba983f441bfa7ed46a20f23c
+      internalID: 1896225213
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_16
+      name: mage_16
       rect:
         serializedVersion: 2
-        x: 1750
-        y: 1541
-        width: 415
-        height: 505
+        x: 1744
+        y: 1536
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4c7e695a4c0cdee40800000000000000
-      internalID: 5687413855263057860
+      spriteID: cc2700752bdcb1047bb389c839f500db
+      internalID: 393537342
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_17
+      name: mage_17
       rect:
         serializedVersion: 2
-        x: 2186
-        y: 1541
-        width: 422
-        height: 505
+        x: 2180
+        y: 1536
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f005ec0947d811fd0800000000000000
-      internalID: -2372959996862377969
+      spriteID: 0eb9bd6f103ca0443bc552b321021a53
+      internalID: 1920021332
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_18
+      name: mage_18
       rect:
         serializedVersion: 2
-        x: 6
-        y: 1029
-        width: 424
-        height: 505
+        x: 0
+        y: 1024
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b04599192cd14f830800000000000000
-      internalID: 4103937881944970251
+      spriteID: 1be6a04e7163eb5419f82e9485603978
+      internalID: 1248059279
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_19
+      name: mage_19
       rect:
         serializedVersion: 2
-        x: 442
-        y: 1029
-        width: 425
-        height: 505
+        x: 436
+        y: 1024
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3d616252e6445c610800000000000000
-      internalID: 1640792879106758355
+      spriteID: 5b84cc5199258174dbcd91c48465bf5b
+      internalID: -1239635207
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_20
+      name: mage_20
       rect:
         serializedVersion: 2
-        x: 878
-        y: 1029
-        width: 426
-        height: 505
+        x: 872
+        y: 1024
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 985d146e75907fb30800000000000000
-      internalID: 4320932640615159177
+      spriteID: a193882e2a9e0ba4fac070cffb66e661
+      internalID: -990720980
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_21
+      name: mage_21
       rect:
         serializedVersion: 2
-        x: 1315
-        y: 1029
-        width: 426
-        height: 505
+        x: 1308
+        y: 1024
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 21b81b8695af2d890800000000000000
-      internalID: -7434604772919768302
+      spriteID: 5894e22d91fa95f4ebb59e532bb1be04
+      internalID: 1263885756
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_22
+      name: mage_22
       rect:
         serializedVersion: 2
-        x: 1750
-        y: 1029
-        width: 427
-        height: 505
+        x: 1744
+        y: 1024
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 814fcfe853dad8e20800000000000000
-      internalID: 3354527743004701720
+      spriteID: 6f9bb14251d391d42bef83f078988421
+      internalID: -2132387906
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_23
+      name: mage_23
       rect:
         serializedVersion: 2
-        x: 2186
-        y: 1029
-        width: 427
-        height: 505
+        x: 2180
+        y: 1024
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b062b075331424e40800000000000000
-      internalID: 5639141372180768267
+      spriteID: e4139eff5bfb4cd4c949bc20ee31737c
+      internalID: -175422383
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_24
+      name: mage_24
       rect:
         serializedVersion: 2
-        x: 6
-        y: 517
-        width: 426
-        height: 505
+        x: 0
+        y: 512
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 81d0d69ff101419a0800000000000000
-      internalID: -6263363452250813160
+      spriteID: c18f9538cb151354cb5e8d603eeff052
+      internalID: -1639217185
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_25
+      name: mage_25
       rect:
         serializedVersion: 2
-        x: 442
-        y: 517
-        width: 425
-        height: 505
+        x: 436
+        y: 512
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3dda0470dec73c590800000000000000
-      internalID: -7655137584128938541
+      spriteID: 702b3d09aba89b34e9f4e780dc3fb2c3
+      internalID: 1161714714
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_26
+      name: mage_26
       rect:
         serializedVersion: 2
-        x: 876
-        y: 517
-        width: 425
-        height: 505
+        x: 872
+        y: 512
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d870bdcc3aba83840800000000000000
-      internalID: 5204098089431533453
+      spriteID: 7b8bba5ecaacdd94d9e15659cfbee95e
+      internalID: 1995433746
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_27
+      name: mage_27
       rect:
         serializedVersion: 2
-        x: 1311
-        y: 517
-        width: 423
-        height: 505
+        x: 1308
+        y: 512
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e37615c18f35efe30800000000000000
-      internalID: 4539157799528130366
+      spriteID: db4e1e1b9039e024e91bd3890e5daba8
+      internalID: 1398133270
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_28
+      name: mage_28
       rect:
         serializedVersion: 2
-        x: 1745
-        y: 517
-        width: 422
-        height: 505
+        x: 1744
+        y: 512
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 6894bc85fd3be07b0800000000000000
-      internalID: -5256065943245993594
+      spriteID: fb9a0002a8b7f9e4bb6258c2c7a5c918
+      internalID: 1047185850
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_29
+      name: mage_29
       rect:
         serializedVersion: 2
-        x: 2182
-        y: 517
-        width: 417
-        height: 505
+        x: 2180
+        y: 512
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 2a6e1dc4d6e6ea1b0800000000000000
-      internalID: -5643451867329337694
+      spriteID: 0e97b1c3644a5d04381016ec072d2463
+      internalID: 273333881
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_30
+      name: mage_30
       rect:
         serializedVersion: 2
-        x: 2
-        y: 5
-        width: 415
-        height: 505
+        x: 0
+        y: 0
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bcd6a84b2c8720a80800000000000000
-      internalID: -8502100368874115637
+      spriteID: e6908ee182c62cb47940188049c7c758
+      internalID: -751694743
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_31
+      name: mage_31
       rect:
         serializedVersion: 2
-        x: 438
-        y: 5
-        width: 413
-        height: 506
+        x: 436
+        y: 0
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 20ae2b1b8f304b400800000000000000
-      internalID: 338900238627695106
+      spriteID: bae84860d2781c149bcfd1ab8a73b1e0
+      internalID: -228016017
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_32
+      name: mage_32
       rect:
         serializedVersion: 2
-        x: 877
-        y: 5
-        width: 408
-        height: 506
+        x: 872
+        y: 0
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b9f8f1e324733a060800000000000000
-      internalID: 6963470206494543771
+      spriteID: 7a6440b32f33a14489afd8b8e6136136
+      internalID: 676580967
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_33
+      name: mage_33
       rect:
         serializedVersion: 2
-        x: 1311
-        y: 5
-        width: 408
-        height: 505
+        x: 1308
+        y: 0
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c3b217080472d6a00800000000000000
-      internalID: 751299870827031356
+      spriteID: cfd74dad71f6f4d4d99dd2aae823553c
+      internalID: -1262786668
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_34
+      name: mage_34
       rect:
         serializedVersion: 2
-        x: 1749
-        y: 5
-        width: 404
-        height: 505
+        x: 1744
+        y: 0
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ec6cfae7c9e3b2f90800000000000000
-      internalID: -6977414355819182386
+      spriteID: facb7f8ebcd41d24e96f7c6a7be4f828
+      internalID: 698312873
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_35
+      name: mage_35
       rect:
         serializedVersion: 2
-        x: 2186
-        y: 5
-        width: 402
-        height: 505
+        x: 2180
+        y: 0
+        width: 436
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8095d35374b391860800000000000000
-      internalID: 7501091831384201480
+      spriteID: 8ac116ac0ad4d1648932c1fe6b11852f
+      internalID: -781626650
       vertices: []
       indices: 
       edges: []
@@ -1013,7 +1013,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: b31afaa9989e32049a7a964cfdec6cdf
     internalID: 0
     vertices: []
     indices: 
@@ -1021,44 +1021,46 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":6.0,"y":6.0},"gridSpriteSize":{"x":436.0,"y":512.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_0: 3267760003031969834
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_1: 2914006718816477413
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_10: -7774909948352094931
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_11: 3842559932602661320
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_12: 8711490336154223175
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_13: -5685206489565887393
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_14: -7616039584219546550
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_15: -9032636495941410172
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_16: 5687413855263057860
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_17: -2372959996862377969
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_18: 4103937881944970251
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_19: 1640792879106758355
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_2: -8907049405452331365
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_20: 4320932640615159177
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_21: -7434604772919768302
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_22: 3354527743004701720
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_23: 5639141372180768267
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_24: -6263363452250813160
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_25: -7655137584128938541
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_26: 5204098089431533453
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_27: 4539157799528130366
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_28: -5256065943245993594
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_29: -5643451867329337694
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_3: -5239393884577910898
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_30: -8502100368874115637
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_31: 338900238627695106
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_32: 6963470206494543771
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_33: 751299870827031356
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_34: -6977414355819182386
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_35: 7501091831384201480
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_4: 7203023345021639141
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_5: 374646036452479887
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_6: 7820700203621928252
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_7: -3760671978123321021
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_8: 8503986110716286907
-      A-wizard-stands-in-a-side-profile-view-wearing-a-l-max-px-36_9: -2550572694742188342
+      mage_0: 1524277432
+      mage_1: 275198712
+      mage_10: -1934080462
+      mage_11: 1972268690
+      mage_12: 1950354680
+      mage_13: 1149066746
+      mage_14: -257215485
+      mage_15: 1896225213
+      mage_16: 393537342
+      mage_17: 1920021332
+      mage_18: 1248059279
+      mage_19: -1239635207
+      mage_2: 1053403721
+      mage_20: -990720980
+      mage_21: 1263885756
+      mage_22: -2132387906
+      mage_23: -175422383
+      mage_24: -1639217185
+      mage_25: 1161714714
+      mage_26: 1995433746
+      mage_27: 1398133270
+      mage_28: 1047185850
+      mage_29: 273333881
+      mage_3: -461154224
+      mage_30: -751694743
+      mage_31: -228016017
+      mage_32: 676580967
+      mage_33: -1262786668
+      mage_34: 698312873
+      mage_35: -781626650
+      mage_4: 1022081622
+      mage_5: -2077801340
+      mage_6: -329064844
+      mage_7: 2004391682
+      mage_8: 95205618
+      mage_9: -1853611385
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
