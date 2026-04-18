@@ -44,6 +44,9 @@ public class Hex : MonoBehaviour
 
     [Header("Rendering")]
     public TextMeshPro pcName;
+    
+    [SerializeField]
+    private float revealDuration = 1f;
 
     [Header("Hover")]
     [SerializeField] private float tooltipFontSize = 2f;
@@ -106,6 +109,7 @@ public class Hex : MonoBehaviour
     private readonly HashSet<Leader> persistentScoutedBy = new();
     private readonly Dictionary<Leader, int> anchoredWarships = new();
     private int anchoredWarshipsTotal = 0;
+    private Coroutine revealPulseCoroutine;
 
     public bool isSelected = false;
 
@@ -486,14 +490,6 @@ public class Hex : MonoBehaviour
         RedrawCharacters(false);
         RedrawPC(false);
         RefreshHoverText();
-    }
-
-    public string GetLoyalty()
-    {
-        if (pc != null && pc.owner != null && (pc.owner == game.player || (pc.owner.alignment == game.player.alignment && pc.owner.alignment != AlignmentEnum.neutral) || scoutedBy.Contains(game.player))) {
-            return pc.GetLoyaltyText();
-        }
-        return "";
     }
 
     public void RefreshHoverText()
@@ -1052,6 +1048,12 @@ public class Hex : MonoBehaviour
             return;
         }
 
+        if (!IsHexSeen())
+        {
+            ClearBannerSprite();
+            return;
+        }
+
         if (!TryGetKnownCharacterForBanner(out Character known))
         {
             ClearBannerSprite();
@@ -1456,6 +1458,7 @@ public class Hex : MonoBehaviour
 */
     private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
     {
+        bool wasSeen = IsHexSeen();
         isRevealed = true;
         mapOnlyRevealed = false;
         if (scoutedByPlayer)
@@ -1475,10 +1478,20 @@ public class Hex : MonoBehaviour
         RedrawCharacters(false);
         RedrawPC(false);
         RefreshHoverText();
+        if (!wasSeen)
+        {
+            PlayRevealPulse();
+        }
     }
 
     private void RevealMapOnlyInternal()
     {
+        bool wasSeen = IsHexSeen();
+        if (wasSeen)
+        {
+            return;
+        }
+
         isRevealed = true;
         mapOnlyRevealed = true;
         isCurrentlyUnseen = !(game != null && game.player != null && game.player.LeaderSeesHex(this));
@@ -1488,6 +1501,59 @@ public class Hex : MonoBehaviour
         RedrawCharacters(false);
         RedrawPC(false);
         RefreshHoverText();
+        PlayRevealPulse();
+    }
+
+    private void PlayRevealPulse()
+    {
+        if (terrainTexture == null) return;
+
+        if (revealPulseCoroutine != null)
+        {
+            StopCoroutine(revealPulseCoroutine);
+        }
+
+        revealPulseCoroutine = StartCoroutine(AnimateRevealPulse());
+    }
+
+    private IEnumerator AnimateRevealPulse()
+    {
+        if (terrainTexture == null)
+        {
+            revealPulseCoroutine = null;
+            yield break;
+        }
+
+        Transform terrainTransform = terrainTexture.transform;
+        Vector3 endScale = Vector3.one;
+        float scaleEffect = UnityEngine.Random.Range(0.3f, 0.9f);
+        Vector3 startScale = new(scaleEffect, scaleEffect, endScale.z);
+
+        terrainTransform.localScale = startScale;
+        yield return null;
+
+        float elapsed = 0f;
+        while (elapsed < revealDuration)
+        {
+            if (terrainTexture == null)
+            {
+                revealPulseCoroutine = null;
+                yield break;
+            }
+
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / revealDuration);
+            float eased = Mathf.SmoothStep(0f, 1f, t);
+            terrainTransform.localScale = Vector3.Lerp(startScale, endScale, eased);
+            yield return null;
+        }
+
+        if (terrainTexture != null)
+        {
+            terrainTransform.localScale = endScale;
+        }
+
+        revealPulseCoroutine = null;
     }
 
     public void ClearScouting()
@@ -2265,7 +2331,7 @@ public class Hex : MonoBehaviour
             builder.Append("</color>");
         }
 
-        builder.Append("\n<sprite name=\"loyalty\"><color=");
+        builder.Append("<sprite name=\"loyalty\"><color=");
         builder.Append(GetLoyaltyColorHex(pc.loyalty));
         builder.Append('>');
         builder.Append(Math.Max(0, pc.loyalty));

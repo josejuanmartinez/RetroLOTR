@@ -139,6 +139,7 @@ public class Game : MonoBehaviour
         InitializePlayableLeaderIcons();
         InitializeNonPlayableLeaderIcons();
         board.StartGame();
+        HookBoardSelectionRefresh();
         AssignAIandHumans();
         VictoryPoints.RecalculateAndAssign(this);
         RefreshPlayableLeaderIconVictoryPoints();
@@ -158,6 +159,19 @@ public class Game : MonoBehaviour
         StartCoroutine(RefreshDeckUiAfterStartup());
         MessageDisplay.ClearPersistent();
 
+    }
+
+    private void HookBoardSelectionRefresh()
+    {
+        if (board == null) return;
+        board.SelectedCharacterChanged -= HandleSelectedCharacterChanged;
+        board.SelectedCharacterChanged += HandleSelectedCharacterChanged;
+    }
+
+    private void HandleSelectedCharacterChanged(Character previous, Character current)
+    {
+        Card.RequestInteractionRefreshAll();
+        FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
     }
 
     private IEnumerator RefreshDeckUiAfterStartup()

@@ -13,6 +13,7 @@ public class LeaderSelector : SearcherByName
     private class LeaderSelectionEntry
     {
         public string baseLeaderName;
+        public AlignmentEnum alignment;
         public string displayName;
         public string variantName;
         public string assetName;
@@ -33,6 +34,7 @@ public class LeaderSelector : SearcherByName
     public GameObject progress;
     public GameObject progressText;
     public GameObject leaderSelectionFullScreen;
+    public Image bannerImage;
 
     readonly List<LeaderSelectionEntry> selectionEntries = new();
     readonly List<GameObject> carouselItems = new();
@@ -325,24 +327,24 @@ public class LeaderSelector : SearcherByName
         if (biome == null) return;
 
         string baseDescription = NormalizeLeaderDescription(biome.description);
-        AddSelectionEntry(playableLeader, BuildLeaderDisplayName(playableLeader), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
+        AddSelectionEntry(playableLeader, biome.alignment, BuildLeaderDisplayName(playableLeader, biome.alignment), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
 
         foreach (LeaderVariantConfig variant in biome.variants)
         {
             string variantName = GetVariantName(playableLeader.characterName, variant.displayName, variant.variantId);
-            string displayName = BuildLeaderDisplayName(playableLeader, variantName);
+            string displayName = BuildLeaderDisplayName(playableLeader, biome.alignment, variantName);
             string assetName = ResolveVariantAssetName(playableLeader.characterName, variant.displayName, variant.variantId);
             string variantDescription = NormalizeLeaderDescription(variant.description);
             string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? biome.subdeckId : variant.subdeckId;
-            AddSelectionEntry(playableLeader, displayName, baseDescription, variantDescription, variant.deckIdentity, subdeckId, variantName, assetName);
+            AddSelectionEntry(playableLeader, biome.alignment, displayName, baseDescription, variantDescription, variant.deckIdentity, subdeckId, variantName, assetName);
         }
     }
 
-    string BuildLeaderDisplayName(PlayableLeader playableLeader, string variantName = null)
+    string BuildLeaderDisplayName(PlayableLeader playableLeader, AlignmentEnum alignment, string variantName = null)
     {
         if (playableLeader == null) return string.Empty;
 
-        string alignmentSprite = GetAlignmentSpriteTag(playableLeader.GetAlignment());
+        string alignmentSprite = GetAlignmentSpriteTag(alignment);
         if (string.IsNullOrWhiteSpace(variantName))
         {
             return $"{alignmentSprite} {playableLeader.characterName}";
@@ -416,7 +418,7 @@ public class LeaderSelector : SearcherByName
         return $"{baseLeaderName} {displayName}";
     }
 
-    void AddSelectionEntry(PlayableLeader playableLeader, string displayName, string baseDescription, string variantDescription, string deckIdentity, string subdeckId, string variantName = null, string assetName = null)
+    void AddSelectionEntry(PlayableLeader playableLeader, AlignmentEnum alignment, string displayName, string baseDescription, string variantDescription, string deckIdentity, string subdeckId, string variantName = null, string assetName = null)
     {
         Illustrations illustrations = FindFirstObjectByType<Illustrations>();
         Sprite carouselSprite = illustrations != null ? illustrations.GetIllustrationByName(assetName) ?? illustrations.GetIllustrationByName(playableLeader.characterName) : null;
@@ -424,6 +426,7 @@ public class LeaderSelector : SearcherByName
         LeaderSelectionEntry selectionEntry = new()
         {
             baseLeaderName = playableLeader.characterName,
+            alignment = alignment,
             displayName = displayName,
             variantName = variantName,
             assetName = assetName,
@@ -491,30 +494,13 @@ public class LeaderSelector : SearcherByName
     {
         if (selection == null) return string.Empty;
 
-        string alignmentSprite = GetAlignmentSpriteTag(null, selection.baseLeaderName);
+        string alignmentSprite = GetAlignmentSpriteTag(selection.alignment);
         if (string.IsNullOrWhiteSpace(selection.variantName))
         {
             return $"{alignmentSprite} {selection.baseLeaderName}";
         }
 
         return $"{alignmentSprite} {selection.baseLeaderName}<br>({selection.variantName})";
-    }
-
-    string GetAlignmentSpriteTag(PlayableLeader playableLeader, string fallbackLeaderName = null)
-    {
-        if (playableLeader != null)
-        {
-            return GetAlignmentSpriteTag(playableLeader.GetAlignment());
-        }
-
-        AlignmentEnum inferredAlignment = fallbackLeaderName switch
-        {
-            "Gandalf" => AlignmentEnum.freePeople,
-            "Sauron" => AlignmentEnum.darkServants,
-            "Saruman" => AlignmentEnum.darkServants,
-            _ => AlignmentEnum.neutral
-        };
-        return GetAlignmentSpriteTag(inferredAlignment);
     }
 
     public void SelectLeader(int value)
@@ -532,8 +518,66 @@ public class LeaderSelector : SearcherByName
                 player.SetDeckSelection(selection.subdeckId, selection.deckIdentity, leaderText, selection.variantName);
             }
 
+            UpdateBannerImage(player);
             FindFirstObjectByType<Game>().SelectPlayer(player);
         }
+    }
+
+    private void UpdateBannerImage(PlayableLeader player)
+    {
+        if (bannerImage == null)
+        {
+            return;
+        }
+
+        Illustrations illustrations = FindFirstObjectByType<Illustrations>();
+        Sprite bannerSprite = ResolveBannerSprite(player, illustrations);
+        bannerImage.sprite = bannerSprite;
+        bannerImage.enabled = bannerSprite != null;
+    }
+
+    private Sprite ResolveBannerSprite(Leader owner, Illustrations illustrations)
+    {
+        string bannerName = ResolveBannerName(owner);
+        if (string.IsNullOrWhiteSpace(bannerName) || illustrations == null)
+        {
+            return null;
+        }
+
+        return illustrations.GetIllustrationByName(bannerName, false);
+    }
+
+    private static string ResolveBannerName(Leader owner)
+    {
+        if (owner == null)
+        {
+            return null;
+        }
+
+        LeaderBiomeConfig biome = owner.GetBiome();
+        if (biome == null)
+        {
+            return null;
+        }
+
+        if (owner is PlayableLeader playableLeader)
+        {
+            string selectedSubdeckId = playableLeader.GetSelectedSubdeckId();
+            if (!string.IsNullOrWhiteSpace(selectedSubdeckId) && biome.variants != null)
+            {
+                LeaderVariantConfig variant = biome.variants.Find(entry =>
+                    entry != null
+                    && ((!string.IsNullOrWhiteSpace(entry.variantId) && string.Equals(entry.variantId, selectedSubdeckId, StringComparison.OrdinalIgnoreCase))
+                        || (!string.IsNullOrWhiteSpace(entry.subdeckId) && string.Equals(entry.subdeckId, selectedSubdeckId, StringComparison.OrdinalIgnoreCase))));
+
+                if (!string.IsNullOrWhiteSpace(variant?.banner))
+                {
+                    return variant.banner;
+                }
+            }
+        }
+
+        return biome.banner;
     }
 
     void ApplyLeaderTexts(LeaderSelectionEntry selection)

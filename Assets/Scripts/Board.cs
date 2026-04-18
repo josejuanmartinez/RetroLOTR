@@ -1363,6 +1363,11 @@ public class Board : MonoBehaviour
                 character.GetOwner().RefreshVisibleHexesImmediate();
             }
 
+            if (ShouldRefreshCardInteractionsFor(character))
+            {
+                RefreshCardInteractions();
+            }
+
             if ((!wasWater && isWater) || (wasWater && !isWater) || finishMovement)
             {
                 character.moved = character.GetMaxMovement();
@@ -1500,6 +1505,11 @@ public class Board : MonoBehaviour
                 currentHex.LookAt();
                 SelectHex(currentHex.v2);
             }
+
+            if (ShouldRefreshCardInteractionsFor(character))
+            {
+                RefreshCardInteractions();
+            }
         }
 
         if (!ShouldShowPlayerUi(character)) return;
@@ -1515,6 +1525,18 @@ public class Board : MonoBehaviour
     {
         Game g = FindFirstObjectByType<Game>();
         return g != null && g.IsPlayerCurrentlyPlaying() && g.player == character?.GetOwner();
+    }
+
+    private bool ShouldRefreshCardInteractionsFor(Character character)
+    {
+        Game g = FindFirstObjectByType<Game>();
+        return g != null && g.IsPlayerCurrentlyPlaying() && character != null && character.GetOwner() == g.player;
+    }
+
+    private void RefreshCardInteractions()
+    {
+        Card.RequestInteractionRefreshAll();
+        FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
     }
     private void UpdateGenerationProgress(float progress, string stage)
     {

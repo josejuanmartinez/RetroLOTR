@@ -89,7 +89,7 @@ public class BagginsDueAction : EventAction
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Baggins' Due: the richest nearby enemy owner pays {Mathf.Max(1, goldTaken)} gold or a resource, and {sourceOwner.characterName} collects the due.",
+                $"The Sack of Bag End: the richest nearby enemy owner pays {Mathf.Max(1, goldTaken)} gold or a resource, and {sourceOwner.characterName} collects the due.",
                 new Color(0.84f, 0.72f, 0.42f));
 
             return true;

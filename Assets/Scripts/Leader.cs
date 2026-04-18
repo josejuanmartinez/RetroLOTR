@@ -13,6 +13,7 @@ public class Leader : Character
     public List<Character> controlledCharacters = new();
     public List<PC> controlledPcs = new();
     public List<Hex> visibleHexes = new();
+    public bool playedLandThisTurn;
     private readonly Dictionary<Hex, int> tempSeenHexes = new();
     private readonly Dictionary<Hex, int> tempScoutCenters = new();
 
@@ -154,6 +155,7 @@ public class Leader : Character
     }
     new public void NewTurn()
     {
+        playedLandThisTurn = false;
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
         if (deckManager != null && this is PlayableLeader playable)
         {
@@ -208,6 +210,16 @@ public class Leader : Character
             }
             ));
         }
+    }
+
+    public void RecordPlayedLandThisTurn()
+    {
+        playedLandThisTurn = true;
+    }
+
+    public bool HasPlayedLandThisTurn()
+    {
+        return playedLandThisTurn;
     }
 
     // The async version of RevealVisibleHexes

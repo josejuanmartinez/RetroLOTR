@@ -69,6 +69,8 @@ public class CharacterAction
     private static int defaultActionNameFrame = -1;
     private static string cachedDefaultActionName;
 
+    protected virtual bool ConsumesAction => true;
+
     protected static T FindFirstObjectByType<T>() where T : UnityEngine.Object
     {
         return UnityEngine.Object.FindFirstObjectByType<T>();
@@ -233,7 +235,7 @@ public class CharacterAction
             MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.red);
             BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex, character.GetOwner());
         }
-        if (!isAI) game.PointToCharacterWithMissingActions();
+        if (!isAI && game != null) game.PointToCharacterWithMissingActions();
         if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
         if (!isAI) Card.RequestInteractionRefreshAll();
         return;
@@ -250,8 +252,11 @@ public class CharacterAction
                 Sounds.Instance?.PlayActionExecute();
             }
             Hex actionHex = character.hex;
-            // All characters
-            character.hasActionedThisTurn = true;
+            // Most actions consume the character's action for the turn.
+            if (ConsumesAction)
+            {
+                character.hasActionedThisTurn = true;
+            }
 
             bool failed = false;
             int effectiveDifficulty = difficulty;
@@ -290,7 +295,10 @@ public class CharacterAction
 
             string message = actionName;            
             string rumourMessage = $"succeeds on {message}";
-            bool isDoubledByPlayer = character.doubledBy.Contains(game.player);
+            bool isDoubledByPlayer = game != null
+                && game.player != null
+                && character.doubledBy != null
+                && character.doubledBy.Contains(game.player);
             if (isAI)
             {
                 // Always record AI actions privately; if doubled by the player, also promote to public immediately

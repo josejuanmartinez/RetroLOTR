@@ -9,6 +9,7 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
     private const int FoundingGoldCost = 10;
     private static int activePcLookupFrame = -1;
     private static readonly HashSet<string> activePcLookupKeys = new(StringComparer.OrdinalIgnoreCase);
+    protected override bool GrantsResourcesImmediately => false;
 
     public override void Initialize(Character c, CardData card = null, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
@@ -58,11 +59,23 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
 
         PcEffectCatalog.PcEffectDefinition definition = ResolvePcEffectDefinition();
         bool canUseEffect = definition != null && definition.CanExecute(character);
+        Leader owner = character.GetOwner();
+        bool alreadyPlayedLandThisTurn = owner != null && owner.HasPlayedLandThisTurn();
         bool useResources = true;
+
+        if (alreadyPlayedLandThisTurn && !canUseEffect)
+        {
+            MessageDisplayNoUI.ShowMessage(character.hex, character, "Only one land card can be played each turn.", Color.red);
+            return false;
+        }
 
         if (canUseEffect)
         {
-            if (character != null && character.isPlayerControlled)
+            if (alreadyPlayedLandThisTurn)
+            {
+                useResources = false;
+            }
+            else if (character.isPlayerControlled)
             {
                 string effectLabel = string.IsNullOrWhiteSpace(definition.title) ? "Activate the local effect" : $"Activate {definition.title}";
                 string prompt =
@@ -104,6 +117,7 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         Leader owner = character.GetOwner();
         if (owner == null) return false;
 
+        owner.RecordPlayedLandThisTurn();
         if (card.leatherGranted > 0) owner.AddLeather(card.leatherGranted, false);
         if (card.mountsGranted > 0) owner.AddMounts(card.mountsGranted, false);
         if (card.timberGranted > 0) owner.AddTimber(card.timberGranted, false);
@@ -218,24 +232,24 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
     private static string NormalizePcLookupKey(string value)
     {
         if (string.IsNullOrWhiteSpace(value)) return string.Empty;
-        char[] chars = value.Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant).ToArray();
-        return new string(chars);
+        return new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
     }
 
-    private static string HumanizeSourceName(string sourceName)
+    private static string HumanizeSourceName(string value)
     {
-        if (string.IsNullOrWhiteSpace(sourceName)) return "PC";
-
-        List<char> chars = new(sourceName.Length + 4);
-        for (int i = 0; i < sourceName.Length; i++)
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+        List<string> parts = new();
+        string current = string.Empty;
+        foreach (char ch in value)
         {
-            char current = sourceName[i];
-            if (i > 0 && char.IsUpper(current) && !char.IsUpper(sourceName[i - 1]))
+            if (char.IsUpper(ch) && current.Length > 0)
             {
-                chars.Add(' ');
+                parts.Add(current);
+                current = string.Empty;
             }
-            chars.Add(current);
+            current += ch;
         }
-        return new string(chars.ToArray());
+        if (current.Length > 0) parts.Add(current);
+        return string.Join(" ", parts);
     }
 }

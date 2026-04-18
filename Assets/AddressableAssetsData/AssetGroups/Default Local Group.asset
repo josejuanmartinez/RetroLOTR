@@ -6383,7 +6383,8 @@ MonoBehaviour:
   - m_GUID: addb70861518b1843844543db19bcb27
     m_Address: Assets/Art/Cards/Actions/Events/ClimbingTheWhiteHills.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: adf6a174f20c2bf408f9f021d9d9e970
     m_Address: Assets/Art/Hexes/Tiles/002.png
@@ -8800,7 +8801,8 @@ MonoBehaviour:
   - m_GUID: f24d380f6b8043a3adebe839575eb7e4
     m_Address: Assets/Art/Cards/Actions/Events/TravelThroughTheSnow.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f2742503bb35982449f77d78414f95c6
     m_Address: Assets/Art/Hexes/Tiles/hexPlainsElvenLodge00.png

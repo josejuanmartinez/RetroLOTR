@@ -41,6 +41,7 @@ public class Character : MonoBehaviour
     public string lastPlayedActionClassNameThisTurn;
     public string lastPlayedActionNameThisTurn;
     public string lastPlayedCardSpriteNameThisTurn;
+    public readonly List<Sprite> playedCardSpritesThisTurn = new();
     public bool isEmbarked;
     public List<Hex> reachableHexes = new();
     public List<Hex> relevantHexes = new();
@@ -124,6 +125,7 @@ public class Character : MonoBehaviour
         lastPlayedActionClassNameThisTurn = null;
         lastPlayedActionNameThisTurn = null;
         lastPlayedCardSpriteNameThisTurn = null;
+        playedCardSpritesThisTurn.Clear();
         awaken = true;
         colors = FindFirstObjectByType<Colors>();
     }
@@ -352,6 +354,20 @@ public class Character : MonoBehaviour
         ResetStatusSpecialState(effect);
     }
 
+    public void RecordPlayedCard(CardData card, Sprite sprite = null)
+    {
+        if (card == null) return;
+
+        if (sprite != null)
+        {
+            playedCardSpritesThisTurn.Add(sprite);
+        }
+
+        lastPlayedCardSpriteNameThisTurn = !string.IsNullOrWhiteSpace(card.spriteName)
+            ? card.spriteName
+            : lastPlayedCardSpriteNameThisTurn;
+    }
+
     public void NewTurn()
     {
         Game game = FindFirstObjectByType<Game>();
@@ -401,6 +417,7 @@ public class Character : MonoBehaviour
             lastPlayedActionClassNameThisTurn = null;
             lastPlayedActionNameThisTurn = null;
             lastPlayedCardSpriteNameThisTurn = null;
+            playedCardSpritesThisTurn.Clear();
         }
         else if (halted)
         {
@@ -411,6 +428,7 @@ public class Character : MonoBehaviour
             lastPlayedActionClassNameThisTurn = null;
             lastPlayedActionNameThisTurn = null;
             lastPlayedCardSpriteNameThisTurn = null;
+            playedCardSpritesThisTurn.Clear();
         }
         else
         {
@@ -419,6 +437,7 @@ public class Character : MonoBehaviour
             lastPlayedActionClassNameThisTurn = null;
             lastPlayedActionNameThisTurn = null;
             lastPlayedCardSpriteNameThisTurn = null;
+            playedCardSpritesThisTurn.Clear();
         }
 
         if (!blocked && HasStatusEffect(StatusEffectEnum.Fear) && !IsArmyCommander() && UnityEngine.Random.Range(0, 2) == 0)
@@ -971,6 +990,7 @@ public class Character : MonoBehaviour
         lastPlayedActionClassNameThisTurn = null;
         lastPlayedActionNameThisTurn = null;
         lastPlayedCardSpriteNameThisTurn = null;
+        playedCardSpritesThisTurn.Clear();
 
         hex = destinationHex;
 

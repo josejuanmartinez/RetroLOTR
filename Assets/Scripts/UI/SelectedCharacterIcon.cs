@@ -51,7 +51,7 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     [Header("Played cards")]
     [SerializeField] private CanvasGroup cardCanvasGroup;
-    [SerializeField] private Image card;
+    [SerializeField] public GameObject playedCard;
     
     // private Videos videos;
     private Illustrations illustrations;
@@ -69,12 +69,16 @@ public class SelectedCharacterIcon : MonoBehaviour
     public Character CurrentCharacter { get; private set; }
     private bool refreshScheduled;
     private readonly List<ArtifactRenderer> artifactRenderers = new();
+    private readonly List<GameObject> playedCardInstances = new();
 
     private void Awake()
     {
         if (rootImage != null) rootDefaultColor = rootImage.color;
         if (borderImage != null) borderDefaultColor = borderImage.color;
         defaultScale = transform.localScale;
+        BindPlayedCardTemplate();
+        ClearPlayedCardInstances();
+        SetPlayedCardVisible(false);
     }
 
     private void OnDisable()
@@ -229,7 +233,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         RefreshArtifacts(c.artifacts);
         
         RefreshMovementLeft(c);
-        RefreshPlayedCard(c);
+        RefreshPlayedCards(c);
 
         if (c != null)
         {
@@ -289,6 +293,7 @@ public class SelectedCharacterIcon : MonoBehaviour
 
         RefreshArtifacts(showArtifacts ? c.artifacts : null);
 
+        ClearPlayedCardInstances();
         SetPlayedCardVisible(false);
     }
 
@@ -315,6 +320,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         actioned.SetActive(false);
         moved.SetActive(false);
         health.gameObject.SetActive(false);
+        ClearPlayedCardInstances();
         SetPlayedCardVisible(false);
         lastRefreshedCharacterId = int.MinValue;
         pendingRefreshCharacter = null;
@@ -396,59 +402,47 @@ public class SelectedCharacterIcon : MonoBehaviour
         }
     }
 
-    private void RefreshPlayedCard(Character c)
+    private void RefreshPlayedCards(Character c)
     {
-        if (c == null)
+        ClearPlayedCardInstances();
+
+        if (c == null || c.playedCardSpritesThisTurn == null || c.playedCardSpritesThisTurn.Count == 0)
         {
             SetPlayedCardVisible(false);
             return;
         }
 
-        Sprite playedSprite = null;
-
-        if (!string.IsNullOrWhiteSpace(c.lastPlayedCardSpriteNameThisTurn))
-        {
-            playedSprite = GetIllustrationByName(c.lastPlayedCardSpriteNameThisTurn, false);
-        }
-
-        if (playedSprite == null && !string.IsNullOrWhiteSpace(c.lastPlayedActionClassNameThisTurn))
-        {
-            playedSprite = GetPlayedCardIllustrationByActionName(c.lastPlayedActionClassNameThisTurn);
-        }
-
-        if (playedSprite == null && !string.IsNullOrWhiteSpace(c.lastPlayedActionNameThisTurn))
-        {
-            playedSprite = GetIllustrationByName(c.lastPlayedActionNameThisTurn, false);
-        }
-
-        if (playedSprite == null)
+        BindPlayedCardTemplate();
+        if (playedCard == null)
         {
             SetPlayedCardVisible(false);
             return;
         }
 
-        if (card != null)
+        Transform parent = cardCanvasGroup != null ? cardCanvasGroup.transform : playedCard.transform.parent;
+        if (parent == null)
         {
-            card.sprite = playedSprite;
-            card.enabled = true;
-        }
-        SetPlayedCardVisible(true);
-    }
-
-    private Sprite GetPlayedCardIllustrationByActionName(string actionClassName)
-    {
-        if (string.IsNullOrWhiteSpace(actionClassName)) return null;
-
-        Sprite sprite = GetIllustrationByName(actionClassName, false);
-        if (sprite != null) return sprite;
-
-        if (!actionClassName.EndsWith("OrAction", System.StringComparison.OrdinalIgnoreCase))
-        {
-            sprite = GetIllustrationByName($"{actionClassName}OrAction", false);
-            if (sprite != null) return sprite;
+            SetPlayedCardVisible(false);
+            return;
         }
 
-        return null;
+        playedCard.SetActive(false);
+        for (int i = 0; i < c.playedCardSpritesThisTurn.Count; i++)
+        {
+            Sprite playedSprite = c.playedCardSpritesThisTurn[i];
+            if (playedSprite == null) continue;
+
+            GameObject instance = Instantiate(playedCard, parent);
+            instance.name = $"PlayedCard_{i + 1}";
+            instance.SetActive(true);
+
+            PlayedCard playedCardComponent = instance.GetComponent<PlayedCard>();
+            playedCardComponent?.Initialize(playedSprite);
+
+            playedCardInstances.Add(instance);
+        }
+
+        SetPlayedCardVisible(playedCardInstances.Count > 0);
     }
 
     private void SetPlayedCardVisible(bool visible)
@@ -459,10 +453,64 @@ public class SelectedCharacterIcon : MonoBehaviour
             cardCanvasGroup.interactable = visible;
             cardCanvasGroup.blocksRaycasts = visible;
         }
-        if (card != null)
+    }
+
+    private void BindPlayedCardTemplate()
+    {
+        if (playedCard != null)
         {
-            card.enabled = visible;
+            playedCard.SetActive(false);
+            if (cardCanvasGroup == null)
+            {
+                Transform parent = playedCard.transform.parent;
+                if (parent != null)
+                {
+                    cardCanvasGroup = parent.GetComponent<CanvasGroup>();
+                    if (cardCanvasGroup == null)
+                    {
+                        cardCanvasGroup = parent.gameObject.AddComponent<CanvasGroup>();
+                    }
+                }
+            }
+            return;
         }
+
+        Transform[] children = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < children.Length; i++)
+        {
+            Transform child = children[i];
+            if (child != null && string.Equals(child.name, "playedCard", System.StringComparison.OrdinalIgnoreCase))
+            {
+                playedCard = child.gameObject;
+                playedCard.SetActive(false);
+                if (cardCanvasGroup == null)
+                {
+                    Transform parent = child.parent;
+                    if (parent != null)
+                    {
+                        cardCanvasGroup = parent.GetComponent<CanvasGroup>();
+                        if (cardCanvasGroup == null)
+                        {
+                            cardCanvasGroup = parent.gameObject.AddComponent<CanvasGroup>();
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    private void ClearPlayedCardInstances()
+    {
+        for (int i = 0; i < playedCardInstances.Count; i++)
+        {
+            GameObject instance = playedCardInstances[i];
+            if (instance != null)
+            {
+                Destroy(instance);
+            }
+        }
+        playedCardInstances.Clear();
     }
 
     private void RefreshArtifacts(List<Artifact> artifacts)

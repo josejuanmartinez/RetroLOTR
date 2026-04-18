@@ -92,6 +92,11 @@ public class PlayableLeader : Leader
         return !string.IsNullOrEmpty(normalizedPc) && playedPcCards.Contains(normalizedPc);
     }
 
+    public bool HasPlayedLandCardThisTurn()
+    {
+        return HasPlayedLandThisTurn();
+    }
+
     override public void Killed(Leader killedBy, bool onlyMask = false)
     {
         if (killed) return;

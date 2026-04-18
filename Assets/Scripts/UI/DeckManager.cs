@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
@@ -100,6 +102,7 @@ public class EncounterOptionData
 [Serializable]
 public class CardData
 {
+    public int cardId;
     public string name;
     public string description;
     public string type;
@@ -199,6 +202,42 @@ public class CardData
         return !string.IsNullOrWhiteSpace(action) ? action : actionClassName;
     }
 
+    public string GetArmyDescription()
+    {
+        if (GetCardType() != CardTypeEnum.Army) return string.Empty;
+
+        string troopLabel = GetDefaultTroopName(troopType);
+        if (string.IsNullOrWhiteSpace(troopLabel))
+        {
+            troopLabel = !string.IsNullOrWhiteSpace(name) ? name : string.Empty;
+        }
+
+        string spriteTag = $"<sprite name=\"{troopType.ToString().ToLowerInvariant()}\">";
+        List<string> abilities = GetArmyAbilityLabels();
+
+        if (string.IsNullOrWhiteSpace(troopLabel))
+        {
+            return abilities.Count > 0 ? string.Join(", ", abilities) : string.Empty;
+        }
+
+        string baseText = $"{troopLabel} {spriteTag}.";
+        return abilities.Count > 0
+            ? $"{baseText} {string.Join(", ", abilities)}."
+            : baseText;
+    }
+
+    public string GetCharacterDescription()
+    {
+        if (GetCardType() != CardTypeEnum.Character) return string.Empty;
+
+        List<string> parts = new();
+        AppendCharacterLevel(parts, "commander", commander);
+        AppendCharacterLevel(parts, "agent", agent);
+        AppendCharacterLevel(parts, "emmissary", emmissary);
+        AppendCharacterLevel(parts, "mage", mage);
+        return parts.Count > 0 ? string.Join(" ", parts) : string.Empty;
+    }
+
     public bool EvaluatePlayability(Character selectedCharacter, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)
     {
         playability ??= new CardPlayabilityResult();
@@ -265,12 +304,62 @@ public class CardData
         reason = null;
         if (owner is not PlayableLeader playableLeader) return true;
 
+        if (GetCardType() == CardTypeEnum.Land && playableLeader.HasPlayedLandThisTurn())
+        {
+            reason = "Only one land card can be played each turn.";
+            return false;
+        }
+
         if (GetCardType() != CardTypeEnum.PC) return true;
         if (string.IsNullOrWhiteSpace(region)) return true;
         if (playableLeader.HasPlayedLandCardForRegion(region)) return true;
 
         reason = $"{region} not discovered yet.";
         return false;
+    }
+
+    private static string GetDefaultTroopName(TroopsTypeEnum troopType)
+    {
+        return troopType switch
+        {
+            TroopsTypeEnum.ma => "Men-at-arms",
+            TroopsTypeEnum.ar => "Archers",
+            TroopsTypeEnum.li => "Light Infantry",
+            TroopsTypeEnum.hi => "Heavy Infantry",
+            TroopsTypeEnum.lc => "Light Cavalry",
+            TroopsTypeEnum.hc => "Heavy Cavalry",
+            TroopsTypeEnum.ca => "Catapults",
+            TroopsTypeEnum.ws => "Warships",
+            _ => string.Empty
+        };
+    }
+
+    private List<string> GetArmyAbilityLabels()
+    {
+        if (specialAbilities == null || specialAbilities.Count == 0) return new List<string>();
+
+        return specialAbilities
+            .Distinct()
+            .Select(FormatArmyAbilityLabel)
+            .Where(label => !string.IsNullOrWhiteSpace(label))
+            .ToList();
+    }
+
+    private static string FormatArmyAbilityLabel(ArmySpecialAbilityEnum ability)
+    {
+        return ability switch
+        {
+            ArmySpecialAbilityEnum.Longrange => "Long range",
+            ArmySpecialAbilityEnum.ShortRange => "Short range",
+            _ => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
+                Regex.Replace(ability.ToString(), "([a-z])([A-Z])", "$1 $2").ToLowerInvariant())
+        };
+    }
+
+    private static void AppendCharacterLevel(List<string> parts, string spriteName, int required)
+    {
+        if (parts == null || string.IsNullOrWhiteSpace(spriteName) || required <= 0) return;
+        parts.Add($"{required}<sprite name=\"{spriteName}\">");
     }
 }
 
@@ -662,6 +751,11 @@ public class DeckManager : MonoBehaviour
 
         consumedCard = state.hand[handIndex];
         if (consumedCard == null) return false;
+        if (consumedCard.GetCardType() == CardTypeEnum.Land && playableLeader.HasPlayedLandThisTurn())
+        {
+            consumedCard = null;
+            return false;
+        }
         if (!consumedCard.MeetsResourceRequirements(playableLeader))
         {
             consumedCard = null;
@@ -701,12 +795,12 @@ public class DeckManager : MonoBehaviour
         {
             case CardTypeEnum.Land:
                 revealedPcHexes = RevealRegion(board, card.name, leader);
-                revealMessage = $"The lands of {card.name} were discovered";
+                revealMessage = $"The lands of {FormatDisplayName(card.name)} were revealed";
                 break;
             case CardTypeEnum.PC:
                 string pcRegion = !string.IsNullOrWhiteSpace(card.region) ? card.region : card.name;
                 revealedPcHexes = RevealRegion(board, pcRegion, leader);
-                revealMessage = $"The lands of {pcRegion} were discovered";
+                revealMessage = $"The lands of {FormatDisplayName(pcRegion)} were revealed";
                 break;
         }
 
@@ -801,6 +895,7 @@ public class DeckManager : MonoBehaviour
         if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
         if (ShouldSkipTurnRefillForTutorialHuman(leader))
         {
+            Debug.Log($"[TutorialDebug] Turn refill skipped for tutorial leader '{leader.characterName}'");
             EnsureTutorialHandForPlayer(leader);
             RefreshHumanPlayerHandUIIfHuman(leader);
             return true;
@@ -1202,6 +1297,14 @@ public class DeckManager : MonoBehaviour
         {
             showRevealMessage();
         }
+    }
+
+    private static string FormatDisplayName(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+
+        string spaced = Regex.Replace(value.Trim(), @"(?<!^)([A-Z])", " $1");
+        return Regex.Replace(spaced, @"\s+", " ").Trim();
     }
 
     private static Hex ChooseFocusHex(List<Hex> hexes)
@@ -1679,6 +1782,7 @@ public class DeckManager : MonoBehaviour
 
         if (!playerDecks.TryGetValue(leader, out PlayerDeckState state))
         {
+            Debug.Log($"[TutorialDebug] Rebuild tutorial hand for '{leader.characterName}': no existing state, expected=[{string.Join(", ", requiredCardNames)}]");
             SetTutorialCardsByName(leader, requiredCardNames);
             return;
         }
@@ -1696,6 +1800,8 @@ public class DeckManager : MonoBehaviour
 
         if (!sameCount || !allPresent)
         {
+            string currentHand = string.Join(", ", state.hand.Where(card => card != null).Select(card => card.name));
+            Debug.Log($"[TutorialDebug] Rebuild tutorial hand for '{leader.characterName}': hand=[{currentHand}] expected=[{string.Join(", ", requiredCardNames)}]");
             ApplyTutorialCardsToStateByName(leader, requiredCardNames);
         }
     }

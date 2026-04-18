@@ -14,7 +14,6 @@ public class PopupManager : MonoBehaviour
     public GameObject container;
     public Image actor1;
     public Image actor2;
-    public Sprite actorReplacement;
     public RawImage actor1RawImage;
     public RawImage actor2RawImage;
     public VideoPlayer actor1Video;
@@ -244,7 +243,18 @@ public class PopupManager : MonoBehaviour
         // ClearActorOutput(actor2RawImage, actor2Video);
 
         bool hasActor2 = data.spriteActor2 != null;
-        SetActor2Active(hasActor2);
+        if (actor2 != null)
+        {
+            actor2.gameObject.SetActive(hasActor2);
+        }
+        if (actor2RawImage != null)
+        {
+            actor2RawImage.gameObject.SetActive(hasActor2);
+        }
+        if (actor2Video != null)
+        {
+            actor2Video.gameObject.SetActive(hasActor2);
+        }
         SetActorVisuals(actor1, actor1RawImage, actor1Video, data.spriteActor1);
         SetActorVisuals(actor2, actor2RawImage, actor2Video, data.spriteActor2);
         ShowContainer();
@@ -315,14 +325,6 @@ public class PopupManager : MonoBehaviour
     //     if (videos == null) videos = FindFirstObjectByType<Videos>();
     //     return videos != null ? videos.GetVideoByName(name) : null;
     // }
-
-    private void SetActor2Active(bool isActive)
-    {
-        if(!isActive) actor2.sprite = actorReplacement; 
-        actor2.gameObject.SetActive(true);
-        if (actor2RawImage != null) actor2RawImage.gameObject.SetActive(false);
-        if (actor2Video != null) actor2Video.gameObject.SetActive(false);
-    }
 
     // private void StopActorPlaybackSequence()
     // {
@@ -452,7 +454,7 @@ public class PopupManager : MonoBehaviour
         if (image != null)
         {
             image.enabled = true;
-            image.sprite = fallbackSprite ? fallbackSprite : Instance.actorReplacement;
+            image.sprite = fallbackSprite;
         }
     }
 }

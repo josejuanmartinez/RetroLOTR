@@ -4,6 +4,8 @@ using UnityEngine;
 public class MaterialRetrieval : CharacterAction
 {
     protected override AdvisorType DefaultAdvisorType => AdvisorType.Economic;
+    protected override bool ConsumesAction => false;
+    protected virtual bool GrantsResourcesImmediately => true;
 
     public override void Initialize(Character c, CardData card = null, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -13,11 +15,12 @@ public class MaterialRetrieval : CharacterAction
 
         effect = (c) =>
         {
-            if (this.card != null)
+            if (GrantsResourcesImmediately && this.card != null)
             {
                 Leader owner = c.GetOwner();
                 if (owner != null)
                 {
+                    owner.RecordPlayedLandThisTurn();
                     if (this.card.leatherGranted > 0) owner.AddLeather(this.card.leatherGranted, false);
                     if (this.card.mountsGranted > 0) owner.AddMounts(this.card.mountsGranted, false);
                     if (this.card.timberGranted > 0) owner.AddTimber(this.card.timberGranted, false);

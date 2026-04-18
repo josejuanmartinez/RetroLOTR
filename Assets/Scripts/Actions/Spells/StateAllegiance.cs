@@ -18,7 +18,7 @@ public class StateAllegiance : EmmissaryAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
 
-            PC pc = character.hex.GetPC();
+            PC pc = character?.hex != null ? character.hex.GetPCData() : null;
             if (pc == null) return false;
             Leader actorOwner = character.GetOwner();
             if (actorOwner == null) return false;
@@ -58,9 +58,9 @@ public class StateAllegiance : EmmissaryAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
 
-            PC pc = character.hex.GetPC();
-            if (pc == null) return false;
-            return true;
+            return character != null
+                && character.hex != null
+                && character.hex.GetPCData() != null;
         };
 
         asyncEffect = async (character) =>

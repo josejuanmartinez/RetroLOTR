@@ -642,6 +642,7 @@ MonoBehaviour:
   mageAnimatorController: {fileID: 9100000, guid: 4773f3a1f3db26e418402c478b15be8b, type: 2}
   defaultAnimatorController: {fileID: 9100000, guid: 51b63b676b05cfd4685142d19b321a69, type: 2}
   pcName: {fileID: 7944563718846919063}
+  revealDuration: 1
   tooltipFontSize: 1
   freeArmiesAtHexHover: {fileID: 3961464270988164118}
   neutralArmiesAtHexHover: {fileID: 2864586007110171483}
@@ -1134,7 +1135,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.004, y: -0.191, z: 0}
-  m_LocalScale: {x: 0.0201, y: 0.0201, z: 0.0804}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 585888745348916050}
@@ -1188,7 +1189,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 6
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: a71dfb149f38f73479aa7e18a574a6b7, type: 3}
+  m_Sprite: {fileID: -8994130878728344744, guid: e63d105e192d8ef4a80c1169aafedb99, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1497,7 +1498,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.425, y: 0.038, z: 0}
-  m_LocalScale: {x: 0.15, y: 0.15, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 585888745348916050}
@@ -1551,7 +1552,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 6
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 5fd9139457be66b47a3a744eb0687aa1, type: 3}
+  m_Sprite: {fileID: 8420096775129614418, guid: e63d105e192d8ef4a80c1169aafedb99, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -16240,7 +16241,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.412, y: 0.03, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 585888745348916050}
@@ -16294,7 +16295,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 6
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 994ee76df3536f34da669149d100a3b9, type: 3}
+  m_Sprite: {fileID: -1646275485490424379, guid: e63d105e192d8ef4a80c1169aafedb99, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -21267,8 +21268,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.257}
-  m_SizeDelta: {x: 1.0164, y: 0.2466}
+  m_AnchoredPosition: {x: -0.0225, y: 0.257}
+  m_SizeDelta: {x: 1.3538, y: 0.2466}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &2309548884366140041
 MeshRenderer:
@@ -21341,7 +21342,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '<mark color=#ff0000>Barad-dur
 
-    <sprite name="loyalty">5<sprite name="fort">3
+    <sprite name="loyalty">5<sprite name="fort">3<sprite
+    name="port">
 
     </mark>'
   m_isRightToLeft: 0

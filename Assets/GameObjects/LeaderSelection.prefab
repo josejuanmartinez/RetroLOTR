@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 12361439555819451}
   - component: {fileID: 6654698591583212499}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Banner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -13.637, y: 47.199997}
-  m_SizeDelta: {x: 8.7667, y: 177.95}
+  m_AnchoredPosition: {x: -11.7673, y: 50.027023}
+  m_SizeDelta: {x: 102.1474, y: 221.55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &12361439555819451
 CanvasRenderer:
@@ -58,15 +58,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.105882354}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 7d71b31658b349148b693b4b6d9a3e18, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -907,7 +907,6 @@ GameObject:
   - component: {fileID: 1992789170409819335}
   - component: {fileID: 1429045359021708014}
   - component: {fileID: 2732991095363221510}
-  - component: {fileID: 7528204083186897407}
   - component: {fileID: 2343573671029420991}
   m_Layer: 5
   m_Name: LeaderSelection
@@ -1010,36 +1009,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2970214047015904252}
   m_CullTransparentMesh: 1
---- !u!114 &7528204083186897407
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2970214047015904252}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.7294118, g: 0.7137255, b: 0.69411767, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: -8483731395159641348, guid: a24e72b7632a62c4c804c17ed6e475ae, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &2343573671029420991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1062,6 +1031,7 @@ MonoBehaviour:
   progress: {fileID: 6578540453222313299}
   progressText: {fileID: 5204058090946023585}
   leaderSelectionFullScreen: {fileID: 1116041978972027761}
+  bannerImage: {fileID: 6654698591583212499}
 --- !u!1 &2995945280340711185
 GameObject:
   m_ObjectHideFlags: 0

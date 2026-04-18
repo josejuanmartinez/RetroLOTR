@@ -15,6 +15,7 @@ This file provides repo-wide guidance for coding agents working in this project.
 - New subdeck cards should be genuinely new entries with unique names, ids, logic, and art.
 - Avoid duplicating a card concept, gameplay role, or image across sibling subdecks.
 - When expanding a modular subdeck, add one card at a time and verify deck count after each addition.
+- Do not hardcode card names, card-to-action mappings, or tutorial card exceptions in gameplay code; resolve them from deck/card data or tutorial JSON instead.
 
 ## Actions And Gameplay Logic
 
@@ -28,6 +29,15 @@ This file provides repo-wide guidance for coding agents working in this project.
 - Save new card art under `Assets/Art/Cards/...` in the correct type-specific folder.
 - New card art should be original and should not reuse or repurpose an existing card image as the shipped asset.
 - Match the repo's black-and-white retro ink style for new generated card art.
+
+## Card Text And Lore
+
+- Keep card names and descriptions short, immersive, and lore-like.
+- Prefer indirect Tolkien-inspired phrasing over modern, explanatory, or literal wording.
+- When rewriting a card description, preserve the feeling of the source material rather than narrating the mechanics directly.
+- If a card needs a quote or description, keep both parts:
+  - a short lore-based immersive line
+  - the effect text, stated clearly and without removing gameplay meaning
 
 ## Safety And Collaboration
 
