@@ -38,6 +38,7 @@ This file provides repo-wide guidance for coding agents working in this project.
 - If a card needs a quote or description, keep both parts:
   - a short lore-based immersive line
   - the effect text, stated clearly and without removing gameplay meaning
+- When writing card, army, or UI text for abilities, troop types, or status effects, always append the matching `<sprite name="...">` icon alongside the term instead of leaving the raw name by itself.
 
 ## Safety And Collaboration
 

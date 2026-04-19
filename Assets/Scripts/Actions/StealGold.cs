@@ -27,10 +27,10 @@ public class StealGold : AgentPCAction
                 actorOwner.goldAmount += toSteal;
             }
             pc.owner.RemoveGold(toSteal);
-            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"gold\"/> stolen!", Color.red);
+            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"gold\"> stolen!", Color.red);
             if (actorOwner == FindFirstObjectByType<Game>().player)
             {
-                MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"gold\"/> stolen!", Color.green);
+                MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"gold\"> stolen!", Color.green);
                 FindFirstObjectByType<StoresManager>().RefreshStores();
             }
             return true;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ButterfliesAction : EventAction
 {
-    private const int Radius = 2;
+    private const int Radius = 3;
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -18,41 +18,28 @@ public class ButterfliesAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> allies = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == character.GetAlignment() &&
-                    (ch.race == RacesEnum.Hobbit || ch.race == RacesEnum.Elf))
-                .Distinct()
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            List<Hex> terrainHexes = character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null && (h.terrainType == TerrainEnum.forest || h.terrainType == TerrainEnum.swamp))
                 .ToList();
 
-            List<Character> enemies = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment())
-                .Distinct()
-                .ToList();
+            if (terrainHexes.Count == 0) return false;
 
-            if (allies.Count == 0 && enemies.Count == 0) return false;
-
-            for (int i = 0; i < allies.Count; i++)
+            owner.AddTemporarySeenHexes(terrainHexes);
+            if (owner == FindFirstObjectByType<Game>()?.player)
             {
-                allies[i].ApplyStatusEffect(StatusEffectEnum.Hope, 1);
-                allies[i].ApplyStatusEffect(StatusEffectEnum.Hidden, 1);
+                owner.RefreshVisibleHexesImmediate();
             }
 
-            int revealed = 0;
-            foreach (Character enemy in enemies)
+            for (int i = 0; i < terrainHexes.Count; i++)
             {
-                if (enemy.HasStatusEffect(StatusEffectEnum.Hidden))
-                {
-                    enemy.ClearStatusEffect(StatusEffectEnum.Hidden);
-                    revealed++;
-                }
+                terrainHexes[i]?.RefreshVisibilityRendering();
             }
 
             MessageDisplayNoUI.ShowMessage(character.hex, character,
-                $"Butterflies: {allies.Count} Hobbit/Elf ally unit(s) drift into Hope and Hidden, and {revealed} hidden enemy unit(s) are exposed among the trees.",
+                $"Butterflies: forest and swamp hexes in radius {Radius} are seen for 1 turn.",
                 new Color(0.76f, 0.74f, 0.5f));
 
             return true;
@@ -64,7 +51,7 @@ public class ButterfliesAction : EventAction
             if (character == null || character.hex == null) return false;
 
             return character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed));
+                .Any(h => h != null && (h.terrainType == TerrainEnum.forest || h.terrainType == TerrainEnum.swamp));
         };
 
         asyncEffect = async (character) =>

@@ -79,7 +79,7 @@ public class CaravansManager : MonoBehaviour, IPointerEnterHandler, IPointerExit
         if (stockText != null)
         {
             string spriteName = resource.ToString().ToLowerInvariant();
-            stockText.text = $"<sprite name=\"{spriteName}\">{storesManager.GetCurrentStock(resource)}";
+            stockText.text = $"<sprite name=\"{spriteName}\">{spriteName}{storesManager.GetCurrentStock(resource)}";
         }
         if (buyText != null) buyText.text = storesManager.GetBuyPricePerUnit(resource).ToString();
         if (sellText != null) sellText.text = storesManager.GetSellPricePerUnit(resource).ToString();

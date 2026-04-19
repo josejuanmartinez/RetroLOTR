@@ -6791,10 +6791,10 @@ TextureImporter:
       name: NicePng_fantasy-map-icons-png_2379148_253
       rect:
         serializedVersion: 2
-        x: 215
+        x: 216
         y: 195
-        width: 26
-        height: 26
+        width: 24
+        height: 25
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -6945,10 +6945,10 @@ TextureImporter:
       name: NicePng_fantasy-map-icons-png_2379148_260
       rect:
         serializedVersion: 2
-        x: 311
-        y: 171
-        width: 26
-        height: 50
+        x: 312
+        y: 197
+        width: 23
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -10976,7 +10976,7 @@ TextureImporter:
         width: 22
         height: 22
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -10985,6 +10985,50 @@ TextureImporter:
       bones: []
       spriteID: 0acc0fd1f90e0ba48b0120ae1df27fbb
       internalID: 791784542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: color_common_spritesheet_67
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 172
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b794f96933c7e5d4c98fabe2bf9f96ea
+      internalID: 1974739835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: color_common_spritesheet_68
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 581
+        width: 21
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2bf021762e84b2246b2bb4abd2839bda
+      internalID: 275174219
       vertices: []
       indices: 
       edges: []
@@ -11445,6 +11489,8 @@ TextureImporter:
       color_common_spritesheet_64: 806804778
       color_common_spritesheet_65: -1742072832
       color_common_spritesheet_66: 791784542
+      color_common_spritesheet_67: 1974739835
+      color_common_spritesheet_68: 275174219
       color_common_spritesheet_7: 394110191
       color_common_spritesheet_8: 1138557431
       color_common_spritesheet_9: -1134120710

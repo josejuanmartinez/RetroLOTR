@@ -245,7 +245,7 @@ public class StoresManager : MonoBehaviour
             int stock = state.CurrentStock;
             int sellPrice = GetSellPricePerUnit(type);
             int buyPrice = GetBuyPricePerUnit(type);
-            sb.AppendLine($"<sprite name=\"{state.SpriteName}\">x{stock} - sell for <sprite name=\"gold\">{sellPrice} buy for <sprite name=\"gold\">{buyPrice}");
+            sb.AppendLine($"<sprite name=\"{state.SpriteName}\">{state.SpriteName}x{stock} - sell for <sprite name=\"gold\">{sellPrice} buy for <sprite name=\"gold\">{buyPrice}");
         }
 
         return sb.ToString().TrimEnd();
@@ -271,7 +271,7 @@ public class StoresManager : MonoBehaviour
 
         if (pricePopupShownThisFrame) return;
         pricePopupShownThisFrame = true;
-        MessageDisplay.ShowMessage("Prices in the caravans changed. Please check the <sprite name=\"caravans\"> icon above.", Color.yellow);
+        MessageDisplay.ShowMessage("Prices in the caravans changed. Please check the <sprite name=\"caravans\">caravans icon above.", Color.yellow);
         pricePopupShownThisFrame = false;
     }
 

@@ -41,13 +41,22 @@ public static class AddressablesIllustrationsSync
             changed++;
         }
 
-        if (changed > 0)
+        int cardArtScanned = 0;
+        int cardArtMoved = 0;
+        int cardArtAddressed = 0;
+        int cardArtLabeled = 0;
+        EnsureArtInDefaultGroup(settings, ref cardArtScanned, ref cardArtMoved, ref cardArtAddressed, ref cardArtLabeled);
+
+        if (changed > 0 || cardArtMoved > 0 || cardArtAddressed > 0 || cardArtLabeled > 0)
         {
             EditorUtility.SetDirty(settings);
             AssetDatabase.SaveAssets();
         }
 
-        Debug.Log($"Addressables sync complete. Scanned {scanned} art entries, updated {changed}.");
+        Debug.Log(
+            $"Addressables sync complete. Scanned {scanned} art entries, updated {changed} addresses. " +
+            $"Checked {cardArtScanned} art assets, moved/created {cardArtMoved} in the Default group, " +
+            $"updated {cardArtAddressed} art addresses, labeled {cardArtLabeled} as default.");
     }
 
     [MenuItem(MenuReport)]
@@ -97,6 +106,65 @@ public static class AddressablesIllustrationsSync
 
                 yield return entry;
             }
+        }
+    }
+
+    private static void EnsureArtInDefaultGroup(
+        AddressableAssetSettings settings,
+        ref int scanned,
+        ref int movedOrCreated,
+        ref int addressChanged,
+        ref int labelChanged)
+    {
+        AddressableAssetGroup defaultGroup = settings.DefaultGroup;
+        if (defaultGroup == null)
+        {
+            Debug.LogError("Addressables default group not found.");
+            return;
+        }
+
+        string[] guids = AssetDatabase.FindAssets(string.Empty, new[] { ArtRoot });
+        foreach (string guid in guids)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                continue;
+            }
+
+            if (AssetDatabase.IsValidFolder(assetPath))
+            {
+                continue;
+            }
+
+            scanned++;
+
+            AddressableAssetEntry existingEntry = settings.FindAssetEntry(guid, false);
+            if (existingEntry == null || existingEntry.parentGroup != defaultGroup)
+            {
+                movedOrCreated++;
+            }
+
+            AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, defaultGroup);
+            if (entry == null)
+            {
+                continue;
+            }
+
+            if (entry.SetLabel("default", true, false, false))
+            {
+                labelChanged++;
+            }
+
+            string expectedAddress = assetPath;
+            if (entry.address == expectedAddress)
+            {
+                continue;
+            }
+
+            Debug.Log($"Addressables sync: {entry.address} -> {expectedAddress}");
+            entry.SetAddress(expectedAddress, false);
+            addressChanged++;
         }
     }
 }

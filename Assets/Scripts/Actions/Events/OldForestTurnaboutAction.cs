@@ -11,65 +11,29 @@ public class OldForestTurnaboutAction : EventAction
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
 
-        effect = (character) => true;
-
-        asyncEffect = async (character) =>
+        effect = (character) =>
         {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
-
-            List<Character> enemies = character.hex.characters
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment())
-                .Distinct()
-                .ToList();
+            if (character.hex.terrainType != TerrainEnum.forest) return false;
 
             List<Character> allies = character.hex.characters
                 .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == character.GetAlignment())
                 .Distinct()
                 .ToList();
 
-            if (enemies.Count == 0 || allies.Count == 0) return false;
+            if (allies.Count == 0) return false;
 
-            int enemyStops = 0;
-            for (int i = 0; i < enemies.Count; i++)
+            for (int i = 0; i < allies.Count; i++)
             {
-                Character enemy = enemies[i];
-                int previousMovementLeft = enemy.GetMovementLeft();
-                enemy.moved = enemy.GetMaxMovement();
-                if (previousMovementLeft > 0) enemyStops++;
+                allies[i].ApplyStatusEffect(StatusEffectEnum.Hidden, 1);
+                allies[i].ApplyStatusEffect(StatusEffectEnum.Haste, 1);
             }
-
-            bool isAI = !character.isPlayerControlled;
-            Character allyTarget = null;
-            if (!isAI)
-            {
-                string selected = await SelectionDialog.Ask(
-                    "Choose ally guided by the Old Forest",
-                    "Guide",
-                    "Cancel",
-                    allies.Select(x => x.characterName).ToList(),
-                    isAI,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
-
-                if (string.IsNullOrEmpty(selected)) return false;
-                allyTarget = allies.Find(x => x.characterName == selected);
-            }
-            else
-            {
-                allyTarget = allies
-                    .OrderByDescending(ch => ch.GetMovementLeft())
-                    .ThenByDescending(ch => ch.GetAgent() + ch.GetCommander() + ch.GetEmmissary() + ch.GetMage())
-                    .FirstOrDefault();
-            }
-
-            if (allyTarget == null) return false;
-            allyTarget.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Old Forest Turnabout: {enemyStops} enemy unit(s) lose the rest of their movement, and {allyTarget.characterName} gains Haste (1).",
+                $"Old Forest Turnabout: the forest hides the allies with Hidden <sprite name=\"hidden\"> and quickens them with Haste <sprite name=\"haste\">.",
                 new Color(0.35f, 0.65f, 0.35f));
 
             return true;
@@ -79,10 +43,13 @@ public class OldForestTurnaboutAction : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
-
-            bool hasEnemy = character.hex.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment());
-            bool hasAlly = character.hex.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() == character.GetAlignment());
-            return hasEnemy && hasAlly;
+            if (character.hex.terrainType != TerrainEnum.forest) return false;
+            return character.hex.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() == character.GetAlignment());
+        };
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
         };
 
         base.Initialize(c, condition, effect, asyncEffect);

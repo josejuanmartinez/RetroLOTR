@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -50,6 +51,7 @@ public class DeckExplorerWindow : EditorWindow
     private bool onlyShowCardsWithActions;
     private bool sortCardsByTypeThenName = true;
     private string editedCardKey;
+    private string copyTargetResourcePath;
     private int editedCommanderSkillRequired;
     private int editedAgentSkillRequired;
     private int editedEmissarySkillRequired;
@@ -62,8 +64,17 @@ public class DeckExplorerWindow : EditorWindow
     private int editedMithrilRequired;
     private int editedGoldRequired;
     private int editedJokerRequired;
+    private int editedLeatherGranted;
+    private int editedMountsGranted;
+    private int editedTimberGranted;
+    private int editedIronGranted;
+    private int editedSteelGranted;
+    private int editedMithrilGranted;
+    private int editedGoldGranted;
+    private ArmySpecialAbilityEnum editedArmyAbilityToAdd;
 
     private TextAsset manifestAsset;
+    private CardsManifest cardsManifest;
     private GameObject cardPrefabAsset;
     private GameObject previewRoot;
     private GameObject previewCanvasRoot;
@@ -194,8 +205,9 @@ public class DeckExplorerWindow : EditorWindow
 
             bool selected = i == selectedCardIndex;
             string finalizedPrefix = IsCardFinalized(card) ? "✔ " : string.Empty;
-            string label = $"{finalizedPrefix}{FormatCardTitle(card.name)}  [{card.GetCardType()}]";
-            if (GUILayout.Toggle(selected, label, selected ? EditorStyles.helpBox : EditorStyles.label))
+            string typeLabel = FormatCardTypeLabel(card.GetCardType());
+            string label = $"{finalizedPrefix}{FormatCardTitle(card.name)}  [{typeLabel}]";
+            if (GUILayout.Toggle(selected, label, CreateRichTextStyle(selected ? EditorStyles.helpBox : EditorStyles.label)))
             {
                 if (selectedCardIndex != i)
                 {
@@ -235,6 +247,8 @@ public class DeckExplorerWindow : EditorWindow
             SetCardFinalized(card, finalized);
         }
         GUILayout.FlexibleSpace();
+        DrawCopyToSubdeckControls(card);
+        GUILayout.Space(6);
         if (GUILayout.Button("Provide Feedback", GUILayout.Width(130)))
         {
             CopyCardFeedbackPayload(card);
@@ -289,7 +303,7 @@ public class DeckExplorerWindow : EditorWindow
     private void DrawCardDetails(CardData card)
     {
         EditorGUILayout.LabelField("Name", FormatCardTitle(card.name));
-        EditorGUILayout.LabelField("Type", card.GetCardType().ToString());
+        EditorGUILayout.LabelField("Type", FormatCardTypeLabel(card.GetCardType()), CreateRichTextStyle(EditorStyles.label));
         EditorGUILayout.LabelField("Deck", card.deckId ?? string.Empty);
         EditorGUILayout.LabelField("Region", card.region ?? string.Empty);
         EditorGUILayout.LabelField("Tags", card.tags != null ? string.Join(", ", card.tags) : string.Empty);
@@ -299,11 +313,42 @@ public class DeckExplorerWindow : EditorWindow
         EditorGUILayout.LabelField("Requirements text", card.requirementsText ?? string.Empty);
     }
 
+    private void DrawCopyToSubdeckControls(CardData card)
+    {
+        DeckEntryView currentDeck = GetSelectedDeckView();
+        List<DeckEntryView> targets = GetCopyTargets(currentDeck);
+        if (targets.Count == 0)
+        {
+            EditorGUILayout.LabelField("Copy", "No subdeck targets");
+            return;
+        }
+
+        int targetIndex = GetCopyTargetIndex(targets);
+        string[] options = targets.Select(BuildDeckLabel).ToArray();
+
+        EditorGUI.BeginDisabledGroup(!IsCardFinalized(card));
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(380));
+        EditorGUILayout.LabelField("Copy", GUILayout.Width(35));
+
+        int newIndex = EditorGUILayout.Popup(targetIndex, options, GUILayout.Width(220));
+        if (newIndex != targetIndex)
+        {
+            copyTargetResourcePath = targets[newIndex].manifest.resourcePath;
+        }
+
+        if (GUILayout.Button("To Subdeck", GUILayout.Width(90)))
+        {
+            CopyFinalizedCardToSubdeck(card, targets[newIndex]);
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUI.EndDisabledGroup();
+    }
+
     private void DrawEditableRequirements(CardData card)
     {
         if (card == null) return;
 
-        SyncEditableRequirements(card);
+        SyncEditableCardFields(card);
 
         editedCommanderSkillRequired = EditorGUILayout.IntField("Commander", editedCommanderSkillRequired);
         editedAgentSkillRequired = EditorGUILayout.IntField("Agent", editedAgentSkillRequired);
@@ -320,6 +365,20 @@ public class DeckExplorerWindow : EditorWindow
         editedGoldRequired = EditorGUILayout.IntField("Gold", editedGoldRequired);
         editedJokerRequired = EditorGUILayout.IntField("Joker", editedJokerRequired);
 
+        if (card.GetCardType() == CardTypeEnum.Army)
+        {
+            GUILayout.Space(10);
+            EditorGUILayout.LabelField("Army Abilities", EditorStyles.boldLabel);
+            DrawEditableArmyAbilities(card);
+        }
+
+        if (card.GetCardType() == CardTypeEnum.PC)
+        {
+            GUILayout.Space(10);
+            EditorGUILayout.LabelField("Editable Grants", EditorStyles.boldLabel);
+            DrawEditableGrants(card);
+        }
+
         GUILayout.Space(6);
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
@@ -330,7 +389,71 @@ public class DeckExplorerWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
-    private void SyncEditableRequirements(CardData card)
+    private void DrawEditableGrants(CardData card)
+    {
+        if (card == null) return;
+
+        SyncEditableCardFields(card);
+
+        editedLeatherGranted = EditorGUILayout.IntField("Leather", editedLeatherGranted);
+        editedTimberGranted = EditorGUILayout.IntField("Timber", editedTimberGranted);
+        editedMountsGranted = EditorGUILayout.IntField("Mounts", editedMountsGranted);
+        editedIronGranted = EditorGUILayout.IntField("Iron", editedIronGranted);
+        editedSteelGranted = EditorGUILayout.IntField("Steel", editedSteelGranted);
+        editedMithrilGranted = EditorGUILayout.IntField("Mithril", editedMithrilGranted);
+        editedGoldGranted = EditorGUILayout.IntField("Gold", editedGoldGranted);
+
+        GUILayout.Space(6);
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("Save new grants", GUILayout.Width(160)))
+        {
+            SaveNewGrants(card);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawEditableArmyAbilities(CardData card)
+    {
+        if (card == null) return;
+
+        card.specialAbilities ??= new List<ArmySpecialAbilityEnum>();
+
+        if (card.specialAbilities.Count == 0)
+        {
+            EditorGUILayout.LabelField("None");
+        }
+        else
+        {
+            for (int i = 0; i < card.specialAbilities.Count; i++)
+            {
+                ArmySpecialAbilityEnum ability = card.specialAbilities[i];
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(FormatArmyAbilityLabel(ability));
+                if (GUILayout.Button("Remove", GUILayout.Width(70)))
+                {
+                    card.specialAbilities.RemoveAt(i);
+                    SaveArmyAbilities(card);
+                    GUIUtility.ExitGUI();
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+        }
+
+        EditorGUILayout.BeginHorizontal();
+        editedArmyAbilityToAdd = (ArmySpecialAbilityEnum)EditorGUILayout.EnumPopup(editedArmyAbilityToAdd);
+        if (GUILayout.Button("Add", GUILayout.Width(60)))
+        {
+            if (!card.specialAbilities.Contains(editedArmyAbilityToAdd))
+            {
+                card.specialAbilities.Add(editedArmyAbilityToAdd);
+                SaveArmyAbilities(card);
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void SyncEditableCardFields(CardData card)
     {
         string key = GetEditableRequirementsKey(card);
         if (string.Equals(editedCardKey, key, StringComparison.Ordinal)) return;
@@ -348,6 +471,13 @@ public class DeckExplorerWindow : EditorWindow
         editedMithrilRequired = Mathf.Max(0, card.mithrilRequired);
         editedGoldRequired = Mathf.Max(0, card.goldRequired);
         editedJokerRequired = Mathf.Max(0, card.jokerRequired);
+        editedLeatherGranted = Mathf.Max(0, card.leatherGranted);
+        editedTimberGranted = Mathf.Max(0, card.timberGranted);
+        editedMountsGranted = Mathf.Max(0, card.mountsGranted);
+        editedIronGranted = Mathf.Max(0, card.ironGranted);
+        editedSteelGranted = Mathf.Max(0, card.steelGranted);
+        editedMithrilGranted = Mathf.Max(0, card.mithrilGranted);
+        editedGoldGranted = Mathf.Max(0, card.goldGranted);
     }
 
     private static string GetEditableRequirementsKey(CardData card)
@@ -400,6 +530,80 @@ public class DeckExplorerWindow : EditorWindow
         ReloadSelectedCard();
         EditorUtility.SetDirty(this);
         Debug.Log($"DeckExplorerWindow: saved new requirements for '{card.name}'.");
+    }
+
+    private void SaveNewGrants(CardData card)
+    {
+        DeckEntryView deckView = GetSelectedDeckView();
+        if (card == null || deckView?.deckData?.cards == null)
+        {
+            return;
+        }
+
+        CardData target = deckView.deckData.cards.FirstOrDefault(c => c != null && c.cardId == card.cardId);
+        if (target == null)
+        {
+            target = card;
+        }
+
+        target.leatherGranted = Mathf.Max(0, editedLeatherGranted);
+        target.timberGranted = Mathf.Max(0, editedTimberGranted);
+        target.mountsGranted = Mathf.Max(0, editedMountsGranted);
+        target.ironGranted = Mathf.Max(0, editedIronGranted);
+        target.steelGranted = Mathf.Max(0, editedSteelGranted);
+        target.mithrilGranted = Mathf.Max(0, editedMithrilGranted);
+        target.goldGranted = Mathf.Max(0, editedGoldGranted);
+
+        string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving grants.");
+            return;
+        }
+
+        string json = JsonUtility.ToJson(deckView.deckData, true);
+        File.WriteAllText(assetPath, json);
+        AssetDatabase.ImportAsset(ToAssetPath(assetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
+
+        ReloadSelectedCard();
+        EditorUtility.SetDirty(this);
+        Debug.Log($"DeckExplorerWindow: saved new grants for '{card.name}'.");
+    }
+
+    private void SaveArmyAbilities(CardData card)
+    {
+        DeckEntryView deckView = GetSelectedDeckView();
+        if (card == null || deckView?.deckData?.cards == null)
+        {
+            return;
+        }
+
+        CardData target = deckView.deckData.cards.FirstOrDefault(c => c != null && c.cardId == card.cardId);
+        if (target == null)
+        {
+            target = card;
+        }
+
+        target.specialAbilities = card.specialAbilities != null
+            ? card.specialAbilities.Distinct().ToList()
+            : new List<ArmySpecialAbilityEnum>();
+
+        string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving army abilities.");
+            return;
+        }
+
+        string json = JsonUtility.ToJson(deckView.deckData, true);
+        File.WriteAllText(assetPath, json);
+        AssetDatabase.ImportAsset(ToAssetPath(assetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
+
+        ReloadSelectedCard();
+        EditorUtility.SetDirty(this);
+        Debug.Log($"DeckExplorerWindow: saved army abilities for '{card.name}'.");
     }
 
     private static string GetDeckAssetPath(string resourcePath)
@@ -645,7 +849,39 @@ public class DeckExplorerWindow : EditorWindow
             previewCardComponent = previewCardObject.GetComponent<Card>();
         }
 
+        ConfigurePreviewTextMeshPro();
+
         EnsureRenderTexture(rect);
+    }
+
+    private void ConfigurePreviewTextMeshPro()
+    {
+        TMP_FontAsset defaultFont = TMP_Settings.defaultFontAsset;
+        TMP_SpriteAsset defaultSpriteAsset = TMP_Settings.defaultSpriteAsset;
+        if (previewCardComponent == null) return;
+
+        ConfigurePreviewTextField("titleText", defaultFont, defaultSpriteAsset);
+        ConfigurePreviewTextField("descriptionText", defaultFont, defaultSpriteAsset);
+        ConfigurePreviewTextField("requirementsText", defaultFont, defaultSpriteAsset);
+        ConfigurePreviewTextField("requirementsMessage", defaultFont, defaultSpriteAsset);
+    }
+
+    private void ConfigurePreviewTextField(string fieldName, TMP_FontAsset defaultFont, TMP_SpriteAsset defaultSpriteAsset)
+    {
+        TextMeshProUGUI tmp = GetPreviewField<TextMeshProUGUI>(fieldName);
+        if (tmp == null) return;
+
+        if (tmp.font == null && defaultFont != null)
+        {
+            tmp.font = defaultFont;
+        }
+
+        if (tmp.spriteAsset == null && defaultSpriteAsset != null)
+        {
+            tmp.spriteAsset = defaultSpriteAsset;
+        }
+
+        tmp.richText = true;
     }
 
     private void EnsureRenderTexture(Rect rect)
@@ -748,6 +984,7 @@ public class DeckExplorerWindow : EditorWindow
         }
 
         CardsManifest manifest = JsonUtility.FromJson<CardsManifest>(manifestAsset.text);
+        cardsManifest = manifest;
         if (manifest?.decks == null)
         {
             Repaint();
@@ -829,6 +1066,133 @@ public class DeckExplorerWindow : EditorWindow
         }
 
         Repaint();
+    }
+
+    private List<DeckEntryView> GetCopyTargets(DeckEntryView currentDeck)
+    {
+        return deckViews
+            .Where(view =>
+                view != null
+                && view.manifest != null
+                && view.deckData != null
+                && !string.IsNullOrWhiteSpace(view.manifest.resourcePath)
+                && !view.manifest.sharedToAll
+                && !view.manifest.isBaseDeck
+                && (currentDeck == null || !string.Equals(view.manifest.resourcePath, currentDeck.manifest.resourcePath, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+    }
+
+    private int GetCopyTargetIndex(List<DeckEntryView> targets)
+    {
+        if (targets == null || targets.Count == 0) return 0;
+
+        if (!string.IsNullOrWhiteSpace(copyTargetResourcePath))
+        {
+            int matchIndex = targets.FindIndex(view => view != null && view.manifest != null
+                && string.Equals(view.manifest.resourcePath, copyTargetResourcePath, StringComparison.OrdinalIgnoreCase));
+            if (matchIndex >= 0)
+            {
+                return matchIndex;
+            }
+        }
+
+        copyTargetResourcePath = targets[0].manifest.resourcePath;
+        return 0;
+    }
+
+    private void CopyFinalizedCardToSubdeck(CardData sourceCard, DeckEntryView targetDeckView)
+    {
+        if (sourceCard == null || targetDeckView == null || targetDeckView.manifest == null || targetDeckView.deckData == null)
+        {
+            return;
+        }
+
+        if (!IsCardFinalized(sourceCard))
+        {
+            Debug.LogWarning($"DeckExplorerWindow: '{sourceCard.name}' must be finalized before copying.");
+            return;
+        }
+
+        string targetDeckId = string.IsNullOrWhiteSpace(targetDeckView.manifest.deckId)
+            ? string.Empty
+            : targetDeckView.manifest.deckId.Trim();
+
+        CardData copiedCard = CloneCard(sourceCard);
+        if (copiedCard == null)
+        {
+            return;
+        }
+
+        copiedCard.deckId = targetDeckId;
+        copiedCard.cardId = GetNextCardId(targetDeckView.deckData.cards);
+
+        targetDeckView.deckData.cards ??= new List<CardData>();
+        targetDeckView.deckData.cards.Add(copiedCard);
+        targetDeckView.manifest.cardCount = targetDeckView.deckData.cards.Count;
+
+        string deckAssetPath = GetDeckAssetPath(targetDeckView.manifest.resourcePath);
+        if (string.IsNullOrWhiteSpace(deckAssetPath))
+        {
+            Debug.LogWarning("DeckExplorerWindow: could not resolve target deck asset path for copying.");
+            return;
+        }
+
+        File.WriteAllText(deckAssetPath, JsonUtility.ToJson(targetDeckView.deckData, true));
+
+        if (cardsManifest != null)
+        {
+            SaveCardsManifest();
+        }
+
+        AssetDatabase.ImportAsset(ToAssetPath(deckAssetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
+
+        copyTargetResourcePath = targetDeckView.manifest.resourcePath;
+        RefreshData();
+        SelectDeckByResourcePath(targetDeckView.manifest.resourcePath);
+        selectedCardIndex = FindCardIndexInFilteredCards(copiedCard.cardId, copiedCard.name, copiedCard.GetActionRef());
+        Repaint();
+
+        Debug.Log($"DeckExplorerWindow: copied finalized card '{sourceCard.name}' to subdeck '{targetDeckView.manifest.deckId}'.");
+    }
+
+    private static CardData CloneCard(CardData source)
+    {
+        if (source == null) return null;
+        string json = JsonUtility.ToJson(source);
+        return JsonUtility.FromJson<CardData>(json);
+    }
+
+    private static int GetNextCardId(List<CardData> cards)
+    {
+        if (cards == null || cards.Count == 0) return 1;
+        return cards.Where(c => c != null).Select(c => c.cardId).DefaultIfEmpty(0).Max() + 1;
+    }
+
+    private void SaveCardsManifest()
+    {
+        if (cardsManifest == null) return;
+
+        string manifestAssetPath = Path.GetFullPath(Path.Combine(Application.dataPath, "Resources", "Cards.json"));
+        File.WriteAllText(manifestAssetPath, JsonUtility.ToJson(cardsManifest, true));
+        AssetDatabase.ImportAsset(ToAssetPath(manifestAssetPath), ImportAssetOptions.ForceUpdate);
+    }
+
+    private void SelectDeckByResourcePath(string resourcePath)
+    {
+        if (string.IsNullOrWhiteSpace(resourcePath)) return;
+
+        for (int i = 0; i < deckViews.Count; i++)
+        {
+            DeckEntryView view = deckViews[i];
+            if (view == null || view.manifest == null) continue;
+            if (!string.Equals(view.manifest.resourcePath, resourcePath, StringComparison.OrdinalIgnoreCase)) continue;
+
+            selectedDeckIndex = i;
+            selectedCardIndex = 0;
+            RebuildFilteredCards();
+            return;
+        }
     }
 
     private DeckData LoadDeckData(string resourcePath)
@@ -1051,7 +1415,16 @@ public class DeckExplorerWindow : EditorWindow
         string typePrefix = FormatCardTypeLabel(cardType);
         if (cardType == CardTypeEnum.Character)
         {
-            return PrefixWithCardType(typePrefix, data.GetCharacterDescription());
+            string characterSummary = data.GetCharacterDescription();
+            string characterBody = !string.IsNullOrWhiteSpace(data.description) ? data.description : string.Empty;
+            if (string.IsNullOrWhiteSpace(characterSummary))
+            {
+                return PrefixWithCardType(typePrefix, characterBody);
+            }
+
+            return string.IsNullOrWhiteSpace(characterBody)
+                ? PrefixWithCardType(typePrefix, characterSummary)
+                : PrefixWithCardType(typePrefix, $"{characterSummary}. {characterBody}");
         }
         if (cardType == CardTypeEnum.Army)
         {
@@ -1077,7 +1450,16 @@ public class DeckExplorerWindow : EditorWindow
             sb.Append(string.Join(string.Empty, grants));
             if (cardType == CardTypeEnum.PC)
             {
-                sb.Append("\nOR\nLocal Effect");
+                sb.Append("\nOR\n");
+                PcEffectCatalog.PcEffectDefinition pcEffect = PcEffectCatalog.GetDefinition(data.pcEffectId);
+                if (pcEffect != null)
+                {
+                    sb.Append(pcEffect.title).Append(": ").Append(pcEffect.description);
+                }
+                else
+                {
+                    sb.Append("Local Effect");
+                }
             }
             return PrefixWithCardType(typePrefix, sb.ToString());
         }
@@ -1410,6 +1792,26 @@ public class DeckExplorerWindow : EditorWindow
         return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(formatted);
     }
 
+    private static string FormatArmyAbilityLabel(ArmySpecialAbilityEnum ability)
+    {
+        string abilityName = ability switch
+        {
+            ArmySpecialAbilityEnum.Longrange => "Long range",
+            ArmySpecialAbilityEnum.ShortRange => "Short range",
+            _ => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
+                Regex.Replace(ability.ToString(), "([a-z])([A-Z])", "$1 $2").ToLowerInvariant())
+        };
+
+        string spriteName = ability switch
+        {
+            ArmySpecialAbilityEnum.Longrange => "longrange",
+            ArmySpecialAbilityEnum.ShortRange => "shortrange",
+            _ => ability.ToString().ToLowerInvariant()
+        };
+
+        return $"{abilityName} <sprite name=\"{spriteName}\">";
+    }
+
     private static bool ShouldInsertWordSpace(string value, int index)
     {
         if (string.IsNullOrWhiteSpace(value)) return false;
@@ -1452,25 +1854,25 @@ public class DeckExplorerWindow : EditorWindow
 
         if (string.IsNullOrWhiteSpace(label)) return string.Empty;
 
-        Colors colors = UnityEngine.Object.FindFirstObjectByType<Colors>();
-        if (colors == null)
-        {
-            return label;
-        }
-
+        Colors colors = GetColorsForEditor();
         string colorName = cardType switch
         {
-            CardTypeEnum.PC => "pcCard",
-            CardTypeEnum.Land => "landCard",
-            CardTypeEnum.Character => "characterCard",
-            CardTypeEnum.Army => "armyCard",
-            CardTypeEnum.Event => "eventCard",
-            CardTypeEnum.Action => "actionCard",
-            CardTypeEnum.Spell => "spellCard",
+            CardTypeEnum.PC => "pc",
+            CardTypeEnum.Land => "land",
+            CardTypeEnum.Character => "character",
+            CardTypeEnum.Army => "army",
+            CardTypeEnum.Event => "event",
+            CardTypeEnum.Action => "action",
+            CardTypeEnum.Spell => "spell",
             _ => null
         };
 
         if (string.IsNullOrWhiteSpace(colorName))
+        {
+            return label;
+        }
+
+        if (colors == null)
         {
             return label;
         }
@@ -1483,6 +1885,25 @@ public class DeckExplorerWindow : EditorWindow
         {
             return label;
         }
+    }
+
+    private static Colors GetColorsForEditor()
+    {
+        Colors colors = UnityEngine.Object.FindFirstObjectByType<Colors>();
+        if (colors != null)
+        {
+            return colors;
+        }
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/GameObjects/Colors.prefab");
+        return prefab != null ? prefab.GetComponent<Colors>() : null;
+    }
+
+    private static GUIStyle CreateRichTextStyle(GUIStyle baseStyle)
+    {
+        GUIStyle style = new(baseStyle);
+        style.richText = true;
+        return style;
     }
 
     private static string PrefixWithCardType(string typePrefix, string text)

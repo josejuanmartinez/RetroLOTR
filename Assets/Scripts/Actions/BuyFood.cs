@@ -46,7 +46,7 @@ public class BuyFood : EmmissaryPCAction
             MessageDisplayNoUI.ShowMessage(
                 c.hex,
                 c,
-                $"Army Rations: {affectedCount} army(ies) gain Haste for 1 turn (-{totalCost} <sprite name=\"gold\"/>).",
+                $"Army Rations: {affectedCount} army(ies) gain Haste for 1 turn (-{totalCost} <sprite name=\"gold\">).",
                 Color.green);
 
             return true;

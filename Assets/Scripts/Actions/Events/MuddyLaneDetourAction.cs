@@ -5,6 +5,23 @@ using UnityEngine;
 
 public class MuddyLaneDetourAction : EventAction
 {
+    private const int TotalDrainValue = 10;
+
+    private static int GetResourceValue(ProducesEnum resourceType)
+    {
+        return resourceType switch
+        {
+            ProducesEnum.leather => 1,
+            ProducesEnum.timber => 2,
+            ProducesEnum.iron => 3,
+            ProducesEnum.mounts => 2,
+            ProducesEnum.steel => 4,
+            ProducesEnum.mithril => 5,
+            ProducesEnum.gold => 1,
+            _ => 0
+        };
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -33,35 +50,53 @@ public class MuddyLaneDetourAction : EventAction
             Leader owner = target.GetOwner();
             if (owner == null) return false;
 
-            List<ProducesEnum> availableResources = new();
-            if (owner.leatherAmount > 0) availableResources.Add(ProducesEnum.leather);
-            if (owner.timberAmount > 0) availableResources.Add(ProducesEnum.timber);
-            if (owner.mountsAmount > 0) availableResources.Add(ProducesEnum.mounts);
-            if (owner.ironAmount > 0) availableResources.Add(ProducesEnum.iron);
-            if (owner.steelAmount > 0) availableResources.Add(ProducesEnum.steel);
-            if (owner.mithrilAmount > 0) availableResources.Add(ProducesEnum.mithril);
+            int remainingValue = TotalDrainValue;
+            int goldLoss = Mathf.Min(owner.goldAmount, remainingValue);
+            if (goldLoss > 0)
+            {
+                owner.RemoveGold(goldLoss, owner == FindFirstObjectByType<Game>()?.player);
+                remainingValue -= goldLoss;
+            }
 
-            string lossText;
-            if (availableResources.Count > 0)
+            List<(ProducesEnum resource, int value, Func<int> getter, Action<int, bool> remover)> resources = new()
             {
-                ProducesEnum lost = availableResources[UnityEngine.Random.Range(0, availableResources.Count)];
-                owner.RemoveResource(lost, 1, owner == FindFirstObjectByType<Game>()?.player);
-                lossText = $"1 {lost}";
-            }
-            else if (owner.goldAmount > 0)
+                (ProducesEnum.mithril, GetResourceValue(ProducesEnum.mithril), () => owner.mithrilAmount, (amount, showMessage) => owner.RemoveMithril(amount, showMessage)),
+                (ProducesEnum.steel, GetResourceValue(ProducesEnum.steel), () => owner.steelAmount, (amount, showMessage) => owner.RemoveSteel(amount, showMessage)),
+                (ProducesEnum.iron, GetResourceValue(ProducesEnum.iron), () => owner.ironAmount, (amount, showMessage) => owner.RemoveIron(amount, showMessage)),
+                (ProducesEnum.mounts, GetResourceValue(ProducesEnum.mounts), () => owner.mountsAmount, (amount, showMessage) => owner.RemoveMounts(amount, showMessage)),
+                (ProducesEnum.timber, GetResourceValue(ProducesEnum.timber), () => owner.timberAmount, (amount, showMessage) => owner.RemoveTimber(amount, showMessage)),
+                (ProducesEnum.leather, GetResourceValue(ProducesEnum.leather), () => owner.leatherAmount, (amount, showMessage) => owner.RemoveLeather(amount, showMessage)),
+            };
+
+            List<string> drainedParts = new();
+            for (int i = 0; i < resources.Count && remainingValue > 0; i++)
             {
-                owner.RemoveGold(1, owner == FindFirstObjectByType<Game>()?.player);
-                lossText = "1 gold";
+                var entry = resources[i];
+                int available = entry.getter();
+                if (available <= 0 || entry.value <= 0) continue;
+
+                int maxUnits = Mathf.Min(available, remainingValue / entry.value);
+                if (maxUnits <= 0) continue;
+
+                entry.remover(maxUnits, owner == FindFirstObjectByType<Game>()?.player);
+                drainedParts.Add($"{maxUnits}<sprite name=\"{entry.resource.ToString().ToLowerInvariant()}\">");
+                remainingValue -= maxUnits * entry.value;
             }
-            else
+
+            if (remainingValue > 0 && owner.goldAmount > 0)
             {
-                return false;
+                int extraGold = Mathf.Min(owner.goldAmount, remainingValue);
+                owner.RemoveGold(extraGold, owner == FindFirstObjectByType<Game>()?.player);
+                drainedParts.Add($"{extraGold}<sprite name=\"gold\">");
+                remainingValue -= extraGold;
             }
+
+            if (drainedParts.Count == 0) return false;
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Muddy Lane Detour: {target.characterName}'s side loses {lossText} in the mess.",
+                $"Muddy Lane: {target.characterName}'s side loses {string.Join(" ", drainedParts)}.",
                 new Color(0.55f, 0.34f, 0.16f));
 
             return true;

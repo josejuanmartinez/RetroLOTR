@@ -742,15 +742,15 @@ public class Game : MonoBehaviour
             string message = null;
             if (pc != null && pc.temporaryRevealTurns > 0)
             {
-                message = $"<sprite name=\"light\"> Light fades ({pc.temporaryRevealTurns} turn{(pc.temporaryRevealTurns == 1 ? "" : "s")} left)";
+                message = $"<sprite name=\"light\">light Light fades ({pc.temporaryRevealTurns} turn{(pc.temporaryRevealTurns == 1 ? "" : "s")} left)";
             }
             else if (pc != null && pc.temporaryHiddenTurns > 0)
             {
-                message = $"<sprite name=\"darkness\"> Darkness fades ({pc.temporaryHiddenTurns} turn{(pc.temporaryHiddenTurns == 1 ? "" : "s")} left)";
+                message = $"<sprite name=\"darkness\">darkness Darkness fades ({pc.temporaryHiddenTurns} turn{(pc.temporaryHiddenTurns == 1 ? "" : "s")} left)";
             }
             else
             {
-                message = $"<sprite name=\"scout\"> Scouted: {scoutedTurns} turn{(scoutedTurns == 1 ? "" : "s")} left";
+                message = $"<sprite name=\"scout\">scout Scouted: {scoutedTurns} turn{(scoutedTurns == 1 ? "" : "s")} left";
             }
 
             MessageDisplayNoUI.ShowMessage(hex, player, message, Color.yellow, false);
@@ -908,7 +908,7 @@ public class Game : MonoBehaviour
             foreach (KeyValuePair<ProducesEnum, int> entry in resources)
             {
                 if (entry.Value < 1) continue;
-                parts.Add($"{entry.Value} <sprite name=\"{entry.Key}\">");
+                parts.Add($"{entry.Value} <sprite name=\"{entry.Key}\">{entry.Key}");
             }
 
             return string.Join(", ", parts);

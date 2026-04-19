@@ -42,7 +42,7 @@ public class SabotageStorage : AgentPCAction
                 if (loss < 1) continue;
 
                 slot.setter(target, current - loss);
-                MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{loss} <sprite name=\"{slot.sprite}\"/> sabotaged!", Color.red);
+                MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{loss} <sprite name=\"{slot.sprite}\">{slot.sprite} sabotaged!", Color.red);
             }
 
             if (target == FindFirstObjectByType<Game>().player)

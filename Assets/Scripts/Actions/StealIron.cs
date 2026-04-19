@@ -20,8 +20,8 @@ public class StealIron : AgentPCAction
             if (playable == null) return false;
             playable.AddIron(toSteal);
             pc.owner.RemoveIron(toSteal);
-            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"iron\"/> stolen!", Color.red);
-            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"iron\"/> stolen!", Color.green);
+            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"iron\"> stolen!", Color.red);
+            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"iron\"> stolen!", Color.green);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 
         };

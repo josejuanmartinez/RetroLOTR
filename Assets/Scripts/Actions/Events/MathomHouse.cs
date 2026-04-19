@@ -6,7 +6,6 @@ using UnityEngine;
 public class MathomHouse : EventAction
 {
     private const int Radius = 2;
-    private const int GoldGain = 2;
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -28,13 +27,14 @@ public class MathomHouse : EventAction
 
             if (hobbits.Count == 0) return false;
 
-            for (int i = 0; i < hobbits.Count; i++)
-            {
-                hobbits[i].ApplyStatusEffect(StatusEffectEnum.Hope, 1);
-            }
+            Leader owner = character.GetOwner();
+            owner.AddResource(ProducesEnum.iron, 1);
+            owner.AddResource(ProducesEnum.steel, 1);
+            owner.AddResource(ProducesEnum.mithril, 1);
 
-            character.GetOwner().AddGold(GoldGain);
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Mathom House grants Hope (1) to {hobbits.Count} Hobbit(s) in radius {Radius} and +{GoldGain} Gold.", Color.green);
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Mathom House yields iron, steel, and mithril from the old collection, while {hobbits.Count} Hobbit(s) witness the finding.",
+                Color.green);
             return true;
         };
 

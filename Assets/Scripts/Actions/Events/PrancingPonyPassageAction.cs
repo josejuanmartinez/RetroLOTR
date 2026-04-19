@@ -7,13 +7,11 @@ public class PrancingPonyPassageAction : EventAction
 {
     private const int Radius = 1;
     private const int HealAmount = 10;
-    private const int GoldReward = 1;
-
     private static bool IsEligible(Character source, Character target)
     {
         if (source == null || target == null || target.killed) return false;
         if (target.hex == null || target.hex == source.hex) return false;
-        if (target.race != RacesEnum.Hobbit && target.race != RacesEnum.Dwarf) return false;
+        if (target.race != RacesEnum.Hobbit && target.race != RacesEnum.Dunedain && target.race != RacesEnum.Dwarf) return false;
         return target.GetOwner() == source.GetOwner() || target.GetAlignment() == source.GetAlignment();
     }
 
@@ -29,8 +27,7 @@ public class PrancingPonyPassageAction : EventAction
             if (character == null || character.hex == null) return false;
 
             Board board = FindFirstObjectByType<Board>();
-            Leader owner = character.GetOwner();
-            if (board == null || owner == null) return false;
+            if (board == null) return false;
 
             List<Character> targets = character.hex.GetHexesInRadius(Radius)
                 .Where(h => h != null && h.characters != null)
@@ -58,12 +55,10 @@ public class PrancingPonyPassageAction : EventAction
 
             if (movedCount == 0) return false;
 
-            owner.AddGold(GoldReward);
-
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Prancing Pony Passage: {movedCount} Hobbit/Dwarf ally unit(s) are escorted into the hex, {healedCount} are healed for {HealAmount}, and {owner.characterName} gains {GoldReward} gold.",
+                $"Prancing Pony Passage: {movedCount} Hobbit/Dunedain/Dwarf ally unit(s) are escorted into the hex, {healedCount} are healed for {HealAmount}.",
                 new Color(0.82f, 0.7f, 0.4f));
 
             return true;

@@ -49,7 +49,7 @@ public class FindArtifact: MageAction
             } 
             else
             {
-                MessageDisplayNoUI.ShowMessage(c.hex, c, $"No <sprite name=\"artifact\"> found", Color.red);
+                MessageDisplayNoUI.ShowMessage(c.hex, c, $"No <sprite name=\"artifact\">artifact found", Color.red);
             }
 
 
@@ -81,7 +81,7 @@ public class FindArtifact: MageAction
                 c.hex.UpdateArtifactVisibility();
                 Character.RefreshArtifactPcVisibilityForHex(c.hex);
                 await ApplyAlignmentPenaltyIfNeeded();
-                MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} found", Color.green);
+                MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\">artifact {artifact.GetHoverText()} found", Color.green);
                 Sounds.Instance?.PlayArtifactFound();
                 return true;
             }
@@ -94,7 +94,7 @@ public class FindArtifact: MageAction
                 c.hex.UpdateArtifactVisibility();
                 Character.RefreshArtifactPcVisibilityForHex(c.hex);
                 await ApplyAlignmentPenaltyIfNeeded();
-                MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()} claimed", Color.green);
+                MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\">artifact {artifact.GetHoverText()} claimed", Color.green);
                 Sounds.Instance?.PlayArtifactFound();
             }
             else

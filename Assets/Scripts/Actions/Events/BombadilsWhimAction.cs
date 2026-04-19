@@ -19,6 +19,18 @@ public class BombadilsWhimAction : EventAction
         return target.GetCommander() + target.GetAgent() + target.GetEmmissary() + target.GetMage();
     }
 
+    private static bool IsSafeDestination(Hex candidate, Leader owner)
+    {
+        if (candidate == null || owner == null) return false;
+        if (candidate.IsWaterTerrain()) return false;
+        if (candidate.GetPC() != null) return false;
+        if (candidate.characters != null && candidate.characters.Count > 0) return false;
+        if (candidate.armies != null && candidate.armies.Count > 0) return false;
+
+        return !candidate.GetHexesInRadius(4).Any(hex =>
+            hex != null && (hex.GetPC() != null || hex.HasCharacterOfLeader(owner) || hex.HasArmyOfLeader(owner)));
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -61,8 +73,8 @@ public class BombadilsWhimAction : EventAction
             int moved = 0;
             if (strongest != null && strongest.hex != null)
             {
-                List<Hex> escapeHexes = character.hex.GetHexesInRadius(1)
-                    .Where(h => h != null && h != character.hex && (h.characters == null || h.characters.Count == 0))
+                List<Hex> escapeHexes = board.GetHexes()
+                    .Where(h => IsSafeDestination(h, owner))
                     .ToList();
 
                 if (escapeHexes.Count > 0)
@@ -73,15 +85,10 @@ public class BombadilsWhimAction : EventAction
                 }
             }
 
-            if (moved > 0)
-            {
-                owner.AddGold(1);
-            }
-
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Bombadil's Whim: {revealed} hidden enemy unit(s) are exposed, {moved} enemy unit is whisked one hex away, and the road earns a little gold.",
+                $"Bombadil's Whim: {revealed} hidden enemy unit(s) are exposed, and the strongest enemy in radius {Radius} is whisked to a hex at least 5 away from any PC or your own units if possible.",
                 new Color(0.62f, 0.78f, 0.47f));
 
             return revealed > 0 || moved > 0;

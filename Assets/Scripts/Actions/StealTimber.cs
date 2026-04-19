@@ -20,8 +20,8 @@ public class StealTimber : AgentPCAction
             if (playable == null) return false;
             playable.AddTimber(toSteal);
             pc.owner.RemoveTimber(toSteal);
-            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"timber\"/> stolen!", Color.red);
-            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"timber\"/> stolen!", Color.green);
+            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"timber\"> stolen!", Color.red);
+            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"timber\"> stolen!", Color.green);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true;
         };

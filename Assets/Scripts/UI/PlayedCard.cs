@@ -15,6 +15,6 @@ public class PlayedCard : MonoBehaviour
         if (image == null) return;
 
         image.sprite = cardSprite;
-        image.enabled = cardSprite != null;
+        image.enabled = cardSprite != null; 
     }
 }

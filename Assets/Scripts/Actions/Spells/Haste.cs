@@ -16,7 +16,7 @@ public class Haste: Spell
             int displayedBoost = Math.Max(1, totalReduction);
             c.moved = c.moved - totalReduction;
             Sounds.Instance?.PlaySpeedUp();
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"+{displayedBoost} <sprite name=\"movement\"/>", Color.green);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"+{displayedBoost} <sprite name=\"movement\">movement", Color.green);
             return true;
         };
         condition = (c) => {

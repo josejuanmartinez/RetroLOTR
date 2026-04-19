@@ -1,8 +1,10 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 [Serializable]
@@ -105,7 +107,7 @@ public class Army
     }
     public void Recruit(TroopsTypeEnum troopsType, int amount, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null)
     {
-        MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\"/>", Color.green);
+        MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\">", Color.green);
         if (troopsType == TroopsTypeEnum.ma) ma += amount;
         if (troopsType == TroopsTypeEnum.ar) ar += amount;
         if (troopsType == TroopsTypeEnum.li) li += amount;
@@ -1459,14 +1461,14 @@ public class Army
     private static string BuildCasualtySpriteString(CasualtyBreakdown breakdown)
     {
         StringBuilder casualties = new StringBuilder();
-        if (breakdown.ma > 0) casualties.Append($"<sprite name=\"ma\"/>[{breakdown.ma}]");
-        if (breakdown.ar > 0) casualties.Append($"<sprite name=\"ar\"/>[{breakdown.ar}]");
-        if (breakdown.li > 0) casualties.Append($"<sprite name=\"li\"/>[{breakdown.li}]");
-        if (breakdown.hi > 0) casualties.Append($"<sprite name=\"hi\"/>[{breakdown.hi}]");
-        if (breakdown.lc > 0) casualties.Append($"<sprite name=\"lc\"/>[{breakdown.lc}]");
-        if (breakdown.hc > 0) casualties.Append($"<sprite name=\"hc\"/>[{breakdown.hc}]");
-        if (breakdown.ca > 0) casualties.Append($"<sprite name=\"ca\"/>[{breakdown.ca}]");
-        if (breakdown.ws > 0) casualties.Append($"<sprite name=\"ws\"/>[{breakdown.ws}]");
+        if (breakdown.ma > 0) casualties.Append($"<sprite name=\"ma\">ma[{breakdown.ma}]");
+        if (breakdown.ar > 0) casualties.Append($"<sprite name=\"ar\">ar[{breakdown.ar}]");
+        if (breakdown.li > 0) casualties.Append($"<sprite name=\"li\">li[{breakdown.li}]");
+        if (breakdown.hi > 0) casualties.Append($"<sprite name=\"hi\">hi[{breakdown.hi}]");
+        if (breakdown.lc > 0) casualties.Append($"<sprite name=\"lc\">lc[{breakdown.lc}]");
+        if (breakdown.hc > 0) casualties.Append($"<sprite name=\"hc\">hc[{breakdown.hc}]");
+        if (breakdown.ca > 0) casualties.Append($"<sprite name=\"ca\">ca[{breakdown.ca}]");
+        if (breakdown.ws > 0) casualties.Append($"<sprite name=\"ws\">ws[{breakdown.ws}]");
         return casualties.ToString();
     }
 
@@ -1512,7 +1514,7 @@ public class Army
         TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Raid, 10, battleMessages, battleNarration, () =>
         {
             commander.GetOwner()?.AddGold(1);
-            return ($"{commander.characterName}'s raiders seize +1 <sprite name=\"gold\"/>.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.Raid, commander.characterName, null, true));
+            return ($"{commander.characterName}'s raiders seize +1 <sprite name=\"gold\">.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.Raid, commander.characterName, null, true));
         });
 
         TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Encouraging, 10, battleMessages, battleNarration, () =>
@@ -1563,7 +1565,7 @@ public class Army
         enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Raid, 10, battleMessages, battleNarration, () =>
         {
             enemyArmy.commander.GetOwner()?.AddGold(1);
-            return ($"{enemyArmy.commander.characterName}'s raiders seize +1 <sprite name=\"gold\"/>.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.Raid, enemyArmy.commander.characterName, null, true));
+            return ($"{enemyArmy.commander.characterName}'s raiders seize +1 <sprite name=\"gold\">.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.Raid, enemyArmy.commander.characterName, null, true));
         });
 
         enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Encouraging, 10, battleMessages, battleNarration, () =>
@@ -2014,12 +2016,22 @@ public class Army
 
     private static string FormatAbilityLabel(ArmySpecialAbilityEnum ability)
     {
-        return ability switch
+        string abilityName = ability switch
+        {
+            ArmySpecialAbilityEnum.Longrange => "Long range",
+            ArmySpecialAbilityEnum.ShortRange => "Short range",
+            _ => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
+                Regex.Replace(ability.ToString(), "([a-z])([A-Z])", "$1 $2").ToLowerInvariant())
+        };
+
+        string spriteName = ability switch
         {
             ArmySpecialAbilityEnum.Longrange => "longrange",
             ArmySpecialAbilityEnum.ShortRange => "shortrange",
             _ => ability.ToString().ToLowerInvariant()
         };
+
+        return $"{abilityName} <sprite name=\"{spriteName}\">";
     }
 
     private float GetAbilityTriggerChancePercent(ArmySpecialAbilityEnum ability, int basePercentChance)

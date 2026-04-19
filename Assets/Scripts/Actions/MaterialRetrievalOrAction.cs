@@ -43,7 +43,7 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
     {
         PcEffectCatalog.PcEffectDefinition definition = ResolvePcEffectDefinition();
         string effectDescription = definition != null
-            ? definition.description
+            ? $"{definition.title}: {definition.description}"
             : "Activate this place's local effect instead of taking its resources.";
         return $"{effectDescription} If this PC is not in play, found it in your hex instead for 10 gold (Commander 2 or Emmissary 1, no PC there, no enemy armies there).";
     }
@@ -58,56 +58,59 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         }
 
         PcEffectCatalog.PcEffectDefinition definition = ResolvePcEffectDefinition();
-        bool canUseEffect = definition != null && definition.CanExecute(character);
         Leader owner = character.GetOwner();
-        bool alreadyPlayedLandThisTurn = owner != null && owner.HasPlayedLandThisTurn();
-        bool useResources = true;
-
-        if (alreadyPlayedLandThisTurn && !canUseEffect)
+        if (owner == null) return false;
+        if (owner.HasPlayedLandThisTurn())
         {
             MessageDisplayNoUI.ShowMessage(character.hex, character, "Only one land card can be played each turn.", Color.red);
             return false;
         }
 
-        if (canUseEffect)
+        owner.RecordPlayedLandThisTurn();
+
+        bool useResources = true;
+        if (character.isPlayerControlled)
         {
-            if (alreadyPlayedLandThisTurn)
-            {
-                useResources = false;
-            }
-            else if (character.isPlayerControlled)
-            {
-                string effectLabel = string.IsNullOrWhiteSpace(definition.title) ? "Activate the local effect" : $"Activate {definition.title}";
-                string prompt =
-                    $"Choose for {ResolveAssociatedPcName()}:\n" +
-                    $"{GetResourceSummary()}\nOR\n{effectLabel}";
-                useResources = await ConfirmationDialog.Ask(prompt, "Resources", "Effect");
-            }
-            else
+            string effectLabel = definition != null && !string.IsNullOrWhiteSpace(definition.title)
+                ? $"Activate {definition.title}"
+                : "Activate the local effect";
+            string prompt =
+                $"Gather resources from {ResolveAssociatedPcName()} or activate the local effect?\n" +
+                $"{GetResourceSummary()}\nOR\n{effectLabel}";
+            useResources = await ConfirmationDialog.Ask(prompt, "Resources", "Effect");
+        }
+        else
+        {
+            if (definition != null && definition.CanExecute(character))
             {
                 useResources = !definition.PreferEffectForAi(character);
             }
         }
 
-        if (useResources || !canUseEffect)
+        if (useResources)
         {
             return ApplyResources(character);
         }
 
-        return definition.Execute(character);
+        if (definition != null && definition.CanExecute(character))
+        {
+            return definition.Execute(character);
+        }
+
+        return true;
     }
 
     private string GetResourceSummary()
     {
         if (card == null) return "Resources";
         List<string> parts = new();
-        if (card.leatherGranted > 0) parts.Add($"+{card.leatherGranted} <sprite name=\"leather\"/>");
-        if (card.mountsGranted > 0) parts.Add($"+{card.mountsGranted} <sprite name=\"mounts\"/>");
-        if (card.timberGranted > 0) parts.Add($"+{card.timberGranted} <sprite name=\"timber\"/>");
-        if (card.ironGranted > 0) parts.Add($"+{card.ironGranted} <sprite name=\"iron\"/>");
-        if (card.steelGranted > 0) parts.Add($"+{card.steelGranted} <sprite name=\"steel\"/>");
-        if (card.mithrilGranted > 0) parts.Add($"+{card.mithrilGranted} <sprite name=\"mithril\"/>");
-        if (card.goldGranted > 0) parts.Add($"+{card.goldGranted} <sprite name=\"gold\"/>");
+        if (card.leatherGranted > 0) parts.Add($"+{card.leatherGranted} <sprite name=\"leather\">");
+        if (card.mountsGranted > 0) parts.Add($"+{card.mountsGranted} <sprite name=\"mounts\">");
+        if (card.timberGranted > 0) parts.Add($"+{card.timberGranted} <sprite name=\"timber\">");
+        if (card.ironGranted > 0) parts.Add($"+{card.ironGranted} <sprite name=\"iron\">");
+        if (card.steelGranted > 0) parts.Add($"+{card.steelGranted} <sprite name=\"steel\">");
+        if (card.mithrilGranted > 0) parts.Add($"+{card.mithrilGranted} <sprite name=\"mithril\">");
+        if (card.goldGranted > 0) parts.Add($"+{card.goldGranted} <sprite name=\"gold\">");
         return string.Join("  ", parts);
     }
 
@@ -116,8 +119,6 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         if (character == null || card == null) return false;
         Leader owner = character.GetOwner();
         if (owner == null) return false;
-
-        owner.RecordPlayedLandThisTurn();
         if (card.leatherGranted > 0) owner.AddLeather(card.leatherGranted, false);
         if (card.mountsGranted > 0) owner.AddMounts(card.mountsGranted, false);
         if (card.timberGranted > 0) owner.AddTimber(card.timberGranted, false);
@@ -137,6 +138,7 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         Leader owner = character.GetOwner();
         if (owner == null || character.hex == null) return false;
 
+        owner.RecordPlayedLandThisTurn();
         owner.RemoveGold(FoundingGoldCost);
 
         string pcName = ResolveAssociatedPcName();

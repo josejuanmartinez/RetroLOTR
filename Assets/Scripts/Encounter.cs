@@ -155,10 +155,10 @@ public static class EncounterResolver
         bool requiresMage = option.outcomes.Any(outcome => outcome != null && outcome.minMage > 0);
 
         List<string> prefixes = new();
-        if (requiresCommander) prefixes.Add("<sprite name=\"commander\">");
-        if (requiresAgent) prefixes.Add("<sprite name=\"agent\">");
-        if (requiresEmmissary) prefixes.Add("<sprite name=\"emmissary\">");
-        if (requiresMage) prefixes.Add("<sprite name=\"mage\">");
+        if (requiresCommander) prefixes.Add("<sprite name=\"commander\">commander");
+        if (requiresAgent) prefixes.Add("<sprite name=\"agent\">agent");
+        if (requiresEmmissary) prefixes.Add("<sprite name=\"emmissary\">emmissary");
+        if (requiresMage) prefixes.Add("<sprite name=\"mage\">mage");
 
         return prefixes.Count > 0 ? string.Join("", prefixes) + " " : string.Empty;
     }

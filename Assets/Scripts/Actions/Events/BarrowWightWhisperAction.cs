@@ -27,33 +27,16 @@ public class BarrowWightWhisperAction : EventAction
 
             if (enemies.Count == 0) return false;
 
-            int revealed = 0;
             for (int i = 0; i < enemies.Count; i++)
             {
-                if (enemies[i].HasStatusEffect(StatusEffectEnum.Hidden))
-                {
-                    enemies[i].ClearStatusEffect(StatusEffectEnum.Hidden);
-                    revealed++;
-                }
-
-                enemies[i].ApplyStatusEffect(StatusEffectEnum.Despair, 1);
-            }
-
-            Character weakest = enemies
-                .OrderBy(ch => ch.health)
-                .ThenBy(ch => ch.GetCommander() + ch.GetAgent() + ch.GetEmmissary() + ch.GetMage())
-                .FirstOrDefault();
-
-            if (weakest != null)
-            {
-                weakest.ApplyStatusEffect(StatusEffectEnum.Halted, 1);
+                enemies[i].ApplyStatusEffect(StatusEffectEnum.Fear, 1);
             }
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Barrow-Wight Whisper: {revealed} hidden enemy unit(s) are exposed, {enemies.Count} enemy unit(s) gain Despair (1), and the weakest is Halted (1).",
-                Color.gray);
+                $"Barrow-Wight Whisper: {enemies.Count} enemy unit(s) in radius {Radius} gain Fear (1).",
+                Color.magenta);
 
             return true;
         };

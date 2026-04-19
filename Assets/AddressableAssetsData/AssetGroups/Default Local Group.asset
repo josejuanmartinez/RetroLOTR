@@ -105,6 +105,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0289bc7da0e84f544b0adaf3e0d41a14
+    m_Address: Assets/Art/Videos/intro.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 028e2ba095f97ea46b9f35bde84d9af7
     m_Address: Assets/Art/Hexes/Roads/hexRoad-011101-00.png
     m_ReadOnly: 0
@@ -195,6 +201,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 05bd964a373b78a4ebae4e33c442e45c
+    m_Address: Assets/Art/RenderTextures/LeaderVideoRenderTexture.renderTexture
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0608657df90104b42b7f8431fdad2638
     m_Address: Assets/Art/Cards/Characters/Arwen.png
     m_ReadOnly: 0
@@ -215,6 +227,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0765c85f02055904aab2792809efc27a
     m_Address: Assets/Art/Hexes/Tiles/074.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 07c4f89768a34f929607df28b3918038
+    m_Address: Assets/Art/Cards/Actions/Events/RoadToRivendell.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -287,6 +305,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 09b18ababd951df44a5976f415b81bd8
     m_Address: Assets/Art/Hexes/Tiles/hexMountainMine03.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 09b6fb5cd34c251458addca6399e3f28
+    m_Address: Assets/Art/Fonts/IMFellEnglish-Italic.ttf
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -393,6 +417,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d59c27849f640b44a4b68f266d9c28f
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-Italic.ttf
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0d66521e934a8a047a57ac2b464a37cd
     m_Address: Assets/Art/Cards/Actions/SellIron.png
     m_ReadOnly: 0
@@ -477,6 +507,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0e68cf96689a4e2f8c4750c90b6b216e
+    m_Address: Assets/Art/Cards/Actions/Events/TheFord.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0e9af1338ab8ddc49a30534072e0bd62
     m_Address: Assets/Art/Cards/Actions/RemovePort.png
     m_ReadOnly: 0
@@ -509,6 +545,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0f1e5596a169d4e49a0ca1ce60a9ccf2
     m_Address: Assets/Art/Cards/Actions/Events/Marked by a Nazgul.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0f2ab410a2eb9c0439c8e5df2446fd3e
+    m_Address: Assets/Art/Cards/Actions/Events/OldForestTurnabout.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -563,6 +605,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 116ecff78defaab408ac92e2a3b27fae
     m_Address: Assets/Art/Hexes/Roads/hexRoad-011100-01.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 118a3ddc13798b44daba9ab1a226f423
+    m_Address: Assets/Art/UI/icons1.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -628,7 +676,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 12a9340f0ce632f46bef0d569174ef61
-    m_Address: Assets/Art/Cards/PC/Ilanin.jpg
+    m_Address: Assets/Art/Cards/PC/ilanin.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -641,6 +689,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 12da2455152669640a05a8e3647d40cd
     m_Address: Assets/Art/Hexes/Tiles/041.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 12f6cc677d6f951498cde2a608c41ea7
+    m_Address: Assets/Art/Hexes/Tiles/Westfold.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -807,8 +861,26 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 17d4945b9a263ab4891b0cfbfdb9a2eb
+    m_Address: Assets/Art/Fonts/IMFellEnglish-Regular.ttf
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 17dc1945584dfc847b6707acd331625f
+    m_Address: Assets/Art/Hexes/Tiles/Jug Rijeisha.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 17e3d5093a0c163479db096448ecbb60
     m_Address: Assets/Art/Hexes/Tiles/091 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 17f38e28b8a34af99a1b73b9717fd2e0
+    m_Address: Assets/Art/Cards/Actions/Events/OldManWillowSong.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -851,6 +923,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 18a24b05fa4acae41ab32cb9dedc5e7d
     m_Address: Assets/Art/Cards/Armies/DurthangSorcerers.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 18a3bf1091c175747bd7669366fdcaee
+    m_Address: Assets/Art/RenderTextures/PlayableLeaderIconVideo.renderTexture
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -958,7 +1036,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1bbee4aa15fdd4f40948852e32b99415
-    m_Address: Assets/Art/Cards/PC/Erech.jpg
+    m_Address: Assets/Art/Cards/PC/erech.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1079,6 +1157,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1e8ad5703675486479c0bd271e5209cf
     m_Address: Assets/Art/Hexes/Tiles/hexDesertRedDirt00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ea3c05212e47c140a3c622b0f5f07f0
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-Outline.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1215,6 +1299,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 217f3d8542b734c478889e25c321dfe9
+    m_Address: Assets/Art/Animation/commander.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2197f162cb0e1204783beaeae655d21a
     m_Address: Assets/Art/UI/square.png
     m_ReadOnly: 0
@@ -1235,6 +1325,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 21ee8cfa14a59ff4c8efff1f3877c44c
     m_Address: Assets/Art/Hexes/Tiles/055 2.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 22353669a78cc1a49b8b1de620296e2e
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-BoldItalic.ttf
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1336,7 +1432,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 24bd693e683c6d046aac45df06fd50e3
-    m_Address: Assets/Art/Cards/PC/Buckland.png
+    m_Address: Assets/Art/Cards/PC/buckland.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1439,6 +1535,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2689d2a4664c8314ca84efe7293ecf77
     m_Address: Assets/Art/Cards/Armies/ForestOrcs.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 269fe370aeba65d46bc1cb915cc6e8b2
+    m_Address: Assets/Art/RenderTextures/Minimap.renderTexture
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1617,6 +1719,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2b60e4a6c83274c48965461659356f2c
+    m_Address: Assets/Art/Cards/Actions/Events/UnexpectedFireworks.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2b7e41783730473429b3a6ae3ae120ef
     m_Address: Assets/Art/Hexes/Tiles/086 1.png
     m_ReadOnly: 0
@@ -1625,6 +1733,18 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2bf0cad31cdbcf046a2d9e44e1451d2c
     m_Address: Assets/Art/Hexes/Tiles/025 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c7a2b6202f349bb8e0ef4a0b6d8cb32
+    m_Address: Assets/Art/Cards/Actions/Events/BreeRumours.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c7aa5bac29b2f04185184a6ae04b4a6
+    m_Address: Assets/Art/RenderTextures/Actor1.renderTexture
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1666,7 +1786,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2d3f43c747bcd214481ff8d90beae9c0
-    m_Address: Assets/Art/Cards/PC/Carvarad.jpg
+    m_Address: Assets/Art/Cards/PC/carvarad.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1727,6 +1847,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2ea6aa8fb0c069645802f27fe59754e7
     m_Address: Assets/Art/Hexes/Tiles/hexPlainsChurch00 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2ea8bd6c74941e04e8250f470bedd645
+    m_Address: Assets/Art/Animation/emmissary.controller
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1865,6 +1991,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 31a4014c1a4e8ce46bf12e55e4e70fc2
     m_Address: Assets/Art/Cards/Actions/Events/Under the White Hand.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 31cba802c73344d48aa9702e875a1195
+    m_Address: Assets/Art/Skyboxes/skybox-color-preview.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2013,6 +2145,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 35d4bb2f1f09fca4191334ed8f222476
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-Bold.ttf
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 35de92f30045eff4590c706600bf6a65
     m_Address: Assets/Art/Hexes/Tiles/080.png
     m_ReadOnly: 0
@@ -2087,12 +2225,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 37a5240f56ff96e4eb10fea345ff316e
     m_Address: Assets/Art/Cards/Actions/Spells/ConjureMounts.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 37b7b36b6c5ca3149a1a12af08ae822b
-    m_Address: Assets/Art/Cursor/default.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2232,11 +2364,16 @@ MonoBehaviour:
   - m_GUID: 3c5b0012faf1d2d45ba20b2b0d0c47eb
     m_Address: Assets/Shaders/fire/Textures/fx_fire/fx_fire_cartoon_a.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3c75cb1450197f5478070c6819428273
     m_Address: Assets/Art/Cards/PC/HelmDeep.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c7b8dc9ed34c4c468b0a0b16011a8ea
+    m_Address: Assets/Art/Materials/path.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2320,7 +2457,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3e066f3b669e04941922d8278a408afc
-    m_Address: Assets/Art/Cards/PC/Celebannon.jpg
+    m_Address: Assets/Art/Cards/PC/celebannon.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2339,6 +2476,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3e62372424c6386479bb9f8c69bcbb66
     m_Address: Assets/Art/Hexes/Tiles/077 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e9cd469e8d285f44bc758ddd59995e8
+    m_Address: Assets/Art/Hexes/Tiles/Rul.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2547,6 +2690,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 437b22217d0e98f44812f0c5db3f83d9
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-Italic SDF.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 437b4d5aed7dae8448d5a6a078ab0af3
     m_Address: Assets/Art/Hexes/Roads/hexRoad-111010-01.png
     m_ReadOnly: 0
@@ -2607,6 +2756,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45668fcc63ab5a94f9f381938360d16c
+    m_Address: Assets/Art/Animation/mage.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4567137f9d7166a4ba7c873e9bf526f4
     m_Address: Assets/Art/Cards/Actions/Spells/WizardsLaugh.png
     m_ReadOnly: 0
@@ -2661,6 +2816,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4653cf9c0a779e74b92093dbd19e4b8d
+    m_Address: Assets/Art/Cards/Lands/Rhun.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 46830afc8560d584d868804d29a9bb1a
     m_Address: Assets/Art/UI/Alignment/Banners/banner_green_eye.png
     m_ReadOnly: 0
@@ -2685,8 +2846,32 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 475cad30242453549a36740ee4faf744
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-Bold SDF.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4773f3a1f3db26e418402c478b15be8b
+    m_Address: Assets/Art/Animation/mage.controller
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47d87ce6ab8189a438043aaf823ca844
+    m_Address: Assets/Art/Fonts/Spritesheets/common_spritesheet.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4820a4839e7f55845a3aafa24eab7a3b
     m_Address: Assets/Art/Hexes/Tiles/hexDesertDunesOasis01.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4822606906ec0ed4d8e6b40df0058e2e
+    m_Address: Assets/Art/Fonts/IMFellEnglish-Outline.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2699,6 +2884,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 483410e5847f8e941b38fabe712f25ac
     m_Address: Assets/Art/Cards/Actions/Events/ChainsOfTheLidlessEye.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4847c90ae9e28a049b3e7e76663fdf48
+    m_Address: Assets/Art/Hexes/Tiles/Belegost.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2745,6 +2936,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a0beed0975e3724a94ffa456dfcd3f2
+    m_Address: Assets/Art/Hexes/Tiles/Caras Amarth.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4a2f357587a2f414eb57f083b21755ab
     m_Address: Assets/Art/Cards/Actions/Events/BountyfulSeason.png
     m_ReadOnly: 0
@@ -2777,6 +2974,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4af7497fce5037540878b679d3fae388
     m_Address: Assets/Art/Cards/PC/DolAmroth.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b087989eeff19f4bb49d265e7282ad4
+    m_Address: Assets/Art/Cards/Actions/Events/LanternsAtBreeGate.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2817,6 +3020,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4c0a2e5e74541e34e95acd99385d55a6
+    m_Address: Assets/Art/RenderTextures/intro.renderTexture
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4c21c35ba972db14c9e9be50914a4c68
     m_Address: Assets/Art/Cards/Lands/Anduin.jpg
     m_ReadOnly: 0
@@ -2835,8 +3044,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4caac0ea4ff93e448bd8e7dbf05e4a07
+    m_Address: Assets/Art/Hexes/Tiles/Amon Lhaw.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4cc0a1520a0860e40bee699ee34f64e4
     m_Address: Assets/Art/Cards/Actions/Events/The Beorning Toll.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4cccf9fc755654b4f82c2208431fb4ab
+    m_Address: Assets/Art/Hexes/Tiles/Noegrod.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2979,8 +3200,26 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 516df1a4f714ff24ca3fe6a3ec739f39
+    m_Address: Assets/Art/UI/icons2.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 51865ba1f33c3a945bf40d9312786ef2
     m_Address: Assets/Art/Cards/Armies/DwarvenSiege.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51b2a095d6f9b1847b86b4cef8651481
+    m_Address: Assets/Art/Cards/Actions/Events/WhispersBeforeTheGate.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51b63b676b05cfd4685142d19b321a69
+    m_Address: Assets/Art/Animation/commander.controller
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2994,8 +3233,7 @@ MonoBehaviour:
   - m_GUID: 51da0b528a6b14946a2eb9f4d9cc0c25
     m_Address: Assets/Shaders/fire/Textures/fx_fire/fx_fire_ball_bbb.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 520f9e6256b2ff148ae6f520aa1b56b2
     m_Address: Assets/Art/Hexes/Roads/hexRoad-111111-00.png
@@ -3130,7 +3368,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 553cbc90f7edc9d4382c188a1d4ef795
-    m_Address: Assets/Art/Cards/PC/Eastfold.jpg
+    m_Address: Assets/Art/Cards/PC/eastfold.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3149,6 +3387,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55a9da2618b85844f8a13fd51157cdee
     m_Address: Assets/Art/Cards/Characters/Sauron-TheNecromancer.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55d875533ebbc8442b623a3920b13996
+    m_Address: Assets/Art/Cards/Armies/HallGuardsOfThranduil.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3274,7 +3518,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 58bbf3205f66f3142a3f75b0fc560e28
-    m_Address: Assets/Art/Cards/PC/Forochel.jpg
+    m_Address: Assets/Art/Cards/PC/forochel.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3305,6 +3549,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 594e042e9e047124cb1eb4ebe018cdce
     m_Address: Assets/Art/Hexes/Roads/hexRoad-001011-00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5951769a059642089c710dbbf036e949
+    m_Address: Assets/Art/Cards/Actions/Events/Butterflies.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3453,6 +3703,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e83bb5097f746b98867a247bd414ee7
+    m_Address: Assets/Art/Cards/Actions/Events/WaterLilies.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5e92b2ed480bd0d44a6d3710d1238c5a
     m_Address: Assets/Art/Hexes/Tiles/hexForestCastleRuins00.png
     m_ReadOnly: 0
@@ -3471,8 +3727,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5edc6f8e9104ff6458984efac40adfeb
+    m_Address: Assets/Art/Cards/Actions/Events/RoomAtTheLastInn.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5f0ca8444dec53448b4126f932162739
+    m_Address: Assets/Art/RenderTextures/PlayableLeaderIconVideoCompetitor1.renderTexture
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5f1bcdd42b9c2bb4790dad68ebdd4036
-    m_Address: Assets/Art/Cards/Actions/StateAllegiance.png
+    m_Address: Assets/Art/Cards/Actions/AFriendOrThree.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3507,8 +3775,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 606e1377925badb448cda6f423ae77a5
+    m_Address: Assets/Art/Cards/Actions/AskRansom.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 60825200f4bce3d4fb8458f3bae42e34
-    m_Address: Assets/Art/Cards/PC/Imdorad.jpg
+    m_Address: Assets/Art/Cards/PC/imdorad.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3597,6 +3871,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 640582e44dfb65e4d825dcae7ccc3e0b
+    m_Address: Assets/Art/Hexes/Tiles/Derndingle.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6413b703117641d44a7cf00fd98b124f
     m_Address: Assets/Art/Cards/Encounters/SpellWeaverOfRivendell.jpg
     m_ReadOnly: 0
@@ -3627,6 +3907,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6537dfc64ba3252489f0a5ee1fe4e4ac
+    m_Address: Assets/Art/Cards/Actions/Events/RavensOverTheFord.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 65813eb70305b884e94b058f19d70cc8
     m_Address: Assets/Art/Hexes/Tiles/hexMountainUndergroundGateNatural00.png
     m_ReadOnly: 0
@@ -3641,6 +3927,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 659ca86bb30a7694b8660a6c831ef0d3
     m_Address: Assets/Art/Cards/Characters/Sangarunya.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 65ae9c9e90c8d81459748b1193fa84c0
+    m_Address: Assets/Art/Cards/Actions/Events/OrdersInTheNight.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3707,6 +3999,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 670213f6d01bab143923af67b8e7d501
     m_Address: Assets/Art/Hexes/Roads/hexRoad-000010-01.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 673721b59f17bc84c932e73321f8bb18
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-Regular SDF.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3928,7 +4226,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6c505660d1bc3b545aa0edce2905848a
-    m_Address: Assets/Art/Cards/PC/Framsburg.jpg
+    m_Address: Assets/Art/Cards/PC/framsburg.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3993,6 +4291,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e1dd9c8467010c409da49d7110e7787
+    m_Address: Assets/Art/Hexes/Tiles/Cerin Amroth.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6e4a082bb89a550439125e7bb4876758
     m_Address: Assets/Art/Hexes/Tiles/005 4.png
     m_ReadOnly: 0
@@ -4047,6 +4351,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ef442f33a7e4e6c9a363e0eda5acb82
+    m_Address: Assets/Art/Cards/Actions/Events/PrancingPonyPassage.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6f0c3de11df02cf49ae0d18ade1ff7cc
     m_Address: Assets/Art/Cards/Encounters/FarmerCotton.jpg
     m_ReadOnly: 0
@@ -4073,6 +4383,18 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6fdc807f2454be54580074f16fd5d65d
     m_Address: Assets/Art/Cards/Actions/Spells/Teleport.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6fdef3feda238e14fbfd5504378269e5
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-RegularOutline.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 700c9c8e9e8e23c40972358b15e43fc2
+    m_Address: Assets/Art/Hexes/Tiles/Dunharrow.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4109,6 +4431,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 705054248b6c4c84d984cd6cb4c001a2
     m_Address: Assets/Art/Hexes/Tiles/004 5.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7074dea86aa520845a4a510235932fd3
+    m_Address: Assets/Art/Cards/Actions/Events/BlackSailsRumoured.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4203,6 +4531,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 72620d06efc4447c9d9bf8b30a20a267
+    m_Address: Assets/Art/Cards/Actions/Events/OldRuinsOfArthedain.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 72768bc05266de547a0a707c155036bd
     m_Address: Assets/Art/Hexes/Roads/hexRoad-011000-00.png
     m_ReadOnly: 0
@@ -4253,6 +4587,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 74581cab816c0a446bc35a2463c1fae2
     m_Address: Assets/Art/Cards/Actions/StealMounts.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 745c9b772d1622f41a74a01f7681b867
+    m_Address: Assets/Art/Cards/Lands/Dorwinion.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4317,6 +4657,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 75d43de3cb05ca9489cdff41b757b536
+    m_Address: Assets/Art/Cards/Actions/Events/HarbourAlreadyWhispering.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 764f8224448833e429475199a53c928b
     m_Address: Assets/Art/Cards/Actions/Events/StewardsMuster.png
     m_ReadOnly: 0
@@ -4371,6 +4717,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 77550247f8c06bb4ba7f146119bcbb75
+    m_Address: Assets/Art/Hexes/Tiles/Edhellond.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 775581c1e80648e42b3ed70d2f4e87c7
     m_Address: Assets/Art/Hexes/Tiles/034 4.png
     m_ReadOnly: 0
@@ -4413,6 +4765,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78cedc2dcb5885947864c8edda64138c
+    m_Address: Assets/Art/Hexes/Tiles/Celebannon.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 78cf3a3f138771846a3339b43a50b452
     m_Address: Assets/Art/Hexes/Tiles/hexPlainsSmithy00.png
     m_ReadOnly: 0
@@ -4439,6 +4797,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7978556709bfca64d869eb26e8334020
     m_Address: Assets/Art/Cards/Armies/GaladhrimArchers.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 79848b7e79f8d3545b527d621281b695
+    m_Address: Assets/Art/Hexes/Tiles/Ovatharac.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4527,6 +4891,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7aad5694a5ecc124a8ce785aa7209bff
+    m_Address: Assets/Art/Animation/emmissary.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7abc97febcac4ca44b3ec55cfe5acd75
     m_Address: Assets/Art/UI/Alignment/Banners/banner_elk.png
     m_ReadOnly: 0
@@ -4557,6 +4927,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b1eb24aa7d03f945bcdb319efce350d
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-BoldItalic SDF.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7b4f33cb892c8324191c9b3866c130fc
     m_Address: Assets/Art/Hexes/Tiles/084.png
     m_ReadOnly: 0
@@ -4571,6 +4947,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7b83761db2a98e0419e2b33a35b0e1be
     m_Address: Assets/Art/Hexes/Roads/hexRoad-101111-00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7be63126d0dc02d4ca5309a6c660c9e3
+    m_Address: Assets/Art/Hexes/Tiles/Sarn Goriwing.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4629,8 +5011,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d8f8896cb0ff6e4f89dd1fe9a66b32a
+    m_Address: Assets/Art/Fonts/IMFellEnglish-Regular SDF.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7dd9190e5db1ced4e89c30d6a1811c28
-    m_Address: Assets/Art/Cards/PC/Dunharrow.jpg
+    m_Address: Assets/Art/Cards/PC/dunharrow.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7deb0a9bd7fbf2c40bada2f72da33ee5
+    m_Address: Assets/Art/RenderTextures/SelectedCharacterIcon.renderTexture
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4815,6 +5209,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8492b13d94e93e04fab8133af62b0e3f
+    m_Address: Assets/Art/Animation/emmissary.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 84a8f7016d9cf954cbc1c1520b9ad609
     m_Address: Assets/Art/Hexes/Tiles/055 1.png
     m_ReadOnly: 0
@@ -4877,6 +5277,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8787729bb9d217349bbf41b83bf4cf30
     m_Address: Assets/Art/Hexes/Tiles/007 3.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 879bdffd7485356438fbb58db48f9af7
+    m_Address: Assets/Art/Fonts/Courier_Prime/OFL.txt
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4983,6 +5389,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a6f0377f17d0e84ab3da8756dee0e8f
+    m_Address: Assets/Art/Animation/agent.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8a75f941bffc04a4bacc496ece12266a
     m_Address: Assets/Art/Cards/Characters/BarrowKingOfRhudaur.jpg
     m_ReadOnly: 0
@@ -5008,7 +5420,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8af798416e48b49488437d45b786179c
-    m_Address: Assets/Art/Cards/PC/Harlond.jpg
+    m_Address: Assets/Art/Cards/PC/harlond.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5075,6 +5487,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8c18bb705eb55784191783f66f613ae1
     m_Address: Assets/Art/Cards/Actions/Events/Healing Herbs.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c6921976ec34871aa573b94e39d375f
+    m_Address: Assets/Art/Cards/Actions/Events/BagginsDue.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5181,6 +5599,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ddb2d89c03d0004a8a53688e213e58e
+    m_Address: Assets/Art/Hexes/Tiles/Buth Ovaisa.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8de27bbff0bf81b4d8f780751fa3cda9
     m_Address: Assets/Art/Cards/Actions/Events/Heir to Barahir.png
     m_ReadOnly: 0
@@ -5225,6 +5649,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8f4bf518c37201a40bc412452f60e1dd
     m_Address: Assets/Art/Hexes/Tiles/049.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8f6a5e2407598814c99bb24cc077c5e2
+    m_Address: Assets/Art/Hexes/Tiles/Barad-wath.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5285,6 +5715,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 91c78414f5829434e86477dad1f4257a
     m_Address: Assets/Art/Cards/Actions/Events/WhenThereIsAWhip.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91e26798df8695648887346d35e70636
+    m_Address: Assets/Art/Animation/mage.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5355,6 +5791,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93d9f45a9317bf847874dd6288178b21
+    m_Address: Assets/Art/UI/icons3.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 941d58072c8229844a4262646ae0f341
     m_Address: Assets/Art/Hexes/Tiles/048 1.png
     m_ReadOnly: 0
@@ -5367,8 +5809,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94587ad7a8c3fdd4fb1cbba38c0d3445
+    m_Address: Assets/Art/Cards/Actions/Events/WhiteHandAtTheFords.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9469c0897f6c2674ab1d09a8503a3d5d
     m_Address: Assets/Art/Hexes/Tiles/024 2.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9478e1976cda3c441b57b2f63bd14f35
+    m_Address: Assets/Art/Hexes/SelectionDiffusedUp.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5469,6 +5923,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9768973c90d76d04fb4b4db7ea3343e2
+    m_Address: Assets/Art/Hexes/Tiles/Sturlurtsa Khand.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 978754044238f4a439a92d95b9ef2204
     m_Address: Assets/Art/Hexes/Roads/hexRoad-000001-01.png
     m_ReadOnly: 0
@@ -5478,8 +5938,7 @@ MonoBehaviour:
   - m_GUID: 97b0f924f71eb934abbf606b2dc94275
     m_Address: Assets/Shaders/fire/Textures/fx_fire/fx_fire_g.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 97ce625ca53429741a017b592945500e
     m_Address: Assets/Art/Cards/Characters/Sauron-TheDeceiver.png
@@ -5548,7 +6007,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9984ca901c234fd448183e349970ef7a
-    m_Address: Assets/Art/Cards/PC/Gondmaeglon.jpg
+    m_Address: Assets/Art/Cards/PC/gondmaeglon.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5614,7 +6073,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9b23b639f0dbd834a980ec525059b0ce
-    m_Address: Assets/Art/Cards/PC/Forlond.jpg
+    m_Address: Assets/Art/Cards/PC/forlond.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5687,6 +6146,18 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9c82af6adb65e944da87a9653b1e3d5f
     m_Address: Assets/Art/Hexes/Roads/hexRoad-101100-00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9cba750629e7ff04ea86f6ca174e8af1
+    m_Address: Assets/Art/Fonts/Courier_Prime/CourierPrime-Regular.ttf
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9cd615d7aebb9854e895637e8f5626c4
+    m_Address: Assets/Art/Cards/Actions/Events/ShutteredWatchfires.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5871,12 +6342,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a0390a21577c2ab41942cc44c5bb8af3
-    m_Address: Assets/Art/Cursor/pointer.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a04b68a2e87c3d341996659f461125f9
     m_Address: Assets/Art/Hexes/Tiles/070 2.png
     m_ReadOnly: 0
@@ -5903,6 +6368,18 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a081b8b048a9bca45889996922a58e62
     m_Address: Assets/Art/Hexes/Roads/hexRoad-010011-00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a090552ce0a4c964cbf90470c0c62afa
+    m_Address: Assets/Art/Animation/commander.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0bb1e4f4039a854185e0c26157ce8a1
+    m_Address: Assets/Art/Hexes/Tiles/Gladden Fields.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6000,8 +6477,7 @@ MonoBehaviour:
   - m_GUID: a2c38a3eaf1687547b15df4bf53a98e3
     m_Address: Assets/Shaders/fire/Textures/fx_fire/fx_fire_a.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a2dd1a6de27e8fd4797a5f1a6aa9f325
     m_Address: Assets/Art/Hexes/Tiles/hexDirtVillageRuin03.png
@@ -6105,8 +6581,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a568b0f57a62a004b992298476f56fb4
+    m_Address: Assets/Art/Hexes/Tiles/Eastfold.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a5ab678124d10334a98f267ebc91a662
     m_Address: Assets/Art/Cards/Armies/GoblinSappers.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a5ceb9c326d33ef41817fdbdd3269511
+    m_Address: Assets/Art/Cards/Actions/Events/CaptainOfTheOuterWall.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6237,6 +6725,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a90b1ac4c88e4204ab2b745269d38005
+    m_Address: Assets/Art/UI/icons4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a966b353169a4a14ba3054146963fa28
     m_Address: Assets/Art/Hexes/Roads/hexRoad-010010-02.png
     m_ReadOnly: 0
@@ -6247,6 +6741,12 @@ MonoBehaviour:
     m_Address: Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Lit-Default.mat
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a993c20c64e712b44a55d5b10f948513
+    m_Address: Assets/Art/Cards/Actions/ReleaseCharacter.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a99a0c0aa36c3984bb78058bfe7fc196
     m_Address: Assets/Art/Hexes/Tiles/hexForestBroadleafClearing00.png
@@ -6298,6 +6798,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: aa672bdedf366564fb6559991239ad98
     m_Address: Assets/Art/Cards/Actions/Events/The Power of Nenya.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa6d8355be765f34bb5cdc22bdc789ba
+    m_Address: Assets/Art/Hexes/Tiles/Luglurak.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6362,6 +6868,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad1cbd39767e0a54f9c10061b863034b
+    m_Address: Assets/Art/Hexes/Tiles/Lugarlur.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ad47a763bfee748499062366fc89ed41
     m_Address: Assets/Art/Hexes/Tiles/018 2.png
     m_ReadOnly: 0
@@ -6370,6 +6882,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ad9939ae7f1b0364da1337df08f46497
     m_Address: Assets/Art/Cards/Armies/UrukHai.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ada7836f77d30d34ab3ce35938c98f75
+    m_Address: Assets/Art/Cards/Actions/Events/SecondBreakfastDiversion.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6394,6 +6912,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ae04cff6116e4c848b609339ed4ca5c7
     m_Address: Assets/Art/Cards/Encounters/WargKing.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae10116da2b5b18448c11aaaf4569be3
+    m_Address: Assets/Art/RenderTextures/Actor2.renderTexture
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6512,6 +7036,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b140a49f41181d7498e386e4496b5346
+    m_Address: Assets/Art/Hexes/Tiles/Shelob's Lair.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b195fc34e58c6c34f876a65ad29fe834
     m_Address: Assets/Art/Hexes/Tiles/059.png
     m_ReadOnly: 0
@@ -6520,6 +7050,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b1cbc8ddb3ffdc740af21772f856db40
     m_Address: Assets/Art/Hexes/Tiles/hexMountain00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b2040c97442b6324a959a808d08504e8
+    m_Address: Assets/Art/Hexes/Tiles/Treforn.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6550,6 +7086,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b30b3dad6657f9043b19b309ae2255f6
     m_Address: Assets/Art/Cards/Characters/Saruman-TheWhite.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3218baa35898c34ea37d5a93e98e6e6
+    m_Address: Assets/Art/Hexes/Tiles/Maethelburg.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6722,6 +7264,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b86de0d27e1876a4fbb0aa8ef39c74bb
+    m_Address: Assets/Art/UI/icons5.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b9065875724a0584085f06f707f65c2a
     m_Address: Assets/Art/Hexes/Tiles/003.png
     m_ReadOnly: 0
@@ -6800,6 +7348,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba1dd9c396b3b5245bd5164eb1e7f270
+    m_Address: Assets/Art/Cards/Actions/Events/RoadsideArgument.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bab1d7e4dc7b71b49ad85e95bc23be13
     m_Address: Assets/Art/Cards/Characters/Thranduil.png
     m_ReadOnly: 0
@@ -6850,6 +7404,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bc582ab01d03eb44bab191c93f1f12a6
     m_Address: Assets/Art/Cards/Actions/SiegePC.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bc5ece0afa2c17a4b9daaa5c3be1ec93
+    m_Address: Assets/Art/Cards/Actions/Events/ShirriffInterruption.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6938,6 +7498,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bff7672192bd530439f3dd827a237b0c
+    m_Address: Assets/Art/Materials/light.mat
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bff7738046f16ea4f9ae5f868f53475b
     m_Address: Assets/Art/Cards/Characters/GoblinKing.png
     m_ReadOnly: 0
@@ -6952,6 +7518,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bffd1c474863cc14783086a7eaa7b562
     m_Address: Assets/Art/Cards/PC/Elgaer.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c01c290b3f2948e469f2bf535fa1eb19
+    m_Address: Assets/Art/Hexes/Tiles/Amon Hen.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7066,6 +7638,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c3a834f4aebbff047a97a826bc685995
     m_Address: Assets/Art/Cards/Armies/ElvenElkRiders.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c3b11ec779e54f1db6649fc3cc6d124f
+    m_Address: Assets/Art/Cards/Actions/Events/ElvenLull.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7202,6 +7780,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7560043246747b5bef7689df0598cf8
+    m_Address: Assets/Art/Cards/Actions/Events/BombadilsWhim.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c758a71ef43f39c4b841f6e4709e95db
     m_Address: Assets/Art/Cards/Characters/Ingomer.png
     m_ReadOnly: 0
@@ -7210,6 +7794,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c75c367ca6204904897ab24e8e848d21
     m_Address: Assets/Art/Cards/Encounters/HoodedFigure.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c78c3e3dc930bb54b8f5ef3f3252b31a
+    m_Address: Assets/Art/Cards/Actions/Events/MuddyLaneDetour.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7228,6 +7818,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c7be45a5ed828aa49a5fa37ed3749b3e
     m_Address: Assets/Art/Hexes/Roads/hexRoad-110011-00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c8134bd5e48217945b055273cd0a3d2a
+    m_Address: Assets/Art/Cards/Actions/Events/IllNewsFromTheMark.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7349,8 +7945,7 @@ MonoBehaviour:
   - m_GUID: cb3fb03fdf2bd2742a1c7d98a89b3d5c
     m_Address: Assets/Shaders/fire/Textures/fx_fire/fx_fire_ball_bb.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cb569fd9c004693438aaa1899fa52324
     m_Address: Assets/Art/Materials/star.png
@@ -7365,7 +7960,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cb79bad1ef6612649bad6989f6250bdb
-    m_Address: Assets/Art/Cards/PC/Caradhras.jpg
+    m_Address: Assets/Art/Cards/PC/caradhras.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7448,6 +8043,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce1dde92c19e4ea9a3d9e00c2d50aa2f
+    m_Address: Assets/Art/Cards/Actions/Events/CrickhollowDiversion.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ce2b91abe44e88948b14c51e468a2cf9
     m_Address: Assets/Art/Cards/Characters/KavMakow.jpg
     m_ReadOnly: 0
@@ -7474,6 +8075,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ce6b4cd4c532d874da07ab069caeb628
     m_Address: Assets/Art/Hexes/Tiles/hexHillsMine02.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce7e32b92e4849bc8563a676e8da8c07
+    m_Address: Assets/Art/Cards/Actions/Events/BarrowChill.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7580,6 +8187,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1bed1bf178c4475995742d6d9534b80
+    m_Address: Assets/Art/Cards/Actions/Events/FloatingInBarrels.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d1c764d46a0e1ee44abf98814e8b90d4
     m_Address: Assets/Art/Hexes/Roads/hexRoad-110110-01.png
     m_ReadOnly: 0
@@ -7606,6 +8219,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d2e92321be161f24ba38e0e39519a3e9
     m_Address: Assets/Art/Cards/Characters/Ovatha.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d316208aad6178549ab7687cfcb2c760
+    m_Address: Assets/Art/Materials/cloud.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7671,7 +8290,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d6030c2c3ca1a6c46ace20a8d733013d
-    m_Address: Assets/Art/Cards/PC/SturlurtsaKhand.jpg
+    m_Address: Assets/Art/Cards/PC/Ovatharac.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7702,6 +8321,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d75c9fd8fe98fee4aaaf38c82ab1a057
     m_Address: Assets/Art/Hexes/Tiles/075 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d795e9344fe69694984e4bbcae6c3ca8
+    m_Address: Assets/Art/Hexes/Tiles/Barad Ungol.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7755,7 +8380,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d89a8f21a007e6e449d524d5b74ec566
-    m_Address: Assets/Art/Cards/PC/Edhellond.jpg
+    m_Address: Assets/Art/Cards/PC/edhellond.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7832,6 +8457,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da8d7ef9f2b245cb81a37327e8020092
+    m_Address: Assets/Art/Cards/Actions/Events/BarrowLilies.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dac042c334e26c2498c6ae3eef93976e
+    m_Address: Assets/Art/Hexes/Tiles/Cair Andros.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dad3f97ab5356c044bd1ab03dfcb1a7f
     m_Address: Assets/Art/Cards/Actions/StealSteel.png
     m_ReadOnly: 0
@@ -7846,6 +8483,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: db0dc76d3799559449343ff0974d34f8
     m_Address: Assets/Art/Cards/Armies/ElvenArchers.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db65d717f0c85b74591880a032fa5b9c
+    m_Address: Assets/Art/Animation/agent.controller
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8138,6 +8781,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e26f7c987141c604ba498c46f5ae7c2b
+    m_Address: Assets/Art/Cards/Actions/FreeCharacter.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e27063687f3b6454d8f6f6f3ae14ecd6
     m_Address: Assets/Art/Cards/Actions/Events/Caravans.png
     m_ReadOnly: 0
@@ -8163,7 +8812,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e2b4045e2e1ccbc41842e654c72309f1
-    m_Address: Assets/Art/Cards/PC/Ashkiri.jpg
+    m_Address: Assets/Art/Cards/PC/ashkiri.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8252,6 +8901,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e41981db90b34bbc955ee121fe7025ad
+    m_Address: Assets/Art/Cards/Actions/Events/GreenwayDiversion.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e4634b5163621694ab4f57acd78def5d
     m_Address: Assets/Art/Cards/PC/TheCarrock.png
     m_ReadOnly: 0
@@ -8312,14 +8967,38 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e5b903051fa6d07498863c3f07fe6ffe
+    m_Address: Assets/Art/Materials/star.mat
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e5bc59295ffa7b849b6f354d826dc3bb
     m_Address: Assets/Art/Hexes/Roads/hexRoad-101110-00.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e61827ed54ab4749ab715e5e48c4ef84
+    m_Address: Assets/Art/Cards/Actions/Events/TravelInSafety.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6239aa57eabe7041bf5dfaca0adf325
+    m_Address: Assets/Art/Hexes/Tiles/Nurumurl.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e6258244aa5984647bdf7f021d324237
     m_Address: Assets/Art/Cards/Armies/RhunCorsairs.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e63d105e192d8ef4a80c1169aafedb99
+    m_Address: Assets/Art/Fonts/Spritesheets/color_common_spritesheet.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8582,6 +9261,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec97939943ea4fb1af8972881cfa6470
+    m_Address: Assets/Art/Cards/Actions/Events/Weathertop.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ec9a8cbaa829337408f8ff24599c7023
     m_Address: Assets/Art/Cards/Characters/TomBombadil.png
     m_ReadOnly: 0
@@ -8780,6 +9465,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f17dba98aa954533b465e9b05bad5c28
+    m_Address: Assets/Art/Cards/Actions/Events/TravelThroughTheMarsh.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f1ae4073d674e8441ba011e56590796b
     m_Address: Assets/Art/Cards/PC/Enedhir.jpg
     m_ReadOnly: 0
@@ -8848,6 +9539,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f35f03fd3fc37cf4db16bb743c0f43b8
     m_Address: Assets/Art/Hexes/Tiles/036 4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f36341db995ba4e4e8ba199b093d09cf
+    m_Address: Assets/Art/Cards/Actions/Events/CounselNoOneWanted.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8991,7 +9688,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f7ae7ea9c7e163040aac508606738620
-    m_Address: Assets/Art/Cards/PC/Dale.jpg
+    m_Address: Assets/Art/Cards/PC/dale.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9098,6 +9795,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa589795dcc91a748a6d5a7686a04024
+    m_Address: Assets/Art/Cards/Actions/Events/BarrowWightWhisper.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fa66035013b161147947d041d5ecda25
     m_Address: Assets/Art/UI/Alignment/Banners/banner_bear.png
     m_ReadOnly: 0
@@ -9194,6 +9897,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd4a4eaa4541bca419068e86055092ea
+    m_Address: Assets/Art/RenderTextures/PlayableLeaderIconVideoCompetitor2.renderTexture
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fd4c7bceeef72ee409d588f0d98de250
     m_Address: Assets/Art/Hexes/Tiles/hexPlainsVillageWood02.png
     m_ReadOnly: 0
@@ -9236,6 +9945,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd93e09fdfc67dd4f84458f5f02016e0
+    m_Address: Assets/Art/Cards/Actions/Events/StormWarningAtPelargir.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fdae9375c223fd046b3675f7ec6dde43
     m_Address: Assets/Art/Cards/Actions/Spells/Invisibility.jpg
     m_ReadOnly: 0
@@ -9244,6 +9959,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fdd32745ffc0b2f42b3e6c5b4bc1fc95
     m_Address: Assets/Art/Hexes/Tiles/065 2.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fde2f44b0e82bb54e971bd6650c5acec
+    m_Address: Assets/Art/Cards/Actions/KidnapCharacter.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9257,11 +9978,16 @@ MonoBehaviour:
   - m_GUID: fe247d80be9535d438b572eff07e2a16
     m_Address: Assets/Shaders/fire/Textures/fx_fire/fx_fire_ball_b.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fe37435c64b948c41a749a5ac3bfef07
     m_Address: Assets/Art/Hexes/Roads/hexRoad-100100-00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe4841de91130284f8bc74d7305770e6
+    m_Address: Assets/Art/Animation/agent.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9280,6 +10006,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: feb355926adf6fd4292786eb581925a6
     m_Address: Assets/Art/Cards/Actions/Spells/Root.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fecdbf49e2f4f2042bd15e770cee152d
+    m_Address: Assets/Art/Cards/Actions/Events/HallFellSilent.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

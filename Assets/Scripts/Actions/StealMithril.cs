@@ -20,8 +20,8 @@ public class StealMithril : AgentPCAction
             if (playable == null) return false;
             playable.AddMithril(toSteal);
             pc.owner.RemoveMithril(toSteal);
-            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"mithril\"/> stolen!", Color.red);
-            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"mithril\"/> stolen!", Color.green);
+            MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"mithril\"> stolen!", Color.red);
+            MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"mithril\"> stolen!", Color.green);
             if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 
         };

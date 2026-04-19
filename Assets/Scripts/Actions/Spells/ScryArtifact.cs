@@ -22,7 +22,7 @@ public class ScryArtifact: Spell
             c.GetOwner()?.AddTemporarySeenHexes(new[] { randomHex });
             randomHex.RevealArtifact();
             randomHex.LookAt();            
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\"> {artifact.GetHoverText()}", Color.green);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\">artifact {artifact.GetHoverText()}", Color.green);
             return true;
         };
         condition = (c) => {

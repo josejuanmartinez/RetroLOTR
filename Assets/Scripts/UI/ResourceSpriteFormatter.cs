@@ -15,7 +15,7 @@ public static class ResourceSpriteFormatter
         {
             string token = match.Value.ToLowerInvariant();
             if (token == "mount") token = "mounts";
-            return $"<sprite name=\"{token}\">";
+            return $"<sprite name=\"{token}\">{token}";
         });
     }
 }

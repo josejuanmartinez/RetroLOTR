@@ -3,9 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ShirriffInterruptionAction : EventAction
+public class ShirriffsAndBoundersAction : EventAction
 {
-    private const int Radius = 1;
+    private static string NormalizeRegion(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+        return new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+    }
+
+    private static List<Hex> GetShireHexes(Board board)
+    {
+        if (board == null || board.hexes == null) return new List<Hex>();
+
+        return board.hexes.Values
+            .Where(hex =>
+            {
+                if (hex == null) return false;
+                string region = hex.GetLandRegion();
+                return !string.IsNullOrWhiteSpace(region) && NormalizeRegion(region) == "theshire";
+            })
+            .ToList();
+    }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -18,39 +36,24 @@ public class ShirriffInterruptionAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> nearby = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed)
-                .Distinct()
-                .ToList();
+            Board board = FindFirstObjectByType<Board>();
+            Leader owner = character.GetOwner();
+            if (board == null || owner == null) return false;
 
-            if (nearby.Count == 0) return false;
+            List<Hex> shireHexes = GetShireHexes(board);
+            if (shireHexes.Count == 0) return false;
 
-            int enemiesHalted = 0;
-            int alliesHidden = 0;
-
-            for (int i = 0; i < nearby.Count; i++)
+            for (int i = 0; i < shireHexes.Count; i++)
             {
-                Character target = nearby[i];
-                if (target.GetAlignment() != character.GetAlignment() && !target.IsArmyCommander())
-                {
-                    target.ApplyStatusEffect(StatusEffectEnum.Halted, 1);
-                    enemiesHalted++;
-                }
-                else if (target.GetAlignment() == character.GetAlignment() && (target.race == RacesEnum.Hobbit || target.race == RacesEnum.Common))
-                {
-                    target.Hide(1);
-                    alliesHidden++;
-                }
+                shireHexes[i].RevealMapOnlyArea(1, false, false);
             }
 
-            if (enemiesHalted == 0 && alliesHidden == 0) return false;
+            owner.AddTemporarySeenHexes(shireHexes);
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Shirriff Interruption: {enemiesHalted} enemy non-army unit(s) are Halted (1), {alliesHidden} allied Hobbit/Human unit(s) become Hidden (1).",
+                $"Shirriffs and Bounders: all hexes of the Shire are seen for 1 turn.",
                 Color.yellow);
 
             return true;
@@ -61,8 +64,8 @@ public class ShirriffInterruptionAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            return character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed));
+            Board board = FindFirstObjectByType<Board>();
+            return GetShireHexes(board).Count > 0;
         };
 
         asyncEffect = async (character) =>

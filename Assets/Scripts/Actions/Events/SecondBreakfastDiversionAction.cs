@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SecondBreakfastDiversionAction : EventAction
+public class UncautiousSupperAction : EventAction
 {
     private const int Radius = 2;
 
@@ -27,30 +27,25 @@ public class SecondBreakfastDiversionAction : EventAction
 
             if (nearby.Count == 0) return false;
 
-            int hobbitsHidden = 0;
-            int enemiesHalted = 0;
+            int hobbitsAffected = 0;
 
             for (int i = 0; i < nearby.Count; i++)
             {
                 Character target = nearby[i];
                 if (target.race == RacesEnum.Hobbit)
                 {
-                    target.Hide(1);
-                    hobbitsHidden++;
-                }
-                else if (target.GetAlignment() != character.GetAlignment())
-                {
-                    target.ApplyStatusEffect(StatusEffectEnum.Halted, 1);
-                    enemiesHalted++;
+                    target.ClearStatusEffect(StatusEffectEnum.Hidden);
+                    target.Wounded(character.GetOwner(), 15);
+                    hobbitsAffected++;
                 }
             }
 
-            if (hobbitsHidden == 0 && enemiesHalted == 0) return false;
+            if (hobbitsAffected == 0) return false;
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Second Breakfast Diversion: hid {hobbitsHidden} Hobbit(s) and Halted {enemiesHalted} enemy unit(s) for 1 turn.",
+                $"Uncautious Supper: {hobbitsAffected} Hobbit unit(s) lose Hidden <sprite name=\"hidden\"> and take 15 damage.",
                 Color.cyan);
 
             return true;

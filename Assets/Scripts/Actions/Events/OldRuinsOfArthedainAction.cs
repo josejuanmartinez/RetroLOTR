@@ -5,7 +5,34 @@ using UnityEngine;
 
 public class OldRuinsOfArthedainAction : EventAction
 {
-    private const int Radius = 2;
+    private static readonly string[] TargetRegions = { "Arthedain", "Cardolan", "Rhudaur" };
+
+    private static string NormalizeRegion(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+        return new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+    }
+
+    private static List<Hex> ChooseRandomHexesInRegion(Board board, string region, int count)
+    {
+        if (board == null || board.hexes == null || string.IsNullOrWhiteSpace(region) || count <= 0)
+            return new List<Hex>();
+
+        string normalizedRegion = NormalizeRegion(region);
+        List<Hex> candidates = board.hexes.Values
+            .Where(hex =>
+            {
+                if (hex == null) return false;
+                string hexRegion = hex.GetLandRegion();
+                if (string.IsNullOrWhiteSpace(hexRegion)) return false;
+                return NormalizeRegion(hexRegion) == normalizedRegion;
+            })
+            .OrderBy(_ => UnityEngine.Random.value)
+            .ToList();
+
+        if (candidates.Count == 0) return new List<Hex>();
+        return candidates.Take(Mathf.Min(count, candidates.Count)).ToList();
+    }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -19,50 +46,36 @@ public class OldRuinsOfArthedainAction : EventAction
             if (character == null || character.hex == null) return false;
 
             Leader owner = character.GetOwner();
-            if (owner == null) return false;
+            Board board = FindFirstObjectByType<Board>();
+            if (owner == null || board == null) return false;
 
-            List<Character> enemies = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment())
-                .Distinct()
-                .ToList();
-
-            if (enemies.Count == 0) return false;
-
-            int revealed = 0;
-            foreach (Character enemy in enemies)
+            List<Hex> revealedHexes = new();
+            for (int i = 0; i < TargetRegions.Length; i++)
             {
-                if (enemy.HasStatusEffect(StatusEffectEnum.Hidden))
+                List<Hex> chosenHexes = ChooseRandomHexesInRegion(board, TargetRegions[i], 2);
+                if (chosenHexes.Count == 0) continue;
+
+                foreach (Hex chosen in chosenHexes)
                 {
-                    enemy.ClearStatusEffect(StatusEffectEnum.Hidden);
-                    revealed++;
+                    chosen.RevealMapOnlyArea(0, false, false);
                 }
+
+                owner.AddTemporarySeenHexes(chosenHexes);
+                revealedHexes.AddRange(chosenHexes);
             }
 
-            List<Character> allies = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == character.GetAlignment() &&
-                    (ch.race == RacesEnum.Hobbit || ch.race == RacesEnum.Dunedain))
-                .Distinct()
-                .ToList();
+            if (revealedHexes.Count == 0) return false;
 
-            for (int i = 0; i < allies.Count; i++)
+            for (int i = 0; i < revealedHexes.Count; i++)
             {
-                allies[i].ApplyStatusEffect(StatusEffectEnum.Hope, 1);
-            }
-
-            if (revealed > 0)
-            {
-                owner.AddGold(1);
+                revealedHexes[i]?.RefreshVisibilityRendering();
             }
 
             MessageDisplayNoUI.ShowMessage(character.hex, character,
-                $"Old Ruins of Arthedain: {revealed} hidden enemy unit(s) are uncovered, and the old stones bless nearby Hobbit/Dunedain allies with Hope.",
+                $"Old Ruins of Arthedain: Arthedain, Cardolan, and Rhudaur each reveal 2 hexes for 1 turn.",
                 new Color(0.64f, 0.64f, 0.45f));
 
-            return revealed > 0 || allies.Count > 0;
+            return true;
         };
 
         condition = (character) =>
@@ -70,8 +83,10 @@ public class OldRuinsOfArthedainAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            return character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment()));
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            return TargetRegions.Any(region => ChooseRandomHexesInRegion(board, region, 1).Count > 0);
         };
 
         asyncEffect = async (character) =>

@@ -17,6 +17,9 @@ public static class PcEffectCatalog
             ["gondorian_bastion"] = GondorianBastion,
             ["ranger_ambush"] = RangerAmbush,
             ["hobbit_hearth"] = HobbitHearth,
+            ["old_forest_whisper"] = OldForestWhisper,
+            ["crickhollow_hideaway"] = CrickhollowHideaway,
+            ["stock_breeze"] = StockBreeze,
             ["beorning_hall"] = BeorningHall,
             ["forest_sanctuary"] = ForestSanctuary,
             ["eagle_watch"] = EagleWatch,
@@ -67,7 +70,7 @@ public static class PcEffectCatalog
 
     private static PcEffectDefinition BreefolkHospitality() => Create(
         "Breefolk Hospitality",
-        "Nearby allied Humans and Hobbits gain Hope (1), and your nation gains +1 <sprite name=\"gold\"/>.",
+        "Nearby allied Humans and Hobbits gain Hope (1), and your nation gains +1 <sprite name=\"gold\">.",
         c => HasAlliedCharacters(c, 1, ch => ch.race == RacesEnum.Common || ch.race == RacesEnum.Hobbit) || HasOwner(c),
         c =>
         {
@@ -106,7 +109,7 @@ public static class PcEffectCatalog
 
     private static PcEffectDefinition GreyHavensPassage() => Create(
         "Grey Havens Passage",
-        "Allied characters on shore or water in radius 2 gain Haste (1) and Hope (1), and your nation gains +1 <sprite name=\"gold\"/>.",
+        "Allied characters on shore or water in radius 2 gain Haste (1) and Hope (1), and your nation gains +1 <sprite name=\"gold\">.",
         c => ShoreOrWaterAllies(c, 2).Count > 0 || HasOwner(c),
         c =>
         {
@@ -123,7 +126,7 @@ public static class PcEffectCatalog
 
     private static PcEffectDefinition DwarvenForgeHall() => Create(
         "Dwarven Forge-Hall",
-        "Allied Dwarves in radius 2 gain Fortified (1) and Strengthened (1), and your nation gains +1 <sprite name=\"gold\"/>.",
+        "Allied Dwarves in radius 2 gain Fortified (1) and Strengthened (1), and your nation gains +1 <sprite name=\"gold\">.",
         c => HasAlliedCharacters(c, 2, ch => ch.race == RacesEnum.Dwarf) || HasOwner(c),
         c =>
         {
@@ -176,7 +179,7 @@ public static class PcEffectCatalog
 
     private static PcEffectDefinition HobbitHearth() => Create(
         "Hobbit Hearth",
-        "Allied Hobbits and nearby friendly small folk in radius 2 gain Hope (1); allied Hobbits there also gain Hidden (1), and your nation gains +1 <sprite name=\"gold\"/>.",
+        "Allied Hobbits and nearby friendly small folk in radius 2 gain Hope (1); allied Hobbits there also gain Hidden (1), and your nation gains +1 <sprite name=\"gold\">.",
         c => HasAlliedCharacters(c, 2, ch => ch.race == RacesEnum.Hobbit || ch.race == RacesEnum.Common) || HasOwner(c),
         c =>
         {
@@ -194,6 +197,52 @@ public static class PcEffectCatalog
             AddGold(c, 1);
             MessageDisplayNoUI.ShowMessage(c.hex, c, $"Hobbit Hearth cheers {targets.Count} ally(s), hides {hidden} hobbit(s), and adds +1 gold.", Color.green);
             return targets.Count > 0 || HasOwner(c);
+        });
+
+    private static PcEffectDefinition OldForestWhisper() => Create(
+        "Old Forest Whisper",
+        "All units in the hex gain Hidden <sprite name=\"hidden\"> and Fear <sprite name=\"fear\"> for 3 turns.",
+        c => CollectCharacters(c, 0, _ => true).Count > 0,
+        c =>
+        {
+            List<Character> units = CollectCharacters(c, 0, _ => true);
+            foreach (Character unit in units)
+            {
+                unit.ApplyStatusEffect(StatusEffectEnum.Hidden, 3);
+                unit.ApplyStatusEffect(StatusEffectEnum.Fear, 3);
+            }
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Old Forest Whisper veils and unsettles {units.Count} unit(s).", Color.green);
+            return units.Count > 0;
+        });
+
+    private static PcEffectDefinition CrickhollowHideaway() => Create(
+        "Crickhollow Hideaway",
+        "All Hobbits in the hex gain Hidden <sprite name=\"hidden\"> for 1 turn.",
+        c => CollectCharacters(c, 0, ch => ch.race == RacesEnum.Hobbit).Count > 0,
+        c =>
+        {
+            List<Character> hobbits = CollectCharacters(c, 0, ch => ch.race == RacesEnum.Hobbit);
+            foreach (Character hobbit in hobbits)
+            {
+                hobbit.ApplyStatusEffect(StatusEffectEnum.Hidden, 1);
+            }
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Crickhollow Hideaway veils {hobbits.Count} hobbit(s).", Color.green);
+            return hobbits.Count > 0;
+        });
+
+    private static PcEffectDefinition StockBreeze() => Create(
+        "Stock Breeze",
+        "All units in the hex gain Haste <sprite name=\"haste\"> for 1 turn.",
+        c => CollectCharacters(c, 0, _ => true).Count > 0,
+        c =>
+        {
+            List<Character> units = CollectCharacters(c, 0, _ => true);
+            foreach (Character unit in units)
+            {
+                unit.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+            }
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Stock Breeze quickens {units.Count} unit(s).", Color.green);
+            return units.Count > 0;
         });
 
     private static PcEffectDefinition BeorningHall() => Create(
@@ -236,7 +285,7 @@ public static class PcEffectCatalog
 
     private static PcEffectDefinition TradeWaterways() => Create(
         "Trade Waterways",
-        "Your nation gains +1 <sprite name=\"gold\"/>; allied shore and river travellers in radius 2 gain Haste (1).",
+        "Your nation gains +1 <sprite name=\"gold\">; allied shore and river travellers in radius 2 gain Haste (1).",
         c => HasOwner(c) || ShoreOrWaterAllies(c, 2).Count > 0,
         c =>
         {
@@ -339,7 +388,7 @@ public static class PcEffectCatalog
 
     private static PcEffectDefinition NurnWarCamp() => Create(
         "Nurn War-Camp",
-        "Allied dark units and commanders in radius 2 gain Strengthened (1); your nation gains +1 <sprite name=\"gold\"/>.",
+        "Allied dark units and commanders in radius 2 gain Strengthened (1); your nation gains +1 <sprite name=\"gold\">.",
         c => HasAlliedCharacters(c, 2, ch => IsDarkRace(ch) || ch.IsArmyCommander()) || HasOwner(c),
         c =>
         {
@@ -352,7 +401,7 @@ public static class PcEffectCatalog
 
     private static PcEffectDefinition HaradPort() => Create(
         "Harad Port",
-        "Your nation gains +2 <sprite name=\"gold\"/>; allied commanders in radius 2 gain Haste (1).",
+        "Your nation gains +2 <sprite name=\"gold\">; allied commanders in radius 2 gain Haste (1).",
         c => HasOwner(c) || HasAlliedCharacters(c, 2, ch => ch.IsArmyCommander()),
         c =>
         {
@@ -371,7 +420,7 @@ public static class PcEffectCatalog
 
     private static PcEffectDefinition RhunicCourt() => Create(
         "Rhunic Court",
-        "Your nation gains +1 <sprite name=\"gold\"/>; allied Humans, Southrons, and Easterlings in radius 2 gain Encouraged (1).",
+        "Your nation gains +1 <sprite name=\"gold\">; allied Humans, Southrons, and Easterlings in radius 2 gain Encouraged (1).",
         c => HasOwner(c) || HasAlliedCharacters(c, 2, ch => ch.race == RacesEnum.Common || ch.race == RacesEnum.Southron || ch.race == RacesEnum.Easterling),
         c =>
         {

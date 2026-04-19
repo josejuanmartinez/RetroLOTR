@@ -577,14 +577,14 @@ public class Character : MonoBehaviour
         List<string> result = new() { };
         if (withColor) result.Add($"<color={colors.GetHexColorByName(alignment.ToString())}>");
         if (withHealth) result.Add(GetHealthHoverText());
-        if(withAlignment) result.Add($"<sprite name=\"{alignment}\">");
+        if(withAlignment) result.Add($"<sprite name=\"{alignment}\">{alignment}");
         result.Add($"{characterName}");
         if (withCharInfo)
         {
-            if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? GetCommander().ToString() : "")}");
-            if (agent > 0) result.Add($"<sprite name=\"agent\">{(withLevels ? GetAgent().ToString() : "")}");
-            if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">{(withLevels ? GetEmmissary().ToString() : "")}");
-            if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? GetMage().ToString() : "")}");
+            if (commander > 0) result.Add($"<sprite name=\"commander\">commander{(withLevels ? GetCommander().ToString() : "")}");
+            if (agent > 0) result.Add($"<sprite name=\"agent\">agent{(withLevels ? GetAgent().ToString() : "")}");
+            if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">emmissary{(withLevels ? GetEmmissary().ToString() : "")}");
+            if (mage > 0) result.Add($"<sprite name=\"mage\">mage{(withLevels ? GetMage().ToString() : "")}");
         }
 
         if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText());
@@ -662,7 +662,7 @@ public class Character : MonoBehaviour
         army = new Army(this, troopsType, amount, startingArmy, ws, 25, specialAbilities, troopName);
         hex.armies.Add(army);
 
-        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\"/>[{amount}]", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\">[{amount}]", Color.green);
         hex.RedrawCharacters();
         hex.RedrawArmies();
         RefreshSelectedCharacterIconIfSelected();
@@ -1021,7 +1021,7 @@ public class Character : MonoBehaviour
         if (artifact == null || !artifact.ShouldApplyAlignmentPenalty(GetAlignment())) return;
         int damage = Artifact.OppositeAlignmentHealthPenalty;
         health = Mathf.Max(0, health - damage);
-        MessageDisplayNoUI.ShowMessage(hex, this, $"-{damage} <sprite name=\"health\">", Color.red);
+        MessageDisplayNoUI.ShowMessage(hex, this, $"-{damage} <sprite name=\"health\">health", Color.red);
         Sounds.Instance?.PlayVoicePain(this);
         RefreshSelectedCharacterIconIfSelected();
         CharacterIcons.RefreshForHumanPlayerCharacter(this);
@@ -1495,7 +1495,7 @@ public class Character : MonoBehaviour
                 if (artifactOwner != null)
                 {
                     artifactOwner.AddMounts(1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} provides +1 <sprite name=\"mounts\"/>.", Color.green);
+                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} provides +1 <sprite name=\"mounts\">.", Color.green);
                 }
             }
 
@@ -1513,7 +1513,7 @@ public class Character : MonoBehaviour
                 if (artifactOwner != null)
                 {
                     artifactOwner.AddGold(1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} provides +1 <sprite name=\"gold\"/>.", Color.green);
+                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} provides +1 <sprite name=\"gold\">.", Color.green);
                 }
             }
         }
@@ -1619,7 +1619,7 @@ public class Character : MonoBehaviour
         TroopsTypeEnum? lostTroop = commandedArmy.RemoveRandomTroop();
         if (lostTroop.HasValue)
         {
-            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName}'s burning army loses 1 <sprite name=\"{lostTroop.Value.ToString().ToLower()}\"/> in the forest.", Color.red);
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName}'s burning army loses 1 <sprite name=\"{lostTroop.Value.ToString().ToLower()}\"> in the forest.", Color.red);
         }
         burningForestTroopLossPending = false;
     }

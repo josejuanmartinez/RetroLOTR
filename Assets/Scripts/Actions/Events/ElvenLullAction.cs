@@ -18,40 +18,46 @@ public class ElvenLullAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> allies = character.hex.GetHexesInRadius(Radius)
+            List<Character> targets = character.hex.GetHexesInRadius(Radius)
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == character.GetAlignment() && ch.race == RacesEnum.Elf)
+                .Where(ch => ch != null && !ch.killed)
                 .Distinct()
                 .ToList();
 
-            List<Character> enemies = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment() && ch.race != RacesEnum.Elf)
-                .Distinct()
+            List<Character> allies = targets
+                .Where(ch => ch.GetAlignment() == character.GetAlignment() && (ch.race == RacesEnum.Elf || ch.race == RacesEnum.Hobbit))
                 .ToList();
 
-            if (allies.Count == 0 && enemies.Count == 0) return false;
+            List<Character> nazguls = targets
+                .Where(ch => ch.GetAlignment() != character.GetAlignment() && ch.race == RacesEnum.Nazgul)
+                .ToList();
 
-            int elvenHaste = 0;
+            List<Character> halted = targets
+                .Where(ch => ch.GetAlignment() != character.GetAlignment() && (ch.race == RacesEnum.Orc || ch.race == RacesEnum.Troll))
+                .ToList();
+
+            if (allies.Count == 0 && nazguls.Count == 0 && halted.Count == 0) return false;
+
             for (int i = 0; i < allies.Count; i++)
             {
                 allies[i].ApplyStatusEffect(StatusEffectEnum.Haste, 1);
-                elvenHaste++;
             }
 
-            int sleeped = 0;
-            for (int i = 0; i < enemies.Count; i++)
+            for (int i = 0; i < nazguls.Count; i++)
             {
-                enemies[i].ApplyStatusEffect(StatusEffectEnum.Blocked, 1);
-                sleeped++;
+                nazguls[i].ApplyStatusEffect(StatusEffectEnum.Blocked, 1);
+            }
+
+            for (int i = 0; i < halted.Count; i++)
+            {
+                halted[i].ApplyStatusEffect(StatusEffectEnum.Halted, 1);
             }
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Elven Lull: {elvenHaste} allied Elf unit(s) gain Haste (1), and {sleeped} non-elf enemy unit(s) fall asleep as Blocked (1).",
+                $"Elven Lull: allied Hobbit/Elf unit(s) gain Haste (1), Nazgul unit(s) are Blocked (1), and Orc/Troll unit(s) are Halted (1).",
                 Color.cyan);
 
             return true;
@@ -63,7 +69,9 @@ public class ElvenLullAction : EventAction
             if (character == null || character.hex == null) return false;
 
             return character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed));
+                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed
+                    && ((ch.GetAlignment() == character.GetAlignment() && (ch.race == RacesEnum.Elf || ch.race == RacesEnum.Hobbit))
+                        || (ch.GetAlignment() != character.GetAlignment() && (ch.race == RacesEnum.Nazgul || ch.race == RacesEnum.Orc || ch.race == RacesEnum.Troll)))));
         };
 
         asyncEffect = async (character) =>

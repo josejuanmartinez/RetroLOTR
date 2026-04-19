@@ -362,7 +362,7 @@ public class LeaderSelector : SearcherByName
             _ => "neutral"
         };
 
-        return $"<sprite name=\"{spriteName}\">";
+        return $"<sprite name=\"{spriteName}\">{spriteName}";
     }
 
     string GetVariantName(string baseLeaderName, string displayName, string variantId)

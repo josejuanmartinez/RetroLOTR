@@ -41,7 +41,7 @@ public class GoingOnAnAdventure : EventAction
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Going On An Adventure grants Courage to {targets.Count} Hobbit/Dwarf unit(s) in radius {Radius}.",
+                $"Going On An Adventure grants Encouraged<sprite name=\"encouraged\"> to {targets.Count} Hobbit/Dwarf unit(s) in radius {Radius}.",
                 Color.yellow);
             return true;
         };

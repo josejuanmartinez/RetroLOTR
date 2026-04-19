@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Colors : SearcherByName
 {
@@ -18,13 +19,13 @@ public class Colors : SearcherByName
     public Color freePeople;
     public Color neutral;
     public Color darkServants;
-    public Color pcCard;
-    public Color landCard;
-    public Color characterCard;
-    public Color armyCard;
-    public Color eventCard;
-    public Color actionCard;
-    public Color spellCard;
+    [FormerlySerializedAs("pcCard")] public Color pc;
+    [FormerlySerializedAs("landCard")] public Color land;
+    [FormerlySerializedAs("characterCard")] public Color character;
+    [FormerlySerializedAs("armyCard")] public Color army;
+    [FormerlySerializedAs("eventCard")] public Color @event;
+    [FormerlySerializedAs("actionCard")] public Color action;
+    [FormerlySerializedAs("spellCard")] public Color spell;
     public Color MAX;
 
     private Dictionary<string, FieldInfo> normalizedLookup;
@@ -52,6 +53,11 @@ public class Colors : SearcherByName
 
     public Color GetColorByName(string colorName)
     {
+        if (normalizedLookup == null)
+        {
+            BuildLookup();
+        }
+
         string normalized = Normalize(colorName);
 
         if (normalizedLookup.TryGetValue(normalized, out var field))

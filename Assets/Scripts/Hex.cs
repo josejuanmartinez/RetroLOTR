@@ -2308,7 +2308,7 @@ public class Hex : MonoBehaviour
 
         if (pc.citySize != PCSizeEnum.NONE)
         {
-            builder.Append("<sprite name=\"pc\"><color=");
+            builder.Append("<sprite name=\"pc\">pc<color=");
             builder.Append(GetGradientColorHex((int)pc.citySize, (int)PCSizeEnum.camp, (int)PCSizeEnum.city));
             builder.Append('>');
             builder.Append((int)pc.citySize);
@@ -2318,20 +2318,20 @@ public class Hex : MonoBehaviour
         if (pc.hasPort)
         {
             if (pc.citySize != PCSizeEnum.NONE) builder.Append(' ');
-            builder.Append("<sprite name=\"port\">");
+            builder.Append("<sprite name=\"port\">port");
         }
 
         if (pc.fortSize > FortSizeEnum.NONE)
         {
             if (pc.citySize != PCSizeEnum.NONE || pc.hasPort) builder.Append(' ');
-            builder.Append("<sprite name=\"fort\"><color=");
+            builder.Append("<sprite name=\"fort\">fort<color=");
             builder.Append(GetGradientColorHex((int)pc.fortSize, (int)FortSizeEnum.tower, (int)FortSizeEnum.citadel));
             builder.Append('>');
             builder.Append((int)pc.fortSize);
             builder.Append("</color>");
         }
 
-        builder.Append("<sprite name=\"loyalty\"><color=");
+        builder.Append("<sprite name=\"loyalty\">loyalty<color=");
         builder.Append(GetLoyaltyColorHex(pc.loyalty));
         builder.Append('>');
         builder.Append(Math.Max(0, pc.loyalty));

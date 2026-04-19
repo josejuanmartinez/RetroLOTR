@@ -43,6 +43,6 @@ public class CarouselItem : MonoBehaviour
             return value;
         }
 
-        return $"<sprite name=\"{spriteName}\"> {trimmed}";
+        return $"<sprite name=\"{spriteName}\">{spriteName} {trimmed}";
     }
 }

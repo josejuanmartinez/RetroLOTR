@@ -39,7 +39,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         nonPlayableLeader = leader;
         leaderSprite = illustrations.GetIllustrationByName(leader.characterName);
         alignment = leader.alignment;
-        text = $"<sprite name=\"{alignment}\">{leader.characterName}";
+        text = $"<sprite name=\"{alignment}\">{alignment}{leader.characterName}";
         alignmentImage.sprite = illustrations.GetIllustrationByName(leader.GetAlignment().ToString());
         raycaster.enabled = false;
         canvasGroup.alpha = 0;

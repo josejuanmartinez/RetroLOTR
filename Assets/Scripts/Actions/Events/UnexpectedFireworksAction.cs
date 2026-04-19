@@ -6,12 +6,7 @@ using UnityEngine;
 public class UnexpectedFireworksAction : EventAction
 {
     private const int Radius = 2;
-
-    private static int GetPriority(Character target)
-    {
-        if (target == null) return 0;
-        return target.GetCommander() + target.GetAgent() + target.GetEmmissary() + target.GetMage();
-    }
+    private const int RevealRadius = 3;
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -27,61 +22,41 @@ public class UnexpectedFireworksAction : EventAction
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
 
-            var targets = character.hex.GetHexesInRadius(Radius)
+            List<Hex> revealedHexes = character.hex.GetHexesInRadius(RevealRadius)
+                .Where(h => h != null)
+                .ToList();
+
+            if (revealedHexes.Count == 0) return false;
+
+            for (int i = 0; i < revealedHexes.Count; i++)
+            {
+                revealedHexes[i].RevealMapOnlyArea(0, false, false);
+            }
+
+            List<Character> hobbits = character.hex.GetHexesInRadius(Radius)
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed)
+                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Hobbit)
                 .Distinct()
                 .ToList();
 
-            if (targets.Count == 0) return false;
-
-            int enemiesRevealed = 0;
-            int enemiesScattered = 0;
             int hobbitsInspired = 0;
-
-            for (int i = 0; i < targets.Count; i++)
+            for (int i = 0; i < hobbits.Count; i++)
             {
-                Character target = targets[i];
-                if (target.GetAlignment() != character.GetAlignment() && target.HasStatusEffect(StatusEffectEnum.Hidden))
-                {
-                    target.ClearStatusEffect(StatusEffectEnum.Hidden);
-                    enemiesRevealed++;
-                }
-
-                if (target.race == RacesEnum.Hobbit && target.GetAlignment() == character.GetAlignment())
+                Character target = hobbits[i];
+                if (target.GetAlignment() == character.GetAlignment())
                 {
                     target.ApplyStatusEffect(StatusEffectEnum.Hope, 1);
                     hobbitsInspired++;
                 }
             }
 
-            Character strongest = targets
-                .Where(ch => ch.GetAlignment() != character.GetAlignment())
-                .OrderByDescending(GetPriority)
-                .ThenByDescending(ch => ch.health)
-                .FirstOrDefault();
-
-            if (strongest != null && strongest.hex != null)
-            {
-                List<Hex> escapeHexes = strongest.hex.GetHexesInRadius(1)
-                    .Where(h => h != null && h != strongest.hex && (h.characters == null || h.characters.Count == 0))
-                    .ToList();
-
-                if (escapeHexes.Count > 0)
-                {
-                    Hex destination = escapeHexes[UnityEngine.Random.Range(0, escapeHexes.Count)];
-                    board.MoveCharacterOneHex(strongest, strongest.hex, destination, true, false);
-                    enemiesScattered++;
-                }
-            }
-
-            if (enemiesRevealed == 0 && enemiesScattered == 0 && hobbitsInspired == 0) return false;
+            if (hobbitsInspired == 0) return false;
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Unexpected Fireworks: {enemiesRevealed} hidden enemy unit(s) are exposed, {enemiesScattered} enemy unit(s) are scattered, and {hobbitsInspired} Hobbit(s) gain Hope (1) in radius {Radius}.",
+                $"Unexpected Fireworks: {hobbitsInspired} Hobbit unit(s) gain Hope <sprite name=\"hope\"> in radius {Radius}; radius {RevealRadius} is seen for 1 turn.",
                 Color.yellow);
 
             return true;

@@ -10,7 +10,7 @@ public class RoadToRivendellAction : EventAction
     private static bool IsAffected(Character character)
     {
         if (character == null || character.killed) return false;
-        return character.race == RacesEnum.Hobbit || character.race == RacesEnum.Dwarf;
+        return character.race == RacesEnum.Hobbit || character.race == RacesEnum.Dwarf || character.race == RacesEnum.Elf;
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -60,7 +60,7 @@ public class RoadToRivendellAction : EventAction
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Road to Rivendell: {inspired} Hobbit/Dwarf unit(s) gain Courage and Haste (1), {fearCleared} Fear and {haltedCleared} Halted removed.",
+                $"Road to Rivendell: {inspired} Hobbit/Dwarf/Elf unit(s) gain Encouraged <sprite name=\"encouraged\"> and Haste <sprite name=\"haste\"> (1), {fearCleared} Fear <sprite name=\"fear\"> and {haltedCleared} Halted <sprite name=\"halted\"> removed.",
                 Color.yellow);
 
             return true;

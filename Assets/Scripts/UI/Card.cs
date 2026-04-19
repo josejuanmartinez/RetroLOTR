@@ -310,7 +310,16 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         string typePrefix = FormatCardTypeLabel(cardType);
         if (cardType == CardTypeEnum.Character)
         {
-            return PrefixWithCardType(typePrefix, data.GetCharacterDescription());
+            string characterSummary = data.GetCharacterDescription();
+            string characterBody = !string.IsNullOrWhiteSpace(data.description) ? data.description : string.Empty;
+            if (string.IsNullOrWhiteSpace(characterSummary))
+            {
+                return PrefixWithCardType(typePrefix, characterBody);
+            }
+
+            return string.IsNullOrWhiteSpace(characterBody)
+                ? PrefixWithCardType(typePrefix, characterSummary)
+                : PrefixWithCardType(typePrefix, $"{characterSummary}. {characterBody}");
         }
         if (cardType == CardTypeEnum.Army)
         {
@@ -333,12 +342,21 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             {
                 sb.Append(data.region).Append(". ");
             }
-            
+
             sb.Append(string.Join("", grants));
 
             if (cardType == CardTypeEnum.PC)
             {
-                sb.Append("\nOR\nLocal Effect");
+                sb.Append("\nOR\n");
+                PcEffectCatalog.PcEffectDefinition pcEffect = PcEffectCatalog.GetDefinition(data.pcEffectId);
+                if (pcEffect != null)
+                {
+                    sb.Append(pcEffect.title).Append(": ").Append(pcEffect.description);
+                }
+                else
+                {
+                    sb.Append("Local Effect");
+                }
             }
 
             return PrefixWithCardType(typePrefix, sb.ToString());
@@ -428,17 +446,22 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         string colorName = cardType switch
         {
-            CardTypeEnum.PC => "pcCard",
-            CardTypeEnum.Land => "landCard",
-            CardTypeEnum.Character => "characterCard",
-            CardTypeEnum.Army => "armyCard",
-            CardTypeEnum.Event => "eventCard",
-            CardTypeEnum.Action => "actionCard",
-            CardTypeEnum.Spell => "spellCard",
+            CardTypeEnum.PC => "pc",
+            CardTypeEnum.Land => "land",
+            CardTypeEnum.Character => "character",
+            CardTypeEnum.Army => "army",
+            CardTypeEnum.Event => "event",
+            CardTypeEnum.Action => "action",
+            CardTypeEnum.Spell => "spell",
             _ => null
         };
 
-        if (colors == null || string.IsNullOrWhiteSpace(colorName))
+        if (string.IsNullOrWhiteSpace(colorName))
+        {
+            return label;
+        }
+
+        if (colors == null)
         {
             return label;
         }
@@ -473,7 +496,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private void AppendRequirement(List<string> requirements, string spriteName, int count)
     {
         if (requirements == null || string.IsNullOrWhiteSpace(spriteName) || count <= 0) return;
-        requirements.Add(FormatRequirementToken(spriteName, count));
+        requirements.Add($"{count}<sprite name=\"{spriteName}\">");
     }
 
     private string FormatRequirementToken(string spriteName, int count)

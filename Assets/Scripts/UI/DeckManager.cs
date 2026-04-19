@@ -206,6 +206,26 @@ public class CardData
     {
         if (GetCardType() != CardTypeEnum.Army) return string.Empty;
 
+        string summary = GetArmySummary();
+        string body = string.IsNullOrWhiteSpace(description) ? string.Empty : description.Trim();
+        if (string.IsNullOrWhiteSpace(body))
+        {
+            return summary;
+        }
+
+        if (string.IsNullOrWhiteSpace(summary))
+        {
+            return body;
+        }
+
+        return $"{summary} {body}";
+    }
+
+    private string GetArmySummary()
+    {
+        if (GetCardType() != CardTypeEnum.Army) return string.Empty;
+
+        string raceLabel = FormatRaceLabel(race);
         string troopLabel = GetDefaultTroopName(troopType);
         if (string.IsNullOrWhiteSpace(troopLabel))
         {
@@ -217,10 +237,19 @@ public class CardData
 
         if (string.IsNullOrWhiteSpace(troopLabel))
         {
-            return abilities.Count > 0 ? string.Join(", ", abilities) : string.Empty;
+            if (abilities.Count > 0)
+            {
+                return !string.IsNullOrWhiteSpace(raceLabel)
+                    ? $"{raceLabel}. {string.Join(", ", abilities)}."
+                    : string.Join(", ", abilities);
+            }
+
+            return raceLabel;
         }
 
-        string baseText = $"{troopLabel} {spriteTag}.";
+        string baseText = string.IsNullOrWhiteSpace(raceLabel)
+            ? $"{troopLabel} {spriteTag}."
+            : $"{raceLabel}. {troopLabel} {spriteTag}.";
         return abilities.Count > 0
             ? $"{baseText} {string.Join(", ", abilities)}."
             : baseText;
@@ -334,6 +363,14 @@ public class CardData
         };
     }
 
+    private static string FormatRaceLabel(RacesEnum value)
+    {
+        string raw = value.ToString();
+        if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
+        string formatted = raw.Trim().ToLowerInvariant();
+        return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(formatted);
+    }
+
     private List<string> GetArmyAbilityLabels()
     {
         if (specialAbilities == null || specialAbilities.Count == 0) return new List<string>();
@@ -347,13 +384,22 @@ public class CardData
 
     private static string FormatArmyAbilityLabel(ArmySpecialAbilityEnum ability)
     {
-        return ability switch
+        string abilityName = ability switch
         {
             ArmySpecialAbilityEnum.Longrange => "Long range",
             ArmySpecialAbilityEnum.ShortRange => "Short range",
             _ => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
                 Regex.Replace(ability.ToString(), "([a-z])([A-Z])", "$1 $2").ToLowerInvariant())
         };
+
+        string spriteName = ability switch
+        {
+            ArmySpecialAbilityEnum.Longrange => "longrange",
+            ArmySpecialAbilityEnum.ShortRange => "shortrange",
+            _ => ability.ToString().ToLowerInvariant()
+        };
+
+        return $"{abilityName} <sprite name=\"{spriteName}\">";
     }
 
     private static void AppendCharacterLevel(List<string> parts, string spriteName, int required)

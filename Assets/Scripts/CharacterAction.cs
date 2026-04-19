@@ -1101,13 +1101,13 @@ public class CharacterAction
         Leader owner = character != null ? character.GetOwner() : null;
         ResourceCostProfile cost = GetResourceCostProfile(owner);
         List<string> costs = new();
-        if (cost.leather > 0) costs.Add($"<color=red>-<sprite name=\"leather\"/>[{cost.leather}]</color>");
-        if (cost.timber > 0) costs.Add($"<color=red>-<sprite name=\"timber\"/>[{cost.timber}]</color>");
-        if (cost.mounts > 0) costs.Add($"<color=red>-<sprite name=\"mounts\"/>[{cost.mounts}]</color>");
-        if (cost.iron > 0) costs.Add($"<color=red>-<sprite name=\"iron\"/>[{cost.iron}]</color>");
-        if (cost.steel > 0) costs.Add($"<color=red>-<sprite name=\"steel\"/>[{cost.steel}]</color>");
-        if (cost.mithril > 0) costs.Add($"<color=red>-<sprite name=\"mithril\"/>[{cost.mithril}]</color>");
-        if (cost.gold > 0) costs.Add($"<color=red>-<sprite name=\"gold\"/>[{cost.gold}]</color>");
+        if (cost.leather > 0) costs.Add($"<color=red>-<sprite name=\"leather\">[{cost.leather}]</color>");
+        if (cost.timber > 0) costs.Add($"<color=red>-<sprite name=\"timber\">[{cost.timber}]</color>");
+        if (cost.mounts > 0) costs.Add($"<color=red>-<sprite name=\"mounts\">[{cost.mounts}]</color>");
+        if (cost.iron > 0) costs.Add($"<color=red>-<sprite name=\"iron\">[{cost.iron}]</color>");
+        if (cost.steel > 0) costs.Add($"<color=red>-<sprite name=\"steel\">[{cost.steel}]</color>");
+        if (cost.mithril > 0) costs.Add($"<color=red>-<sprite name=\"mithril\">[{cost.mithril}]</color>");
+        if (cost.gold > 0) costs.Add($"<color=red>-<sprite name=\"gold\">[{cost.gold}]</color>");
         return string.Join(" ", costs);
     }
 
@@ -1193,7 +1193,7 @@ public class CharacterAction
         }
 
         if (totalGold <= 0) return string.Empty;
-        return $"<color=red>-<sprite name=\"gold\"/>[{totalGold}]</color>";
+        return $"<color=red>-<sprite name=\"gold\">[{totalGold}]</color>";
     }
 
     private string BuildSellCaravanCostText()
@@ -1208,13 +1208,13 @@ public class CharacterAction
 
         foreach (var cost in GetResourceCosts(costProfile))
         {
-            parts.Add($"<color=red>-<sprite name=\"{cost.sprite}\"/>[{cost.amount}]</color>");
+            parts.Add($"<color=red>-<sprite name=\"{cost.sprite}\">{cost.sprite}[{cost.amount}]</color>");
             totalGold += stores.GetSellPrice(cost.produce, cost.amount);
         }
 
         if (totalGold > 0)
         {
-            parts.Add($"<color=green>+<sprite name=\"gold\"/>[{totalGold}]</color>");
+            parts.Add($"<color=green>+<sprite name=\"gold\">[{totalGold}]</color>");
         }
 
         return string.Join(" ", parts);
@@ -1274,7 +1274,7 @@ public class CharacterAction
 
                 if (snapshot.goldDelta < 0 && owner.goldAmount < -snapshot.goldDelta)
                 {
-                    parts.Add($"Need <sprite name=\"gold\"/>[{Mathf.Abs(snapshot.goldDelta)}] (have {owner.goldAmount})");
+                    parts.Add($"Need <sprite name=\"gold\">[{Mathf.Abs(snapshot.goldDelta)}] (have {owner.goldAmount})");
                 }
 
                 if (isSellCaravans)
@@ -1294,7 +1294,7 @@ public class CharacterAction
                         };
                         if (available < cost.amount)
                         {
-                            parts.Add($"Need <sprite name=\"{cost.produce}\">[{cost.amount}] (have {available})");
+                            parts.Add($"Need <sprite name=\"{cost.produce}\">{cost.produce}[{cost.amount}] (have {available})");
                         }
                     }
                 }
@@ -1302,19 +1302,19 @@ public class CharacterAction
             else
             {
                 if (costProfile.leather > 0 && owner.leatherAmount < costProfile.leather)
-                    parts.Add($"Need <sprite name=\"leather\"/>[{costProfile.leather}] (have {owner.leatherAmount})");
+                    parts.Add($"Need <sprite name=\"leather\">[{costProfile.leather}] (have {owner.leatherAmount})");
                 if (costProfile.timber > 0 && owner.timberAmount < costProfile.timber)
-                    parts.Add($"Need <sprite name=\"timber\"/>[{costProfile.timber}] (have {owner.timberAmount})");
+                    parts.Add($"Need <sprite name=\"timber\">[{costProfile.timber}] (have {owner.timberAmount})");
                 if (costProfile.mounts > 0 && owner.mountsAmount < costProfile.mounts)
-                    parts.Add($"Need <sprite name=\"mounts\"/>[{costProfile.mounts}] (have {owner.mountsAmount})");
+                    parts.Add($"Need <sprite name=\"mounts\">[{costProfile.mounts}] (have {owner.mountsAmount})");
                 if (costProfile.iron > 0 && owner.ironAmount < costProfile.iron)
-                    parts.Add($"Need <sprite name=\"iron\"/>[{costProfile.iron}] (have {owner.ironAmount})");
+                    parts.Add($"Need <sprite name=\"iron\">[{costProfile.iron}] (have {owner.ironAmount})");
                 if (costProfile.steel > 0 && owner.steelAmount < costProfile.steel)
-                    parts.Add($"Need <sprite name=\"steel\"/>[{costProfile.steel}] (have {owner.steelAmount})");
+                    parts.Add($"Need <sprite name=\"steel\">[{costProfile.steel}] (have {owner.steelAmount})");
                 if (costProfile.mithril > 0 && owner.mithrilAmount < costProfile.mithril)
-                    parts.Add($"Need <sprite name=\"mithril\"/>[{costProfile.mithril}] (have {owner.mithrilAmount})");
+                    parts.Add($"Need <sprite name=\"mithril\">[{costProfile.mithril}] (have {owner.mithrilAmount})");
                 if (costProfile.gold > 0 && owner.goldAmount < costProfile.gold)
-                    parts.Add($"Need <sprite name=\"gold\"/>[{costProfile.gold}] (have {owner.goldAmount})");
+                    parts.Add($"Need <sprite name=\"gold\">[{costProfile.gold}] (have {owner.goldAmount})");
             }
         }
 
@@ -1338,23 +1338,23 @@ public class CharacterAction
         {
             if (snapshot.goldDelta < 0)
             {
-                parts.Add($"<color=red>-<sprite name=\"gold\"/>[{Mathf.Abs(snapshot.goldDelta)}]</color>");
+                parts.Add($"<color=red>-<sprite name=\"gold\">[{Mathf.Abs(snapshot.goldDelta)}]</color>");
             }
         }
         else if (isSellCaravans)
         {
             foreach (var cost in snapshot.resourceCosts)
             {
-                parts.Add($"<color=red>-<sprite name=\"{cost.produce}\">[{cost.amount}]</color>");
+                parts.Add($"<color=red>-<sprite name=\"{cost.produce}\">{cost.produce}[{cost.amount}]</color>");
             }
 
             if (snapshot.goldDelta > 0)
             {
-                parts.Add($"<color=green>+<sprite name=\"gold\"/>[{snapshot.goldDelta}]</color>");
+                parts.Add($"<color=green>+<sprite name=\"gold\">[{snapshot.goldDelta}]</color>");
             }
             else if (snapshot.goldDelta < 0)
             {
-                parts.Add($"<color=red>-<sprite name=\"gold\"/>[{Mathf.Abs(snapshot.goldDelta)}]</color>");
+                parts.Add($"<color=red>-<sprite name=\"gold\">[{Mathf.Abs(snapshot.goldDelta)}]</color>");
             }
         }
 
@@ -1369,12 +1369,12 @@ public class CharacterAction
 
         foreach (var cost in GetResourceCosts(costProfile))
         {
-            parts.Add($"<color=red>-<sprite name=\"{cost.sprite}\"/>[{cost.amount}]</color>");
+            parts.Add($"<color=red>-<sprite name=\"{cost.sprite}\">{cost.sprite}[{cost.amount}]</color>");
         }
 
         if (costProfile.gold > 0)
         {
-            parts.Add($"<color=red>-<sprite name=\"gold\"/>[{costProfile.gold}]</color>");
+            parts.Add($"<color=red>-<sprite name=\"gold\">[{costProfile.gold}]</color>");
         }
 
         return string.Join(" ", parts);
@@ -1436,7 +1436,7 @@ public class CharacterAction
         Sounds.Instance?.PlayVoicePain(character);
         if (!isAI)
         {
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"-{damage} <sprite name=\"health\">", Color.red);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"-{damage} <sprite name=\"health\">health", Color.red);
         }
         if (character.health < 1)
         {
