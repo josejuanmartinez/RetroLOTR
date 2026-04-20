@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class MaterialRetrievalOrAction : MaterialRetrieval
+public class PCAction : MaterialRetrieval
 {
     private const int FoundingGoldCost = 10;
     private static int activePcLookupFrame = -1;
     private static readonly HashSet<string> activePcLookupKeys = new(StringComparer.OrdinalIgnoreCase);
-    protected override bool GrantsResourcesImmediately => false;
 
     public override void Initialize(Character c, CardData card = null, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
@@ -26,14 +26,17 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            if (character == null) return false;
-            return HasAssociatedPcInGame() || CanFoundAssociatedPc(character);
+            return character != null;
         };
 
         asyncEffect = async (character) =>
         {
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
-            return await ResolvePendingChoiceAsync(character);
+            if (character != null && !HasAssociatedPcInGame())
+            {
+                TryFoundAssociatedPc(character);
+            }
+            return true;
         };
 
         base.Initialize(c, card, condition, effect, asyncEffect);
@@ -41,63 +44,7 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
 
     protected override string GetDescription()
     {
-        PcEffectCatalog.PcEffectDefinition definition = ResolvePcEffectDefinition();
-        string effectDescription = definition != null
-            ? $"{definition.title}: {definition.description}"
-            : "Activate this place's local effect instead of taking its resources.";
-        return $"{effectDescription} If this PC is not in play, found it in your hex instead for 10 gold (Commander 2 or Emmissary 1, no PC there, no enemy armies there).";
-    }
-
-    private async Task<bool> ResolvePendingChoiceAsync(Character character)
-    {
-        if (character == null) return false;
-
-        if (!HasAssociatedPcInGame())
-        {
-            return TryFoundAssociatedPc(character);
-        }
-
-        PcEffectCatalog.PcEffectDefinition definition = ResolvePcEffectDefinition();
-        Leader owner = character.GetOwner();
-        if (owner == null) return false;
-        if (owner.HasPlayedLandThisTurn())
-        {
-            MessageDisplayNoUI.ShowMessage(character.hex, character, "Only one land card can be played each turn.", Color.red);
-            return false;
-        }
-
-        owner.RecordPlayedLandThisTurn();
-
-        bool useResources = true;
-        if (character.isPlayerControlled)
-        {
-            string effectLabel = definition != null && !string.IsNullOrWhiteSpace(definition.title)
-                ? $"Activate {definition.title}"
-                : "Activate the local effect";
-            string prompt =
-                $"Gather resources from {ResolveAssociatedPcName()} or activate the local effect?\n" +
-                $"{GetResourceSummary()}\nOR\n{effectLabel}";
-            useResources = await ConfirmationDialog.Ask(prompt, "Resources", "Effect");
-        }
-        else
-        {
-            if (definition != null && definition.CanExecute(character))
-            {
-                useResources = !definition.PreferEffectForAi(character);
-            }
-        }
-
-        if (useResources)
-        {
-            return ApplyResources(character);
-        }
-
-        if (definition != null && definition.CanExecute(character))
-        {
-            return definition.Execute(character);
-        }
-
-        return true;
+        return card != null ? card.GetRenderedDescription(true) : string.Empty;
     }
 
     private string GetResourceSummary()
@@ -138,7 +85,6 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         Leader owner = character.GetOwner();
         if (owner == null || character.hex == null) return false;
 
-        owner.RecordPlayedLandThisTurn();
         owner.RemoveGold(FoundingGoldCost);
 
         string pcName = ResolveAssociatedPcName();
@@ -154,6 +100,8 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
 
         Leader owner = character.GetOwner();
         if (owner == null || owner.goldAmount < FoundingGoldCost) return false;
+        if (!IsOnAssociatedRegion(character)) return false;
+        if (character.hex.IsWaterTerrain()) return false;
         if (character.hex.HasAnyPC()) return false;
         if (character.GetCommander() < 2 && character.GetEmmissary() < 1) return false;
 
@@ -168,6 +116,17 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         }
 
         return true;
+    }
+
+    private bool IsOnAssociatedRegion(Character character)
+    {
+        if (character == null || character.hex == null) return false;
+
+        string pcRegion = ResolveAssociatedPcRegion();
+        string hexRegion = character.hex.GetLandRegion();
+        if (string.IsNullOrWhiteSpace(pcRegion) || string.IsNullOrWhiteSpace(hexRegion)) return false;
+
+        return string.Equals(NormalizePcLookupKey(pcRegion), NormalizePcLookupKey(hexRegion), StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsEnemyArmy(Character character, Army army)
@@ -189,12 +148,6 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
 
         RefreshActivePcLookup();
         return activePcLookupKeys.Contains(targetKey);
-    }
-
-    private PcEffectCatalog.PcEffectDefinition ResolvePcEffectDefinition()
-    {
-        string effectId = ResolveAssociatedPcEffectId();
-        return PcEffectCatalog.GetDefinition(effectId);
     }
 
     private static void RefreshActivePcLookup()
@@ -225,9 +178,9 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         return HumanizeSourceName(GetType().Name);
     }
 
-    private string ResolveAssociatedPcEffectId()
+    private string ResolveAssociatedPcRegion()
     {
-        if (card != null && !string.IsNullOrWhiteSpace(card.pcEffectId)) return card.pcEffectId;
+        if (card != null && !string.IsNullOrWhiteSpace(card.region)) return card.region;
         return null;
     }
 
@@ -253,5 +206,103 @@ public class MaterialRetrievalOrAction : MaterialRetrieval
         }
         if (current.Length > 0) parts.Add(current);
         return string.Join(" ", parts);
+    }
+}
+
+public class MaterialRetrievalOrAction : PCAction
+{
+}
+
+public static class PcDescriptionBuilder
+{
+    public static string BuildBody(CardData data, bool includeFoundingText)
+    {
+        if (data == null) return string.Empty;
+
+        string regionName = FormatDisplayRegionName(data.region);
+        bool hasRegion = !string.IsNullOrWhiteSpace(regionName);
+
+        System.Text.StringBuilder sb = new();
+        if (hasRegion)
+        {
+            sb.Append(regionName).Append(". ");
+        }
+
+        string resources = BuildResourceSummary(data);
+        if (!string.IsNullOrWhiteSpace(resources))
+        {
+            sb.Append(resources).Append(".");
+        }
+        else if (hasRegion)
+        {
+            sb.Append("Resources.");
+        }
+
+        if (includeFoundingText && hasRegion)
+        {
+            if (sb.Length > 0) sb.Append(" ");
+            sb.Append("Can be founded in ").Append(regionName).Append(".");
+        }
+
+        string body = sb.ToString();
+        return body;
+    }
+
+    public static string FormatDisplayRegionName(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+
+        List<char> chars = new(value.Length + 4);
+        for (int i = 0; i < value.Length; i++)
+        {
+            char current = value[i];
+            if (ShouldInsertWordSpace(value, i))
+            {
+                chars.Add(' ');
+            }
+            chars.Add(current);
+        }
+
+        string formatted = new string(chars.ToArray()).Trim().ToLowerInvariant();
+        return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(formatted);
+    }
+
+    private static string BuildResourceSummary(CardData data)
+    {
+        List<string> parts = new();
+        if (data.leatherGranted > 0) parts.Add($"{data.leatherGranted}<sprite name=\"leather\">");
+        if (data.timberGranted > 0) parts.Add($"{data.timberGranted}<sprite name=\"timber\">");
+        if (data.mountsGranted > 0) parts.Add($"{data.mountsGranted}<sprite name=\"mounts\">");
+        if (data.ironGranted > 0) parts.Add($"{data.ironGranted}<sprite name=\"iron\">");
+        if (data.steelGranted > 0) parts.Add($"{data.steelGranted}<sprite name=\"steel\">");
+        if (data.mithrilGranted > 0) parts.Add($"{data.mithrilGranted}<sprite name=\"mithril\">");
+        if (data.goldGranted > 0) parts.Add($"{data.goldGranted}<sprite name=\"gold\">");
+        return string.Join(" ", parts);
+    }
+
+    private static bool ShouldInsertWordSpace(string value, int index)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return false;
+        if (index <= 0 || index >= value.Length) return false;
+
+        char current = value[index];
+        if (!char.IsUpper(current)) return false;
+
+        char previous = value[index - 1];
+        if (char.IsWhiteSpace(previous)) return false;
+
+        if (char.IsLower(previous) || char.IsDigit(previous))
+        {
+            return true;
+        }
+
+        if (!char.IsUpper(previous)) return false;
+
+        if (index + 1 < value.Length && char.IsLower(value[index + 1]))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

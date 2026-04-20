@@ -104,7 +104,8 @@ public class CardData
 {
     public int cardId;
     public string name;
-    public string description;
+    public string quote;
+    public string actionEffect;
     public string type;
     public List<string> tags = new();
     public string deckId;
@@ -114,9 +115,10 @@ public class CardData
     public string spriteName;
     public string region;
     public string requirementsText;
-    public string pcEffectId;
     public string historyText;
     public string portraitName;
+    public string referenceDeckId;
+    public int referenceCardId;
     public List<EncounterOptionData> encounterOptions = new();
     public EncounterOptionData fleeOption;
     public int commander;
@@ -172,6 +174,11 @@ public class CardData
 
     public int GetTotalGoldCost()
     {
+        if (GetCardType() == CardTypeEnum.Character)
+        {
+            return GetAdditionalGoldCost();
+        }
+
         return Mathf.Max(0, goldRequired) + GetAdditionalGoldCost();
     }
 
@@ -202,23 +209,60 @@ public class CardData
         return !string.IsNullOrWhiteSpace(action) ? action : actionClassName;
     }
 
-    public string GetArmyDescription()
+    public string GetRenderedDescription(bool includeFoundingText = false)
     {
-        if (GetCardType() != CardTypeEnum.Army) return string.Empty;
+        string body = GetDescriptionBody(includeFoundingText);
+        string quoteBlock = GetQuoteBlock();
 
-        string summary = GetArmySummary();
-        string body = string.IsNullOrWhiteSpace(description) ? string.Empty : description.Trim();
         if (string.IsNullOrWhiteSpace(body))
         {
-            return summary;
+            return quoteBlock;
         }
 
-        if (string.IsNullOrWhiteSpace(summary))
+        if (string.IsNullOrWhiteSpace(quoteBlock))
         {
             return body;
         }
 
-        return $"{summary} {body}";
+        return $"{body}\n\n{quoteBlock}";
+    }
+
+    public string GetDescriptionBody(bool includeFoundingText = false)
+    {
+        return GetCardType() switch
+        {
+            CardTypeEnum.Character => GetCharacterDescription(),
+            CardTypeEnum.Army => GetArmyDescription(),
+            CardTypeEnum.Land => GetLandDescription(),
+            CardTypeEnum.PC => PcDescriptionBuilder.BuildBody(this, includeFoundingText),
+            CardTypeEnum.Event or CardTypeEnum.Action or CardTypeEnum.Spell => GetActionEffectText(),
+            _ => string.Empty
+        };
+    }
+
+    public string GetQuoteBlock()
+    {
+        if (string.IsNullOrWhiteSpace(quote)) return string.Empty;
+
+        string text = Regex.Replace(quote.Trim(), "<[^>]+>", string.Empty).Trim();
+        if (text.StartsWith("\"", StringComparison.Ordinal) && text.EndsWith("\"", StringComparison.Ordinal) && text.Length >= 2)
+        {
+            text = text.Substring(1, text.Length - 2).Trim();
+        }
+
+        if (string.IsNullOrWhiteSpace(text)) return string.Empty;
+        return $"<align=\"center\"><color=#d3d3d388><i>\"{text}\"</i></color></align>";
+    }
+
+    public string GetArmyDescription()
+    {
+        if (GetCardType() != CardTypeEnum.Army) return string.Empty;
+        return GetArmySummary();
+    }
+
+    public string GetActionEffectText()
+    {
+        return string.IsNullOrWhiteSpace(actionEffect) ? string.Empty : actionEffect.Trim();
     }
 
     private string GetArmySummary()
@@ -253,6 +297,32 @@ public class CardData
         return abilities.Count > 0
             ? $"{baseText} {string.Join(", ", abilities)}."
             : baseText;
+    }
+
+    private string GetLandDescription()
+    {
+        if (GetCardType() != CardTypeEnum.Land) return string.Empty;
+
+        List<string> parts = new();
+        if (!string.IsNullOrWhiteSpace(region))
+        {
+            parts.Add($"{PcDescriptionBuilder.FormatDisplayRegionName(region)}.");
+        }
+
+        List<string> grants = new();
+        if (leatherGranted > 0) grants.Add($"{leatherGranted}<sprite name=\"leather\">");
+        if (timberGranted > 0) grants.Add($"{timberGranted}<sprite name=\"timber\">");
+        if (mountsGranted > 0) grants.Add($"{mountsGranted}<sprite name=\"mounts\">");
+        if (ironGranted > 0) grants.Add($"{ironGranted}<sprite name=\"iron\">");
+        if (steelGranted > 0) grants.Add($"{steelGranted}<sprite name=\"steel\">");
+        if (mithrilGranted > 0) grants.Add($"{mithrilGranted}<sprite name=\"mithril\">");
+        if (goldGranted > 0) grants.Add($"{goldGranted}<sprite name=\"gold\">");
+        if (grants.Count > 0)
+        {
+            parts.Add(string.Join(string.Empty, grants));
+        }
+
+        return string.Join(" ", parts.Where(part => !string.IsNullOrWhiteSpace(part)));
     }
 
     public string GetCharacterDescription()
@@ -564,6 +634,15 @@ public class DeckManager : MonoBehaviour
             }
 
             loadedDecksById[deckData.deckId] = deckData;
+            cards.AddRange(deckData.cards);
+        }
+
+        ResolveCardReferences();
+        cards.Clear();
+        foreach (DeckManifestEntry entry in deckManifestById.Values)
+        {
+            if (entry == null || string.IsNullOrWhiteSpace(entry.deckId)) continue;
+            if (!loadedDecksById.TryGetValue(entry.deckId, out DeckData deckData) || deckData?.cards == null) continue;
             cards.AddRange(deckData.cards);
         }
 
@@ -1080,7 +1159,8 @@ public class DeckManager : MonoBehaviour
         return new CardData
         {
             name = card.name,
-            description = card.description,
+            quote = card.quote,
+            actionEffect = card.actionEffect,
             type = card.type,
             tags = card.tags != null ? new List<string>(card.tags) : new List<string>(),
             deckId = card.deckId,
@@ -1102,9 +1182,10 @@ public class DeckManager : MonoBehaviour
             spriteName = card.spriteName,
             region = card.region,
             requirementsText = card.requirementsText,
-            pcEffectId = card.pcEffectId,
             historyText = card.historyText,
             portraitName = card.portraitName,
+            referenceDeckId = card.referenceDeckId,
+            referenceCardId = card.referenceCardId,
             encounterOptions = card.encounterOptions != null ? CloneEncounterOptions(card.encounterOptions) : new List<EncounterOptionData>(),
             fleeOption = CloneEncounterOption(card.fleeOption),
             difficulty = card.difficulty,
@@ -1124,6 +1205,108 @@ public class DeckManager : MonoBehaviour
             mithrilGranted = card.mithrilGranted,
             goldGranted = card.goldGranted
         };
+    }
+
+    private void ResolveCardReferences()
+    {
+        Dictionary<string, CardData> cardIndex = BuildCardIndex();
+        Dictionary<string, CardData> resolvedTemplates = new(StringComparer.OrdinalIgnoreCase);
+
+        foreach (DeckData deckData in loadedDecksById.Values)
+        {
+            if (deckData?.cards == null) continue;
+
+            for (int i = 0; i < deckData.cards.Count; i++)
+            {
+                CardData card = deckData.cards[i];
+                if (!IsReferenceCard(card)) continue;
+
+                CardData template = ResolveReferencedTemplate(card.referenceDeckId, card.referenceCardId, cardIndex, resolvedTemplates, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+                if (template == null)
+                {
+                    Debug.LogWarning($"DeckManager: Could not resolve reference for card '{card?.name}' in deck '{deckData.deckId}' -> {card.referenceDeckId}:{card.referenceCardId}.");
+                    continue;
+                }
+
+                CardData resolvedCard = CloneCard(template);
+                resolvedCard.cardId = card.cardId;
+                resolvedCard.deckId = deckData.deckId;
+                resolvedCard.alignment = deckData.alignment;
+                resolvedCard.referenceDeckId = card.referenceDeckId;
+                resolvedCard.referenceCardId = card.referenceCardId;
+                deckData.cards[i] = resolvedCard;
+            }
+        }
+    }
+
+    private Dictionary<string, CardData> BuildCardIndex()
+    {
+        Dictionary<string, CardData> cardIndex = new(StringComparer.OrdinalIgnoreCase);
+
+        foreach (DeckData deckData in loadedDecksById.Values)
+        {
+            if (deckData?.cards == null || string.IsNullOrWhiteSpace(deckData.deckId)) continue;
+
+            foreach (CardData card in deckData.cards)
+            {
+                if (card == null) continue;
+                cardIndex[BuildCardReferenceKey(deckData.deckId, card.cardId)] = card;
+            }
+        }
+
+        return cardIndex;
+    }
+
+    private static CardData ResolveReferencedTemplate(
+        string referenceDeckId,
+        int referenceCardId,
+        Dictionary<string, CardData> cardIndex,
+        Dictionary<string, CardData> resolvedTemplates,
+        HashSet<string> resolving)
+    {
+        if (string.IsNullOrWhiteSpace(referenceDeckId) || referenceCardId <= 0) return null;
+
+        string referenceKey = BuildCardReferenceKey(referenceDeckId, referenceCardId);
+        if (resolvedTemplates.TryGetValue(referenceKey, out CardData cachedTemplate))
+        {
+            return cachedTemplate;
+        }
+
+        if (!cardIndex.TryGetValue(referenceKey, out CardData sourceCard) || sourceCard == null)
+        {
+            return null;
+        }
+
+        if (!IsReferenceCard(sourceCard))
+        {
+            CardData directTemplate = CloneCard(sourceCard);
+            resolvedTemplates[referenceKey] = directTemplate;
+            return directTemplate;
+        }
+
+        if (!resolving.Add(referenceKey))
+        {
+            return null;
+        }
+
+        CardData nestedTemplate = ResolveReferencedTemplate(sourceCard.referenceDeckId, sourceCard.referenceCardId, cardIndex, resolvedTemplates, resolving);
+        resolving.Remove(referenceKey);
+
+        if (nestedTemplate == null) return null;
+
+        CardData resolvedTemplate = CloneCard(nestedTemplate);
+        resolvedTemplates[referenceKey] = resolvedTemplate;
+        return resolvedTemplate;
+    }
+
+    private static bool IsReferenceCard(CardData card)
+    {
+        return card != null && !string.IsNullOrWhiteSpace(card.referenceDeckId) && card.referenceCardId > 0;
+    }
+
+    private static string BuildCardReferenceKey(string deckId, int cardId)
+    {
+        return $"{deckId?.Trim().ToLowerInvariant()}::{cardId}";
     }
 
     private static int FindMatchingActionCardIndex(List<CardData> cardsList, string actionClassName, Character selectedCharacter = null, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)

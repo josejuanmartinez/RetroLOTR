@@ -119,9 +119,15 @@ public static class EncounterResolver
             return encounterCard.historyText.Trim();
         }
 
-        return string.IsNullOrWhiteSpace(encounterCard.description)
+        string prompt = encounterCard.GetDescriptionBody();
+        if (string.IsNullOrWhiteSpace(prompt))
+        {
+            prompt = encounterCard.quote;
+        }
+
+        return string.IsNullOrWhiteSpace(prompt)
             ? $"How will you answer {encounterCard.name}?"
-            : encounterCard.description.Trim();
+            : prompt.Trim();
     }
 
     private static string GetOptionLabel(EncounterOptionData option)

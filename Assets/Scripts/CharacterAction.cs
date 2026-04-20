@@ -151,7 +151,7 @@ public class CharacterAction
             if (card != null)
             {
                 this.actionName = card.name;
-                this.description = card.description;
+                this.description = card.GetDescriptionBody();
                 this.difficulty = card.difficulty;
                 this.commanderSkillRequired = card.commanderSkillRequired;
                 this.agentSkillRequired = card.agentSkillRequired;

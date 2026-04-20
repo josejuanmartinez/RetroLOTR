@@ -308,63 +308,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         CardTypeEnum cardType = data.GetCardType();
         string typePrefix = FormatCardTypeLabel(cardType);
-        if (cardType == CardTypeEnum.Character)
+        string body = data.GetRenderedDescription(CanShowFoundingText(data));
+        if (!string.IsNullOrWhiteSpace(body))
         {
-            string characterSummary = data.GetCharacterDescription();
-            string characterBody = !string.IsNullOrWhiteSpace(data.description) ? data.description : string.Empty;
-            if (string.IsNullOrWhiteSpace(characterSummary))
-            {
-                return PrefixWithCardType(typePrefix, characterBody);
-            }
-
-            return string.IsNullOrWhiteSpace(characterBody)
-                ? PrefixWithCardType(typePrefix, characterSummary)
-                : PrefixWithCardType(typePrefix, $"{characterSummary}. {characterBody}");
-        }
-        if (cardType == CardTypeEnum.Army)
-        {
-            return PrefixWithCardType(typePrefix, data.GetArmyDescription());
-        }
-
-        if (cardType == CardTypeEnum.Land || cardType == CardTypeEnum.PC)
-        {
-            StringBuilder sb = new();
-            List<string> grants = new();
-            if (data.leatherGranted > 0) grants.Add(FormatRequirementToken("leather", data.leatherGranted));
-            if (data.timberGranted > 0) grants.Add(FormatRequirementToken("timber", data.timberGranted));
-            if (data.mountsGranted > 0) grants.Add(FormatRequirementToken("mounts", data.mountsGranted));
-            if (data.ironGranted > 0) grants.Add(FormatRequirementToken("iron", data.ironGranted));
-            if (data.steelGranted > 0) grants.Add(FormatRequirementToken("steel", data.steelGranted));
-            if (data.mithrilGranted > 0) grants.Add(FormatRequirementToken("mithril", data.mithrilGranted));
-            if (data.goldGranted > 0) grants.Add(FormatRequirementToken("gold", data.goldGranted));
-
-            if (!string.IsNullOrWhiteSpace(data.region))
-            {
-                sb.Append(data.region).Append(". ");
-            }
-
-            sb.Append(string.Join("", grants));
-
-            if (cardType == CardTypeEnum.PC)
-            {
-                sb.Append("\nOR\n");
-                PcEffectCatalog.PcEffectDefinition pcEffect = PcEffectCatalog.GetDefinition(data.pcEffectId);
-                if (pcEffect != null)
-                {
-                    sb.Append(pcEffect.title).Append(": ").Append(pcEffect.description);
-                }
-                else
-                {
-                    sb.Append("Local Effect");
-                }
-            }
-
-            return PrefixWithCardType(typePrefix, sb.ToString());
-        }
-
-        if (!string.IsNullOrWhiteSpace(data.description))
-        {
-            return PrefixWithCardType(typePrefix, data.description);
+            return PrefixWithCardType(typePrefix, body);
         }
 
         string actionRef = data.GetActionRef();
@@ -398,6 +345,36 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         string formatted = new string(chars.ToArray()).Trim().ToLowerInvariant();
         return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(formatted);
+    }
+
+    private static bool CanShowFoundingText(CardData data)
+    {
+        if (data == null || string.IsNullOrWhiteSpace(data.name)) return false;
+
+        Board board = FindFirstObjectByType<Board>();
+        List<Hex> hexes = board != null ? board.GetHexes() : null;
+        if (hexes == null) return false;
+
+        string target = NormalizeLookupKey(data.name);
+        if (string.IsNullOrWhiteSpace(target)) return false;
+
+        for (int i = 0; i < hexes.Count; i++)
+        {
+            PC candidate = hexes[i] != null ? hexes[i].GetPCData() : null;
+            if (candidate == null || string.IsNullOrWhiteSpace(candidate.pcName)) continue;
+            if (string.Equals(NormalizeLookupKey(candidate.pcName), target, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static string NormalizeLookupKey(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+        return new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
     }
 
     private static bool ShouldInsertWordSpace(string value, int index)
