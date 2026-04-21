@@ -52,7 +52,7 @@
             "thematic": "Core Free Peoples deck built around Men, Elves, Dwarves, Hobbits, Eagles, and other allied peoples working in concert. Its gameplay favors balanced development, card quality, scouting, diplomacy, defensive resilience, region access, and reliable utility over brute specialization; it should feel like the broad strategic foundation from which the more sharply themed Gandalf subdecks branch outward.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/GandalfBase",
-            "cardCount": 137,
+            "cardCount": 107,
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true
@@ -63,7 +63,7 @@
             "thematic": "High-authority comeback deck built around renewal, courage, cleansing, and open leadership after the return in white. This deck should reward stabilization, morale swings, anti-fear and anti-corruption play, stronger army support, and decisive rally turns; it suits players who want to absorb pressure, reclaim control, and then swing the board through righteous momentum.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/GandalfTheWhite",
-            "cardCount": 27,
+            "cardCount": 32,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false
@@ -74,7 +74,7 @@
             "thematic": "Pure wizardry deck focused on refined spellcraft, insight, wards, lore, and precise magical intervention. Elven wisdom, hidden knowledge, vision, revelation, and tightly targeted magic all belong here; in gameplay it emphasizes selective control, information advantage, safe setup, and elegant spell resolution rather than broad swarm or raw military output.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/Mithrandir",
-            "cardCount": 43,
+            "cardCount": 50,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false
@@ -85,7 +85,7 @@
             "thematic": "Stormcrow is the Gandalf subdeck of uneasy wartime pressure among Men. It should frame the Grey Pilgrim not only as an ill omen or unwelcome counselor, but as the unsettling force who appears when Mannish realms are strained by encroaching evil and must harden themselves for survival. This includes fronts such as Rohan against the White Hand, Gondor against Mordor, the Northmen of Rhovanion against Easterlings, the Anduin Vale against Dol Guldur, Bree and wider Eriador under the long memory of Angmar, and similar regions where roads, ports, fords, courts, and frontier settlements live under gathering shadow. Gandalf is trying to help, organize, and strengthen resistance, yet many still see him as the sign that peace has already failed. In gameplay the deck should lean into morale strain, defensive hardening, political tension, frontier vigilance, war-readiness, movement pressure, intelligence and concealment, loyalty under stress, and reputation-based disruption rather than reducing itself to repeated warnings or bad-news delivery.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/Stormcrow",
-            "cardCount": 44,
+            "cardCount": 50,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false
@@ -96,7 +96,7 @@
             "thematic": "Mischief, adventure, and social-chaos deck built around hobbits, roadside incidents, strange meetings, awkward interruptions, and unexpectedly powerful small-scale plays. Its regional flavor should stretch across Eriador, especially Bree-land, the roads and inns of the North, the Old Forest, the Barrow-downs, scattered settlements, and out toward Cardolan, so the deck can hold wandering locals, petty troublemakers, rural rumors, travel incidents, eerie borderland hazards, and small but meaningful frontier entanglements. It is less martial than other branches and more about quirky utility, board disturbance, off-angle events, and playful disruption that feels fair but annoying for the opponent.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/DisturberOfThePeace",
-            "cardCount": 46,
+            "cardCount": 53,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false
@@ -107,7 +107,7 @@
             "thematic": "Dwarf-friend archetype rooted in mountains, halls, treasure, mithril, endurance, and old alliances with the Durin folk. Expect Dwarven races, Erebor and Khazad themes, defensive economy, sturdy progression, fortress-like value, and reward for treasure or mountain cards; this deck suits slow-building players who want resilience, gear, and hard-to-shift board presence.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/Tharkun",
-            "cardCount": 41,
+            "cardCount": 46,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false

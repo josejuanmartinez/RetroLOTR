@@ -361,7 +361,7 @@ public class DeckExplorerWindow : EditorWindow
         List<DeckEntryView> targets = GetCopyTargets(currentDeck);
         if (targets.Count == 0)
         {
-            EditorGUILayout.LabelField("Copy", "No subdeck targets");
+            EditorGUILayout.LabelField("Transfer", "No subdeck targets");
             return;
         }
 
@@ -369,18 +369,22 @@ public class DeckExplorerWindow : EditorWindow
         string[] options = targets.Select(BuildDeckLabel).ToArray();
 
         EditorGUI.BeginDisabledGroup(!IsCardFinalized(card) || IsCardDisabled(card));
-        EditorGUILayout.BeginHorizontal(GUILayout.Width(380));
-        EditorGUILayout.LabelField("Copy", GUILayout.Width(35));
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(440));
+        EditorGUILayout.LabelField("Transfer", GUILayout.Width(50));
 
-        int newIndex = EditorGUILayout.Popup(targetIndex, options, GUILayout.Width(220));
+        int newIndex = EditorGUILayout.Popup(targetIndex, options, GUILayout.Width(210));
         if (newIndex != targetIndex)
         {
             copyTargetResourcePath = targets[newIndex].manifest.resourcePath;
         }
 
-        if (GUILayout.Button("To Subdeck", GUILayout.Width(90)))
+        if (GUILayout.Button("Copy", GUILayout.Width(62)))
         {
             CopyFinalizedCardToSubdeck(card, currentDeck, targets[newIndex]);
+        }
+        if (GUILayout.Button("Move", GUILayout.Width(62)))
+        {
+            MoveFinalizedCardToSubdeck(card, currentDeck, targets[newIndex]);
         }
         EditorGUILayout.EndHorizontal();
         EditorGUI.EndDisabledGroup();
@@ -1315,21 +1319,17 @@ public class DeckExplorerWindow : EditorWindow
         SetCardFinalized(copiedCard, true);
         SetCardDisabled(copiedCard, true);
 
-        string deckAssetPath = GetDeckAssetPath(targetDeckView.manifest.resourcePath);
-        if (string.IsNullOrWhiteSpace(deckAssetPath))
+        if (!SaveDeckData(targetDeckView, "copying"))
         {
-            Debug.LogWarning("DeckExplorerWindow: could not resolve target deck asset path for copying.");
+            RefreshData();
             return;
         }
-
-        File.WriteAllText(deckAssetPath, JsonUtility.ToJson(targetDeckView.deckData, true));
 
         if (cardsManifest != null)
         {
             SaveCardsManifest();
         }
 
-        AssetDatabase.ImportAsset(ToAssetPath(deckAssetPath), ImportAssetOptions.ForceUpdate);
         AssetDatabase.Refresh();
 
         copyTargetResourcePath = targetDeckView.manifest.resourcePath;
@@ -1339,6 +1339,125 @@ public class DeckExplorerWindow : EditorWindow
         Repaint();
 
         Debug.Log($"DeckExplorerWindow: copied finalized card '{sourceCard.name}' to subdeck '{targetDeckView.manifest.deckId}'.");
+    }
+
+    private void MoveFinalizedCardToSubdeck(CardData sourceCard, DeckEntryView sourceDeckView, DeckEntryView targetDeckView)
+    {
+        if (sourceCard == null || sourceDeckView == null || targetDeckView == null || targetDeckView.manifest == null || targetDeckView.deckData == null)
+        {
+            return;
+        }
+
+        if (!IsCardFinalized(sourceCard))
+        {
+            Debug.LogWarning($"DeckExplorerWindow: '{sourceCard.name}' must be finalized before moving.");
+            return;
+        }
+
+        string targetDeckId = string.IsNullOrWhiteSpace(targetDeckView.manifest.deckId)
+            ? string.Empty
+            : targetDeckView.manifest.deckId.Trim();
+
+        if (!EditorUtility.DisplayDialog(
+                "Move Card",
+                $"Move '{sourceCard.name}' to {targetDeckId}? The card will be removed from the current deck.",
+                "Move",
+                "Cancel"))
+        {
+            return;
+        }
+
+        CardData movedCard = CloneCard(sourceCard);
+        if (movedCard == null)
+        {
+            Debug.LogWarning($"DeckExplorerWindow: Could not clone '{sourceCard.name}' for moving.");
+            return;
+        }
+
+        movedCard.cardId = GetNextCardId(targetDeckView.deckData.cards);
+        movedCard.deckId = targetDeckId;
+        movedCard.referenceDeckId = null;
+        movedCard.referenceCardId = 0;
+
+        targetDeckView.deckData.cards ??= new List<CardData>();
+        targetDeckView.deckData.cards.Add(movedCard);
+        targetDeckView.manifest.cardCount = targetDeckView.deckData.cards.Count;
+        SetCardFinalized(movedCard, true);
+        SetCardDisabled(movedCard, false);
+
+        if (!SaveDeckData(targetDeckView, "moving"))
+        {
+            RefreshData();
+            return;
+        }
+
+        int sourceCardIndex = sourceDeckView.deckData.cards.FindIndex(c => c != null && c.cardId == sourceCard.cardId);
+        int removedCount = sourceDeckView.deckData.cards.RemoveAll(c => c != null && c.cardId == sourceCard.cardId);
+        if (removedCount <= 0)
+        {
+            Debug.LogWarning($"DeckExplorerWindow: Could not find card '{sourceCard.name}' to move out of deck '{sourceDeckView.manifest.deckId}'.");
+            targetDeckView.deckData.cards.RemoveAll(c => c != null && c.cardId == movedCard.cardId);
+            targetDeckView.manifest.cardCount = targetDeckView.deckData.cards.Count;
+            SaveDeckData(targetDeckView, "rolling back move");
+            RefreshData();
+            return;
+        }
+
+        sourceDeckView.manifest.cardCount = sourceDeckView.deckData.cards.Count;
+        if (!SaveDeckData(sourceDeckView, "moving"))
+        {
+            Debug.LogWarning($"DeckExplorerWindow: Could not save the source deck after moving '{sourceCard.name}'. Rolling back.");
+            if (sourceCardIndex < 0 || sourceCardIndex > sourceDeckView.deckData.cards.Count)
+            {
+                sourceDeckView.deckData.cards.Add(sourceCard);
+            }
+            else
+            {
+                sourceDeckView.deckData.cards.Insert(sourceCardIndex, sourceCard);
+            }
+
+            sourceDeckView.manifest.cardCount = sourceDeckView.deckData.cards.Count;
+            targetDeckView.deckData.cards.RemoveAll(c => c != null && c.cardId == movedCard.cardId);
+            targetDeckView.manifest.cardCount = targetDeckView.deckData.cards.Count;
+            SaveDeckData(sourceDeckView, "rolling back move");
+            SaveDeckData(targetDeckView, "rolling back move");
+            RefreshData();
+            return;
+        }
+
+        if (cardsManifest != null)
+        {
+            SaveCardsManifest();
+        }
+
+        AssetDatabase.Refresh();
+
+        copyTargetResourcePath = targetDeckView.manifest.resourcePath;
+        RefreshData();
+        SelectDeckByResourcePath(targetDeckView.manifest.resourcePath);
+        selectedCardIndex = FindCardIndexInFilteredCards(movedCard.cardId, movedCard.name, movedCard.GetActionRef());
+        Repaint();
+
+        Debug.Log($"DeckExplorerWindow: moved finalized card '{sourceCard.name}' to subdeck '{targetDeckView.manifest.deckId}'.");
+    }
+
+    private static bool SaveDeckData(DeckEntryView deckView, string actionVerb)
+    {
+        if (deckView?.manifest == null || deckView.deckData == null)
+        {
+            return false;
+        }
+
+        string deckAssetPath = GetDeckAssetPath(deckView.manifest.resourcePath);
+        if (string.IsNullOrWhiteSpace(deckAssetPath))
+        {
+            Debug.LogWarning($"DeckExplorerWindow: could not resolve deck asset path while {actionVerb}.");
+            return false;
+        }
+
+        File.WriteAllText(deckAssetPath, JsonUtility.ToJson(deckView.deckData, true));
+        AssetDatabase.ImportAsset(ToAssetPath(deckAssetPath), ImportAssetOptions.ForceUpdate);
+        return true;
     }
 
     private void EnsureReferenceCardsFinalized()
