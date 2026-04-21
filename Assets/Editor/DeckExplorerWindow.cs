@@ -108,6 +108,8 @@ public class DeckExplorerWindow : EditorWindow
 
     private void OnGUI()
     {
+        GUI.enabled = true;
+        EditorGUI.showMixedValue = false;
         DrawToolbar();
 
         if (deckViews.Count == 0)
@@ -230,8 +232,11 @@ public class DeckExplorerWindow : EditorWindow
 
     private void DrawDetailPane()
     {
+        GUI.enabled = true;
+        EditorGUI.showMixedValue = false;
         GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
         CardData card = GetSelectedCard();
+        bool isReference = IsReferenceCard(card);
 
         if (card == null)
         {
@@ -247,7 +252,8 @@ public class DeckExplorerWindow : EditorWindow
 
         GUILayout.Space(8);
         EditorGUILayout.BeginHorizontal();
-        bool isReference = IsReferenceCard(card);
+        GUI.enabled = true;
+        EditorGUI.showMixedValue = false;
         EditorGUI.BeginDisabledGroup(isReference);
         EditorGUI.BeginChangeCheck();
         bool finalized = EditorGUILayout.ToggleLeft("Finalized", IsCardFinalized(card));
@@ -255,7 +261,6 @@ public class DeckExplorerWindow : EditorWindow
         {
             SetCardFinalized(card, finalized);
         }
-        EditorGUI.EndDisabledGroup();
         GUILayout.FlexibleSpace();
         DrawCopyToSubdeckControls(card);
         GUILayout.Space(6);
@@ -269,6 +274,13 @@ public class DeckExplorerWindow : EditorWindow
             ReloadSelectedCard();
         }
         EditorGUILayout.EndHorizontal();
+        EditorGUI.EndDisabledGroup();
+
+        if (isReference)
+        {
+            GUILayout.Space(4);
+            EditorGUILayout.HelpBox("Reference card locked in this deck.", MessageType.Info);
+        }
 
         GUILayout.Space(10);
         EditorGUILayout.LabelField("Card Data", EditorStyles.boldLabel);
@@ -356,7 +368,7 @@ public class DeckExplorerWindow : EditorWindow
         int targetIndex = GetCopyTargetIndex(targets);
         string[] options = targets.Select(BuildDeckLabel).ToArray();
 
-        EditorGUI.BeginDisabledGroup(!IsCardFinalized(card));
+        EditorGUI.BeginDisabledGroup(!IsCardFinalized(card) || IsCardDisabled(card));
         EditorGUILayout.BeginHorizontal(GUILayout.Width(380));
         EditorGUILayout.LabelField("Copy", GUILayout.Width(35));
 
@@ -378,10 +390,9 @@ public class DeckExplorerWindow : EditorWindow
     {
         if (card == null) return;
 
-        bool isReference = IsReferenceCard(card);
         SyncEditableCardFields(card);
 
-        EditorGUI.BeginDisabledGroup(isReference);
+        EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
         editedCommanderSkillRequired = EditorGUILayout.IntField("Commander", editedCommanderSkillRequired);
         editedAgentSkillRequired = EditorGUILayout.IntField("Agent", editedAgentSkillRequired);
         editedEmissarySkillRequired = EditorGUILayout.IntField("Emissary", editedEmissarySkillRequired);
@@ -438,10 +449,9 @@ public class DeckExplorerWindow : EditorWindow
     {
         if (card == null) return;
 
-        bool isReference = IsReferenceCard(card);
         SyncEditableCardFields(card);
 
-        EditorGUI.BeginDisabledGroup(isReference);
+        EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
         editedLeatherGranted = EditorGUILayout.IntField("Leather", editedLeatherGranted);
         editedTimberGranted = EditorGUILayout.IntField("Timber", editedTimberGranted);
         editedMountsGranted = EditorGUILayout.IntField("Mounts", editedMountsGranted);
@@ -465,10 +475,9 @@ public class DeckExplorerWindow : EditorWindow
     {
         if (card == null) return;
 
-        bool isReference = IsReferenceCard(card);
         card.specialAbilities ??= new List<ArmySpecialAbilityEnum>();
 
-        EditorGUI.BeginDisabledGroup(isReference);
+        EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
         if (card.specialAbilities.Count == 0)
         {
             EditorGUILayout.LabelField("None");
@@ -508,10 +517,9 @@ public class DeckExplorerWindow : EditorWindow
     {
         if (card == null) return;
 
-        bool isReference = IsReferenceCard(card);
         SyncEditableCardFields(card);
 
-        EditorGUI.BeginDisabledGroup(isReference);
+        EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Type", GUILayout.Width(40));
         editedTroopType = (TroopsTypeEnum)EditorGUILayout.EnumPopup(editedTroopType);
@@ -527,10 +535,9 @@ public class DeckExplorerWindow : EditorWindow
     {
         if (card == null) return;
 
-        bool isReference = IsReferenceCard(card);
         SyncEditableCardFields(card);
 
-        EditorGUI.BeginDisabledGroup(isReference);
+        EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
         EditorGUILayout.LabelField("Gold Cost", card.GetTotalGoldCost().ToString());
         editedCharacterCommander = EditorGUILayout.IntField("Commander", editedCharacterCommander);
         editedCharacterAgent = EditorGUILayout.IntField("Agent", editedCharacterAgent);
@@ -564,6 +571,7 @@ public class DeckExplorerWindow : EditorWindow
         editedIronRequired = Mathf.Max(0, card.ironRequired);
         editedSteelRequired = Mathf.Max(0, card.steelRequired);
         editedMithrilRequired = Mathf.Max(0, card.mithrilRequired);
+        editedGoldRequired = Mathf.Max(0, card.goldRequired);
         editedJokerRequired = Mathf.Max(0, card.jokerRequired);
         editedLeatherGranted = Mathf.Max(0, card.leatherGranted);
         editedTimberGranted = Mathf.Max(0, card.timberGranted);
@@ -611,6 +619,7 @@ public class DeckExplorerWindow : EditorWindow
         target.ironRequired = Mathf.Max(0, editedIronRequired);
         target.steelRequired = Mathf.Max(0, editedSteelRequired);
         target.mithrilRequired = Mathf.Max(0, editedMithrilRequired);
+        target.goldRequired = Mathf.Max(0, editedGoldRequired);
         target.jokerRequired = Mathf.Max(0, editedJokerRequired);
 
         string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
@@ -1195,6 +1204,7 @@ public class DeckExplorerWindow : EditorWindow
         }
 
         ResolveCardReferences();
+        EnsureReferenceCardsFinalized();
         selectedDeckIndex = deckViews.Count > 0 ? Mathf.Clamp(selectedDeckIndex, 0, deckViews.Count - 1) : 0;
         RebuildFilteredCards();
         Repaint();
@@ -1225,6 +1235,7 @@ public class DeckExplorerWindow : EditorWindow
             deckView.manifest.cardCount = reloadedDeck.cards.Count;
         }
 
+        ResolveCardReferences();
         RebuildFilteredCards();
 
         int matchIndex = FindCardIndexInFilteredCards(selectedCardId, selectedCardName, selectedActionRef);
@@ -1301,6 +1312,8 @@ public class DeckExplorerWindow : EditorWindow
         targetDeckView.deckData.cards ??= new List<CardData>();
         targetDeckView.deckData.cards.Add(copiedCard);
         targetDeckView.manifest.cardCount = targetDeckView.deckData.cards.Count;
+        SetCardFinalized(copiedCard, true);
+        SetCardDisabled(copiedCard, true);
 
         string deckAssetPath = GetDeckAssetPath(targetDeckView.manifest.resourcePath);
         if (string.IsNullOrWhiteSpace(deckAssetPath))
@@ -1326,6 +1339,21 @@ public class DeckExplorerWindow : EditorWindow
         Repaint();
 
         Debug.Log($"DeckExplorerWindow: copied finalized card '{sourceCard.name}' to subdeck '{targetDeckView.manifest.deckId}'.");
+    }
+
+    private void EnsureReferenceCardsFinalized()
+    {
+        foreach (DeckEntryView view in deckViews)
+        {
+            if (view?.deckData?.cards == null) continue;
+
+            foreach (CardData card in view.deckData.cards)
+            {
+                if (card == null || !IsReferenceCard(card)) continue;
+                SetCardFinalized(card, true);
+                SetCardDisabled(card, true);
+            }
+        }
     }
 
     private static string ResolveSourceDeckId(CardData sourceCard, DeckEntryView sourceDeckView)
@@ -1465,6 +1493,7 @@ public class DeckExplorerWindow : EditorWindow
         string manifestAssetPath = Path.GetFullPath(Path.Combine(Application.dataPath, "Resources", "Cards.json"));
         File.WriteAllText(manifestAssetPath, JsonUtility.ToJson(cardsManifest, true));
         AssetDatabase.ImportAsset(ToAssetPath(manifestAssetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
     }
 
     private void RemoveCard(CardData card)
@@ -1497,7 +1526,9 @@ public class DeckExplorerWindow : EditorWindow
         }
 
         File.WriteAllText(deckAssetPath, JsonUtility.ToJson(deckView.deckData, true));
+        AssetDatabase.ImportAsset(ToAssetPath(deckAssetPath), ImportAssetOptions.ForceUpdate);
         SaveCardsManifest();
+        AssetDatabase.Refresh();
         RefreshData();
     }
 
@@ -2048,11 +2079,40 @@ public class DeckExplorerWindow : EditorWindow
         return !string.IsNullOrWhiteSpace(key) && EditorPrefs.GetBool(key, false);
     }
 
+    private static bool IsCardDisabled(CardData card)
+    {
+        string key = GetCardDisabledPreferenceKey(card);
+        return !string.IsNullOrWhiteSpace(key) && EditorPrefs.GetBool(key, false);
+    }
+
     private static void SetCardFinalized(CardData card, bool finalized)
     {
         string key = GetCardFinalizedPreferenceKey(card);
         if (string.IsNullOrWhiteSpace(key)) return;
         EditorPrefs.SetBool(key, finalized);
+    }
+
+    private static void SetCardDisabled(CardData card, bool disabled)
+    {
+        string key = GetCardDisabledPreferenceKey(card);
+        if (string.IsNullOrWhiteSpace(key)) return;
+        EditorPrefs.SetBool(key, disabled);
+    }
+
+    private static string GetCardDisabledPreferenceKey(CardData card)
+    {
+        if (card == null) return null;
+
+        string deckId = string.IsNullOrWhiteSpace(card.deckId) ? "unknownDeck" : card.deckId.Trim();
+        if (card.cardId > 0)
+        {
+            return $"RetroLOTR.DeckExplorer.Disabled.{deckId}.{card.cardId}";
+        }
+
+        string name = string.IsNullOrWhiteSpace(card.name) ? "unknownCard" : Normalize(card.name);
+        string sprite = string.IsNullOrWhiteSpace(card.spriteName) ? "nosprite" : Normalize(card.spriteName);
+        string action = string.IsNullOrWhiteSpace(card.GetActionRef()) ? "noaction" : Normalize(card.GetActionRef());
+        return $"RetroLOTR.DeckExplorer.Disabled.{deckId}.{name}.{sprite}.{action}";
     }
 
     private static Leader GetHumanPlayerLeader()

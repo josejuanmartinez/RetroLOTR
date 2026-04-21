@@ -82,11 +82,12 @@ Use this as the canonical flavor guardrail when adding/moving cards.
 - “Unexpected but fair” interaction.
 
 ### Tharkun
-**Fantasy:** dwarf-friend and mountain alliances.
+**Fantasy:** dwarf-friend, reconquest, and mountain alliances.
 
 **Preferred mechanics:**
 - Erebor/Khazad resonance, gear/treasure synergy, stubborn resilience.
-- Defensive economy, fortified progression.
+- Defensive economy, fortified progression, and reclaimed-hall war pressure.
+- Dragon-guarded hoards, artifacts, gems, war weapons, and long journeys across Middle-earth.
 
 ---
 

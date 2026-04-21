@@ -1,6 +1,6 @@
 ---
 name: create-card-logic
-description: Audit cards and wire missing deck/action logic in RetroLOTR. Use when Codex must iterate card files, verify whether each card exists in any deck JSON, ensure linked character actions exist, and interactively resolve missing alignment/effect decisions with numbered user options.
+description: Audit cards and wire missing deck/card logic in RetroLOTR. Use when Codex must iterate card files, verify whether each card exists in any deck JSON, ensure any linked character actions exist, and interactively resolve missing alignment/effect decisions with numbered user options.
 ---
 
 # Create Card Logic
@@ -17,6 +17,7 @@ Audit card coverage and action wiring card-by-card with minimal noise.
   - `Assets/Art/Cards/Actions`
   - `Assets/Art/Cards/Actions/Spells`
   - `Assets/Art/Cards/Actions/Events` (including nested folders)
+- For modular subdeck cards, read `Assets/Resources/Cards/Modular/manifest.json` and `DeckFlavorRules.md` before proposing any card effect.
 
 ## Required Behavior
 - Iterate cards by file name.
@@ -30,12 +31,14 @@ Audit card coverage and action wiring card-by-card with minimal noise.
 - **Never ask alignment/deck assignment for a card that is already present** (even if image filename differs).
 - Ask the user only when required information is missing.
 - Use numbered options whenever asking for confirmation or a choice.
-- Use deck-card schema as source of truth: action cards use `actionClassName`, `actionId`, `action`, and card-owned requirements (`*SkillRequired`, `*Required`).
+- Use deck-card schema as source of truth: current cards may rely on `action`, `referenceDeckId`, `referenceCardId`, and card-owned requirements (`*SkillRequired`, `*Required`).
 - For action validation, require both:
   - action linkage exists on the card JSON entry and is internally coherent
   - action class exists under `Assets/Scripts/Actions` (including subfolders)
 - Before proposing effects, verify required resources/mechanics exist in code. If missing (for example a new resource type), ask whether to map to existing mechanics or expand core systems.
 - Prefer data-driven requirement rendering (card fields) over hardcoded UI checks tied to specific card/action names.
+- Every proposed card effect must be unique and immersive; reject near-duplicates even when the wording or target changes.
+- Do not keep repeating the same status effects over and over again across proposed cards.
 - Never implement or modify gameplay logic before the user chooses one proposed logic option.
 
 ## Workflow
@@ -44,9 +47,9 @@ Audit card coverage and action wiring card-by-card with minimal noise.
 3. Build a normalized card-name index from file names (ignore extension, normalize case/spacing/underscores/hyphens).
 4. For each candidate card, perform **presence resolution before any prompt** using all of:
    - normalized `name`
-   - normalized `actionClassName`
+   - normalized `actionClassName` when present
    - normalized `action`
-   - `actionId` (if derivable from name/action)
+   - `actionId` only when the schema or source card explicitly provides it
    - support camel/pascal/spacing equivalence (e.g. `SellIron`, `Sell Iron`, `sell_iron`, `sell-iron`).
 5. If card exists in at least one deck:
    - If the card has valid linkage (card JSON linkage + action class), continue silently.
@@ -54,7 +57,7 @@ Audit card coverage and action wiring card-by-card with minimal noise.
    - **Never ask alignment/deck assignment for existing cards.**
 6. If card is not assigned to any deck after the full presence resolution, ask alignment using numbered options.
 7. After deck assignment, if the card needs a character action, proceed directly to effect-definition without asking for separate confirmation.
-8. Present 3 concise logic options for the card (option 1 should be conservative/recommended), then always include option 4 exactly as: `You will provide the text`.
+8. Present 3 concise logic options for the card when an action effect is actually needed (option 1 should be conservative/recommended), then always include option 4 exactly as: `You will provide the text`.
 9. Wait for the user's option choice before any code changes.
 10. Implement only the selected option (or the user's custom text if option 4).
 11. After each resolved card, automatically continue through remaining cards unless the user explicitly asks to stop.
@@ -109,8 +112,10 @@ Use these meanings when proposing card effects, durations, and balance. Prefer e
 - `Fortified`: about `+10%` army defense for army commanders.
 
 ## Suggestion Rules
-- Base suggestions on existing card-linkage patterns (cost, target, reward, risk).
+- Base suggestions on existing card-linkage patterns (cost, target, reward, risk) only when a card actually needs a linked effect.
 - Keep effects implementable in current action architecture.
+- Prefer mechanics that read like a moment in the world, not a generic status package.
+- Avoid defaulting to the same status bundles repeatedly; if a status effect is used, it should be a deliberate choice.
 - Prefer simple, testable effects over novel mechanics.
 - If uncertain, present a conservative default as recommended.
 

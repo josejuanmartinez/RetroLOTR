@@ -799,6 +799,17 @@ public class DeckManager : MonoBehaviour
 
         state.hand.RemoveAt(index);
         state.discardPile.Add(discardedCard);
+        RefreshHumanPlayerHandUIIfHuman(leader);
+        return true;
+    }
+
+    public bool TryAddCardToHand(PlayableLeader leader, CardData card)
+    {
+        if (leader == null || card == null) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
+
+        state.hand.Add(CloneCard(card));
+        RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
 

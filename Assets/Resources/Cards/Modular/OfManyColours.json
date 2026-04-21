@@ -631,5 +631,70 @@
                       "actionEffect":  "At supper or rest, Hobbits in radius 2 lose Hidden \u003csprite name=\"hidden\"\u003e and take 15 damage.",
                       "quote":  "A flame unwatched at meal may summon the long eye of night."
                   }
+                  ,
+                  {
+                      "cardId":  853,
+                      "name":  "Rhun",
+                      "quote":  "Rhun is a far shore of smoke and mounted dust, where distant thunder gathers.",
+                      "actionEffect":  "",
+                      "type":  "Land",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "of_many_colours",
+                      "alignment":  0,
+                      "actionClassName":  "",
+                      "action":  "MaterialRetrieval",
+                      "spriteName":  "",
+                      "region":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "portraitName":  "",
+                      "referenceDeckId":  "",
+                      "referenceCardId":  0,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  1,
+                      "mountsGranted":  1,
+                      "timberGranted":  1,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  2
+                  }
               ]
 }

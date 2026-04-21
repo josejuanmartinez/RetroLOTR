@@ -26,6 +26,8 @@ Do not edit, move, remove, rename, or repurpose cards that already exist in shar
 - target base deck JSON in `Assets/Resources/Cards/Modular`
 - `DeckFlavorRules.md`
 
+Always read the target subdeck's `thematic`, `fantasy`, `mechanicalPillars`, `themeLanes`, `avoidThemes`, and `visualDirections` from `manifest.json` before choosing or designing any card.
+
 ## Required Rules
 
 - Treat the chosen subdeck as the only place that owns its specialty cards.
@@ -44,7 +46,9 @@ Do not edit, move, remove, rename, or repurpose cards that already exist in shar
 - Do not let any one narrow motif dominate the additions. As a rule of thumb, avoid spending more than roughly one quarter of the newly added cards on the same micro-theme.
 - Vary gameplay patterns across additions. Avoid repeatedly producing simple stat tweaks, duplicate timing windows, or lightly renamed versions of the same effect structure.
 - Do not solve too many cards with the same status package (for example repeatedly defaulting to Halt, Fear, Hidden, Hope, Courage, or other familiar soft-control bundles). Even when themes differ, push for distinct mechanic identities and broader creativity in the actual play pattern.
+- Do not keep repeating the same status effects over and over again across the subdeck.
 - When choosing a new card effect, prefer a mechanic that feels unique to that card's story beat instead of another status loop. Reach for movement, terrain, resource, positioning, reveal, sacrifice, interruption, or setup/payoff ideas before falling back to the usual status trio.
+- Every added card must have a unique, immersive mechanic; if it reads like a renamed copy of an existing card, reject it and choose a different design.
 - If a candidate card keeps collapsing into the same repeated status effects, reject it and choose a different thematic angle rather than forcing another near-duplicate.
 - When proposing or implementing a card, explicitly check whether the mechanic feels like "another version of the last few cards." If yes, reject it and choose a more surprising but still coherent design.
 - Vary visual composition across additions. Avoid repeated subject matter, camera framing, prop focus, and scene setup that would predictably yield near-duplicate art.
@@ -131,6 +135,7 @@ For each subdeck, deliberately spread candidate ideas across several of these le
 - aftermath, consequences, and reactions to the theme rather than just the theme's cause
 
 Mechanical creativity matters as much as theme creativity. Try to make each added card feel like it plays differently from the last few additions, not just like the same effect with a new name.
+Make the result feel immersive in play and in lore, not just balanced on paper.
 
 If the subdeck title suggests a playful or narrow premise, do not stay trapped at the literal surface. Expand outward to second-order ideas: what the theme disrupts, enables, attracts, ruins, reveals, or changes.
 

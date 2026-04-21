@@ -285,13 +285,16 @@
             "id": "Tharkun",
             "path": "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\Tharkun.json",
             "count": 22,
-            "thematic": "Dwarf-friend archetype rooted in mountains, halls, treasure, mithril, endurance, and old alliances with the Durin folk. Expect Dwarven races, Erebor and Khazad themes, defensive economy, sturdy progression, fortress-like value, and reward for treasure or mountain cards; this deck suits slow-building players who want resilience, gear, and hard-to-shift board presence.",
-            "fantasy": "Gandalf as dwarf-friend: mountain roads, ancient halls, treasure-lore, and hard endurance tied to the houses of Durin.",
+            "thematic": "Dwarf-friend archetype rooted in mountains, halls, reconquest, treasure, mithril, endurance, and old alliances with the Durin folk. Expect Dwarven races, Erebor and Khazad themes, war for reclaimed halls, dragons, artifacts, gems, war weapons, long wandering across Middle-earth, and reward for treasure or mountain cards; this deck suits slow-building players who want resilience, gear, and hard-to-shift board presence. Mechanical identity must remain dwarf-first: Dwarves should be the default beneficiaries, payoffs, and board pieces. Other races may appear in art or story context, but should not routinely share the card's mechanical reward unless the card is explicitly about a cross-racial alliance moment.",
+            "fantasy": "Gandalf as dwarf-friend: mountain roads, ancient halls, reconquest, dragon-guarded treasure, relic-lore, and hard endurance tied to the houses of Durin and the long wandering roads of Middle-earth. Bilbo-style companionship can appear as flavor, but the deck's gameplay rewards should read primarily as support for Dwarven journeys, Dwarven warbands, Dwarven reclaimers, and the memory of Durin's folk.",
             "mechanicalPillars": [
                 "sturdy progression",
                 "defensive economy",
                 "treasure and mountain synergy",
-                "hard-to-shift board presence"
+                "hard-to-shift board presence",
+                "reconquest and war pressure",
+                "artifact and gem pursuit",
+                "journeying across Middle-earth"
             ],
             "themeLanes": [
                 "Khazad halls",
@@ -299,17 +302,29 @@
                 "old alliances",
                 "mountain caravans",
                 "fortress endurance",
-                "treasure-guarded advances"
+                "treasure-guarded advances",
+                "reconquest of lost halls",
+                "dragons and dragon-guarded hoards",
+                "artifacts and heirlooms",
+                "gems and jeweled wealth",
+                "war weapons and siege relics",
+                "long wanders over Middle-earth",
+                "Dwarven companies, reclaimers, miners, smiths, and royal houses as the primary gameplay actors"
             ],
             "avoidThemes": [
                 "soft prank-heavy tone",
                 "pure open-field cavalry identity",
                 "overusing one treasure object repeatedly",
-                "thin gimmicks without mountain or dwarf resonance"
+                "thin gimmicks without mountain or dwarf resonance",
+                "treating Hobbits as routine co-beneficiaries of Tharkun mechanics",
+                "drifting from dwarf-first gameplay identity into generic fellowship support"
             ],
             "visualDirections": [
                 "stone halls and gates",
                 "lamplit forges and treasure chambers",
+                "dragon-hoard shadows and reclaimed hallways",
+                "war gear laid out for a hard road",
+                "far-ranging travels through wild country",
                 "mountain passes",
                 "sturdy shieldwall and crafted relic imagery"
             ]
