@@ -63,7 +63,7 @@ public class WhiteHandAtTheFordsAction : EventAction
             MessageDisplayNoUI.ShowMessage(
                 character != null ? character.hex : null,
                 character,
-                $"White Hand at the Fords: {alliedAtCrossings.Count} allied unit(s) on shore/water crossings gain Fortified (1), and {enemyAtCrossings.Count} enemy unit(s) on shore/water crossings are Halted (1).",
+                $"Protect the Fords: {alliedAtCrossings.Count} allied unit(s) on shore/water crossings gain Fortified (1), and {enemyAtCrossings.Count} enemy unit(s) on shore/water crossings are Halted (1).",
                 Color.yellow);
 
             return true;

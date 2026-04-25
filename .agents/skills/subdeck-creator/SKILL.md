@@ -1,11 +1,11 @@
 ---
 name: subdeck-creator
-description: Add cards to a RetroLOTR modular subdeck until it has exactly 30 cards. Use when Codex must expand a specific level-2 subdeck under Assets/Resources/Cards/Modular, preserve the common -> base -> subdeck hierarchy, avoid card duplication across decks, and process additions one card at a time by delegating each card implementation to the card-creation workflow.
+description: Add cards to a RetroLOTR modular subdeck. Use when Codex must expand a specific level-2 subdeck under Assets/Resources/Cards/Modular, preserve the common -> base -> subdeck hierarchy, avoid card duplication across decks, and process additions one card at a time by delegating each card implementation to the card-creation workflow.
 ---
 
 # Subdeck Creator
 
-Expand one modular subdeck to exactly 30 cards.
+Expand one modular subdeck.
 
 ## Scope
 
@@ -38,7 +38,7 @@ Always read the target subdeck's `thematic`, `fantasy`, `mechanicalPillars`, `th
 - Any card added to the target subdeck must be a genuinely new card entry (new name/id) not already present in `SharedBase`, the base deck, or sibling subdecks.
 - Each added card must have newly created gameplay logic for that card; do not reuse another card's logic implementation as the shipped logic for the new card.
 - Each added card must have a newly created illustration generated for that card; do not reuse, copy, or repurpose another card image.
-- The target subdeck must finish with exactly `30` cards.
+- The target subdeck should finish at the user-requested size.
 - Process additions one card at a time.
 - Push beyond the most obvious surface motif of the subdeck; do not over-concentrate cards on the same literal joke, prop, meal, catchphrase, or scene fragment.
 - Build the subdeck around a varied thematic cluster, not a single repeated reference. For any theme, actively look for contrast across people, places, moods, tactics, consequences, symbols, and story beats.
@@ -56,9 +56,8 @@ Always read the target subdeck's `thematic`, `fantasy`, `mechanicalPillars`, `th
 - Wait for explicit user confirmation before continuing to the next card.
 - Do not start proposing, implementing, or generating the next card until the user has approved the current card image.
 - After each card is added, re-count the subdeck before proposing the next card.
-- Stop immediately when the subdeck reaches `30`.
-- If the subdeck already has `30`, make no card changes.
-- If the subdeck has more than `30`, do not remove cards automatically; report the overflow and stop.
+- Stop when the user-requested target size is reached.
+- If the subdeck already exceeds the requested target size, report the overflow and stop unless the user explicitly asks for changes.
 
 ## Mandatory Delegation
 
@@ -79,14 +78,13 @@ Do not move to the next card until the user explicitly confirms the current card
 1. Read `Assets/Resources/Cards.json` and `Assets/Resources/Cards/Modular/manifest.json`.
 2. Resolve the chosen subdeck id, its base deck, and its faction.
 3. Count the current cards in the target subdeck.
-4. If count is `30`, report success and stop.
-5. If count is greater than `30`, report the count and stop.
+4. If count already meets or exceeds the requested target size, report the count and stop unless the user explicitly asks for changes.
 6. Read `DeckFlavorRules.md` and the subdeck thematic text from the manifests.
 7. Build a compact theme map for the subdeck before choosing cards:
    - identify 5 to 8 distinct theme lanes the subdeck can support
    - include at least one lane each for character/persona, event/conflict, place/journey, object/symbol, and tonal reversal or consequence when the source material allows it
    - note which lanes are already represented by existing cards so new additions can fill gaps instead of repeating the loudest existing motif
-8. Determine how many cards are missing to reach `30`.
+8. Determine how many cards are missing to reach the requested target size.
 9. Propose or audit exactly one candidate card at a time for the target subdeck.
 10. Before committing to that card, run a diversity check against cards already in the subdeck:
    - theme check: is this drawing from an underused lane rather than the most obvious repeated one?
@@ -104,7 +102,7 @@ Do not move to the next card until the user explicitly confirms the current card
 14. Show the generated image to the user and ask for confirmation to proceed.
 15. Pause and wait for explicit user confirmation.
 16. If approved, re-count the subdeck.
-17. Repeat from step 9 until the count is exactly `30`.
+17. Repeat from step 9 until the count reaches the requested target size.
 
 ## Candidate Selection Heuristics
 
@@ -117,7 +115,7 @@ Choose cards in this order:
 5. Distinct visual potential from cards already in the subdeck.
 6. If still unclear, keep the card out of the subdeck.
 
-Do not pad with generic economy or filler cards just to hit `30`.
+Do not pad with generic economy or filler cards just to hit a target count.
 Prefer archetype-defining cards, signature events, race-linked units, and mechanically coherent support pieces.
 Prefer surprising but defensible interpretations over obvious repeated references.
 When a subdeck risks collapsing into a meme or single running gag, widen the card pool to adjacent story material, consequences, oppositions, and setting details that still support the deck identity.
@@ -168,7 +166,7 @@ After each added card, report:
 4. short note on why the card improves thematic/mechanical/visual diversity
 5. image shown and awaiting/received user confirmation
 6. files changed
-7. new subdeck count in the form `count=NN/30`
+7. new subdeck count in the form `count=NN`
 
 ## Final Output
 

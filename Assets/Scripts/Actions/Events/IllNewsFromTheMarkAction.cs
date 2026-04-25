@@ -66,7 +66,7 @@ public class IllNewsFromTheMarkAction : EventAction
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Ill News from the Mark: {warnedAllies} allied Human/Dunedain unit(s) gain Courage (1); {shakenEnemies} enemy Human/Dunedain unit(s) gain Fear and Refusing Duels (1).",
+                $"News Fly to the Mark: {warnedAllies} allied Human/Dunedain unit(s) gain Courage (1); {shakenEnemies} enemy Human/Dunedain unit(s) gain Fear and Refusing Duels (1).",
                 Color.yellow);
 
             return true;

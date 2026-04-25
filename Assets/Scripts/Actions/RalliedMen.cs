@@ -24,28 +24,18 @@ public class RalliedMen : CharacterAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            if (character == null) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
-            if (board == null) return false;
-
-            return board.GetHexes().Any(h => h != null
-                && h.characters != null
-                && h.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch) && ch.race == RacesEnum.Common));
+            return character.hex.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch) && ch.race == RacesEnum.Common);
         };
 
         async Task<bool> ralliedAsync(Character character)
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
-            if (character == null) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
-            if (board == null) return false;
-
-            List<Character> targets = board.GetHexes()
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
+            List<Character> targets = character.hex.characters
                 .Where(ch => ch != null && !ch.killed && IsAllied(character, ch) && ch.race == RacesEnum.Common)
                 .Distinct()
                 .ToList();
@@ -57,7 +47,7 @@ public class RalliedMen : CharacterAction
                 t.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
             }
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Rallied Men grants Strengthened (1) to {targets.Count} allied Human unit(s).", Color.white);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Rallied Men grants Strengthened (1) to {targets.Count} allied Human unit(s) in this hex.", Color.white);
             return true;
         }
 

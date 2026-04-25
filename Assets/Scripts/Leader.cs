@@ -286,17 +286,23 @@ public class Leader : Character
 
     public void AddTemporarySeenHexes(IEnumerable<Hex> hexes)
     {
+        AddTemporarySeenHexes(hexes, 2);
+    }
+
+    public void AddTemporarySeenHexes(IEnumerable<Hex> hexes, int turns)
+    {
         if (hexes == null) return;
+        turns = Math.Max(1, turns);
         foreach (var hex in hexes)
         {
             if (hex == null) continue;
             if (tempSeenHexes.TryGetValue(hex, out int current))
             {
-                tempSeenHexes[hex] = Math.Max(current, 2);
+                tempSeenHexes[hex] = Math.Max(current, turns);
             }
             else
             {
-                tempSeenHexes[hex] = 2;
+                tempSeenHexes[hex] = turns;
             }
         }
     }

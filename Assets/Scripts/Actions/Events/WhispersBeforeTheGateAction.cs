@@ -33,39 +33,15 @@ public class WhispersBeforeTheGateAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> nearby = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && IsHumanLike(ch))
-                .Distinct()
-                .ToList();
+            PC pc = character.hex.GetPC();
+            if (pc == null || pc.owner == null) return false;
+            if (pc.owner != character.GetOwner()) return false;
 
-            if (nearby.Count == 0) return false;
-
-            int hiddenAllies = 0;
-            int haltedEnemies = 0;
-
-            for (int i = 0; i < nearby.Count; i++)
-            {
-                Character target = nearby[i];
-                if (IsAllied(character, target))
-                {
-                    target.ApplyStatusEffect(StatusEffectEnum.Hidden, 1);
-                    hiddenAllies++;
-                }
-                else
-                {
-                    target.ApplyStatusEffect(StatusEffectEnum.Halted, 1);
-                    haltedEnemies++;
-                }
-            }
-
-            if (hiddenAllies == 0 && haltedEnemies == 0) return false;
-
+            pc.IncreaseFort();
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Whispers Before the Gate: {hiddenAllies} allied Human/Dunedain unit(s) become Hidden (1); {haltedEnemies} enemy Human/Dunedain unit(s) are Halted (1).",
+                $"Ready the gates: {pc.pcName} fortifications rise by 1.",
                 Color.gray);
 
             return true;
@@ -75,11 +51,8 @@ public class WhispersBeforeTheGateAction : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
-
-            return character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null
-                    && h.characters != null
-                    && h.characters.Any(ch => ch != null && !ch.killed && IsHumanLike(ch)));
+            PC pc = character.hex.GetPC();
+            return pc != null && pc.owner == character.GetOwner();
         };
 
         asyncEffect = async (character) =>

@@ -1,4 +1,4 @@
-{
+﻿{
     "deckId":  "sauron_base",
     "nation":  "Sauron",
     "alignment":  1,
@@ -78,7 +78,7 @@
                       "ironGranted":  0,
                       "steelGranted":  0,
                       "mithrilGranted":  0,
-                      "quote":  "Tol Buruth drifts on the Sea of Rhûn like a rumor that has learned to sail."
+                      "quote":  "Tol Buruth drifts on the Sea of RhÃ»n like a rumor that has learned to sail."
                   },
                   {
                       "cardId":  12,
@@ -250,58 +250,6 @@
                       "steelGranted":  1,
                       "mithrilGranted":  0,
                       "quote":  "Gundabad bears the deep memory of the North, grim as a mountain scar that never closed."
-                  },
-                  {
-                      "cardId":  242,
-                      "name":  "Sabotage Port",
-                      "type":  "Action",
-                      "actionClassName":  "SabotagePort",
-                      "actionId":  177,
-                      "action":  "SabotagePort",
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  4,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  70,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  1,
-                      "ironRequired":  1,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  1,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0,
-                      "actionEffect":  "",
-                      "quote":  ""
-                  },
-                  {
-                      "cardId":  245,
-                      "name":  "Destroy Fortifications",
-                      "type":  "Action",
-                      "actionClassName":  "DestroyFortifications",
-                      "actionId":  175,
-                      "action":  "DestroyFortifications",
-                      "commanderSkillRequired":  4,
-                      "agentSkillRequired":  0,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  70,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  1,
-                      "ironRequired":  1,
-                      "steelRequired":  1,
-                      "mithrilRequired":  0,
-                      "goldRequired":  2,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0,
-                      "actionEffect":  "",
-                      "quote":  ""
                   },
                   {
                       "cardId":  251,
@@ -1622,7 +1570,7 @@
                       "mithrilRequired":  0,
                       "goldRequired":  1,
                       "jokerRequired":  0,
-                      "actionEffect":  "Target allied character in your hex: gain Fortified (1 turn).",
+                      "actionEffect":  "Gain 2 <sprite name=\"iron\">, 1 <sprite name=\"steel\">, and 1 <sprite name=\"leather\">; choose 1 allied character in this hex to gain Strengthened <sprite name=\"strengthened\"> or Fortified <sprite name=\"fortified\"> for 1 turn.",
                       "quote":  ""
                   },
                   {
@@ -1851,7 +1799,7 @@
                       "mithrilRequired":  0,
                       "goldRequired":  2,
                       "jokerRequired":  0,
-                      "actionEffect":  "All allied army commanders in mountains or hills gain Haste (1 turn) and Courage (1 turn).",
+                      "actionEffect":  "All allied army commanders in mountains or hills gain Haste \u003csprite name=\"haste\"\u003e (1 turn) and Courage \u003csprite name=\"encouraged\"\u003e (1 turn).",
                       "quote":  ""
                   },
                   {
@@ -2032,12 +1980,12 @@
                   },
                   {
                       "cardId":  505,
-                      "name":  "Well-equiped Army",
+                      "name":  "Well-equipped Army",
                       "type":  "Event",
                       "action":  "WellEquipedArmy",
                       "actionClassName":  "WellEquipedArmy",
                       "actionId":  303,
-                      "spriteName":  "Well-equiped Army",
+                      "spriteName":  "Well-equipped Army",
                       "tags":  [
 
                                ],
@@ -2341,87 +2289,6 @@
                       "artifacts":  [
 
                                     ],
-                      "quote":  ""
-                  },
-                  {
-                      "cardId":  798,
-                      "name":  "Release Character",
-                      "type":  "Action",
-                      "actionClassName":  "ReleaseCharacter",
-                      "actionId":  1231,
-                      "action":  "ReleaseCharacter",
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  1,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  0,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  0,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0,
-                      "spriteName":  "ReleaseCharacter",
-                      "actionEffect":  "Release one captive currently held by this character in the same hex.",
-                      "quote":  ""
-                  },
-                  {
-                      "cardId":  799,
-                      "name":  "Ask Ransom",
-                      "type":  "Action",
-                      "actionClassName":  "AskRansom",
-                      "actionId":  1232,
-                      "action":  "AskRansom",
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  1,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  0,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  0,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0,
-                      "spriteName":  "AskRansom",
-                      "actionEffect":  "Demand ransom for a captive in the same hex. If the captive\u0027s owner pays, the captive is released.",
-                      "quote":  ""
-                  },
-                  {
-                      "cardId":  800,
-                      "name":  "Free Character",
-                      "type":  "Action",
-                      "actionClassName":  "FreeCharacter",
-                      "actionId":  1233,
-                      "action":  "FreeCharacter",
-                      "commanderSkillRequired":  0,
-                      "agentSkillRequired":  4,
-                      "emissarySkillRequired":  0,
-                      "mageSkillRequired":  0,
-                      "difficulty":  0,
-                      "leatherRequired":  0,
-                      "mountsRequired":  0,
-                      "timberRequired":  0,
-                      "ironRequired":  0,
-                      "steelRequired":  0,
-                      "mithrilRequired":  0,
-                      "goldRequired":  0,
-                      "tags":  [
-
-                               ],
-                      "jokerRequired":  0,
-                      "spriteName":  "FreeCharacter",
-                      "actionEffect":  "Attempt to free an allied captive of the same nation in the same hex. Enemy agents hold captives more securely, and critical failure is dangerous.",
                       "quote":  ""
                   },
                   {

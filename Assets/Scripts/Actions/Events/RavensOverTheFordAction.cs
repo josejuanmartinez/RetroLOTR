@@ -66,7 +66,7 @@ public class RavensOverTheFordAction : EventAction
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Ravens Over the Ford: {swiftAllies} allied Human/Dunedain unit(s) gain Haste (1); {shakenEnemies} enemy Human/Dunedain unit(s) gain Fear and Halted (1).",
+                $"Ravens: {swiftAllies} allied Human/Dunedain unit(s) gain Haste (1); {shakenEnemies} enemy Human/Dunedain unit(s) gain Fear and Halted (1).",
                 Color.black);
 
             return true;

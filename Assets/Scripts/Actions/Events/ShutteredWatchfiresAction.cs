@@ -7,21 +7,6 @@ public class ShutteredWatchfiresAction : EventAction
 {
     private const int Radius = 2;
 
-    private static bool IsAllied(Character source, Character target)
-    {
-        if (source == null || target == null) return false;
-        if (target.GetOwner() == source.GetOwner()) return true;
-        return source.GetAlignment() != AlignmentEnum.neutral
-            && target.GetAlignment() == source.GetAlignment()
-            && target.GetAlignment() != AlignmentEnum.neutral;
-    }
-
-    private static bool IsHumanLike(Character ch)
-    {
-        if (ch == null) return false;
-        return ch.race == RacesEnum.Common || ch.race == RacesEnum.Dunedain;
-    }
-
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -33,42 +18,40 @@ public class ShutteredWatchfiresAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> nearby = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && IsHumanLike(ch))
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            List<Hex> ownedPcs = board.GetHexes()
+                .Where(h => h != null && h.GetPC() != null && h.GetPC().owner == owner)
                 .Distinct()
                 .ToList();
 
-            if (nearby.Count == 0) return false;
+            if (ownedPcs.Count == 0) return false;
 
-            int fortified = 0;
-            int concealed = 0;
-
-            for (int i = 0; i < nearby.Count; i++)
+            HashSet<Hex> revealedHexes = new();
+            foreach (Hex pcHex in ownedPcs)
             {
-                Character target = nearby[i];
-                if (!IsAllied(character, target)) continue;
-
-                target.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
-                fortified++;
-
-                if (!target.HasStatusEffect(StatusEffectEnum.Hidden))
+                if (pcHex == null) continue;
+                List<Hex> area = pcHex.GetHexesInRadius(Radius).Where(h => h != null).Distinct().ToList();
+                pcHex.RevealArea(Radius, true, owner);
+                owner.AddTemporarySeenHexes(area);
+                owner.AddTemporaryScoutCenters(new[] { pcHex });
+                foreach (Hex hex in area)
                 {
-                    target.ApplyStatusEffect(StatusEffectEnum.Hidden, 1);
-                    concealed++;
+                    revealedHexes.Add(hex);
                 }
             }
-
-            if (fortified == 0) return false;
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"Shuttered Watchfires: {fortified} allied Human/Dunedain unit(s) gain Fortified (1); {concealed} also become Hidden (1).",
+                $"Light the Watchfires: {revealedHexes.Count} hex(es) around your PCs are revealed for 1 turn.",
                 new Color(0.75f, 0.72f, 0.55f));
 
-            return true;
+            return revealedHexes.Count > 0;
         };
 
         condition = (character) =>
@@ -76,10 +59,14 @@ public class ShutteredWatchfiresAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            return character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null
-                    && h.characters != null
-                    && h.characters.Any(ch => ch != null && !ch.killed && IsHumanLike(ch) && IsAllied(character, ch)));
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            return board.GetHexes()
+                .Any(h => h != null && h.GetPC() != null && h.GetPC().owner == owner);
         };
 
         asyncEffect = async (character) =>

@@ -25,7 +25,7 @@ public class VisionsOfTolEressea : CharacterAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null || character.hex.characters == null) return false;
-            return character.hex.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch) && ch.race == RacesEnum.Elf);
+            return character.hex.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch));
         };
 
         async Task<bool> visionsAsync(Character character)
@@ -34,11 +34,11 @@ public class VisionsOfTolEressea : CharacterAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> elfTargets = character.hex.characters
-                .Where(ch => ch != null && !ch.killed && IsAllied(character, ch) && ch.race == RacesEnum.Elf)
+            List<Character> targets = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && IsAllied(character, ch))
                 .Distinct()
                 .ToList();
-            if (elfTargets.Count == 0) return false;
+            if (targets.Count == 0) return false;
 
             bool isAI = !character.isPlayerControlled;
             Character target = null;
@@ -46,19 +46,19 @@ public class VisionsOfTolEressea : CharacterAction
             if (!isAI)
             {
                 string selected = await SelectionDialog.Ask(
-                    "Select allied Elf",
+                    "Select allied character",
                     "Ok",
                     "Cancel",
-                    elfTargets.Select(x => x.characterName).ToList(),
+                    targets.Select(x => x.characterName).ToList(),
                     false,
                     SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
 
                 if (string.IsNullOrWhiteSpace(selected)) return false;
-                target = elfTargets.FirstOrDefault(x => x.characterName == selected);
+                target = targets.FirstOrDefault(x => x.characterName == selected);
             }
             else
             {
-                target = elfTargets.OrderByDescending(x => x.GetMage()).FirstOrDefault();
+                target = targets.OrderByDescending(x => x.GetMage()).FirstOrDefault();
             }
 
             if (target == null) return false;

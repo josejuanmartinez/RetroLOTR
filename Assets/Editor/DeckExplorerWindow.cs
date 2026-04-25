@@ -53,6 +53,7 @@ public class DeckExplorerWindow : EditorWindow
     private bool sortCardsByTypeThenName = true;
     private string editedCardKey;
     private string copyTargetResourcePath;
+    private string baseDeckTargetResourcePath;
     private int editedCommanderSkillRequired;
     private int editedAgentSkillRequired;
     private int editedEmissarySkillRequired;
@@ -264,6 +265,8 @@ public class DeckExplorerWindow : EditorWindow
         GUILayout.FlexibleSpace();
         DrawCopyToSubdeckControls(card);
         GUILayout.Space(6);
+        DrawCopyToBaseDeckControls(card);
+        GUILayout.Space(6);
         if (GUILayout.Button("Provide Feedback", GUILayout.Width(130)))
         {
             CopyCardFeedbackPayload(card);
@@ -376,6 +379,41 @@ public class DeckExplorerWindow : EditorWindow
         if (newIndex != targetIndex)
         {
             copyTargetResourcePath = targets[newIndex].manifest.resourcePath;
+        }
+
+        if (GUILayout.Button("Copy", GUILayout.Width(62)))
+        {
+            CopyFinalizedCardToSubdeck(card, currentDeck, targets[newIndex]);
+        }
+        if (GUILayout.Button("Move", GUILayout.Width(62)))
+        {
+            MoveFinalizedCardToSubdeck(card, currentDeck, targets[newIndex]);
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUI.EndDisabledGroup();
+    }
+
+    private void DrawCopyToBaseDeckControls(CardData card)
+    {
+        DeckEntryView currentDeck = GetSelectedDeckView();
+        List<DeckEntryView> targets = GetBaseDeckTargets(currentDeck);
+        if (targets.Count == 0)
+        {
+            EditorGUILayout.LabelField("Transfer to base", "No base deck targets");
+            return;
+        }
+
+        int targetIndex = GetBaseDeckTargetIndex(targets);
+        string[] options = targets.Select(BuildDeckLabel).ToArray();
+
+        EditorGUI.BeginDisabledGroup(!IsCardFinalized(card) || IsCardDisabled(card));
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(440));
+        EditorGUILayout.LabelField("To base", GUILayout.Width(50));
+
+        int newIndex = EditorGUILayout.Popup(targetIndex, options, GUILayout.Width(210));
+        if (newIndex != targetIndex)
+        {
+            baseDeckTargetResourcePath = targets[newIndex].manifest.resourcePath;
         }
 
         if (GUILayout.Button("Copy", GUILayout.Width(62)))
@@ -1265,6 +1303,25 @@ public class DeckExplorerWindow : EditorWindow
             .ToList();
     }
 
+    private List<DeckEntryView> GetBaseDeckTargets(DeckEntryView currentDeck)
+    {
+        if (currentDeck?.manifest == null)
+        {
+            return new List<DeckEntryView>();
+        }
+
+        return deckViews
+            .Where(view =>
+                view != null
+                && view.manifest != null
+                && view.deckData != null
+                && !string.IsNullOrWhiteSpace(view.manifest.resourcePath)
+                && view.manifest.isBaseDeck
+                && view.manifest.alignment == currentDeck.manifest.alignment
+                && !string.Equals(view.manifest.resourcePath, currentDeck.manifest.resourcePath, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
     private int GetCopyTargetIndex(List<DeckEntryView> targets)
     {
         if (targets == null || targets.Count == 0) return 0;
@@ -1280,6 +1337,24 @@ public class DeckExplorerWindow : EditorWindow
         }
 
         copyTargetResourcePath = targets[0].manifest.resourcePath;
+        return 0;
+    }
+
+    private int GetBaseDeckTargetIndex(List<DeckEntryView> targets)
+    {
+        if (targets == null || targets.Count == 0) return 0;
+
+        if (!string.IsNullOrWhiteSpace(baseDeckTargetResourcePath))
+        {
+            int matchIndex = targets.FindIndex(view => view != null && view.manifest != null
+                && string.Equals(view.manifest.resourcePath, baseDeckTargetResourcePath, StringComparison.OrdinalIgnoreCase));
+            if (matchIndex >= 0)
+            {
+                return matchIndex;
+            }
+        }
+
+        baseDeckTargetResourcePath = targets[0].manifest.resourcePath;
         return 0;
     }
 
@@ -1338,7 +1413,7 @@ public class DeckExplorerWindow : EditorWindow
         selectedCardIndex = FindCardIndexInFilteredCards(copiedCard.cardId, copiedCard.name, copiedCard.GetActionRef());
         Repaint();
 
-        Debug.Log($"DeckExplorerWindow: copied finalized card '{sourceCard.name}' to subdeck '{targetDeckView.manifest.deckId}'.");
+        Debug.Log($"DeckExplorerWindow: copied finalized card '{sourceCard.name}' to deck '{targetDeckView.manifest.deckId}'.");
     }
 
     private void MoveFinalizedCardToSubdeck(CardData sourceCard, DeckEntryView sourceDeckView, DeckEntryView targetDeckView)
@@ -1438,7 +1513,7 @@ public class DeckExplorerWindow : EditorWindow
         selectedCardIndex = FindCardIndexInFilteredCards(movedCard.cardId, movedCard.name, movedCard.GetActionRef());
         Repaint();
 
-        Debug.Log($"DeckExplorerWindow: moved finalized card '{sourceCard.name}' to subdeck '{targetDeckView.manifest.deckId}'.");
+        Debug.Log($"DeckExplorerWindow: moved finalized card '{sourceCard.name}' to deck '{targetDeckView.manifest.deckId}'.");
     }
 
     private static bool SaveDeckData(DeckEntryView deckView, string actionVerb)

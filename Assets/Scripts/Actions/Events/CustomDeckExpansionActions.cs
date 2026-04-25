@@ -805,7 +805,7 @@ public class RaiseTheInnerBastionAction : EventAction
 
 public class PalantirGlimpseAction : EventAction
 {
-    private const int RevealCount = 3;
+    private const int RevealCount = 10;
 
     private static bool IsAllied(Character source, Character target)
     {
@@ -832,14 +832,14 @@ public class PalantirGlimpseAction : EventAction
             if (owner == null || board == null) return false;
 
             List<Hex> chosen = board.GetHexes()
-                .Where(hex => hex != null && !hex.IsHexRevealed())
+                .Where(hex => hex != null && hex.terrainType == TerrainEnum.mountains)
                 .OrderBy(_ => UnityEngine.Random.value)
                 .Take(RevealCount)
                 .ToList();
 
             if (chosen.Count == 0) return false;
 
-            owner.AddTemporarySeenHexes(chosen);
+            owner.AddTemporarySeenHexes(chosen, 1);
             if (owner == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
             {
                 owner.RefreshVisibleHexesImmediate();
@@ -850,9 +850,8 @@ public class PalantirGlimpseAction : EventAction
                 chosen[i]?.RefreshVisibilityRendering();
             }
 
-            character.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1);
             chosen[0]?.LookAt();
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Palantir Glimpse reveals {chosen.Count} unseen hex(es) for 1 turn and grants Arcane Insight.", Color.magenta);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Signal Fires of Anorien reveals {chosen.Count} mountain hex(es) for 1 turn.", Color.magenta);
             return true;
         };
 
@@ -860,7 +859,7 @@ public class PalantirGlimpseAction : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
-            return character != null && character.GetOwner() != null && board != null && board.GetHexes().Any(hex => hex != null && !hex.IsHexRevealed());
+            return character != null && character.GetOwner() != null && board != null && board.GetHexes().Any(hex => hex != null && hex.terrainType == TerrainEnum.mountains);
         };
 
         asyncEffect = async (character) =>
@@ -875,6 +874,8 @@ public class PalantirGlimpseAction : EventAction
 
 public class WordsOfWardingAction : EventAction
 {
+    private const int Radius = 2;
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -884,25 +885,34 @@ public class WordsOfWardingAction : EventAction
         effect = (character) =>
         {
             if (originalEffect != null && !originalEffect(character)) return false;
-            if (character == null || character.hex == null || character.hex.characters == null) return false;
+            if (character == null || character.hex == null) return false;
 
-            Character target = character.hex.characters
-                .Where(ch => ch != null && !ch.killed && IsAllied(character, ch))
-                .OrderByDescending(ch => ch.GetMage() + ch.GetEmmissary())
-                .FirstOrDefault();
-            if (target == null) return false;
+            List<Hex> area = character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null)
+                .Distinct()
+                .ToList();
 
-            target.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
-            target.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1);
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Words of Warding shelters {target.characterName} with Fortified and Arcane Insight.", Color.magenta);
+            if (area.Count == 0) return false;
+
+            for (int i = 0; i < area.Count; i++)
+            {
+                area[i].RevealMapOnlyArea(0, false, false);
+            }
+
+            if (character.GetOwner() == FindFirstObjectByType<Game>()?.player)
+            {
+                MinimapManager.RefreshMinimap();
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Wardens of the Rammas: {area.Count} hex(es) around this place are revealed as unseen for 1 turn.", new Color(0.82f, 0.76f, 0.6f));
             return true;
         };
 
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            return character != null && character.hex != null && character.hex.characters != null
-                && character.hex.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch));
+            return character != null && character.hex != null
+                && character.hex.GetHexesInRadius(Radius).Any(h => h != null);
         };
 
         asyncEffect = async (character) =>
@@ -980,31 +990,37 @@ public class LightThroughCloudAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> enemies = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && !IsAllied(character, ch))
-                .Distinct()
-                .ToList();
+            List<Character> unitsAtHex = character.hex.characters != null
+                ? character.hex.characters.Where(ch => ch != null && !ch.killed).Distinct().ToList()
+                : new List<Character>();
 
+            int courageGranted = 0;
             int fearCleared = 0;
-            int hiddenCleared = 0;
-            for (int i = 0; i < enemies.Count; i++)
+            int haltedEnemies = 0;
+
+            for (int i = 0; i < unitsAtHex.Count; i++)
             {
-                if (enemies[i].HasStatusEffect(StatusEffectEnum.Fear))
+                Character target = unitsAtHex[i];
+                if (IsAllied(character, target))
                 {
-                    enemies[i].ClearStatusEffect(StatusEffectEnum.Fear);
-                    fearCleared++;
+                    target.ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+                    courageGranted++;
+
+                    if (target.HasStatusEffect(StatusEffectEnum.Fear))
+                    {
+                        target.ClearStatusEffect(StatusEffectEnum.Fear);
+                        fearCleared++;
+                    }
                 }
-                if (enemies[i].HasStatusEffect(StatusEffectEnum.Hidden))
+                else
                 {
-                    enemies[i].ClearStatusEffect(StatusEffectEnum.Hidden);
-                    hiddenCleared++;
+                    target.ApplyStatusEffect(StatusEffectEnum.Halted, 1);
+                    haltedEnemies++;
                 }
             }
 
-            if (fearCleared == 0 && hiddenCleared == 0) return false;
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Light Through Cloud strips Hidden from {hiddenCleared} and clears Fear from {fearCleared} enemy unit(s).", Color.magenta);
+            if (courageGranted == 0 && fearCleared == 0 && haltedEnemies == 0) return false;
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Light Through Cloud: {courageGranted} friendly unit(s) gain Courage (1); Fear is cleared from {fearCleared}; {haltedEnemies} enemy unit(s) are Halted (1).", Color.magenta);
             return true;
         };
 
@@ -1012,11 +1028,8 @@ public class LightThroughCloudAction : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
-            return character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Any(ch => ch != null && !ch.killed && !IsAllied(character, ch)
-                    && (ch.HasStatusEffect(StatusEffectEnum.Fear) || ch.HasStatusEffect(StatusEffectEnum.Hidden)));
+            return character.hex.characters != null
+                && character.hex.characters.Any(ch => ch != null && !ch.killed);
         };
 
         asyncEffect = async (character) =>
@@ -1127,6 +1140,799 @@ public class FarSpeakingThoughtAction : EventAction
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
                 .Any(ch => ch != null && !ch.killed && !IsAllied(character, ch));
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class CounselByFirelightAction : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            if (game == null || deckManager == null || game.player == null) return false;
+            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
+
+            var hand = deckManager.GetHand(game.player);
+            int maxHand = deckManager.GetHandSize();
+            CardData discardTarget = hand.FirstOrDefault(card => card != null && !card.IsEncounterCard() && !string.Equals(card.name, "Counsel By Firelight", StringComparison.OrdinalIgnoreCase));
+            if (discardTarget == null) return false;
+
+            if (!deckManager.TryDiscardCard(game.player, discardTarget.name, out _)) return false;
+
+            int roomAfterDiscard = Math.Max(0, maxHand - deckManager.GetHand(game.player).Count);
+            int drawsAllowed = Math.Min(2, roomAfterDiscard);
+            int drawn = 0;
+            if (drawsAllowed >= 1 && deckManager.TryDrawCard(game.player, out _)) drawn++;
+            if (drawsAllowed >= 2 && deckManager.TryDrawCard(game.player, out _)) drawn++;
+
+            if (drawn == 0) return false;
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Counsel by Firelight discards 1 card and draws {drawn}.", Color.magenta);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            if (character == null || game == null || deckManager == null || game.player == null) return false;
+            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
+
+            var hand = deckManager.GetHand(game.player);
+            bool hasDiscardTarget = hand.Any(card => card != null && !card.IsEncounterCard() && !string.Equals(card.name, "Counsel By Firelight", StringComparison.OrdinalIgnoreCase));
+            int roomAfterDiscard = Math.Max(0, deckManager.GetHandSize() - (hand.Count - 1));
+            return hasDiscardTarget && roomAfterDiscard > 0;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class StayTheDarkTaleAction : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            if (game == null || deckManager == null || game.player == null) return false;
+            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
+
+            var hand = deckManager.GetHand(game.player);
+            int maxHand = deckManager.GetHandSize();
+            CardData encounterCard = hand.FirstOrDefault(card => card != null && card.IsEncounterCard());
+            if (encounterCard == null) return false;
+
+            if (!deckManager.TryReturnCardToHand(game.player, encounterCard.name)) return false;
+            if (deckManager.GetHand(game.player).Count >= maxHand) return false;
+            if (!deckManager.TryDrawCard(game.player, out CardData replacement) || replacement == null) return false;
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Stay the Dark Tale sets aside {encounterCard.name} and draws a replacement.", Color.magenta);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            if (character == null || game == null || deckManager == null || game.player == null) return false;
+            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
+
+            var hand = deckManager.GetHand(game.player);
+            bool hasEncounter = hand.Any(card => card != null && card.IsEncounterCard());
+            return hasEncounter && hand.Count <= deckManager.GetHandSize();
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class KingUnderTheMountainAction : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+
+            Character target = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Dwarf && IsAllied(character, ch))
+                .OrderByDescending(ch => ch.hasActionedThisTurn ? 1 : 0)
+                .ThenByDescending(ch => ch.GetCommander() + ch.GetAgent() + ch.GetEmmissary() + ch.GetMage())
+                .FirstOrDefault();
+            if (target == null) return false;
+
+            target.hasActionedThisTurn = false;
+            target.moved = 0;
+            target.lastPlayedActionClassNameThisTurn = null;
+            target.lastPlayedActionNameThisTurn = null;
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"King Under the Mountain readies {target.characterName} for one more labor this turn.", Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null && character.hex != null && character.hex.characters != null
+                && character.hex.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Dwarf && IsAllied(character, ch));
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class DoorsOfTheDeepDelvedAction : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            if (game == null || deckManager == null || game.player == null) return false;
+            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
+            if (deckManager.GetHand(game.player).Count >= deckManager.GetHandSize()) return false;
+
+            PlayableLeader player = game.player;
+            var drawPile = deckManager.GetDrawPile(player).Take(5).ToList();
+            CardData chosen = drawPile.FirstOrDefault(card => card != null &&
+                ((card.race == RacesEnum.Dwarf)
+                || (!string.IsNullOrWhiteSpace(card.name) && card.name.IndexOf("mithril", StringComparison.OrdinalIgnoreCase) >= 0)
+                || (card.tags != null && card.tags.Any(tag => tag != null && (tag.IndexOf("treasure", StringComparison.OrdinalIgnoreCase) >= 0 || tag.IndexOf("artifact", StringComparison.OrdinalIgnoreCase) >= 0 || tag.IndexOf("dwarf", StringComparison.OrdinalIgnoreCase) >= 0)))));
+            if (chosen == null) return false;
+
+            if (!deckManager.TryAddCardToHand(player, chosen)) return false;
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Doors of the Deep Delved finds {chosen.name} among the deep ways.", Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            return character != null && game != null && deckManager != null && game.player != null && character.GetOwner() == game.player
+                && deckManager.HasDeckFor(game.player)
+                && deckManager.GetHand(game.player).Count < deckManager.GetHandSize()
+                && deckManager.GetDrawPile(game.player).Take(5).Any(card => card != null);
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class IllNewsBeforeDawnAction : EventAction
+{
+    private const int Radius = 5;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            var nearby = character.hex.GetHexesInRadius(Radius).Where(h => h != null).ToList();
+            Hex targetHex = nearby.FirstOrDefault(h => h.GetPC() != null && h.GetPC().owner != owner)
+                ?? nearby.FirstOrDefault(h => h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && !IsAllied(character, ch) && ch.IsArmyCommander()));
+            if (targetHex == null) return false;
+
+            targetHex.RevealArea(0, true, owner);
+            if (targetHex.GetPC() != null && targetHex.GetPC().loyalty > 0)
+            {
+                targetHex.GetPC().DecreaseLoyalty(10, character);
+                MessageDisplayNoUI.ShowMessage(character.hex, character, $"Ill News Before Dawn reveals {targetHex.GetPC().pcName} and lowers its loyalty.", Color.white);
+            }
+            else
+            {
+                MessageDisplayNoUI.ShowMessage(character.hex, character, $"Ill News Before Dawn exposes enemy forces before dawn.", Color.white);
+            }
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null && character.hex != null && character.hex.GetHexesInRadius(Radius).Any(h => h != null && ((h.GetPC() != null && h.GetPC().owner != character.GetOwner()) || (h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && !IsAllied(character, ch) && ch.IsArmyCommander()))));
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class RidersSentInHasteAction : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+
+            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            Hex farthestOwnedPcHex = board.GetHexes()
+                .Where(h => h != null && h.GetPC() != null && h.GetPC().owner == character.GetOwner())
+                .OrderByDescending(h => Vector2.Distance(character.hex.v2, h.v2))
+                .FirstOrDefault();
+            if (farthestOwnedPcHex == null) return false;
+
+            board.MoveCharacterOneHex(character, character.hex, farthestOwnedPcHex, true, false);
+
+            PC pc = farthestOwnedPcHex.GetPC();
+            if (pc != null)
+            {
+                pc.IncreaseLoyalty(5, character);
+                MessageDisplayNoUI.ShowMessage(farthestOwnedPcHex, character, $"Riders Sent in Haste carries {character.characterName} to {pc.pcName}, where loyalty rises by 5.", Color.white);
+            }
+
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            return character != null && character.hex != null && board != null
+                && board.GetHexes().Any(h => h != null && h.GetPC() != null && h.GetPC().owner == character.GetOwner());
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class CouncilInAShutteredHallAction : EventAction
+{
+    private const int Radius = 2;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            if (game == null || deckManager == null || game.player == null) return false;
+            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
+            if (deckManager.GetHand(game.player).Count >= deckManager.GetHandSize()) return false;
+
+            CardData peek = deckManager.GetDrawPile(game.player).Take(3).FirstOrDefault(card => card != null);
+            if (peek == null) return false;
+            if (!deckManager.TryAddCardToHand(game.player, peek)) return false;
+
+            PC pc = character.hex.GetPC();
+            bool grantedLoyalty = false;
+            if (pc != null && pc.owner == character.GetOwner() && character.hex.GetHexesInRadius(Radius).Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && !IsAllied(character, ch))))
+            {
+                pc.IncreaseLoyalty(5, character);
+                grantedLoyalty = true;
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Council in a Shuttered Hall secures {peek.name}{(grantedLoyalty ? " and hardens local loyalty." : ".")}", Color.white);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            return character != null && game != null && deckManager != null && game.player != null && character.GetOwner() == game.player
+                && deckManager.HasDeckFor(game.player)
+                && deckManager.GetHand(game.player).Count < deckManager.GetHandSize()
+                && deckManager.GetDrawPile(game.player).Take(3).Any(card => card != null);
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class WhiteTowerArsenalAction : EventAction
+{
+    private static bool IsAllied(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
+    private static List<Character> GetTargets(Character character)
+    {
+        if (character == null || character.hex == null || character.hex.characters == null) return new List<Character>();
+        return character.hex.characters
+            .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch) && ch.GetArmy() != null)
+            .Distinct()
+            .ToList();
+    }
+
+    private static int GrantShielded(Army army)
+    {
+        if (army == null || army.troopAbilityGroups == null) return 0;
+
+        int shieldedTroops = 0;
+        foreach (ArmyTroopAbilityGroup group in army.troopAbilityGroups)
+        {
+            if (group == null || group.amount <= 0) continue;
+            group.abilities ??= new List<ArmySpecialAbilityEnum>();
+            if (group.abilities.Contains(ArmySpecialAbilityEnum.Shielded)) continue;
+            group.abilities.Add(ArmySpecialAbilityEnum.Shielded);
+            shieldedTroops += group.amount;
+        }
+
+        return shieldedTroops;
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            List<Character> targets = GetTargets(character);
+            if (targets.Count == 0) return false;
+
+            int fortifiedTargets = 0;
+            int shieldedTroops = 0;
+            foreach (Character target in targets)
+            {
+                target.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
+                fortifiedTargets++;
+                shieldedTroops += GrantShielded(target.GetArmy());
+                target.GetArmy()?.commander?.hex?.RedrawArmies();
+            }
+
+            character.hex?.RedrawCharacters();
+            character.hex?.RedrawArmies();
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"White Tower Arsenal arms {fortifiedTargets} allied army commander(s) with Fortified and {shieldedTroops} shielded troop(s).", Color.cyan);
+            return fortifiedTargets > 0;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return GetTargets(character).Count > 0;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class OsgiliathQuartermastersAction : EventAction
+{
+    private const int Radius = 2;
+
+    private static bool IsAllied(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
+    private static List<Character> GetTargets(Character character)
+    {
+        if (character == null || character.hex == null) return new List<Character>();
+
+        return character.hex.GetHexesInRadius(Radius)
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch) && ch.GetArmy() != null)
+            .Distinct()
+            .ToList();
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            List<Character> targets = GetTargets(character);
+            if (targets.Count == 0) return false;
+
+            Character target = targets
+                .OrderByDescending(ch => ch.GetCommander() + ch.GetEmmissary())
+                .ThenByDescending(ch => ch.GetArmy() != null ? ch.GetArmy().GetSize() : 0)
+                .FirstOrDefault();
+            if (target == null || target.GetArmy() == null) return false;
+
+            Leader owner = target.GetOwner();
+            owner?.AddTimber(1, false);
+            owner?.AddIron(1, false);
+            owner?.AddGold(1, false);
+            target.GetArmy().AddXp(1, "Quartermasters");
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Osgiliath Quartermasters replenish {target.characterName}: +1 timber, +1 iron, +1 gold, and +1 army XP.", Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return GetTargets(character).Count > 0;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class RammasEchorAction : EventAction
+{
+    private static bool IsAllied(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+
+            List<Character> allies = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && IsAllied(character, ch))
+                .Distinct()
+                .ToList();
+            List<Character> enemies = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && !IsAllied(character, ch))
+                .Distinct()
+                .ToList();
+
+            if (allies.Count == 0 && enemies.Count == 0) return false;
+
+            for (int i = 0; i < allies.Count; i++)
+            {
+                allies[i].ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
+            }
+
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                enemies[i].ApplyStatusEffect(StatusEffectEnum.Halted, 1);
+            }
+
+            character.hex.RedrawCharacters();
+            character.hex.RedrawArmies();
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Rammas Echor braces the wall: {allies.Count} allied unit(s) gain Fortified and {enemies.Count} enemy unit(s) are Halted.", Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null && character.hex != null && character.hex.characters != null
+                && character.hex.characters.Any(ch => ch != null && !ch.killed);
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class DolAmrothShipyardAction : EventAction
+{
+    private static bool IsSeaAdjacent(Hex hex)
+    {
+        if (hex == null) return false;
+        return hex.GetHexesInRadius(1)
+            .Any(h => h != null && h != hex && (h.terrainType == TerrainEnum.shore || h.terrainType == TerrainEnum.shallowWater || h.IsWaterTerrain()));
+    }
+
+    private static bool IsAllied(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
+    private static List<Character> GetTargets(Character character)
+    {
+        if (character == null || character.hex == null || character.hex.characters == null) return new List<Character>();
+        return character.hex.characters
+            .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch) && ch.GetArmy() != null)
+            .Distinct()
+            .ToList();
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null || !IsSeaAdjacent(character.hex)) return false;
+
+            Character target = GetTargets(character)
+                .OrderByDescending(ch => ch.GetCommander() + ch.GetEmmissary())
+                .ThenByDescending(ch => ch.GetArmy() != null ? ch.GetArmy().GetSize() : 0)
+                .FirstOrDefault();
+            if (target == null || target.GetArmy() == null) return false;
+
+            target.GetArmy().Recruit(TroopsTypeEnum.ws, 1);
+            target.GetOwner()?.AddTimber(1, false);
+            target.hex?.RedrawCharacters();
+            target.hex?.RedrawArmies();
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Dol Amroth Shipyard launches a warship for {target.characterName} and adds 1 timber to the stores.", Color.cyan);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null && character.hex != null && IsSeaAdjacent(character.hex) && GetTargets(character).Count > 0;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class GondorMusteringAction : EventAction
+{
+    private const int Radius = 2;
+
+    private static bool IsAllied(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
+    private static List<Character> GetTargets(Character character)
+    {
+        if (character == null || character.hex == null) return new List<Character>();
+        return character.hex.GetHexesInRadius(Radius)
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch) && ch.GetArmy() != null)
+            .Distinct()
+            .ToList();
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            Character target = GetTargets(character)
+                .OrderByDescending(ch => ch.GetCommander() + ch.GetEmmissary())
+                .ThenByDescending(ch => ch.GetArmy() != null ? ch.GetArmy().GetSize() : 0)
+                .FirstOrDefault();
+            if (target == null || target.GetArmy() == null) return false;
+
+            target.GetArmy().Recruit(TroopsTypeEnum.li, 1);
+            target.ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+            target.hex?.RedrawCharacters();
+            target.hex?.RedrawArmies();
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Gondor Mustering adds 1 Light Infantry and Courage to {target.characterName}.", Color.green);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return GetTargets(character).Count > 0;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class PelargirShipCaptainAction : EventAction
+{
+    private static bool IsSeaAdjacent(Hex hex)
+    {
+        if (hex == null) return false;
+        return hex.GetHexesInRadius(1)
+            .Any(h => h != null && h != hex && (h.terrainType == TerrainEnum.shore || h.terrainType == TerrainEnum.shallowWater || h.IsWaterTerrain()));
+    }
+
+    private static bool IsAllied(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
+    private static List<Character> GetTargets(Character character)
+    {
+        if (character == null || character.hex == null || character.hex.characters == null) return new List<Character>();
+        return character.hex.characters
+            .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch) && ch.GetArmy() != null)
+            .Distinct()
+            .ToList();
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null || !IsSeaAdjacent(character.hex)) return false;
+
+            Character target = GetTargets(character)
+                .OrderByDescending(ch => (ch.GetCommander() + ch.GetEmmissary(), ch.GetArmy() != null ? ch.GetArmy().GetSize() : 0))
+                .FirstOrDefault();
+            if (target == null || target.GetArmy() == null) return false;
+
+            target.GetArmy().Recruit(TroopsTypeEnum.ws, 1);
+            target.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+            target.hex?.RedrawCharacters();
+            target.hex?.RedrawArmies();
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Pelargir Ship Captain adds 1 Warship and Haste to {target.characterName}.", Color.cyan);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null && character.hex != null && IsSeaAdjacent(character.hex) && GetTargets(character).Count > 0;
         };
 
         asyncEffect = async (character) =>
