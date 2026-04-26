@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId": "the_dark_eye",
     "nation": "Sauron",
     "alignment": 1,
@@ -7,6 +7,7 @@
         {
             "cardId": 3,
             "name": "Barad-dur",
+            "deckId": "the_dark_eye",
             "type": "PC",
             "action": "PCAction",
             "tags": [
@@ -26,6 +27,7 @@
         {
             "cardId": 13,
             "name": "Barad Ungol",
+            "deckId": "the_dark_eye",
             "type": "PC",
             "action": "PCAction",
             "tags": [
@@ -45,6 +47,7 @@
         {
             "cardId": 395,
             "name": "The Eye Watches",
+            "deckId": "the_dark_eye",
             "type": "Action",
             "action": "BlazonOfTheEye",
             "actionClassName": "BlazonOfTheEye",
@@ -64,6 +67,7 @@
         {
             "cardId": 470,
             "name": "Reach of Barad-Ungol",
+            "deckId": "the_dark_eye",
             "type": "Event",
             "action": "ReachOfBaradUngol",
             "actionClassName": "ReachOfBaradUngol",
@@ -84,6 +88,7 @@
         {
             "cardId": 707,
             "name": "Eye's Tribute",
+            "deckId": "the_dark_eye",
             "type": "Event",
             "action": "EyesTribute",
             "actionClassName": "EyesTribute",
@@ -104,6 +109,7 @@
         {
             "cardId": 710,
             "name": "Chains of the Lidless Eye",
+            "deckId": "the_dark_eye",
             "type": "Event",
             "action": "ChainsoftheLidlessEye",
             "actionClassName": "ChainsoftheLidlessEye",
@@ -124,6 +130,7 @@
         {
             "cardId": 719,
             "name": "Murazor",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "Murazor",
             "tags": [],
@@ -199,6 +206,7 @@
         {
             "cardId": 720,
             "name": "Khamul",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "Khamul",
             "tags": [],
@@ -274,6 +282,7 @@
         {
             "cardId": 721,
             "name": "Akhorahil",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "Akhorahil",
             "tags": [],
@@ -349,6 +358,7 @@
         {
             "cardId": 722,
             "name": "Ji Indur",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "JiIndur",
             "tags": [],
@@ -424,6 +434,7 @@
         {
             "cardId": 723,
             "name": "Ovatha",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "Ovatha",
             "tags": [],
@@ -484,6 +495,7 @@
         {
             "cardId": 724,
             "name": "Adunaphel",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "Adunaphel",
             "tags": [],
@@ -544,6 +556,7 @@
         {
             "cardId": 725,
             "name": "Ren the Unclean",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "RenTheUnclean",
             "tags": [],
@@ -604,6 +617,7 @@
         {
             "cardId": 726,
             "name": "Hoarmurath",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "Hoarmurath",
             "tags": [],
@@ -664,6 +678,7 @@
         {
             "cardId": 727,
             "name": "Dendra Dwar",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "DendraDwar",
             "tags": [],
@@ -739,6 +754,7 @@
         {
             "cardId": 732,
             "name": "Shelob",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "Shelob",
             "tags": [],
@@ -769,6 +785,7 @@
         {
             "cardId": 763,
             "name": "Barad-dur",
+            "deckId": "the_dark_eye",
             "type": "Character",
             "spriteName": "Baraddur",
             "tags": [],
@@ -783,6 +800,7 @@
         {
             "cardId": 559,
             "name": "Angmarin",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "Angmarin",
             "tags": [],
@@ -811,6 +829,7 @@
         {
             "cardId": 574,
             "name": "Catapults",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "Catapults",
             "tags": [],
@@ -836,6 +855,7 @@
         {
             "cardId": 582,
             "name": "Crossbow Orcs",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "CrossbowOrcs",
             "tags": [],
@@ -864,6 +884,7 @@
         {
             "cardId": 591,
             "name": "Durthang Orcs",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "DurthangOrcs",
             "tags": [],
@@ -889,6 +910,7 @@
         {
             "cardId": 592,
             "name": "Durthang Sorcerers",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "DurthangSorcerers",
             "tags": [],
@@ -914,6 +936,7 @@
         {
             "cardId": 593,
             "name": "Durthang Uruk Hai",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "DurthangUrukHai",
             "tags": [],
@@ -942,6 +965,7 @@
         {
             "cardId": 616,
             "name": "Gorgoroth Orcs",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "GorgorothOrcs",
             "tags": [],
@@ -967,6 +991,7 @@
         {
             "cardId": 617,
             "name": "Grond",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "Grond",
             "tags": [],
@@ -992,6 +1017,7 @@
         {
             "cardId": 624,
             "name": "Head Catapults",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "HeadCatapults",
             "tags": [],
@@ -1020,6 +1046,7 @@
         {
             "cardId": 645,
             "name": "Morgul Pass Guards",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "MorgulPassGuards",
             "tags": [],
@@ -1048,6 +1075,7 @@
         {
             "cardId": 654,
             "name": "Orcs",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "Orcs",
             "tags": [],
@@ -1073,6 +1101,7 @@
         {
             "cardId": 681,
             "name": "Trebuchets",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "Trebuchets",
             "tags": [],
@@ -1098,6 +1127,7 @@
         {
             "cardId": 685,
             "name": "Ungol Orcs",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "UngolOrcs",
             "tags": [],
@@ -1123,6 +1153,7 @@
         {
             "cardId": 686,
             "name": "Uruk Hai",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "UrukHai",
             "tags": [],
@@ -1151,6 +1182,7 @@
         {
             "cardId": 689,
             "name": "Warg Riders",
+            "deckId": "the_dark_eye",
             "type": "Army",
             "spriteName": "WargRiders",
             "tags": [],

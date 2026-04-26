@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId": "the_necromancer",
     "nation": "Sauron",
     "alignment": 1,
@@ -7,6 +7,7 @@
         {
             "cardId": 8,
             "name": "Dol Guldur",
+            "deckId": "the_necromancer",
             "type": "PC",
             "action": "PCAction",
             "tags": [
@@ -26,6 +27,7 @@
         {
             "cardId": 554,
             "name": "Lieutenant of Dol Guldur",
+            "deckId": "the_necromancer",
             "type": "Character",
             "spriteName": "LieutenantOfDolGuldur",
             "tags": [],
@@ -40,6 +42,7 @@
         {
             "cardId": 549,
             "name": "Goblin Miner",
+            "deckId": "the_necromancer",
             "type": "Character",
             "spriteName": "GoblinMiner",
             "tags": [],
@@ -54,6 +57,7 @@
         {
             "cardId": 733,
             "name": "Balrog",
+            "deckId": "the_necromancer",
             "type": "Character",
             "spriteName": "Balrog",
             "tags": [],
@@ -99,6 +103,7 @@
         {
             "cardId": 734,
             "name": "Smaug",
+            "deckId": "the_necromancer",
             "type": "Character",
             "spriteName": "Smaug",
             "tags": [],
@@ -129,6 +134,7 @@
         {
             "cardId": 747,
             "name": "Goblin King",
+            "deckId": "the_necromancer",
             "type": "Character",
             "spriteName": "GoblinKing",
             "tags": [],
@@ -159,6 +165,7 @@
         {
             "cardId": 755,
             "name": "Barrow-wight",
+            "deckId": "the_necromancer",
             "type": "Character",
             "spriteName": "Barrowwight",
             "tags": [],
@@ -204,6 +211,7 @@
         {
             "cardId": 758,
             "name": "Azog",
+            "deckId": "the_necromancer",
             "type": "Character",
             "spriteName": "Azog",
             "tags": [],
@@ -218,6 +226,7 @@
         {
             "cardId": 571,
             "name": "Bog Swarm",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "BogSwarm",
             "tags": [],
@@ -246,6 +255,7 @@
         {
             "cardId": 575,
             "name": "Cave Goblins",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "CaveGoblins",
             "tags": [],
@@ -271,6 +281,7 @@
         {
             "cardId": 576,
             "name": "Cave Trolls",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "CaveTrolls",
             "tags": [],
@@ -296,6 +307,7 @@
         {
             "cardId": 580,
             "name": "Creatures Of The Deeps",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "CreaturesOfTheDeeps",
             "tags": [],
@@ -324,6 +336,7 @@
         {
             "cardId": 607,
             "name": "Forest Orcs",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "ForestOrcs",
             "tags": [],
@@ -349,6 +362,7 @@
         {
             "cardId": 608,
             "name": "Forest Spiders",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "ForestSpiders",
             "tags": [],
@@ -377,6 +391,7 @@
         {
             "cardId": 609,
             "name": "Forest Wargs",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "ForestWargs",
             "tags": [],
@@ -405,6 +420,7 @@
         {
             "cardId": 612,
             "name": "Goblin Sappers",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "GoblinSappers",
             "tags": [],
@@ -430,6 +446,7 @@
         {
             "cardId": 613,
             "name": "Goblins Of Moria",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "GoblinsOfMoria",
             "tags": [],
@@ -455,6 +472,7 @@
         {
             "cardId": 628,
             "name": "Hobgoblins",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "Hobgoblins",
             "tags": [],
@@ -480,6 +498,7 @@
         {
             "cardId": 629,
             "name": "Hounds",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "Hounds",
             "tags": [],
@@ -508,6 +527,7 @@
         {
             "cardId": 637,
             "name": "Mangonels",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "Mangonels",
             "tags": [],
@@ -533,6 +553,7 @@
         {
             "cardId": 653,
             "name": "Olog Hai",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "OlogHai",
             "tags": [],
@@ -558,6 +579,7 @@
         {
             "cardId": 664,
             "name": "Ruins Spiders",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "RuinsSpiders",
             "tags": [],
@@ -586,6 +608,7 @@
         {
             "cardId": 665,
             "name": "Snow Trolls",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "SnowTrolls",
             "tags": [],
@@ -611,6 +634,7 @@
         {
             "cardId": 671,
             "name": "Spiders",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "Spiders",
             "tags": [],
@@ -639,6 +663,7 @@
         {
             "cardId": 672,
             "name": "Stone Trolls",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "StoneTrolls",
             "tags": [],
@@ -664,6 +689,7 @@
         {
             "cardId": 684,
             "name": "Undead",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "Undead",
             "tags": [],
@@ -692,6 +718,7 @@
         {
             "cardId": 690,
             "name": "Wargs",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "Wargs",
             "tags": [],
@@ -720,6 +747,7 @@
         {
             "cardId": 691,
             "name": "War Trolls",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "WarTrolls",
             "tags": [],
@@ -748,6 +776,7 @@
         {
             "cardId": 693,
             "name": "Wolves",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "Wolves",
             "tags": [],
@@ -776,6 +805,7 @@
         {
             "cardId": 699,
             "name": "Wood Trolls",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "WoodTrolls",
             "tags": [],
@@ -801,6 +831,7 @@
         {
             "cardId": 620,
             "name": "Half Trolls",
+            "deckId": "the_necromancer",
             "type": "Army",
             "spriteName": "HalfTrolls",
             "tags": [],

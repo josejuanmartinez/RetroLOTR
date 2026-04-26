@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId":  "actions_deck",
     "nation":  "Shared",
     "alignment":  2,
@@ -7,6 +7,7 @@
                   {
                       "cardId":  102,
                       "name":  "Hear Stories",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "RevealRumours",
                       "actionId":  162,
@@ -34,6 +35,7 @@
                   {
                       "cardId":  274,
                       "name":  "Hide",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "action":  "Hide",
                       "actionClassName":  "Hide",
@@ -56,6 +58,7 @@
                   {
                       "cardId":  86,
                       "name":  "Steal Gold",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StealGold",
                       "actionId":  146,
@@ -83,6 +86,7 @@
                   {
                       "cardId":  87,
                       "name":  "Steal Iron",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StealIron",
                       "actionId":  147,
@@ -110,6 +114,7 @@
                   {
                       "cardId":  88,
                       "name":  "Steal Leather",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StealLeather",
                       "actionId":  148,
@@ -137,6 +142,7 @@
                   {
                       "cardId":  91,
                       "name":  "Steal Timber",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StealTimber",
                       "actionId":  151,
@@ -164,6 +170,7 @@
                   {
                       "cardId":  90,
                       "name":  "Steal Mounts",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StealMounts",
                       "actionId":  150,
@@ -191,6 +198,7 @@
                   {
                       "cardId":  89,
                       "name":  "Steal Mithril",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StealMithril",
                       "actionId":  149,
@@ -218,6 +226,7 @@
                   {
                       "cardId":  475,
                       "name":  "Poison",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "action":  "Poison",
                       "actionClassName":  "Poison",
@@ -240,6 +249,7 @@
                   {
                       "cardId":  52,
                       "name":  "Sell 5 Steel",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "SellSteel",
                       "actionId":  98,
@@ -266,6 +276,7 @@
                   {
                       "cardId":  53,
                       "name":  "Buy 5 Steel",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "BuySteel",
                       "actionId":  99,
@@ -293,6 +304,7 @@
                   {
                       "cardId":  54,
                       "name":  "Sell 5 Leather",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "SellLeather",
                       "actionId":  109,
@@ -319,6 +331,7 @@
                   {
                       "cardId":  55,
                       "name":  "Buy 5 Leather",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "BuyLeather",
                       "actionId":  110,
@@ -346,6 +359,7 @@
                   {
                       "cardId":  56,
                       "name":  "Sell 5 Mounts",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "SellMounts",
                       "actionId":  111,
@@ -372,6 +386,7 @@
                   {
                       "cardId":  57,
                       "name":  "Buy 5 Mounts",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "BuyMounts",
                       "actionId":  112,
@@ -399,6 +414,7 @@
                   {
                       "cardId":  58,
                       "name":  "Sell 5 Iron",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "SellIron",
                       "actionId":  113,
@@ -425,6 +441,7 @@
                   {
                       "cardId":  59,
                       "name":  "Buy 5 Iron",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "BuyIron",
                       "actionId":  114,
@@ -452,6 +469,7 @@
                   {
                       "cardId":  60,
                       "name":  "Sell 5 Timber",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "SellTimber",
                       "actionId":  115,
@@ -478,6 +496,7 @@
                   {
                       "cardId":  61,
                       "name":  "Buy 5 Timber",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "BuyTimber",
                       "actionId":  116,
@@ -504,6 +523,7 @@
                   {
                       "cardId":  273,
                       "name":  "Buy 5 Food",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "BuyFood",
                       "actionId":  195,
@@ -531,6 +551,7 @@
                   {
                       "cardId":  62,
                       "name":  "Sell 5 Mithril",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "SellMithril",
                       "actionId":  117,
@@ -557,6 +578,7 @@
                   {
                       "cardId":  63,
                       "name":  "Buy 5 Mithril",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "BuyMithril",
                       "actionId":  118,
@@ -583,6 +605,7 @@
                   {
                       "cardId":  65,
                       "name":  "Wound Character",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "WoundCharacter",
                       "actionId":  120,
@@ -610,6 +633,7 @@
                   {
                       "cardId":  66,
                       "name":  "Double Character",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "DoubleCharacter",
                       "actionId":  121,
@@ -636,6 +660,7 @@
                   {
                       "cardId":  67,
                       "name":  "Undouble Character",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "UndoubleCharacter",
                       "actionId":  122,
@@ -662,6 +687,7 @@
                   {
                       "cardId":  68,
                       "name":  "Increase Loyalty",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "InfluenceUpPC",
                       "actionId":  123,
@@ -689,6 +715,7 @@
                   {
                       "cardId":  69,
                       "name":  "Decrease Loyalty",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "InfluenceDownPC",
                       "actionId":  124,
@@ -716,6 +743,7 @@
                   {
                       "cardId":  70,
                       "name":  "Attack",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "Attack",
                       "actionId":  125,
@@ -743,6 +771,7 @@
                   {
                       "cardId":  71,
                       "name":  "Increase Fortifications",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "FortifyPC",
                       "actionId":  126,
@@ -769,6 +798,7 @@
                   {
                       "cardId":  84,
                       "name":  "Find Artifact",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "FindArtifact",
                       "actionId":  144,
@@ -796,6 +826,7 @@
                   {
                       "cardId":  94,
                       "name":  "Scout Area",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "ScoutArea",
                       "actionId":  154,
@@ -823,6 +854,7 @@
                   {
                       "cardId":  95,
                       "name":  "Block",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "Block",
                       "actionId":  155,
@@ -850,6 +882,7 @@
                   {
                       "cardId":  103,
                       "name":  "AFriendOrThree",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StateAllegiance",
                       "actionId":  163,
@@ -877,6 +910,7 @@
                   {
                       "cardId":  105,
                       "name":  "Transfer Artifact",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "TransferArtifact",
                       "actionId":  165,
@@ -904,6 +938,7 @@
                   {
                       "cardId":  108,
                       "name":  "Steal Artifact",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StealArtifact",
                       "actionId":  173,
@@ -931,6 +966,7 @@
                   {
                       "cardId":  109,
                       "name":  "Sabotage Storage",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "SabotageStorage",
                       "actionId":  174,
@@ -958,6 +994,7 @@
                   {
                       "cardId":  111,
                       "name":  "Destroy Port",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "DestroyPort",
                       "actionId":  180,
@@ -985,6 +1022,7 @@
                   {
                       "cardId":  112,
                       "name":  "Remove Port",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "RemovePort",
                       "actionId":  178,
@@ -1012,6 +1050,7 @@
                   {
                       "cardId":  114,
                       "name":  "Remove Fortifications",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "RemoveFortifications",
                       "actionId":  179,
@@ -1039,6 +1078,7 @@
                   {
                       "cardId":  115,
                       "name":  "Siege Population",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "SiegePC",
                       "actionId":  176,
@@ -1066,6 +1106,7 @@
                   {
                       "cardId":  116,
                       "name":  "Duel",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "Duel",
                       "actionId":  181,
@@ -1093,6 +1134,7 @@
                   {
                       "cardId":  117,
                       "name":  "Refuse Duel",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "RefuseDuel",
                       "actionId":  182,
@@ -1120,6 +1162,7 @@
                   {
                       "cardId":  277,
                       "name":  "Steal Steel",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StealSteel",
                       "actionId":  201,
@@ -1147,6 +1190,7 @@
                   {
                       "cardId":  278,
                       "name":  "Train Army",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "TrainArmy",
                       "actionId":  166,
@@ -1174,6 +1218,7 @@
                   {
                       "cardId":  276,
                       "name":  "AssassinateCharacter",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "action":  "AssassinateCharacter",
                       "actionClassName":  "AssassinateCharacter",
@@ -1196,6 +1241,7 @@
                   {
                       "cardId":  279,
                       "name":  "Steal Food",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "StealFood",
                       "actionId":  200,
@@ -1223,6 +1269,7 @@
                   {
                       "cardId":  280,
                       "name":  "Kidnap Character",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "KidnapCharacter",
                       "actionId":  1230,
@@ -1250,6 +1297,7 @@
                   {
                       "cardId":  476,
                       "name":  "Ask Ransom",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "AskRansom",
                       "actionId":  1232,
@@ -1277,6 +1325,7 @@
                   {
                       "cardId":  477,
                       "name":  "Destroy Fortifications",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "DestroyFortifications",
                       "actionId":  175,
@@ -1304,6 +1353,7 @@
                   {
                       "cardId":  478,
                       "name":  "Free Character",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "FreeCharacter",
                       "actionId":  1233,
@@ -1331,6 +1381,7 @@
                   {
                       "cardId":  479,
                       "name":  "Sabotage Port",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "SabotagePort",
                       "actionId":  177,
@@ -1358,6 +1409,7 @@
                   {
                       "cardId":  480,
                       "name":  "Release Character",
+                      "deckId":  "actions_deck",
                       "type":  "Action",
                       "actionClassName":  "ReleaseCharacter",
                       "actionId":  1231,

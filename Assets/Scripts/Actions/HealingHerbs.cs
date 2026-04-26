@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class HealingHerbs : CharacterAction
+public class Athelas : CharacterAction
 {
     private static bool IsAllied(Character source, Character target)
     {
@@ -67,10 +67,14 @@ public class HealingHerbs : CharacterAction
             target.ClearStatusEffect(StatusEffectEnum.Poisoned);
             target.ClearStatusEffect(StatusEffectEnum.Burning);
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Healing Herbs restores {target.characterName}: +15 HP, Poisoned/Burning removed.", Color.green);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Athelas restores {target.characterName}: +15 HP, Poisoned/Burning removed.", Color.green);
             return true;
         }
 
         base.Initialize(c, condition, effect, herbsAsync);
     }
+}
+
+public class HealingHerbs : Athelas
+{
 }

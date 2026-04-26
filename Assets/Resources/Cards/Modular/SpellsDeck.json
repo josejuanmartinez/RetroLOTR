@@ -7,6 +7,7 @@
                   {
                       "cardId":  138,
                       "name":  "Cast Darkness",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "CastDarkness",
                       "actionId":  127,
@@ -34,6 +35,7 @@
                   {
                       "cardId":  73,
                       "name":  "Cast Light",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "CastLight",
                       "actionId":  128,
@@ -61,6 +63,7 @@
                   {
                       "cardId":  206,
                       "name":  "Conjure Mounts",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "ConjureMounts",
                       "actionId":  129,
@@ -88,6 +91,7 @@
                   {
                       "cardId":  282,
                       "name":  "Corruption",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Corruption",
                       "actionId":  202,
@@ -115,6 +119,7 @@
                   {
                       "cardId":  96,
                       "name":  "Courage",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Courage",
                       "actionId":  156,
@@ -142,6 +147,7 @@
                   {
                       "cardId":  141,
                       "name":  "Curse",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Curse",
                       "actionId":  130,
@@ -169,6 +175,7 @@
                   {
                       "cardId":  279,
                       "name":  "Fear",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Fear",
                       "actionId":  203,
@@ -196,6 +203,7 @@
                   {
                       "cardId":  83,
                       "name":  "Festival Night",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Fireworks",
                       "actionId":  139,
@@ -223,6 +231,7 @@
                   {
                       "cardId":  283,
                       "name":  "Foam on the Water",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "WhiteHorsesFoam",
                       "actionId":  209,
@@ -250,6 +259,7 @@
                   {
                       "cardId":  97,
                       "name":  "Halt",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Halt",
                       "actionId":  157,
@@ -277,6 +287,7 @@
                   {
                       "cardId":  93,
                       "name":  "Haste",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Haste",
                       "actionId":  153,
@@ -304,6 +315,7 @@
                   {
                       "cardId":  82,
                       "name":  "Heal",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Heal",
                       "actionId":  138,
@@ -331,6 +343,7 @@
                   {
                       "cardId":  164,
                       "name":  "Ice Storm",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "IceStorm",
                       "actionId":  158,
@@ -358,6 +371,7 @@
                   {
                       "cardId":  280,
                       "name":  "Invisibility",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Invisibility",
                       "actionId":  204,
@@ -385,6 +399,7 @@
                   {
                       "cardId":  76,
                       "name":  "Oh, Elbereth!",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "OhElbereth",
                       "actionId":  131,
@@ -412,6 +427,7 @@
                   {
                       "cardId":  104,
                       "name":  "Perceive Danger",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "PerceiveDanger",
                       "actionId":  164,
@@ -439,6 +455,7 @@
                   {
                       "cardId":  285,
                       "name":  "Possession",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Possession",
                       "actionId":  205,
@@ -466,6 +483,7 @@
                   {
                       "cardId":  77,
                       "name":  "Return To Capital",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "ReturnToCapital",
                       "actionId":  132,
@@ -493,6 +511,7 @@
                   {
                       "cardId":  78,
                       "name":  "Reveal PC",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "RevealPC",
                       "actionId":  133,
@@ -520,6 +539,7 @@
                   {
                       "cardId":  281,
                       "name":  "Root",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Root",
                       "actionId":  206,
@@ -547,6 +567,7 @@
                   {
                       "cardId":  79,
                       "name":  "Scry Area",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "ScryArea",
                       "actionId":  134,
@@ -574,6 +595,7 @@
                   {
                       "cardId":  85,
                       "name":  "Scry Artifact",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "ScryArtifact",
                       "actionId":  145,
@@ -601,6 +623,7 @@
                   {
                       "cardId":  287,
                       "name":  "Summon Men-at-arms",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "SummonMA",
                       "actionId":  136,
@@ -628,6 +651,7 @@
                   {
                       "cardId":  282,
                       "name":  "Telepathy",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Telepathy",
                       "actionId":  207,
@@ -655,6 +679,7 @@
                   {
                       "cardId":  80,
                       "name":  "Teleport",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "Teleport",
                       "actionId":  135,
@@ -682,6 +707,7 @@
                   {
                       "cardId":  288,
                       "name":  "Voice Of The Tower",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "VoiceOfTheTower",
                       "actionId":  208,
@@ -709,6 +735,7 @@
                   {
                       "cardId":  99,
                       "name":  "Wizard\u0027s Fire",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "WizardsFire",
                       "actionId":  159,
@@ -736,6 +763,7 @@
                   {
                       "cardId":  81,
                       "name":  "WizardsLaugh",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "WizardsLaugh",
                       "actionId":  137,
@@ -763,6 +791,7 @@
                   {
                       "cardId":  166,
                       "name":  "Words Of Dispair",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "WordsOfDispair",
                       "actionId":  160,
@@ -790,6 +819,7 @@
                   {
                       "cardId":  101,
                       "name":  "You Shall Not Pass!",
+                      "deckId":  "spells_deck",
                       "type":  "Action",
                       "actionClassName":  "YouShallNotPass",
                       "actionId":  161,

@@ -197,7 +197,8 @@ public class DeckExplorerWindow : EditorWindow
         GUILayout.BeginVertical(GUILayout.Width(320));
         EditorGUILayout.LabelField("Cards", EditorStyles.boldLabel);
 
-        if (GetSelectedDeckView() == null)
+        DeckEntryView deckView = GetSelectedDeckView();
+        if (deckView == null)
         {
             EditorGUILayout.HelpBox("Select a deck.", MessageType.Info);
             GUILayout.EndVertical();
@@ -213,7 +214,7 @@ public class DeckExplorerWindow : EditorWindow
             if (card == null) continue;
 
             bool selected = i == selectedCardIndex;
-            string finalizedPrefix = IsCardFinalized(card) ? "✔ " : string.Empty;
+            string finalizedPrefix = IsCardFinalized(card, deckView) ? "✔ " : string.Empty;
             string typeLabel = FormatCardTypeLabel(card.GetCardType());
             string referencePrefix = IsReferenceCard(card) ? "↩ " : string.Empty;
             string label = $"{finalizedPrefix}{referencePrefix}{FormatCardTitle(card.name)}  [{typeLabel}]";
@@ -262,6 +263,7 @@ public class DeckExplorerWindow : EditorWindow
         {
             SetCardFinalized(card, finalized);
         }
+        EditorGUI.EndDisabledGroup();
         GUILayout.FlexibleSpace();
         DrawCopyToDeckControls(card);
         GUILayout.Space(6);
@@ -275,12 +277,11 @@ public class DeckExplorerWindow : EditorWindow
             ReloadSelectedCard();
         }
         EditorGUILayout.EndHorizontal();
-        EditorGUI.EndDisabledGroup();
 
         if (isReference)
         {
             GUILayout.Space(4);
-            EditorGUILayout.HelpBox("Reference card locked in this deck.", MessageType.Info);
+            EditorGUILayout.HelpBox("Reference card locked for editing in this deck. Copy and move are still available.", MessageType.Info);
         }
 
         GUILayout.Space(10);
@@ -369,7 +370,8 @@ public class DeckExplorerWindow : EditorWindow
         int targetIndex = GetCopyTargetIndex(targets);
         string[] options = targets.Select(BuildDeckLabel).ToArray();
 
-        EditorGUI.BeginDisabledGroup(!IsCardFinalized(card) || IsCardDisabled(card));
+        bool disableTransfer = !IsCardFinalized(card) || (IsCardDisabled(card) && !IsReferenceCard(card));
+        EditorGUI.BeginDisabledGroup(disableTransfer);
         EditorGUILayout.BeginHorizontal(GUILayout.Width(460));
         EditorGUILayout.LabelField("To deck", GUILayout.Width(55));
 
@@ -1299,13 +1301,16 @@ public class DeckExplorerWindow : EditorWindow
             ? string.Empty
             : targetDeckView.manifest.deckId.Trim();
         string sourceDeckId = ResolveSourceDeckId(sourceCard, sourceDeckView);
+        int sourceCardId = IsReferenceCard(sourceCard)
+            ? sourceCard.referenceCardId
+            : sourceCard.cardId;
 
         CardData copiedCard = new CardData
         {
             cardId = GetNextCardId(targetDeckView.deckData.cards),
             deckId = targetDeckId,
             referenceDeckId = sourceDeckId,
-            referenceCardId = sourceCard.cardId
+            referenceCardId = sourceCardId
         };
         if (copiedCard == null)
         {
@@ -1315,8 +1320,8 @@ public class DeckExplorerWindow : EditorWindow
         targetDeckView.deckData.cards ??= new List<CardData>();
         targetDeckView.deckData.cards.Add(copiedCard);
         targetDeckView.manifest.cardCount = targetDeckView.deckData.cards.Count;
-        SetCardFinalized(copiedCard, true);
-        SetCardDisabled(copiedCard, true);
+        SetCardFinalized(copiedCard, true, targetDeckView);
+        SetCardDisabled(copiedCard, true, targetDeckView);
 
         if (!SaveDeckData(targetDeckView, "copying"))
         {
@@ -1381,8 +1386,8 @@ public class DeckExplorerWindow : EditorWindow
         targetDeckView.deckData.cards ??= new List<CardData>();
         targetDeckView.deckData.cards.Add(movedCard);
         targetDeckView.manifest.cardCount = targetDeckView.deckData.cards.Count;
-        SetCardFinalized(movedCard, true);
-        SetCardDisabled(movedCard, false);
+        SetCardFinalized(movedCard, true, targetDeckView);
+        SetCardDisabled(movedCard, false, targetDeckView);
 
         if (!SaveDeckData(targetDeckView, "moving"))
         {
@@ -1468,8 +1473,8 @@ public class DeckExplorerWindow : EditorWindow
             foreach (CardData card in view.deckData.cards)
             {
                 if (card == null || !IsReferenceCard(card)) continue;
-                SetCardFinalized(card, true);
-                SetCardDisabled(card, true);
+                SetCardFinalized(card, true, view);
+                SetCardDisabled(card, true, view);
             }
         }
     }
@@ -1536,19 +1541,67 @@ public class DeckExplorerWindow : EditorWindow
     private Dictionary<string, CardData> BuildCardIndex()
     {
         Dictionary<string, CardData> cardIndex = new(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, string> parentDeckById = BuildParentDeckIndex();
+        Dictionary<string, List<CardData>> cardsByDeckId = new(StringComparer.OrdinalIgnoreCase);
 
         foreach (DeckEntryView view in deckViews)
         {
             if (view?.deckData?.cards == null || string.IsNullOrWhiteSpace(view.deckData.deckId)) continue;
 
+            string deckId = view.deckData.deckId.Trim();
+            cardsByDeckId[deckId] = view.deckData.cards;
+
             foreach (CardData card in view.deckData.cards)
             {
                 if (card == null) continue;
-                cardIndex[BuildCardReferenceKey(view.deckData.deckId, card.cardId)] = card;
+                cardIndex[BuildCardReferenceKey(deckId, card.cardId)] = card;
+            }
+        }
+
+        foreach (string deckId in cardsByDeckId.Keys)
+        {
+            string currentDeckId = deckId;
+            HashSet<string> visited = new(StringComparer.OrdinalIgnoreCase);
+
+            while (parentDeckById.TryGetValue(currentDeckId, out string parentDeckId)
+                && !string.IsNullOrWhiteSpace(parentDeckId)
+                && visited.Add(parentDeckId))
+            {
+                currentDeckId = parentDeckId;
+                if (!cardsByDeckId.TryGetValue(parentDeckId, out List<CardData> parentCards)) continue;
+
+                foreach (CardData card in parentCards)
+                {
+                    if (card == null) continue;
+                    string inheritedKey = BuildCardReferenceKey(deckId, card.cardId);
+                    if (!cardIndex.ContainsKey(inheritedKey))
+                    {
+                        cardIndex[inheritedKey] = card;
+                    }
+                }
             }
         }
 
         return cardIndex;
+    }
+
+    private Dictionary<string, string> BuildParentDeckIndex()
+    {
+        Dictionary<string, string> parentDeckById = new(StringComparer.OrdinalIgnoreCase);
+
+        foreach (DeckEntryView view in deckViews)
+        {
+            string deckId = view?.manifest?.deckId;
+            if (string.IsNullOrWhiteSpace(deckId))
+            {
+                deckId = view?.deckData?.deckId;
+            }
+
+            if (string.IsNullOrWhiteSpace(deckId)) continue;
+            parentDeckById[deckId.Trim()] = view?.manifest?.parentDeckId?.Trim() ?? string.Empty;
+        }
+
+        return parentDeckById;
     }
 
     private static CardData ResolveReferencedTemplate(
@@ -2175,11 +2228,11 @@ public class DeckExplorerWindow : EditorWindow
         return errors.Count == 0 ? "No requirement errors." : string.Join("\n", errors.Distinct());
     }
 
-    private static string GetCardFinalizedPreferenceKey(CardData card)
+    private string GetCardFinalizedPreferenceKey(CardData card, DeckEntryView deckView = null)
     {
         if (card == null) return null;
 
-        string deckId = string.IsNullOrWhiteSpace(card.deckId) ? "unknownDeck" : card.deckId.Trim();
+        string deckId = ResolvePreferenceDeckId(card, deckView);
         if (card.cardId > 0)
         {
             return $"RetroLOTR.DeckExplorer.Finalized.{deckId}.{card.cardId}";
@@ -2191,37 +2244,38 @@ public class DeckExplorerWindow : EditorWindow
         return $"RetroLOTR.DeckExplorer.Finalized.{deckId}.{name}.{sprite}.{action}";
     }
 
-    private static bool IsCardFinalized(CardData card)
+    private bool IsCardFinalized(CardData card, DeckEntryView deckView = null)
     {
-        string key = GetCardFinalizedPreferenceKey(card);
+        string key = GetCardFinalizedPreferenceKey(card, deckView);
         return !string.IsNullOrWhiteSpace(key) && EditorPrefs.GetBool(key, false);
     }
 
-    private static bool IsCardDisabled(CardData card)
+    private bool IsCardDisabled(CardData card, DeckEntryView deckView = null)
     {
-        string key = GetCardDisabledPreferenceKey(card);
+        if (!IsReferenceCard(card)) return false;
+        string key = GetCardDisabledPreferenceKey(card, deckView);
         return !string.IsNullOrWhiteSpace(key) && EditorPrefs.GetBool(key, false);
     }
 
-    private static void SetCardFinalized(CardData card, bool finalized)
+    private void SetCardFinalized(CardData card, bool finalized, DeckEntryView deckView = null)
     {
-        string key = GetCardFinalizedPreferenceKey(card);
+        string key = GetCardFinalizedPreferenceKey(card, deckView);
         if (string.IsNullOrWhiteSpace(key)) return;
         EditorPrefs.SetBool(key, finalized);
     }
 
-    private static void SetCardDisabled(CardData card, bool disabled)
+    private void SetCardDisabled(CardData card, bool disabled, DeckEntryView deckView = null)
     {
-        string key = GetCardDisabledPreferenceKey(card);
+        string key = GetCardDisabledPreferenceKey(card, deckView);
         if (string.IsNullOrWhiteSpace(key)) return;
         EditorPrefs.SetBool(key, disabled);
     }
 
-    private static string GetCardDisabledPreferenceKey(CardData card)
+    private string GetCardDisabledPreferenceKey(CardData card, DeckEntryView deckView = null)
     {
         if (card == null) return null;
 
-        string deckId = string.IsNullOrWhiteSpace(card.deckId) ? "unknownDeck" : card.deckId.Trim();
+        string deckId = ResolvePreferenceDeckId(card, deckView);
         if (card.cardId > 0)
         {
             return $"RetroLOTR.DeckExplorer.Disabled.{deckId}.{card.cardId}";
@@ -2231,6 +2285,27 @@ public class DeckExplorerWindow : EditorWindow
         string sprite = string.IsNullOrWhiteSpace(card.spriteName) ? "nosprite" : Normalize(card.spriteName);
         string action = string.IsNullOrWhiteSpace(card.GetActionRef()) ? "noaction" : Normalize(card.GetActionRef());
         return $"RetroLOTR.DeckExplorer.Disabled.{deckId}.{name}.{sprite}.{action}";
+    }
+
+    private string ResolvePreferenceDeckId(CardData card, DeckEntryView deckView = null)
+    {
+        if (!string.IsNullOrWhiteSpace(card?.deckId))
+        {
+            return card.deckId.Trim();
+        }
+
+        deckView ??= GetSelectedDeckView();
+        if (!string.IsNullOrWhiteSpace(deckView?.deckData?.deckId))
+        {
+            return deckView.deckData.deckId.Trim();
+        }
+
+        if (!string.IsNullOrWhiteSpace(deckView?.manifest?.deckId))
+        {
+            return deckView.manifest.deckId.Trim();
+        }
+
+        return "unknownDeck";
     }
 
     private static Leader GetHumanPlayerLeader()

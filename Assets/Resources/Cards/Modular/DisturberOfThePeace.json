@@ -11,7 +11,7 @@
             "actionEffect": "",
             "type": "Character",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "",
             "action": "",
@@ -98,7 +98,7 @@
             "actionEffect": "",
             "type": "Character",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "",
             "action": "",
@@ -156,7 +156,7 @@
             "tags": [
                 "TheShire"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "",
             "action": "PCAction",
@@ -214,7 +214,7 @@
             "tags": [
                 "TheShire"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "",
             "action": "PCAction",
@@ -272,7 +272,7 @@
             "tags": [
                 "TheShire"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "",
             "action": "PCAction",
@@ -332,7 +332,7 @@
                 "party",
                 "environmental"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "TreeParty",
             "action": "TreeParty",
@@ -388,7 +388,7 @@
             "actionEffect": "Hobbits within a personal radius of 2-4 hexes gain Hidden <sprite name=\"hidden\"> for 1 turn and lose Fear <sprite name=\"fear\">.",
             "type": "Event",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "BagginsDontLeaveHere",
             "action": "BagginsDontLeaveHere",
@@ -444,7 +444,7 @@
             "actionEffect": "Hobbits and Dwarves in radius 2 gain Encouraged<sprite name=\"encouraged\">.",
             "type": "Event",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "GoingOnAnAdventure",
             "action": "GoingOnAnAdventure",
@@ -500,7 +500,7 @@
             "actionEffect": "From the old mathoms, you gain 1<sprite name=\"iron\"> 1<sprite name=\"steel\"> 1<sprite name=\"mithril\">.",
             "type": "Event",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "MathomHouse",
             "action": "MathomHouse",
@@ -556,7 +556,7 @@
             "actionEffect": "Choose one character. Their refusal of duels ends, and you will win any duel forced on you this turn.",
             "type": "Action",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "RiddleAction",
             "action": "RiddleAction",
@@ -617,7 +617,7 @@
                 "disruption",
                 "festival"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "UnexpectedFireworksAction",
             "action": "UnexpectedFireworksAction",
@@ -678,7 +678,7 @@
                 "shirriff",
                 "reveal"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "ShirriffsAndBoundersAction",
             "action": "ShirriffsAndBoundersAction",
@@ -739,7 +739,7 @@
                 "fear",
                 "control"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "BarrowWightWhisperAction",
             "action": "BarrowWightWhisperAction",
@@ -800,7 +800,7 @@
                 "supply-loss",
                 "frontier"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "MuddyLaneDetourAction",
             "action": "MuddyLaneDetourAction",
@@ -861,7 +861,7 @@
                 "reveal",
                 "frontier"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "LanternsAtBreeGateAction",
             "action": "LanternsAtBreeGateAction",
@@ -922,7 +922,7 @@
                 "paths",
                 "tempo"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "OldForestTurnaboutAction",
             "action": "OldForestTurnaboutAction",
@@ -983,7 +983,7 @@
                 "roadside",
                 "shelter"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "RoomAtTheLastInnAction",
             "action": "RoomAtTheLastInnAction",
@@ -1044,7 +1044,7 @@
                 "rivendell",
                 "hobbit"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "RoadToRivendellAction",
             "action": "RoadToRivendellAction",
@@ -1105,7 +1105,7 @@
                 "escort",
                 "travel"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "PrancingPonyPassageAction",
             "action": "PrancingPonyPassageAction",
@@ -1166,7 +1166,7 @@
                 "haste",
                 "travel"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "GreenwayDiversionAction",
             "action": "GreenwayDiversionAction",
@@ -1227,7 +1227,7 @@
                 "scout",
                 "reveal"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "BreeRumoursAction",
             "action": "BreeRumoursAction",
@@ -1288,7 +1288,7 @@
                 "debt",
                 "tax"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "BagginsDueAction",
             "action": "BagginsDueAction",
@@ -1349,7 +1349,7 @@
                 "blocked",
                 "haunting"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "BarrowChillAction",
             "action": "BarrowChillAction",
@@ -1410,7 +1410,7 @@
                 "rest",
                 "watch"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "CrickhollowDiversionAction",
             "action": "CrickhollowDiversionAction",
@@ -1471,7 +1471,7 @@
                 "reveal",
                 "treasure"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "BarrowLiliesAction",
             "action": "BarrowLiliesAction",
@@ -1532,7 +1532,7 @@
                 "movement",
                 "diversion"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "BombadilsWhimAction",
             "action": "BombadilsWhimAction",
@@ -1593,7 +1593,7 @@
                 "song",
                 "camp"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "ElvenLullAction",
             "action": "ElvenLullAction",
@@ -1654,7 +1654,7 @@
                 "cleanse",
                 "water"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "WaterLiliesAction",
             "action": "WaterLiliesAction",
@@ -1715,7 +1715,7 @@
                 "forest",
                 "sleep"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "OldManWillowSongAction",
             "action": "OldManWillowSongAction",
@@ -1776,7 +1776,7 @@
                 "sea-view",
                 "journey"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "ClimbingWhiteHillsAction",
             "action": "ClimbingWhiteHillsAction",
@@ -1837,7 +1837,7 @@
                 "poison",
                 "journey"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "TravelThroughTheMarshAction",
             "action": "TravelThroughTheMarshAction",
@@ -1898,7 +1898,7 @@
                 "reveal",
                 "relic"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "OldRuinsOfArthedainAction",
             "action": "OldRuinsOfArthedainAction",
@@ -1959,7 +1959,7 @@
                 "crossing",
                 "escape"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "TheFordAction",
             "action": "TheFordAction",
@@ -2020,7 +2020,7 @@
                 "nazgul",
                 "watch"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "WeathertopAction",
             "action": "WeathertopAction",
@@ -2081,7 +2081,7 @@
                 "hobbit",
                 "escape"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "FloatingInBarrelsAction",
             "action": "FloatingInBarrelsAction",
@@ -2142,7 +2142,7 @@
                 "hope",
                 "reveal"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "ButterfliesAction",
             "action": "ButterfliesAction",
@@ -2203,7 +2203,7 @@
                 "hobbit",
                 "safety"
             ],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "TravelInSafetyAction",
             "action": "TravelInSafetyAction",
@@ -2259,7 +2259,7 @@
             "actionEffect": "",
             "type": "Army",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "",
             "action": "",
@@ -2317,7 +2317,7 @@
             "actionEffect": "",
             "type": "Army",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "",
             "action": "",
@@ -2375,7 +2375,7 @@
             "actionEffect": "",
             "type": "Army",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "",
             "action": "",
@@ -2487,7 +2487,7 @@
             "actionEffect": "",
             "type": "Army",
             "tags": [],
-            "deckId": "",
+            "deckId": "disturber_of_the_peace",
             "alignment": 0,
             "actionClassName": "",
             "action": "",
@@ -2732,7 +2732,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 100,
+            "procChance": 40,
             "portraitName": "",
             "referenceDeckId": "tharkun",
             "referenceCardId": 659,
@@ -2751,7 +2751,7 @@
             "artifacts": [],
             "troopType": 2,
             "specialAbilities": [
-                5
+                8
             ],
             "commanderSkillRequired": 1,
             "agentSkillRequired": 0,
@@ -3242,7 +3242,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 40,
+            "procChance": 45,
             "portraitName": "",
             "referenceDeckId": "",
             "referenceCardId": 0,
@@ -3261,7 +3261,7 @@
             "artifacts": [],
             "troopType": 1,
             "specialAbilities": [
-                0
+                17
             ],
             "commanderSkillRequired": 1,
             "agentSkillRequired": 0,

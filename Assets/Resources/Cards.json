@@ -52,7 +52,7 @@
             "thematic": "Core Free Peoples deck built around Men, Elves, Dwarves, Hobbits, Eagles, and other allied peoples working in concert. Its gameplay favors balanced development, card quality, scouting, diplomacy, defensive resilience, region access, and reliable utility over brute specialization; it should feel like the broad strategic foundation from which the more sharply themed Gandalf subdecks branch outward.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/GandalfBase",
-            "cardCount": 44,
+            "cardCount": 45,
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true
@@ -118,7 +118,7 @@
             "thematic": "Core Isengard strategy deck blending manipulation, coercion, industrial preparation, mixed evil-men support, and practical force. Its races and allies can include Dunlendings, opportunistic Men, Orcs, and wizard-led control pieces; in play it is about pressure through planning, resource leverage, positioning, political influence, and midrange control before committing to a sharper Saruman identity.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/SarumanBase",
-            "cardCount": 84,
+            "cardCount": 80,
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true
@@ -129,7 +129,7 @@
             "thematic": "Orthanc mastermind deck focused on rhetoric, control, persuasion, voice, and polished strategic dominance. This is Saruman as the calculating high wizard who bends choices and states rather than simply rushing with troops; players should expect influence, deception, mind-affecting actions, elegant tactical denial, and carefully timed control cards.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/SarumanTheWhite",
-            "cardCount": 26,
+            "cardCount": 28,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false
@@ -151,7 +151,7 @@
             "thematic": "War engine of Isengard built around Uruk-hai, Orc industry, furnaces, intimidation, and relentless production-to-pressure conversion. This is the aggressive Saruman branch: siege tools, military events, battlefield force multiplication, and sustained assault through disciplined evil infantry and industrial throughput rather than finesse.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/TheWhiteHand",
-            "cardCount": 37,
+            "cardCount": 38,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false

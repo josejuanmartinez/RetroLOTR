@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId": "the_deceiver",
     "nation": "Sauron",
     "alignment": 1,
@@ -7,6 +7,7 @@
         {
             "cardId": 394,
             "name": "Numenor turned to Shadow",
+            "deckId": "the_deceiver",
             "type": "Action",
             "action": "BlackNumenoreanArmour",
             "actionClassName": "BlackNumenoreanArmour",
@@ -26,6 +27,7 @@
         {
             "cardId": 488,
             "name": "TheDrownOfTheStone",
+            "deckId": "the_deceiver",
             "type": "Event",
             "action": "TheDrownOfTheStone",
             "actionClassName": "TheDrownOfTheStone",
@@ -46,6 +48,7 @@
         {
             "cardId": 493,
             "name": "TheLureOfTheSenses",
+            "deckId": "the_deceiver",
             "type": "Action",
             "action": "TheLureOfTheSenses",
             "actionClassName": "TheLureOfTheSenses",
@@ -66,6 +69,7 @@
         {
             "cardId": 509,
             "name": "WhatDoesMordorCommand",
+            "deckId": "the_deceiver",
             "type": "Event",
             "action": "WhatDoesMordorCommand",
             "actionClassName": "WhatDoesMordorCommand",
@@ -86,6 +90,7 @@
         {
             "cardId": 556,
             "name": "Mouth of Sauron",
+            "deckId": "the_deceiver",
             "type": "Character",
             "spriteName": "MouthOfSauron",
             "tags": [],
@@ -100,6 +105,7 @@
         {
             "cardId": 569,
             "name": "Black Numenoreans",
+            "deckId": "the_deceiver",
             "type": "Army",
             "spriteName": "BlackNumenoreans",
             "tags": [],
@@ -128,6 +134,7 @@
         {
             "cardId": 562,
             "name": "Archers",
+            "deckId": "the_deceiver",
             "type": "Army",
             "spriteName": "Archers",
             "tags": [],
@@ -156,6 +163,7 @@
         {
             "cardId": 619,
             "name": "Half Orcs",
+            "deckId": "the_deceiver",
             "type": "Army",
             "spriteName": "HalfOrcs",
             "tags": [],
@@ -181,6 +189,7 @@
         {
             "cardId": 635,
             "name": "Light Cavalry",
+            "deckId": "the_deceiver",
             "type": "Army",
             "spriteName": "LightCavalry",
             "tags": [],
@@ -206,6 +215,7 @@
         {
             "cardId": 641,
             "name": "Men At Arms",
+            "deckId": "the_deceiver",
             "type": "Army",
             "spriteName": "MenAtArms",
             "tags": [],
@@ -231,6 +241,7 @@
         {
             "cardId": 652,
             "name": "Nurn Cavalry",
+            "deckId": "the_deceiver",
             "type": "Army",
             "spriteName": "NurnCavalry",
             "tags": [],
@@ -256,6 +267,7 @@
         {
             "cardId": 670,
             "name": "Spearmen",
+            "deckId": "the_deceiver",
             "type": "Army",
             "spriteName": "Spearmen",
             "tags": [],
@@ -284,6 +296,7 @@
         {
             "cardId": 676,
             "name": "Swordmen",
+            "deckId": "the_deceiver",
             "type": "Army",
             "spriteName": "Swordmen",
             "tags": [],
