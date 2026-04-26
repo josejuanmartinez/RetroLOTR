@@ -249,6 +249,7 @@ public class AIContext
         }
 
         consumedCard ??= card;
+        action.card = consumedCard;
         action.difficulty = Mathf.Max(0, consumedCard.difficulty);
         deckManager.ApplyMapRevealForPlayedCard(Leader, consumedCard);
         Leader.RecordPlayedCard(consumedCard);

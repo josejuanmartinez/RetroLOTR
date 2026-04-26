@@ -265,6 +265,10 @@ public class CharacterAction
                 int artifactReduction = character.GetArtifactActionDifficultyReduction(GetType().Name);
                 int temporaryReduction = character.GetTemporaryActionDifficultyReduction(GetType().Name, actionHex);
                 effectiveDifficulty = Mathf.Max(0, effectiveDifficulty - artifactReduction - temporaryReduction);
+                if (character.HasStatusEffect(StatusEffectEnum.ArcaneInsight) && GetType().Name == nameof(FindArtifact))
+                {
+                    effectiveDifficulty = Mathf.Max(0, effectiveDifficulty - 50);
+                }
             }
             if (isAI && ShouldApplyUnscoutedPenalty(character))
             {
@@ -292,6 +296,15 @@ public class CharacterAction
             // Store last successful action for selected-character UI "played card" slot.
             character.lastPlayedActionClassNameThisTurn = GetType().Name;
             character.lastPlayedActionNameThisTurn = actionName;
+
+            if (ConsumesAction && character.HasStatusEffect(StatusEffectEnum.Hope) && UnityEngine.Random.Range(0, 100) < 25)
+            {
+                character.hasActionedThisTurn = false;
+                MessageDisplayNoUI.ShowMessage(character.hex, character, "Hope preserves the action.", Color.green);
+            }
+
+            // Card-authored status effects are no longer part of exposed card design.
+            // Status effects remain internal gameplay state only.
 
             string message = actionName;            
             string rumourMessage = $"succeeds on {message}";
@@ -365,6 +378,7 @@ public class CharacterAction
 
         AlignmentEnum actorAlignment = actor.GetAlignment();
         if (actorAlignment != AlignmentEnum.neutral && target.GetAlignment() == actorAlignment) return true;
+        if (target.HasStatusEffect(StatusEffectEnum.Hidden)) return false;
 
         return ShouldIgnoreScouting(actorOwner) || actor.hex.IsScoutedBy(actorOwner);
     }

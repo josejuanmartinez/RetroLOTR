@@ -1298,7 +1298,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true) {
+    public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true, bool rememberPreviousHex = true) {
         int movedBefore = character.moved;
         bool wasWater = previousHex != null && previousHex.IsWaterTerrain();
         bool isWater = newHex != null && newHex.IsWaterTerrain();
@@ -1318,6 +1318,10 @@ public class Board : MonoBehaviour
             if (character.IsArmyCommander())
             {
                 if (!newHex.armies.Contains(character.GetArmy())) newHex.armies.Add(character.GetArmy());
+            }
+            if (rememberPreviousHex)
+            {
+                character.previousHex = previousHex;
             }
             character.hex = newHex;
             character.RefreshKidnappedCharactersPosition();

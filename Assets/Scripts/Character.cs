@@ -42,6 +42,7 @@ public class Character : MonoBehaviour
     public string lastPlayedActionNameThisTurn;
     public string lastPlayedCardSpriteNameThisTurn;
     public readonly List<Sprite> playedCardSpritesThisTurn = new();
+    public Hex previousHex;
     public bool isEmbarked;
     public List<Hex> reachableHexes = new();
     public List<Hex> relevantHexes = new();
@@ -80,6 +81,7 @@ public class Character : MonoBehaviour
     private Dictionary<StatusEffectEnum, int> statusEffectTurns = new();
     private bool burningForestTroopLossPending;
     private bool poisonedFearTriggered;
+    private int statusMovementBonusThisTurn;
     private string temporaryActionDifficultyReductionClassName;
     private int temporaryActionDifficultyReductionValue;
     private int temporaryActionDifficultyReductionTurns;
@@ -98,6 +100,7 @@ public class Character : MonoBehaviour
         public bool isEmbarked;
         public bool burningForestTroopLossPending;
         public bool poisonedFearTriggered;
+        public int statusMovementBonusThisTurn;
         public string temporaryActionDifficultyReductionClassName;
         public int temporaryActionDifficultyReductionValue;
         public int temporaryActionDifficultyReductionTurns;
@@ -117,6 +120,7 @@ public class Character : MonoBehaviour
         InitializeStatusEffects();
         burningForestTroopLossPending = false;
         poisonedFearTriggered = false;
+        statusMovementBonusThisTurn = 0;
         temporaryActionDifficultyReductionClassName = null;
         temporaryActionDifficultyReductionValue = 0;
         temporaryActionDifficultyReductionTurns = 0;
@@ -231,11 +235,11 @@ public class Character : MonoBehaviour
         ApplyStatusEffect(StatusEffectEnum.Halted, clampedTurns);
         if (clampedTurns == 1)
         {
-            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} halted (reduced movement) for next turn!", Color.red);
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} halted (no movement) for next turn!", Color.red);
         }
         else
         {
-            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} halted (reduced movement) for {clampedTurns} turns!", Color.red);
+            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} halted (no movement) for {clampedTurns} turns!", Color.red);
         }
     }
 
@@ -376,6 +380,8 @@ public class Character : MonoBehaviour
         ProcessKidnappedCharacters();
         if (killed) return;
 
+        statusMovementBonusThisTurn = 0;
+
         if (health < 100)
         {
             health = Mathf.Min(100, health + 5);
@@ -383,37 +389,32 @@ public class Character : MonoBehaviour
         if (HasStatusEffect(StatusEffectEnum.Hope) && health < 100)
         {
             health = Mathf.Min(100, health + 5);
+            MessageDisplayNoUI.ShowMessage(hex, this, "Hope restores +5 health.", Color.green);
         }
 
         ApplyArtifactPassiveEffects();
 
         ClearSuppressedStatusesIfEncouraged();
 
-        if (!killed)
-        {
-            ProcessMorgulTouch();
-        }
-        if (!killed)
-        {
-            ProcessBurning();
-        }
-        if (!killed)
-        {
-            ProcessPoisoned();
-        }
-        if (killed) return;
-
         int blockedTurns = GetStatusEffectTurns(StatusEffectEnum.Blocked);
         bool blocked = blockedTurns > 0;
-        if (blocked && GetOwner() == player) MessageDisplayNoUI.ShowMessage(hex, this, "Blocked", Color.red);
-
         bool halted = HasStatusEffect(StatusEffectEnum.Halted);
-        if (halted && GetOwner() == player) MessageDisplayNoUI.ShowMessage(hex, this, "Halted", Color.yellow);
+
+        if (HasStatusEffect(StatusEffectEnum.Encouraged))
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Encouraged steadies the heart.", Color.green);
+            if (UnityEngine.Random.Range(0, 100) < 50)
+            {
+                statusMovementBonusThisTurn += 2;
+                MessageDisplayNoUI.ShowMessage(hex, this, "Encouraged grants +2 movement.", Color.green);
+            }
+        }
 
         if (blocked)
         {
-            moved = GetMaxMovement();
+            moved = 0;
             hasActionedThisTurn = true;
+            MessageDisplayNoUI.ShowMessage(hex, this, "Blocked: action lost.", Color.red);
             lastPlayedActionClassNameThisTurn = null;
             lastPlayedActionNameThisTurn = null;
             lastPlayedCardSpriteNameThisTurn = null;
@@ -421,10 +422,9 @@ public class Character : MonoBehaviour
         }
         else if (halted)
         {
-            int maxMovement = GetMaxMovement();
-            int haltedPenalty = Mathf.Max(1, Mathf.FloorToInt(maxMovement * 0.5f));
-            moved = Mathf.Min(maxMovement, haltedPenalty);
+            moved = GetMaxMovement();
             hasActionedThisTurn = false;
+            MessageDisplayNoUI.ShowMessage(hex, this, "Halted: movement lost.", Color.yellow);
             lastPlayedActionClassNameThisTurn = null;
             lastPlayedActionNameThisTurn = null;
             lastPlayedCardSpriteNameThisTurn = null;
@@ -440,14 +440,57 @@ public class Character : MonoBehaviour
             playedCardSpritesThisTurn.Clear();
         }
 
-        if (!blocked && HasStatusEffect(StatusEffectEnum.Fear) && !IsArmyCommander() && UnityEngine.Random.Range(0, 2) == 0)
+        if (HasStatusEffect(StatusEffectEnum.Frozen))
         {
-            hasActionedThisTurn = true;
-            if (GetOwner() == player)
-            {
-                MessageDisplayNoUI.ShowMessage(hex, this, "Fear prevents action", Color.red);
-            }
+            MessageDisplayNoUI.ShowMessage(hex, this, "Frostbitten: -5 movement.", Color.cyan);
         }
+        if (HasStatusEffect(StatusEffectEnum.Haste))
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Haste grants +5 movement.", Color.green);
+        }
+        if (HasStatusEffect(StatusEffectEnum.Despair))
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, HasStatusEffect(StatusEffectEnum.Hope) ? "Hope holds Despair at bay." : "Despair lowers skill.", Color.magenta);
+        }
+        if (HasStatusEffect(StatusEffectEnum.ArcaneInsight))
+        {
+            ProcessArcaneInsight();
+        }
+        if (HasStatusEffect(StatusEffectEnum.Hidden))
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Hidden from enemy actions.", Color.green);
+        }
+        if (HasStatusEffect(StatusEffectEnum.Strengthened))
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Strengthened: attack and duel power increased.", Color.red);
+        }
+        if (HasStatusEffect(StatusEffectEnum.Fortified))
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Fortified: defense and duel power increased.", Color.cyan);
+        }
+        if (HasStatusEffect(StatusEffectEnum.Bleeding))
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Bleeding worsens.", Color.red);
+        }
+
+        if (HasStatusEffect(StatusEffectEnum.Fear))
+        {
+            ProcessFear();
+        }
+
+        if (!killed)
+        {
+            ProcessMorgulTouch();
+        }
+        if (!killed)
+        {
+            ProcessBurning();
+        }
+        if (!killed)
+        {
+            ProcessPoisoned();
+        }
+        if (killed) return;
 
         if (blockedTurns > 0)
         {
@@ -460,22 +503,13 @@ public class Character : MonoBehaviour
             }
         }
 
-        if (HasStatusEffect(StatusEffectEnum.Encouraged) && GetOwner() == player)
+        if (HasStatusEffect(StatusEffectEnum.RefusingDuels))
         {
-            MessageDisplayNoUI.ShowMessage(hex, this,  "Encouraged", Color.green);
+            MessageDisplayNoUI.ShowMessage(hex, this, "Refusing duels.", Color.yellow);
         }
-
-        if (HasStatusEffect(StatusEffectEnum.RefusingDuels) && GetOwner() == player)
+        if (HasStatusEffect(StatusEffectEnum.DuelSupremacy))
         {
-            MessageDisplayNoUI.ShowMessage(hex, this, "Refusing duels", Color.yellow);
-        }
-        if (HasStatusEffect(StatusEffectEnum.DuelSupremacy) && GetOwner() == player)
-        {
-            MessageDisplayNoUI.ShowMessage(hex, this, "Wins challenged duels", Color.cyan);
-        }
-        if (!blocked && halted && GetOwner() == player)
-        {
-            MessageDisplayNoUI.ShowMessage(hex, this, "Movement reduced", Color.yellow);
+            MessageDisplayNoUI.ShowMessage(hex, this, "Duel Supremacy is ready.", Color.cyan);
         }
 
         foreach (StatusEffectEnum effect in Enum.GetValues(typeof(StatusEffectEnum)))
@@ -490,6 +524,11 @@ public class Character : MonoBehaviour
             {
                 statusEffects?.Remove(effect);
                 ResetStatusSpecialState(effect);
+                if (effect == StatusEffectEnum.Bleeding)
+                {
+                    ProcessBleeding();
+                    if (killed) return;
+                }
             }
         }
         TickDoubledByTurns();
@@ -514,6 +553,7 @@ public class Character : MonoBehaviour
             isEmbarked = isEmbarked,
             burningForestTroopLossPending = burningForestTroopLossPending,
             poisonedFearTriggered = poisonedFearTriggered,
+            statusMovementBonusThisTurn = statusMovementBonusThisTurn,
             temporaryActionDifficultyReductionClassName = temporaryActionDifficultyReductionClassName,
             temporaryActionDifficultyReductionValue = temporaryActionDifficultyReductionValue,
             temporaryActionDifficultyReductionTurns = temporaryActionDifficultyReductionTurns,
@@ -538,6 +578,7 @@ public class Character : MonoBehaviour
         isEmbarked = snapshot.isEmbarked;
         burningForestTroopLossPending = snapshot.burningForestTroopLossPending;
         poisonedFearTriggered = snapshot.poisonedFearTriggered;
+        statusMovementBonusThisTurn = snapshot.statusMovementBonusThisTurn;
         temporaryActionDifficultyReductionClassName = snapshot.temporaryActionDifficultyReductionClassName;
         temporaryActionDifficultyReductionValue = snapshot.temporaryActionDifficultyReductionValue;
         temporaryActionDifficultyReductionTurns = snapshot.temporaryActionDifficultyReductionTurns;
@@ -613,11 +654,6 @@ public class Character : MonoBehaviour
 
     public int GetMaxMovement()
     {
-        if (HasStatusEffect(StatusEffectEnum.Frozen))
-        {
-            return 0;
-        }
-
         MovementType movementType = army == null ? MovementType.Character : army.GetMovementType();
         bool isInWater = hex != null && hex.IsWaterTerrain();
         int baseMovement = movementType switch
@@ -629,9 +665,15 @@ public class Character : MonoBehaviour
 
         if (HasStatusEffect(StatusEffectEnum.Haste))
         {
-            baseMovement += 2;
+            baseMovement += 5;
         }
 
+        if (HasStatusEffect(StatusEffectEnum.Frozen))
+        {
+            baseMovement -= 5;
+        }
+
+        baseMovement += statusMovementBonusThisTurn;
         return Mathf.Max(0, baseMovement);
     }
 
@@ -657,9 +699,9 @@ public class Character : MonoBehaviour
         return Mathf.Max(0, GetMaxMovement() - moved);
     }
 
-    public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, List<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null)
+    public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, List<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null, int specialAbilityProcChance = 100)
     {
-        army = new Army(this, troopsType, amount, startingArmy, ws, 25, specialAbilities, troopName);
+        army = new Army(this, troopsType, amount, startingArmy, ws, 25, specialAbilities, troopName, specialAbilityProcChance);
         hex.armies.Add(army);
 
         MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\">[{amount}]", Color.green);
@@ -1555,7 +1597,8 @@ public class Character : MonoBehaviour
         {
             StatusEffectEnum.Burning => Mathf.Max(3, turns),
             StatusEffectEnum.Poisoned => Mathf.Max(5, turns),
-            StatusEffectEnum.MorgulTouch => Mathf.Max(7, turns),
+            StatusEffectEnum.MorgulTouch => Mathf.Max(5, turns),
+            StatusEffectEnum.Bleeding => 1,
             _ => turns
         };
     }
@@ -1572,8 +1615,7 @@ public class Character : MonoBehaviour
     {
         return effect == StatusEffectEnum.Fear
             || effect == StatusEffectEnum.Despair
-            || effect == StatusEffectEnum.Halted
-            || effect == StatusEffectEnum.Blocked;
+            || effect == StatusEffectEnum.Halted;
     }
 
     private void ClearSuppressedStatusesIfEncouraged()
@@ -1582,7 +1624,58 @@ public class Character : MonoBehaviour
         ClearStatusEffect(StatusEffectEnum.Fear);
         ClearStatusEffect(StatusEffectEnum.Despair);
         ClearStatusEffect(StatusEffectEnum.Halted);
-        ClearStatusEffect(StatusEffectEnum.Blocked);
+    }
+
+    private void ApplyStatusMovementPenalty(int amount, string sourceName)
+    {
+        int penalty = Mathf.Max(0, amount);
+        if (penalty <= 0) return;
+        moved = Mathf.Min(GetMaxMovement(), moved + penalty);
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{sourceName}: -{penalty} movement.", Color.yellow);
+    }
+
+    private void ProcessFear()
+    {
+        bool retreated = false;
+        if (previousHex != null && previousHex != hex && UnityEngine.Random.Range(0, 100) < 50)
+        {
+            Board board = FindFirstObjectByType<Board>();
+            if (board != null)
+            {
+                Hex currentHex = hex;
+                int movedBefore = moved;
+                board.MoveCharacterOneHex(this, currentHex, previousHex, true, false, false);
+                previousHex = currentHex;
+                moved = Mathf.Min(GetMaxMovement(), movedBefore);
+                retreated = true;
+                MessageDisplayNoUI.ShowMessage(hex, this, "Fear drives a retreat.", Color.magenta);
+            }
+        }
+
+        if (UnityEngine.Random.Range(0, 100) < 25)
+        {
+            hasActionedThisTurn = true;
+            MessageDisplayNoUI.ShowMessage(hex, this, retreated ? "Fear also steals the action." : "Fear steals the action.", Color.red);
+        }
+        else if (!retreated)
+        {
+            MessageDisplayNoUI.ShowMessage(hex, this, "Fear stirs, but is resisted.", Color.magenta);
+        }
+    }
+
+    private void ProcessArcaneInsight()
+    {
+        MessageDisplayNoUI.ShowMessage(hex, this, "Arcane Insight: Mage +1.", Color.cyan);
+        if (hex == null || UnityEngine.Random.Range(0, 100) >= 25) return;
+
+        List<Hex> artifactHexes = hex.GetHexesInRadius(2)
+            .Where(h => h != null && h.hiddenArtifacts != null && h.hiddenArtifacts.Count > 0)
+            .ToList();
+        if (artifactHexes.Count < 1) return;
+
+        Hex revealedHex = artifactHexes[UnityEngine.Random.Range(0, artifactHexes.Count)];
+        revealedHex.RevealArtifact();
+        MessageDisplayNoUI.ShowMessage(revealedHex, this, "Arcane Insight reveals an artifact site.", Color.cyan);
     }
 
     private void ResetStatusSpecialState(StatusEffectEnum effect)
@@ -1611,17 +1704,20 @@ public class Character : MonoBehaviour
 
         ApplyStatusDamage(5, "Burning");
         if (killed) return;
+        ApplyStatusMovementPenalty(2, "Burning");
 
-        if (!burningForestTroopLossPending || !IsArmyCommander() || hex == null || hex.terrainType != TerrainEnum.forest) return;
+        if (!IsArmyCommander()) return;
         Army commandedArmy = GetArmy();
         if (commandedArmy == null || commandedArmy.killed || commandedArmy.GetSize(true) < 1) return;
 
-        TroopsTypeEnum? lostTroop = commandedArmy.RemoveRandomTroop();
-        if (lostTroop.HasValue)
+        if (UnityEngine.Random.Range(0, 100) < 25)
         {
-            MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName}'s burning army loses 1 <sprite name=\"{lostTroop.Value.ToString().ToLower()}\"> in the forest.", Color.red);
+            TroopsTypeEnum? lostTroop = commandedArmy.RemoveRandomTroopOfTypes(TroopsTypeEnum.ca, TroopsTypeEnum.ar, TroopsTypeEnum.ws);
+            if (lostTroop.HasValue)
+            {
+                MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName}'s burning army loses 1 <sprite name=\"{lostTroop.Value.ToString().ToLower()}\">.", Color.red);
+            }
         }
-        burningForestTroopLossPending = false;
     }
 
     private void ProcessPoisoned()
@@ -1630,11 +1726,17 @@ public class Character : MonoBehaviour
 
         ApplyStatusDamage(5, "Poisoned");
         if (killed) return;
+        ApplyStatusMovementPenalty(1, "Poisoned");
 
         if (poisonedFearTriggered || GetStatusEffectTurns(StatusEffectEnum.Poisoned) > 3) return;
         ApplyStatusEffect(StatusEffectEnum.Fear, 1);
         poisonedFearTriggered = true;
         MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} succumbs to Poison and gains Fear.", Color.magenta);
+    }
+
+    private void ProcessBleeding()
+    {
+        ApplyStatusDamage(15, "Bleeding");
     }
 
     private void ProcessMorgulTouch()
@@ -1645,6 +1747,7 @@ public class Character : MonoBehaviour
         MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} suffers 10 damage from Morgul Touch.", Color.magenta);
         RefreshSelectedCharacterIconIfSelected();
         CharacterIcons.RefreshForHumanPlayerCharacter(this);
+        ApplyStatusMovementPenalty(2, "Morgul Touch");
 
         if (health > 0) return;
 
@@ -1674,7 +1777,7 @@ public class Character : MonoBehaviour
         for (int i = 0; i < leaders.Length; i++)
         {
             Leader leader = leaders[i];
-            if (leader != null && !leader.killed && string.Equals(leader.characterName, "Sauron", StringComparison.OrdinalIgnoreCase))
+            if (leader is PlayableLeader && !leader.killed && string.Equals(leader.characterName, "Sauron", StringComparison.OrdinalIgnoreCase))
             {
                 return leader;
             }

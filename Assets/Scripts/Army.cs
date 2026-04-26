@@ -21,13 +21,14 @@ public class Army
     [SerializeField] public int ca = 0;
     [SerializeField] public int ws = 0;
     [SerializeField] public int xp = 25;
+    [SerializeField] public int specialAbilityProcChance = 100;
     [SerializeField] public List<ArmyTroopAbilityGroup> troopAbilityGroups = new();
 
     [SerializeField] public bool startingArmy = false;
 
     public bool killed = false;
 
-    public Army(Character commander, bool startingArmy = false, int ma = 0, int ar = 0, int li = 0, int hi = 0, int lc = 0, int hc = 0, int ca = 0, int ws = 0, int xp = 25)
+    public Army(Character commander, bool startingArmy = false, int ma = 0, int ar = 0, int li = 0, int hi = 0, int lc = 0, int hc = 0, int ca = 0, int ws = 0, int xp = 25, int specialAbilityProcChance = 100)
     {
         this.commander = commander;
         this.startingArmy = startingArmy;
@@ -40,14 +41,16 @@ public class Army
         this.ca = ca;
         this.ws = ws;
         this.xp = Mathf.Clamp(xp, 0, 100);
+        this.specialAbilityProcChance = Mathf.Clamp(specialAbilityProcChance <= 0 ? 100 : specialAbilityProcChance, 1, 100);
         troopAbilityGroups = new();
     }
 
-    public Army(Character commander, TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, int xp = 25, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null)
+    public Army(Character commander, TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, int xp = 25, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null, int specialAbilityProcChance = 100)
     {
         this.commander = commander;
         this.startingArmy = startingArmy;
         this.xp = Mathf.Clamp(xp, 0, 100);
+        this.specialAbilityProcChance = Mathf.Clamp(specialAbilityProcChance <= 0 ? 100 : specialAbilityProcChance, 1, 100);
         troopAbilityGroups = new();
 
         // Use reflection to set the field based on the enum value
@@ -105,7 +108,7 @@ public class Army
             }
         }
     }
-    public void Recruit(TroopsTypeEnum troopsType, int amount, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null)
+    public void Recruit(TroopsTypeEnum troopsType, int amount, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null, int specialAbilityProcChance = 100)
     {
         MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\">", Color.green);
         if (troopsType == TroopsTypeEnum.ma) ma += amount;
@@ -116,6 +119,7 @@ public class Army
         if (troopsType == TroopsTypeEnum.hc) hc += amount;
         if (troopsType == TroopsTypeEnum.ca) ca += amount;
         if (troopsType == TroopsTypeEnum.ws) ws += amount;
+        this.specialAbilityProcChance = Mathf.Clamp(specialAbilityProcChance <= 0 ? 100 : specialAbilityProcChance, 1, 100);
         AddTroopGroup(troopsType, amount, troopName, specialAbilities);
     }
 
@@ -434,6 +438,59 @@ public class Army
                 break;
             case TroopsTypeEnum.ca:
                 ca = Math.Max(0, ca - 1);
+                break;
+        }
+
+        if (GetSize(true) < 1)
+        {
+            Killed(commander != null ? commander.GetOwner() : null);
+        }
+        else
+        {
+            commander?.hex?.RedrawArmies();
+            commander?.RefreshSelectedCharacterIconIfSelected();
+        }
+
+        RemoveSpecialTroops(troop, 1);
+        return troop;
+    }
+
+    public TroopsTypeEnum? RemoveRandomTroopOfTypes(params TroopsTypeEnum[] troopTypes)
+    {
+        if (troopTypes == null || troopTypes.Length == 0) return null;
+
+        List<TroopsTypeEnum> available = troopTypes
+            .Where(troopType => GetTroopCount(troopType) > 0)
+            .Distinct()
+            .ToList();
+        if (available.Count == 0) return null;
+
+        TroopsTypeEnum troop = available[UnityEngine.Random.Range(0, available.Count)];
+        switch (troop)
+        {
+            case TroopsTypeEnum.ma:
+                ma = Math.Max(0, ma - 1);
+                break;
+            case TroopsTypeEnum.ar:
+                ar = Math.Max(0, ar - 1);
+                break;
+            case TroopsTypeEnum.li:
+                li = Math.Max(0, li - 1);
+                break;
+            case TroopsTypeEnum.hi:
+                hi = Math.Max(0, hi - 1);
+                break;
+            case TroopsTypeEnum.lc:
+                lc = Math.Max(0, lc - 1);
+                break;
+            case TroopsTypeEnum.hc:
+                hc = Math.Max(0, hc - 1);
+                break;
+            case TroopsTypeEnum.ca:
+                ca = Math.Max(0, ca - 1);
+                break;
+            case TroopsTypeEnum.ws:
+                ws = Math.Max(0, ws - 1);
                 break;
         }
 
@@ -1062,6 +1119,18 @@ public class Army
             ArmySpecialAbilityEnum.Longrange => "arching long volleys over the melee into distant targets",
             ArmySpecialAbilityEnum.ShortRange => "unleashing vicious close volleys at a stone's throw",
             ArmySpecialAbilityEnum.Charging => "hurling themselves forward in a thunderous charge",
+            ArmySpecialAbilityEnum.Halted => "checking the foe in place with a hard sudden stop",
+            ArmySpecialAbilityEnum.RefusingDuels => "spoiling challenges and denying single combat",
+            ArmySpecialAbilityEnum.Frozen => "leaving the enemy seized by cold and hesitation",
+            ArmySpecialAbilityEnum.Blocked => "catching the enemy in a knot of stalled movement",
+            ArmySpecialAbilityEnum.Hope => "kindling fresh hope in allied hearts",
+            ArmySpecialAbilityEnum.Hidden => "vanishing behind smoke, dusk, and battlefield confusion",
+            ArmySpecialAbilityEnum.ArcaneInsight => "finding uncanny clarity in the chaos of battle",
+            ArmySpecialAbilityEnum.Strengthened => "surging with renewed force at the key moment",
+            ArmySpecialAbilityEnum.Fortified => "bracing under sudden hardening discipline",
+            ArmySpecialAbilityEnum.MorgulTouch => "inflicting a black wound that lingers in fear and pain",
+            ArmySpecialAbilityEnum.DuelSupremacy => "letting their champion seize the upper hand in single combat",
+            ArmySpecialAbilityEnum.Bleeding => "opening cruel wounds that continue to weaken the foe",
             _ => string.Empty
         };
     }
@@ -1495,111 +1564,264 @@ public class Army
         return "The fight swings back and forth, momentum shifting with each fresh shout.";
     }
 
+    private int GetDefaultArmyCardProcChancePercent()
+    {
+        return Mathf.Clamp(specialAbilityProcChance <= 0 ? 100 : specialAbilityProcChance, 1, 100);
+    }
+
     private void TriggerBattleSpecialAbilities(Hex battleHex, Army enemyArmy, List<(string message, Color color)> battleMessages, List<string> battleNarration)
     {
         if (battleHex == null || enemyArmy == null || battleMessages == null || battleNarration == null) return;
 
-        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Shielded, 10, battleMessages, battleNarration, () =>
+        int procChance = GetDefaultArmyCardProcChancePercent();
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Shielded, procChance, battleMessages, battleNarration, () =>
         {
             commander.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
             return ($"{commander.characterName}'s shielded troops gain Fortified.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Shielded, commander.characterName, null, true));
         });
 
-        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Berserker, 10, battleMessages, battleNarration, () =>
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Berserker, procChance, battleMessages, battleNarration, () =>
         {
             commander.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
             return ($"{commander.characterName}'s berserk fury grants Strengthened.", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Berserker, commander.characterName, null, true));
         });
 
-        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Raid, 10, battleMessages, battleNarration, () =>
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Raid, procChance, battleMessages, battleNarration, () =>
         {
             commander.GetOwner()?.AddGold(1);
             return ($"{commander.characterName}'s raiders seize +1 <sprite name=\"gold\">.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.Raid, commander.characterName, null, true));
         });
 
-        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Encouraging, 10, battleMessages, battleNarration, () =>
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Encouraging, procChance, battleMessages, battleNarration, () =>
         {
             commander.ApplyStatusEffect(StatusEffectEnum.Encouraged, 2);
             return ($"{commander.characterName}'s army gains Courage (2).", Color.green, BuildAbilityNarration(ArmySpecialAbilityEnum.Encouraging, commander.characterName, null, true));
         });
 
-        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Discouraging, 10, enemyArmy, battleMessages, battleNarration, () =>
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Discouraging, procChance, enemyArmy, battleMessages, battleNarration, () =>
         {
             enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Despair, 2);
             return ($"{enemyArmy.commander.characterName} suffers Despair (2).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Discouraging, commander.characterName, enemyArmy.commander.characterName, false));
         });
 
-        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Poison, 10, enemyArmy, battleMessages, battleNarration, () =>
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Poison, procChance, enemyArmy, battleMessages, battleNarration, () =>
         {
             enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Poisoned, 5);
             return ($"{enemyArmy.commander.characterName} is Poisoned (5).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Poison, commander.characterName, enemyArmy.commander.characterName, false));
         });
 
-        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Fire, 10, enemyArmy, battleMessages, battleNarration, () =>
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Fire, procChance, enemyArmy, battleMessages, battleNarration, () =>
         {
             enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Burning, 3);
             return ($"{enemyArmy.commander.characterName} is Burning (3).", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Fire, commander.characterName, enemyArmy.commander.characterName, false));
         });
 
-        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Cursed, 10, enemyArmy, battleMessages, battleNarration, () =>
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Cursed, procChance, enemyArmy, battleMessages, battleNarration, () =>
         {
             enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Fear, 2);
             return ($"{enemyArmy.commander.characterName} is gripped by Fear (2).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Cursed, commander.characterName, enemyArmy.commander.characterName, false));
         });
 
-        TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.Longrange, 10, battleHex, enemyArmy, 2, 0.10f, "longrange volley", battleMessages, battleNarration);
-        TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.ShortRange, 10, battleHex, enemyArmy, 1, 0.20f, "shortrange strike", battleMessages, battleNarration);
+        TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.Longrange, procChance, battleHex, enemyArmy, 2, 0.10f, "longrange volley", battleMessages, battleNarration);
+        TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.ShortRange, procChance, battleHex, enemyArmy, 1, 0.20f, "shortrange strike", battleMessages, battleNarration);
 
-        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Shielded, 10, battleMessages, battleNarration, () =>
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Hope, procChance, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Hope, 1);
+            return ($"{commander.characterName}'s army gains Hope.", Color.green, BuildAbilityNarration(ArmySpecialAbilityEnum.Hope, commander.characterName, null, true));
+        });
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Hidden, procChance, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Hidden, 1);
+            return ($"{commander.characterName}'s army becomes Hidden.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Hidden, commander.characterName, null, true));
+        });
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.ArcaneInsight, procChance, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1);
+            return ($"{commander.characterName}'s army gains Arcane Insight.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.ArcaneInsight, commander.characterName, null, true));
+        });
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Strengthened, procChance, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
+            return ($"{commander.characterName}'s army is Strengthened.", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Strengthened, commander.characterName, null, true));
+        });
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Fortified, procChance, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
+            return ($"{commander.characterName}'s army is Fortified.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Fortified, commander.characterName, null, true));
+        });
+
+        TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.DuelSupremacy, procChance, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.DuelSupremacy, 1);
+            return ($"{commander.characterName}'s champion claims Duel Supremacy.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.DuelSupremacy, commander.characterName, null, true));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Halted, procChance, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Halted, 1);
+            return ($"{enemyArmy.commander.characterName} is Halted.", Color.white, BuildAbilityNarration(ArmySpecialAbilityEnum.Halted, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.RefusingDuels, procChance, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.RefusingDuels, 1);
+            return ($"{enemyArmy.commander.characterName} is Refusing Duels.", Color.white, BuildAbilityNarration(ArmySpecialAbilityEnum.RefusingDuels, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Frozen, procChance, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Frozen, 1);
+            return ($"{enemyArmy.commander.characterName} is Frozen.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Frozen, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Blocked, procChance, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Blocked, 1);
+            return ($"{enemyArmy.commander.characterName} is Blocked.", Color.white, BuildAbilityNarration(ArmySpecialAbilityEnum.Blocked, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.MorgulTouch, procChance, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, 3);
+            return ($"{enemyArmy.commander.characterName} suffers Morgul Touch.", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.MorgulTouch, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Bleeding, procChance, enemyArmy, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Bleeding, 2);
+            return ($"{enemyArmy.commander.characterName} is Bleeding.", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Bleeding, commander.characterName, enemyArmy.commander.characterName, false));
+        });
+
+        int enemyProcChance = enemyArmy.GetDefaultArmyCardProcChancePercent();
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Shielded, enemyProcChance, battleMessages, battleNarration, () =>
         {
             enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
             return ($"{enemyArmy.commander.characterName}'s shielded troops gain Fortified.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Shielded, enemyArmy.commander.characterName, null, true));
         });
 
-        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Berserker, 10, battleMessages, battleNarration, () =>
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Berserker, enemyProcChance, battleMessages, battleNarration, () =>
         {
             enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
             return ($"{enemyArmy.commander.characterName}'s berserk fury grants Strengthened.", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Berserker, enemyArmy.commander.characterName, null, true));
         });
 
-        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Raid, 10, battleMessages, battleNarration, () =>
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Raid, enemyProcChance, battleMessages, battleNarration, () =>
         {
             enemyArmy.commander.GetOwner()?.AddGold(1);
             return ($"{enemyArmy.commander.characterName}'s raiders seize +1 <sprite name=\"gold\">.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.Raid, enemyArmy.commander.characterName, null, true));
         });
 
-        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Encouraging, 10, battleMessages, battleNarration, () =>
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Encouraging, enemyProcChance, battleMessages, battleNarration, () =>
         {
             enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Encouraged, 2);
             return ($"{enemyArmy.commander.characterName}'s army gains Courage (2).", Color.green, BuildAbilityNarration(ArmySpecialAbilityEnum.Encouraging, enemyArmy.commander.characterName, null, true));
         });
 
-        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Discouraging, 10, this, battleMessages, battleNarration, () =>
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Discouraging, enemyProcChance, this, battleMessages, battleNarration, () =>
         {
             commander.ApplyStatusEffect(StatusEffectEnum.Despair, 2);
             return ($"{commander.characterName} suffers Despair (2).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Discouraging, enemyArmy.commander.characterName, commander.characterName, false));
         });
 
-        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Poison, 10, this, battleMessages, battleNarration, () =>
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Poison, enemyProcChance, this, battleMessages, battleNarration, () =>
         {
             commander.ApplyStatusEffect(StatusEffectEnum.Poisoned, 5);
             return ($"{commander.characterName} is Poisoned (5).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Poison, enemyArmy.commander.characterName, commander.characterName, false));
         });
 
-        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Fire, 10, this, battleMessages, battleNarration, () =>
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Fire, enemyProcChance, this, battleMessages, battleNarration, () =>
         {
             commander.ApplyStatusEffect(StatusEffectEnum.Burning, 3);
             return ($"{commander.characterName} is Burning (3).", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Fire, enemyArmy.commander.characterName, commander.characterName, false));
         });
 
-        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Cursed, 10, this, battleMessages, battleNarration, () =>
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Cursed, enemyProcChance, this, battleMessages, battleNarration, () =>
         {
             commander.ApplyStatusEffect(StatusEffectEnum.Fear, 2);
             return ($"{commander.characterName} is gripped by Fear (2).", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.Cursed, enemyArmy.commander.characterName, commander.characterName, false));
         });
 
-        enemyArmy.TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.Longrange, 10, battleHex, this, 2, 0.10f, "longrange volley", battleMessages, battleNarration);
-        enemyArmy.TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.ShortRange, 10, battleHex, this, 1, 0.20f, "shortrange strike", battleMessages, battleNarration);
+        enemyArmy.TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.Longrange, enemyProcChance, battleHex, this, 2, 0.10f, "longrange volley", battleMessages, battleNarration);
+        enemyArmy.TryTriggerRangedBattleAbility(ArmySpecialAbilityEnum.ShortRange, enemyProcChance, battleHex, this, 1, 0.20f, "shortrange strike", battleMessages, battleNarration);
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Hope, enemyProcChance, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Hope, 1);
+            return ($"{enemyArmy.commander.characterName}'s army gains Hope.", Color.green, BuildAbilityNarration(ArmySpecialAbilityEnum.Hope, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Hidden, enemyProcChance, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Hidden, 1);
+            return ($"{enemyArmy.commander.characterName}'s army becomes Hidden.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Hidden, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.ArcaneInsight, enemyProcChance, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1);
+            return ($"{enemyArmy.commander.characterName}'s army gains Arcane Insight.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.ArcaneInsight, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Strengthened, enemyProcChance, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
+            return ($"{enemyArmy.commander.characterName}'s army is Strengthened.", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Strengthened, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.Fortified, enemyProcChance, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
+            return ($"{enemyArmy.commander.characterName}'s army is Fortified.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Fortified, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum.DuelSupremacy, enemyProcChance, battleMessages, battleNarration, () =>
+        {
+            enemyArmy.commander.ApplyStatusEffect(StatusEffectEnum.DuelSupremacy, 1);
+            return ($"{enemyArmy.commander.characterName}'s champion claims Duel Supremacy.", Color.yellow, BuildAbilityNarration(ArmySpecialAbilityEnum.DuelSupremacy, enemyArmy.commander.characterName, null, true));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Halted, enemyProcChance, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Halted, 1);
+            return ($"{commander.characterName} is Halted.", Color.white, BuildAbilityNarration(ArmySpecialAbilityEnum.Halted, enemyArmy.commander.characterName, commander.characterName, false));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.RefusingDuels, enemyProcChance, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.RefusingDuels, 1);
+            return ($"{commander.characterName} is Refusing Duels.", Color.white, BuildAbilityNarration(ArmySpecialAbilityEnum.RefusingDuels, enemyArmy.commander.characterName, commander.characterName, false));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Frozen, enemyProcChance, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Frozen, 1);
+            return ($"{commander.characterName} is Frozen.", Color.cyan, BuildAbilityNarration(ArmySpecialAbilityEnum.Frozen, enemyArmy.commander.characterName, commander.characterName, false));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Blocked, enemyProcChance, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Blocked, 1);
+            return ($"{commander.characterName} is Blocked.", Color.white, BuildAbilityNarration(ArmySpecialAbilityEnum.Blocked, enemyArmy.commander.characterName, commander.characterName, false));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.MorgulTouch, enemyProcChance, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, 3);
+            return ($"{commander.characterName} suffers Morgul Touch.", Color.magenta, BuildAbilityNarration(ArmySpecialAbilityEnum.MorgulTouch, enemyArmy.commander.characterName, commander.characterName, false));
+        });
+
+        enemyArmy.TryTriggerEnemyBattleAbility(ArmySpecialAbilityEnum.Bleeding, enemyProcChance, this, battleMessages, battleNarration, () =>
+        {
+            commander.ApplyStatusEffect(StatusEffectEnum.Bleeding, 2);
+            return ($"{commander.characterName} is Bleeding.", Color.red, BuildAbilityNarration(ArmySpecialAbilityEnum.Bleeding, enemyArmy.commander.characterName, commander.characterName, false));
+        });
     }
 
     private void TryTriggerSelfBattleAbility(ArmySpecialAbilityEnum ability, int percentChance, List<(string message, Color color)> battleMessages, List<string> battleNarration, Func<(string message, Color color, string narration)> onSuccess)
@@ -1654,6 +1876,58 @@ public class Army
 
         if (candidates.Count == 0) return null;
         return candidates[UnityEngine.Random.Range(0, candidates.Count)];
+    }
+
+    public static void ResolveStartOfTurnRangedVolleysForLeader(Leader leader)
+    {
+        if (leader == null || leader.killed || leader.controlledCharacters == null) return;
+
+        HashSet<Hex> processedHexes = new();
+        foreach (Character character in leader.controlledCharacters)
+        {
+            if (character == null || character.killed || !character.IsArmyCommander() || character.hex == null) continue;
+            Army army = character.GetArmy();
+            if (army == null || !processedHexes.Add(character.hex)) continue;
+
+            List<Army> alliedArmiesInHex = character.hex.armies
+                .Where(a => a != null && !a.killed && a.commander != null && !a.commander.killed && a.commander.GetOwner() == leader)
+                .ToList();
+            if (alliedArmiesInHex.Count == 0) continue;
+
+            List<Army> longRangeArmies = alliedArmiesInHex
+                .Where(a => a.HasSpecialAbility(ArmySpecialAbilityEnum.Longrange) && UnityEngine.Random.Range(0f, 100f) < a.GetDefaultArmyCardProcChancePercent())
+                .ToList();
+            List<Army> shortRangeArmies = alliedArmiesInHex
+                .Where(a => a.HasSpecialAbility(ArmySpecialAbilityEnum.ShortRange) && UnityEngine.Random.Range(0f, 100f) < a.GetDefaultArmyCardProcChancePercent())
+                .ToList();
+
+            if (longRangeArmies.Count == 0 && shortRangeArmies.Count == 0) continue;
+
+            int maxRadius = longRangeArmies.Count > 0 ? 2 : 1;
+            Army target = FindNearestEnemyArmyForVolley(character.hex, leader, maxRadius);
+            if (target == null) continue;
+
+            float totalCasualtyPercent = (longRangeArmies.Count * 0.10f) + (shortRangeArmies.Count * 0.20f);
+            totalCasualtyPercent = Mathf.Clamp(totalCasualtyPercent, 0.05f, 0.95f);
+            target.ReceiveCasualties(totalCasualtyPercent, leader, false);
+
+            string sourceText = $"{longRangeArmies.Count} long-range" + (shortRangeArmies.Count > 0 ? $", {shortRangeArmies.Count} short-range" : string.Empty);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Turn-start volley: {sourceText} army group(s) strike {target.commander.characterName}'s army.", Color.yellow);
+        }
+    }
+
+    private static Army FindNearestEnemyArmyForVolley(Hex origin, Leader leader, int radius)
+    {
+        if (origin == null || leader == null) return null;
+        List<Hex> hexes = origin.GetHexesInRadius(radius);
+        if (hexes == null || hexes.Count == 0) return null;
+
+        return hexes
+            .Where(h => h != null && h.armies != null)
+            .SelectMany(h => h.armies)
+            .Where(a => a != null && !a.killed && a.commander != null && !a.commander.killed && a.commander.GetOwner() != leader)
+            .OrderBy(a => Vector2.Distance(origin.v2, a.commander.hex.v2))
+            .FirstOrDefault();
     }
 
     private static string BuildBattleAbilityNarration(List<string> battleAbilityNarration)
@@ -2020,6 +2294,10 @@ public class Army
         {
             ArmySpecialAbilityEnum.Longrange => "Long range",
             ArmySpecialAbilityEnum.ShortRange => "Short range",
+            ArmySpecialAbilityEnum.RefusingDuels => "Refusing duels",
+            ArmySpecialAbilityEnum.ArcaneInsight => "Arcane insight",
+            ArmySpecialAbilityEnum.DuelSupremacy => "Duel supremacy",
+            ArmySpecialAbilityEnum.MorgulTouch => "Morgul touch",
             _ => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
                 Regex.Replace(ability.ToString(), "([a-z])([A-Z])", "$1 $2").ToLowerInvariant())
         };
@@ -2028,6 +2306,10 @@ public class Army
         {
             ArmySpecialAbilityEnum.Longrange => "longrange",
             ArmySpecialAbilityEnum.ShortRange => "shortrange",
+            ArmySpecialAbilityEnum.ArcaneInsight => "arcaneinsight",
+            ArmySpecialAbilityEnum.RefusingDuels => "refusingduels",
+            ArmySpecialAbilityEnum.DuelSupremacy => "duelsupremacy",
+            ArmySpecialAbilityEnum.MorgulTouch => "morgultouch",
             _ => ability.ToString().ToLowerInvariant()
         };
 

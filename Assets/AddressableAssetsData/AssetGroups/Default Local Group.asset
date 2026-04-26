@@ -610,7 +610,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1186954206daa0e4e8c33fa653e1e800
-    m_Address: Assets/Art/Cards/PC/WhiteTowerArsenal.png
+    m_Address: Assets/Art/Cards/Actions/Events/WhiteTowerArsenal.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1025,6 +1025,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1b3b0393dabdf3d4da4f4ab49195b104
     m_Address: Assets/Art/Hexes/Tiles/hexPlainsVillageRuin00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1b611f8f0b96660429b229309bf4c275
+    m_Address: Assets/Art/Cards/Actions/Events/OrthancsSurveillance.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2661,7 +2667,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 41ca690e56dcd304983f22f725a7b7e4
-    m_Address: Assets/Art/Cards/PC/OsgiliathQuartermasters.png
+    m_Address: Assets/Art/Cards/Actions/Events/OsgiliathQuartermasters.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4484,7 +4490,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6fb1a4be37064954684a069df1a42bf0
-    m_Address: Assets/Art/Cards/Lands/DolAmrothShipyard.png
+    m_Address: Assets/Art/Cards/Actions/Events/DolAmrothShipyard.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4587,6 +4593,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 716e074aa77a8874e9a3a786101153a1
     m_Address: Assets/Art/Cards/PC/LagariOrath.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 717044f1ae517a34890b457187dbc065
+    m_Address: Assets/Art/Cards/Actions/Events/PalantirOfOrthanc.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7252,6 +7264,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b2ffe7ad5f770ba4e979be2b278b746b
+    m_Address: Assets/Art/Cards/Actions/Events/EnginesFromIsengard.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b30b3dad6657f9043b19b309ae2255f6
     m_Address: Assets/Art/Cards/Characters/Saruman-TheWhite.png
     m_ReadOnly: 0
@@ -7559,7 +7577,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bb3affc3afaae514194768c7a0b5eab0
-    m_Address: Assets/Art/Cards/Lands/RammasEchor.png
+    m_Address: Assets/Art/Cards/Actions/Events/RammasEchor.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

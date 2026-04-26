@@ -80,7 +80,7 @@ public static class AITurnController
         CharacterAction action = ResolveActionByRef(actionRef, actionsManager);
         if (action == null) return false;
 
-        action.Initialize(actor, condition: null, effect: null, asyncEffect: null);
+        action.Initialize(actor, card, condition: null, effect: null, asyncEffect: null);
         action.difficulty = Mathf.Max(0, card.difficulty);
 
         bool ok = true;

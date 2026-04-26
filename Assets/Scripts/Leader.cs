@@ -169,6 +169,8 @@ public class Leader : Character
         if (killed) return;
 
         EvaluateCreationSlots();
+
+        Army.ResolveStartOfTurnRangedVolleysForLeader(this);
         
         // Make all characters in nation act!
         controlledCharacters.FindAll(c => !c.killed).ForEach(x => x.NewTurn());

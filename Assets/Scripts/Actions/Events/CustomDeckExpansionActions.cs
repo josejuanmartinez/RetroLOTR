@@ -34,7 +34,230 @@ public class WormtonguesWhisper : UnderTheWhiteHand { }
 public class FurnacesofIsengard : ChoppingTheTrees { }
 public class UrukVanguard : WellEquipedArmy { }
 public class FalseParley : RestlessEast { }
-public class StormfromOrthanc : Caradhras { }
+public class StormfromOrthanc : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+
+            List<Character> allies = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && (ch.GetOwner() == character.GetOwner() || (character.GetAlignment() != AlignmentEnum.neutral && ch.GetAlignment() == character.GetAlignment())))
+                .Distinct()
+                .ToList();
+
+            if (allies.Count == 0) return false;
+
+            for (int i = 0; i < allies.Count; i++)
+            {
+                allies[i].hasActionedThisTurn = false;
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Storm from Orthanc drives {allies.Count} friendly unit(s) in this hex to act again.", Color.white);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null && character.hex != null && character.hex.characters != null
+                && character.hex.characters.Any(ch => ch != null && !ch.killed && (ch.GetOwner() == character.GetOwner() || (character.GetAlignment() != AlignmentEnum.neutral && ch.GetAlignment() == character.GetAlignment())));
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class OrthancsSurveillanceAction : EventAction
+{
+    private const int Radius = 4;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            List<Hex> revealed = new();
+            foreach (Hex hex in character.hex.GetHexesInRadius(Radius))
+            {
+                if (hex == null) continue;
+                bool enemyPc = hex.GetPC() != null && hex.GetPC().owner != owner;
+                bool enemyArmy = hex.armies != null && hex.armies.Any(a => a != null && !a.killed && a.commander != null && a.commander.GetOwner() != owner);
+                if (!enemyPc && !enemyArmy) continue;
+
+                hex.RevealArea(0, true, owner);
+                revealed.Add(hex);
+            }
+
+            if (revealed.Count == 0) return false;
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Orthanc's Surveillance reveals {revealed.Count} enemy PC/army hex(es) in radius {Radius}.", Color.white);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            return character.hex.GetHexesInRadius(Radius).Any(hex => hex != null
+                && ((hex.GetPC() != null && hex.GetPC().owner != owner)
+                    || (hex.armies != null && hex.armies.Any(a => a != null && !a.killed && a.commander != null && a.commander.GetOwner() != owner))));
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class EnginesFromIsengardAction : EventAction
+{
+    private const int Radius = 2;
+    private const int BonusProc = 25;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            List<Army> armies = character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null && h.armies != null)
+                .SelectMany(h => h.armies)
+                .Where(a => a != null && !a.killed && a.commander != null && a.commander.GetOwner() == owner)
+                .Distinct()
+                .ToList();
+
+            if (armies.Count == 0) return false;
+
+            for (int i = 0; i < armies.Count; i++)
+            {
+                armies[i].specialAbilityProcChance = Mathf.Clamp(armies[i].specialAbilityProcChance + BonusProc, 1, 100);
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Engines from Isengard drives {armies.Count} allied arm(ies) to +{BonusProc}% proc chance this turn.", Color.white);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            return character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null && h.armies != null)
+                .SelectMany(h => h.armies)
+                .Any(a => a != null && !a.killed && a.commander != null && a.commander.GetOwner() == owner);
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class PalantirOfOrthancAction : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            if (game == null || deckManager == null || board == null || game.player == null) return false;
+            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player) || deckManager.GetHand(game.player).Count >= deckManager.GetHandSize()) return false;
+
+            CardData peek = deckManager.GetDrawPile(game.player).Take(3).FirstOrDefault(card => card != null);
+            if (peek == null) return false;
+            if (!deckManager.TryAddCardToHand(game.player, peek)) return false;
+
+            Leader owner = character.GetOwner();
+            Hex nearestEnemyPc = board.GetHexes()
+                .Where(h => h != null && h.GetPC() != null && h.GetPC().owner != owner)
+                .OrderBy(h => Vector2.Distance(character.hex.v2, h.v2))
+                .FirstOrDefault();
+
+            if (nearestEnemyPc != null)
+            {
+                nearestEnemyPc.RevealArea(0, true, owner);
+                MessageDisplayNoUI.ShowMessage(character.hex, character, $"Palantír of Orthanc secures {peek.name} and reveals {nearestEnemyPc.GetPC().pcName}.", Color.white);
+            }
+            else
+            {
+                MessageDisplayNoUI.ShowMessage(character.hex, character, $"Palantír of Orthanc secures {peek.name} from the top of your deck.", Color.white);
+            }
+
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            return character != null && game != null && deckManager != null && game.player != null
+                && character.GetOwner() == game.player
+                && deckManager.HasDeckFor(game.player)
+                && deckManager.GetHand(game.player).Count < deckManager.GetHandSize()
+                && deckManager.GetDrawPile(game.player).Take(3).Any(card => card != null);
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
 public class ThroughMirkwoodShadowsAction : EventAction
 {
     private const int RevealCount = 5;

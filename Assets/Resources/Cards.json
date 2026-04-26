@@ -52,7 +52,7 @@
             "thematic": "Core Free Peoples deck built around Men, Elves, Dwarves, Hobbits, Eagles, and other allied peoples working in concert. Its gameplay favors balanced development, card quality, scouting, diplomacy, defensive resilience, region access, and reliable utility over brute specialization; it should feel like the broad strategic foundation from which the more sharply themed Gandalf subdecks branch outward.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/GandalfBase",
-            "cardCount": 42,
+            "cardCount": 44,
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true
@@ -85,7 +85,7 @@
             "thematic": "Stormcrow is the Gandalf subdeck of uneasy wartime pressure among Men. It should frame the Grey Pilgrim not only as an ill omen or unwelcome counselor, but as the unsettling force who appears when Mannish realms are strained by encroaching evil and must harden themselves for survival. This includes fronts such as Rohan against the White Hand, Gondor against Mordor, the Northmen of Rhovanion against Easterlings, the Anduin Vale against Dol Guldur, Bree and wider Eriador under the long memory of Angmar, and similar regions where roads, ports, fords, courts, and frontier settlements live under gathering shadow. Gandalf is trying to help, organize, and strengthen resistance, yet many still see him as the sign that peace has already failed. In gameplay the deck should lean into morale strain, defensive hardening, political tension, frontier vigilance, war-readiness, movement pressure, intelligence and concealment, loyalty under stress, and reputation-based disruption rather than reducing itself to repeated warnings or bad-news delivery.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/Stormcrow",
-            "cardCount": 69,
+            "cardCount": 67,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false
@@ -118,7 +118,7 @@
             "thematic": "Core Isengard strategy deck blending manipulation, coercion, industrial preparation, mixed evil-men support, and practical force. Its races and allies can include Dunlendings, opportunistic Men, Orcs, and wizard-led control pieces; in play it is about pressure through planning, resource leverage, positioning, political influence, and midrange control before committing to a sharper Saruman identity.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/SarumanBase",
-            "cardCount": 113,
+            "cardCount": 84,
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true
@@ -129,7 +129,7 @@
             "thematic": "Orthanc mastermind deck focused on rhetoric, control, persuasion, voice, and polished strategic dominance. This is Saruman as the calculating high wizard who bends choices and states rather than simply rushing with troops; players should expect influence, deception, mind-affecting actions, elegant tactical denial, and carefully timed control cards.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/SarumanTheWhite",
-            "cardCount": 16,
+            "cardCount": 26,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false
@@ -140,7 +140,7 @@
             "thematic": "Arcane self-reinvention deck expressing Saruman's many-coloured identity: layered wizardry, vanity, broad magical reach, and power drawn from synthesis rather than purity. This subdeck is ideal for spell-oriented play with multi-axis magical effects, buffs and debuffs in the same action, symbolic robes-and-voice flavor, and flashy board manipulation that feels sophisticated and dangerous.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/OfManyColours",
-            "cardCount": 26,
+            "cardCount": 46,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false
@@ -151,7 +151,7 @@
             "thematic": "War engine of Isengard built around Uruk-hai, Orc industry, furnaces, intimidation, and relentless production-to-pressure conversion. This is the aggressive Saruman branch: siege tools, military events, battlefield force multiplication, and sustained assault through disciplined evil infantry and industrial throughput rather than finesse.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/TheWhiteHand",
-            "cardCount": 21,
+            "cardCount": 37,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false

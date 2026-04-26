@@ -16,7 +16,19 @@ public enum ArmySpecialAbilityEnum
     Encouraging = 8,
     Discouraging = 9,
     Berserker = 10,
-    Charging = 11
+    Charging = 11,
+    Halted = 12,
+    RefusingDuels = 13,
+    Frozen = 14,
+    Blocked = 15,
+    Hope = 16,
+    Hidden = 17,
+    ArcaneInsight = 18,
+    Strengthened = 19,
+    Fortified = 20,
+    MorgulTouch = 21,
+    DuelSupremacy = 22,
+    Bleeding = 23
 }
 
 [Serializable]

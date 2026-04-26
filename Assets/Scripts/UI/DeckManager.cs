@@ -116,6 +116,8 @@ public class CardData
     public string region;
     public string requirementsText;
     public string historyText;
+    public string statusEffect;
+    public int procChance;
     public string portraitName;
     public string referenceDeckId;
     public int referenceCardId;
@@ -229,7 +231,8 @@ public class CardData
 
     public string GetDescriptionBody(bool includeFoundingText = false)
     {
-        return GetCardType() switch
+        CardTypeEnum cardType = GetCardType();
+        string body = cardType switch
         {
             CardTypeEnum.Character => GetCharacterDescription(),
             CardTypeEnum.Army => GetArmyDescription(),
@@ -238,6 +241,14 @@ public class CardData
             CardTypeEnum.Event or CardTypeEnum.Action or CardTypeEnum.Spell => GetActionEffectText(),
             _ => string.Empty
         };
+
+        return cardType == CardTypeEnum.Action
+            || cardType == CardTypeEnum.Event
+            || cardType == CardTypeEnum.Spell
+            || cardType == CardTypeEnum.Land
+            || cardType == CardTypeEnum.PC
+                ? AppendCardStatusText(body)
+                : body;
     }
 
     public string GetQuoteBlock()
@@ -263,6 +274,13 @@ public class CardData
     public string GetActionEffectText()
     {
         return string.IsNullOrWhiteSpace(actionEffect) ? string.Empty : actionEffect.Trim();
+    }
+
+    private string AppendCardStatusText(string body)
+    {
+        // Status effects are internal gameplay state and should not be exposed in card authoring/display.
+        // Army proc configuration is driven by specialAbilities + procChance instead.
+        return body;
     }
 
     private string GetArmySummary()
@@ -445,11 +463,11 @@ public class CardData
     {
         if (specialAbilities == null || specialAbilities.Count == 0) return new List<string>();
 
-        return specialAbilities
-            .Distinct()
-            .Select(FormatArmyAbilityLabel)
-            .Where(label => !string.IsNullOrWhiteSpace(label))
-            .ToList();
+        ArmySpecialAbilityEnum ability = specialAbilities.First();
+        string label = FormatArmyAbilityLabel(ability);
+        if (string.IsNullOrWhiteSpace(label)) return new List<string>();
+        int chance = Mathf.Clamp(procChance <= 0 ? 100 : procChance, 1, 100);
+        return new List<string> { $"{label} {chance}%" };
     }
 
     private static string FormatArmyAbilityLabel(ArmySpecialAbilityEnum ability)
@@ -458,6 +476,10 @@ public class CardData
         {
             ArmySpecialAbilityEnum.Longrange => "Long range",
             ArmySpecialAbilityEnum.ShortRange => "Short range",
+            ArmySpecialAbilityEnum.RefusingDuels => "Refusing duels",
+            ArmySpecialAbilityEnum.ArcaneInsight => "Arcane insight",
+            ArmySpecialAbilityEnum.DuelSupremacy => "Duel supremacy",
+            ArmySpecialAbilityEnum.MorgulTouch => "Morgul touch",
             _ => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
                 Regex.Replace(ability.ToString(), "([a-z])([A-Z])", "$1 $2").ToLowerInvariant())
         };
@@ -466,6 +488,10 @@ public class CardData
         {
             ArmySpecialAbilityEnum.Longrange => "longrange",
             ArmySpecialAbilityEnum.ShortRange => "shortrange",
+            ArmySpecialAbilityEnum.ArcaneInsight => "arcaneinsight",
+            ArmySpecialAbilityEnum.RefusingDuels => "refusingduels",
+            ArmySpecialAbilityEnum.DuelSupremacy => "duelsupremacy",
+            ArmySpecialAbilityEnum.MorgulTouch => "morgultouch",
             _ => ability.ToString().ToLowerInvariant()
         };
 
@@ -538,6 +564,9 @@ public class DeckManager : MonoBehaviour
 
     public List<CardData> cards = new();
 
+    [Header("Status Effects")]
+    [SerializeField] private List<string> availableStatusEffectIds = Enum.GetNames(typeof(StatusEffectEnum)).ToList();
+
     [Header("Inspector (Runtime)")]
     [SerializeField] private List<DeckData> inspectorDecks = new();
 
@@ -549,6 +578,13 @@ public class DeckManager : MonoBehaviour
     private int handSize = 5;
     private bool loaded;
     private bool isRefreshingHumanHandUI;
+
+    public IReadOnlyList<string> AvailableStatusEffectIds => availableStatusEffectIds;
+
+    private void OnValidate()
+    {
+        availableStatusEffectIds = Enum.GetNames(typeof(StatusEffectEnum)).ToList();
+    }
 
     private void Awake()
     {
@@ -1194,6 +1230,8 @@ public class DeckManager : MonoBehaviour
             region = card.region,
             requirementsText = card.requirementsText,
             historyText = card.historyText,
+            statusEffect = card.statusEffect,
+            procChance = card.procChance,
             portraitName = card.portraitName,
             referenceDeckId = card.referenceDeckId,
             referenceCardId = card.referenceCardId,

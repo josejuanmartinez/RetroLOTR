@@ -1051,15 +1051,15 @@ public class TutorialManager : MonoBehaviour
             completed = true;
         }
         else if (!string.IsNullOrWhiteSpace(requiredCardName)
-            && TryGetSkipArmyDefinition(actor.GetOwner() as PlayableLeader, requiredCardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName))
+            && TryGetSkipArmyDefinition(actor.GetOwner() as PlayableLeader, requiredCardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName, out int procChance))
         {
             if (!actor.IsArmyCommander())
             {
-                actor.CreateArmy(troopType, 1, false, 0, specialAbilities, troopName);
+                actor.CreateArmy(troopType, 1, false, 0, specialAbilities, troopName, procChance);
             }
             else
             {
-                actor.GetArmy()?.Recruit(troopType, 1, specialAbilities, troopName);
+                actor.GetArmy()?.Recruit(troopType, 1, specialAbilities, troopName, procChance);
                 actor.hex?.RedrawCharacters();
                 actor.hex?.RedrawArmies();
                 actor.RefreshSelectedCharacterIconIfSelected();
@@ -1290,15 +1290,15 @@ public class TutorialManager : MonoBehaviour
         string requiredCardName = ResolveRequiredCardName(step, playableLeader);
         if (string.IsNullOrWhiteSpace(requiredCardName)) return;
 
-        if (!TryGetSkipArmyDefinition(playableLeader, requiredCardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName)) return;
+        if (!TryGetSkipArmyDefinition(playableLeader, requiredCardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName, out int procChance)) return;
 
         if (!actor.IsArmyCommander())
         {
-            actor.CreateArmy(troopType, 1, false, 0, specialAbilities, troopName);
+            actor.CreateArmy(troopType, 1, false, 0, specialAbilities, troopName, procChance);
         }
         else
         {
-            actor.GetArmy()?.Recruit(troopType, 1, specialAbilities, troopName);
+            actor.GetArmy()?.Recruit(troopType, 1, specialAbilities, troopName, procChance);
             actor.hex?.RedrawCharacters();
             actor.hex?.RedrawArmies();
             actor.RefreshSelectedCharacterIconIfSelected();
@@ -1406,11 +1406,12 @@ public class TutorialManager : MonoBehaviour
         Debug.Log($"{TutorialDebugPrefix} leader='{leader.characterName}' stepIndex={requiredStepIndex} step='{stepId}' card='{requiredCard}' :: {message}");
     }
 
-    private bool TryGetSkipArmyDefinition(PlayableLeader playableLeader, string cardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName)
+    private bool TryGetSkipArmyDefinition(PlayableLeader playableLeader, string cardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName, out int procChance)
     {
         troopType = default;
         specialAbilities = null;
         troopName = null;
+        procChance = 100;
         if (string.IsNullOrWhiteSpace(cardName)) return false;
 
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
@@ -1420,6 +1421,7 @@ public class TutorialManager : MonoBehaviour
         troopType = card.troopType;
         specialAbilities = card.specialAbilities != null ? new List<ArmySpecialAbilityEnum>(card.specialAbilities) : new List<ArmySpecialAbilityEnum>();
         troopName = card.name;
+        procChance = Mathf.Clamp(card.procChance <= 0 ? 100 : card.procChance, 1, 100);
         return true;
     }
 

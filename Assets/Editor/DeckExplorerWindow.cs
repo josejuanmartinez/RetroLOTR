@@ -53,7 +53,6 @@ public class DeckExplorerWindow : EditorWindow
     private bool sortCardsByTypeThenName = true;
     private string editedCardKey;
     private string copyTargetResourcePath;
-    private string baseDeckTargetResourcePath;
     private int editedCommanderSkillRequired;
     private int editedAgentSkillRequired;
     private int editedEmissarySkillRequired;
@@ -75,6 +74,7 @@ public class DeckExplorerWindow : EditorWindow
     private int editedGoldGranted;
     private ArmySpecialAbilityEnum editedArmyAbilityToAdd;
     private TroopsTypeEnum editedTroopType;
+    private int editedProcChance;
     private int editedCharacterCommander;
     private int editedCharacterAgent;
     private int editedCharacterEmissary;
@@ -167,7 +167,7 @@ public class DeckExplorerWindow : EditorWindow
         GUILayout.BeginVertical(GUILayout.Width(260));
         EditorGUILayout.LabelField("Decks", EditorStyles.boldLabel);
 
-        deckScroll = EditorGUILayout.BeginScrollView(deckScroll, GUILayout.Width(260));
+        deckScroll = EditorGUILayout.BeginScrollView(deckScroll, GUILayout.Width(360));
         for (int i = 0; i < deckViews.Count; i++)
         {
             DeckEntryView view = deckViews[i];
@@ -263,9 +263,7 @@ public class DeckExplorerWindow : EditorWindow
             SetCardFinalized(card, finalized);
         }
         GUILayout.FlexibleSpace();
-        DrawCopyToSubdeckControls(card);
-        GUILayout.Space(6);
-        DrawCopyToBaseDeckControls(card);
+        DrawCopyToDeckControls(card);
         GUILayout.Space(6);
         if (GUILayout.Button("Provide Feedback", GUILayout.Width(130)))
         {
@@ -358,13 +356,13 @@ public class DeckExplorerWindow : EditorWindow
         EditorGUILayout.LabelField("Requirements text", card.requirementsText ?? string.Empty);
     }
 
-    private void DrawCopyToSubdeckControls(CardData card)
+    private void DrawCopyToDeckControls(CardData card)
     {
         DeckEntryView currentDeck = GetSelectedDeckView();
-        List<DeckEntryView> targets = GetCopyTargets(currentDeck);
+        List<DeckEntryView> targets = GetAllTransferTargets(currentDeck);
         if (targets.Count == 0)
         {
-            EditorGUILayout.LabelField("Transfer", "No subdeck targets");
+            EditorGUILayout.LabelField("To deck", "No deck targets");
             return;
         }
 
@@ -372,48 +370,13 @@ public class DeckExplorerWindow : EditorWindow
         string[] options = targets.Select(BuildDeckLabel).ToArray();
 
         EditorGUI.BeginDisabledGroup(!IsCardFinalized(card) || IsCardDisabled(card));
-        EditorGUILayout.BeginHorizontal(GUILayout.Width(440));
-        EditorGUILayout.LabelField("Transfer", GUILayout.Width(50));
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(460));
+        EditorGUILayout.LabelField("To deck", GUILayout.Width(55));
 
-        int newIndex = EditorGUILayout.Popup(targetIndex, options, GUILayout.Width(210));
+        int newIndex = EditorGUILayout.Popup(targetIndex, options, GUILayout.Width(230));
         if (newIndex != targetIndex)
         {
             copyTargetResourcePath = targets[newIndex].manifest.resourcePath;
-        }
-
-        if (GUILayout.Button("Copy", GUILayout.Width(62)))
-        {
-            CopyFinalizedCardToSubdeck(card, currentDeck, targets[newIndex]);
-        }
-        if (GUILayout.Button("Move", GUILayout.Width(62)))
-        {
-            MoveFinalizedCardToSubdeck(card, currentDeck, targets[newIndex]);
-        }
-        EditorGUILayout.EndHorizontal();
-        EditorGUI.EndDisabledGroup();
-    }
-
-    private void DrawCopyToBaseDeckControls(CardData card)
-    {
-        DeckEntryView currentDeck = GetSelectedDeckView();
-        List<DeckEntryView> targets = GetBaseDeckTargets(currentDeck);
-        if (targets.Count == 0)
-        {
-            EditorGUILayout.LabelField("Transfer to base", "No base deck targets");
-            return;
-        }
-
-        int targetIndex = GetBaseDeckTargetIndex(targets);
-        string[] options = targets.Select(BuildDeckLabel).ToArray();
-
-        EditorGUI.BeginDisabledGroup(!IsCardFinalized(card) || IsCardDisabled(card));
-        EditorGUILayout.BeginHorizontal(GUILayout.Width(440));
-        EditorGUILayout.LabelField("To base", GUILayout.Width(50));
-
-        int newIndex = EditorGUILayout.Popup(targetIndex, options, GUILayout.Width(210));
-        if (newIndex != targetIndex)
-        {
-            baseDeckTargetResourcePath = targets[newIndex].manifest.resourcePath;
         }
 
         if (GUILayout.Button("Copy", GUILayout.Width(62)))
@@ -476,6 +439,7 @@ public class DeckExplorerWindow : EditorWindow
             DrawEditableGrants(card);
         }
 
+
         GUILayout.Space(6);
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
@@ -518,38 +482,28 @@ public class DeckExplorerWindow : EditorWindow
         if (card == null) return;
 
         card.specialAbilities ??= new List<ArmySpecialAbilityEnum>();
+        if (card.specialAbilities.Count > 1)
+        {
+            card.specialAbilities = new List<ArmySpecialAbilityEnum> { card.specialAbilities[0] };
+        }
 
         EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
-        if (card.specialAbilities.Count == 0)
-        {
-            EditorGUILayout.LabelField("None");
-        }
-        else
-        {
-            for (int i = 0; i < card.specialAbilities.Count; i++)
-            {
-                ArmySpecialAbilityEnum ability = card.specialAbilities[i];
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField(FormatArmyAbilityLabel(ability));
-                if (GUILayout.Button("Remove", GUILayout.Width(70)))
-                {
-                    card.specialAbilities.RemoveAt(i);
-                    SaveArmyAbilities(card);
-                    GUIUtility.ExitGUI();
-                }
-                EditorGUILayout.EndHorizontal();
-            }
-        }
+
+        ArmySpecialAbilityEnum? currentAbility = card.specialAbilities.Count > 0 ? card.specialAbilities[0] : (ArmySpecialAbilityEnum?)null;
+        EditorGUILayout.LabelField("Ability", currentAbility.HasValue ? FormatArmyAbilityLabel(currentAbility.Value) : "None");
+        editedProcChance = EditorGUILayout.IntSlider("Proc Chance", Mathf.Clamp(editedProcChance <= 0 ? 100 : editedProcChance, 1, 100), 1, 100);
 
         EditorGUILayout.BeginHorizontal();
-        editedArmyAbilityToAdd = (ArmySpecialAbilityEnum)EditorGUILayout.EnumPopup(editedArmyAbilityToAdd);
-        if (GUILayout.Button("Add", GUILayout.Width(60)))
+        editedArmyAbilityToAdd = (ArmySpecialAbilityEnum)EditorGUILayout.EnumPopup("Set Ability", currentAbility ?? editedArmyAbilityToAdd);
+        if (GUILayout.Button("Save", GUILayout.Width(60)))
         {
-            if (!card.specialAbilities.Contains(editedArmyAbilityToAdd))
-            {
-                card.specialAbilities.Add(editedArmyAbilityToAdd);
-                SaveArmyAbilities(card);
-            }
+            card.specialAbilities = new List<ArmySpecialAbilityEnum> { editedArmyAbilityToAdd };
+            SaveArmyAbilities(card);
+        }
+        if (GUILayout.Button("Clear", GUILayout.Width(60)))
+        {
+            card.specialAbilities.Clear();
+            SaveArmyAbilities(card);
         }
         EditorGUILayout.EndHorizontal();
         EditorGUI.EndDisabledGroup();
@@ -623,6 +577,7 @@ public class DeckExplorerWindow : EditorWindow
         editedMithrilGranted = Mathf.Max(0, card.mithrilGranted);
         editedGoldGranted = Mathf.Max(0, card.goldGranted);
         editedTroopType = card.troopType;
+        editedProcChance = Mathf.Clamp(card.procChance <= 0 ? 100 : card.procChance, 1, 100);
         editedCharacterCommander = Mathf.Max(0, card.commander);
         editedCharacterAgent = Mathf.Max(0, card.agent);
         editedCharacterEmissary = Mathf.Max(0, card.emmissary);
@@ -636,6 +591,7 @@ public class DeckExplorerWindow : EditorWindow
         string cardName = string.IsNullOrWhiteSpace(card.name) ? "unknownCard" : card.name.Trim();
         return $"{deckId}:{card.cardId}:{cardName}";
     }
+
 
     private void SaveNewRequirements(CardData card)
     {
@@ -734,9 +690,13 @@ public class DeckExplorerWindow : EditorWindow
             target = card;
         }
 
-        target.specialAbilities = card.specialAbilities != null
-            ? card.specialAbilities.Distinct().ToList()
+        target.specialAbilities = card.specialAbilities != null && card.specialAbilities.Count > 0
+            ? new List<ArmySpecialAbilityEnum> { card.specialAbilities[0] }
             : new List<ArmySpecialAbilityEnum>();
+        target.procChance = target.specialAbilities.Count > 0
+            ? Mathf.Clamp(editedProcChance <= 0 ? 100 : editedProcChance, 1, 100)
+            : 0;
+        target.statusEffect = string.Empty;
 
         string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
         if (string.IsNullOrWhiteSpace(assetPath))
@@ -752,7 +712,7 @@ public class DeckExplorerWindow : EditorWindow
 
         ReloadSelectedCard();
         EditorUtility.SetDirty(this);
-        Debug.Log($"DeckExplorerWindow: saved army abilities for '{card.name}'.");
+        Debug.Log($"DeckExplorerWindow: saved army ability/proc chance for '{card.name}'.");
     }
 
     private void SaveCharacterStats(CardData card)
@@ -823,6 +783,7 @@ public class DeckExplorerWindow : EditorWindow
         EditorUtility.SetDirty(this);
         Debug.Log($"DeckExplorerWindow: saved army type for '{card.name}'.");
     }
+
 
     private static string GetDeckAssetPath(string resourcePath)
     {
@@ -1183,7 +1144,8 @@ public class DeckExplorerWindow : EditorWindow
         string nation = string.IsNullOrWhiteSpace(view.manifest.nation) ? "(no nation)" : view.manifest.nation;
         string parent = string.IsNullOrWhiteSpace(view.manifest.parentDeckId) ? string.Empty : $" <- {view.manifest.parentDeckId}";
         string indent = new string(' ', Mathf.Max(0, view.depth) * 2);
-        return $"{indent}{nation} / {deckId}{parent} ({view.manifest.cardCount} cards)";
+        return $"{indent}{nation} / {deckId} ({view.manifest.cardCount} cards)";
+        //return $"{indent}{nation} / {deckId}{parent} ({view.manifest.cardCount} cards)";
     }
 
     private void RefreshData()
@@ -1289,7 +1251,7 @@ public class DeckExplorerWindow : EditorWindow
         Repaint();
     }
 
-    private List<DeckEntryView> GetCopyTargets(DeckEntryView currentDeck)
+    private List<DeckEntryView> GetAllTransferTargets(DeckEntryView currentDeck)
     {
         return deckViews
             .Where(view =>
@@ -1297,28 +1259,7 @@ public class DeckExplorerWindow : EditorWindow
                 && view.manifest != null
                 && view.deckData != null
                 && !string.IsNullOrWhiteSpace(view.manifest.resourcePath)
-                && !view.manifest.sharedToAll
-                && !view.manifest.isBaseDeck
                 && (currentDeck == null || !string.Equals(view.manifest.resourcePath, currentDeck.manifest.resourcePath, StringComparison.OrdinalIgnoreCase)))
-            .ToList();
-    }
-
-    private List<DeckEntryView> GetBaseDeckTargets(DeckEntryView currentDeck)
-    {
-        if (currentDeck?.manifest == null)
-        {
-            return new List<DeckEntryView>();
-        }
-
-        return deckViews
-            .Where(view =>
-                view != null
-                && view.manifest != null
-                && view.deckData != null
-                && !string.IsNullOrWhiteSpace(view.manifest.resourcePath)
-                && view.manifest.isBaseDeck
-                && view.manifest.alignment == currentDeck.manifest.alignment
-                && !string.Equals(view.manifest.resourcePath, currentDeck.manifest.resourcePath, StringComparison.OrdinalIgnoreCase))
             .ToList();
     }
 
@@ -1340,23 +1281,6 @@ public class DeckExplorerWindow : EditorWindow
         return 0;
     }
 
-    private int GetBaseDeckTargetIndex(List<DeckEntryView> targets)
-    {
-        if (targets == null || targets.Count == 0) return 0;
-
-        if (!string.IsNullOrWhiteSpace(baseDeckTargetResourcePath))
-        {
-            int matchIndex = targets.FindIndex(view => view != null && view.manifest != null
-                && string.Equals(view.manifest.resourcePath, baseDeckTargetResourcePath, StringComparison.OrdinalIgnoreCase));
-            if (matchIndex >= 0)
-            {
-                return matchIndex;
-            }
-        }
-
-        baseDeckTargetResourcePath = targets[0].manifest.resourcePath;
-        return 0;
-    }
 
     private void CopyFinalizedCardToSubdeck(CardData sourceCard, DeckEntryView sourceDeckView, DeckEntryView targetDeckView)
     {
@@ -2387,6 +2311,10 @@ public class DeckExplorerWindow : EditorWindow
         {
             ArmySpecialAbilityEnum.Longrange => "Long range",
             ArmySpecialAbilityEnum.ShortRange => "Short range",
+            ArmySpecialAbilityEnum.RefusingDuels => "Refusing duels",
+            ArmySpecialAbilityEnum.ArcaneInsight => "Arcane insight",
+            ArmySpecialAbilityEnum.DuelSupremacy => "Duel supremacy",
+            ArmySpecialAbilityEnum.MorgulTouch => "Morgul touch",
             _ => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
                 Regex.Replace(ability.ToString(), "([a-z])([A-Z])", "$1 $2").ToLowerInvariant())
         };
@@ -2395,6 +2323,10 @@ public class DeckExplorerWindow : EditorWindow
         {
             ArmySpecialAbilityEnum.Longrange => "longrange",
             ArmySpecialAbilityEnum.ShortRange => "shortrange",
+            ArmySpecialAbilityEnum.ArcaneInsight => "arcaneinsight",
+            ArmySpecialAbilityEnum.RefusingDuels => "refusingduels",
+            ArmySpecialAbilityEnum.DuelSupremacy => "duelsupremacy",
+            ArmySpecialAbilityEnum.MorgulTouch => "morgultouch",
             _ => ability.ToString().ToLowerInvariant()
         };
 
@@ -2521,5 +2453,3 @@ public class DeckExplorerWindow : EditorWindow
         return new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
     }
 }
-
-

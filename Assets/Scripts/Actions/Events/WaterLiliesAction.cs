@@ -16,7 +16,8 @@ public class WaterLiliesAction : EventAction
         StatusEffectEnum.Blocked,
         StatusEffectEnum.Despair,
         StatusEffectEnum.Fear,
-        StatusEffectEnum.MorgulTouch
+        StatusEffectEnum.MorgulTouch,
+        StatusEffectEnum.Bleeding
     };
 
     private static bool IsWaterOrShore(Hex hex)

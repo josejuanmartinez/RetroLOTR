@@ -16,5 +16,6 @@ public enum StatusEffectEnum
     Strengthened = 13,
     Fortified = 14,
     MorgulTouch = 15,
-    DuelSupremacy = 16
+    DuelSupremacy = 16,
+    Bleeding = 17
 }
