@@ -1,6 +1,6 @@
 {
     "handSize": 5,
-    "deckCount": 18,
+    "deckCount": 20,
     "decks": [
         {
             "deckId": "shared_base",
@@ -118,7 +118,7 @@
             "thematic": "Core Isengard strategy deck blending manipulation, coercion, industrial preparation, mixed evil-men support, and practical force. Its races and allies can include Dunlendings, opportunistic Men, Orcs, and wizard-led control pieces; in play it is about pressure through planning, resource leverage, positioning, political influence, and midrange control before committing to a sharper Saruman identity.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/SarumanBase",
-            "cardCount": 80,
+            "cardCount": 79,
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true
@@ -140,7 +140,7 @@
             "thematic": "Arcane self-reinvention deck expressing Saruman's many-coloured identity: layered wizardry, vanity, broad magical reach, and power drawn from synthesis rather than purity. This subdeck is ideal for spell-oriented play with multi-axis magical effects, buffs and debuffs in the same action, symbolic robes-and-voice flavor, and flashy board manipulation that feels sophisticated and dangerous.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/OfManyColours",
-            "cardCount": 46,
+            "cardCount": 47,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false
@@ -151,7 +151,7 @@
             "thematic": "War engine of Isengard built around Uruk-hai, Orc industry, furnaces, intimidation, and relentless production-to-pressure conversion. This is the aggressive Saruman branch: siege tools, military events, battlefield force multiplication, and sustained assault through disciplined evil infantry and industrial throughput rather than finesse.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/TheWhiteHand",
-            "cardCount": 38,
+            "cardCount": 40,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false
@@ -162,7 +162,7 @@
             "thematic": "Foundational Shadow empire deck covering Mordor's broad military, corruption, fear, conquest, and attrition game plan. Orcs, evil men, monsters, siege assets, and oppressive utility belong here, giving a reliable shell for expansion into more specialized Sauron identities; it rewards steady pressure, resource denial, battlefield cruelty, and inevitability through accumulation.",
             "alignment": 1,
             "resourcePath": "Cards/Modular/SauronBase",
-            "cardCount": 117,
+            "cardCount": 90,
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true
@@ -173,7 +173,7 @@
             "thematic": "Lidless surveillance and Nazgul command deck centered on dread presence, revelation, control auras, and the feeling that no movement escapes Mordor's notice. It favors fear, despair, board locking, command projection, cursed riders, and oppressive events that squeeze the opponent's options turn by turn until resistance becomes inefficient.",
             "alignment": 1,
             "resourcePath": "Cards/Modular/TheDarkEye",
-            "cardCount": 32,
+            "cardCount": 39,
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
             "isBaseDeck": false
@@ -184,7 +184,7 @@
             "thematic": "Subversion-and-false-gifts deck for Sauron as Annatar and corrupter: persuasive command, fallen Numenorean legacy, palantir theft, temptation, and domination achieved through trust, seduction, and crooked counsel before open conquest.",
             "alignment": 1,
             "resourcePath": "Cards/Modular/TheDeceiver",
-            "cardCount": 13,
+            "cardCount": 19,
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
             "isBaseDeck": false
@@ -195,7 +195,29 @@
             "thematic": "Dol Guldur horror deck built around dark sorcery, ruined strongholds, cursed creatures, lingering effects, and monster-heavy occult pressure. Goblins, spirits, spiders, dragons, undead presences, and slow magical decay all fit here; gameplay leans toward attrition, haunting pressure, corruption-adjacent status play, and a more monstrous, supernatural style than the disciplined Dark Eye branch.",
             "alignment": 1,
             "resourcePath": "Cards/Modular/TheNecromancer",
-            "cardCount": 31,
+            "cardCount": 40,
+            "sharedToAll": false,
+            "parentDeckId": "sauron_base",
+            "isBaseDeck": false
+        },
+        {
+            "deckId": "shadow_of_the_east",
+            "nation": "Sauron",
+            "thematic": "Eastern shadow and dark diplomacy deck built around Sauron's influence over the Easterling tribes beyond the Sea of Rhûn. It favors horde raising through emissary pressure, whispered threats, iron promises, and the patient swelling of eastern war-bands that look westward with hungry patience.",
+            "alignment": 1,
+            "resourcePath": "Cards/Modular/ShadowOfTheEast",
+            "cardCount": 6,
+            "sharedToAll": false,
+            "parentDeckId": "sauron_base",
+            "isBaseDeck": false
+        },
+        {
+            "deckId": "the_iron_crown",
+            "nation": "Sauron",
+            "thematic": "Witch-realm of Angmar deck centered on the Witch-king's iron crown: deception, slaving, and the breaking of hope among the Men of Eriador. It breeds Orcs and Trolls from northern mountain holds, gnaws at Arnor and Cardolan through false counsel and terror, and pours dark sorcery from Carn Dûm like a black river that bends wills before blades are drawn.",
+            "alignment": 1,
+            "resourcePath": "Cards/Modular/TheIronCrown",
+            "cardCount": 9,
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
             "isBaseDeck": false

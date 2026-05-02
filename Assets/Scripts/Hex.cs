@@ -2002,7 +2002,7 @@ public class Hex : MonoBehaviour
     {
         bool revealed = IsHexRevealed();
         bool isWaterHex = terrainType == TerrainEnum.shallowWater || terrainType == TerrainEnum.deepWater;
-        float frontierAlpha = isCurrentlyUnseen ? 0.1f : 1f;
+        float frontierAlpha = isCurrentlyUnseen ? 0.1f : 1f; 
 
         if (!revealed)
         {

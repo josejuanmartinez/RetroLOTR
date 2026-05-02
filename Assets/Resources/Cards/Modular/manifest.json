@@ -592,6 +592,75 @@
                                                "haunting apparitions",
                                                "monstrous occult scenes"
                                            ]
+                  },
+                  {
+                      "id":  "ShadowOfTheEast",
+                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\ShadowOfTheEast.json",
+                      "count":  0,
+                      "thematic":  "Eastern shadow and dark diplomacy deck built around Sauron's influence over the Easterling tribes beyond the Sea of Rhûn. It favors horde raising through emissary pressure, whispered threats, iron promises, and the patient swelling of eastern war-bands that look westward with hungry patience.",
+                      "fantasy":  "Sauron's hidden hand among the horse-lords and wagon-folk of the eastern steppes: gifts of iron and fear, tribal manipulation, and the gathering of a storm born far beyond the walls of the Free Peoples.",
+                      "mechanicalPillars":  [
+                                                "emissary-driven recruitment and manipulation",
+                                                "horde raising and mass army accumulation",
+                                                "dark diplomacy and threat-based control",
+                                                "eastern tribal pressure against western borders"
+                                            ],
+                      "themeLanes":  [
+                                         "Easterling tribes and eastern steppes",
+                                         "emissary craft and whispered threats",
+                                         "iron promises and bondage",
+                                         "horse-lords and wagon-folk under shadow",
+                                         "the Sea of Rhûn and lands beyond the map",
+                                         "patient armies swelling beyond sight"
+                                     ],
+                      "avoidThemes":  [
+                                          "direct Mordor fortress imagery",
+                                          "Nazgul surveillance as primary identity",
+                                          "western political court intrigue",
+                                          "isolated monster horror without tribal context"
+                                      ],
+                      "visualDirections":  [
+                                               "eastern steppes and red war-spears",
+                                               "tribal gatherings under dark counsel",
+                                               "distant horizons burning with marching columns",
+                                               "horse-lords receiving iron gifts from hooded figures"
+                                           ]
+                  },
+                  {
+                      "id":  "TheIronCrown",
+                      "path":  "C:\\Users\\jjmca\\RetroLOTR\\Assets\\Resources\\Cards\\Modular\\TheIronCrown.json",
+                      "count":  0,
+                      "thematic":  "Witch-realm of Angmar deck centered on the Witch-king's iron crown: deception, slaving, and the breaking of hope among the Men of Eriador. It breeds Orcs and Trolls from northern mountain holds, gnaws at Arnor and Cardolan through false counsel and terror, and pours dark sorcery from Carn Dûm like a black river that bends wills before blades are drawn.",
+                      "fantasy":  "The Witch-king's cold dominion over Eriador: deception and plague among the Men of the West, monstrous hordes bred in mountain dark, and sorcery that breaks loyalty before open war begins.",
+                      "mechanicalPillars":  [
+                                                "deception and recruitment through terror",
+                                                "slaving and resource extraction from conquered peoples",
+                                                "Orc and Troll horde generation from mountain holds",
+                                                "dark sorcery and will-breaking before battle"
+                                            ],
+                      "themeLanes":  [
+                                         "the Witch-realm of Angmar",
+                                         "Carn Dûm and the northern mountains",
+                                         "deception and false counsel in Eriador",
+                                         "slaving and the breaking of hope",
+                                         "Orc and Troll breeding in mountain holds",
+                                         "dark sorcery and winter that will not end",
+                                         "the Men of Arnor and Cardolan under siege"
+                                     ],
+                      "avoidThemes":  [
+                                          "Mordor and Barad-dur imagery",
+                                          "Nazgul surveillance and eye symbolism",
+                                          "eastern tribal diplomacy",
+                                          "industrial furnace aesthetics",
+                                          "treating the Iron Crown as Morgoth's crown"
+                                      ],
+                      "visualDirections":  [
+                                               "ruined Eriador hills and broken kingdoms",
+                                               "cold mountain holds breeding monsters",
+                                               "hooded deceivers in western settlements",
+                                               "dark sorcery flowing from black towers",
+                                               "shackled figures and slave columns"
+                                           ]
                   }
               ]
 }

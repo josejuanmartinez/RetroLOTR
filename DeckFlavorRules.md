@@ -137,6 +137,24 @@ Use this as the canonical flavor guardrail when adding/moving cards.
 - Wraith/spirit themes, curses, lingering magical decay.
 - Recurring dread effects and occult control.
 
+### TheIronCrown
+**Fantasy:** the Witch-King's frozen northern dominion — Angmar, fell spirits, and the dead who do not rest. Deceived and enslaved folk of Eriador (Arthedain, Cardolan, Rhudaur) labour beneath snow storms and witchery. Mountain trolls, Orcs, and Goblins haunt old Dwarven abandoned settlements, while Rhudaur Hillmen and the Angmarin rally under the Iron Crown. Forochel's bitter ice breeds only cruel resolve.
+
+**Preferred mechanics:**
+- Nazgul synergy and command buffs, barrow-wight and undead leadership.
+- Cold territory control, northern land grabs, and haunted resilience.
+- Corrupted hill-men and emissary dread from the North Downs and Rhudaur.
+- Witchery, fell spirits, and Mountain Troll brute force.
+
+### ShadowOfTheEast
+**Fantasy:** a deceiving and growing shadow from the east — cruel Easterling hordes, restless tribes, and the long dust of desert caravans. Cataphracts and chariots cross scorched lands at horse-riding speed, while emissaries weave promises among restless tribes. From Rhûn to the Brown Lands, the shadow advances across distances no western army can match.
+
+**Preferred mechanics:**
+- Eastern territory and mounted economy (Rhûn, Rhovanion, Brown Lands, Dagorlad).
+- Wide-area pressure across sprawling borderlands and long-distance reach.
+- Scorched-earth denial and the relentless advance of chariot and cataphract hordes.
+- Deception, emissary infiltration, and tribal restlessnes
+
 ---
 
 ## Practical Move Rules (for future card distribution)

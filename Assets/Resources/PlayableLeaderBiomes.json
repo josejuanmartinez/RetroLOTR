@@ -380,6 +380,22 @@
                                             "deckIdentity":  "<sprite name=\"deck\">deck <i>Deck identity:</i> Sauron as the Necromancer of Dol Guldur: ruin, occult infestation, cursed creatures, and slow supernatural decay spreading from dark strongholds.",
                                             "subdeckId":  "the_necromancer",
                                             "banner": "banner_sauron_the_necromancer"
+                                        },
+                                        {
+                                            "variantId":  "shadow_of_the_east",
+                                            "displayName":  "Shadow of the East",
+                                            "description":  "<u>The Shadow of the East</u> stirs where the sun rises over the Sea of Rhûn and the red war-spears of the Easterlings gather beneath whispers older than their tribal kings. Sauron has walked there in secret, leaving gifts of iron and fear among the horse-lords and wagon-folk, and now the eastern steppes breed armies that look westward with hungry patience. From the lands beyond the maps of the Wise, a tide of bondage and blade gathers, and the Free Peoples feel the first cold wind of a storm born far beyond their walls.<br><br>This variant is built on eastern hordes, dark diplomacy, and the patient raising of vast armies through emissary craft and whispered threats.",
+                                            "deckIdentity":  "<sprite name=\"deck\">deck <i>Deck identity:</i> Eastern shadow and dark diplomacy: emissary <sprite name=\"emissary\"> manipulation, commander <sprite name=\"commander\">-led horde raising, and the swelling of Easterling war-bands through iron <sprite name=\"iron\"> promises and patient threat.",
+                                            "subdeckId":  "shadow_of_the_east",
+                                            "banner": "banner_shadow_of_the_east"
+                                        },
+                                        {
+                                            "variantId":  "the_iron_crown",
+                                            "displayName":  "The Iron Crown",
+                                            "description":  "<u>The Iron Crown</u> rises in the Witch-realm of Angmar, where the Witch-king wears cold dominion over the ruined hills of Eriador. He does not come with open war at first, but with deception, plague, and the slow breaking of hope among the Men of Arnor and Cardolan. From the mountain holds of the North, Orcs and Trolls are bred like a pestilence, while slavers and false counsel gnaw at the edges of a kingdom that no longer trusts its own shadow. Dark sorcery flows from Carn Dûm like a black river, and the crown upon the Witch-king's brow is the seal of a winter that will not end until the last hearth in the West is cold.<br><br>This variant favors deceit, recruitment through terror, slaving, monstrous hordes from the mountains, and sorcery that bends the will before the blade is drawn.",
+                                            "deckIdentity":  "<sprite name=\"deck\">deck <i>Deck identity:</i> Angmar's witch-realm: deception and slaving among the Men of the West, Orc and Troll hordes bred in mountain dark, and sorcery <sprite name=\"mage\"> that breaks loyalty before the first sword is drawn.",
+                                            "subdeckId":  "the_iron_crown",
+                                            "banner": "banner_the_iron_crown"
                                         }
                                     ],
                        "subdeckId":  "the_dark_eye",
