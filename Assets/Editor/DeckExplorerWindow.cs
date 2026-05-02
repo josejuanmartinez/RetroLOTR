@@ -1371,17 +1371,32 @@ public class DeckExplorerWindow : EditorWindow
             return;
         }
 
-        CardData movedCard = CloneCard(sourceCard);
-        if (movedCard == null)
+        CardData movedCard;
+        if (IsReferenceCard(sourceCard))
         {
-            Debug.LogWarning($"DeckExplorerWindow: Could not clone '{sourceCard.name}' for moving.");
-            return;
+            string sourceDeckId = ResolveSourceDeckId(sourceCard, sourceDeckView);
+            int sourceCardId = sourceCard.referenceCardId;
+            movedCard = new CardData
+            {
+                cardId = GetNextCardId(targetDeckView.deckData.cards),
+                deckId = targetDeckId,
+                referenceDeckId = sourceDeckId,
+                referenceCardId = sourceCardId
+            };
         }
-
-        movedCard.cardId = GetNextCardId(targetDeckView.deckData.cards);
-        movedCard.deckId = targetDeckId;
-        movedCard.referenceDeckId = null;
-        movedCard.referenceCardId = 0;
+        else
+        {
+            movedCard = CloneCard(sourceCard);
+            if (movedCard == null)
+            {
+                Debug.LogWarning($"DeckExplorerWindow: Could not clone '{sourceCard.name}' for moving.");
+                return;
+            }
+            movedCard.cardId = GetNextCardId(targetDeckView.deckData.cards);
+            movedCard.deckId = targetDeckId;
+            movedCard.referenceDeckId = null;
+            movedCard.referenceCardId = 0;
+        }
 
         targetDeckView.deckData.cards ??= new List<CardData>();
         targetDeckView.deckData.cards.Add(movedCard);
