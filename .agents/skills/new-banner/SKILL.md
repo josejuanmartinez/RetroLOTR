@@ -72,11 +72,30 @@ If the request does not provide enough detail for a distinctive banner, infer fr
 - Prefer lowercase snake-case names that follow the existing convention, for example `banner_white_horse`
 - Keep the saved filename aligned with the JSON / gameplay banner id whenever possible
 
+## Unity Import Settings
+After saving the banner, ensure the Unity TextureImporter is configured as a **single sprite**:
+- **Texture Type**: `Sprite (2D and UI)`
+- **Sprite Mode**: `Single` (NOT Multiple)
+
+If doing this programmatically from an Editor script:
+```csharp
+TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+importer.textureType = TextureImporterType.Sprite;
+importer.spriteImportMode = SpriteImportMode.Single;
+importer.SaveAndReimport();
+```
+
+Then run the Addressables sync to register the new asset:
+```
+Tools > Addressables > Sync Art Addresses
+```
+
 ## Final Checks
 - Output is a standalone PNG sprite in `Assets/Art/UI/Alignment/Banners`
 - Composition matches the existing banner family
 - Emblem remains legible when reduced to small UI size
 - Filename matches the intended in-game banner id
+- TextureImporter is set to **Sprite Mode = Single**
 
 ## Completion Report
 After generating a banner, always report:

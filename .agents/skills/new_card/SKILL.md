@@ -54,8 +54,9 @@ If alignment is unknown, ask before editing files.
 
 ## Creativity Rule
 - Every new card mechanic must be unique and immersive; do not ship a card that feels like a renamed copy of an existing pattern.
-- Do not keep repeating the same status effects over and over again across new cards.
-- Do not default to the same familiar status packages, especially repeated use of `Fear`, `Halted`, `Hope`, `Encouraged`, `Hidden`, or `Blocked`.
+- **Status Effect Soft Cap:** Avoid letting status effects dominate a deck. As a guideline, no more than roughly 25% of cards in a deck/subdeck should apply, grant, remove, or interact with status effects. Count existing status-effect cards before proposing any new one; if the deck is already heavy with status effects, you **must** choose a non-status mechanic.
+- Do not default to common status effects out of habit. Be creative and create unique mechanics.
+- If a status effect is the best fit for a card, write a one-sentence justification explaining why that effect serves the card's lore and gameplay identity better than a non-status mechanic, then verify the deck is still at a reasonable density of status-effect cards before proceeding.
 - Prefer a card-specific mechanic that better expresses the lore, scene, or role of the card.
 - If a simple status effect is the best fit, make sure it is doing distinct work and not just another copy of the last few cards.
 - For new action cards, look first for a fresh play pattern: movement manipulation, conditional targeting, resource changes, terrain interaction, cleansing, setup/reward loops, or other distinct tactical identities.

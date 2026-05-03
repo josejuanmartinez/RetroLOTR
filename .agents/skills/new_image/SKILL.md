@@ -84,11 +84,30 @@ If `XXXX` is unknown because the card type is unclear:
 
 Prefer `.png` for new outputs unless the user requests another format.
 
+## Unity Import Settings
+After saving the final image to `Assets/Art/Cards/...`, ensure the Unity TextureImporter is configured as a **single sprite**:
+- **Texture Type**: `Sprite (2D and UI)`
+- **Sprite Mode**: `Single` (NOT Multiple)
+
+If doing this programmatically from an Editor script:
+```csharp
+TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+importer.textureType = TextureImporterType.Sprite;
+importer.spriteImportMode = SpriteImportMode.Single;
+importer.SaveAndReimport();
+```
+
+Then run the Addressables sync to register the new asset:
+```
+Tools > Addressables > Sync Art Addresses
+```
+
 ## Final Checks
 - Image is square (`width == height`).
 - File path matches the intended card category.
 - Reference images came from `Assets/Art/Cards`, not from the final asset folder.
 - The image handed to `colorify` is the strict black-and-white output of `scripts/bw_postprocess.py`, not the raw generation output.
+- **TextureImporter is set to Sprite Mode = Single**
 
 ## Completion Report (Mandatory)
 After finishing image generation, always report:

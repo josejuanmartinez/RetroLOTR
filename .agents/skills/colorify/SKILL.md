@@ -85,6 +85,29 @@ Append concise card-specific guardrails when useful:
 - Uses the same OpenAI Python SDK pattern as the repo's image generation tooling.
 - If the key is missing, stop and tell the user what is needed instead of faking success.
 
+## Unity Import Settings
+After saving the final image (whether overwriting the original or creating a preview), ensure the Unity TextureImporter is configured as a **single sprite**:
+- **Texture Type**: `Sprite (2D and UI)`
+- **Sprite Mode**: `Single` (NOT Multiple)
+
+If doing this programmatically from an Editor script:
+```csharp
+TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+importer.textureType = TextureImporterType.Sprite;
+importer.spriteImportMode = SpriteImportMode.Single;
+importer.SaveAndReimport();
+```
+
+Then run the Addressables sync to register the updated asset:
+```
+Tools > Addressables > Sync Art Addresses
+```
+
+## Final Checks
+- Output image is square (`width == height`) unless a preview with different dimensions was explicitly requested.
+- Source image composition, subject, and card identity remain recognizable.
+- **TextureImporter is set to Sprite Mode = Single** on the final asset.
+
 ## Completion Report
 Always report:
 - source image path

@@ -30,3 +30,21 @@ Keep the banner shape, silhouette, and cutout edges exactly as in the original i
 - Reinforce the banner/emblem identity while recoloring it.
 - Preserve transparency outside the banner silhouette.
 - Avoid text, logos, extra framing, or a new background.
+
+## Unity Import Settings
+After saving the final banner (whether overwriting the original or creating a preview), ensure the Unity TextureImporter is configured as a **single sprite**:
+- **Texture Type**: `Sprite (2D and UI)`
+- **Sprite Mode**: `Single` (NOT Multiple)
+
+If doing this programmatically from an Editor script:
+```csharp
+TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+importer.textureType = TextureImporterType.Sprite;
+importer.spriteImportMode = SpriteImportMode.Single;
+importer.SaveAndReimport();
+```
+
+Then run the Addressables sync to register the updated asset:
+```
+Tools > Addressables > Sync Art Addresses
+```

@@ -76,6 +76,9 @@ Use this skill when the user wants new modular subdeck cards fully implemented:
 - If the user asks for a subdeck expansion, deliver the card data, gameplay logic, and art layers that the subdeck actually needs.
 - Never present a card as finished if its effect exists only in text and is not wired in code.
 - Do not ship a card whose mechanic feels like a reskinned version of the last few additions.
+- **Status Effect Soft Cap:** Avoid letting status effects dominate a subdeck. As a guideline, no more than roughly 25% of cards in a subdeck should apply, grant, remove, or interact with status effects. Count existing status-effect cards before proposing any new one; if the deck is already heavy with status effects, choose a non-status mechanic instead.
+- Do not default to common status effects out of habit. Be creative and create unique mechanics.
+- If a status effect is the best fit for a card, write a one-sentence justification explaining why that effect serves the card's lore and gameplay identity better than a non-status mechanic, then verify the subdeck is still at a reasonable density of status-effect cards before proceeding.
 
 ## Suggested Output Report
 After completion, report:

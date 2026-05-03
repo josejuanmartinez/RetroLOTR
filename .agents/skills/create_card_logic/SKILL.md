@@ -115,7 +115,9 @@ Use these meanings when proposing card effects, durations, and balance. Prefer e
 - Base suggestions on existing card-linkage patterns (cost, target, reward, risk) only when a card actually needs a linked effect.
 - Keep effects implementable in current action architecture.
 - Prefer mechanics that read like a moment in the world, not a generic status package.
-- Avoid defaulting to the same status bundles repeatedly; if a status effect is used, it should be a deliberate choice.
+- **Status Effect Soft Cap:** Avoid letting status effects dominate a deck. As a guideline, no more than roughly 25% of cards in a deck/subdeck should apply, grant, remove, or interact with status effects. Count existing status-effect cards before proposing any new one; if the deck is already heavy with status effects, suggest a non-status mechanic instead.
+- Do not default to common status effects out of habit. Be creative and create unique mechanics.
+- If a status effect is the best fit for a card, write a one-sentence justification explaining why that effect serves the card's lore and gameplay identity better than a non-status mechanic, then verify the deck is still at a reasonable density of status-effect cards before proceeding.
 - Prefer simple, testable effects over novel mechanics.
 - If uncertain, present a conservative default as recommended.
 
