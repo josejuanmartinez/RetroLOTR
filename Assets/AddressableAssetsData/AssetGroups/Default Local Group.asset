@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -1006,7 +1006,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1adcccd8955a75541af442c1492f9816
-    m_Address: Assets/Art/UI/Alignment/Banners/banner_red_sun.png
+    m_Address: Assets/Art/UI/Alignment/Banners/banner_shadow_of_the_east.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1661,6 +1661,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 28d2a7852bb214f469255da1d051c118
     m_Address: Assets/Art/Cards/Encounters/CommanderOfTheGaladhrim.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 28db10817086e3244923716ba151cdb8
+    m_Address: Assets/Art/Cards/Characters/Sauron-ShadowOfTheEast.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6324,6 +6330,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9cf1083a93f903f449b440b4d3052fd9
+    m_Address: Assets/Art/Cards/Characters/Sauron-TheIronCrown.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9d0f50bad88921d42b6288860686248d
     m_Address: Assets/Art/Cards/Characters/Faemir.jpg
     m_ReadOnly: 0
@@ -6840,7 +6852,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a74ccbe4a3675184f96111b5edca01a4
-    m_Address: Assets/Art/UI/Alignment/Banners/banner_red_sun_2.png
+    m_Address: Assets/Art/UI/Alignment/Banners/banner_red_sun.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7830,6 +7842,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c2540388288d3bc4da082d7f93855e83
     m_Address: Assets/Art/Cards/Characters/Beoraborn.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c264168ae522308408afda615a3c192f
+    m_Address: Assets/Art/UI/Alignment/Banners/banner_the_iron_crown.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

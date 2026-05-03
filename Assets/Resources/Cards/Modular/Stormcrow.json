@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize": 5,
     "deckId": "stormcrow",
     "nation": "Gandalf",
@@ -1142,7 +1142,7 @@
         {
             "cardId": 19,
             "name": "Woodmen town",
-            "quote": "Woodmen town keeps a plain folk-stead’s courage, with smoke, timber, and the watch of the woods about it.",
+            "quote": "Woodmen town keeps a plain folk-stead\u2019s courage, with smoke, timber, and the watch of the woods about it.",
             "actionEffect": "",
             "type": "PC",
             "tags": [
@@ -1314,7 +1314,7 @@
         {
             "cardId": 307,
             "name": "BeornHouse",
-            "quote": "BeornHouse stands as a stronghold of hearth and stern hospitality, where the bears’ memory is never far.",
+            "quote": "BeornHouse stands as a stronghold of hearth and stern hospitality, where the bears\u2019 memory is never far.",
             "actionEffect": "",
             "type": "PC",
             "tags": [
@@ -1488,7 +1488,7 @@
         {
             "cardId": 342,
             "name": "Framsburg",
-            "quote": "Framsburg keeps a stern watch over the river-country, as if Fram’s old strength had never loosened its grip.",
+            "quote": "Framsburg keeps a stern watch over the river-country, as if Fram\u2019s old strength had never loosened its grip.",
             "actionEffect": "",
             "type": "PC",
             "tags": [
@@ -2896,7 +2896,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 44,
+            "procChance": 40,
             "portraitName": "",
             "referenceDeckId": "gandalf_the_white",
             "referenceCardId": 662,

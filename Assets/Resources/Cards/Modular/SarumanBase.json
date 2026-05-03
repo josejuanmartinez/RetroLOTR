@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize": 5,
     "deckId": "saruman_base",
     "nation": "Saruman",
@@ -467,7 +467,7 @@
         {
             "cardId": 334,
             "name": "ErynVorn",
-            "quote": "ErynVorn keeps the old forestÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s memory under its boughs, green and unbowed in the dusk.",
+            "quote": "ErynVorn keeps the old forest\u00c3\u0192\u00c2\u00a2\u00c3\u00a2\u00e2\u20ac\u0161\u00c2\u00ac\u00c3\u00a2\u00e2\u20ac\u017e\u00c2\u00a2s memory under its boughs, green and unbowed in the dusk.",
             "actionEffect": "",
             "type": "PC",
             "tags": [
@@ -1382,7 +1382,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 33,
+            "procChance": 30,
             "portraitName": "",
             "referenceDeckId": "gandalf_base",
             "referenceCardId": 861,
@@ -1440,7 +1440,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 33,
+            "procChance": 30,
             "portraitName": "",
             "referenceDeckId": "gandalf_base",
             "referenceCardId": 862,
@@ -1498,7 +1498,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 33,
+            "procChance": 30,
             "portraitName": "",
             "referenceDeckId": "gandalf_base",
             "referenceCardId": 860,
@@ -1717,7 +1717,7 @@
         },
         {
             "cardId": 922,
-            "name": "Palantír of Orthanc",
+            "name": "Palant\u00edr of Orthanc",
             "quote": "The stone yields knowledge, but never without shadow clinging to the edge of sight.",
             "actionEffect": "Look at the top 3 cards of your deck. Put 1 into your hand and reveal the nearest enemy PC.",
             "type": "Event",

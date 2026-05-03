@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6fb8e50e5dce356499d1cc4966bcdc24
+guid: 9cf1083a93f903f449b440b4d3052fd9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2155388646505057832
-    second: card_frame_3_0
+      213: -4929423824264544519
+    second: Sauron-TheIronCrown_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: card_frame_3_0
+      name: Sauron-TheIronCrown_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 623
-        height: 980
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 82e08d3ed8a79ed10800000000000000
-      internalID: 2155388646505057832
+      spriteID: 9fe3d57262b279bb0800000000000000
+      internalID: -4929423824264544519
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      card_frame_3_0: 2155388646505057832
+      Sauron-TheIronCrown_0: -4929423824264544519
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

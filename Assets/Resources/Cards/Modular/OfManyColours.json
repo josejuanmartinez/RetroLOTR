@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize": 5,
     "deckId": "of_many_colours",
     "nation": "Saruman",
@@ -190,7 +190,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 60,
+            "procChance": 40,
             "portraitName": "",
             "referenceDeckId": "",
             "referenceCardId": 0,
@@ -248,7 +248,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 45,
+            "procChance": 40,
             "portraitName": "",
             "referenceDeckId": "",
             "referenceCardId": 0,
@@ -364,7 +364,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 100,
+            "procChance": 40,
             "portraitName": "",
             "referenceDeckId": "",
             "referenceCardId": 0,
@@ -654,7 +654,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 100,
+            "procChance": 40,
             "portraitName": "",
             "referenceDeckId": "",
             "referenceCardId": 0,
@@ -3329,7 +3329,7 @@
         {
             "cardId": 897,
             "name": "Kas Shadoul",
-            "quote": "Kas Shadoul stands under a heat-hazed sky, and its walls seem to hoard the dayÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s last breath.",
+            "quote": "Kas Shadoul stands under a heat-hazed sky, and its walls seem to hoard the day\u00c3\u0192\u00c2\u00a2\u00c3\u00a2\u00e2\u20ac\u0161\u00c2\u00ac\u00c3\u00a2\u00e2\u20ac\u017e\u00c2\u00a2s last breath.",
             "actionEffect": "",
             "type": "PC",
             "tags": [

@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize": 5,
     "deckId": "saruman_the_white",
     "nation": "Saruman",
@@ -397,7 +397,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 100,
+            "procChance": 40,
             "portraitName": "",
             "referenceDeckId": "",
             "referenceCardId": 0,
@@ -2235,7 +2235,7 @@
         {
             "cardId": 818,
             "name": "BeornHouse",
-            "quote": "BeornHouse stands as a stronghold of hearth and stern hospitality, where the bears’ memory is never far.",
+            "quote": "BeornHouse stands as a stronghold of hearth and stern hospitality, where the bears\u2019 memory is never far.",
             "actionEffect": "",
             "type": "PC",
             "tags": [

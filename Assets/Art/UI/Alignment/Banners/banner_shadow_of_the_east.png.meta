@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 5f8f373abd64ea4439c4ce4e1a5581eb
+guid: 1adcccd8955a75541af442c1492f9816
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5006969470577889766
-    second: card_frame_black_0
+      213: 2135372252087979610
+    second: ChatGPT Image Apr 11, 2026, 07_27_55 PM_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -24,7 +24,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: card_frame_black_0
+      name: ChatGPT Image Apr 11, 2026, 07_27_55 PM_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 624
-        height: 980
+        y: 8
+        width: 1024
+        height: 1480
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6e1550794345c7540800000000000000
-      internalID: 5006969470577889766
+      spriteID: a5e0ee4efbd52ad10800000000000000
+      internalID: 2135372252087979610
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      card_frame_black_0: 5006969470577889766
+      ChatGPT Image Apr 11, 2026, 07_27_55 PM_0: 2135372252087979610
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

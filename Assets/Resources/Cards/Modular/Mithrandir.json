@@ -1,4 +1,4 @@
-{
+﻿{
     "handSize": 5,
     "deckId": "mithrandir",
     "nation": "Gandalf",
@@ -658,7 +658,7 @@
             "requirementsText": "",
             "historyText": "",
             "statusEffect": "",
-            "procChance": 25,
+            "procChance": 40,
             "portraitName": "",
             "referenceDeckId": "",
             "referenceCardId": 0,
@@ -1677,7 +1677,7 @@
         {
             "cardId": 322,
             "name": "CerinAmroth",
-            "quote": "CerinAmroth lifts a green and golden hush above LÃ³rien, where even sorrow seems to keep its distance.",
+            "quote": "CerinAmroth lifts a green and golden hush above L\u00c3\u00b3rien, where even sorrow seems to keep its distance.",
             "actionEffect": "",
             "type": "PC",
             "tags": [

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a74ccbe4a3675184f96111b5edca01a4
+guid: 28db10817086e3244923716ba151cdb8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1897200410198950706
-    second: banner_red_sun_0
+      213: 4719134117034124773
+    second: Sauron-ShadowOfTheEast_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -24,7 +24,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: banner_red_sun_0
+      name: Sauron-ShadowOfTheEast_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 178
-        height: 267
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eccbd5a574acba5e0800000000000000
-      internalID: -1897200410198950706
+      spriteID: 5e5ee35f97bbd7140800000000000000
+      internalID: 4719134117034124773
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      banner_red_sun_0: -1897200410198950706
+      Sauron-ShadowOfTheEast_0: 4719134117034124773
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
