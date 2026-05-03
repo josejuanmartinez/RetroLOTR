@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -268,7 +268,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 08f3e2c56e977264e80d5b88a76585e5
-    m_Address: Assets/Art/Cards/Characters/HillLordOfRhudaur.png
+    m_Address: Assets/Art/Cards/Characters/Seammu.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5546,7 +5546,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8a75f941bffc04a4bacc496ece12266a
-    m_Address: Assets/Art/Cards/Characters/BarrowKingOfRhudaur.jpg
+    m_Address: Assets/Art/Cards/Characters/Gurthul.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5582,7 +5582,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8b10183f68a42624d8462a61d21547bd
-    m_Address: Assets/Art/Cards/Characters/Leardinoth.jpg
+    m_Address: Assets/Art/Cards/Characters/DinOhtar.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6660,7 +6660,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a2e15b660ea3e86448415a5aac563caf
-    m_Address: Assets/Art/Cards/Armies/GorgorothOrcs.jpg
+    m_Address: Assets/Art/Cards/Armies/GorgorothMilitia.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6720,7 +6720,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a46fc15545edafe4386ada340870ed9a
-    m_Address: Assets/Art/Cards/Characters/LieutenantOfDolGuldur.jpg
+    m_Address: Assets/Art/Cards/Characters/Morthrog.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7169,7 +7169,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: afddb69b22ee6184abd9c79ac1133c31
-    m_Address: Assets/Art/Cards/Armies/Spiders.jpg
+    m_Address: Assets/Art/Cards/Armies/SpawnsOfUngoliant.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9814,7 +9814,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f459519dff021384cabef1c4a4edbc9f
-    m_Address: Assets/Art/Cards/Armies/DurthangUrukHai.jpg
+    m_Address: Assets/Art/Cards/Armies/MountedHalfOrcs.jpg
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
