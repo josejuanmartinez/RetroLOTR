@@ -5,33 +5,10 @@ using UnityEngine;
 
 public class BagginsDueAction : EventAction
 {
-    private const int Radius = 2;
-    private const int GoldLoss = 2;
-
     private static bool IsEnemy(Character source, Character target)
     {
         if (source == null || target == null || target.killed) return false;
         return target.GetAlignment() != source.GetAlignment();
-    }
-
-    private static int GetPriority(Character target)
-    {
-        if (target == null) return 0;
-        return target.GetCommander() + target.GetAgent() + target.GetEmmissary() + target.GetMage();
-    }
-
-    private static ProducesEnum? PickResourceToLose(Leader owner)
-    {
-        if (owner == null) return null;
-
-        List<ProducesEnum> resources = new();
-        if (owner.leatherAmount > 0) resources.Add(ProducesEnum.leather);
-        if (owner.timberAmount > 0) resources.Add(ProducesEnum.timber);
-        if (owner.mountsAmount > 0) resources.Add(ProducesEnum.mounts);
-        if (owner.ironAmount > 0) resources.Add(ProducesEnum.iron);
-        if (owner.steelAmount > 0) resources.Add(ProducesEnum.steel);
-        if (owner.mithrilAmount > 0) resources.Add(ProducesEnum.mithril);
-        return resources.Count == 0 ? null : resources[UnityEngine.Random.Range(0, resources.Count)];
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -45,51 +22,32 @@ public class BagginsDueAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> enemies = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => IsEnemy(character, ch))
-                .Distinct()
+            var candidates = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && IsEnemy(character, ch))
+                .Select(ch => new { character = ch, artifacts = ch.artifacts.Where(a => a != null && a.transferable).ToList() })
+                .Where(x => x.artifacts.Count > 0)
                 .ToList();
 
-            if (enemies.Count == 0) return false;
+            if (candidates.Count == 0) return false;
 
-            Character target = enemies
-                .OrderByDescending(GetPriority)
-                .ThenByDescending(ch => ch.health)
-                .FirstOrDefault();
+            var target = candidates[UnityEngine.Random.Range(0, candidates.Count)];
+            Artifact stolen = target.artifacts[UnityEngine.Random.Range(0, target.artifacts.Count)];
+            if (!target.character.artifacts.Remove(stolen)) return false;
 
-            if (target == null) return false;
-
-            Leader enemyOwner = target.GetOwner();
-            Leader sourceOwner = character.GetOwner();
-            if (enemyOwner == null || sourceOwner == null) return false;
-
-            int goldTaken = Mathf.Min(GoldLoss, Mathf.Max(0, enemyOwner.goldAmount));
-            int resourceTaken = 0;
-
-            if (goldTaken > 0)
+            bool isAI = !character.isPlayerControlled;
+            if (stolen.ShouldApplyAlignmentPenalty(character.GetAlignment()) && !isAI)
             {
-                enemyOwner.RemoveGold(goldTaken, enemyOwner == FindFirstObjectByType<Game>()?.player);
-            }
-            else
-            {
-                ProducesEnum? resource = PickResourceToLose(enemyOwner);
-                if (resource.HasValue)
-                {
-                    enemyOwner.RemoveResource(resource.Value, 1, enemyOwner == FindFirstObjectByType<Game>()?.player);
-                    resourceTaken = 1;
-                }
+                ConfirmationDialog.AskOk("Artifacts of opposite alignment have health penalties for their bearers").Wait();
             }
 
-            if (goldTaken == 0 && resourceTaken == 0) return false;
-
-            sourceOwner.AddGold(Mathf.Max(1, goldTaken));
+            character.artifacts.Add(stolen);
+            character.ApplyOppositeAlignmentArtifactPenalty(stolen);
+            Character.RefreshArtifactPcVisibilityForHex(character.hex);
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"The Sack of Bag End: the richest nearby enemy owner pays {Mathf.Max(1, goldTaken)} gold or a resource, and {sourceOwner.characterName} collects the due.",
+                $"The Sack of Bag End: {character.characterName} ransacks the place and makes off with {stolen.artifactName}!",
                 new Color(0.84f, 0.72f, 0.42f));
 
             return true;
@@ -99,9 +57,13 @@ public class BagginsDueAction : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
+            if (character.artifacts.Count >= Character.MAX_ARTIFACTS) return false;
 
-            return character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null && h.characters != null && h.characters.Any(ch => IsEnemy(character, ch)));
+            return character.hex.characters.Any(ch =>
+                ch != null &&
+                !ch.killed &&
+                IsEnemy(character, ch) &&
+                ch.artifacts.Any(a => a != null && a.transferable));
         };
 
         asyncEffect = async (character) =>

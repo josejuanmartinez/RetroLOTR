@@ -58,8 +58,8 @@ public class AMorgulBlade : CharacterAction
                 return false;
             }
 
-            target.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, 7);
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} suffers Morgul Touch.", Color.magenta);
+            target.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, 3);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} suffers Morgul Touch (3).", Color.magenta);
             return true;
         }
 

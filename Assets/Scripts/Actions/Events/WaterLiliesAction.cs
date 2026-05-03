@@ -5,45 +5,7 @@ using UnityEngine;
 
 public class WaterLiliesAction : EventAction
 {
-    private const int Radius = 5;
-    private static readonly StatusEffectEnum[] NegativeStatusEffects =
-    {
-        StatusEffectEnum.Halted,
-        StatusEffectEnum.RefusingDuels,
-        StatusEffectEnum.Poisoned,
-        StatusEffectEnum.Burning,
-        StatusEffectEnum.Frozen,
-        StatusEffectEnum.Blocked,
-        StatusEffectEnum.Despair,
-        StatusEffectEnum.Fear,
-        StatusEffectEnum.MorgulTouch,
-        StatusEffectEnum.Bleeding
-    };
-
-    private static bool IsWaterOrShore(Hex hex)
-    {
-        return hex != null && (hex.terrainType == TerrainEnum.shore || hex.terrainType == TerrainEnum.shallowWater || hex.IsWaterTerrain());
-    }
-
-    private static bool IsCloseToWater(Hex hex)
-    {
-        return hex != null && hex.GetHexesInRadius(1).Any(IsWaterOrShore);
-    }
-
-    private static int CleanseNegativeStatusEffects(Character target)
-    {
-        if (target == null || target.killed) return 0;
-
-        int removed = 0;
-        foreach (StatusEffectEnum effect in NegativeStatusEffects)
-        {
-            if (!target.HasStatusEffect(effect)) continue;
-            target.ClearStatusEffect(effect);
-            removed++;
-        }
-
-        return removed;
-    }
+    private const int Radius = 2;
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -56,28 +18,29 @@ public class WaterLiliesAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> targets = character.hex.GetHexesInRadius(Radius)
-                .Where(IsCloseToWater)
-                .Where(h => h.characters != null)
+            List<Character> hobbits = character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed)
+                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Hobbit)
                 .Distinct()
                 .ToList();
 
-            if (targets.Count == 0) return false;
+            if (hobbits.Count == 0) return false;
 
-            int cleansedUnits = 0;
-            foreach (Character target in targets)
+            int restored = 0;
+            foreach (Character hobbit in hobbits)
             {
-                int removed = CleanseNegativeStatusEffects(target);
-                if (removed <= 0) continue;
-                cleansedUnits++;
+                hobbit.hasActionedThisTurn = false;
+                hobbit.moved = 0;
+                if (hobbit.HasStatusEffect(StatusEffectEnum.Blocked))
+                {
+                    hobbit.ClearStatusEffect(StatusEffectEnum.Blocked);
+                }
+                restored++;
             }
 
-            if (cleansedUnits == 0) return false;
-
             MessageDisplayNoUI.ShowMessage(character.hex, character,
-                $"River Lillies: {cleansedUnits} unit(s) close to the water are cleansed of their darker burdens.",
+                $"River Lillies: {restored} Hobbit(s) by the water shake off their weariness and are free to act and move again.",
                 new Color(0.65f, 0.8f, 0.78f));
 
             return true;
@@ -89,7 +52,7 @@ public class WaterLiliesAction : EventAction
             if (character == null || character.hex == null) return false;
 
             return character.hex.GetHexesInRadius(Radius)
-                .Any(IsCloseToWater);
+                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Hobbit));
         };
 
         asyncEffect = async (character) =>

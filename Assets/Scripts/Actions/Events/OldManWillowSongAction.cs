@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class OldManWillowSongAction : EventAction
 {
-    private const int Radius = 2;
+    private const int Radius = 1;
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -18,40 +18,23 @@ public class OldManWillowSongAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> enemies = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment())
-                .Distinct()
-                .ToList();
-
             List<Character> hobbits = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null)
+                .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == character.GetAlignment() && ch.race == RacesEnum.Hobbit)
+                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Hobbit)
                 .Distinct()
                 .ToList();
 
-            if (enemies.Count == 0 && hobbits.Count == 0) return false;
+            if (hobbits.Count == 0) return false;
 
-            int rooted = 0;
-            foreach (Character enemy in enemies)
+            foreach (Character hobbit in hobbits)
             {
-                enemy.moved = enemy.GetMaxMovement();
-                if (!enemy.HasStatusEffect(StatusEffectEnum.Blocked))
-                {
-                    enemy.ApplyStatusEffect(StatusEffectEnum.RefusingDuels, 1);
-                }
-                rooted++;
-            }
-
-            for (int i = 0; i < hobbits.Count; i++)
-            {
-                hobbits[i].Hide(1);
+                hobbit.ApplyStatusEffect(StatusEffectEnum.Blocked, 2);
+                hobbit.ApplyStatusEffect(StatusEffectEnum.Halted, 2);
             }
 
             MessageDisplayNoUI.ShowMessage(character.hex, character,
-                $"Old Man Willow Song: the forest roots stall {rooted} enemy unit(s) and hide nearby Hobbit(s) in the trees.",
+                $"Old Man Willow Song: {hobbits.Count} Hobbit(s) in the nearby glade are tangled in root and shadow, Blocked and Halted for 2 turns.",
                 new Color(0.34f, 0.55f, 0.34f));
 
             return true;
@@ -63,7 +46,7 @@ public class OldManWillowSongAction : EventAction
             if (character == null || character.hex == null) return false;
 
             return character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed));
+                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Hobbit));
         };
 
         asyncEffect = async (character) =>

@@ -49,16 +49,9 @@ public class NazgulMark : CharacterAction
 
             if (target == null) return false;
 
-            target.ApplyStatusEffect(StatusEffectEnum.Fear, 1);
-            target.Halt(1);
-            bool appliedMorgulTouch = UnityEngine.Random.Range(0, 100) < 10;
-            if (appliedMorgulTouch)
-            {
-                target.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, 7);
-            }
+            target.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, 1);
 
-            string morgulText = appliedMorgulTouch ? " MorgulTouch applied." : string.Empty;
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} is marked by the Nazgul: Fear (1) and Halted (1).{morgulText}", Color.magenta);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} is marked by the Nazgul: MorgulTouch (1).", Color.magenta);
             return true;
         }
 
