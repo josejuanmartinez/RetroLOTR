@@ -100,9 +100,10 @@ Do not move to the next card until the user explicitly confirms the current card
 12. Generate a brand-new image for that card; do not reuse an existing illustration.
 13. When generating the image, give `new_image` a distinct visual brief that intentionally differs from the last few cards in subject, composition, and scene energy.
 14. Show the generated image to the user and ask for confirmation to proceed.
-15. Pause and wait for explicit user confirmation.
-16. If approved, re-count the subdeck.
-17. Repeat from step 9 until the count reaches the requested target size.
+15. Verify the new image's `.meta` file uses `spriteMode: 1` (Single). If Unity imported it as `spriteMode: 2` (Multiple), change it to `spriteMode: 1` and clear `internalIDToNameTable: []` so Addressables can load the sprite correctly.
+16. Pause and wait for explicit user confirmation.
+17. If approved, re-count the subdeck.
+18. Repeat from step 9 until the count reaches the requested target size.
 
 ## Candidate Selection Heuristics
 

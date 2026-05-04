@@ -46,7 +46,8 @@ Choose the closest base class first, then add specific behavior in `Initialize(.
 4. Call `base.Initialize(c, condition, effect, asyncEffect)` so base gating still applies.
 5. Add or update the corresponding card JSON entry so it points at the action class using the fields the current deck schema actually uses.
 6. Create a new card image for the action by using the `new-image` skill and save it in the correct `Assets/Art/Cards/...` folder (`Actions` or `Actions/Spells` for spells).
-7. Verify runtime resolution and visibility in the Actions UI.
+7. Verify the new image's `.meta` file uses `spriteMode: 1` (Single). `spriteMode: 2` (Multiple) breaks Addressables sprite lookup.
+8. Verify runtime resolution and visibility in the Actions UI.
 
 ## Design Rule
 - Every new action must express a unique, immersive mechanic; avoid building another thin wrapper around an existing effect unless the wrapper creates a clearly different play pattern.

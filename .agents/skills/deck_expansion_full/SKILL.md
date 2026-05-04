@@ -66,6 +66,7 @@ Use this skill when the user wants new modular subdeck cards fully implemented:
    - `spriteName` matches the final art file.
    - `referenceDeckId` and `referenceCardId` resolve when used.
    - JSON remains valid.
+   - Every new card image's `.meta` file uses `spriteMode: 1` (Single). `spriteMode: 2` (Multiple) breaks Addressables sprite lookup and must not be shipped.
 
 ## Non-Negotiables
 - Do not claim "new art" if images are only renamed or copied.

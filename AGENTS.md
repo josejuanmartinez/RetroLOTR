@@ -29,6 +29,7 @@ This file provides repo-wide guidance for coding agents working in this project.
 - Save new card art under `Assets/Art/Cards/...` in the correct type-specific folder.
 - New card art should be original and should not reuse or repurpose an existing card image as the shipped asset.
 - Match the repo's black-and-white retro ink style for new generated card art.
+- **Unity import rule:** every new card image must be imported with `Sprite Mode = Single` (`spriteMode: 1`). `Multiple` sprite mode breaks Addressables sprite lookup and causes the card to show no image in-game. If a `.meta` file shows `spriteMode: 2`, change it to `spriteMode: 1` and clear `internalIDToNameTable: []`.
 
 ## Card Text And Lore
 

@@ -81,6 +81,7 @@ Before generating art, check whether an image already exists for the card name u
 - If the user asks to reuse existing art, use that image and skip generation.
 - If a same-name image exists and the user did not request regeneration, reuse it.
 - If no suitable image exists, use the `new-image` skill and save to the correct card-art folder.
+- After saving, verify the image's `.meta` file uses `spriteMode: 1` (Single). `spriteMode: 2` (Multiple) breaks Addressables sprite lookup and causes the card to show no image in-game. If needed, change `spriteMode: 2` to `spriteMode: 1` and clear `internalIDToNameTable: []`.
 
 ## Validation Checklist
 - Correct deck file selected for alignment.
@@ -88,4 +89,5 @@ Before generating art, check whether an image already exists for the card name u
 - Card schema matches existing cards of the same `type`.
 - Action-linked cards point to the fields required by the current deck schema.
 - Image exists (reused or newly generated) and card name/image naming is consistent.
+- Image `.meta` uses `spriteMode: 1` (Single), not `spriteMode: 2` (Multiple).
 - JSON remains valid.
