@@ -1,8 +1,6 @@
 import json
-
-for deck in ['ShadowOfTheEast.json', 'TheIronCrown.json']:
-    with open(f'Assets/Resources/Cards/Modular/{deck}', 'r', encoding='utf-8-sig') as f:
-        data = json.load(f)
-    for card in data['cards']:
-        if card['name'] in ['Shadow of the East', 'The Iron Crown']:
-            print(f"{deck}: {card['name']} -> spriteName={card['spriteName']}, type={card['type']}")
+with open('Assets/Resources/Cards/Modular/SarumanTheWhite.json', 'r') as f:
+    data = json.load(f)
+for card in data['cards']:
+    if card['cardId'] in [1033, 1035, 1036, 1037, 1038, 1040, 1041, 1042, 1043, 1044]:
+        print(f"cardId={card['cardId']}, name={card['name']}, actionClassName={card['actionClassName']}, actionEffect={card['actionEffect'][:60]}...")

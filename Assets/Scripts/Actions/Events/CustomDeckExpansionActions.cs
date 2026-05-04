@@ -2167,3 +2167,301 @@ public class PelargirShipCaptainAction : EventAction
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
+
+
+public class StarlightDispatch : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+
+            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            bool hasCapital = board.GetHexes().Any(x => x.GetPC() != null && x.GetPC().owner == character.GetOwner() && x.GetPC().isCapital);
+            if (!hasCapital) return false;
+
+            return character.hex.characters.Any(ch => ch != null && !ch.killed && ch != character && (ch.GetOwner() == character.GetOwner() || (character.GetAlignment() != AlignmentEnum.neutral && ch.GetAlignment() == character.GetAlignment())) && !ch.IsArmyCommander());
+        };
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+
+            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            Hex capitalHex = board.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == character.GetOwner() && x.GetPC().isCapital);
+            if (capitalHex == null) return false;
+
+            List<Character> allies = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && ch != character && (ch.GetOwner() == character.GetOwner() || (character.GetAlignment() != AlignmentEnum.neutral && ch.GetAlignment() == character.GetAlignment())) && !ch.IsArmyCommander())
+                .Distinct()
+                .ToList();
+            if (allies.Count == 0) return false;
+
+            Character target = allies[UnityEngine.Random.Range(0, allies.Count)];
+            if (target == null) return false;
+
+            board.MoveCharacterOneHex(target, target.hex, capitalHex, true);
+            Sounds.Instance?.PlaySpeedUp();
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Starlight Dispatch guides {target.characterName} back to capital.", Color.cyan);
+            board.SelectCharacter(target);
+            return true;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class WisdomOfTheAges : EventAction
+{
+    private const int HealAmount = 20;
+
+    private static bool IsAllied(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+            return character.hex.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch));
+        };
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+
+            List<Character> allies = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && IsAllied(character, ch))
+                .Distinct()
+                .ToList();
+            if (allies.Count == 0) return false;
+
+            Character target = allies.OrderByDescending(x => 100 - x.health).FirstOrDefault();
+            if (target == null) return false;
+
+            target.Heal(HealAmount);
+            string bonusText = "";
+            if (target.GetMage() > 0 && target.GetOwner() != null)
+            {
+                target.GetOwner().AddGold(1);
+                bonusText = " and +1 <sprite name=\"gold\">";
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Wisdom of the Ages heals {target.characterName} for {HealAmount} HP{bonusText}.", Color.green);
+            return true;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class RingsOfLore : EventAction
+{
+    private static readonly string[] LoreBearers = { "Galadriel", "Elrond", "Gandalf" };
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            Leader owner = character.GetOwner();
+            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            if (owner == null || board == null || board.hexes == null) return false;
+
+            List<Character> loreBearers = UnityEngine.Object.FindObjectsByType<Character>(FindObjectsSortMode.None)
+                .Where(ch => ch != null && !ch.killed && LoreBearers.Contains(ch.characterName))
+                .Distinct()
+                .ToList();
+
+            List<Hex> targetHexes = loreBearers
+                .Select(ch => ch.hex)
+                .Where(h => h != null && !h.IsScoutedBy(owner))
+                .Distinct()
+                .ToList();
+
+            if (targetHexes.Count == 0)
+            {
+                MessageDisplayNoUI.ShowMessage(
+                    character.hex,
+                    character,
+                    "Rings of Lore: no lore-bearers (Galadriel, Elrond, or Gandalf) are hidden from view.",
+                    new UnityEngine.Color(0.55f, 0.42f, 0.72f));
+                return true;
+            }
+
+            owner.AddTemporarySeenHexes(targetHexes);
+
+            if (owner == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+            {
+                owner.RefreshVisibleHexesImmediate();
+            }
+
+            for (int i = 0; i < targetHexes.Count; i++)
+            {
+                targetHexes[i]?.RefreshVisibilityRendering();
+            }
+
+            targetHexes[0]?.LookAt();
+            MessageDisplayNoUI.ShowMessage(
+                character.hex,
+                character,
+                $"Rings of Lore reveals {targetHexes.Count} hex(es) where lore-bearers stand.",
+                new UnityEngine.Color(0.55f, 0.42f, 0.72f));
+
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null) return false;
+
+            Leader owner = character.GetOwner();
+            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            if (owner == null || board == null || board.hexes == null) return false;
+
+            return true;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class VoiceOfAuthority : EventAction
+{
+    private const int LoyaltyGain = 15;
+    private const int GoldGain = 1;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+
+            PC pc = character.hex.GetPC();
+            if (pc == null) return false;
+
+            pc.IncreaseLoyalty(LoyaltyGain, character);
+            character.GetOwner()?.AddGold(GoldGain);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Voice of Authority grants {pc.pcName} +{LoyaltyGain} loyalty and +{GoldGain} <sprite name=\"gold\">.", Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null && character.hex != null && character.hex.GetPC() != null && character.hex.GetPC().loyalty < 100;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class CounselOfTheWise : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            if (game == null || deckManager == null || game.player == null) return false;
+            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player) || deckManager.GetHand(game.player).Count >= deckManager.GetHandSize()) return false;
+
+            List<CardData> topCards = deckManager.GetDrawPile(game.player).Take(3).Where(card => card != null).ToList();
+            if (topCards.Count == 0) return false;
+
+            CardData chosen = topCards[UnityEngine.Random.Range(0, topCards.Count)];
+            if (chosen == null) return false;
+            if (!deckManager.TryAddCardToHand(game.player, chosen)) return false;
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Counsel of the Wise draws {chosen.name} from the top of the deck.", Color.white);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            return character != null && game != null && deckManager != null && game.player != null
+                && character.GetOwner() == game.player
+                && deckManager.HasDeckFor(game.player)
+                && deckManager.GetHand(game.player).Count < deckManager.GetHandSize()
+                && deckManager.GetDrawPile(game.player).Take(3).Any(card => card != null);
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}

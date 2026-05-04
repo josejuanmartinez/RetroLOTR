@@ -19,7 +19,10 @@ public class RhosgobelRabbits : CharacterAction
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
 
-            return board.GetHexes().Any(x => x.GetPC() != null && x.GetPC().owner == character.GetOwner() && x.GetPC().isCapital);
+            bool hasRhosgobel = board.GetHexes().Any(x => x.GetPC() != null && x.GetPC().pcName == "Rhosgobel");
+            bool hasCapital = board.GetHexes().Any(x => x.GetPC() != null && x.GetPC().owner == character.GetOwner() && x.GetPC().isCapital);
+
+            return hasRhosgobel || hasCapital;
         };
 
         async Task<bool> rabbitsAsync(Character character)
@@ -31,12 +34,20 @@ public class RhosgobelRabbits : CharacterAction
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
 
-            Hex capitalHex = board.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == character.GetOwner() && x.GetPC().isCapital);
-            if (capitalHex == null) return false;
+            Hex targetHex = board.GetHexes().Find(x => x.GetPC() != null && x.GetPC().pcName == "Rhosgobel");
+            string destinationName = "Rhosgobel";
 
-            board.MoveCharacterOneHex(character, character.hex, capitalHex, true);
+            if (targetHex == null)
+            {
+                targetHex = board.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == character.GetOwner() && x.GetPC().isCapital);
+                destinationName = "capital";
+            }
+
+            if (targetHex == null) return false;
+
+            board.MoveCharacterOneHex(character, character.hex, targetHex, true);
             Sounds.Instance?.PlaySpeedUp();
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Rhosgobel Rabbits guide {character.characterName} back to capital.", Color.green);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Rhosgobel Rabbits guide {character.characterName} to {destinationName}.", Color.green);
             board.SelectCharacter(character);
             return true;
         }
