@@ -38,7 +38,7 @@ public class RingOfOrthanc : EventAction
             for (int i = 0; i < allies.Count; i++)
             {
                 Character ally = allies[i];
-                if (ally.health < ally.maxHealth)
+                if (ally.health < 100)
                 {
                     ally.Heal(healAmount);
                     healedCount++;
