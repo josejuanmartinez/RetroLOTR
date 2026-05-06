@@ -7,7 +7,7 @@
         {
             "cardId": 614,
             "name": "Gondorian Archers",
-            "quote": "",
+            "quote": "With eyes as sharp as their arrows, they guard the realm.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -65,7 +65,7 @@
         {
             "cardId": 615,
             "name": "Gondorian Infantry",
-            "quote": "",
+            "quote": "Steadfast and true, they stand like stone against the tide.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -123,7 +123,7 @@
         {
             "cardId": 631,
             "name": "Knights Of Dol Amroth",
-            "quote": "",
+            "quote": "Horns of the sea call us; we ride to glory.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -181,7 +181,7 @@
         {
             "cardId": 638,
             "name": "Meduseld Guards",
-            "quote": "",
+            "quote": "We are the shield of the Golden Hall, unyielding as the mountains.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -239,7 +239,7 @@
         {
             "cardId": 655,
             "name": "Pelargir Fleet",
-            "quote": "",
+            "quote": "Through stormy seas, our sails are the harbingers of hope.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -297,7 +297,7 @@
         {
             "cardId": 658,
             "name": "Rangers Of Ithilien",
-            "quote": "",
+            "quote": "Unseen, we tread the paths of shadow and light.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -355,7 +355,7 @@
         {
             "cardId": 662,
             "name": "Riders Of Rohan",
-            "quote": "",
+            "quote": "The thunder of our horses shall echo in victory.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -413,7 +413,7 @@
         {
             "cardId": 679,
             "name": "Tower Guards",
-            "quote": "",
+            "quote": "Our vigilance is the fortress, our valor the blade.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -471,7 +471,7 @@
         {
             "cardId": 692,
             "name": "White Tower Wardens",
-            "quote": "",
+            "quote": "Guardians of the White City, we defend against the dark.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -529,7 +529,7 @@
         {
             "cardId": 680,
             "name": "Trebuchets",
-            "quote": "",
+            "quote": "With every stone cast, we hurl defiance at our foes.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -587,7 +587,7 @@
         {
             "cardId": 700,
             "name": "Woses",
-            "quote": "",
+            "quote": "We are the whispers of the forest, fierce in our silence.",
             "actionEffect": "",
             "type": "Army",
             "tags": [],
@@ -763,7 +763,7 @@
         {
             "cardId": 127,
             "name": "Ithilien",
-            "quote": "",
+            "quote": "In the soft glow of dusk, the woods hide a thousand secrets.",
             "actionEffect": "",
             "type": "Land",
             "tags": [],
@@ -819,7 +819,7 @@
         {
             "cardId": 131,
             "name": "NorthernGondor",
-            "quote": "",
+            "quote": "Where the mountains meet the sky, ancient tales linger.",
             "actionEffect": "",
             "type": "Land",
             "tags": [],
@@ -875,7 +875,7 @@
         {
             "cardId": 136,
             "name": "SouthernGondor",
-            "quote": "",
+            "quote": "The sun sets over golden fields, a land of dreams.",
             "actionEffect": "",
             "type": "Land",
             "tags": [],
@@ -1453,7 +1453,7 @@
         {
             "cardId": 849,
             "name": "Nindalf",
-            "quote": "",
+            "quote": "In the quiet valley, the river sings a timeless song.",
             "actionEffect": "",
             "type": "Land",
             "tags": [],
@@ -1739,7 +1739,7 @@
         {
             "cardId": 853,
             "name": "Denethor",
-            "quote": "",
+            "quote": "The line of kings is yet unbroken, but time is a thief.",
             "actionEffect": "",
             "type": "Character",
             "tags": [],
@@ -1826,7 +1826,7 @@
         {
             "cardId": 854,
             "name": "Faramir",
-            "quote": "",
+            "quote": "I will not sacrifice the innocent for the sake of victory.",
             "actionEffect": "",
             "type": "Character",
             "tags": [],
@@ -1882,8 +1882,8 @@
         {
             "cardId": 855,
             "name": "Storm Warning from Pelargir",
-            "quote": "",
-            "actionEffect": "If this hex borders the sea, the current commander gains 1 Warship.",
+            "quote": "A tempest brews upon the waters; heed the warning.",
+            "actionEffect": "If this hex borders the sea, the current commander gains 1 Warship <sprite name=\"ws\">.",
             "type": "Event",
             "tags": [
                 "stormcrow",
@@ -1945,7 +1945,7 @@
         {
             "cardId": 856,
             "name": "BlackSailsRumoured",
-            "quote": "",
+            "quote": "Whispers of darkness spread like shadows on the sea.",
             "actionEffect": "Reveal the hexes of the nearest 3 enemy units at sea.",
             "type": "Event",
             "tags": [
@@ -2193,7 +2193,7 @@
             "cardId": 860,
             "name": "Pelargir War Galleys",
             "quote": "The tide takes the ships out hard and brings them back stronger.",
-            "actionEffect": "A commander in an owned port gains 1 Warship.",
+            "actionEffect": "A commander in an owned port gains 1 Warship <sprite name=\"ws\">.",
             "type": "Event",
             "tags": [
                 "gondor",
@@ -3749,7 +3749,7 @@
         {
             "cardId": 965,
             "name": "Boromir",
-            "quote": "",
+            "quote": "One does not simply abandon duty in the face of despair.",
             "actionEffect": "",
             "type": "Character",
             "tags": [],
@@ -3917,7 +3917,7 @@
         {
             "cardId": 1004,
             "name": "Gandalf the White",
-            "quote": "",
+            "quote": "A wizard is never late, nor is he early, he arrives precisely when he means to.",
             "actionEffect": "",
             "type": "Character",
             "tags": [],
@@ -3974,7 +3974,7 @@
             "cardId": 1005,
             "name": "Attired for the Winelords",
             "quote": "",
-            "actionEffect": "Target allied character in your hex: gain Fortified (1 turn), and gain 2 gold.",
+            "actionEffect": "Target allied character in your hex: gain Fortified <sprite name=\"fortified\"> (1 turn), and gain 2 gold.",
             "type": "Event",
             "tags": [],
             "deckId": "gandalf_the_white",
