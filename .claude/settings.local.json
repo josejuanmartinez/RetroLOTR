@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem c:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\ -Name | Where-Object { $_ -notmatch '^Library|^Packages|^Logs' })",
+      "PowerShell(head -20)"
+    ]
+  }
+}

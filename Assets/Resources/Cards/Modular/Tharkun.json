@@ -3933,9 +3933,9 @@
                 "description": "",
                 "outcomes": []
             },
-            "commander": 3,
+            "commander": 1,
             "agent": 0,
-            "emmissary": 2,
+            "emmissary": 1,
             "mage": 0,
             "race": 2,
             "artifacts": [],
@@ -4045,7 +4045,7 @@
                 "description": "",
                 "outcomes": []
             },
-            "commander": 1,
+            "commander": 0,
             "agent": 1,
             "emmissary": 0,
             "mage": 0,
@@ -4131,7 +4131,7 @@
             "goldGranted": 0
         },
         {
-            "cardId": 1071,
+            "cardId": 1073,
             "name": "Zarak-dum",
             "quote": "The western halls remember the hammer, though few now walk their deep ways.",
             "actionEffect": "",
@@ -4189,16 +4189,16 @@
             "goldGranted": 1
         },
         {
-            "cardId": 1072,
-            "name": "",
-            "quote": "",
+            "cardId": 1074,
+            "name": "Angmar",
+            "quote": "A land steeped in shadows, where the chill of the grave lingers.",
             "actionEffect": "",
-            "type": "",
+            "type": "Land",
             "tags": [],
             "deckId": "tharkun",
             "alignment": 0,
             "actionClassName": "",
-            "action": "",
+            "action": "MaterialRetrieval",
             "spriteName": "",
             "region": "",
             "requirementsText": "",
@@ -4239,10 +4239,10 @@
             "leatherGranted": 0,
             "mountsGranted": 0,
             "timberGranted": 0,
-            "ironGranted": 0,
-            "steelGranted": 0,
-            "mithrilGranted": 0,
-            "goldGranted": 0
+            "ironGranted": 2,
+            "steelGranted": 1,
+            "mithrilGranted": 1,
+            "goldGranted": 1
         }
     ]
 }
