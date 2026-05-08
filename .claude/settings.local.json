@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "PowerShell(Get-ChildItem c:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\ -Name | Where-Object { $_ -notmatch '^Library|^Packages|^Logs' })",
-      "PowerShell(head -20)"
+      "PowerShell(head -20)",
+      "PowerShell(\\(Get-Content \"c:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\Assets\\\\Resources\\\\Cards\\\\Modular\\\\SarumanTheWhite.json\"\\).Count)"
     ]
   }
 }
