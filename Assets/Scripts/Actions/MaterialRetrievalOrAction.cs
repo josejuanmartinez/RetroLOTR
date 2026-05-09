@@ -8,8 +8,6 @@ using UnityEngine;
 public class PCAction : MaterialRetrieval
 {
     private const int FoundingGoldCost = 10;
-    private static int activePcLookupFrame = -1;
-    private static readonly HashSet<string> activePcLookupKeys = new(StringComparer.OrdinalIgnoreCase);
 
     public override void Initialize(Character c, CardData card = null, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
@@ -32,10 +30,13 @@ public class PCAction : MaterialRetrieval
         asyncEffect = async (character) =>
         {
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
-            if (character != null && !HasAssociatedPcInGame())
-            {
+            if (character == null) return true;
+
+            PC existingPc = FindAssociatedPcInGame();
+            if (existingPc == null)
                 TryFoundAssociatedPc(character);
-            }
+            ShowCaravanNotification(character, existingPc);
+
             return true;
         };
 
@@ -141,35 +142,48 @@ public class PCAction : MaterialRetrieval
         return targetAlignment != sourceAlignment;
     }
 
-    private bool HasAssociatedPcInGame()
+    private PC FindAssociatedPcInGame()
     {
         string targetKey = NormalizePcLookupKey(ResolveAssociatedPcName());
-        if (string.IsNullOrWhiteSpace(targetKey)) return false;
-
-        RefreshActivePcLookup();
-        return activePcLookupKeys.Contains(targetKey);
-    }
-
-    private static void RefreshActivePcLookup()
-    {
-        if (activePcLookupFrame == Time.frameCount) return;
-
-        activePcLookupFrame = Time.frameCount;
-        activePcLookupKeys.Clear();
+        if (string.IsNullOrWhiteSpace(targetKey)) return null;
 
         Board board = FindFirstObjectByType<Board>();
-        List<Hex> hexes = board != null ? board.GetHexes() : null;
-        if (hexes == null) return;
+        List<Hex> hexes = board?.GetHexes();
+        if (hexes == null) return null;
 
         for (int i = 0; i < hexes.Count; i++)
         {
             PC candidate = hexes[i]?.GetPCData();
-            string key = NormalizePcLookupKey(candidate != null ? candidate.pcName : null);
-            if (!string.IsNullOrWhiteSpace(key))
-            {
-                activePcLookupKeys.Add(key);
-            }
+            if (candidate == null) continue;
+            if (NormalizePcLookupKey(candidate.pcName) == targetKey) return candidate;
         }
+        return null;
+    }
+
+    private void ShowCaravanNotification(Character character, PC existingPc)
+    {
+        string pcName = ResolveAssociatedPcName();
+        string message = $"A caravan from {pcName} arrives with {GetResourceSummary()}";
+        Hex pcHex = existingPc?.hex;
+        bool isRevealed = pcHex != null && pcHex.IsHexRevealed();
+
+        EventIconsManager iconsManager = EventIconsManager.FindManager();
+        if (iconsManager == null) return;
+
+        EventIcon icon = null;
+        icon = iconsManager.AddEventIcon(EventIconType.HexMessage, true, () =>
+        {
+            if (isRevealed && BoardNavigator.Instance != null)
+            {
+                BoardNavigator.Instance.EnqueueMessageFocus(pcHex, () =>
+                    MessageDisplayNoUI.ShowAnchoredMessage(pcHex, message, Color.yellow, true));
+            }
+            else
+            {
+                MessageDisplayNoUI.ShowAnchoredMessage(character.hex, message, Color.yellow, true);
+            }
+            icon?.ConsumeAndDestroy();
+        });
     }
 
     private string ResolveAssociatedPcName()

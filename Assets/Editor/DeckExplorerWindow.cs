@@ -79,6 +79,7 @@ public class DeckExplorerWindow : EditorWindow
     private int editedCharacterAgent;
     private int editedCharacterEmissary;
     private int editedCharacterMage;
+    private string editedStartingPC = string.Empty;
 
     private TextAsset manifestAsset;
     private CardsManifest cardsManifest;
@@ -542,6 +543,13 @@ public class DeckExplorerWindow : EditorWindow
         editedCharacterEmissary = EditorGUILayout.IntField("Emissary", editedCharacterEmissary);
         editedCharacterMage = EditorGUILayout.IntField("Mage", editedCharacterMage);
 
+        GUILayout.Space(4);
+        List<string> pcNames = GetAvailablePcNamesForCurrentDeck();
+        string[] pcOptions = pcNames.ToArray();
+        int currentPcIndex = Mathf.Max(0, pcNames.IndexOf(editedStartingPC));
+        int newPcIndex = EditorGUILayout.Popup("Starting PC", currentPcIndex, pcOptions);
+        editedStartingPC = pcOptions[newPcIndex];
+
         GUILayout.Space(6);
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
@@ -551,6 +559,37 @@ public class DeckExplorerWindow : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
         EditorGUI.EndDisabledGroup();
+    }
+
+    private List<string> GetAvailablePcNamesForCurrentDeck()
+    {
+        var names = new List<string> { string.Empty };
+        DeckEntryView current = GetSelectedDeckView();
+        if (current == null) return names;
+
+        CollectPcNamesFromDeckView(current, names);
+
+        string parentId = current.manifest?.parentDeckId;
+        while (!string.IsNullOrWhiteSpace(parentId))
+        {
+            DeckEntryView parent = deckViews.FirstOrDefault(d =>
+                string.Equals(d.manifest?.deckId, parentId, StringComparison.OrdinalIgnoreCase));
+            if (parent == null) break;
+            CollectPcNamesFromDeckView(parent, names);
+            parentId = parent.manifest?.parentDeckId;
+        }
+
+        return names;
+    }
+
+    private static void CollectPcNamesFromDeckView(DeckEntryView deckView, List<string> names)
+    {
+        if (deckView?.deckData?.cards == null) return;
+        foreach (CardData c in deckView.deckData.cards)
+        {
+            if (c?.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(c.name) && !names.Contains(c.name))
+                names.Add(c.name);
+        }
     }
 
     private void SyncEditableCardFields(CardData card)
@@ -584,6 +623,7 @@ public class DeckExplorerWindow : EditorWindow
         editedCharacterAgent = Mathf.Max(0, card.agent);
         editedCharacterEmissary = Mathf.Max(0, card.emmissary);
         editedCharacterMage = Mathf.Max(0, card.mage);
+        editedStartingPC = card.startingPC ?? string.Empty;
     }
 
     private static string GetEditableRequirementsKey(CardData card)
@@ -735,6 +775,7 @@ public class DeckExplorerWindow : EditorWindow
         target.agent = Mathf.Max(0, editedCharacterAgent);
         target.emmissary = Mathf.Max(0, editedCharacterEmissary);
         target.mage = Mathf.Max(0, editedCharacterMage);
+        target.startingPC = editedStartingPC ?? string.Empty;
 
         string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
         if (string.IsNullOrWhiteSpace(assetPath))

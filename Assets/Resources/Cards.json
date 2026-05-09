@@ -52,7 +52,7 @@
             "thematic": "Core Free Peoples deck built around Men, Elves, Dwarves, Hobbits, Eagles, and other allied peoples working in concert. Its gameplay favors balanced development, card quality, scouting, diplomacy, defensive resilience, region access, and reliable utility over brute specialization; it should feel like the broad strategic foundation from which the more sharply themed Gandalf subdecks branch outward.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/GandalfBase",
-            "cardCount": 48,
+            "cardCount": 49,
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true
@@ -85,7 +85,7 @@
             "thematic": "Stormcrow is the Gandalf subdeck of uneasy wartime pressure among Men. It should frame the Grey Pilgrim not only as an ill omen or unwelcome counselor, but as the unsettling force who appears when Mannish realms are strained by encroaching evil and must harden themselves for survival. This includes fronts such as Rohan against the White Hand, Gondor against Mordor, the Northmen of Rhovanion against Easterlings, the Anduin Vale against Dol Guldur, Bree and wider Eriador under the long memory of Angmar, and similar regions where roads, ports, fords, courts, and frontier settlements live under gathering shadow. Gandalf is trying to help, organize, and strengthen resistance, yet many still see him as the sign that peace has already failed. In gameplay the deck should lean into morale strain, defensive hardening, political tension, frontier vigilance, war-readiness, movement pressure, intelligence and concealment, loyalty under stress, and reputation-based disruption rather than reducing itself to repeated warnings or bad-news delivery.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/Stormcrow",
-            "cardCount": 82,
+            "cardCount": 81,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false
@@ -96,7 +96,7 @@
             "thematic": "Mischief, adventure, and social-chaos deck built around hobbits, roadside incidents, strange meetings, awkward interruptions, and unexpectedly powerful small-scale plays. Its regional flavor should stretch across Eriador, especially Bree-land, the roads and inns of the North, the Old Forest, the Barrow-downs, scattered settlements, and out toward Cardolan, so the deck can hold wandering locals, petty troublemakers, rural rumors, travel incidents, eerie borderland hazards, and small but meaningful frontier entanglements. It is less martial than other branches and more about quirky utility, board disturbance, off-angle events, and playful disruption that feels fair but annoying for the opponent.",
             "alignment": 0,
             "resourcePath": "Cards/Modular/DisturberOfThePeace",
-            "cardCount": 75,
+            "cardCount": 73,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false
@@ -129,7 +129,7 @@
             "thematic": "Orthanc mastermind deck focused on rhetoric, control, persuasion, voice, and polished strategic dominance. This is Saruman as the calculating high wizard who bends choices and states rather than simply rushing with troops; players should expect influence, deception, mind-affecting actions, elegant tactical denial, and carefully timed control cards.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/SarumanTheWhite",
-            "cardCount": 71,
+            "cardCount": 77,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false

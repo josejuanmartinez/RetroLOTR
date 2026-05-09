@@ -155,6 +155,8 @@ public class CardData
     public int mithrilGranted;
     public int goldGranted;
 
+    public string startingPC = string.Empty;
+
     [NonSerialized] public bool isPlayable;
     [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
 
