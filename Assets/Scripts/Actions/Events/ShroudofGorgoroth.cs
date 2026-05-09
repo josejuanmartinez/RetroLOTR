@@ -1,0 +1,73 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class ShroudofGorgoroth : EventAction
+{
+    private const int ObscureRadius = 4;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            // Obscure all hexes in radius 4
+            character.hex.ObscureArea(ObscureRadius, false);
+
+            // Allied dark-aligned characters in radius 4 become Hidden
+            List<Character> darkAllies = character.hex.GetHexesInRadius(ObscureRadius)
+                .Where(h => h != null && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.darkServants)
+                .Distinct()
+                .ToList();
+
+            foreach (Character darkAlly in darkAllies)
+                darkAlly.Hide(1);
+
+            // Dispel any Encouraged effects on Free People (dispels Dawn)
+            List<Character> freePeople = board.GetHexes()
+                .Where(h => h != null && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.freePeople)
+                .Distinct()
+                .ToList();
+
+            foreach (Character fp in freePeople)
+                fp.ClearEncouraged();
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Shroud of Gorgoroth: radius {ObscureRadius} blanketed in shadow; {darkAllies.Count} dark servant(s) become Hidden; Dawn's light snuffed out.",
+                new Color(0.3f, 0.0f, 0.4f));
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.GetAlignment() == AlignmentEnum.freePeople) return false;
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+            return board.GetHexes().Any(h => h != null && h.characters != null
+                && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.darkServants));
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}

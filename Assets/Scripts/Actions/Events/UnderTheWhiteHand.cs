@@ -27,21 +27,40 @@ public class UnderTheWhiteHand : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> targets = character.hex.GetHexesInRadius(Radius)
+            List<Character> commanders = character.hex.GetHexesInRadius(Radius)
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && IsAllied(character, ch))
+                .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch)
+                    && ch.GetArmy() != null)
                 .Distinct()
                 .ToList();
 
-            if (targets.Count == 0) return false;
+            if (commanders.Count == 0) return false;
 
-            for (int i = 0; i < targets.Count; i++)
+            int upgradedCount = 0;
+            foreach (Character commander in commanders)
             {
-                targets[i].ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
+                Army army = commander.GetArmy();
+                army.hi++;
+                if (army.ma > 0)
+                {
+                    army.ma = Math.Max(0, army.ma - 1);
+                    army.hi++;
+                }
+                upgradedCount++;
             }
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Under the White Hand grants Strengthened (1) to {targets.Count} allied unit(s) in radius {Radius}.", Color.white);
+            // Also upgrade nearest allied army's ma → hi
+            Character nearest = commanders.FirstOrDefault(ch => ch.GetArmy()?.ma > 0);
+            string nearestMsg = "";
+            if (nearest != null)
+            {
+                nearestMsg = $" {nearest.characterName}'s banner unit converted to Uruk-hai Heavy Infantry.";
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Under the White Hand: {upgradedCount} allied army commander(s) in radius {Radius} gain +1 Heavy Infantry.{nearestMsg}",
+                Color.white);
             return true;
         };
 
@@ -51,9 +70,8 @@ public class UnderTheWhiteHand : EventAction
             return character != null
                 && character.hex != null
                 && character.hex.GetHexesInRadius(Radius)
-                    .Where(h => h != null && h.characters != null)
-                    .SelectMany(h => h.characters)
-                    .Any(ch => ch != null && !ch.killed && IsAllied(character, ch));
+                    .Any(h => h != null && h.characters != null
+                        && h.characters.Any(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch)));
         };
 
         asyncEffect = async (character) =>

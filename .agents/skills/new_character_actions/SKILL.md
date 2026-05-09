@@ -53,6 +53,30 @@ Choose the closest base class first, then add specific behavior in `Initialize(.
 - Every new action must express a unique, immersive mechanic; avoid building another thin wrapper around an existing effect unless the wrapper creates a clearly different play pattern.
 - Do not keep repeating the same status effects over and over again across new actions.
 
+### No Pure-Status Actions
+
+An action **fails** the quality bar if its entire effect matches one of these templates and has nothing else:
+
+- `"All [X] gain [Status] (N turns)."`
+- `"Target allied character: gain [Status] (N turns)."`
+- `"Enemy [X] gain [Status] (N turns)."`
+- `"Apply [Status] (N turns) to [X]."`
+
+**Every action must include at least one mechanic beyond a buff/debuff grant.** A status effect is fine as a secondary component on top of a real mechanic, but it cannot be the entire action. If your design matches one of the templates above and has nothing else, **reject it and redesign** before writing any code.
+
+Good primary mechanics to reach for first:
+
+| Category | Examples |
+|---|---|
+| Movement / repositioning | Teleport, forced displacement, extra movement, westward compulsion |
+| Combat / damage | Fixed damage, troop loss, auto-hit, charge damage |
+| Army modification | Unit type conversion (ma → hi), permanent troop gain, warship grant |
+| Resource change | Gold steal, skill increase (`AddCommander`), loyalty boost |
+| Information | Reveal hidden units, obscure scouting, reveal artifact sites |
+| Terrain interaction | Forest fire, coastal reveal, mountain charge bonus |
+| Targeted disruption | Halt + damage, card denial (Blocked), expose-then-damage |
+| Resurrection / revival | Revive dead characters, extra action this turn |
+
 ## Required Initialize Pattern
 Use this structure so composition with base classes remains intact:
 

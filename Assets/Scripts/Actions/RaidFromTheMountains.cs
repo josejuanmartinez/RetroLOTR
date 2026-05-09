@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class RaidFromTheMountains : CharacterAction
 {
+    private const int ChargeDamage = 15;
+
     private static bool IsAllied(Character source, Character target)
     {
         if (source == null || target == null) return false;
@@ -15,11 +17,15 @@ public class RaidFromTheMountains : CharacterAction
             && target.GetAlignment() != AlignmentEnum.neutral;
     }
 
-    private static bool IsMountainOrHill(Hex hex)
+    private static bool IsEnemy(Character source, Character target)
     {
-        if (hex == null) return false;
-        return hex.terrainType == TerrainEnum.mountains || hex.terrainType == TerrainEnum.hills;
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return false;
+        return target.GetAlignment() != source.GetAlignment() || source.GetAlignment() == AlignmentEnum.neutral;
     }
+
+    private static bool IsMountainOrHill(Hex hex) =>
+        hex != null && (hex.terrainType == TerrainEnum.mountains || hex.terrainType == TerrainEnum.hills);
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
@@ -35,9 +41,7 @@ public class RaidFromTheMountains : CharacterAction
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
 
-            return board.GetHexes().Any(h => h != null
-                && IsMountainOrHill(h)
-                && h.characters != null
+            return board.GetHexes().Any(h => h != null && IsMountainOrHill(h) && h.characters != null
                 && h.characters.Any(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch)));
         };
 
@@ -59,13 +63,27 @@ public class RaidFromTheMountains : CharacterAction
 
             if (targets.Count == 0) return false;
 
+            int chargedCount = 0;
+            int enemiesStruck = 0;
+
             foreach (Character commander in targets)
             {
+                commander.moved = Math.Max(0, commander.moved - 1);
                 commander.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
-                commander.ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+                chargedCount++;
+
+                // Enemies sharing hex take charge damage
+                if (commander.hex?.characters == null) continue;
+                foreach (Character enemy in commander.hex.characters.Where(e => e != null && !e.killed && IsEnemy(commander, e)).ToList())
+                {
+                    enemy.Wounded(commander.GetOwner(), ChargeDamage);
+                    enemiesStruck++;
+                }
             }
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Raid From The Mountains grants Haste and Courage to {targets.Count} allied army commander(s) in hills or mountains.", Color.red);
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Raid From The Mountains: {chargedCount} commander(s) charge with Haste; {enemiesStruck} enemy unit(s) take {ChargeDamage} damage.",
+                Color.red);
             return true;
         }
 

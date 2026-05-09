@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Traps : EventAction
 {
+    private const int TrapDamage = 20;
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -47,13 +49,13 @@ public class Traps : EventAction
 
             if (target == null) return false;
 
-            target.ApplyStatusEffect(StatusEffectEnum.Blocked, 1);
-            target.ApplyStatusEffect(StatusEffectEnum.Poisoned, 2);
+            target.Wounded(character.GetOwner(), TrapDamage);
+            target.Halt(1);
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"{target.characterName} is caught in traps: Blocked (1) and Poisoned (2).",
+                $"{target.characterName} is caught in traps: takes {TrapDamage} damage and loses all movement this turn.",
                 Color.yellow);
             return true;
         }

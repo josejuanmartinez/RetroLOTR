@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class LeafBrooch : CharacterAction
 {
+    private const int HiddenTurns = 3;
+    private const int StrengthenedTurns = 3;
+
     private static bool IsAllied(Character source, Character target)
     {
         if (source == null || target == null) return false;
@@ -13,6 +16,13 @@ public class LeafBrooch : CharacterAction
         return source.GetAlignment() != AlignmentEnum.neutral
             && target.GetAlignment() == source.GetAlignment()
             && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
+    private static bool IsEnemy(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return false;
+        return target.GetAlignment() != source.GetAlignment() || source.GetAlignment() == AlignmentEnum.neutral;
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
@@ -52,7 +62,6 @@ public class LeafBrooch : CharacterAction
                     allies.Select(x => x.characterName).ToList(),
                     false,
                     SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
-
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = allies.FirstOrDefault(x => x.characterName == selected);
             }
@@ -64,8 +73,29 @@ public class LeafBrooch : CharacterAction
 
             if (target == null) return false;
 
-            target.Hide(1);
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} gains Hidden (1).", Color.cyan);
+            target.Hide(HiddenTurns);
+            target.ApplyStatusEffect(StatusEffectEnum.Strengthened, StrengthenedTurns);
+
+            // If target is an Elf, reveal hidden enemies in adjacent hexes
+            int revealedCount = 0;
+            if (target.race == RacesEnum.Elf && target.hex != null)
+            {
+                foreach (Hex h in target.hex.GetHexesInRadius(1))
+                {
+                    if (h?.characters == null) continue;
+                    foreach (Character enemy in h.characters.Where(ch => ch != null && !ch.killed
+                        && IsEnemy(target, ch) && ch.HasStatusEffect(StatusEffectEnum.Hidden)).ToList())
+                    {
+                        enemy.ClearStatusEffect(StatusEffectEnum.Hidden);
+                        revealedCount++;
+                    }
+                }
+            }
+
+            string elfMsg = revealedCount > 0 ? $" Elven sight reveals {revealedCount} nearby hidden enemy(ies)." : "";
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"{target.characterName} receives the Leaf Brooch: Hidden ({HiddenTurns}) and Strengthened ({StrengthenedTurns}).{elfMsg}",
+                Color.cyan);
             return true;
         }
 

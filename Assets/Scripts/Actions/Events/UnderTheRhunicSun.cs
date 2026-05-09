@@ -5,6 +5,15 @@ using UnityEngine;
 
 public class UnderTheRhunicSun : EventAction
 {
+    private static bool IsAllied(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -22,18 +31,36 @@ public class UnderTheRhunicSun : EventAction
             List<Character> easterlings = board.GetHexes()
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Easterling)
+                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Easterling && IsAllied(character, ch))
                 .Distinct()
                 .ToList();
 
             if (easterlings.Count == 0) return false;
 
-            for (int i = 0; i < easterlings.Count; i++)
+            // Army commanders reveal their area
+            int revealedCount = 0;
+            foreach (Character easterling in easterlings.Where(e => e.IsArmyCommander() && e.hex != null))
             {
-                easterlings[i].ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+                easterling.hex.RevealArea(2, false, easterling.GetOwner());
+                revealedCount++;
             }
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Under the Rhunic Sun grants Courage to {easterlings.Count} Easterling unit(s).", Color.yellow);
+            // First allied Easterling army gains +1 Light Cavalry
+            Character firstCommander = easterlings.FirstOrDefault(e => e.IsArmyCommander() && e.GetArmy() != null);
+            if (firstCommander != null)
+                firstCommander.GetArmy().lc++;
+
+            // Easterlings in the field (not in PC) gain Courage
+            int encouragedCount = 0;
+            foreach (Character easterling in easterlings.Where(e => e.hex != null && e.hex.GetPC() == null))
+            {
+                easterling.ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+                encouragedCount++;
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Under the Rhunic Sun: {revealedCount} Easterling commander(s) reveal area; +1 LC for first army; {encouragedCount} unit(s) on patrol gain Courage.",
+                Color.yellow);
             return true;
         };
 
@@ -42,7 +69,8 @@ public class UnderTheRhunicSun : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
-            return board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Easterling));
+            return board.GetHexes().Any(h => h != null && h.characters != null
+                && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Easterling && IsAllied(character, ch)));
         };
 
         asyncEffect = async (character) =>

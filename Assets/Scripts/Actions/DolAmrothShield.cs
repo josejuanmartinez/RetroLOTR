@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class DolAmrothShield : CharacterAction
 {
+    private const int LoyaltyBonus = 5;
+
     private static bool IsAllied(Character source, Character target)
     {
         if (source == null || target == null) return false;
@@ -52,7 +54,6 @@ public class DolAmrothShield : CharacterAction
                     allies.Select(x => x.characterName).ToList(),
                     false,
                     SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
-
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = allies.FirstOrDefault(x => x.characterName == selected);
             }
@@ -64,7 +65,23 @@ public class DolAmrothShield : CharacterAction
             if (target == null) return false;
 
             target.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} gains Fortified (1 turn).", Color.cyan);
+            target.RefuseDuels(1);
+
+            // Boost loyalty of the PC in target's hex
+            string pcMsg = "";
+            if (target.hex != null)
+            {
+                PC pc = target.hex.GetPC();
+                if (pc != null)
+                {
+                    pc.IncreaseLoyalty(LoyaltyBonus, target);
+                    pcMsg = $" {pc.pcName} gains {LoyaltyBonus} loyalty.";
+                }
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"{target.characterName} holds the line: Fortified (1) and cannot be targeted by Kidnap or Assassinate.{pcMsg}",
+                Color.cyan);
             return true;
         }
 

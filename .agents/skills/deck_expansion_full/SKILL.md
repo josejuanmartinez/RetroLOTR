@@ -77,9 +77,16 @@ Use this skill when the user wants new modular subdeck cards fully implemented:
 - If the user asks for a subdeck expansion, deliver the card data, gameplay logic, and art layers that the subdeck actually needs.
 - Never present a card as finished if its effect exists only in text and is not wired in code.
 - Do not ship a card whose mechanic feels like a reskinned version of the last few additions.
-- **Status Effect Soft Cap:** Avoid letting status effects dominate a subdeck. As a guideline, no more than roughly 25% of cards in a subdeck should apply, grant, remove, or interact with status effects. Count existing status-effect cards before proposing any new one; if the deck is already heavy with status effects, choose a non-status mechanic instead.
+- **No Pure-Status Cards:** A card fails the quality bar if its entire effect matches one of these templates and has nothing else:
+  - `"All [X] gain [Status] (N turns)."`
+  - `"Target allied character: gain [Status] (N turns)."`
+  - `"Enemy [X] gain [Status] (N turns)."`
+  - `"Apply [Status] (N turns) to [X]."`
+  Every card must include at least one mechanic beyond a buff/debuff grant. A status effect is acceptable as a *secondary* component alongside a real mechanic, but it cannot be the whole card. If a proposed design matches one of the failing templates above and has nothing else, **reject it outright and choose a different design.**
+- Good primary mechanics to reach for: movement/repositioning, combat/damage, army modification (troop type conversion, warship grant), resource change (gold steal, `AddCommander`), information (reveal hidden units, reveal artifact sites), terrain interaction, targeted disruption (Halt + damage), resurrection/revival.
+- **Status Effect Soft Cap:** Even when a card clears the quality bar above, avoid letting status effects dominate a subdeck. As a guideline, no more than roughly 25% of cards in a subdeck should apply, grant, remove, or interact with status effects. Count existing status-effect cards before proposing any new one; if the deck is already heavy with status effects, choose a non-status mechanic instead.
 - Do not default to common status effects out of habit. Be creative and create unique mechanics.
-- If a status effect is the best fit for a card, write a one-sentence justification explaining why that effect serves the card's lore and gameplay identity better than a non-status mechanic, then verify the subdeck is still at a reasonable density of status-effect cards before proceeding.
+- If a status effect is the best fit as a *secondary* component, write a one-sentence justification explaining why it serves the card's lore and gameplay identity, then verify the subdeck is still at a reasonable density before proceeding.
 
 ## Suggested Output Report
 After completion, report:

@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class WhenThereIsAWhip : EventAction
 {
     private const int Radius = 2;
-    private const int Duration = 3;
 
     private static bool IsAllied(Character source, Character target)
     {
@@ -17,52 +17,93 @@ public class WhenThereIsAWhip : EventAction
             && target.GetAlignment() != AlignmentEnum.neutral;
     }
 
-    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    private static void RemoveWeakestTroop(Army army)
+    {
+        if (army == null) return;
+        int min = int.MaxValue;
+        int slot = -1;
+        if (army.ma > 0 && army.ma < min) { min = army.ma; slot = 0; }
+        if (army.li > 0 && army.li < min) { min = army.li; slot = 1; }
+        if (army.hi > 0 && army.hi < min) { min = army.hi; slot = 2; }
+        if (army.lc > 0 && army.lc < min) { min = army.lc; slot = 3; }
+        if (army.hc > 0 && army.hc < min) { min = army.hc; slot = 4; }
+        if (army.ws > 0 && army.ws < min) { slot = 5; }
+
+        switch (slot)
+        {
+            case 0: army.ma = Math.Max(0, army.ma - 1); break;
+            case 1: army.li = Math.Max(0, army.li - 1); break;
+            case 2: army.hi = Math.Max(0, army.hi - 1); break;
+            case 3: army.lc = Math.Max(0, army.lc - 1); break;
+            case 4: army.hc = Math.Max(0, army.hc - 1); break;
+            case 5: army.ws = Math.Max(0, army.ws - 1); break;
+        }
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
 
-        effect = (character) =>
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null) return false;
+            return character.hex.GetHexesInRadius(Radius)
+                .Any(h => h != null && h.characters != null
+                    && h.characters.Any(ch => ch != null && !ch.killed && ch.IsArmyCommander()
+                        && IsAllied(character, ch) && ch.GetArmy() != null));
+        };
+
+        async Task<bool> whipAsync(Character character)
         {
             if (originalEffect != null && !originalEffect(character)) return false;
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
             List<Character> commanders = character.hex.GetHexesInRadius(Radius)
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch))
+                .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander()
+                    && IsAllied(character, ch) && ch.GetArmy() != null)
                 .Distinct()
                 .ToList();
 
             if (commanders.Count == 0) return false;
 
-            for (int i = 0; i < commanders.Count; i++)
+            bool isAI = !character.isPlayerControlled;
+            Character target = null;
+
+            if (!isAI)
             {
-                commanders[i].ApplyStatusEffect(StatusEffectEnum.Haste, Duration);
+                string selected = await SelectionDialog.Ask(
+                    "Select allied army commander",
+                    "Ok",
+                    "Cancel",
+                    commanders.Select(x => x.characterName).ToList(),
+                    false,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                if (string.IsNullOrWhiteSpace(selected)) return false;
+                target = commanders.FirstOrDefault(x => x.characterName == selected);
+            }
+            else
+            {
+                target = commanders.FirstOrDefault();
             }
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"When There Is A Whip grants Haste ({Duration}) to {commanders.Count} allied army commander(s) in radius {Radius}.", Color.red);
+            if (target == null || target.GetArmy() == null) return false;
+
+            RemoveWeakestTroop(target.GetArmy());
+            target.AddCommander(1);
+            target.hasActionedThisTurn = false;
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"When There Is a Whip: {target.characterName}'s weakest troop is whipped away; permanent +1 Commander and may act again this turn.",
+                Color.red);
             return true;
-        };
+        }
 
-        condition = (character) =>
-        {
-            if (originalCondition != null && !originalCondition(character)) return false;
-            return character != null
-                && character.hex != null
-                && character.hex.GetHexesInRadius(Radius)
-                    .Where(h => h != null && h.characters != null)
-                    .SelectMany(h => h.characters)
-                    .Any(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch));
-        };
-
-        asyncEffect = async (character) =>
-        {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
-            return true;
-        };
-
-        base.Initialize(c, condition, effect, asyncEffect);
+        base.Initialize(c, condition, effect, whipAsync);
     }
 }

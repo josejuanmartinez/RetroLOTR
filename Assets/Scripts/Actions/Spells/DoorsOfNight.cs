@@ -5,64 +5,66 @@ using UnityEngine;
 
 public class DoorsOfNight : EventAction
 {
+    private const int ObscureRadius = 4;
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
 
-        effect = (c) =>
+        effect = (character) =>
         {
-            if (originalEffect != null && !originalEffect(c)) return false;
-            if (c == null) return false;
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
 
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
 
-            List<Character> allUnits = board.GetHexes()
+            // Obscure all hexes in radius 4
+            character.hex.ObscureArea(ObscureRadius, false);
+
+            // Allied dark-aligned characters in radius 4 become Hidden
+            List<Character> darkAllies = character.hex.GetHexesInRadius(ObscureRadius)
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed)
+                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.darkServants)
                 .Distinct()
                 .ToList();
 
-            List<Character> darkServants = allUnits
-                .Where(ch => ch.GetAlignment() == AlignmentEnum.darkServants)
+            foreach (Character darkAlly in darkAllies)
+                darkAlly.Hide(1);
+
+            // Dispel Dawn: clear Encouraged from Free People
+            List<Character> freePeople = board.GetHexes()
+                .Where(h => h != null && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.freePeople)
+                .Distinct()
                 .ToList();
-            List<Character> freePeople = allUnits
-                .Where(ch => ch.GetAlignment() == AlignmentEnum.freePeople)
-                .ToList();
 
-            if (darkServants.Count == 0) return false;
+            foreach (Character fp in freePeople)
+                fp.ClearEncouraged();
 
-            for (int i = 0; i < freePeople.Count; i++)
-            {
-                freePeople[i].ClearEncouraged();
-            }
-
-            int turns = 1;
-            for (int i = 0; i < darkServants.Count; i++)
-            {
-                darkServants[i].ClearEncouraged();
-                darkServants[i].Encourage(turns);
-            }
-
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Doors of Night grants Courage to {darkServants.Count} dark servant unit(s) for {turns} turn(s), dispelling Dawn!", Color.red);
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Doors of Night: radius {ObscureRadius} shrouded; {darkAllies.Count} dark servant(s) become Hidden; Dawn dispelled.",
+                Color.red);
             return true;
         };
 
-        condition = (c) =>
+        condition = (character) =>
         {
-            if (originalCondition != null && !originalCondition(c)) return false;
-            if (c == null || c.GetAlignment() == AlignmentEnum.freePeople) return false;
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.GetAlignment() == AlignmentEnum.freePeople) return false;
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
-            return board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.darkServants));
+            return board.GetHexes().Any(h => h != null && h.characters != null
+                && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.darkServants));
         };
 
-        asyncEffect = async (c) =>
+        asyncEffect = async (character) =>
         {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             return true;
         };
 

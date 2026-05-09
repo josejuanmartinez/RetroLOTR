@@ -1,0 +1,117 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using UnityEngine;
+
+public class BlackGateSortie : EventAction
+{
+    private const int Radius = 4;
+    private const string BlackGateName = "Morannon";
+
+    private static bool IsAllied(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
+    }
+
+    private static bool IsEnemy(Character source, Character target)
+    {
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return false;
+        return target.GetAlignment() != source.GetAlignment() || source.GetAlignment() == AlignmentEnum.neutral;
+    }
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null) return false;
+
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            bool nearBlackGate = board.hexes.Values.Any(h => h != null && h.GetPC() != null
+                && (h.GetPC().pcName == BlackGateName || h.GetPC().pcName == "Black Gate")
+                && character.hex.GetHexesInRadius(Radius).Contains(h));
+
+            if (!nearBlackGate) return false;
+
+            return character.hex.GetHexesInRadius(Radius)
+                .Any(h => h != null && h.characters != null
+                    && h.characters.Any(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch)));
+        };
+
+        async Task<bool> sortieAsync(Character character)
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+
+            List<Character> commanders = character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsAllied(character, ch)
+                    && ch.GetArmy() != null)
+                .Distinct()
+                .ToList();
+
+            if (commanders.Count == 0) return false;
+
+            bool isAI = !character.isPlayerControlled;
+            Character target = null;
+
+            if (!isAI)
+            {
+                string selected = await SelectionDialog.Ask(
+                    "Choose army for the sortie",
+                    "Ok",
+                    "Cancel",
+                    commanders.Select(x => x.characterName).ToList(),
+                    false,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                if (string.IsNullOrWhiteSpace(selected)) return false;
+                target = commanders.FirstOrDefault(x => x.characterName == selected);
+            }
+            else
+            {
+                target = commanders.FirstOrDefault();
+            }
+
+            if (target == null || target.GetArmy() == null) return false;
+
+            target.GetArmy().hi += 2;
+            target.ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+
+            // Auto-attack adjacent enemy army
+            string attackMsg = "";
+            if (target.hex != null)
+            {
+                Hex enemyHex = target.hex.GetHexesInRadius(1)
+                    .FirstOrDefault(h => h != null && h.armies != null
+                        && h.armies.Any(a => a != null && !a.killed && a.GetCommander() != null
+                            && IsEnemy(target, a.GetCommander())));
+                if (enemyHex != null)
+                {
+                    target.GetArmy().Attack(enemyHex);
+                    attackMsg = " Sortie strikes an adjacent enemy army!";
+                }
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Black Gate Sortie: {target.characterName}'s army gains +2 Heavy Infantry and Courage.{attackMsg}",
+                new Color(0.8f, 0.2f, 0.1f));
+            return true;
+        }
+
+        base.Initialize(c, condition, effect, sortieAsync);
+    }
+}

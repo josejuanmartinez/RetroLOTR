@@ -54,11 +54,35 @@ If alignment is unknown, ask before editing files.
 
 ## Creativity Rule
 - Every new card mechanic must be unique and immersive; do not ship a card that feels like a renamed copy of an existing pattern.
-- **Status Effect Soft Cap:** Avoid letting status effects dominate a deck. As a guideline, no more than roughly 25% of cards in a deck/subdeck should apply, grant, remove, or interact with status effects. Count existing status-effect cards before proposing any new one; if the deck is already heavy with status effects, you **must** choose a non-status mechanic.
+
+### Card Mechanic Quality Bar — No Pure-Status Cards
+
+A card **fails** this bar if its entire effect can be described as one of these templates and nothing else:
+
+- `”All [X] gain [Status] (N turns).”`
+- `”Target allied character: gain [Status] (N turns).”`
+- `”Enemy [X] gain [Status] (N turns).”`
+- `”Apply [Status] (N turns) to [X].”`
+
+**Every card must include at least one mechanic that cannot be described as a buff/debuff to a group.** A status effect may appear as a *secondary* component alongside a primary mechanic, but it cannot be the whole card. If a proposed design matches one of the templates above and has nothing else, **reject it outright** and redesign before continuing.
+
+Good primary mechanics to reach for first:
+
+| Category | Examples |
+|---|---|
+| Movement / repositioning | Teleport, forced displacement, extra movement, westward compulsion |
+| Combat / damage | Fixed damage, troop loss, auto-hit, charge damage |
+| Army modification | Unit type conversion (ma → hi), permanent troop gain, warship grant |
+| Resource change | Gold steal, skill increase (`AddCommander`), loyalty boost |
+| Information | Reveal hidden units, obscure scouting, reveal artifact sites |
+| Terrain interaction | Forest fire, coastal reveal, mountain charge bonus |
+| Targeted disruption | Halt + damage, card denial (Blocked), expose-then-damage |
+| Resurrection / revival | Revive dead characters, extra action this turn |
+
+- **Status Effect Soft Cap:** Even when a card clears the quality bar above, avoid letting status effects dominate a deck. As a guideline, no more than roughly 25% of cards in a deck/subdeck should apply, grant, remove, or interact with status effects. Count existing status-effect cards before proposing any new one; if the deck is already heavy with status effects, you **must** choose a non-status mechanic.
 - Do not default to common status effects out of habit. Be creative and create unique mechanics.
-- If a status effect is the best fit for a card, write a one-sentence justification explaining why that effect serves the card's lore and gameplay identity better than a non-status mechanic, then verify the deck is still at a reasonable density of status-effect cards before proceeding.
+- If a status effect is the best fit as a *secondary* component, write a one-sentence justification explaining why it serves the card's lore and gameplay identity, then verify the deck is still at a reasonable density of status-effect cards before proceeding.
 - Prefer a card-specific mechanic that better expresses the lore, scene, or role of the card.
-- If a simple status effect is the best fit, make sure it is doing distinct work and not just another copy of the last few cards.
 - For new action cards, look first for a fresh play pattern: movement manipulation, conditional targeting, resource changes, terrain interaction, cleansing, setup/reward loops, or other distinct tactical identities.
 - If a proposed effect feels like “another Courage/Fear card,” reject it and choose a more original mechanic unless the lore strongly justifies the reuse.
 - When reusing an existing status, use it as a deliberate choice, not the default answer.

@@ -5,16 +5,51 @@ using UnityEngine;
 
 public class FullMoon : EventAction
 {
+    private const int TeleportRadius = 5;
+
+    private static bool IsFreePeople(Character ch) =>
+        ch != null && ch.GetAlignment() == AlignmentEnum.freePeople;
+
+    private static void MoveCharacterToHex(Character character, Hex targetHex)
+    {
+        if (character == null || targetHex == null || character.hex == targetHex) return;
+
+        Hex previousHex = character.hex;
+        if (previousHex != null)
+        {
+            previousHex.characters.Remove(character);
+            if (character.IsArmyCommander() && previousHex.armies != null && character.GetArmy() != null)
+                previousHex.armies.Remove(character.GetArmy());
+            previousHex.RedrawCharacters();
+            previousHex.RedrawArmies();
+            Character.RefreshArtifactPcVisibilityForHex(previousHex);
+        }
+
+        if (!targetHex.characters.Contains(character)) targetHex.characters.Add(character);
+        if (character.IsArmyCommander() && targetHex.armies != null && character.GetArmy() != null
+            && !targetHex.armies.Contains(character.GetArmy()))
+            targetHex.armies.Add(character.GetArmy());
+
+        character.hex = targetHex;
+        character.RefreshKidnappedCharactersPosition();
+        Character.RefreshArtifactPcVisibilityForHex(targetHex);
+        targetHex.RedrawCharacters();
+        targetHex.RedrawArmies();
+
+        if (character.GetOwner() == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+            targetHex.RevealArea(1, true);
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
 
-        effect = (c) =>
+        effect = (character) =>
         {
-            if (originalEffect != null && !originalEffect(c)) return false;
-            if (c == null) return false;
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
 
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
@@ -22,32 +57,57 @@ public class FullMoon : EventAction
             List<Character> nazguls = board.GetHexes()
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Nazgul)
+                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Nazgul && ch.hex != null)
                 .Distinct()
                 .ToList();
 
             if (nazguls.Count == 0) return false;
 
-            for (int i = 0; i < nazguls.Count; i++)
+            int teleportedCount = 0;
+            int movedCount = 0;
+
+            foreach (Character nazgul in nazguls)
             {
-                nazguls[i].ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                if (nazgul.hex == null) continue;
+
+                Hex targetHex = nazgul.hex.GetHexesInRadius(TeleportRadius)
+                    .FirstOrDefault(h => h != null && h.characters != null
+                        && h.characters.Any(ch => ch != null && !ch.killed && IsFreePeople(ch)));
+
+                if (targetHex != null)
+                {
+                    foreach (Character fp in targetHex.characters.Where(ch => ch != null && !ch.killed && IsFreePeople(ch)).ToList())
+                        fp.ClearStatusEffect(StatusEffectEnum.Hidden);
+
+                    MoveCharacterToHex(nazgul, targetHex);
+                    nazgul.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                    teleportedCount++;
+                }
+                else
+                {
+                    nazgul.moved = Math.Max(0, nazgul.moved - 2);
+                    movedCount++;
+                }
             }
 
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Full Moon grants Haste to {nazguls.Count} Nazgul unit(s) for 1 turn.", Color.magenta);
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Full Moon: {teleportedCount} Nazgul descend on Free People; {movedCount} advance toward the enemy.",
+                Color.magenta);
             return true;
         };
 
-        condition = (c) =>
+        condition = (character) =>
         {
-            if (originalCondition != null && !originalCondition(c)) return false;
+            if (originalCondition != null && !originalCondition(character)) return false;
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
-            return board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Nazgul));
+            return board.GetHexes().Any(h => h != null && h.characters != null
+                && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Nazgul));
         };
 
-        asyncEffect = async (c) =>
+        asyncEffect = async (character) =>
         {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             return true;
         };
 

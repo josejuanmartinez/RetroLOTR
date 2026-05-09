@@ -5,6 +5,35 @@ using UnityEngine;
 
 public class DreadOfTheNoldor : EventAction
 {
+    private const int Radius = 2;
+
+    private static void MoveCharacterToHex(Character character, Hex targetHex)
+    {
+        if (character == null || targetHex == null || character.hex == targetHex) return;
+
+        Hex previousHex = character.hex;
+        if (previousHex != null)
+        {
+            previousHex.characters.Remove(character);
+            if (character.IsArmyCommander() && previousHex.armies != null && character.GetArmy() != null)
+                previousHex.armies.Remove(character.GetArmy());
+            previousHex.RedrawCharacters();
+            previousHex.RedrawArmies();
+            Character.RefreshArtifactPcVisibilityForHex(previousHex);
+        }
+
+        if (!targetHex.characters.Contains(character)) targetHex.characters.Add(character);
+        if (character.IsArmyCommander() && targetHex.armies != null && character.GetArmy() != null
+            && !targetHex.armies.Contains(character.GetArmy()))
+            targetHex.armies.Add(character.GetArmy());
+
+        character.hex = targetHex;
+        character.RefreshKidnappedCharactersPosition();
+        Character.RefreshArtifactPcVisibilityForHex(targetHex);
+        targetHex.RedrawCharacters();
+        targetHex.RedrawArmies();
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -16,38 +45,47 @@ public class DreadOfTheNoldor : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> elvesInRadius = character.hex.GetHexesInRadius(2)
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            List<Character> elves = character.hex.GetHexesInRadius(Radius)
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Elf)
+                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Elf && ch.hex != null)
                 .Distinct()
                 .ToList();
 
-            List<Character> enemyElvesInHex = character.hex.characters
-                .Where(ch => ch != null
-                    && !ch.killed
-                    && ch.race == RacesEnum.Elf
-                    && ch.GetOwner() != character.GetOwner()
-                    && (character.GetAlignment() == AlignmentEnum.neutral || ch.GetAlignment() != character.GetAlignment()))
-                .Distinct()
-                .ToList();
+            if (elves.Count == 0) return false;
 
-            if (elvesInRadius.Count == 0 && enemyElvesInHex.Count == 0) return false;
-
-            for (int i = 0; i < elvesInRadius.Count; i++)
+            int displacedCount = 0;
+            foreach (Character elf in elves)
             {
-                elvesInRadius[i].ApplyStatusEffect(StatusEffectEnum.Despair, 1);
+                bool mageCheckFails = elf.GetMage() < 2 || UnityEngine.Random.Range(0, 100) < 50;
+                if (mageCheckFails)
+                {
+                    // Move westward (lowest v2.y adjacent hex)
+                    List<Hex> adjacent = elf.hex.GetHexesInRadius(1).Where(h => h != null && h != elf.hex).ToList();
+                    Hex westHex = adjacent.OrderBy(h => h.v2.y).FirstOrDefault();
+                    if (westHex != null)
+                    {
+                        elf.ClearStatusEffect(StatusEffectEnum.Hidden);
+                        MoveCharacterToHex(elf, westHex);
+                        displacedCount++;
+                    }
+                }
+                elf.ApplyStatusEffect(StatusEffectEnum.Despair, 1);
             }
 
-            for (int i = 0; i < enemyElvesInHex.Count; i++)
+            // Caster hides if in forest or shore hex
+            bool casterHid = false;
+            if (character.hex.terrainType == TerrainEnum.forest || character.hex.terrainType == TerrainEnum.shore)
             {
-                enemyElvesInHex[i].ApplyStatusEffect(StatusEffectEnum.Fear, 1);
+                character.Hide(1);
+                casterHid = true;
             }
 
-            MessageDisplayNoUI.ShowMessage(
-                character.hex,
-                character,
-                $"Dread of the Noldor: {elvesInRadius.Count} elf unit(s) gain Despair (1); {enemyElvesInHex.Count} enemy elf unit(s) in the hex gain Fear (1).",
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Dread of the Noldor: {elves.Count} Elf unit(s) gain Despair; {displacedCount} displaced westward.{(casterHid ? " Caster becomes Hidden." : "")}",
                 Color.magenta);
             return true;
         };
@@ -57,7 +95,7 @@ public class DreadOfTheNoldor : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            return character.hex.GetHexesInRadius(2)
+            return character.hex.GetHexesInRadius(Radius)
                 .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Elf));
         };
 

@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class ReachOfBaradUngol : CharacterAction
 {
+    private const int Radius = 2;
+    private const int ExposureDamage = 15;
+
     private static bool IsEnemy(Character source, Character target)
     {
         if (source == null || target == null) return false;
@@ -24,10 +27,8 @@ public class ReachOfBaradUngol : CharacterAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            return character.hex.GetHexesInRadius(1)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Any(ch => ch != null && !ch.killed && IsEnemy(character, ch));
+            return character.hex.GetHexesInRadius(Radius)
+                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && IsEnemy(character, ch)));
         };
 
         async Task<bool> reachAsync(Character character)
@@ -36,7 +37,7 @@ public class ReachOfBaradUngol : CharacterAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> enemies = character.hex.GetHexesInRadius(1)
+            List<Character> enemies = character.hex.GetHexesInRadius(Radius)
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
                 .Where(ch => ch != null && !ch.killed && IsEnemy(character, ch))
@@ -45,13 +46,27 @@ public class ReachOfBaradUngol : CharacterAction
 
             if (enemies.Count == 0) return false;
 
+            int revealedCount = 0;
+            int damagedCount = 0;
+
             foreach (Character enemy in enemies)
             {
-                enemy.ApplyStatusEffect(StatusEffectEnum.Fear, 1);
-                enemy.ApplyStatusEffect(StatusEffectEnum.Halted, 1);
+                bool wasHidden = enemy.HasStatusEffect(StatusEffectEnum.Hidden);
+                if (wasHidden)
+                {
+                    enemy.ClearStatusEffect(StatusEffectEnum.Hidden);
+                    enemy.Wounded(character.GetOwner(), ExposureDamage);
+                    enemy.hasActionedThisTurn = true;
+                    revealedCount++;
+                    damagedCount++;
+                }
             }
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Reach of Barad-Ungol afflicts {enemies.Count} enemy unit(s) with Fear and Halted.", Color.magenta);
+            if (revealedCount == 0) return false;
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Reach of Barad-Ungol: {revealedCount} hidden enemy(ies) exposed; {damagedCount} take {ExposureDamage} damage and lose their action.",
+                Color.magenta);
             return true;
         }
 

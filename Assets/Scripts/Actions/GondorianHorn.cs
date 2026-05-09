@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class GondorianHorn : CharacterAction
 {
-    private const int Radius = 2;
+    private const int Radius = 3;
+    private const int AlliedRadius = 2;
 
     private static bool IsAllied(Character source, Character target)
     {
@@ -16,11 +17,8 @@ public class GondorianHorn : CharacterAction
             && target.GetAlignment() != AlignmentEnum.neutral;
     }
 
-    private static bool IsHumanOrDunedain(Character ch)
-    {
-        if (ch == null) return false;
-        return ch.race == RacesEnum.Common || ch.race == RacesEnum.Dunedain;
-    }
+    private static bool IsHumanOrDunedain(Character ch) =>
+        ch != null && (ch.race == RacesEnum.Common || ch.race == RacesEnum.Dunedain);
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -33,39 +31,49 @@ public class GondorianHorn : CharacterAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> alliedTargets = character.hex.GetHexesInRadius(Radius)
+            // Reveal hidden enemies in radius 3
+            int revealedCount = 0;
+            List<Hex> nearbyHexes = character.hex.GetHexesInRadius(Radius);
+            foreach (Hex h in nearbyHexes)
+            {
+                if (h?.characters == null) continue;
+                foreach (Character enemy in h.characters.Where(ch => ch != null && !ch.killed
+                    && !IsAllied(character, ch) && ch.HasStatusEffect(StatusEffectEnum.Hidden)).ToList())
+                {
+                    enemy.ClearStatusEffect(StatusEffectEnum.Hidden);
+                    revealedCount++;
+                }
+            }
+
+            // Allied Human/Dunedain in radius 2 gain extra movement + Encouraged
+            List<Character> alliedTargets = character.hex.GetHexesInRadius(AlliedRadius)
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
                 .Where(ch => ch != null && !ch.killed && IsAllied(character, ch) && IsHumanOrDunedain(ch))
                 .Distinct()
                 .ToList();
 
-            List<Character> enemyTargets = character.hex.characters == null
-                ? new List<Character>()
-                : character.hex.characters
-                    .Where(ch => ch != null
-                        && !ch.killed
-                        && !IsAllied(character, ch)
-                        && (ch.GetAlignment() != character.GetAlignment() || character.GetAlignment() == AlignmentEnum.neutral))
-                    .Distinct()
-                    .ToList();
-
-            if (alliedTargets.Count == 0 && enemyTargets.Count == 0) return false;
-
-            for (int i = 0; i < alliedTargets.Count; i++)
+            foreach (Character ally in alliedTargets)
             {
-                alliedTargets[i].ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+                ally.moved = Math.Max(0, ally.moved - 1);
+                ally.ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
             }
 
-            for (int i = 0; i < enemyTargets.Count; i++)
+            // Enemies in caster's hex cannot leave (Halt)
+            int haltedCount = 0;
+            if (character.hex.characters != null)
             {
-                enemyTargets[i].ApplyStatusEffect(StatusEffectEnum.Fear, 1);
+                foreach (Character enemy in character.hex.characters.Where(ch => ch != null && !ch.killed && !IsAllied(character, ch)).ToList())
+                {
+                    enemy.Halt(1);
+                    haltedCount++;
+                }
             }
 
-            MessageDisplayNoUI.ShowMessage(
-                character.hex,
-                character,
-                $"Gondorian Horn grants Courage to {alliedTargets.Count} allied Human/Dunedain unit(s) in radius {Radius} and spreads Fear to {enemyTargets.Count} enemy unit(s) in the hex.",
+            if (revealedCount == 0 && alliedTargets.Count == 0 && haltedCount == 0) return false;
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Gondorian Horn: {revealedCount} hidden enemy(ies) revealed; {alliedTargets.Count} Human/Dunedain ally(ies) gain Courage and extra movement; {haltedCount} enemy(ies) in hex halted.",
                 Color.yellow);
             return true;
         };
@@ -75,18 +83,15 @@ public class GondorianHorn : CharacterAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            bool hasAllies = character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null
-                    && h.characters != null
+            bool hasHiddenEnemies = character.hex.GetHexesInRadius(Radius)
+                .Any(h => h != null && h.characters != null
+                    && h.characters.Any(ch => ch != null && !ch.killed && !IsAllied(character, ch)));
+
+            bool hasAllies = character.hex.GetHexesInRadius(AlliedRadius)
+                .Any(h => h != null && h.characters != null
                     && h.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch) && IsHumanOrDunedain(ch)));
 
-            bool hasEnemies = character.hex.characters != null
-                && character.hex.characters.Any(ch => ch != null
-                    && !ch.killed
-                    && !IsAllied(character, ch)
-                    && (ch.GetAlignment() != character.GetAlignment() || character.GetAlignment() == AlignmentEnum.neutral));
-
-            return hasAllies || hasEnemies;
+            return hasHiddenEnemies || hasAllies;
         };
 
         asyncEffect = async (character) =>

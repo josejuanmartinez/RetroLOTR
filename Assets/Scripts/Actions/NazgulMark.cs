@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class NazgulMark : CharacterAction
 {
+    private const int MarkDuration = 3;
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -32,7 +34,7 @@ public class NazgulMark : CharacterAction
             if (!isAI)
             {
                 string targetName = await SelectionDialog.Ask(
-                    "Select enemy character",
+                    "Mark enemy character for death",
                     "Ok",
                     "Cancel",
                     enemies.Select(x => x.characterName).ToList(),
@@ -49,9 +51,12 @@ public class NazgulMark : CharacterAction
 
             if (target == null) return false;
 
-            target.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, 1);
+            target.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, MarkDuration);
+            target.ClearStatusEffect(StatusEffectEnum.Hidden);
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} is marked by the Nazgul: MorgulTouch (1).", Color.magenta);
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"{target.characterName} is marked by the Nazgul: MorgulTouch ({MarkDuration}) and cannot remain Hidden.",
+                Color.magenta);
             return true;
         }
 

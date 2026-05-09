@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class DragonBreath : CharacterAction
 {
+    private const int Radius = 2;
+    private const int Damage = 10;
+
     private static bool IsAllied(Character source, Character target)
     {
         if (source == null || target == null) return false;
@@ -14,55 +17,85 @@ public class DragonBreath : CharacterAction
             && target.GetAlignment() != AlignmentEnum.neutral;
     }
 
+    private static void RemoveWeakestTroop(Army army)
+    {
+        if (army == null) return;
+        int min = int.MaxValue;
+        int slot = -1;
+        if (army.ma > 0 && army.ma < min) { min = army.ma; slot = 0; }
+        if (army.li > 0 && army.li < min) { min = army.li; slot = 1; }
+        if (army.hi > 0 && army.hi < min) { min = army.hi; slot = 2; }
+        if (army.lc > 0 && army.lc < min) { min = army.lc; slot = 3; }
+        if (army.hc > 0 && army.hc < min) { slot = 4; }
+
+        switch (slot)
+        {
+            case 0: army.ma = Math.Max(0, army.ma - 1); break;
+            case 1: army.li = Math.Max(0, army.li - 1); break;
+            case 2: army.hi = Math.Max(0, army.hi - 1); break;
+            case 3: army.lc = Math.Max(0, army.lc - 1); break;
+            case 4: army.hc = Math.Max(0, army.hc - 1); break;
+        }
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
 
-        effect = (c) =>
+        effect = (character) =>
         {
-            if (originalEffect != null && !originalEffect(c)) return false;
-            if (c == null || c.hex == null) return false;
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
 
-            List<Hex> area = c.hex.GetHexesInRadius(1);
-            List<Character> enemies = area
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters.Select(ch => new { Hex = h, Character = ch }))
-                .Where(x => x.Character != null && !x.Character.killed && !IsAllied(c, x.Character))
-                .Select(x => x.Character)
-                .Distinct()
+            List<Hex> forestHexes = character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null && h.terrainType == TerrainEnum.forest)
                 .ToList();
 
-            if (enemies.Count == 0) return false;
+            if (forestHexes.Count == 0) return false;
 
-            int fearedOnForest = 0;
-            foreach (Character enemy in enemies)
+            int enemiesBurned = 0;
+
+            foreach (Hex h in forestHexes)
             {
-                enemy.ApplyStatusEffect(StatusEffectEnum.Burning, 1);
-                if (enemy.hex != null && enemy.hex.terrainType == TerrainEnum.forest)
+                if (h.characters == null) continue;
+                foreach (Character target in h.characters.ToList())
                 {
-                    enemy.ApplyStatusEffect(StatusEffectEnum.Fear, 1);
-                    fearedOnForest++;
+                    if (target == null || target.killed) continue;
+                    if (IsAllied(character, target)) continue;
+                    if (target.race == RacesEnum.Dwarf) continue;
+
+                    target.ApplyStatusEffect(StatusEffectEnum.Burning, 2);
+                    target.Wounded(character.GetOwner(), Damage);
+                    if (target.IsArmyCommander() && target.GetArmy() != null)
+                        RemoveWeakestTroop(target.GetArmy());
+                    enemiesBurned++;
                 }
             }
 
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Dragon Breath scorches {enemies.Count} enemy unit(s); {fearedOnForest} on forests also gain Fear.", Color.red);
+            if (enemiesBurned == 0) return false;
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Dragon-fire scorches {forestHexes.Count} forest hex(es) in radius {Radius}: {enemiesBurned} enemy unit(s) Burning, take {Damage} damage and lose a troop (Dwarves immune).",
+                Color.red);
             return true;
         };
 
-        condition = (c) =>
+        condition = (character) =>
         {
-            if (originalCondition != null && !originalCondition(c)) return false;
-            if (c == null || c.hex == null) return false;
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null) return false;
 
-            return c.hex.GetHexesInRadius(1)
-                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && !IsAllied(c, ch)));
+            return character.hex.GetHexesInRadius(Radius)
+                .Any(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null
+                    && h.characters.Any(ch => ch != null && !ch.killed && !IsAllied(character, ch)
+                        && ch.race != RacesEnum.Dwarf));
         };
 
-        asyncEffect = async (c) =>
+        asyncEffect = async (character) =>
         {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             return true;
         };
 

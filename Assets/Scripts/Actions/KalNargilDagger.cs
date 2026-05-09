@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class KalNargilDagger : CharacterAction
 {
+    private const int Damage = 15;
+    private const int GoldStolen = 2;
+
     private static bool IsEnemy(Character source, Character target)
     {
         if (source == null || target == null) return false;
@@ -16,7 +19,6 @@ public class KalNargilDagger : CharacterAction
     private static List<Character> FindEnemyTargets(Character source)
     {
         if (source == null || source.hex == null || source.hex.characters == null) return new List<Character>();
-
         return source.hex.characters
             .Where(ch => ch != null && !ch.killed && IsEnemy(source, ch))
             .Distinct()
@@ -55,7 +57,6 @@ public class KalNargilDagger : CharacterAction
                     enemies.Select(x => x.characterName).ToList(),
                     false,
                     SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
-
                 if (string.IsNullOrWhiteSpace(picked)) return false;
                 target = enemies.FirstOrDefault(x => x.characterName == picked);
             }
@@ -66,10 +67,26 @@ public class KalNargilDagger : CharacterAction
 
             if (target == null) return false;
 
-            target.ApplyStatusEffect(StatusEffectEnum.Poisoned, 2);
-            target.ApplyStatusEffect(StatusEffectEnum.Fear, 1);
+            target.Halt(1);
+            target.Wounded(character.GetOwner(), Damage);
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} is struck by Kal Nargil's dagger: Poisoned (2) and Fear (1).", Color.magenta);
+            bool wasHidden = character.HasStatusEffect(StatusEffectEnum.Hidden);
+            string goldMsg = "";
+            if (wasHidden)
+            {
+                Leader targetOwner = target.GetOwner();
+                Leader casterOwner = character.GetOwner();
+                if (targetOwner != null && casterOwner != null && targetOwner.goldAmount >= GoldStolen)
+                {
+                    targetOwner.RemoveGold(GoldStolen, false);
+                    casterOwner.AddGold(GoldStolen, false);
+                    goldMsg = $" Ambush: stole {GoldStolen} gold.";
+                }
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"{target.characterName} struck by Kal Nargil: {Damage} damage and loses movement.{goldMsg}",
+                Color.magenta);
             return true;
         }
 

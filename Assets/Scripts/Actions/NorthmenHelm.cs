@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class NorthmenHelm : CharacterAction
 {
+    private const int LoyaltyBonus = 5;
+
     private static bool IsAllied(Character source, Character target)
     {
         if (source == null || target == null) return false;
@@ -14,6 +16,9 @@ public class NorthmenHelm : CharacterAction
             && target.GetAlignment() == source.GetAlignment()
             && target.GetAlignment() != AlignmentEnum.neutral;
     }
+
+    private static bool IsHumanOrDunedain(Character ch) =>
+        ch != null && (ch.race == RacesEnum.Common || ch.race == RacesEnum.Dunedain);
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
@@ -25,7 +30,7 @@ public class NorthmenHelm : CharacterAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null || character.hex.characters == null) return false;
-            return character.hex.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch));
+            return character.hex.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch) && IsHumanOrDunedain(ch));
         };
 
         async Task<bool> helmAsync(Character character)
@@ -35,7 +40,7 @@ public class NorthmenHelm : CharacterAction
             if (character == null || character.hex == null) return false;
 
             List<Character> allies = character.hex.characters
-                .Where(ch => ch != null && !ch.killed && IsAllied(character, ch))
+                .Where(ch => ch != null && !ch.killed && IsAllied(character, ch) && IsHumanOrDunedain(ch))
                 .Distinct()
                 .ToList();
             if (allies.Count == 0) return false;
@@ -46,13 +51,12 @@ public class NorthmenHelm : CharacterAction
             if (!isAI)
             {
                 string selected = await SelectionDialog.Ask(
-                    "Select allied character",
+                    "Select allied Human or Dunedain character",
                     "Ok",
                     "Cancel",
                     allies.Select(x => x.characterName).ToList(),
                     false,
                     SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
-
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = allies.FirstOrDefault(x => x.characterName == selected);
             }
@@ -63,8 +67,29 @@ public class NorthmenHelm : CharacterAction
 
             if (target == null) return false;
 
-            target.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} gains Fortified (1 turn).", Color.cyan);
+            target.GainDuelSupremacy(1);
+            target.RefuseDuels(1);
+
+            // Find nearest allied PC and give loyalty bonus
+            Board board = FindFirstObjectByType<Board>();
+            if (board != null)
+            {
+                Leader owner = character.GetOwner();
+                Hex nearestPCHex = board.GetHexes()
+                    .Where(h => h != null && h.GetPC() != null && h.characters != null
+                        && h.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch)))
+                    .OrderBy(h => Vector2Int.Distance(character.hex.v2, h.v2))
+                    .FirstOrDefault();
+
+                if (nearestPCHex != null)
+                {
+                    nearestPCHex.GetPC()?.IncreaseLoyalty(LoyaltyBonus, target);
+                }
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"{target.characterName} stands firm: auto-wins next duel, refuses further duels, and nearest allied PC gains {LoyaltyBonus} loyalty.",
+                Color.cyan);
             return true;
         }
 

@@ -242,6 +242,12 @@ public class CardData
             _ => string.Empty
         };
 
+        if (cardType == CardTypeEnum.Character && !string.IsNullOrWhiteSpace(actionEffect))
+        {
+            string effect = actionEffect.Trim();
+            body = string.IsNullOrWhiteSpace(body) ? effect : $"{body}\n\n{effect}";
+        }
+
         return cardType == CardTypeEnum.Action
             || cardType == CardTypeEnum.Event
             || cardType == CardTypeEnum.Spell
@@ -765,6 +771,7 @@ public class DeckManager : MonoBehaviour
 
         if (state.drawPile.Count == 0) return false;
 
+        EnsureSubdeckCardIfNeeded(state);
         card = state.drawPile[0];
         state.drawPile.RemoveAt(0);
         state.hand.Add(card);
@@ -1153,6 +1160,7 @@ public class DeckManager : MonoBehaviour
         }
 
             if (state.drawPile.Count == 0) break;
+            EnsureSubdeckCardIfNeeded(state);
             CardData card = state.drawPile[0];
             state.drawPile.RemoveAt(0);
             state.hand.Add(card);
@@ -1669,7 +1677,7 @@ public class DeckManager : MonoBehaviour
                         .Where(card => card != null));
             }
 
-            AddVariantMergedPool(state.drawPile, basePool, subdeckPool);
+            AddMergedPool(state.drawPile, basePool, subdeckPool);
         }
         else
         {
@@ -1698,7 +1706,7 @@ public class DeckManager : MonoBehaviour
                         .Where(card => card != null));
             }
 
-            AddBalancedMergedPool(state.drawPile, basePool, subdeckPool);
+            AddMergedPool(state.drawPile, basePool, subdeckPool);
         }
 
         List<CardData> sharedPool = new();
@@ -1723,64 +1731,36 @@ public class DeckManager : MonoBehaviour
         return state;
     }
 
-    private static void AddBalancedMergedPool(List<CardData> destination, List<CardData> basePool, List<CardData> leafPool)
+    private static void AddMergedPool(List<CardData> destination, List<CardData> basePool, List<CardData> leafPool)
     {
         if (destination == null) return;
 
-        List<CardData> baseCards = basePool != null ? new List<CardData>(basePool) : new List<CardData>();
-        List<CardData> leafCards = leafPool != null ? new List<CardData>(leafPool) : new List<CardData>();
-
-        Shuffle(baseCards);
-        Shuffle(leafCards);
-
-        while (baseCards.Count > 0 || leafCards.Count > 0)
-        {
-            bool takeLeaf = baseCards.Count == 0
-                ? true
-                : leafCards.Count == 0
-                    ? false
-                    : UnityEngine.Random.value < 0.5f;
-
-            if (takeLeaf && leafCards.Count > 0)
-            {
-                destination.Add(TakeRandomCard(leafCards));
-            }
-            else if (baseCards.Count > 0)
-            {
-                destination.Add(TakeRandomCard(baseCards));
-            }
-        }
+        List<CardData> merged = new List<CardData>();
+        if (basePool != null) merged.AddRange(basePool);
+        if (leafPool != null) merged.AddRange(leafPool);
+        Shuffle(merged);
+        destination.AddRange(merged);
     }
 
-    private static void AddVariantMergedPool(List<CardData> destination, List<CardData> basePool, List<CardData> leafPool)
+    private void EnsureSubdeckCardIfNeeded(PlayerDeckState state)
     {
-        if (destination == null) return;
+        if (state == null || state.drawPile.Count == 0) return;
+        if (string.IsNullOrWhiteSpace(state.deckId)) return;
+        if (!deckManifestById.TryGetValue(state.deckId, out DeckManifestEntry entry)) return;
+        if (string.IsNullOrWhiteSpace(entry.parentDeckId)) return;
 
-        List<CardData> baseCards = basePool != null ? new List<CardData>(basePool) : new List<CardData>();
-        List<CardData> leafCards = leafPool != null ? new List<CardData>(leafPool) : new List<CardData>();
+        bool hasSubdeckCard = state.hand.Any(c => c != null
+            && string.Equals(c.deckId, state.deckId, StringComparison.OrdinalIgnoreCase));
+        if (hasSubdeckCard) return;
 
-        Shuffle(baseCards);
-        Shuffle(leafCards);
-
-        // Variant leaders should see one selected-subdeck card in every five draws when possible.
-        while (baseCards.Count > 0 || leafCards.Count > 0)
+        for (int i = 1; i < state.drawPile.Count; i++)
         {
-            if (leafCards.Count > 0)
-            {
-                destination.Add(TakeRandomCard(leafCards));
-            }
-
-            for (int i = 0; i < 4; i++)
-            {
-                if (baseCards.Count > 0)
-                {
-                    destination.Add(TakeRandomCard(baseCards));
-                }
-                else if (leafCards.Count > 0)
-                {
-                    destination.Add(TakeRandomCard(leafCards));
-                }
-            }
+            CardData candidate = state.drawPile[i];
+            if (candidate == null) continue;
+            if (!string.Equals(candidate.deckId, state.deckId, StringComparison.OrdinalIgnoreCase)) continue;
+            state.drawPile.RemoveAt(i);
+            state.drawPile.Insert(0, candidate);
+            return;
         }
     }
 
@@ -2017,6 +1997,7 @@ public class DeckManager : MonoBehaviour
         if (state == null) return;
         while (state.hand.Count < handSize && state.drawPile.Count > 0)
         {
+            EnsureSubdeckCardIfNeeded(state);
             CardData card = state.drawPile[0];
             state.drawPile.RemoveAt(0);
             state.hand.Add(card);

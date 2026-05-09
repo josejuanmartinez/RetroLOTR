@@ -1,13 +1,13 @@
 /**
- * WhatsApp ↔ Kimi CLI Bridge
+ * WhatsApp ↔ Claude CLI Bridge
  *
- * Run this service to connect WhatsApp Web with Kimi Code CLI.
+ * Run this service to connect WhatsApp Web with Claude Code CLI.
  * When you message yourself on WhatsApp, this bot forwards the message
- * to Kimi and sends back the text response plus any generated images.
+ * to Claude and sends back the text response plus any generated images.
  *
  * Environment variables:
- *   KIMI_WORK_DIR    - Working directory for Kimi (default: parent of this script)
- *   KIMI_TIMEOUT_MS  - Max time to wait for Kimi (default: 300000 = 5 min)
+ *   CLAUDE_WORK_DIR    - Working directory for Claude (default: parent of this script)
+ *   CLAUDE_TIMEOUT_MS  - Max time to wait for Claude (default: 1200000 = 20 min)
  */
 
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
@@ -20,8 +20,8 @@ const fs = require('fs').promises;
 const path = require('path');
 
 // ─── Configuration ───
-const WORK_DIR = process.env.KIMI_WORK_DIR || path.resolve(__dirname, '..');
-const KIMI_TIMEOUT_MS = parseInt(process.env.KIMI_TIMEOUT_MS || '1200000', 10); // 20 min default for image-gen tasks
+const WORK_DIR = process.env.CLAUDE_WORK_DIR || path.resolve(__dirname, '..');
+const CLAUDE_TIMEOUT_MS = parseInt(process.env.CLAUDE_TIMEOUT_MS || '1200000', 10); // 20 min default for image-gen tasks
 
 const IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.svg']);
 const EXCLUDED_DIRS = new Set([
@@ -32,17 +32,8 @@ const EXCLUDED_DIRS = new Set([
   'AtlasCache', 'Bee', 'Artifacts', 'ScriptAssemblies'
 ]);
 
-// Track messages sent by the bot so we don't reply to ourselves
-const sentMessageIds = new Set();
-const sentMessageBodies = new Set(); // fallback guard
-
-// Cooldown: after the bot sends anything, ignore all fromMe messages for N ms.
-// This prevents the race-condition where message_create fires before sendMessage resolves.
-let botCooldownUntil = 0;
-const BOT_COOLDOWN_MS = 30000; // 30s — WhatsApp sync can be slow
-
-// Recently-sent bodies with expiry timestamps
-const recentBotBodies = new Map(); // body -> expiryTimestamp
+// Every bot reply is prefixed with this. Any fromMe message starting with it is ignored.
+const BOT_PREFIX = '🤖🤖 ';
 
 let myId = null;
 
@@ -88,11 +79,11 @@ client.on('auth_failure', (msg) => {
 client.on('ready', () => {
   myId = client.info.wid._serialized;
   console.log('\n╔══════════════════════════════════════════════════════════════╗');
-  console.log('║  🤖 WhatsApp Kimi Bridge is ready!                          ║');
+  console.log('║  🤖 WhatsApp Claude Bridge is ready!                        ║');
   console.log(`║  Your number: ${myId.padEnd(45)} ║`);
   console.log(`║  Working dir:  ${WORK_DIR.padEnd(45)} ║`);
   console.log('║                                                              ║');
-  console.log('║  Message yourself on WhatsApp to talk to Kimi.               ║');
+  console.log('║  Message yourself on WhatsApp to talk to Claude.             ║');
   console.log('╚══════════════════════════════════════════════════════════════╝\n');
 });
 
@@ -110,45 +101,20 @@ client.on('message_create', async (msg) => {
   console.log(`[${timestamp}] 🔍 message_create | from:${msg.from} to:${msg.to} fromMe:${msg.fromMe} type:${msg.type} id:${msg.id?._serialized || 'n/a'} body:"${(msg.body || '').substring(0, 60)}"`);
 
   try {
-    // Guard 1: cooldown — ignore any fromMe message shortly after the bot sent something.
-    // This fixes the race condition where message_create fires before sendMessage resolves.
-    if (msg.fromMe && Date.now() < botCooldownUntil) {
-      console.log(`[${timestamp}] 🚫 Cooldown active, ignoring`);
-      return;
-    }
-
-    // Guard 2: ignore messages the bot itself just sent (by ID)
-    if (msg.id && msg.id._serialized && sentMessageIds.has(msg.id._serialized)) {
-      sentMessageIds.delete(msg.id._serialized);
-      console.log(`[${timestamp}] 🚫 Ignoring own message (ID match)`);
-      return;
-    }
-
-    // Guard 3: ignore messages the bot itself just sent (by body fallback)
-    if (msg.body && sentMessageBodies.has(msg.body)) {
-      sentMessageBodies.delete(msg.body);
-      console.log(`[${timestamp}] 🚫 Ignoring own message (body match)`);
-      return;
-    }
-
-    // Guard 3b: ignore recently-sent bodies (with TTL cleanup)
-    const now = Date.now();
-    if (msg.body && recentBotBodies.has(msg.body) && recentBotBodies.get(msg.body) > now) {
-      console.log(`[${timestamp}] 🚫 Ignoring own message (recent body match)`);
-      return;
-    }
-    // Clean expired entries occasionally
-    for (const [body, expiry] of recentBotBodies) {
-      if (expiry <= now) recentBotBodies.delete(body);
-    }
-
-    // Guard 4: only process messages in the "Me" chat
-    // fromMe=true means "sent from this phone" — that includes replies to ANY contact.
-    // The only reliable way to detect the self-chat is via contact.isMe.
+    // Skip messages not sent by me
     if (!msg.fromMe) {
       console.log(`[${timestamp}] 🚫 Not from me (fromMe=false)`);
       return;
     }
+
+    // Skip bot replies — they start with BOT_PREFIX
+    if (msg.body && msg.body.startsWith(BOT_PREFIX)) {
+      console.log(`[${timestamp}] 🚫 Bot reply, ignoring`);
+      return;
+    }
+
+    // Only process messages in the "Me" chat
+    // fromMe=true includes replies to any contact; contact.isMe is the reliable self-chat check.
     let chat;
     try {
       chat = await msg.getChat();
@@ -162,7 +128,7 @@ client.on('message_create', async (msg) => {
       return;
     }
 
-    // Guard 5: only plain text
+    // Only plain text
     if (msg.type !== 'chat') {
       console.log(`[${timestamp}] 🚫 Not a chat message (type=${msg.type})`);
       return;
@@ -178,15 +144,15 @@ client.on('message_create', async (msg) => {
 
     await chat.sendStateTyping();
 
-    // Snapshot images before running Kimi
+    // Snapshot images before running Claude
     const beforeImages = await scanImages(WORK_DIR);
     console.log(`[${timestamp}] 📸 Before scan: ${beforeImages.size} images`);
 
-    // Run Kimi
+    // Run Claude
     const runStartTime = Date.now();
-    const responseText = await runKimi(userMessage);
+    const responseText = await runClaude(userMessage);
 
-    // Snapshot images after running Kimi
+    // Snapshot images after running Claude
     const afterImages = await scanImages(WORK_DIR);
     console.log(`[${timestamp}] 📸 After scan: ${afterImages.size} images`);
 
@@ -226,7 +192,7 @@ client.on('message_create', async (msg) => {
         } catch (err) {
           console.error(`[${timestamp}] ❌ Failed to send image ${imgPath}:`, err.message);
           try {
-            await sendBotMessage(chat, `[Kimi] Image ready but could not send: ${path.basename(imgPath)}`, timestamp);
+            await sendBotMessage(chat, `Image ready but could not send: ${path.basename(imgPath)}`, timestamp);
           } catch (e2) {
             console.error(`[${timestamp}] ❌ Also failed to send image-fallback text:`, e2.message);
           }
@@ -264,7 +230,7 @@ client.on('message_create', async (msg) => {
     }
 
     if (!responseText && newImages.length === 0) {
-      await sendBotMessage(chat, '[Kimi] No output generated.', timestamp);
+      await sendBotMessage(chat, 'No output generated.', timestamp);
     }
   } catch (error) {
     console.error(`[${timestamp}] ❌ Error in message handler:`, error.message);
@@ -273,12 +239,9 @@ client.on('message_create', async (msg) => {
     try {
       const chat = await msg.getChat();
       await chat.clearState();
-      let errorText = '[Kimi Error] ';
-      if (error.message && error.message.includes('timeout')) {
-        errorText += 'Kimi took too long to respond.';
-      } else {
-        errorText += error.message || 'Unknown error occurred.';
-      }
+      let errorText = error.message && error.message.includes('timeout')
+        ? 'Claude took too long to respond.'
+        : (error.message || 'Unknown error occurred.');
       await sendBotMessage(chat, errorText, timestamp);
     } catch (sendErr) {
       console.error('Failed to send error message:', sendErr.message);
@@ -287,22 +250,17 @@ client.on('message_create', async (msg) => {
 });
 
 // ─── Bot Send Helpers ───
-// These MUST set guards BEFORE calling sendMessage to win the race against message_create.
 async function sendBotMessage(chat, text, timestamp) {
-  recentBotBodies.set(text, Date.now() + BOT_COOLDOWN_MS);
-  botCooldownUntil = Date.now() + BOT_COOLDOWN_MS;
-  const sent = await chat.sendMessage(text);
-  if (sent.id && sent.id._serialized) sentMessageIds.add(sent.id._serialized);
-  console.log(`[${timestamp}] 📤 Sent text (${text.length} chars)`);
+  const prefixed = BOT_PREFIX + text;
+  const sent = await chat.sendMessage(prefixed);
+  console.log(`[${timestamp}] 📤 Sent text (${prefixed.length} chars)`);
   return sent;
 }
 
 async function sendBotImage(chat, imgPath, timestamp) {
   const media = MessageMedia.fromFilePath(imgPath);
   const caption = path.basename(imgPath);
-  botCooldownUntil = Date.now() + BOT_COOLDOWN_MS;
   const sent = await chat.sendMessage(media, { caption });
-  if (sent.id && sent.id._serialized) sentMessageIds.add(sent.id._serialized);
   console.log(`[${timestamp}] 📤 Sent image: ${imgPath}`);
   return sent;
 }
@@ -395,28 +353,21 @@ async function findRecentImages(dir, hours) {
   return imagesWithMtime.map(x => x.path);
 }
 
-// ─── Run Kimi Subprocess ───
-function runKimi(prompt) {
+// ─── Run Claude Subprocess ───
+function runClaude(prompt) {
   return new Promise((resolve, reject) => {
     const args = [
-      '--print',
-      '--quiet',
-      '--yolo',
-      '--afk',
-      '--work-dir', WORK_DIR,
-      '-p', prompt
+      '-p', prompt,
+      '--output-format', 'text',
+      '--dangerously-skip-permissions',
     ];
 
-    console.log(`Running: kimi ${args.map(a => (a.includes(' ') ? `"${a}"` : a)).join(' ')}`);
+    console.log(`Running: claude ${args.map(a => (a.includes(' ') ? `"${a}"` : a)).join(' ')}`);
 
-    const child = spawn('kimi', args, {
+    const child = spawn('claude', args, {
       cwd: WORK_DIR,
       windowsHide: true,
-      env: {
-        ...process.env,
-        PYTHONIOENCODING: 'utf-8',
-        PYTHONUTF8: '1'
-      }
+      env: { ...process.env }
     });
 
     let stdout = '';
@@ -434,36 +385,30 @@ function runKimi(prompt) {
     const timer = setTimeout(() => {
       killedByTimeout = true;
       child.kill('SIGTERM');
-    }, KIMI_TIMEOUT_MS);
+    }, CLAUDE_TIMEOUT_MS);
 
     child.on('close', (code, signal) => {
       clearTimeout(timer);
 
       if (killedByTimeout) {
-        reject(new Error(`kimi timed out after ${KIMI_TIMEOUT_MS}ms`));
+        reject(new Error(`claude timed out after ${CLAUDE_TIMEOUT_MS}ms`));
         return;
       }
 
       if (stderr) {
-        console.error('Kimi stderr:', stderr.trim());
+        console.error('Claude stderr:', stderr.trim());
       }
 
-      // Exit code 0 = success, 75 = retryable, others = failure
       if (code === 0 || code === null) {
-        // Strip the session-resume hint line that kimi appends
-        const cleaned = stdout
-          .replace(/\r\n/g, '\n')
-          .replace(/\nTo resume this session: .+$/m, '')
-          .trim();
-        resolve(cleaned);
+        resolve(stdout.replace(/\r\n/g, '\n').trim());
       } else {
-        reject(new Error(`kimi exited with code ${code}. stderr: ${stderr.trim()}`));
+        reject(new Error(`claude exited with code ${code}. stderr: ${stderr.trim()}`));
       }
     });
 
     child.on('error', (err) => {
       clearTimeout(timer);
-      reject(new Error(`Failed to start kimi: ${err.message}`));
+      reject(new Error(`Failed to start claude: ${err.message}`));
     });
   });
 }
@@ -529,5 +474,5 @@ process.on('SIGTERM', async () => {
 });
 
 // ─── Start ───
-console.log('Starting WhatsApp Kimi Bridge...');
+console.log('Starting WhatsApp Claude Bridge...');
 client.initialize();

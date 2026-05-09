@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Poison : DarkSpell
 {
+    private const int ImmediateDamage = 5;
+    private const int PoisonTurns = 2;
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -47,9 +50,12 @@ public class Poison : DarkSpell
 
             if (target == null) return false;
 
-            const int turns = 2;
-            target.ApplyStatusEffect(StatusEffectEnum.Poisoned, turns);
-            MessageDisplayNoUI.ShowMessage(caster.hex, caster, $"{target.characterName} is poisoned ({turns}).", Color.magenta);
+            target.Wounded(caster.GetOwner(), ImmediateDamage);
+            target.ApplyStatusEffect(StatusEffectEnum.Poisoned, PoisonTurns);
+
+            MessageDisplayNoUI.ShowMessage(caster.hex, caster,
+                $"{target.characterName} is poisoned: {ImmediateDamage} damage now, then {PoisonTurns} turns of Poisoned.",
+                Color.magenta);
             return true;
         }
 

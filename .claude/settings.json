@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command ' *)",
+      "Bash(py -3 -)",
+      "Bash(py -3 tmp_migrate_cards.py)",
+      "Bash(py -3 tmp_verify_economy.py)",
+      "Bash(py -3 tmp_economy_fixes.py)",
+      "Bash(py -3 economy/gen_deck_stats.py)",
+      "Bash(Remove-Item tmp_migrate_cards.py, tmp_verify_economy.py, tmp_economy_fixes.py)",
+      "Bash(xargs grep -l \"StatusEffect\\\\|AddStatusEffect\")",
+      "Bash(mkdir -p \"c:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\ProjectContext\")",
+      "Bash(xargs grep -l \"enum RacesEnum\")",
+      "Read(//c/Users/jjmca/.claude/projects/c--Users-jjmca-RetroLOTR/memory/**)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\jjmca\\RetroLOTR\\ProjectContext",
+      "c:\\Users\\jjmca\\.claude\\projects\\c--Users-jjmca-RetroLOTR\\memory"
+    ]
+  }
+}

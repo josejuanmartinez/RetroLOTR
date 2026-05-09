@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class MithrilCoat : CharacterAction
 {
-    private const int FortifiedTurns = 3;
+    private const int ProtectionTurns = 3;
 
     private static bool IsAllied(Character source, Character target)
     {
@@ -54,7 +54,6 @@ public class MithrilCoat : CharacterAction
                     allies.Select(x => x.characterName).ToList(),
                     false,
                     SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
-
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = allies.FirstOrDefault(x => x.characterName == selected);
             }
@@ -65,8 +64,12 @@ public class MithrilCoat : CharacterAction
 
             if (target == null) return false;
 
-            target.ApplyStatusEffect(StatusEffectEnum.Fortified, FortifiedTurns);
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} gains Fortified ({FortifiedTurns} turns).", Color.cyan);
+            target.ApplyStatusEffect(StatusEffectEnum.Fortified, ProtectionTurns);
+            target.RefuseDuels(ProtectionTurns);
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"{target.characterName} dons the Mithril Coat: Fortified ({ProtectionTurns}) and cannot be targeted by Kidnap or Assassinate for {ProtectionTurns} turns.",
+                Color.cyan);
             return true;
         }
 

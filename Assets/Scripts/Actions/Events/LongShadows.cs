@@ -5,13 +5,20 @@ using UnityEngine;
 
 public class LongShadows : EventAction
 {
-    private static bool IsBeastRace(RacesEnum race)
+    private const int Radius = 4;
+    private const int ForestScoutRadius = 3;
+
+    private static bool IsBeastRace(RacesEnum race) =>
+        race == RacesEnum.Troll || race == RacesEnum.Goblin || race == RacesEnum.Spider
+        || race == RacesEnum.Dragon || race == RacesEnum.Undead || race == RacesEnum.Beast;
+
+    private static bool IsAllied(Character source, Character target)
     {
-        return race == RacesEnum.Troll
-            || race == RacesEnum.Goblin
-            || race == RacesEnum.Spider
-            || race == RacesEnum.Dragon
-            || race == RacesEnum.Undead;
+        if (source == null || target == null) return false;
+        if (target.GetOwner() == source.GetOwner()) return true;
+        return source.GetAlignment() != AlignmentEnum.neutral
+            && target.GetAlignment() == source.GetAlignment()
+            && target.GetAlignment() != AlignmentEnum.neutral;
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -20,10 +27,10 @@ public class LongShadows : EventAction
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
 
-        effect = (c) =>
+        effect = (character) =>
         {
-            if (originalEffect != null && !originalEffect(c)) return false;
-            if (c == null) return false;
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
 
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
@@ -31,32 +38,54 @@ public class LongShadows : EventAction
             List<Character> beasts = board.GetHexes()
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && IsBeastRace(ch.race))
+                .Where(ch => ch != null && !ch.killed && IsBeastRace(ch.race) && IsAllied(character, ch))
                 .Distinct()
                 .ToList();
 
             if (beasts.Count == 0) return false;
 
-            for (int i = 0; i < beasts.Count; i++)
+            // Reset movement for allied beasts so they can move again this turn
+            foreach (Character beast in beasts)
             {
-                beasts[i].ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+                beast.moved = 0;
+                beast.ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
             }
 
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Long Shadows grants Courage to {beasts.Count} beast unit(s) for 1 turn.", Color.gray);
+            // Enemy army commanders on forest tiles in radius 3 lose scouting
+            Leader casterOwner = character.GetOwner();
+            List<Hex> nearbyForestHexes = character.hex.GetHexesInRadius(ForestScoutRadius)
+                .Where(h => h != null && h.terrainType == TerrainEnum.forest)
+                .ToList();
+
+            int obscuredCount = 0;
+            foreach (Hex fh in nearbyForestHexes)
+            {
+                if (fh.armies != null && fh.armies.Any(a => a != null && !a.killed
+                    && a.GetCommander() != null && IsAllied(character, a.GetCommander()) == false))
+                {
+                    fh.Obscure();
+                    obscuredCount++;
+                }
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Long Shadows: {beasts.Count} beast(s) reset movement and gain Encouraged; {obscuredCount} enemy forest position(s) obscured.",
+                Color.gray);
             return true;
         };
 
-        condition = (c) =>
+        condition = (character) =>
         {
-            if (originalCondition != null && !originalCondition(c)) return false;
+            if (originalCondition != null && !originalCondition(character)) return false;
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
-            return board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && IsBeastRace(ch.race)));
+            return board.GetHexes().Any(h => h != null && h.characters != null
+                && h.characters.Any(ch => ch != null && !ch.killed && IsBeastRace(ch.race) && IsAllied(character, ch)));
         };
 
-        asyncEffect = async (c) =>
+        asyncEffect = async (character) =>
         {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             return true;
         };
 

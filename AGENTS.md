@@ -8,6 +8,25 @@ This file provides repo-wide guidance for coding agents working in this project.
 - Prefer small, verifiable edits over broad refactors.
 - Keep lore tone, deck identity, and visual style consistent with the existing RetroLOTR project.
 
+## Available Skills
+
+Skills live under `.agents/skills/<skill-name>/SKILL.md`. Use them by name when instructing an agent.
+
+| Skill | Trigger / use when |
+|---|---|
+| `deck-stats` | Regenerate `economy/deck_stats.json` after any card change (costs, grants, levels, troop type). Runs `python economy/gen_deck_stats.py`. |
+| `new-card` | Add a new card entry to a modular deck JSON and wire its image. |
+| `new-character-action` | Create or update a C# action class under `Assets/Scripts/Actions` and link it from the card JSON. |
+| `create-card-logic` | Audit the full card art folder, find cards missing deck entries or action linkage, and resolve them interactively. |
+| `deck-expansion-full` | Add fully integrated cards to a modular subdeck (data + logic + art) in one pass. |
+| `subdeck-creator` | Expand a single modular subdeck one card at a time, enforcing diversity and flavor rules. |
+| `card-description-writer` | Write or rewrite card `quote` and `actionEffect` text in lore-accurate style. |
+| `new-image` | Generate new card art in the RetroLOTR retro painted style and save to the correct `Assets/Art/Cards/` subfolder. |
+| `colorify` | Colorize an existing B&W card image using the standard two-pass workflow. |
+| `colorify-banner` | Colorize a banner/crest image while preserving its transparent cutout silhouette. |
+| `new-banner` | Generate a new heraldic banner sprite and save to `Assets/Art/UI/Alignment/Banners/`. |
+| `extract-sprite-slices` | Extract sliced sub-assets from a Unity multi-sprite atlas into standalone PNG files. |
+
 ## Card And Deck Work
 
 - Treat `Assets/Resources/Cards/Modular` as the source of truth for modular deck work.
@@ -16,6 +35,34 @@ This file provides repo-wide guidance for coding agents working in this project.
 - Avoid duplicating a card concept, gameplay role, or image across sibling subdecks.
 - When expanding a modular subdeck, add one card at a time and verify deck count after each addition.
 - Do not hardcode card names, card-to-action mappings, or tutorial card exceptions in gameplay code; resolve them from deck/card data or tutorial JSON instead.
+
+### Card Mechanic Quality Bar — No Pure-Status Cards
+
+A card fails this bar if its entire effect can be described as one of these templates and nothing else:
+
+- `"All [X] gain [Status] (N turns)."`
+- `"Target allied character: gain [Status] (N turns)."`
+- `"Enemy [X] gain [Status] (N turns)."`
+- `"Apply [Status] (N turns) to [X]."`
+
+**Every card must include at least one mechanic that cannot be described as a buff/debuff to a group.** A status effect may appear as a *secondary* component alongside a primary mechanic, but it cannot be the whole card.
+
+Good primary mechanics to reach for first:
+
+| Category | Examples |
+|---|---|
+| Movement / repositioning | Teleport, forced displacement, extra movement, westward compulsion |
+| Combat / damage | Fixed damage, troop loss, auto-hit, charge damage |
+| Army modification | Unit type conversion (ma → hi), permanent troop gain, warship grant |
+| Resource change | Gold steal, skill increase (`AddCommander`), loyalty boost |
+| Information | Reveal hidden units, obscure scouting, reveal artifact sites |
+| Terrain interaction | Forest fire, coastal reveal, mountain charge bonus |
+| Targeted disruption | Halt + damage, card denial (Blocked), expose-then-damage |
+| Resurrection / revival | Revive dead characters, extra action this turn |
+
+When a status effect is the only mechanic on a card, reject the design and replace it with something from the list above. A status effect added *on top of* a real mechanic is fine and often good for flavor.
+
+This rule was established after auditing 65 pure-status cards and migrating all of them — see `improving_terrible_status_effect_cards.md` for the reference implementations.
 
 ## Actions And Gameplay Logic
 
@@ -40,6 +87,7 @@ This file provides repo-wide guidance for coding agents working in this project.
   - a short lore-based immersive line
   - the effect text, stated clearly and without removing gameplay meaning
 - When writing card, army, or UI text for abilities, troop types, or status effects, always append the matching `<sprite name="...">` icon alongside the term instead of leaving the raw name by itself.
+- **Before inserting any `<sprite name="...">` tag, check `ProjectContext/available_sprites.md`** for the exact valid name. Using an unlisted name will show a broken icon in-game.
 
 ## Safety And Collaboration
 

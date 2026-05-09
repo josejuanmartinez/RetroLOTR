@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class DreamsOfNumenor : CharacterAction
 {
+    private const int RevealRadius = 4;
+
     private static bool IsAllied(Character source, Character target)
     {
         if (source == null || target == null) return false;
@@ -14,11 +16,8 @@ public class DreamsOfNumenor : CharacterAction
             && target.GetAlignment() != AlignmentEnum.neutral;
     }
 
-    private static bool IsSeaAdjacentHex(Hex hex)
-    {
-        if (hex == null) return false;
-        return hex.terrainType == TerrainEnum.shore || hex.IsWaterTerrain();
-    }
+    private static bool IsSeaAdjacent(Hex hex) =>
+        hex != null && (hex.terrainType == TerrainEnum.shore || hex.IsWaterTerrain());
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -26,46 +25,74 @@ public class DreamsOfNumenor : CharacterAction
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
 
-        effect = (c) =>
+        effect = (character) =>
         {
-            if (originalEffect != null && !originalEffect(c)) return false;
-            if (c == null) return false;
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
 
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
 
-            List<Character> targets = board.GetHexes()
-                .Where(h => h != null && IsSeaAdjacentHex(h) && h.characters != null)
+            // Reveal all coastal hexes in radius
+            List<Hex> coastalHexes = board.GetHexes()
+                .Where(h => h != null && IsSeaAdjacent(h))
+                .ToList();
+
+            int revealedCount = 0;
+            foreach (Hex h in coastalHexes)
+            {
+                h.RevealArea(1, false, character.GetOwner());
+                revealedCount++;
+            }
+
+            // Allied naval commanders gain +1 Warship
+            List<Character> navalCommanders = board.GetHexes()
+                .Where(h => h != null && IsSeaAdjacent(h) && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && IsAllied(c, ch))
+                .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander()
+                    && IsAllied(character, ch) && ch.GetArmy() != null
+                    && (ch.race == RacesEnum.Common || ch.race == RacesEnum.Dunedain))
                 .Distinct()
                 .ToList();
 
-            if (targets.Count == 0) return false;
+            foreach (Character commander in navalCommanders)
+                commander.GetArmy().ws++;
 
-            foreach (Character t in targets)
+            // Allied characters on shore tiles gain Haste (ready to embark)
+            int embarkedCount = 0;
+            List<Character> shoreAllies = board.GetHexes()
+                .Where(h => h != null && h.terrainType == TerrainEnum.shore && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Where(ch => ch != null && !ch.killed && IsAllied(character, ch))
+                .Distinct()
+                .ToList();
+
+            foreach (Character ally in shoreAllies)
             {
-                t.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
-                t.ApplyStatusEffect(StatusEffectEnum.Encouraged, 1);
+                ally.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                embarkedCount++;
             }
 
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Dreams of Númenor blesses {targets.Count} allied unit(s) near the sea with Haste and Courage.", Color.cyan);
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Dreams of Númenor: {revealedCount} coastal hex(es) revealed; {navalCommanders.Count} commander(s) gain +1 Warship; {embarkedCount} shore ally(ies) gain Haste.",
+                Color.cyan);
             return true;
         };
 
-        condition = (c) =>
+        condition = (character) =>
         {
-            if (originalCondition != null && !originalCondition(c)) return false;
-            if (c == null) return false;
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null) return false;
 
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
-            return board.GetHexes().Any(h => h != null && IsSeaAdjacentHex(h) && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && IsAllied(c, ch)));
+            return board.GetHexes().Any(h => h != null && IsSeaAdjacent(h) && h.characters != null
+                && h.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch)));
         };
 
-        asyncEffect = async (c) =>
+        asyncEffect = async (character) =>
         {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             return true;
         };
 

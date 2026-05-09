@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class AMorgulBlade : CharacterAction
 {
+    private const int ImmediateDamage = 10;
+    private const int PoisonTurns = 3;
+    private const int LowHPThreshold = 25;
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -35,7 +39,7 @@ public class AMorgulBlade : CharacterAction
             if (!isAI)
             {
                 string targetName = await SelectionDialog.Ask(
-                    "Select enemy character",
+                    "Strike with the Morgul Blade",
                     "Ok",
                     "Cancel",
                     enemies.Select(x => x.characterName).ToList(),
@@ -52,14 +56,19 @@ public class AMorgulBlade : CharacterAction
 
             if (target == null) return false;
 
-            if (UnityEngine.Random.Range(0, 100) >= 50)
+            target.Wounded(character.GetOwner(), ImmediateDamage);
+            target.ApplyStatusEffect(StatusEffectEnum.Poisoned, PoisonTurns);
+
+            string extraMsg = "";
+            if (target.health <= LowHPThreshold)
             {
-                MessageDisplayNoUI.ShowMessage(character.hex, character, $"The Morgul wound fails to take hold on {target.characterName}.", Color.red);
-                return false;
+                target.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, PoisonTurns);
+                extraMsg = $" The wound festers: MorgulTouch ({PoisonTurns}) applied.";
             }
 
-            target.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, 3);
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} suffers Morgul Touch (3).", Color.magenta);
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"{target.characterName} suffers the Morgul Blade: {ImmediateDamage} damage and Poisoned ({PoisonTurns}).{extraMsg}",
+                Color.magenta);
             return true;
         }
 
