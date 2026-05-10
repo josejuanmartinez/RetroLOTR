@@ -12,6 +12,7 @@ public class LeaderVariantConfig
 {
     public string variantId;
     public string displayName;
+    public string nationName;
     public string description;
     public string deckIdentity;
     public string subdeckId;
@@ -21,6 +22,7 @@ public class LeaderVariantConfig
 [Serializable]
 public class LeaderBiomeConfig: BiomeConfig
 {
+    public string nationName;
     public string description;
     public string deckIdentity;
     public string subdeckId;

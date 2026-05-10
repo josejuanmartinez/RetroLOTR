@@ -31,7 +31,7 @@ public class Board : MonoBehaviour
     public bool moving = false;
     [SerializeField] private SpriteRenderer characterMoverImage;
     [SerializeField] private SpriteRenderer characterMoverBackground;
-    [SerializeField] private SpriteRenderer characterBannerMoverImage;
+    // [SerializeField] private SpriteRenderer characterBannerMoverImage;
     [SerializeField] private SpriteRenderer freeArmyMoverImage;
     [SerializeField] private SpriteRenderer darkServantsMoverImage;
     [SerializeField] private SpriteRenderer neutralMoverImage;
@@ -1072,7 +1072,7 @@ public class Board : MonoBehaviour
         return portMoverImage;
     }
 
-    private SpriteRenderer EnsureCharacterBannerMover(SpriteRenderer mover)
+    /*private SpriteRenderer EnsureCharacterBannerMover(SpriteRenderer mover)
     {
         if (mover == null) return null;
         if (characterBannerMoverImage != null) return characterBannerMoverImage;
@@ -1093,7 +1093,7 @@ public class Board : MonoBehaviour
         characterBannerMoverImage = bannerMover.AddComponent<SpriteRenderer>();
         characterBannerMoverImage.gameObject.SetActive(false);
         return characterBannerMoverImage;
-    }
+    }*/
 
     private static float SafeDivide(float numerator, float denominator)
     {
@@ -1140,19 +1140,19 @@ public class Board : MonoBehaviour
 
         SpriteRenderer appearanceFromCharSR = null;
         SpriteRenderer appearanceFromCharBgSR = null;
-        SpriteRenderer appearanceFromBannerSR = null;
+        // SpriteRenderer appearanceFromBannerSR = null;
         Sprite appearanceFromCharSprite = null;
         Vector3 appearanceBannerOffset = Vector3.zero;
         if (path.Count > 0 && hexes.TryGetValue(path[0], out Hex initialHex))
         {
             appearanceFromCharSR = initialHex != null ? initialHex.GetCharacterSpriteRendererOnHex() : null;
             appearanceFromCharBgSR = GetCharacterBackground(appearanceFromCharSR);
-            appearanceFromBannerSR = initialHex != null ? initialHex.bannerSpriteRenderer : null;
+            // appearanceFromBannerSR = initialHex != null ? initialHex.bannerSpriteRenderer : null;
             appearanceFromCharSprite = appearanceFromCharSR != null ? appearanceFromCharSR.sprite : null;
-            if (appearanceFromCharSR != null && appearanceFromBannerSR != null)
-            {
-                appearanceBannerOffset = appearanceFromBannerSR.transform.position - appearanceFromCharSR.transform.position;
-            }
+            // if (appearanceFromCharSR != null && appearanceFromBannerSR != null)
+            // {
+            //     appearanceBannerOffset = appearanceFromBannerSR.transform.position - appearanceFromCharSR.transform.position;
+            // }
         }
 
         for (int i = 0; i < path.Count - 1; i++)
@@ -1167,9 +1167,12 @@ public class Board : MonoBehaviour
             SpriteRenderer fromBg = GetCharacterBackground(fromSR);
             SpriteRenderer toBg = GetCharacterBackground(toSR);
             SpriteRenderer moverBg = characterMoverSR == characterMoverImage ? EnsureMoverBackground(characterMoverSR) : null;
-            SpriteRenderer fromBannerSR = previousHex.bannerSpriteRenderer;
-            SpriteRenderer toBannerSR = newHex.bannerSpriteRenderer;
-            SpriteRenderer bannerMoverSR = EnsureCharacterBannerMover(characterMoverSR);
+            // SpriteRenderer fromBannerSR = previousHex.bannerSpriteRenderer;
+            // SpriteRenderer toBannerSR = newHex.bannerSpriteRenderer;
+            // SpriteRenderer bannerMoverSR = EnsureCharacterBannerMover(characterMoverSR);
+            SpriteRenderer fromBannerSR = null;
+            SpriteRenderer toBannerSR = null;
+            SpriteRenderer bannerMoverSR = null;
 
             SpriteRenderer fromArmySR = previousHex.GetArmySpriteRendererOnHex(character);
             SpriteRenderer toArmySR = newHex.GetArmySpriteRendererOnHex(character);
@@ -1233,7 +1236,7 @@ public class Board : MonoBehaviour
                             null,
                             appearanceFromCharSR,
                             appearanceFromCharBgSR,
-                            appearanceFromBannerSR,
+                            null,
                             appearanceFromCharSprite,
                             appearanceBannerOffset);
                         canAnimate = true;

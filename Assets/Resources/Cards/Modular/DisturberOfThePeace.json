@@ -8,7 +8,7 @@
             "cardId": 748,
             "name": "Tom Bombadil",
             "quote": "In the greenwood, laughter is a shield more sure than iron.",
-            "actionEffect": "",
+            "actionEffect": "Clear Fear <sprite name=\"fear\"> from all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -90,13 +90,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Old Forest"
+            "startingPC": "Old Forest",
+            "inspireEffectData": {
+                "type": "ClearStatusEffect",
+                "statusEffect": "Fear"
+            }
         },
         {
             "cardId": 514,
             "name": "Fatty Bolger",
             "quote": "The quiet gate is often the first to know of danger.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 15 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -147,7 +151,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Crickhollow"
+            "startingPC": "Crickhollow",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 36,
@@ -2635,7 +2643,7 @@
             "cardId": 839,
             "name": "Merry",
             "quote": "Merry keeps his courage hidden until it is needed.",
-            "actionEffect": "",
+            "actionEffect": "Restore action <sprite name=\"action\"> to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -2686,13 +2694,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Buckland"
+            "startingPC": "Buckland",
+            "inspireEffectData": {
+                "type": "ResetAction",
+                "allCharacters": false
+            }
         },
         {
             "cardId": 840,
             "name": "Frodo",
             "quote": "Frodo bears a burden no hand can measure.",
-            "actionEffect": "",
+            "actionEffect": "Clear Despair <sprite name=\"despair\"> from all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -2743,13 +2755,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Hobbiton"
+            "startingPC": "Hobbiton",
+            "inspireEffectData": {
+                "type": "ClearStatusEffect",
+                "statusEffect": "Despair"
+            }
         },
         {
             "cardId": 841,
             "name": "Gildor Inglorion",
             "quote": "Gildor Inglorion comes with the hush of the Eldar upon him.",
-            "actionEffect": "",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -2800,13 +2816,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Imladris"
+            "startingPC": "Imladris",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
         },
         {
             "cardId": 842,
             "name": "Paladin",
             "quote": "Paladin holds fast where lesser hearts would fail.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 15 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -2857,13 +2876,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Michel Delving"
+            "startingPC": "Michel Delving",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 844,
             "name": "Gwaihir",
             "quote": "Gwaihir sees the winds before they rise.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 4 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -2914,13 +2937,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": ""
+            "startingPC": "",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 4
+            }
         },
         {
             "cardId": 845,
             "name": "Pippin",
             "quote": "Pippin learns wisdom by hard roads and jest.",
-            "actionEffect": "",
+            "actionEffect": "Gain 2 Gold <sprite name=\"gold\">.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -2971,7 +2998,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Michel Delving"
+            "startingPC": "Michel Delving",
+            "inspireEffectData": {
+                "type": "GainResource",
+                "resourceType": "Gold",
+                "amount": 2
+            }
         },
         {
             "cardId": 846,
@@ -3909,7 +3941,7 @@
             "cardId": 967,
             "name": "Bilbo",
             "quote": "I think I am quite ready for another adventure.",
-            "actionEffect": "",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -3960,13 +3992,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Hobbiton"
+            "startingPC": "Hobbiton",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
         },
         {
             "cardId": 969,
             "name": "Halbarad",
             "quote": "With Aragorn, I will stand against the shadow.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 3 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -4017,13 +4052,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Sarn Ford"
+            "startingPC": "Sarn Ford",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 3
+            }
         },
         {
             "cardId": 970,
             "name": "Sam",
             "quote": "There's some good in this world, Mr. Frodo, and it's worth fighting for.",
-            "actionEffect": "",
+            "actionEffect": "Heal a random controlled character by 20.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -4074,13 +4113,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Hobbiton"
+            "startingPC": "Hobbiton",
+            "inspireEffectData": {
+                "type": "Heal",
+                "amount": 20,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 971,
             "name": "HarryGoatleaf",
             "quote": "I’ll make sure the path is clear for the brave!",
-            "actionEffect": "",
+            "actionEffect": "Reveal the random enemy settlement for 1 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -4131,13 +4175,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Bree"
+            "startingPC": "Bree",
+            "inspireEffectData": {
+                "type": "RevealEnemyPC",
+                "turns": 1,
+                "nearest": false
+            }
         },
         {
             "cardId": 972,
             "name": "Elladan",
             "quote": "The shadows gather; we must ride swiftly.",
-            "actionEffect": "",
+            "actionEffect": "Restore full movement <sprite name=\"movement\"> to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -4188,13 +4237,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Imladris"
+            "startingPC": "Imladris",
+            "inspireEffectData": {
+                "type": "ResetMovement",
+                "allCharacters": false
+            }
         },
         {
             "cardId": 973,
             "name": "Elrohir",
             "quote": "Our blades shall sing in defense of our kin.",
-            "actionEffect": "",
+            "actionEffect": "Heal a random controlled character by 15.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -4245,13 +4298,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Imladris"
+            "startingPC": "Imladris",
+            "inspireEffectData": {
+                "type": "Heal",
+                "amount": 15,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 974,
             "name": "Glorfindel",
             "quote": "I have returned, and the shadows shall not claim this land while I stand.",
-            "actionEffect": "",
+            "actionEffect": "Encourage <sprite name=\"encouraged\"> all controlled characters for 2 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -4302,13 +4360,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Imladris"
+            "startingPC": "Imladris",
+            "inspireEffectData": {
+                "type": "Encourage",
+                "turns": 2,
+                "allCharacters": true
+            }
         },
         {
             "cardId": 1003,
             "name": "Disturber of the Peace",
             "quote": "Good morning. And what does a good morning mean to you? To me it means a great many things can still go unexpectedly right.",
-            "actionEffect": "Works best unseen: <sprite name=\"agent\"> deep, archers <sprite name=\"bow\"> ready. No sorcery <sprite name=\"mage\"> — the deed done before it is suspected.",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "disturber_of_the_peace",
@@ -4359,7 +4422,15 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Hobbiton"
+            "startingPC": "Hobbiton",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
+        },
+        {
+            "cardId": 1004,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1003
         }
     ]
 }

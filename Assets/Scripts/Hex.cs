@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TMPro;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class Hex : MonoBehaviour
@@ -35,12 +34,6 @@ public class Hex : MonoBehaviour
     [Header("Character")]
     public SpriteRenderer characterSpriteRenderer;
     public SpriteRenderer bannerSpriteRenderer;
-    public Animator characterAnimator;
-    public AnimatorController commanderAnimatorController;
-    public AnimatorController agentAnimatorController;
-    public AnimatorController emmissaryAnimatorController;
-    public AnimatorController mageAnimatorController;
-    public AnimatorController defaultAnimatorController;
 
     [Header("Rendering")]
     public TextMeshPro pcName;
@@ -58,9 +51,9 @@ public class Hex : MonoBehaviour
     public GameObject artifact;
     public HoverNoUI artifactHover;
 
-    public GameObject freeArmy;
-    public GameObject darkArmy;
-    public GameObject neutralArmy;
+    public GameObject armyIcon;
+    public SpriteRendererGridLayout armyIconGrid;
+    private Coroutine armyArrangeCoroutine;
 
     public TerrainEnum terrainType;
     public SpriteRenderer terrainTexture;
@@ -71,9 +64,7 @@ public class Hex : MonoBehaviour
     public GameObject movement;
     public MovementCostManager movementCostManager;
 
-    public SpriteRenderer freeArmySR;
-    public SpriteRenderer neutralArmySR;
-    public SpriteRenderer darkArmySR;
+
 
     [Header("Frames")]
     public GameObject hoverHexFrame;
@@ -125,7 +116,7 @@ public class Hex : MonoBehaviour
     private Illustrations illustrations;
     private HexTextureMapping hexTextureMapping;
     private Sprite baseTerrainSprite;
-    private Coroutine bannerRetryCoroutine;
+    // private Coroutine bannerRetryCoroutine;
 
     // Reused buffers to avoid GC in UI building / raycasts
     private static readonly StringBuilder sbChars = new(256);
@@ -142,23 +133,23 @@ public class Hex : MonoBehaviour
     private static readonly Dictionary<SharedParticleType, SharedParticlePoolState> sharedParticlePools = new();
     private static Transform sharedParticlePoolRoot;
     private static Material sharedCharacterOutlineMaterial;
-    private static Material sharedBannerOutlineMaterial;
+    // private static Material sharedBannerOutlineMaterial;
     private MaterialPropertyBlock characterOutlinePropertyBlock;
     private Color? lastAppliedCharacterOutlineColor;
     private float? lastAppliedCharacterOutlineSize;
-    private Color? lastAppliedBannerOutlineColor;
-    private float? lastAppliedBannerOutlineSize;
+    // private Color? lastAppliedBannerOutlineColor;
+    // private float? lastAppliedBannerOutlineSize;
 
     private const string Unknown = "Unknown character(s)";
     private const int DarknessTurnsDefault = 2;
     private const int SharedOneShotParticlePoolSize = 3;
     private const string CharacterOutlineMaterialPath = "Materials/CharacterOutline";
-    private const string BannerOutlineMaterialPath = "Materials/BannerOutline";
+    // private const string BannerOutlineMaterialPath = "Materials/BannerOutline";
     private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
     private static readonly int OutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
     [Header("Outline")]
     public float characterOutlineSize = 10f;
-    public float bannerOutlineSize = 70f;
+    // public float bannerOutlineSize = 70f;
     private int darknessTurnsRemaining = 0;
 
     void Awake()
@@ -303,14 +294,9 @@ public class Hex : MonoBehaviour
 
     public SpriteRenderer GetArmySpriteRendererOnHex(Character character)
     {
-        if (character == null || !character.IsArmyCommander()) return null;
-        return character.alignment switch
-        {
-            AlignmentEnum.freePeople => freeArmySR,
-            AlignmentEnum.darkServants => darkArmySR,
-            AlignmentEnum.neutral => neutralArmySR,
-            _ => null
-        };
+        // Deprecated: army icons are now dynamically instantiated per commander.
+        // Returning null disables the legacy army-mover animation in Board.cs.
+        return null;
     }
 
     public SpriteRenderer GetPortSpriteRenderer()
@@ -418,23 +404,56 @@ public class Hex : MonoBehaviour
 
     public void RedrawArmies(bool refreshHoverText = true)
     {
-        // scan once; no LINQ allocs
-        bool hasFree = false, hasNeutral = false, hasDark = false;
-        for (int i = 0, n = armies.Count; i < n; i++)
+        ClearArmyIcons();
+
+        bool hasArmies = armies.Count > 0;
+        bool seen = IsHexSeen();
+
+        if (seen && hasArmies && armyIcon != null && armyIconGrid != null)
         {
-            var a = armies[i].GetCommander().alignment;
-            if (a == AlignmentEnum.freePeople) hasFree = true;
-            else if (a == AlignmentEnum.neutral) hasNeutral = true;
-            else if (a == AlignmentEnum.darkServants) hasDark = true;
+            for (int i = 0, n = armies.Count; i < n; i++)
+            {
+                Army army = armies[i];
+                Character commander = army?.GetCommander();
+                if (commander == null) continue;
+
+                GameObject icon = Instantiate(armyIcon, armyIconGrid.transform);
+                ArmyIconManager manager = icon.GetComponent<ArmyIconManager>();
+                if (manager != null)
+                {
+                    manager.Initialize(commander);
+                }
+            }
+            if (armyArrangeCoroutine != null) StopCoroutine(armyArrangeCoroutine);
+            armyArrangeCoroutine = StartCoroutine(DelayedArrangeArmies());
         }
 
-        bool seen = IsHexSeen();
-        SetActiveFast(freeArmy, seen && hasFree);
-        SetActiveFast(neutralArmy, seen && hasNeutral);
-        SetActiveFast(darkArmy, seen && hasDark);
+        SetActiveFast(armyIconGrid != null ? armyIconGrid.gameObject : null, seen && hasArmies);
         UpdatePortIcon();
 
         if (refreshHoverText) RefreshHoverText();
+    }
+
+    private IEnumerator DelayedArrangeArmies()
+    {
+        yield return null;
+        if (armyIconGrid != null) armyIconGrid.Arrange();
+        armyArrangeCoroutine = null;
+    }
+
+    private void ClearArmyIcons()
+    {
+        if (armyIconGrid == null) return;
+        if (armyArrangeCoroutine != null)
+        {
+            StopCoroutine(armyArrangeCoroutine);
+            armyArrangeCoroutine = null;
+        }
+        Transform gridTransform = armyIconGrid.transform;
+        for (int i = gridTransform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(gridTransform.GetChild(i).gameObject);
+        }
     }
 
     public void RedrawCharacters(bool refreshHoverText = true)
@@ -459,7 +478,7 @@ public class Hex : MonoBehaviour
         {
             ClearOutlineColor();
         }
-        UpdateBannerSpriteForKnownCharacter();
+        // UpdateBannerSpriteForKnownCharacter();
         if (refreshHoverText) RefreshHoverText();
     }
 
@@ -919,6 +938,8 @@ public class Hex : MonoBehaviour
             characterSpriteRenderer.sharedMaterial = sharedCharacterOutlineMaterial;
         }
 
+        // Banner outline material loading commented out
+        /*
         if (sharedBannerOutlineMaterial == null)
         {
             sharedBannerOutlineMaterial = Resources.Load<Material>(BannerOutlineMaterialPath);
@@ -933,6 +954,7 @@ public class Hex : MonoBehaviour
         {
             bannerSpriteRenderer.sharedMaterial = sharedBannerOutlineMaterial;
         }
+        */
     }
 
     private void UpdateMinimapTerrain(bool revealed)
@@ -970,9 +992,7 @@ public class Hex : MonoBehaviour
             return;
         }
 
-        SetActiveFast(freeArmy, false);
-        SetActiveFast(neutralArmy, false);
-        SetActiveFast(darkArmy, false);
+        SetActiveFast(armyIconGrid != null ? armyIconGrid.gameObject : null, false);
         SetActiveFast(characterSpriteRenderer.gameObject, false);
         SetActiveFast(artifact, false);
         if (artifactHover) SetActiveFast(artifactHover.gameObject, false);
@@ -1022,26 +1042,19 @@ public class Hex : MonoBehaviour
 
         if (TryGetKnownCharacterForIcon(out Character known))
         {
-            var controller = GetAnimatorControllerOrDefault(known);
-            if (characterAnimator.runtimeAnimatorController != controller)
-            {
-                characterAnimator.runtimeAnimatorController = controller;
-            }
+            Sprite raceSprite = illustrations != null ? illustrations.GetIllustrationByName(known.race.ToString(), false) : null;
+            characterSpriteRenderer.sprite = raceSprite != null ? raceSprite : defaultCharacterSprite;
             UpdateOutlineColor(known);
-            UpdateBannerSprite(known);
+            // UpdateBannerSprite(known);
         }
         else
         {
             characterSpriteRenderer.sprite = defaultCharacterSprite;
-            if (characterAnimator.runtimeAnimatorController != defaultAnimatorController)
-            {
-                characterAnimator.runtimeAnimatorController = defaultAnimatorController;
-            }
             ClearOutlineColor();
         }
     }
 
-    private void UpdateBannerSpriteForKnownCharacter()
+    /*private void UpdateBannerSpriteForKnownCharacter()
     {
         if (bannerSpriteRenderer == null)
         {
@@ -1061,9 +1074,9 @@ public class Hex : MonoBehaviour
         }
 
         UpdateBannerSprite(known);
-    }
+    }*/
 
-    private bool TryGetKnownCharacterForBanner(out Character known)
+    /*private bool TryGetKnownCharacterForBanner(out Character known)
     {
         known = null;
         if (TryGetKnownCharacterForIcon(out known))
@@ -1101,16 +1114,16 @@ public class Hex : MonoBehaviour
         }
 
         return false;
-    }
+    }*/
 
-    private void UpdateBannerSprite(Character character)
+    /*private void UpdateBannerSprite(Character character)
     {
         if (bannerSpriteRenderer == null) return;
 
         if (character == null)
         {
             ClearBannerSprite();
-            ClearBannerOutline();
+            // ClearBannerOutline();
             return;
         }
 
@@ -1126,7 +1139,7 @@ public class Hex : MonoBehaviour
         if (illustrations == null)
         {
             ClearBannerSprite();
-            ClearBannerOutline();
+            // ClearBannerOutline();
             return;
         }
 
@@ -1153,9 +1166,9 @@ public class Hex : MonoBehaviour
         SetActiveFast(bannerSpriteRenderer.gameObject, true);
         UpdateBannerOutline(character.GetOwner());
         CancelBannerRetry();
-    }
+    }*/
 
-    private void ClearBannerSprite()
+    /*private void ClearBannerSprite()
     {
         if (bannerSpriteRenderer == null)
         {
@@ -1163,9 +1176,9 @@ public class Hex : MonoBehaviour
         }
 
         SetActiveFast(bannerSpriteRenderer.gameObject, false);
-    }
+    }*/
 
-    private void UpdateBannerOutline(Leader owner)
+    /*private void UpdateBannerOutline(Leader owner)
     {
         if (!bannerSpriteRenderer) return;
         ApplyOutlineSettings(
@@ -1173,15 +1186,15 @@ public class Hex : MonoBehaviour
             owner != null ? owner.nationColor : Color.white,
             bannerOutlineSize,
             isBanner: true);
-    }
+    }*/
 
-    private void ClearBannerOutline()
+    /*private void ClearBannerOutline()
     {
         if (!bannerSpriteRenderer) return;
         ApplyOutlineSettings(bannerSpriteRenderer, Color.white, bannerOutlineSize, isBanner: true);
-    }
+    }*/
 
-    private void QueueBannerRetry()
+    /*private void QueueBannerRetry()
     {
         if (bannerRetryCoroutine != null)
         {
@@ -1189,9 +1202,9 @@ public class Hex : MonoBehaviour
         }
 
         bannerRetryCoroutine = StartCoroutine(RetryBannerWhenIllustrationsReady());
-    }
+    }*/
 
-    private void CancelBannerRetry()
+    /*private void CancelBannerRetry()
     {
         if (bannerRetryCoroutine == null)
         {
@@ -1200,9 +1213,9 @@ public class Hex : MonoBehaviour
 
         StopCoroutine(bannerRetryCoroutine);
         bannerRetryCoroutine = null;
-    }
+    }*/
 
-    private IEnumerator RetryBannerWhenIllustrationsReady()
+    /*private IEnumerator RetryBannerWhenIllustrationsReady()
     {
         while (illustrations == null || !illustrations.IsLoaded)
         {
@@ -1221,9 +1234,9 @@ public class Hex : MonoBehaviour
         }
 
         RedrawCharacters(false);
-    }
+    }*/
 
-    private static string ResolveBannerName(Leader owner)
+    /*private static string ResolveBannerName(Leader owner)
     {
         if (owner == null)
         {
@@ -1254,7 +1267,7 @@ public class Hex : MonoBehaviour
         }
 
         return biome.banner;
-    }
+    }*/
 
     private void UpdateOutlineColor(Character character)
     {
@@ -1262,20 +1275,20 @@ public class Hex : MonoBehaviour
         if (owner == null)
         {
             ClearOutlineColor();
-            ClearBannerOutline();
+            // ClearBannerOutline();
             return;
         }
         ApplyOutlineColorFromBanner(null, owner);
-        UpdateBannerOutline(owner);
+        // UpdateBannerOutline(owner);
     }
 
     private void ApplyOutlineColorFromBanner(Sprite bannerSprite, Leader owner)
     {
         ApplyOutlineSettings(characterSpriteRenderer, owner != null ? owner.nationColor : Color.white, characterOutlineSize, isBanner: false);
-        if (bannerSpriteRenderer)
-        {
-            ApplyOutlineSettings(bannerSpriteRenderer, owner != null ? owner.nationColor : Color.white, bannerOutlineSize, isBanner: true);
-        }
+        // if (bannerSpriteRenderer)
+        // {
+        //     ApplyOutlineSettings(bannerSpriteRenderer, owner != null ? owner.nationColor : Color.white, bannerOutlineSize, isBanner: true);
+        // }
     }
 
     private void ClearOutlineColor()
@@ -1287,19 +1300,19 @@ public class Hex : MonoBehaviour
     {
         if (!spriteRenderer) return;
 
-        Color? lastColor = isBanner ? lastAppliedBannerOutlineColor : lastAppliedCharacterOutlineColor;
-        float? lastSize = isBanner ? lastAppliedBannerOutlineSize : lastAppliedCharacterOutlineSize;
+        Color? lastColor = isBanner ? /*lastAppliedBannerOutlineColor*/ null : lastAppliedCharacterOutlineColor;
+        float? lastSize = isBanner ? /*lastAppliedBannerOutlineSize*/ null : lastAppliedCharacterOutlineSize;
 
         bool colorChanged = !lastColor.HasValue || lastColor.Value != outlineColor;
         bool sizeChanged = !lastSize.HasValue || !Mathf.Approximately(lastSize.Value, outlineSize);
         if (!colorChanged && !sizeChanged) return;
 
-        if (isBanner)
-        {
-            lastAppliedBannerOutlineColor = outlineColor;
-            lastAppliedBannerOutlineSize = outlineSize;
-        }
-        else
+        // if (isBanner)
+        // {
+        //     lastAppliedBannerOutlineColor = outlineColor;
+        //     lastAppliedBannerOutlineSize = outlineSize;
+        // }
+        // else
         {
             lastAppliedCharacterOutlineColor = outlineColor;
             lastAppliedCharacterOutlineSize = outlineSize;
@@ -1318,7 +1331,7 @@ public class Hex : MonoBehaviour
 
     private static readonly Dictionary<Sprite, Color> dominantColorCache = new();
 
-    private static bool TryGetDominantBannerColor(Sprite bannerSprite, out Color dominantColor)
+    /*private static bool TryGetDominantBannerColor(Sprite bannerSprite, out Color dominantColor)
     {
         dominantColor = Color.white;
         if (bannerSprite == null)
@@ -1395,38 +1408,8 @@ public class Hex : MonoBehaviour
         {
             return false;
         }
-    }
+    }*/
 
-    private AnimatorController GetAnimatorControllerOrDefault(Character character)
-    {
-        if (character == null) {
-            Debug.Log("Returning default - character or illustrations is null");
-            return defaultAnimatorController;
-        }
-        //Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(character.characterName) : null;
-        string predominantClass = "commander";
-        int predominantClassValue = character.GetCommander();
-        if(character.GetAgent() > predominantClassValue) {
-            predominantClass = "agent";
-            predominantClassValue = character.GetAgent();
-        }
-        if(character.GetEmmissary() > predominantClassValue) {
-            predominantClass = "emmissary";
-            predominantClassValue = character.GetEmmissary();
-        }
-        if(character.GetMage() > predominantClassValue) {
-            predominantClass = "mage";
-            predominantClassValue = character.GetMage();
-        }
-        switch(predominantClass)
-        {
-            case "commander": return commanderAnimatorController;
-            case "agent": return agentAnimatorController;
-            case "emmissary": return emmissaryAnimatorController;
-            case "mage": return mageAnimatorController;
-            default: return defaultAnimatorController;
-        }
-    }
 
     /*private void UpdateCharacterIconZoom(Sprite sprite)
     {

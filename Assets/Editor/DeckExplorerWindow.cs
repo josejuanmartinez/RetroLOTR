@@ -1973,8 +1973,7 @@ public class DeckExplorerWindow : EditorWindow
         string[] searchRoots =
         {
             "Assets/Art/Cards",
-            "Assets/Art/UI",
-            "Assets/Art/Animation"
+            "Assets/Art/UI"
         };
 
         string normalizedTarget = Normalize(name);

@@ -1061,7 +1061,7 @@
             "cardId": 859,
             "name": "Avas of Igath",
             "quote": "In the heat of battle, I find my true purpose and sharpen my resolve.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1112,13 +1112,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Ilanin"
+            "startingPC": "Ilanin",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 860,
             "name": "Tros Hesnef",
             "quote": "Wisdom guides my blade, and courage fuels my heart in this relentless tide.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1169,13 +1173,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "KhandAmu"
+            "startingPC": "KhandAmu",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 2
+            }
         },
         {
             "cardId": 861,
             "name": "Southron Scout",
             "quote": "Silent as the night, I see all and fear none in this vast land.",
-            "actionEffect": "",
+            "actionEffect": "Reveal the random enemy settlement for 1 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1226,13 +1235,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Methir"
+            "startingPC": "Methir",
+            "inspireEffectData": {
+                "type": "RevealEnemyPC",
+                "turns": 1,
+                "nearest": false
+            }
         },
         {
             "cardId": 862,
             "name": "Kav Makow",
             "quote": "The desert speaks to me, its secrets unfurling like the sands beneath my feet.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1283,13 +1297,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Ashkiri"
+            "startingPC": "Ashkiri",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 2
+            }
         },
         {
             "cardId": 863,
             "name": "Sangarunya",
             "quote": "Strength lies not just in steel, but in the heart that wields it.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1340,13 +1359,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Isigir"
+            "startingPC": "Isigir",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 3
+            }
         },
         {
             "cardId": 864,
             "name": "Uvatha",
             "quote": "In the shadow of the Dark Lord, I carve my path through fear and flame.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1397,13 +1421,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Sturlurtsa Khand"
+            "startingPC": "Sturlurtsa Khand",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 3
+            }
         },
         {
             "cardId": 865,
             "name": "Haruth Rammam",
             "quote": "The sands whisper of glory, and I shall let none forget my name.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 hi <sprite name=\"hi\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1454,13 +1483,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Kas Shadoul"
+            "startingPC": "Kas Shadoul",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "hi",
+                "amount": 2
+            }
         },
         {
             "cardId": 866,
             "name": "Angamaite",
             "quote": "A blade is only as true as the heart that wields it.",
-            "actionEffect": "",
+            "actionEffect": "Sabotage the port <sprite name=\"port\"> of the random visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1511,13 +1545,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Havens of Umbar"
+            "startingPC": "Havens of Umbar",
+            "inspireEffectData": {
+                "type": "SabotagePort",
+                "nearest": false
+            }
         },
         {
             "cardId": 867,
             "name": "Huz",
             "quote": "The roar of the desert is my battle cry; fear the storm I bring.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 hc <sprite name=\"hc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1568,13 +1606,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Riavod"
+            "startingPC": "Riavod",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "hc",
+                "amount": 2
+            }
         },
         {
             "cardId": 868,
             "name": "Herumor",
             "quote": "In darkness I thrive, for the shadows are my allies.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1625,13 +1668,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "KasShafra"
+            "startingPC": "KasShafra",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 869,
             "name": "Castamir",
             "quote": "The tides of power shift, and I shall be their master.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -1682,7 +1729,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CarasTolfalas"
+            "startingPC": "CarasTolfalas",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 20
+            }
         },
         {
             "cardId": 870,
@@ -3680,7 +3731,7 @@
             "cardId": 977,
             "name": "Angulion",
             "quote": "From the depths of despair, I rise as a storm upon the horizon.",
-            "actionEffect": "",
+            "actionEffect": "Grant 10 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -3731,13 +3782,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CarasTolfalas"
+            "startingPC": "CarasTolfalas",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 10
+            }
         },
         {
             "cardId": 978,
             "name": "Arfanhil",
             "quote": "From ashes shall rise the fire that consumes our foes.",
-            "actionEffect": "",
+            "actionEffect": "Upgrade fort <sprite name=\"fort\"> on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -3788,13 +3843,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": ""
+            "startingPC": "",
+            "inspireEffectData": {
+                "type": "IncreaseFort"
+            }
         },
         {
             "cardId": 979,
             "name": "Aonghas",
             "quote": "The vale of shadows shall know my wrath.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 2 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -3845,13 +3903,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": ""
+            "startingPC": "",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 2
+            }
         },
         {
             "cardId": 980,
             "name": "Enion",
             "quote": "In silence, I weave the fate of those who dare oppose me.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 15 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -3902,7 +3964,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": ""
+            "startingPC": "",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 981,
@@ -4254,7 +4320,7 @@
             "cardId": 1008,
             "name": "Of Many Colours",
             "quote": "White light can be broken into its parts. I have seen each one clearly. That is why the others feared me.",
-            "actionEffect": "Saruman who broke the white for pride: cavalry <sprite name=\"mounts\"> unmatched, <sprite name=\"gold\"><sprite name=\"leather\"> in flood. <sprite name=\"iron\"> starved — brilliance without foundation.",
+            "actionEffect": "Apply ArcaneInsight <sprite name=\"arcaneinsight\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -4305,7 +4371,13 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Orthanc"
+            "startingPC": "Orthanc",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "ArcaneInsight",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 1009,
@@ -4712,7 +4784,7 @@
             "cardId": 1016,
             "name": "Pallando",
             "quote": "The sea calls to me, its depths holding secrets untold.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 3 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -4794,13 +4866,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Sturlurtsa Khand"
+            "startingPC": "Sturlurtsa Khand",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 3
+            }
         },
         {
             "cardId": 1017,
             "name": "Alatar",
             "quote": "From the East I come, seeking wisdom among the stars.",
-            "actionEffect": "",
+            "actionEffect": "Grant 15 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "of_many_colours",
@@ -4882,7 +4958,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Shrel-Kain"
+            "startingPC": "Shrel-Kain",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 15
+            }
         },
         {
             "cardId": 1018,
@@ -5282,6 +5362,16 @@
             "mithrilGranted": 0,
             "goldGranted": 0,
             "startingPC": ""
+        },
+        {
+            "cardId": 1025,
+            "referenceDeckId": "saruman_base",
+            "referenceCardId": 719
+        },
+        {
+            "cardId": 1026,
+            "referenceDeckId": "saruman_base",
+            "referenceCardId": 1002
         }
     ]
 }

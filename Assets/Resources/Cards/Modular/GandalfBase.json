@@ -2609,7 +2609,7 @@
             "cardId": 1000,
             "name": "Gandalf",
             "quote": "All we have to decide is what to do with the time that is given to us.",
-            "actionEffect": "Grey and uncommitted — <sprite name=\"commander\"><sprite name=\"agent\"><sprite name=\"emmissary\"><sprite name=\"mage\"> spread thin, armies light. No road yet chosen.",
+            "actionEffect": "Encourage <sprite name=\"encouraged\"> all controlled characters for 2 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "gandalf_base",
@@ -2660,7 +2660,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Hobbiton"
+            "startingPC": "Hobbiton",
+            "inspireEffectData": {
+                "type": "Encourage",
+                "turns": 2,
+                "allCharacters": true
+            }
         },
         {
             "cardId": 1001,

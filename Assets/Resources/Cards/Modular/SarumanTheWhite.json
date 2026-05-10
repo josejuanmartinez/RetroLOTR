@@ -8,7 +8,7 @@
             "cardId": 745,
             "name": "Radagast",
             "quote": "In the woods of Rhosgobel, the creatures find solace in my presence.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 4 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -90,13 +90,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Rhosgobel"
+            "startingPC": "Rhosgobel",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 4
+            }
         },
         {
             "cardId": 750,
             "name": "Pallando",
             "quote": "The sea calls to me, its depths holding secrets untold.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 3 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -178,13 +182,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Sturlurtsa Khand"
+            "startingPC": "Sturlurtsa Khand",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 3
+            }
         },
         {
             "cardId": 751,
             "name": "Alatar",
             "quote": "From the East I come, seeking wisdom among the stars.",
-            "actionEffect": "",
+            "actionEffect": "Grant 15 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -266,7 +274,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Shrel-Kain"
+            "startingPC": "Shrel-Kain",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 15
+            }
         },
         {
             "cardId": 583,
@@ -504,7 +516,7 @@
             "cardId": 789,
             "name": "Adumir",
             "quote": "The shadows of old haunt the paths I tread.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 10 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -555,13 +567,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": ""
+            "startingPC": "",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 10
+            }
         },
         {
             "cardId": 790,
             "name": "Annatorion",
             "quote": "A sword is but a tool; wisdom wields the true power.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -643,13 +659,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Shrel-Kain"
+            "startingPC": "Shrel-Kain",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 792,
             "name": "Braega",
             "quote": "My strength lies in the bond of kin, unbreakable and fierce.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 2 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -700,13 +720,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CamethBrin"
+            "startingPC": "CamethBrin",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 2
+            }
         },
         {
             "cardId": 793,
             "name": "GhanBuriGhan",
             "quote": "I am the voice of the wild; listen and you shall understand.",
-            "actionEffect": "",
+            "actionEffect": "Reveal the nearest enemy settlement for 1 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -757,13 +781,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Druadan Forest"
+            "startingPC": "Druadan Forest",
+            "inspireEffectData": {
+                "type": "RevealEnemyPC",
+                "turns": 1,
+                "nearest": true
+            }
         },
         {
             "cardId": 794,
             "name": "Celdacil",
             "quote": "Noble blood flows in my veins, guiding my hand in honor.",
-            "actionEffect": "",
+            "actionEffect": "Reveal the random enemy settlement for 1 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -814,7 +843,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Sarn Lothduin"
+            "startingPC": "Sarn Lothduin",
+            "inspireEffectData": {
+                "type": "RevealEnemyPC",
+                "turns": 1,
+                "nearest": false
+            }
         },
         {
             "cardId": 795,
@@ -2216,7 +2250,7 @@
             "cardId": 819,
             "name": "Theoden",
             "quote": "The sword is a mighty ally, but it is the heart that must lead the way.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -2313,13 +2347,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Edoras"
+            "startingPC": "Edoras",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 3
+            }
         },
         {
             "cardId": 820,
             "name": "Gwaihir",
             "quote": "Gwaihir sees the winds before they rise.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 4 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -2370,13 +2409,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": ""
+            "startingPC": "",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 4
+            }
         },
         {
             "cardId": 821,
             "name": "Treebeard",
             "quote": "Treebeard remembers the young world, and speaks slowly of it.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 hi <sprite name=\"hi\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -2443,13 +2486,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": ""
+            "startingPC": "",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "hi",
+                "amount": 3
+            }
         },
         {
             "cardId": 1009,
             "name": "Saruman the White",
             "quote": "The White Council holds against the Shadow, and I am its head. Power is mine to wield in service, not in dominion.",
-            "actionEffect": "Chief of the Istari, head of the White Council: <sprite name=\"agent\"><sprite name=\"emmissary\"><sprite name=\"mage\"> keen, events reshaping the board. Power wielded in service of the Wise.",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_the_white",
@@ -2500,7 +2548,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Orthanc"
+            "startingPC": "Orthanc",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 20
+            }
         },
         {
             "cardId": 1010,
@@ -4644,6 +4696,16 @@
             "mithrilGranted": 0,
             "goldGranted": 0,
             "startingPC": ""
+        },
+        {
+            "cardId": 1097,
+            "referenceDeckId": "saruman_base",
+            "referenceCardId": 41
+        },
+        {
+            "cardId": 1098,
+            "referenceDeckId": "saruman_base",
+            "referenceCardId": 719
         }
     ]
 }

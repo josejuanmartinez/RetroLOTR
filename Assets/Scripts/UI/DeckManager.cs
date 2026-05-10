@@ -47,7 +47,9 @@ public class CardPlayabilityResult
     public bool failsResourceRequirements;
     public bool failsActionConditions;
     public bool failsCardHistoryRequirements;
+    public bool failsStartingCityRequirement;
     public string cardHistoryReason;
+    public string startingCityReason;
 
     public void Reset()
     {
@@ -56,7 +58,9 @@ public class CardPlayabilityResult
         failsResourceRequirements = false;
         failsActionConditions = false;
         failsCardHistoryRequirements = false;
+        failsStartingCityRequirement = false;
         cardHistoryReason = null;
+        startingCityReason = null;
     }
 }
 
@@ -156,6 +160,7 @@ public class CardData
     public int goldGranted;
 
     public string startingPC = string.Empty;
+    public InspireEffectData inspireEffectData;
 
     [NonSerialized] public bool isPlayable;
     [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
@@ -355,12 +360,24 @@ public class CardData
     {
         if (GetCardType() != CardTypeEnum.Character) return string.Empty;
 
-        List<string> parts = new();
-        AppendCharacterLevel(parts, "commander", commander);
-        AppendCharacterLevel(parts, "agent", agent);
-        AppendCharacterLevel(parts, "emmissary", emmissary);
-        AppendCharacterLevel(parts, "mage", mage);
-        return parts.Count > 0 ? string.Join(" ", parts) : string.Empty;
+        List<string> lines = new();
+
+        if (!string.IsNullOrWhiteSpace(startingPC))
+        {
+            lines.Add($"Starts at {startingPC}.");
+        }
+
+        List<string> classParts = new();
+        AppendCharacterLevel(classParts, "commander", commander);
+        AppendCharacterLevel(classParts, "agent", agent);
+        AppendCharacterLevel(classParts, "emmissary", emmissary);
+        AppendCharacterLevel(classParts, "mage", mage);
+        if (classParts.Count > 0)
+        {
+            lines.Add(string.Join(" ", classParts));
+        }
+
+        return lines.Count > 0 ? string.Join("\n", lines) : string.Empty;
     }
 
     public bool EvaluatePlayability(Character selectedCharacter, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)
@@ -377,7 +394,21 @@ public class CardData
 
             playability.failsResourceRequirements = !cardResourcesOk;
             playability.failsActionConditions = !cardConditionsOk;
-            isPlayable = cardResourcesOk && cardConditionsOk;
+
+            bool startingCityOk = true;
+            if (GetCardType() == CardTypeEnum.Character && !string.IsNullOrWhiteSpace(startingPC))
+            {
+                Hex hex = selectedCharacter?.hex;
+                PC pc = hex?.GetPCData();
+                startingCityOk = pc != null && CardNameUtility.Equals(pc.pcName, startingPC);
+                if (!startingCityOk)
+                {
+                    playability.failsStartingCityRequirement = true;
+                    playability.startingCityReason = $"Must be played at {startingPC}.";
+                }
+            }
+
+            isPlayable = cardResourcesOk && cardConditionsOk && startingCityOk;
             playability.isPlayable = isPlayable;
             return isPlayable;
         }
@@ -681,6 +712,7 @@ public class DeckManager : MonoBehaviour
             cards.AddRange(deckData.cards);
         }
 
+        InjectMissingStartingPcAndLandReferences();
         ResolveCardReferences();
         cards.Clear();
         foreach (DeckManifestEntry entry in deckManifestById.Values)
@@ -1262,8 +1294,114 @@ public class DeckManager : MonoBehaviour
             ironGranted = card.ironGranted,
             steelGranted = card.steelGranted,
             mithrilGranted = card.mithrilGranted,
-            goldGranted = card.goldGranted
+            goldGranted = card.goldGranted,
+            startingPC = card.startingPC,
+            inspireEffectData = card.inspireEffectData
         };
+    }
+
+    private void InjectMissingStartingPcAndLandReferences()
+    {
+        // Build lookups from all non-reference cards
+        Dictionary<string, CardData> pcByName = new(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, CardData> landByRegion = new(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, CardData> allCardsByKey = new(StringComparer.OrdinalIgnoreCase);
+
+        foreach (DeckData deck in loadedDecksById.Values)
+        {
+            if (deck?.cards == null) continue;
+            foreach (CardData card in deck.cards)
+            {
+                if (card == null) continue;
+                allCardsByKey[BuildCardReferenceKey(deck.deckId, card.cardId)] = card;
+                if (IsReferenceCard(card)) continue;
+                if (card.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(card.name))
+                {
+                    string key = NormalizeCardName(card.name);
+                    if (!pcByName.ContainsKey(key)) pcByName[key] = card;
+                }
+                else if (card.GetCardType() == CardTypeEnum.Land && !string.IsNullOrWhiteSpace(card.region))
+                {
+                    string key = NormalizeCardName(card.region);
+                    if (!landByRegion.ContainsKey(key)) landByRegion[key] = card;
+                }
+            }
+        }
+
+        foreach (DeckManifestEntry entry in deckManifestById.Values)
+        {
+            if (string.IsNullOrWhiteSpace(entry.parentDeckId)) continue;
+            if (!loadedDecksById.TryGetValue(entry.deckId, out DeckData subdeck) || subdeck?.cards == null) continue;
+
+            HashSet<string> existingPcNames = new(StringComparer.OrdinalIgnoreCase);
+            HashSet<string> existingLandRegions = new(StringComparer.OrdinalIgnoreCase);
+
+            foreach (CardData card in subdeck.cards)
+            {
+                if (card == null) continue;
+                CardData resolved = IsReferenceCard(card)
+                    ? FindCardByKey(allCardsByKey, card.referenceDeckId, card.referenceCardId)
+                    : card;
+                if (resolved == null) continue;
+                if (resolved.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(resolved.name))
+                    existingPcNames.Add(NormalizeCardName(resolved.name));
+                else if (resolved.GetCardType() == CardTypeEnum.Land && !string.IsNullOrWhiteSpace(resolved.region))
+                    existingLandRegions.Add(NormalizeCardName(resolved.region));
+            }
+
+            int n = subdeck.cards.Count;
+            for (int i = 0; i < n; i++)
+            {
+                CardData card = subdeck.cards[i];
+                if (card == null) continue;
+
+                CardData effective = IsReferenceCard(card)
+                    ? FindCardByKey(allCardsByKey, card.referenceDeckId, card.referenceCardId)
+                    : card;
+                if (effective == null) continue;
+                if (effective.GetCardType() != CardTypeEnum.Character) continue;
+                if (string.IsNullOrWhiteSpace(effective.startingPC)) continue;
+
+                string pcKey = NormalizeCardName(effective.startingPC);
+                if (existingPcNames.Contains(pcKey)) continue;
+
+                if (!pcByName.TryGetValue(pcKey, out CardData originalPc))
+                {
+                    Debug.LogWarning($"DeckManager: Character '{card.name}' in '{subdeck.deckId}' has startingPC '{card.startingPC}' but no matching PC card found.");
+                    continue;
+                }
+
+                InjectReferenceCard(subdeck, originalPc);
+                existingPcNames.Add(pcKey);
+
+                if (string.IsNullOrWhiteSpace(originalPc.region)) continue;
+                string regionKey = NormalizeCardName(originalPc.region);
+                if (existingLandRegions.Contains(regionKey)) continue;
+                if (!landByRegion.TryGetValue(regionKey, out CardData originalLand)) continue;
+
+                InjectReferenceCard(subdeck, originalLand);
+                existingLandRegions.Add(regionKey);
+            }
+        }
+    }
+
+    private static CardData FindCardByKey(Dictionary<string, CardData> index, string deckId, int cardId)
+    {
+        if (string.IsNullOrWhiteSpace(deckId) || cardId <= 0) return null;
+        return index.TryGetValue(BuildCardReferenceKey(deckId, cardId), out CardData card) ? card : null;
+    }
+
+    private static void InjectReferenceCard(DeckData subdeck, CardData original)
+    {
+        if (subdeck?.cards == null || original == null) return;
+        int maxId = subdeck.cards.Where(c => c != null).Select(c => c.cardId).DefaultIfEmpty(0).Max();
+        subdeck.cards.Add(new CardData
+        {
+            cardId = maxId + 1,
+            referenceDeckId = original.deckId,
+            referenceCardId = original.cardId
+        });
+        Debug.Log($"DeckManager: Injected reference to '{original.name}' ({original.type}) from '{original.deckId}' into '{subdeck.deckId}'.");
     }
 
     private void ResolveCardReferences()

@@ -818,7 +818,7 @@
             "cardId": 719,
             "name": "Bill Ferny",
             "quote": "In shadows he lingers, a merchant of malice and deceit.",
-            "actionEffect": "",
+            "actionEffect": "Reveal the random enemy settlement for 1 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -869,13 +869,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Bree"
+            "startingPC": "Bree",
+            "inspireEffectData": {
+                "type": "RevealEnemyPC",
+                "turns": 1,
+                "nearest": false
+            }
         },
         {
             "cardId": 720,
             "name": "Grima",
             "quote": "Words are my blade, cutting through the hearts of men.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -926,13 +931,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Edoras"
+            "startingPC": "Edoras",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 20
+            }
         },
         {
             "cardId": 721,
             "name": "Ugluk",
             "quote": "To battle! The scent of blood drives us ever onward!",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 hi <sprite name=\"hi\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -983,13 +992,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Orthanc"
+            "startingPC": "Orthanc",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "hi",
+                "amount": 2
+            }
         },
         {
             "cardId": 722,
             "name": "The Undead King",
             "quote": "I am the end of all who dwell in light; fear my coming.",
-            "actionEffect": "",
+            "actionEffect": "Conceal a random controlled settlement from enemies for 1 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -1040,13 +1054,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Paths of the Dead"
+            "startingPC": "Paths of the Dead",
+            "inspireEffectData": {
+                "type": "HidePC",
+                "turns": 1
+            }
         },
         {
             "cardId": 723,
             "name": "Broccach",
             "quote": "From the shadows I rise, a warrior of the forgotten hills.",
-            "actionEffect": "",
+            "actionEffect": "Grant 10 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -1097,13 +1115,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Arailt"
+            "startingPC": "Arailt",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 10
+            }
         },
         {
             "cardId": 724,
             "name": "Waulfa",
             "quote": "Strength of the earth flows through my veins; I will not falter.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -1154,13 +1176,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Enedhir"
+            "startingPC": "Enedhir",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 2
+            }
         },
         {
             "cardId": 725,
             "name": "Mauhur",
             "quote": "The hunt is on, and with it comes the thrill of the chase.",
-            "actionEffect": "",
+            "actionEffect": "Restore full movement <sprite name=\"movement\"> to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -1211,7 +1238,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "FangornSCamp"
+            "startingPC": "FangornSCamp",
+            "inspireEffectData": {
+                "type": "ResetMovement",
+                "allCharacters": false
+            }
         },
         {
             "cardId": 726,
@@ -1980,7 +2011,7 @@
             "cardId": 933,
             "name": "Lurtz",
             "quote": "I am the hunter, and you are my prey.",
-            "actionEffect": "",
+            "actionEffect": "Apply Strengthened <sprite name=\"strengthened\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -2031,13 +2062,19 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Orthanc"
+            "startingPC": "Orthanc",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "Strengthened",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 934,
             "name": "Shagrat",
             "quote": "The filth of the world clings to me, a badge of my mastery.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 2 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -2088,7 +2125,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "AmonLhaw"
+            "startingPC": "AmonLhaw",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 2
+            }
         },
         {
             "cardId": 935,
@@ -2932,8 +2973,8 @@
             "statusEffect": "",
             "procChance": 0,
             "portraitName": "",
-            "referenceDeckId": "disturber_of_the_peace",
-            "referenceCardId": 858,
+            "referenceDeckId": "",
+            "referenceCardId": 0,
             "encounterOptions": [],
             "fleeOption": {
                 "optionId": "",
@@ -3148,7 +3189,7 @@
             "cardId": 979,
             "name": "Aonghas",
             "quote": "The vale of shadows shall know my wrath.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 2 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -3199,13 +3240,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Angren"
+            "startingPC": "Angren",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 2
+            }
         },
         {
             "cardId": 980,
             "name": "Enion",
             "quote": "In silence, I weave the fate of those who dare oppose me.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 15 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -3256,7 +3301,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Treforn"
+            "startingPC": "Treforn",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 981,
@@ -3319,7 +3368,7 @@
             "cardId": 1010,
             "name": "The White Hand",
             "quote": "A new power is rising. Its victory is at hand. The age of courtesy is ended — the age of the White Hand has begun.",
-            "actionEffect": "Saruman at war: <sprite name=\"commander\"><sprite name=\"agent\"> drive infantry across Rohan's bones. No sorcery <sprite name=\"mage\"> — strength paid in <sprite name=\"leather\"> and ruin.",
+            "actionEffect": "Recruit 3 hi <sprite name=\"hi\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "the_white_hand",
@@ -3370,7 +3419,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Orthanc"
+            "startingPC": "Orthanc",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "hi",
+                "amount": 3
+            }
         },
         {
             "cardId": 1011,
@@ -4177,6 +4231,21 @@
             "mithrilGranted": 0,
             "goldGranted": 3,
             "startingPC": ""
+        },
+        {
+            "cardId": 1065,
+            "referenceDeckId": "saruman_base",
+            "referenceCardId": 719
+        },
+        {
+            "cardId": 1066,
+            "referenceDeckId": "saruman_base",
+            "referenceCardId": 37
+        },
+        {
+            "cardId": 1067,
+            "referenceDeckId": "saruman_base",
+            "referenceCardId": 1003
         }
     ]
 }

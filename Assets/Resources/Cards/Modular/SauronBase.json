@@ -1866,7 +1866,7 @@
             "cardId": 975,
             "name": "Gollum",
             "quote": "My precious... it must be mine, oh yes, mine!",
-            "actionEffect": "",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "sauron_base",
@@ -1917,13 +1917,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "MountDoom"
+            "startingPC": "MountDoom",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
         },
         {
             "cardId": 976,
             "name": "Bugrug",
             "quote": "In the shadows of the mountains, my true strength will reveal itself.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 ma <sprite name=\"ma\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "sauron_base",
@@ -1974,13 +1977,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Barad-dur"
+            "startingPC": "Barad-dur",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "ma",
+                "amount": 2
+            }
         },
         {
             "cardId": 1002,
             "name": "Sauron",
             "quote": "Three rings for the elven-kings, seven for the dwarves, nine for mortal men — and one to rule them all.",
-            "actionEffect": "Every shadow he has ever worn still breathes — <sprite name=\"commander\"><sprite name=\"agent\"><sprite name=\"emmissary\"> waking, cavalry <sprite name=\"mounts\"> restless. No shape yet fixed.",
+            "actionEffect": "Apply Strengthened <sprite name=\"strengthened\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "sauron_base",
@@ -2031,7 +2039,13 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Barad-dur"
+            "startingPC": "Barad-dur",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "Strengthened",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 1005,

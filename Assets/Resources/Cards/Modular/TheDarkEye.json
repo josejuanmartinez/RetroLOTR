@@ -295,7 +295,7 @@
             "cardId": 719,
             "name": "Murazor",
             "quote": "In service to Sauron, I am his shadow and his sword.",
-            "actionEffect": "",
+            "actionEffect": "Apply Fortified <sprite name=\"fortified\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -407,13 +407,19 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Minas Morgul"
+            "startingPC": "Minas Morgul",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "Fortified",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 721,
             "name": "Akhorahil",
             "quote": "The whispers of darkness guide my hand; I shall not fail.",
-            "actionEffect": "",
+            "actionEffect": "Apply ArcaneInsight <sprite name=\"arcaneinsight\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -525,13 +531,19 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "UrlurtsuNurn"
+            "startingPC": "UrlurtsuNurn",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "ArcaneInsight",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 722,
             "name": "Ji Indur",
             "quote": "In the shadows, power waits; I will claim it for my master.",
-            "actionEffect": "",
+            "actionEffect": "Reveal the random enemy settlement for 2 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -643,13 +655,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Kal Nargil"
+            "startingPC": "Kal Nargil",
+            "inspireEffectData": {
+                "type": "RevealEnemyPC",
+                "turns": 2,
+                "nearest": false
+            }
         },
         {
             "cardId": 724,
             "name": "Adunaphel",
             "quote": "The night is long, and I am its harbinger.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -746,13 +763,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Luglurak"
+            "startingPC": "Luglurak",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 20
+            }
         },
         {
             "cardId": 725,
             "name": "Ren the Unclean",
             "quote": "To serve the Eye is to embrace the filth of the world.",
-            "actionEffect": "",
+            "actionEffect": "Grant 15 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -849,13 +870,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Barad Ungol"
+            "startingPC": "Barad Ungol",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 15
+            }
         },
         {
             "cardId": 726,
             "name": "Hoarmurath",
             "quote": "From the depths, I draw forth the darkness that shall consume you.",
-            "actionEffect": "",
+            "actionEffect": "Upgrade fort <sprite name=\"fort\"> on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -952,13 +977,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Durthang"
+            "startingPC": "Durthang",
+            "inspireEffectData": {
+                "type": "IncreaseFort"
+            }
         },
         {
             "cardId": 727,
             "name": "Dendra Dwar",
             "quote": "Wielding dread like a sword, I am the bane of my enemies.",
-            "actionEffect": "",
+            "actionEffect": "Restore full movement <sprite name=\"movement\"> to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -1070,13 +1098,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Morannon"
+            "startingPC": "Morannon",
+            "inspireEffectData": {
+                "type": "ResetMovement",
+                "allCharacters": false
+            }
         },
         {
             "cardId": 732,
             "name": "Shelob",
             "quote": "In my web, all creatures will meet their end.",
-            "actionEffect": "",
+            "actionEffect": "Conceal a random controlled settlement from enemies for 2 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -1143,7 +1175,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CirithUngol"
+            "startingPC": "CirithUngol",
+            "inspireEffectData": {
+                "type": "HidePC",
+                "turns": 2
+            }
         },
         {
             "cardId": 591,
@@ -1668,7 +1704,7 @@
             "cardId": 738,
             "name": "Gothmog",
             "quote": "I am the darkness that consumes all hope.",
-            "actionEffect": "",
+            "actionEffect": "Grant 15 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -1719,13 +1755,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Carach Angren"
+            "startingPC": "Carach Angren",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 15
+            }
         },
         {
             "cardId": 739,
             "name": "Gorthog",
             "quote": "The strength of iron and the fury of wrath shall be my legacy.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 ma <sprite name=\"ma\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -1776,13 +1816,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "LagScara"
+            "startingPC": "LagScara",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "ma",
+                "amount": 2
+            }
         },
         {
             "cardId": 740,
             "name": "Mouth of Sauron",
             "quote": "I speak for the Dark Lord; his will shall be done.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 25 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -1833,7 +1878,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Pellardur"
+            "startingPC": "Pellardur",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 25
+            }
         },
         {
             "cardId": 741,
@@ -3255,7 +3304,7 @@
             "cardId": 1012,
             "name": "The Dark Eye",
             "quote": "Nothing moves in shadow that I do not see. The darkness between the stars is mine to read.",
-            "actionEffect": "Nothing hidden survives: <sprite name=\"commander\"> unmatched, twenty domains <sprite name=\"pc\"> answering. Heavy infantry holds; slow to mount <sprite name=\"mounts\">.",
+            "actionEffect": "Reveal the random enemy settlement for 2 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -3306,7 +3355,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Barad-dur"
+            "startingPC": "Barad-dur",
+            "inspireEffectData": {
+                "type": "RevealEnemyPC",
+                "turns": 2,
+                "nearest": false
+            }
         },
         {
             "cardId": 1013,
@@ -4177,7 +4231,7 @@
             "cardId": 1091,
             "name": "Khamul",
             "quote": "The night is my ally, and fear is my weapon.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_dark_eye",
@@ -4289,7 +4343,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Dol Guldur"
+            "startingPC": "Dol Guldur",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 20
+            }
         },
         {
             "cardId": 1092,
@@ -4347,6 +4405,31 @@
             "mithrilGranted": 0,
             "goldGranted": 0,
             "startingPC": ""
+        },
+        {
+            "cardId": 1093,
+            "referenceDeckId": "the_deceiver",
+            "referenceCardId": 683
+        },
+        {
+            "cardId": 1094,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 788
+        },
+        {
+            "cardId": 1095,
+            "referenceDeckId": "the_necromancer",
+            "referenceCardId": 8
+        },
+        {
+            "cardId": 1096,
+            "referenceDeckId": "the_deceiver",
+            "referenceCardId": 698
+        },
+        {
+            "cardId": 1097,
+            "referenceDeckId": "the_necromancer",
+            "referenceCardId": 759
         }
     ]
 }

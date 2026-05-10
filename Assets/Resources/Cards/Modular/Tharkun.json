@@ -8,7 +8,7 @@
             "cardId": 743,
             "name": "Dain",
             "quote": "Iron in the blood is no small thing when winter comes to the North.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 hi <sprite name=\"hi\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -59,13 +59,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Azanulimbar-Dum"
+            "startingPC": "Azanulimbar-Dum",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "hi",
+                "amount": 3
+            }
         },
         {
             "cardId": 744,
             "name": "Gloin",
             "quote": "A son of Gloin may travel far, yet still hear the mountain calling.",
-            "actionEffect": "",
+            "actionEffect": "Grant 15 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -116,7 +121,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Norr-dum"
+            "startingPC": "Norr-dum",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 15
+            }
         },
         {
             "cardId": 578,
@@ -2465,7 +2474,7 @@
             "cardId": 879,
             "name": "Balin",
             "quote": "Balin bore the patient fire of Durin's house.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 15 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -2516,13 +2525,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Khazad-Dum"
+            "startingPC": "Khazad-Dum",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 880,
             "name": "Fili",
             "quote": "Fili still runs toward the chance of glory.",
-            "actionEffect": "",
+            "actionEffect": "Restore full movement <sprite name=\"movement\"> to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -2573,13 +2586,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Noegrod"
+            "startingPC": "Noegrod",
+            "inspireEffectData": {
+                "type": "ResetMovement",
+                "allCharacters": false
+            }
         },
         {
             "cardId": 881,
             "name": "Thorin",
             "quote": "Thorin remembers both the wound and the crown.",
-            "actionEffect": "",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -2630,13 +2647,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "ThorinHall"
+            "startingPC": "ThorinHall",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
         },
         {
             "cardId": 882,
             "name": "Nain",
             "quote": "Nain speaks with the deep memory of the halls.",
-            "actionEffect": "",
+            "actionEffect": "Grant 15 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -2687,13 +2707,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Kheled-nala"
+            "startingPC": "Kheled-nala",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 15
+            }
         },
         {
             "cardId": 883,
             "name": "Thrain",
             "quote": "In the dark tunnels of Erebor, I found my fate entwined with shadows and gold.",
-            "actionEffect": "",
+            "actionEffect": "Gain 3 Gold <sprite name=\"gold\">.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -2744,7 +2768,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Zarak-dum"
+            "startingPC": "Zarak-dum",
+            "inspireEffectData": {
+                "type": "GainResource",
+                "resourceType": "Gold",
+                "amount": 3
+            }
         },
         {
             "cardId": 894,
@@ -3397,7 +3426,7 @@
             "cardId": 974,
             "name": "Gimli",
             "quote": "With axe in hand, I stand ready to defend my kin against any foe.",
-            "actionEffect": "",
+            "actionEffect": "Apply Fortified <sprite name=\"fortified\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -3448,13 +3477,19 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Azanulimbar-Dum"
+            "startingPC": "Azanulimbar-Dum",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "Fortified",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 1007,
             "name": "Tharkun",
             "quote": "Gold speaks to Dwarves, but I spoke first — in deed, in memory, and in the long patience of friendship.",
-            "actionEffect": "Friend of Dwarves: <sprite name=\"commander\"> high, <sprite name=\"mithril\"> self-sustaining from deep veins. No sorcery <sprite name=\"mage\"> — built with toil and hard stone.",
+            "actionEffect": "Gain 1 Mithril <sprite name=\"mithril\">.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -3505,7 +3540,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Hobbiton"
+            "startingPC": "Hobbiton",
+            "inspireEffectData": {
+                "type": "GainResource",
+                "resourceType": "Mithril",
+                "amount": 1
+            }
         },
         {
             "cardId": 1008,
@@ -3977,7 +4017,7 @@
             "cardId": 1067,
             "name": "Thror",
             "quote": "The mountain does not forget its king, even when the king has forgotten the mountain.",
-            "actionEffect": "",
+            "actionEffect": "Gain 3 Gold <sprite name=\"gold\">.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -4028,13 +4068,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Telenaug"
+            "startingPC": "Telenaug",
+            "inspireEffectData": {
+                "type": "GainResource",
+                "resourceType": "Gold",
+                "amount": 3
+            }
         },
         {
             "cardId": 1068,
             "name": "Dwalin",
             "quote": "Dwalin arrives with a hood of dark blue and a beard of white, and no one mistakes his purpose.",
-            "actionEffect": "",
+            "actionEffect": "Upgrade fort <sprite name=\"fort\"> on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -4085,13 +4130,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Belegost"
+            "startingPC": "Belegost",
+            "inspireEffectData": {
+                "type": "IncreaseFort"
+            }
         },
         {
             "cardId": 1069,
             "name": "Kili",
             "quote": "A young dwarf with a bow is still a dwarf, and the arrow does not ask his age.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 ar <sprite name=\"ar\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -4142,13 +4190,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Noegrod"
+            "startingPC": "Noegrod",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "ar",
+                "amount": 2
+            }
         },
         {
             "cardId": 1070,
             "name": "Bombur",
             "quote": "Bombur carries his weight as others carry their pride, and both have seen him through hard roads.",
-            "actionEffect": "",
+            "actionEffect": "Heal a random controlled character by 20.",
             "type": "Character",
             "tags": [],
             "deckId": "tharkun",
@@ -4199,7 +4252,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "BarakShathur"
+            "startingPC": "BarakShathur",
+            "inspireEffectData": {
+                "type": "Heal",
+                "amount": 20,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 1073,
@@ -4316,6 +4374,16 @@
             "mithrilGranted": 1,
             "goldGranted": 1,
             "startingPC": ""
+        },
+        {
+            "cardId": 1075,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1003
+        },
+        {
+            "cardId": 1076,
+            "referenceDeckId": "disturber_of_the_peace",
+            "referenceCardId": 851
         }
     ]
 }

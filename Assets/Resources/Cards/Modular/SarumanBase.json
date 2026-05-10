@@ -1695,7 +1695,7 @@
             "cardId": 1001,
             "name": "Saruman",
             "quote": "The time of the Elves is over. The age of Men, of the Ring, has come. I have chosen wisely — will you?",
-            "actionEffect": "The white before the breaking — <sprite name=\"commander\"><sprite name=\"agent\"><sprite name=\"emmissary\"><sprite name=\"mage\"> each open, <sprite name=\"steel\"> already turning. No road yet chosen.",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "saruman_base",
@@ -1746,7 +1746,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Orthanc"
+            "startingPC": "Orthanc",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 1002,

@@ -1414,7 +1414,7 @@
             "cardId": 26,
             "name": "Uvatha",
             "quote": "In the shadow of the Dark Lord, I carve my path through fear and flame.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -1465,13 +1465,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Sturlurtsa Khand"
+            "startingPC": "Sturlurtsa Khand",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 3
+            }
         },
         {
             "cardId": 27,
             "name": "Tros Hesnef",
             "quote": "Wisdom guides my blade, and courage fuels my heart in this relentless tide.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -1522,13 +1527,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "KhandAmu"
+            "startingPC": "KhandAmu",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 2
+            }
         },
         {
             "cardId": 28,
             "name": "Kav Makow",
             "quote": "The desert speaks to me, its secrets unfurling like the sands beneath my feet.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -1579,13 +1589,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Ashkiri"
+            "startingPC": "Ashkiri",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 2
+            }
         },
         {
             "cardId": 29,
             "name": "Huz",
             "quote": "The roar of the desert is my battle cry; fear the storm I bring.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 hc <sprite name=\"hc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -1636,13 +1651,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Riavod"
+            "startingPC": "Riavod",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "hc",
+                "amount": 2
+            }
         },
         {
             "cardId": 30,
             "name": "Avas of Igath",
             "quote": "In the heat of battle, I find my true purpose and sharpen my resolve.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -1693,7 +1713,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Ilanin"
+            "startingPC": "Ilanin",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 31,
@@ -1992,7 +2016,7 @@
             "cardId": 984,
             "name": "Lomelinde",
             "quote": "In the twilight of ages, my song shall weave the tales of lost times.",
-            "actionEffect": "",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -2043,13 +2067,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "OrdugaAivaisa"
+            "startingPC": "OrdugaAivaisa",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
         },
         {
             "cardId": 985,
             "name": "Din Ohtar",
             "quote": "A sword is forged by choice, and I choose the path of honor against the shadows.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 3 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -2100,7 +2127,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Riavod"
+            "startingPC": "Riavod",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 3
+            }
         },
         {
             "cardId": 986,
@@ -2806,7 +2837,7 @@
             "cardId": 1011,
             "name": "Shadow of the East",
             "quote": "The East remembers promises older than Gondor. I made those promises. I keep what I am owed.",
-            "actionEffect": "Sauron's eastern reach: cavalry <sprite name=\"mounts\"> dominant, agents <sprite name=\"agent\"> spreading. No spells <sprite name=\"mage\">, no diplomacy <sprite name=\"emmissary\"> — too fast for councils.",
+            "actionEffect": "Recruit 3 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -2857,7 +2888,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Barad-dur"
+            "startingPC": "Barad-dur",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 3
+            }
         },
         {
             "cardId": 1012,
@@ -4009,7 +4045,7 @@
             "cardId": 1075,
             "name": "Giordia",
             "quote": "She speaks in borrowed truths, and men who hear her find themselves believing them.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -4060,13 +4096,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Elgaer"
+            "startingPC": "Elgaer",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 1076,
             "name": "Morlammen",
             "quote": "The stars above Rhûn do not shine for the living; Morlammen has taught them otherwise.",
-            "actionEffect": "",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -4117,13 +4157,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Ashkiri"
+            "startingPC": "Ashkiri",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
         },
         {
             "cardId": 1077,
             "name": "Ovatha",
             "quote": "Fear is a tool; I wield it with deadly precision.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "shadow_of_the_east",
@@ -4220,7 +4263,26 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Tol Buruth"
+            "startingPC": "Tol Buruth",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 20
+            }
+        },
+        {
+            "cardId": 1078,
+            "referenceDeckId": "of_many_colours",
+            "referenceCardId": 885
+        },
+        {
+            "cardId": 1079,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 788
+        },
+        {
+            "cardId": 1080,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 1008
         }
     ]
 }

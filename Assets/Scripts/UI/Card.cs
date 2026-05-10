@@ -967,6 +967,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             }
         }
 
+        if (cardData.playability.failsStartingCityRequirement)
+        {
+            messages.Add($"<sprite name=\"error\">{cardData.playability.startingCityReason}");
+        }
+
         if (cardData.playability.failsActionConditions)
         {
             messages.Add("<sprite name=\"error\">Action conditions not met.");
@@ -1110,9 +1115,113 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private Task<bool> HandleCharacterCardPlayed(Character selected)
     {
-        // Character cards usually represent recruiting a specific character
-        // This might involve showing a recruitment UI or spawning them at a capital
-        return Task.FromResult(false);
+        Game game = FindFirstObjectByType<Game>();
+        PlayableLeader playerLeader = game != null ? game.player : null;
+        if (playerLeader == null || selected == null)
+        {
+            return Task.FromResult(false);
+        }
+
+        Hex hex = selected.hex;
+        PC pc = hex?.GetPCData();
+        if (pc == null || !CardNameUtility.Equals(pc.pcName, cardData.startingPC))
+        {
+            return Task.FromResult(false);
+        }
+
+        bool drawReplacementCard = !TutorialManager.Instance.IsActiveFor(playerLeader);
+        if (!deckManager.TryConsumeCard(playerLeader, cardData.name, drawReplacementCard, out _))
+        {
+            return Task.FromResult(false);
+        }
+
+        string characterName = cardData.name;
+        Character existing = FindCharacterByName(characterName);
+
+        if (existing == null)
+        {
+            if (!playerLeader.HasCharacterSlot())
+            {
+                MessageDisplay.ShowMessage("No character slots available.", Color.red);
+                return Task.FromResult(false);
+            }
+
+            CharacterInstantiator instantiator = FindFirstObjectByType<CharacterInstantiator>();
+            if (instantiator == null)
+            {
+                return Task.FromResult(false);
+            }
+
+            BiomeConfig config = new()
+            {
+                characterName = characterName,
+                alignment = (AlignmentEnum)cardData.alignment,
+                race = cardData.race,
+                sex = SexEnum.Male,
+                commander = cardData.commander,
+                agent = cardData.agent,
+                emmissary = cardData.emmissary,
+                mage = cardData.mage
+            };
+
+            Character newCharacter = instantiator.InstantiateCharacter(playerLeader, hex, config);
+            if (newCharacter == null)
+            {
+                return Task.FromResult(false);
+            }
+
+            newCharacter.startingCharacter = false;
+            newCharacter.hasActionedThisTurn = true;
+            newCharacter.isPlayerControlled = playerLeader == game.player;
+            playerLeader.TryConsumeCharacterSlot();
+            hex.RedrawCharacters();
+
+            string joinMessage = $"{characterName} has joined {playerLeader.characterName}.";
+            MessageDisplayNoUI.ShowMessage(hex, newCharacter, joinMessage, Color.green, recordRumour: false);
+
+            Rumour rumour = new Rumour
+            {
+                leader = playerLeader,
+                character = newCharacter,
+                characterName = characterName,
+                rumour = joinMessage,
+                v2 = hex.v2
+            };
+            RumoursManager.AddRumour(rumour, isPublic: false);
+
+            return Task.FromResult(true);
+        }
+        else
+        {
+            InspireEffect effect = InspireEffectFactory.CreateFromCardData(cardData);
+            if (effect != null)
+            {
+                effect.Apply(playerLeader);
+            }
+
+            string pcName = pc.pcName;
+            string inspireMessage = $"The presence of {characterName} inspires {pcName}.";
+            MessageDisplayNoUI.ShowMessage(hex, existing, inspireMessage, Color.cyan, recordRumour: false);
+
+            Rumour rumour = new Rumour
+            {
+                leader = existing.GetOwner() ?? playerLeader,
+                character = existing,
+                characterName = characterName,
+                rumour = inspireMessage,
+                v2 = hex.v2
+            };
+            RumoursManager.AddRumour(rumour, isPublic: false);
+
+            return Task.FromResult(true);
+        }
+    }
+
+    private static Character FindCharacterByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        Character[] characters = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        return characters.FirstOrDefault(c => c != null && CardNameUtility.Equals(c.characterName, name));
     }
 
     private Task<bool> HandleArmyCardPlayed(Character selected)

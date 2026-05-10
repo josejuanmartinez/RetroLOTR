@@ -8,7 +8,7 @@
             "cardId": 742,
             "name": "Theoden",
             "quote": "The sword is a mighty ally, but it is the heart that must lead the way.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -105,7 +105,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Edoras"
+            "startingPC": "Edoras",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 3
+            }
         },
         {
             "cardId": 788,
@@ -2099,7 +2104,7 @@
             "cardId": 857,
             "name": "Bard",
             "quote": "Bard's arrow and steadfast hand saved a city in need.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 ar <sprite name=\"ar\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -2150,13 +2155,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Esgaroth"
+            "startingPC": "Esgaroth",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "ar",
+                "amount": 3
+            }
         },
         {
             "cardId": 858,
             "name": "Beoraborn",
             "quote": "Beoraborn has the North's stubborn blood in him.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 10 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -2223,13 +2233,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "The Carrock"
+            "startingPC": "The Carrock",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 10
+            }
         },
         {
             "cardId": 859,
             "name": "Beorn",
             "quote": "Beorn keeps the wild edge between fear and shelter.",
-            "actionEffect": "",
+            "actionEffect": "Apply Strengthened <sprite name=\"strengthened\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -2280,13 +2294,19 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "BeornHouse"
+            "startingPC": "BeornHouse",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "Strengthened",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 860,
             "name": "Hama",
             "quote": "Hama stands at the door as if the hall were his charge.",
-            "actionEffect": "",
+            "actionEffect": "Upgrade fort <sprite name=\"fort\"> on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -2337,13 +2357,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "HelmDeep"
+            "startingPC": "HelmDeep",
+            "inspireEffectData": {
+                "type": "IncreaseFort"
+            }
         },
         {
             "cardId": 861,
             "name": "Grimbeorn",
             "quote": "Grimbeorn guards the wild border with a bear's patience.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 hi <sprite name=\"hi\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -2394,13 +2417,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Maethelburg"
+            "startingPC": "Maethelburg",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "hi",
+                "amount": 2
+            }
         },
         {
             "cardId": 862,
             "name": "Fram Wyrmslayer",
             "quote": "Fram Wyrmslayer keeps the memory of dragon-fire in his name.",
-            "actionEffect": "",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -2451,13 +2479,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Framsburg"
+            "startingPC": "Framsburg",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
         },
         {
             "cardId": 863,
             "name": "Voteli",
             "quote": "Voteli has looked on darkness and not bowed.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 2 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -2508,13 +2539,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Forochel"
+            "startingPC": "Forochel",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 2
+            }
         },
         {
             "cardId": 864,
             "name": "Bork",
             "quote": "Bork has the look of one who bought his lesson dear.",
-            "actionEffect": "",
+            "actionEffect": "Grant 10 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -2565,13 +2600,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "AmonSul"
+            "startingPC": "AmonSul",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 10
+            }
         },
         {
             "cardId": 865,
             "name": "Ingomer",
             "quote": "Ingomer rides as one who knows the cost of haste.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 10 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -2622,7 +2661,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Sarn Lothduin"
+            "startingPC": "Sarn Lothduin",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 10
+            }
         },
         {
             "cardId": 896,
@@ -4092,7 +4135,7 @@
             "cardId": 972,
             "name": "Eomer",
             "quote": "I will not let a shadow fall upon Rohan while I draw breath.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -4143,13 +4186,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Eastfold"
+            "startingPC": "WestFold",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 3
+            }
         },
         {
             "cardId": 973,
             "name": "Eowyn",
             "quote": "I am no man; I will stand against the darkness.",
-            "actionEffect": "",
+            "actionEffect": "Apply Hidden <sprite name=\"hidden\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -4200,7 +4248,13 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "WestFold"
+            "startingPC": "Eastfold",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "Hidden",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 974,
@@ -4263,7 +4317,7 @@
             "cardId": 1006,
             "name": "Stormcrow",
             "quote": "They call me ill-omened. Let them. A stormcrow carries truer counsel than those who wait for calm skies.",
-            "actionEffect": "Bearer of ill omen to those who cling to comfort: <sprite name=\"pc\"> wide, roads self-feeding <sprite name=\"mounts\">. Armies thin, sorcery <sprite name=\"mage\"> slight — he wins by presence, not force.",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "stormcrow",
@@ -4314,7 +4368,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Hobbiton"
+            "startingPC": "Hobbiton",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 1007,
@@ -4829,6 +4887,238 @@
             "steelGranted": 1,
             "mithrilGranted": 0,
             "goldGranted": 2,
+            "startingPC": ""
+        },
+        {
+            "cardId": 1016,
+            "name": "Forochel",
+            "quote": "Under the hard sky of Forochel, even silence has a stern voice.",
+            "actionEffect": "",
+            "type": "PC",
+            "tags": [
+                "Bay of Forochel"
+            ],
+            "deckId": "stormcrow",
+            "alignment": 0,
+            "actionClassName": "",
+            "action": "PCAction",
+            "spriteName": "Forochel",
+            "region": "Bay of Forochel",
+            "requirementsText": "",
+            "historyText": "",
+            "statusEffect": "",
+            "procChance": 0,
+            "portraitName": "",
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 341,
+            "encounterOptions": [],
+            "fleeOption": {
+                "optionId": "",
+                "label": "",
+                "description": "",
+                "outcomes": []
+            },
+            "commander": 0,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 0,
+            "artifacts": [],
+            "troopType": 0,
+            "specialAbilities": [],
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "jokerRequired": 0,
+            "leatherGranted": 2,
+            "mountsGranted": 0,
+            "timberGranted": 1,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0,
+            "goldGranted": 0,
+            "startingPC": ""
+        },
+        {
+            "cardId": 1017,
+            "name": "Bay of Forochel",
+            "quote": "Frozen waters cradle the restless spirits of the North.",
+            "actionEffect": "",
+            "type": "Land",
+            "tags": [],
+            "deckId": "stormcrow",
+            "alignment": 0,
+            "actionClassName": "",
+            "action": "MaterialRetrieval",
+            "spriteName": "BayOfForochel",
+            "region": "",
+            "requirementsText": "",
+            "historyText": "",
+            "statusEffect": "",
+            "procChance": 0,
+            "portraitName": "",
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 865,
+            "encounterOptions": [],
+            "fleeOption": {
+                "optionId": "",
+                "label": "",
+                "description": "",
+                "outcomes": []
+            },
+            "commander": 0,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 0,
+            "artifacts": [],
+            "troopType": 0,
+            "specialAbilities": [],
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "jokerRequired": 0,
+            "leatherGranted": 3,
+            "mountsGranted": 1,
+            "timberGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0,
+            "goldGranted": 1,
+            "startingPC": ""
+        },
+        {
+            "cardId": 1018,
+            "name": "Hobbiton",
+            "quote": "The green of Hobbiton seems soft, yet it has a watchful heart.",
+            "actionEffect": "",
+            "type": "PC",
+            "tags": [
+                "TheShire"
+            ],
+            "deckId": "stormcrow",
+            "alignment": 0,
+            "actionClassName": "",
+            "action": "PCAction",
+            "spriteName": "Hobbiton",
+            "region": "TheShire",
+            "requirementsText": "",
+            "historyText": "",
+            "statusEffect": "",
+            "procChance": 0,
+            "portraitName": "",
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1003,
+            "encounterOptions": [],
+            "fleeOption": {
+                "optionId": "",
+                "label": "",
+                "description": "",
+                "outcomes": []
+            },
+            "commander": 0,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 0,
+            "artifacts": [],
+            "troopType": 0,
+            "specialAbilities": [],
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "jokerRequired": 0,
+            "leatherGranted": 0,
+            "mountsGranted": 0,
+            "timberGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0,
+            "goldGranted": 3,
+            "startingPC": ""
+        },
+        {
+            "cardId": 1019,
+            "name": "TheShire",
+            "quote": "The Shire endures by patience and many watchful hands.",
+            "actionEffect": "",
+            "type": "Land",
+            "tags": [],
+            "deckId": "stormcrow",
+            "alignment": 0,
+            "actionClassName": "",
+            "action": "MaterialRetrieval",
+            "spriteName": "TheShire",
+            "region": "",
+            "requirementsText": "",
+            "historyText": "",
+            "statusEffect": "",
+            "procChance": 0,
+            "portraitName": "",
+            "referenceDeckId": "disturber_of_the_peace",
+            "referenceCardId": 851,
+            "encounterOptions": [],
+            "fleeOption": {
+                "optionId": "",
+                "label": "",
+                "description": "",
+                "outcomes": []
+            },
+            "commander": 0,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 0,
+            "artifacts": [],
+            "troopType": 0,
+            "specialAbilities": [],
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "jokerRequired": 0,
+            "leatherGranted": 1,
+            "mountsGranted": 1,
+            "timberGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0,
+            "goldGranted": 3,
             "startingPC": ""
         }
     ]

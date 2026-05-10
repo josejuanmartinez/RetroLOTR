@@ -67,7 +67,7 @@
             "cardId": 554,
             "name": "Morthrog",
             "quote": "In darkness, I find my strength, and shadows obey my will.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 2 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -118,13 +118,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Dol Guldur"
+            "startingPC": "Dol Guldur",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 2
+            }
         },
         {
             "cardId": 549,
             "name": "Goblin Miner",
             "quote": "The tunnels are ours, and in them, we will thrive.",
-            "actionEffect": "",
+            "actionEffect": "Gain 2 Iron <sprite name=\"iron\">.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -175,13 +179,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Goblin Gate"
+            "startingPC": "Goblin Gate",
+            "inspireEffectData": {
+                "type": "GainResource",
+                "resourceType": "Iron",
+                "amount": 2
+            }
         },
         {
             "cardId": 733,
             "name": "Balrog",
             "quote": "I am fire, I am death, and I shall consume all.",
-            "actionEffect": "",
+            "actionEffect": "Apply Strengthened <sprite name=\"strengthened\"> (3 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -263,13 +272,19 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Khazad-Dum"
+            "startingPC": "Khazad-Dum",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "Strengthened",
+                "turns": 3,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 734,
             "name": "Smaug",
             "quote": "I am the king under the mountain, and all shall fear me.",
-            "actionEffect": "",
+            "actionEffect": "Gain 5 Gold <sprite name=\"gold\">.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -336,13 +351,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Erebor (Lost)"
+            "startingPC": "Erebor (Lost)",
+            "inspireEffectData": {
+                "type": "GainResource",
+                "resourceType": "Gold",
+                "amount": 5
+            }
         },
         {
             "cardId": 747,
             "name": "Goblin King",
             "quote": "Bow before your true ruler, or face the wrath of my horde.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 li <sprite name=\"li\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -409,13 +429,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Goblin Gate"
+            "startingPC": "Goblin Gate",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "li",
+                "amount": 3
+            }
         },
         {
             "cardId": 755,
             "name": "Barrow-wight",
             "quote": "Flee, mortals, lest you join the forgotten of the earth.",
-            "actionEffect": "",
+            "actionEffect": "Conceal a random controlled settlement from enemies for 1 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -497,13 +522,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Thuringwathost"
+            "startingPC": "Thuringwathost",
+            "inspireEffectData": {
+                "type": "HidePC",
+                "turns": 1
+            }
         },
         {
             "cardId": 758,
             "name": "Azog",
             "quote": "I will carve my name in the bones of my enemies.",
-            "actionEffect": "",
+            "actionEffect": "Grant 15 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -554,7 +583,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "AmonLhaw"
+            "startingPC": "AmonLhaw",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 15
+            }
         },
         {
             "cardId": 575,
@@ -1551,7 +1584,7 @@
             "cardId": 763,
             "name": "The Grimburgoth",
             "quote": "In my veins flows the fury of the forest, unyielding and fierce.",
-            "actionEffect": "",
+            "actionEffect": "Downgrade fort <sprite name=\"fort\"> on the nearest visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -1602,7 +1635,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Dol Guldur"
+            "startingPC": "Dol Guldur",
+            "inspireEffectData": {
+                "type": "DecreaseFortEnemy",
+                "nearest": true
+            }
         },
         {
             "cardId": 764,
@@ -1722,7 +1759,7 @@
             "cardId": 766,
             "name": "Ethacali",
             "quote": "I wield the shadows as my cloak, blending with the night's embrace.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 10 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -1773,7 +1810,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Ongushar"
+            "startingPC": "Ongushar",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 10
+            }
         },
         {
             "cardId": 768,
@@ -2485,7 +2526,7 @@
             "cardId": 983,
             "name": "Celedhring",
             "quote": "The stars whisper my name, guiding my path through the darkness.",
-            "actionEffect": "",
+            "actionEffect": "Apply ArcaneInsight <sprite name=\"arcaneinsight\"> (1 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -2536,13 +2577,19 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "SarnGoriwing"
+            "startingPC": "SarnGoriwing",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "ArcaneInsight",
+                "turns": 1,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 986,
             "name": "Bolg",
             "quote": "Let them come; I shall crush their bones beneath my heel.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 ma <sprite name=\"ma\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -2593,7 +2640,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "AmonHen"
+            "startingPC": "AmonHen",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "ma",
+                "amount": 2
+            }
         },
         {
             "cardId": 987,
@@ -2656,7 +2708,7 @@
             "cardId": 1015,
             "name": "The Necromancer",
             "quote": "Let them call this place accursed. Dol Guldur does its work in silence, and silence is patient.",
-            "actionEffect": "Hidden lord of Dol Guldur: <sprite name=\"mithril\"> unending, dark art <sprite name=\"mage\"> deep, heavy arms grinding. No parleys — he waits.",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -2707,7 +2759,10 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Barad-dur"
+            "startingPC": "Barad-dur",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
         },
         {
             "cardId": 1016,
@@ -3686,7 +3741,7 @@
             "cardId": 1082,
             "name": "Khamul",
             "quote": "The night is my ally, and fear is my weapon.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_necromancer",
@@ -3798,7 +3853,21 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Dol Guldur"
+            "startingPC": "Dol Guldur",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 20
+            }
+        },
+        {
+            "cardId": 1083,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 788
+        },
+        {
+            "cardId": 1084,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 1008
         }
     ]
 }

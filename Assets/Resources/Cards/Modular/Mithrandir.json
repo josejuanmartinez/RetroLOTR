@@ -8,7 +8,7 @@
             "cardId": 716,
             "name": "Galadriel",
             "quote": "Her gaze falls like starlight on still water, deep enough to unsettle the proud.",
-            "actionEffect": "",
+            "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -105,13 +105,16 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Caras Galadhon"
+            "startingPC": "Caras Galadhon",
+            "inspireEffectData": {
+                "type": "RevealArtifact"
+            }
         },
         {
             "cardId": 717,
             "name": "Elrond",
             "quote": "His counsel carries the weight of ages, and still it does not grow weary.",
-            "actionEffect": "",
+            "actionEffect": "Heal a random controlled character by 30.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -193,13 +196,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Imladris"
+            "startingPC": "Imladris",
+            "inspireEffectData": {
+                "type": "Heal",
+                "amount": 30,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 718,
             "name": "Thranduil",
             "quote": "The Elvenking wears pride like a crown of winter leaves, and the forest knows him.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 ar <sprite name=\"ar\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -281,13 +289,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Thanduil's Halls"
+            "startingPC": "Thanduil's Halls",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "ar",
+                "amount": 3
+            }
         },
         {
             "cardId": 739,
             "name": "Cirdan",
             "quote": "He has waited so long by the West that even the sea seems to listen.",
-            "actionEffect": "",
+            "actionEffect": "Build a port <sprite name=\"port\"> on a controlled settlement that lacks one.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -354,7 +367,10 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "The Grey Havens"
+            "startingPC": "The Grey Havens",
+            "inspireEffectData": {
+                "type": "CreatePort"
+            }
         },
         {
             "cardId": 564,
@@ -2669,7 +2685,7 @@
             "cardId": 886,
             "name": "King of Taur Romen",
             "quote": "The King of Taur Romen keeps the eastern road in his thought.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 15 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -2720,13 +2736,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Rhubar"
+            "startingPC": "Rhubar",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 887,
             "name": "Ohtar",
             "quote": "Ohtar is a man of the long watch and the silent step.",
-            "actionEffect": "",
+            "actionEffect": "Restore action <sprite name=\"action\"> to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -2777,13 +2797,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CarasAmarth"
+            "startingPC": "CarasAmarth",
+            "inspireEffectData": {
+                "type": "ResetAction",
+                "allCharacters": false
+            }
         },
         {
             "cardId": 888,
             "name": "Tauriel",
             "quote": "Tauriel walks the border as if it were a vow.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 2 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -2834,13 +2858,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CeberFanuin"
+            "startingPC": "CeberFanuin",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 2
+            }
         },
         {
             "cardId": 889,
             "name": "Tharudan",
             "quote": "Tharudan keeps his oath as a blade kept clean.",
-            "actionEffect": "",
+            "actionEffect": "Grant 10 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -2891,13 +2919,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Forlond"
+            "startingPC": "Forlond",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 10
+            }
         },
         {
             "cardId": 890,
             "name": "Taladhan",
             "quote": "Taladhan walks light, as if the road were a thing to be read.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 2 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -2948,13 +2980,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CeberFanuin"
+            "startingPC": "CeberFanuin",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 2
+            }
         },
         {
             "cardId": 891,
             "name": "Faemir",
             "quote": "Faemir walks under a burden that silence cannot ease.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 2 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -3005,7 +3041,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Rhubar"
+            "startingPC": "Rhubar",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 2
+            }
         },
         {
             "cardId": 892,
@@ -4340,7 +4380,7 @@
             "cardId": 955,
             "name": "Arwen",
             "quote": "I would rather share one lifetime with you than face all the ages of this world alone.",
-            "actionEffect": "",
+            "actionEffect": "Apply Hope <sprite name=\"hope\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -4391,13 +4431,19 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Imladris"
+            "startingPC": "Imladris",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "Hope",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 956,
             "name": "Celeborn",
             "quote": "In the light of Lothlórien, all things are revealed, and shadows cannot linger.",
-            "actionEffect": "",
+            "actionEffect": "Encourage <sprite name=\"encouraged\"> all controlled characters for 1 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -4448,13 +4494,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CerinAmroth"
+            "startingPC": "CerinAmroth",
+            "inspireEffectData": {
+                "type": "Encourage",
+                "turns": 1,
+                "allCharacters": true
+            }
         },
         {
             "cardId": 960,
             "name": "Galdor",
             "quote": "We are the voice of the ancient woods, and our words carry the weight of ages.",
-            "actionEffect": "",
+            "actionEffect": "Increase loyalty <sprite name=\"loyalty\"> by 10 on a random controlled settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -4505,13 +4556,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Elostirion"
+            "startingPC": "Elostirion",
+            "inspireEffectData": {
+                "type": "IncreaseLoyalty",
+                "amount": 10
+            }
         },
         {
             "cardId": 961,
             "name": "Glorfindel",
             "quote": "I have returned, and the shadows shall not claim this land while I stand.",
-            "actionEffect": "",
+            "actionEffect": "Encourage <sprite name=\"encouraged\"> all controlled characters for 2 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -4562,13 +4617,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Imladris"
+            "startingPC": "Imladris",
+            "inspireEffectData": {
+                "type": "Encourage",
+                "turns": 2,
+                "allCharacters": true
+            }
         },
         {
             "cardId": 962,
             "name": "Haldir",
             "quote": "We will guard the borders, for the light of our people must not fade.",
-            "actionEffect": "",
+            "actionEffect": "Reveal hexes in radius 3 around all controlled characters.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -4619,13 +4679,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Caras Galadhon"
+            "startingPC": "Caras Galadhon",
+            "inspireEffectData": {
+                "type": "RevealHexes",
+                "amount": 3
+            }
         },
         {
             "cardId": 963,
             "name": "Legolas",
             "quote": "A shadow stirs in the east; my arrows shall find their mark in the dark.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 ar <sprite name=\"ar\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -4676,13 +4740,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Thanduil's Halls"
+            "startingPC": "Thanduil's Halls",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "ar",
+                "amount": 3
+            }
         },
         {
             "cardId": 1005,
             "name": "Mithrandir",
             "quote": "Among the Elves I am Mithrandir. The road goes ever on — and I have walked it long.",
-            "actionEffect": "Friend of Elves, keeper of old lore: <sprite name=\"emmissary\"><sprite name=\"mage\"> deep, elven hosts broad. <sprite name=\"gold\"> runs swift — the price of every open road.",
+            "actionEffect": "Apply ArcaneInsight <sprite name=\"arcaneinsight\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "mithrandir",
@@ -4733,7 +4802,13 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Hobbiton"
+            "startingPC": "Hobbiton",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "ArcaneInsight",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 1048,
@@ -4905,6 +4980,16 @@
             "mithrilGranted": 0,
             "goldGranted": 1,
             "startingPC": ""
+        },
+        {
+            "cardId": 1051,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1003
+        },
+        {
+            "cardId": 1052,
+            "referenceDeckId": "disturber_of_the_peace",
+            "referenceCardId": 851
         }
     ]
 }

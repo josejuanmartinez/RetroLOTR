@@ -618,14 +618,14 @@ public class Character : MonoBehaviour
         List<string> result = new() { };
         if (withColor) result.Add($"<color={colors.GetHexColorByName(alignment.ToString())}>");
         if (withHealth) result.Add(GetHealthHoverText());
-        if(withAlignment) result.Add($"<sprite name=\"{alignment}\">{alignment}");
+        if(withAlignment) result.Add($"<sprite name=\"{alignment}\">");
         result.Add($"{characterName}");
         if (withCharInfo)
         {
-            if (commander > 0) result.Add($"<sprite name=\"commander\">commander{(withLevels ? GetCommander().ToString() : "")}");
-            if (agent > 0) result.Add($"<sprite name=\"agent\">agent{(withLevels ? GetAgent().ToString() : "")}");
-            if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">emmissary{(withLevels ? GetEmmissary().ToString() : "")}");
-            if (mage > 0) result.Add($"<sprite name=\"mage\">mage{(withLevels ? GetMage().ToString() : "")}");
+            if (commander > 0) result.Add($"<sprite name=\"commander\">{(withLevels ? GetCommander().ToString() : "")}");
+            if (agent > 0) result.Add($"<sprite name=\"agent\">{(withLevels ? GetAgent().ToString() : "")}");
+            if (emmissary > 0) result.Add($"<sprite name=\"emmissary\">{(withLevels ? GetEmmissary().ToString() : "")}");
+            if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? GetMage().ToString() : "")}");
         }
 
         if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText());

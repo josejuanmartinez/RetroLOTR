@@ -122,7 +122,7 @@
             "cardId": 556,
             "name": "Mouth of Sauron",
             "quote": "I speak for the Dark Lord; his will shall be done.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 25 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -173,7 +173,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Pellardur"
+            "startingPC": "Pellardur",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 25
+            }
         },
         {
             "cardId": 569,
@@ -759,7 +763,7 @@
             "cardId": 661,
             "name": "Adunaphel",
             "quote": "The night is long, and I am its harbinger.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -856,13 +860,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Luglurak"
+            "startingPC": "Luglurak",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 20
+            }
         },
         {
             "cardId": 662,
             "name": "Akhorahil",
             "quote": "The whispers of darkness guide my hand; I shall not fail.",
-            "actionEffect": "",
+            "actionEffect": "Apply ArcaneInsight <sprite name=\"arcaneinsight\"> (2 turns) to a random controlled character.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -974,13 +982,19 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "UrlurtsuNurn"
+            "startingPC": "UrlurtsuNurn",
+            "inspireEffectData": {
+                "type": "ApplyStatusEffect",
+                "statusEffect": "ArcaneInsight",
+                "turns": 2,
+                "allCharacters": false
+            }
         },
         {
             "cardId": 663,
             "name": "Ji Indur",
             "quote": "In the shadows, power waits; I will claim it for my master.",
-            "actionEffect": "",
+            "actionEffect": "Reveal the random enemy settlement for 2 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -1092,7 +1106,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Kal Nargil"
+            "startingPC": "Kal Nargil",
+            "inspireEffectData": {
+                "type": "RevealEnemyPC",
+                "turns": 2,
+                "nearest": false
+            }
         },
         {
             "cardId": 664,
@@ -2337,7 +2356,7 @@
             "cardId": 685,
             "name": "Southron Scout",
             "quote": "Silent as the night, I see all and fear none in this vast land.",
-            "actionEffect": "",
+            "actionEffect": "Reveal the random enemy settlement for 1 turn(s).",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -2388,13 +2407,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Methir"
+            "startingPC": "Methir",
+            "inspireEffectData": {
+                "type": "RevealEnemyPC",
+                "turns": 1,
+                "nearest": false
+            }
         },
         {
             "cardId": 686,
             "name": "Sangarunya",
             "quote": "Strength lies not just in steel, but in the heart that wields it.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -2445,13 +2469,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Isigir"
+            "startingPC": "Isigir",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 3
+            }
         },
         {
             "cardId": 687,
             "name": "Herumor",
             "quote": "In darkness I thrive, for the shadows are my allies.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -2502,13 +2531,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "KasShafra"
+            "startingPC": "KasShafra",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 688,
             "name": "Haruth Rammam",
             "quote": "The sands whisper of glory, and I shall let none forget my name.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 2 hi <sprite name=\"hi\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -2559,13 +2592,18 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Kas Shadoul"
+            "startingPC": "Kas Shadoul",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "hi",
+                "amount": 2
+            }
         },
         {
             "cardId": 690,
             "name": "Castamir",
             "quote": "The tides of power shift, and I shall be their master.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -2616,13 +2654,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CarasTolfalas"
+            "startingPC": "CarasTolfalas",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 20
+            }
         },
         {
             "cardId": 691,
             "name": "Avas of Igath",
             "quote": "In the heat of battle, I find my true purpose and sharpen my resolve.",
-            "actionEffect": "",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -2673,13 +2715,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Ilanin"
+            "startingPC": "Ilanin",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 15
+            }
         },
         {
             "cardId": 692,
             "name": "Angamaite",
             "quote": "A blade is only as true as the heart that wields it.",
-            "actionEffect": "",
+            "actionEffect": "Sabotage the port <sprite name=\"port\"> of the random visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -2730,13 +2776,17 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Havens of Umbar"
+            "startingPC": "Havens of Umbar",
+            "inspireEffectData": {
+                "type": "SabotagePort",
+                "nearest": false
+            }
         },
         {
             "cardId": 693,
             "name": "Uvatha",
             "quote": "In the shadow of the Dark Lord, I carve my path through fear and flame.",
-            "actionEffect": "",
+            "actionEffect": "Recruit 3 lc <sprite name=\"lc\"> to a controlled army.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -2787,7 +2837,12 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Sturlurtsa Khand"
+            "startingPC": "Sturlurtsa Khand",
+            "inspireEffectData": {
+                "type": "RecruitTroops",
+                "troopType": "lc",
+                "amount": 3
+            }
         },
         {
             "cardId": 694,
@@ -2852,7 +2907,7 @@
             "cardId": 695,
             "name": "Angulion",
             "quote": "From the depths of despair, I rise as a storm upon the horizon.",
-            "actionEffect": "",
+            "actionEffect": "Grant 10 XP to all controlled armies.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -2903,7 +2958,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CarasTolfalas"
+            "startingPC": "CarasTolfalas",
+            "inspireEffectData": {
+                "type": "ArmyXp",
+                "amount": 10
+            }
         },
         {
             "cardId": 697,
@@ -3611,7 +3670,7 @@
             "cardId": 1013,
             "name": "The Deceiver",
             "quote": "I came bearing gifts of knowledge and craft. That they called them Rings of Power was already the beginning of their ruin.",
-            "actionEffect": "Behind a fair face, every realm of men has a price: <sprite name=\"emmissary\"> supreme, <sprite name=\"gold\"> flooding out, armies wide. Power bought, not conjured.",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 25 on a visible enemy settlement.",
             "type": "Character",
             "tags": [],
             "deckId": "the_deceiver",
@@ -3662,7 +3721,11 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "Barad-dur"
+            "startingPC": "Barad-dur",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "amount": 25
+            }
         },
         {
             "cardId": 1014,
@@ -4355,6 +4418,26 @@
             "mithrilGranted": 0,
             "goldGranted": 0,
             "startingPC": ""
+        },
+        {
+            "cardId": 1027,
+            "referenceDeckId": "the_dark_eye",
+            "referenceCardId": 759
+        },
+        {
+            "cardId": 1028,
+            "referenceDeckId": "shadow_of_the_east",
+            "referenceCardId": 17
+        },
+        {
+            "cardId": 1029,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 788
+        },
+        {
+            "cardId": 1030,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 1008
         }
     ]
 }

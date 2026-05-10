@@ -12,7 +12,8 @@ public class Illustrations : SearcherByName
     {
         "Assets/Art/Cards/",
         "Assets/Art/UI/",
-        "Assets/Art/Animation/"
+        "Assets/Art/Animation/",
+        "Assets/Art/Characters/"
     };
 
     private Dictionary<string, Sprite> illustrationsByName = new();
