@@ -631,7 +631,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   v2: {x: 0, y: 0}
-  defaultCharacterSprite: {fileID: 21300000, guid: 0ac83786c66cc42409857711371958fb, type: 3}
+  defaultCharacterSprite: {fileID: 21300000, guid: 458e3468be76328488f165566861d35e, type: 3}
   messageNoUI: {fileID: 4510516640989347010}
   characterSpriteRenderer: {fileID: 970823944743101251}
   bannerSpriteRenderer: {fileID: 1254883462521043516}
@@ -644,7 +644,8 @@ MonoBehaviour:
   charactersAtHexHover: {fileID: 6872885988368644158}
   artifact: {fileID: 1548661320021129584}
   artifactHover: {fileID: 3726000899118390701}
-  armyIcon: {fileID: 5707050488477407365, guid: 3684c0112ce62014a842462cbe19e367, type: 3}
+  spriteRendererLayoutIcon: {fileID: 5707050488477407365, guid: 3684c0112ce62014a842462cbe19e367, type: 3}
+  characterClassesIconGrid: {fileID: 523687915249350636}
   armyIconGrid: {fileID: 8562272294012321577}
   terrainType: 0
   terrainTexture: {fileID: 1202935138384858293}
@@ -941,7 +942,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 0ac83786c66cc42409857711371958fb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 458e3468be76328488f165566861d35e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1349,6 +1350,56 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 8581447337094080155}
   m_maskType: 0
+--- !u!1 &4043102532753241660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1942392349444923333}
+  - component: {fileID: 523687915249350636}
+  m_Layer: 6
+  m_Name: ClassesSpriteRendererLayout
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1942392349444923333
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4043102532753241660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.04, y: -0.051, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7409440867133836997}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &523687915249350636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4043102532753241660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0c1d158cda64a47880be8b18c53ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteRendererGridLayout
+  cellSize: {x: 0.15, y: 0.15}
+  spacing: {x: 0, y: 0}
+  constraintCount: 5
+  centerAlignment: 1
+  scaleToCellSize: 1
+  autoArrangeOnStart: 1
 --- !u!1 &4470700236908939660
 GameObject:
   m_ObjectHideFlags: 0
@@ -15978,7 +16029,7 @@ GameObject:
   - component: {fileID: 585888745348916050}
   - component: {fileID: 8562272294012321577}
   m_Layer: 6
-  m_Name: Armies
+  m_Name: ArmiesSpriteRendererLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16142,6 +16193,7 @@ Transform:
   - {fileID: 4814783870260797250}
   - {fileID: 5547043247089980999}
   - {fileID: 907440936308330334}
+  - {fileID: 1942392349444923333}
   m_Father: {fileID: 1016752862782569053}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7621771753528357810
@@ -21054,8 +21106,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '<mark color=#ff0000>Barad-dur
 
-    <sprite name="loyalty">5<sprite name="fort">3<sprite
-    name="port">
+    <sprite name="loyalty">5<sprite name="fort">3
+    <sprite name="port">
 
     </mark>'
   m_isRightToLeft: 0
@@ -31334,7 +31386,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3255782884132336503, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0.3537
+      value: 0.4639
       objectReference: {fileID: 0}
     - target: {fileID: 3255782884132336503, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_SizeDelta.y
@@ -31382,7 +31434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3255782884132336503, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.007
+      value: -0.0437
       objectReference: {fileID: 0}
     - target: {fileID: 3255782884132336503, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_AnchoredPosition.y

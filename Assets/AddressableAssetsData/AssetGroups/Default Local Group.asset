@@ -1149,6 +1149,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 183ce704014fb2d4fb7360c39d6018e3
+    m_Address: Assets/Art/Characters/SauronCharacter.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1846265bd7adf6f4e925e9c9faaa8d5f
     m_Address: Assets/Art/Cards/Characters/Saruman-OfManyColours.png
     m_ReadOnly: 0
@@ -3609,7 +3615,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 458e3468be76328488f165566861d35e
-    m_Address: Assets/Art/Characters/races_atlas_24.png
+    m_Address: Assets/Art/Characters/unknown.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3730,6 +3736,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 489839d7bc4499b4b892e4f8c7d24cfb
     m_Address: Assets/Art/Hexes/Tiles/039 4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 48cd3c07da6fee94fade42693986286f
+    m_Address: Assets/Art/UI/Classes/commander.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4048,6 +4060,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4ef565b3bb556ba4c9eb66082286b13b
     m_Address: Assets/Art/Cards/Actions/Events/Chopping the Trees.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f03ea0b721f1b742b93b4b83809c7eb
+    m_Address: Assets/Art/Characters/GaladrielCharacter.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6235,6 +6253,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 779ff0761b8152648982acaf867a6d04
+    m_Address: Assets/Art/Characters/SarumanCharacter.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 77e658ce637dd464782d2b28f52e5285
     m_Address: Assets/Art/Fonts/Spritesheets/NicePng_fantasy-map-icons-png_2379148_145.png
     m_ReadOnly: 0
@@ -7387,12 +7411,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8f006bde999b73246b7dd6b3c369d6ad
-    m_Address: Assets/Art/Characters/sauronRace.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8f4bf518c37201a40bc412452f60e1dd
     m_Address: Assets/Art/Hexes/Tiles/049.png
     m_ReadOnly: 0
@@ -7401,6 +7419,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8f50914ef9c2f344580eca9a152d5c9a
     m_Address: Assets/Art/Fonts/Spritesheets/NicePng_fantasy-map-icons-png_2379148_131.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8f516f2924742684098f9cffda7e631d
+    m_Address: Assets/Art/Characters/AlatarCharacter.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9694,6 +9718,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9f82852c6652444d8bca119240337ca
+    m_Address: Assets/Art/Characters/RadagastCharacter.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ba1dd9c396b3b5245bd5164eb1e7f270
     m_Address: Assets/Art/Cards/Actions/Events/RoadsideArgument.png
     m_ReadOnly: 0
@@ -9702,6 +9732,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ba758e6f96fee1c4f96a0b7914382e9e
     m_Address: Assets/Art/Cards/Actions/Events/KingUnderTheMountain.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba7ff69d7f33dd244935f1c202a09ea4
+    m_Address: Assets/Art/Characters/PallandoCharacter.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9810,6 +9846,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bcd559b3832eb9145a3458a19dfa3d48
     m_Address: Assets/Art/Fonts/Spritesheets/color_common_spritesheet_62.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bcf856ca29d5de1438f3d35ed708da0c
+    m_Address: Assets/Art/UI/Classes/agent.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -10228,6 +10270,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4623d774d082184ba34dfd213bfcd7d
+    m_Address: Assets/Art/UI/Classes/emmissary.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c4b3861920d7e834ba9141245c1bf557
     m_Address: Assets/Art/Cards/PC/BaradHarn.jpg
     m_ReadOnly: 0
@@ -10530,6 +10578,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ca2fa64e8c33dde46b603b9e8271a146
     m_Address: Assets/Art/UI/Pasted Layerr #6.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca3ee04ce47672e43b4f93e307dd7a1e
+    m_Address: Assets/Art/UI/Classes/mage.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

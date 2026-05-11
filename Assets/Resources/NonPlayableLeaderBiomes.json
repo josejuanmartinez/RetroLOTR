@@ -77,7 +77,8 @@
                     "mage": 0,
                     "race": 1,
                     "artifacts": [],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Elf"
                 },
                 {
                     "characterName": "Haldir",
@@ -90,12 +91,14 @@
                     "artifacts": [],
                     "startingArmySize": 1,
                     "preferedTroopType": 1,
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Elf"
                 }
             ],
             "sex": 1,
             "startingCityRegion": "Lothlorien",
-            "nationName": "Sinda Elves"
+            "nationName": "Sinda Elves",
+            "characterSprite": "GaladrielCharacter"
         },
         {
             "characterName": "Elrond",
@@ -159,7 +162,8 @@
                     "mage": 0,
                     "race": 1,
                     "artifacts": [],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Elf"
                 },
                 {
                     "characterName": "Glorfindel",
@@ -172,7 +176,8 @@
                     "artifacts": [],
                     "startingArmySize": 1,
                     "preferedTroopType": 1,
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Elf"
                 },
                 {
                     "characterName": "Bilbo",
@@ -233,12 +238,14 @@
                             "alignment": 2
                         }
                     ],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Hobbit"
                 }
             ],
             "sex": 0,
             "startingCityRegion": "Rivendell",
-            "nationName": "Noldor Elves"
+            "nationName": "Noldor Elves",
+            "characterSprite": "Elf"
         },
         {
             "characterName": "Thranduil",
@@ -327,12 +334,14 @@
                             "alignment": 0
                         }
                     ],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Elf"
                 }
             ],
             "sex": 0,
             "startingCityRegion": "NorthernMirkwood",
-            "nationName": "Woodland Elves"
+            "nationName": "Woodland Elves",
+            "characterSprite": "Elf"
         },
         {
             "characterName": "Murazor",
@@ -419,7 +428,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Ungol",
-            "nationName": "Nazgûl"
+            "nationName": "Nazgûl",
+            "characterSprite": "Nazgul"
         },
         {
             "characterName": "Khamul",
@@ -506,7 +516,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "SouthernMirkwood",
-            "nationName": "Nazgûl"
+            "nationName": "Nazgûl",
+            "characterSprite": "Nazgul"
         },
         {
             "characterName": "Akhorahil",
@@ -594,7 +605,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Nurn",
-            "nationName": "Nazgûl"
+            "nationName": "Nazgûl",
+            "characterSprite": "Nazgul"
         },
         {
             "characterName": "Ji Indur",
@@ -681,7 +693,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Nurn",
-            "nationName": "Nazgûl"
+            "nationName": "Nazgûl",
+            "characterSprite": "Nazgul"
         },
         {
             "characterName": "Ovatha",
@@ -778,12 +791,14 @@
                             "alignment": 2
                         }
                     ],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Common"
                 }
             ],
             "sex": 0,
             "startingCityRegion": "SeaOfRhun",
-            "nationName": "Nazgûl"
+            "nationName": "Nazgûl",
+            "characterSprite": "Nazgul"
         },
         {
             "characterName": "Adunaphel",
@@ -856,7 +871,8 @@
             "startingCharacters": [],
             "sex": 1,
             "startingCityRegion": "FarHarad",
-            "nationName": "Nazgûl"
+            "nationName": "Nazgûl",
+            "characterSprite": "Nazgul"
         },
         {
             "characterName": "Ren the Unclean",
@@ -928,7 +944,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Ungol",
-            "nationName": "Nazgûl"
+            "nationName": "Nazgûl",
+            "characterSprite": "Nazgul"
         },
         {
             "characterName": "Hoarmurath",
@@ -1000,7 +1017,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Ithilien",
-            "nationName": "Nazgûl"
+            "nationName": "Nazgûl",
+            "characterSprite": "Nazgul"
         },
         {
             "characterName": "Dendra Dwar",
@@ -1087,7 +1105,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Udun",
-            "nationName": "Nazgûl"
+            "nationName": "Nazgûl",
+            "characterSprite": "Nazgul"
         },
         {
             "characterName": "Aragorn",
@@ -1166,7 +1185,8 @@
                     "mage": 0,
                     "race": 12,
                     "artifacts": [],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Dunedain"
                 },
                 {
                     "characterName": "Elrohir",
@@ -1177,12 +1197,14 @@
                     "mage": 0,
                     "race": 12,
                     "artifacts": [],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Dunedain"
                 }
             ],
             "sex": 0,
             "startingCityRegion": "Cardolan",
-            "nationName": "Dúnedain"
+            "nationName": "Dúnedain",
+            "characterSprite": "Dunedain"
         },
         {
             "characterName": "Waulfa",
@@ -1206,7 +1228,8 @@
             "startingCharacters": [],
             "sex": 1,
             "startingCityRegion": "Dunland",
-            "nationName": "Dunlendings"
+            "nationName": "Dunlendings",
+            "characterSprite": "Easterling"
         },
         {
             "characterName": "Beoraborn",
@@ -1248,7 +1271,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Anduin",
-            "nationName": "Beornings"
+            "nationName": "Beornings",
+            "characterSprite": "Beorning"
         },
         {
             "characterName": "Ingomer",
@@ -1272,7 +1296,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "SouthernMirkwood",
-            "nationName": "Woodmen"
+            "nationName": "Woodmen",
+            "characterSprite": "Common"
         },
         {
             "characterName": "Shelob",
@@ -1314,7 +1339,8 @@
             "startingCharacters": [],
             "sex": 1,
             "startingCityRegion": "Ungol",
-            "nationName": "Spiders"
+            "nationName": "Spiders",
+            "characterSprite": "Spider"
         },
         {
             "characterName": "Balrog",
@@ -1371,7 +1397,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "MistyMountains",
-            "nationName": "Balrog"
+            "nationName": "Balrog",
+            "characterSprite": "Balrog"
         },
         {
             "characterName": "Smaug",
@@ -1413,7 +1440,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Rhovanion",
-            "nationName": "Dragon"
+            "nationName": "Dragon",
+            "characterSprite": "Dragon"
         },
         {
             "characterName": "Bard",
@@ -1441,7 +1469,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Rhovanion",
-            "nationName": "Men of Dale"
+            "nationName": "Men of Dale",
+            "characterSprite": "Common"
         },
         {
             "characterName": "Uvatha",
@@ -1467,7 +1496,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Khand",
-            "nationName": "Khand"
+            "nationName": "Khand",
+            "characterSprite": "Easterling"
         },
         {
             "characterName": "Haruth Rammam",
@@ -1493,7 +1523,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "FarHarad",
-            "nationName": "Haradrim"
+            "nationName": "Haradrim",
+            "characterSprite": "Southron"
         },
         {
             "characterName": "Sangarunya",
@@ -1517,7 +1548,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Umbar",
-            "nationName": "Umbar"
+            "nationName": "Umbar",
+            "characterSprite": "Southron"
         },
         {
             "characterName": "Cirdan",
@@ -1559,7 +1591,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Lindon",
-            "nationName": "Grey Elves"
+            "nationName": "Grey Elves",
+            "characterSprite": "Elf"
         },
         {
             "characterName": "Denethor",
@@ -1638,12 +1671,14 @@
                             "alignment": 0
                         }
                     ],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Common"
                 }
             ],
             "sex": 0,
             "startingCityRegion": "NorthernGondor",
-            "nationName": "Gondor"
+            "nationName": "Gondor",
+            "characterSprite": "Common"
         },
         {
             "characterName": "Faramir",
@@ -1668,7 +1703,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Ithilien",
-            "nationName": "Gondor"
+            "nationName": "Gondor",
+            "characterSprite": "Common"
         },
         {
             "characterName": "Theoden",
@@ -1747,7 +1783,8 @@
                     "mage": 0,
                     "race": 0,
                     "artifacts": [],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Common"
                 },
                 {
                     "characterName": "Eomer",
@@ -1773,12 +1810,14 @@
                             "alignment": 0
                         }
                     ],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Common"
                 }
             ],
             "sex": 0,
             "startingCityRegion": "Rohan",
-            "nationName": "Rohan"
+            "nationName": "Rohan",
+            "characterSprite": "Common"
         },
         {
             "characterName": "Dain",
@@ -1804,7 +1843,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "IronHills",
-            "nationName": "Iron Hills"
+            "nationName": "Iron Hills",
+            "characterSprite": "Dwarf"
         },
         {
             "characterName": "Gloin",
@@ -1850,12 +1890,14 @@
                             "alignment": 0
                         }
                     ],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Dwarf"
                 }
             ],
             "sex": 0,
             "startingCityRegion": "EredLuin",
-            "nationName": "Blue Mountains"
+            "nationName": "Blue Mountains",
+            "characterSprite": "Dwarf"
         },
         {
             "characterName": "Radagast",
@@ -1912,7 +1954,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "SouthernMirkwood",
-            "nationName": "Rhosgobel"
+            "nationName": "Brown Wizard",
+            "characterSprite": "RadagastCharacter"
         },
         {
             "characterName": "GhanBuriGhan",
@@ -1938,7 +1981,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "NorthernGondor",
-            "nationName": "Drúedain"
+            "nationName": "Drúedain",
+            "characterSprite": "Wose"
         },
         {
             "characterName": "Goblin King",
@@ -1980,7 +2024,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "MistyMountains",
-            "nationName": "Goblins"
+            "nationName": "Goblins",
+            "characterSprite": "Goblin"
         },
         {
             "characterName": "Tom Bombadil",
@@ -2037,7 +2082,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "TheShire",
-            "nationName": "Old Forest"
+            "nationName": "Old Forest",
+            "characterSprite": "Maia"
         },
         {
             "characterName": "The Undead King",
@@ -2063,7 +2109,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "SouthernGondor",
-            "nationName": "Oathbreakers"
+            "nationName": "Oathbreakers",
+            "characterSprite": "Undead"
         },
         {
             "characterName": "Pallando",
@@ -2120,7 +2167,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Rhun",
-            "nationName": "Rhûn"
+            "nationName": "Purple Wizard",
+            "characterSprite": "PallandoCharacter"
         },
         {
             "characterName": "Alatar",
@@ -2177,7 +2225,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Khand",
-            "nationName": "Khand"
+            "nationName": "Blue Wizard",
+            "characterSprite": "AlatarCharacter"
         },
         {
             "characterName": "Treebeard",
@@ -2219,7 +2268,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Rohan",
-            "nationName": "Ents"
+            "nationName": "Ents",
+            "characterSprite": "Ent"
         },
         {
             "characterName": "Celdacil",
@@ -2246,7 +2296,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Anduin",
-            "nationName": "Northmen"
+            "nationName": "Northmen",
+            "characterSprite": "Common"
         },
         {
             "characterName": "Annatorion",
@@ -2304,7 +2355,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Dorwinion",
-            "nationName": "Dorwinion"
+            "nationName": "Dorwinion",
+            "characterSprite": "Common"
         },
         {
             "characterName": "Barrow-wight",
@@ -2361,7 +2413,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Cardolan",
-            "nationName": "Barrow-wights"
+            "nationName": "Barrow-wights",
+            "characterSprite": "Undead"
         },
         {
             "characterName": "Gwaihir",
@@ -2387,7 +2440,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "MistyMountains",
-            "nationName": "Eagles"
+            "nationName": "Eagles",
+            "characterSprite": "Eagle"
         },
         {
             "characterName": "Huz",
@@ -2413,7 +2467,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Dorwinion",
-            "nationName": "Dorwinion"
+            "nationName": "Dorwinion",
+            "characterSprite": "Easterling"
         },
         {
             "characterName": "Azog",
@@ -2446,12 +2501,14 @@
                     "mage": 0,
                     "race": 5,
                     "artifacts": [],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Orc"
                 }
             ],
             "sex": 0,
             "startingCityRegion": "Angmar",
-            "nationName": "Gundabad"
+            "nationName": "Gundabad",
+            "characterSprite": "Orc"
         },
         {
             "characterName": "Merry",
@@ -2477,7 +2534,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "TheShire",
-            "nationName": "Hobbits"
+            "nationName": "Hobbits",
+            "characterSprite": "Hobbit"
         },
         {
             "characterName": "Pippin",
@@ -2503,7 +2561,8 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "TheShire",
-            "nationName": "Hobbits"
+            "nationName": "Hobbits",
+            "characterSprite": "Hobbit"
         },
         {
             "characterName": "Frodo",
@@ -2536,13 +2595,15 @@
                     "mage": 0,
                     "race": 3,
                     "artifacts": [],
-                    "sex": 0
+                    "sex": 0,
+                    "characterSprite": "Hobbit"
                 }
             ],
             "spawnPcWithoutOwner": false,
             "sex": 0,
             "startingCityRegion": "TheShire",
-            "nationName": "Hobbits"
+            "nationName": "Hobbits",
+            "characterSprite": "Hobbit"
         },
         {
             "characterName": "Orthanc",
@@ -2569,7 +2630,8 @@
             "spawnPcWithoutOwner": true,
             "sex": 0,
             "startingCityRegion": "GapOfRohan",
-            "nationName": "Isengard"
+            "nationName": "Isengard",
+            "characterSprite": "Maia"
         },
         {
             "characterName": "Barad-dur",
@@ -2596,7 +2658,8 @@
             "spawnPcWithoutOwner": true,
             "sex": 0,
             "startingCityRegion": "Gorgoroth",
-            "nationName": "Mordor"
+            "nationName": "Mordor",
+            "characterSprite": "Maia"
         }
     ]
 }

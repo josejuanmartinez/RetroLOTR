@@ -69,7 +69,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private Vector3 originalScale = Vector3.one;
     private Vector3 targetScale = Vector3.one;
     private Vector2 originalAnchoredPosition = Vector2.zero;
+    private Vector2 originalPivot;
     private bool hoverPositionAdjusted;
+    private Image hitProxyImage;
     private bool isHovered;
     private bool isDragging;
     private bool hoverSortingRaised;
@@ -119,6 +121,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         targetScale = originalScale;
         originalAnchoredPosition = rectTransform.anchoredPosition;
 
+        CreateHitProxy();
         BindLegacyPrefabReferences();
         RestrictRaycastsToRootCard();
 
@@ -250,6 +253,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (graphic == null) continue;
             if (graphic.gameObject == gameObject) continue;
             if (hover != null && graphic.gameObject == hover.gameObject) continue;
+            if (hitProxyImage != null && graphic == hitProxyImage) continue;
             if (graphic.GetComponent<Selectable>() != null) continue;
             graphic.raycastTarget = false;
         }
@@ -257,6 +261,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (cardBackgroundImage != null)
         {
             cardBackgroundImage.raycastTarget = true;
+        }
+        if (hitProxyImage != null)
+        {
+            hitProxyImage.raycastTarget = isHovered;
         }
     }
 
@@ -557,6 +565,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 rectTransform.localScale = targetScale;
             }
         }
+
+        UpdateHitProxy();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -928,6 +938,46 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return game != null ? game.player : null;
     }
 
+    private void CreateHitProxy()
+    {
+        if (hitProxyImage != null) return;
+
+        GameObject proxy = new GameObject("HitProxy", typeof(RectTransform), typeof(Image));
+        proxy.transform.SetParent(transform, false);
+
+        hitProxyImage = proxy.GetComponent<Image>();
+        hitProxyImage.color = Color.clear;
+        hitProxyImage.raycastTarget = false;
+
+        RectTransform proxyRect = proxy.GetComponent<RectTransform>();
+        proxyRect.anchorMin = new Vector2(0.5f, 0.5f);
+        proxyRect.anchorMax = new Vector2(0.5f, 0.5f);
+        proxyRect.pivot = new Vector2(0.5f, 0.5f);
+        proxyRect.sizeDelta = rectTransform.rect.size;
+    }
+
+    private void UpdateHitProxy()
+    {
+        if (hitProxyImage == null || !isHovered || isDragging) return;
+
+        Vector2 offset = rectTransform.anchoredPosition - originalAnchoredPosition;
+        float sx = rectTransform.localScale.x;
+        float sy = rectTransform.localScale.y;
+
+        // When pivot changes, the geometric center of the parent rect shifts.
+        // The hit-proxy's (0.5,0.5) anchor reference point follows that shift,
+        // so we must subtract it to keep the proxy pinned to the original world position.
+        Vector2 anchorCenterOffset = new Vector2(
+            (0.5f - rectTransform.pivot.x) * rectTransform.rect.width,
+            (0.5f - rectTransform.pivot.y) * rectTransform.rect.height
+        );
+
+        hitProxyImage.rectTransform.anchoredPosition = new Vector2(
+            sx != 0 ? (-offset.x / sx) - anchorCenterOffset.x : -offset.x,
+            sy != 0 ? (-offset.y / sy) - anchorCenterOffset.y : -offset.y
+        );
+    }
+
     private void AdjustHoverPosition(bool hovered)
     {
         if (rectTransform == null) return;
@@ -936,14 +986,39 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             if (hoverPositionAdjusted) return;
             originalAnchoredPosition = rectTransform.anchoredPosition;
-            float lift = rectTransform.rect.height * Mathf.Max(0f, hoverScale - 1f) * hoverLiftMultiplier;
-            rectTransform.anchoredPosition = originalAnchoredPosition + Vector2.up * lift;
+            originalPivot = rectTransform.pivot;
+
+            if (layoutElement != null) layoutElement.ignoreLayout = true;
+
+            float height = rectTransform.rect.height;
+            float lift = height * hoverLiftMultiplier;
+
+            rectTransform.pivot = new Vector2(0.5f, 0f);
+            rectTransform.anchoredPosition = originalAnchoredPosition + Vector2.up * (lift - originalPivot.y * height);
+
+            if (hitProxyImage != null)
+            {
+                hitProxyImage.rectTransform.sizeDelta = rectTransform.rect.size;
+                hitProxyImage.raycastTarget = true;
+            }
+
             hoverPositionAdjusted = true;
         }
         else
         {
             if (!hoverPositionAdjusted) return;
+
+            rectTransform.pivot = originalPivot;
             rectTransform.anchoredPosition = originalAnchoredPosition;
+
+            if (hitProxyImage != null)
+            {
+                hitProxyImage.rectTransform.anchoredPosition = Vector2.zero;
+                hitProxyImage.raycastTarget = false;
+            }
+
+            if (layoutElement != null && !isDragging) layoutElement.ignoreLayout = false;
+
             hoverPositionAdjusted = false;
         }
     }

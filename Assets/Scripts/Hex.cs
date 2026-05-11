@@ -51,9 +51,11 @@ public class Hex : MonoBehaviour
     public GameObject artifact;
     public HoverNoUI artifactHover;
 
-    public GameObject armyIcon;
+    public GameObject spriteRendererLayoutIcon;
+    public SpriteRendererGridLayout characterClassesIconGrid;
     public SpriteRendererGridLayout armyIconGrid;
     private Coroutine armyArrangeCoroutine;
+    private Coroutine classArrangeCoroutine;
 
     public TerrainEnum terrainType;
     public SpriteRenderer terrainTexture;
@@ -437,7 +439,7 @@ public class Hex : MonoBehaviour
         bool hasArmies = armies.Count > 0;
         bool seen = IsHexSeen();
 
-        if (seen && hasArmies && armyIcon != null && armyIconGrid != null)
+        if (seen && hasArmies && spriteRendererLayoutIcon != null && armyIconGrid != null)
         {
             for (int i = 0, n = armies.Count; i < n; i++)
             {
@@ -445,7 +447,7 @@ public class Hex : MonoBehaviour
                 Character commander = army?.GetCommander();
                 if (commander == null) continue;
 
-                GameObject icon = Instantiate(armyIcon, armyIconGrid.transform);
+                GameObject icon = Instantiate(spriteRendererLayoutIcon, armyIconGrid.transform);
                 ArmyIconManager manager = icon.GetComponent<ArmyIconManager>();
                 if (manager != null)
                 {
@@ -501,10 +503,12 @@ public class Hex : MonoBehaviour
         if (seen && hasCharacter)
         {
             UpdateCharacterIconSprite();
+            UpdateClassIcons();
         }
         else
         {
             ClearOutlineColor();
+            ClearClassIcons();
         }
         // UpdateBannerSpriteForKnownCharacter();
         if (refreshHoverText) RefreshHoverText();
@@ -585,7 +589,7 @@ public class Hex : MonoBehaviour
                     npl.RevealToLeader(g.currentlyPlaying, isHuman);
                 }
                 
-                var charName = ch.GetHoverText(true, true, true, false, false, true);
+                var charName = ch.GetHoverText(true, true, true, true, false, true);
                 if (ch.IsArmyCommander())
                 {
                     var text = ch.GetHoverText(false, true, true, true, false, true);
@@ -1067,16 +1071,79 @@ public class Hex : MonoBehaviour
 
         if (TryGetKnownCharacterForIcon(out Character known))
         {
-            Sprite raceSprite = illustrations != null ? illustrations.GetIllustrationByName(known.race.ToString(), false) : null;
-            characterSpriteRenderer.sprite = raceSprite != null ? raceSprite : defaultCharacterSprite;
+            Sprite sprite = null;
+            if (illustrations != null)
+            {
+                Leader knownAsLeader = known as Leader;
+                LeaderBiomeConfig knownBiome = knownAsLeader != null ? knownAsLeader.GetBiome() : null;
+                string spriteName = knownBiome?.characterSprite;
+                if (!string.IsNullOrEmpty(spriteName))
+                    sprite = illustrations.GetIllustrationByName(spriteName, false);
+                if (sprite == null)
+                    sprite = illustrations.GetIllustrationByName(known.race.ToString(), false);
+            }
+            characterSpriteRenderer.sprite = sprite != null ? sprite : defaultCharacterSprite;
             UpdateOutlineColor(known);
-            // UpdateBannerSprite(known);
         }
         else
         {
             characterSpriteRenderer.sprite = defaultCharacterSprite;
             ClearOutlineColor();
         }
+    }
+
+    private void UpdateClassIcons()
+    {
+        ClearClassIcons();
+
+        if (characterClassesIconGrid == null || spriteRendererLayoutIcon == null) return;
+        if (!TryGetKnownCharacterForIcon(out Character known)) return;
+
+        void AddClassIcon(string className, int level)
+        {
+            if (level <= 0) return;
+            GameObject icon = Instantiate(spriteRendererLayoutIcon, characterClassesIconGrid.transform);
+            ArmyIconManager manager = icon.GetComponent<ArmyIconManager>();
+            if (manager != null)
+            {
+                Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(className, false) : null;
+                if (manager.armySprite != null) manager.armySprite.sprite = sprite;
+                if (manager.nationText != null) manager.nationText.text = level.ToString();
+            }
+        }
+
+        AddClassIcon("commander", known.GetCommander());
+        AddClassIcon("agent", known.GetAgent());
+        AddClassIcon("emmissary", known.GetEmmissary());
+        AddClassIcon("mage", known.GetMage());
+
+        if (classArrangeCoroutine != null) StopCoroutine(classArrangeCoroutine);
+        classArrangeCoroutine = StartCoroutine(DelayedArrangeClasses());
+
+        SetActiveFast(characterClassesIconGrid.gameObject, true);
+    }
+
+    private void ClearClassIcons()
+    {
+        if (characterClassesIconGrid == null) return;
+        if (classArrangeCoroutine != null)
+        {
+            StopCoroutine(classArrangeCoroutine);
+            classArrangeCoroutine = null;
+        }
+        Transform gridTransform = characterClassesIconGrid.transform;
+        for (int i = gridTransform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(gridTransform.GetChild(i).gameObject);
+        }
+        SetActiveFast(characterClassesIconGrid.gameObject, false);
+    }
+
+    private IEnumerator DelayedArrangeClasses()
+    {
+        yield return null;
+        if (characterClassesIconGrid != null) characterClassesIconGrid.Arrange();
+        classArrangeCoroutine = null;
     }
 
     /*private void UpdateBannerSpriteForKnownCharacter()
@@ -2323,12 +2390,6 @@ public class Hex : MonoBehaviour
             builder.Append("</color>");
         }
 
-        if (pc.hasPort)
-        {
-            if (pc.citySize != PCSizeEnum.NONE) builder.Append(' ');
-            builder.Append("<sprite name=\"port\">");
-        }
-
         if (pc.fortSize > FortSizeEnum.NONE)
         {
             if (pc.citySize != PCSizeEnum.NONE || pc.hasPort) builder.Append(' ');
@@ -2343,7 +2404,12 @@ public class Hex : MonoBehaviour
         builder.Append(GetLoyaltyColorHex(pc.loyalty));
         builder.Append('>');
         builder.Append(Math.Max(0, pc.loyalty));
-        builder.Append("</color></mark>");
+        builder.Append("</color>");
+
+        if (pc.hasPort) builder.Append(" <sprite name=\"port\">");
+
+        builder.Append("</mark>");
+
         return builder.ToString();
     }
 

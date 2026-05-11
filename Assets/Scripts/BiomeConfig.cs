@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class BiomeConfig
 {
     public string characterName;
+    public string characterSprite;
 
     public AlignmentEnum alignment;
     public RacesEnum race;

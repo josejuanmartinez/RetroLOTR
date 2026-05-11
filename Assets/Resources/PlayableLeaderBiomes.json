@@ -78,20 +78,6 @@
                 "Merry",
                 "Pippin"
             ],
-            "newCharacters": [
-                "Halbarad",
-                "Erestor",
-                "Galdor",
-                "Harry Goatleaf",
-                "Barliman Butterbur"
-            ],
-            "newPCs": [
-                "Amon Sul",
-                "Michel Delving",
-                "Fornost Erain",
-                "Annuminas",
-                "Elostirion"
-            ],
             "sex": 0,
             "tutorialArtifacts": [
                 {
@@ -180,7 +166,8 @@
                 }
             ],
             "startingCityRegion": "Arthedain",
-            "nationName": "Gandalf"
+            "nationName": "Gandalf",
+            "characterSprite": "Maia"
         },
         {
             "characterName": "Saruman",
@@ -239,20 +226,6 @@
             "tutorialAnchors": [
                 "Theoden",
                 "Orthanc"
-            ],
-            "newCharacters": [
-                "Bugrug",
-                "Enion",
-                "Aonghas",
-                "Broggha",
-                "Mauhir"
-            ],
-            "newPCs": [
-                "Fangorn's camp",
-                "Treforn",
-                "Arailt",
-                "Angren",
-                "Enedhir"
             ],
             "sex": 0,
             "tutorialArtifacts": [
@@ -342,7 +315,8 @@
                 }
             ],
             "startingCityRegion": "GapOfRohan",
-            "nationName": "Saruman"
+            "nationName": "Saruman",
+            "characterSprite": "SarumanCharacter"
         },
         {
             "characterName": "Sauron",
@@ -351,7 +325,7 @@
             "agent": 0,
             "emmissary": 0,
             "mage": 3,
-            "race": 22,
+            "race": 4,
             "artifacts": [],
             "description": "<u>Sauron</u> is the Dark Lord returned, a will of iron that has never forgotten its claim. From Barad-dur he bends the lands through fear and patience, drawing all things toward a single purpose. He does not need love or loyalty, only obedience, and he will take it by force or by dread.<br><br>The hunt begins in the shadow of Minas Morgul, where the trail is secured and a relic of power is drawn from cursed ground. From there the march moves toward the Black Gate, where the first disciplined hosts take shape under a hard command.",
             "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> Every shadow he has ever worn still breathes — <sprite name=\"commander\"><sprite name=\"agent\"><sprite name=\"emmissary\"> waking, cavalry <sprite name=\"mounts\"> restless. No shape yet fixed.",
@@ -420,20 +394,6 @@
                 "Dendra Dwar",
                 "Murazor",
                 "Barad-dur"
-            ],
-            "newCharacters": [
-                "Angulion",
-                "Maben",
-                "Lomelinde",
-                "Celedhring",
-                "Leardinoth"
-            ],
-            "newPCs": [
-                "Carn Dum",
-                "Mt. Gram",
-                "Thuringwathost",
-                "Olbamarl",
-                "Barad-wath"
             ],
             "sex": 0,
             "tutorialArtifacts": [
@@ -510,7 +470,8 @@
                 }
             ],
             "startingCityRegion": "Gorgoroth",
-            "nationName": "Sauron"
+            "nationName": "Mordor",
+            "characterSprite": "SauronCharacter"
         }
     ]
 }

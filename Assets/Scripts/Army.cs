@@ -136,18 +136,18 @@ public class Army
 
         string xpText = GetXpHoverText();
 
-        return $" leading {string.Join(',', result)}{xpText}";
+        return $" {string.Join(',', result)}{xpText}";
     }
 
     public string GetHoverTextNoXp()
     {
-        return $" leading {string.Join(',', BuildTroopHoverLines())}";
+        return $" {string.Join(',', BuildTroopHoverLines())}";
     }
 
     private string GetXpHoverText()
     {
         string color = xp < 25 ? "#ff4d4d" : xp < 50 ? "#ffb347" : xp < 75 ? "#8fd14f" : "#00c853";
-        return $" XP[<color={color}>{xp}</color>]";
+        return $" XP <color={color}>{xp}</color>";
     }
 
     public string GetTrainingLabel()
