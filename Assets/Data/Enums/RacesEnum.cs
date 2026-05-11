@@ -21,5 +21,6 @@ public enum RacesEnum
     Southron = 18,
     Easterling = 19,
     Beast = 20,
-    Machine = 21
+    Machine = 21,
+    SauronRace = 22
 }

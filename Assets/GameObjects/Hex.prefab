@@ -689,6 +689,9 @@ MonoBehaviour:
   hiddenArtifacts: []
   isSelected: 0
   characterOutlineSize: 5
+  selectedBlinkMinAlpha: 0.5
+  selectedBlinkMaxAlpha: 1
+  selectedBlinkSpeed: 2
 --- !u!114 &8419863931886288814
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -311,6 +311,22 @@ public class Hex : MonoBehaviour
         return null;
     }
 
+    public GameObject GetArmyIconForCommander(Character commander)
+    {
+        if (armyIconGrid == null || commander == null) return null;
+        Transform gridTransform = armyIconGrid.transform;
+        for (int i = 0; i < gridTransform.childCount; i++)
+        {
+            GameObject child = gridTransform.GetChild(i).gameObject;
+            ArmyIconManager manager = child.GetComponent<ArmyIconManager>();
+            if (manager != null && manager.character == commander)
+            {
+                return child;
+            }
+        }
+        return null;
+    }
+
     public SpriteRenderer GetPortSpriteRenderer()
     {
         return null;

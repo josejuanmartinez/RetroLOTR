@@ -362,16 +362,16 @@
                     "description": "Travel to Minas Morgul and find the Witch-king.",
                     "narration": "Minas Morgul is a city of rot and memory, and it is there your most faithful servant waits. Go to the city of the wraiths and find the Witch-king, for his blade is your own and his terror is your herald. This is a journey through your own domain, a reminder of the fear you command and the reach of your influence. When you find him, do not speak of loyalty, for he is bound to you beyond any choice. The strength he brings is the first real weapon of your conquest, and with him at your side, the world will truly begin to tremble.",
                     "actor1": "Sauron",
-                    "actor2": "The Witch-king",
+                    "actor2": "Murazor",
                     "rewards": {
                         "grantCharacters": [
                             {
-                                "characterName": "The Witch-king",
+                                "characterName": "Murazor",
                                 "commander": 1,
                                 "agent": 0,
                                 "emmissary": 0,
                                 "mage": 1,
-                                "race": 6,
+                                "race": 7,
                                 "sex": 0
                             }
                         ]
@@ -415,9 +415,9 @@
                     "required": true,
                     "description": "Have the Witch-king scout the area to locate your enemies.",
                     "narration": "The Witch-king rides on wings of shadow, and nothing escapes his sight for long. Send him to scout the land, not to fight but to mark the paths of those who would oppose you. A scout from Morgul is a shadow that precedes the storm, revealing the secrets of the terrain and the positions of your foes. Let him move with the speed of fear and return with a clear report that leaves no doubt where your fist should fall. His eyes are your own, and the knowledge he brings is the first step of the hunt. Use his report to choose your next victim and prepare the way for your host.",
-                    "actor1": "The Witch-king",
+                    "actor1": "Murazor",
                     "requirements": {
-                        "actorCharacter": "The Witch-king",
+                        "actorCharacter": "Murazor",
                         "cardName": "Scout Area",
                         "supportCards": [
                             "Gorgoroth",
@@ -434,7 +434,7 @@
                     "description": "Return to Barad-dûr to begin your open war.",
                     "narration": "Return to the Dark Tower and let the fires of Orodruin burn brighter. Here you cast aside the shadows of secrecy and embrace the reality of your war, calling your armies to muster and your servants to prepare. This step is the culmination of your return, the moment when intent becomes inescapable force. Let the world see your banner and let the ground tremble under the weight of your purpose. Unlock the means to recruit the host of Mordor, and bring Gothmog into your service to lead the vanguard. Do not wait; the time of the shadow is over, and the time of the eye has begun.",
                     "actor1": "Sauron",
-                    "actor2": "The Witch-king",
+                    "actor2": "Murazor",
                     "rewards": {
                         "unlockRecruitmentTags": [
                             "mordor"

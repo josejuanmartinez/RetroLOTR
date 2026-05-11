@@ -7,6 +7,7 @@ public class ArmyIconManager : MonoBehaviour
     public TextMeshPro nationText;
     public SpriteRenderer armySprite;
     private Illustrations illustrations;
+    public Character character;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,6 +41,7 @@ public class ArmyIconManager : MonoBehaviour
 
     public void Initialize(Character character)
     {
+        this.character = character;
         illustrations = FindFirstObjectByType<Illustrations>();
         AlignmentEnum alignmentEnum = character.GetOwner().GetAlignment();
         Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(alignmentEnum.ToString()) : null;

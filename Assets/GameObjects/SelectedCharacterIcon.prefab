@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4127690787436768881, guid: e63d105e192d8ef4a80c1169aafedb99, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6089db290939cba42ad6886dc748f958, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1214,11 +1214,11 @@ PrefabInstance:
     - target: {fileID: 184028198674588813, guid: 87ae0d3a5f1baa64d9ec7d89edd550b4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -5166545060840922017, guid: e63d105e192d8ef4a80c1169aafedb99, type: 3}
+      objectReference: {fileID: 21300000, guid: d56eff317ef6f254bb029c33ad652a56, type: 3}
     - target: {fileID: 504299800159477073, guid: 87ae0d3a5f1baa64d9ec7d89edd550b4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -193591209055504693, guid: e63d105e192d8ef4a80c1169aafedb99, type: 3}
+      objectReference: {fileID: 21300000, guid: 34f16b556133b9146acb3605e3f5a087, type: 3}
     - target: {fileID: 708842460638330015, guid: 87ae0d3a5f1baa64d9ec7d89edd550b4, type: 3}
       propertyPath: m_fontSize
       value: 15.1
@@ -1926,7 +1926,7 @@ PrefabInstance:
     - target: {fileID: 6713704019795245557, guid: 87ae0d3a5f1baa64d9ec7d89edd550b4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -1086759328, guid: e63d105e192d8ef4a80c1169aafedb99, type: 3}
+      objectReference: {fileID: 21300000, guid: fb4af8fc55fe4a848bebac8402b3993c, type: 3}
     - target: {fileID: 7044206399780819060, guid: 87ae0d3a5f1baa64d9ec7d89edd550b4, type: 3}
       propertyPath: m_Name
       value: MovementIcon
@@ -1998,7 +1998,7 @@ PrefabInstance:
     - target: {fileID: 8001778428239170664, guid: 87ae0d3a5f1baa64d9ec7d89edd550b4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 2862439808309756052, guid: e63d105e192d8ef4a80c1169aafedb99, type: 3}
+      objectReference: {fileID: 21300000, guid: 95510ce61add16042bd28c3afd9d4cc4, type: 3}
     - target: {fileID: 8239791412084388354, guid: 87ae0d3a5f1baa64d9ec7d89edd550b4, type: 3}
       propertyPath: m_Layer
       value: 5

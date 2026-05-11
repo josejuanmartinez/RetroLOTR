@@ -969,6 +969,23 @@ public class Board : MonoBehaviour
         }
     }
 
+    private IEnumerator AnimateArmyIcon(GameObject armyIcon, Vector3 start, Vector3 end, float duration)
+    {
+        if (armyIcon == null) yield break;
+        AnimationCurve ease = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float e = ease.Evaluate(t);
+            if (armyIcon != null)
+                armyIcon.transform.position = Vector3.Lerp(start, end, e);
+            yield return null;
+        }
+        if (armyIcon != null)
+            armyIcon.transform.position = end;
+    }
 
     // Centralize how you get a hex's world spot.
     // If your Hex already has a center/world pos property, use it here.
@@ -1179,6 +1196,10 @@ public class Board : MonoBehaviour
             SpriteRenderer fromPortSR = previousHex.GetPortSpriteRenderer();
             SpriteRenderer toPortSR = newHex.GetPortSpriteRenderer();
 
+            GameObject armyIconObj = previousHex.GetArmyIconForCommander(character);
+            Vector3 armyIconStart = armyIconObj != null ? armyIconObj.transform.position : previousHex.transform.position;
+            Vector3 armyIconEnd = newHex.transform.position;
+
             // Use the sprite transforms' world positions (NOT RectTransform)
             Vector3 startPos = (fromSR != null) ? fromSR.transform.position : previousHex.transform.position;
             Vector3 endPos = (toSR != null) ? toSR.transform.position : newHex.transform.position;
@@ -1190,6 +1211,7 @@ public class Board : MonoBehaviour
             Vector3 endPortPos = (toPortSR != null) ? toPortSR.transform.position : newHex.transform.position;
 
             IEnumerator tween = null;
+            Coroutine armyIconTween = null;
             bool canAnimate = false;
 
             try
@@ -1240,6 +1262,11 @@ public class Board : MonoBehaviour
                             appearanceFromCharSprite,
                             appearanceBannerOffset);
                         canAnimate = true;
+                        if (armyIconObj != null)
+                        {
+                            armyIconObj.transform.SetParent(null, true);
+                            armyIconTween = StartCoroutine(AnimateArmyIcon(armyIconObj, armyIconStart, armyIconEnd, 0.35f));
+                        }
                     }
                 }
                 else
@@ -1259,6 +1286,12 @@ public class Board : MonoBehaviour
             }
 
             if (canAnimate) yield return tween;
+
+            if (armyIconTween != null)
+            {
+                yield return armyIconTween;
+                if (armyIconObj != null) Destroy(armyIconObj);
+            }
 
             try
             {
