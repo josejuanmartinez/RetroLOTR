@@ -17,6 +17,7 @@ public class Character : MonoBehaviour
 
     [Header("Given name")]
     public string characterName;
+    public string characterGroup;
     
     [Header("Allegiance")]
     public AlignmentEnum alignment;

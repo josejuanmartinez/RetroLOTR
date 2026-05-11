@@ -20,6 +20,9 @@ public class CharacterSpriteHover : MonoBehaviour
         if (hex == null || hex.characterSpriteRenderer == null) return;
         if (hex.characterSpriteRenderer.sprite == null || hex.characterSpriteRenderer.sprite == hex.defaultCharacterSprite) return;
         if (!hex.TryGetKnownCharacterForIcon(out Character character)) return;
+
+        hex.SetCharacterHovered(true);
+
         board ??= FindFirstObjectByType<Board>();
         if (board != null && board.selectedCharacter == character) return;
         if (!hex.TryGetPreviewTextForCharacter(character, out string hoverText)) return;
@@ -49,11 +52,13 @@ public class CharacterSpriteHover : MonoBehaviour
 
     private void OnMouseExit()
     {
+        if (hex != null) hex.SetCharacterHovered(false);
         ClearPreview();
     }
 
     private void OnDisable()
     {
+        if (hex != null) hex.SetCharacterHovered(false);
         ClearPreview();
     }
 

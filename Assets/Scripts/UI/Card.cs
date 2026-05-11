@@ -1136,7 +1136,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         string characterName = cardData.name;
-        Character existing = FindCharacterByName(characterName);
+        Character existing = FindCharacterByName(characterName) ?? FindCharacterByGroup(cardData.characterGroup);
 
         if (existing == null)
         {
@@ -1171,6 +1171,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             }
 
             newCharacter.startingCharacter = false;
+            newCharacter.characterGroup = cardData.characterGroup;
             newCharacter.hasActionedThisTurn = true;
             newCharacter.isPlayerControlled = playerLeader == game.player;
             playerLeader.TryConsumeCharacterSlot();
@@ -1222,6 +1223,13 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (string.IsNullOrWhiteSpace(name)) return null;
         Character[] characters = FindObjectsByType<Character>(FindObjectsSortMode.None);
         return characters.FirstOrDefault(c => c != null && CardNameUtility.Equals(c.characterName, name));
+    }
+
+    private static Character FindCharacterByGroup(string group)
+    {
+        if (string.IsNullOrWhiteSpace(group)) return null;
+        Character[] characters = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        return characters.FirstOrDefault(c => c != null && !c.killed && string.Equals(c.characterGroup, group, System.StringComparison.OrdinalIgnoreCase));
     }
 
     private Task<bool> HandleArmyCardPlayed(Character selected)

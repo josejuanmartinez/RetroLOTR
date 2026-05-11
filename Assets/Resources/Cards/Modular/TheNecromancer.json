@@ -2707,6 +2707,7 @@
         {
             "cardId": 1015,
             "name": "The Necromancer",
+            "characterGroup": "sauron",
             "quote": "Let them call this place accursed. Dol Guldur does its work in silence, and silence is patient.",
             "actionEffect": "Reveal a hidden artifact <sprite name=\"artifact\"> on a visible hex.",
             "type": "Character",

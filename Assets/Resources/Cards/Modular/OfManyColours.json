@@ -7,9 +7,9 @@
         {
             "cardId": 456,
             "name": "Clad in Many Colours",
-            "quote": "Bright hues weave a tapestry of hope against the shadows of the battlefield.",
-            "actionEffect": "To look upon him was to be dazzled and then uncertain. Allied units in radius 1 gain Fortified <sprite name=\"fortified\"> and Arcane Insight <sprite name=\"arcaneinsight\">; enemies in radius 1 gain Despair <sprite name=\"despair\">.",
-            "type": "Action",
+            "quote": "I am not Saruman the White. That name belongs to another — if indeed it still belongs to anyone.",
+            "actionEffect": "Reveal hidden enemies in radius 2. Wound enemies in radius 2 (25 HP). Strip and steal their positive status effects (2 turns).",
+            "type": "Event",
             "tags": [],
             "deckId": "of_many_colours",
             "alignment": 0,
@@ -4318,7 +4318,8 @@
         },
         {
             "cardId": 1008,
-            "name": "Of Many Colours",
+            "name": "Saruman Multicoloured",
+            "characterGroup": "saruman",
             "quote": "White light can be broken into its parts. I have seen each one clearly. That is why the others feared me.",
             "actionEffect": "Apply ArcaneInsight <sprite name=\"arcaneinsight\"> (2 turns) to a random controlled character.",
             "type": "Character",

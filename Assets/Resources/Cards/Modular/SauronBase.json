@@ -1987,6 +1987,7 @@
         {
             "cardId": 1002,
             "name": "Sauron",
+            "characterGroup": "sauron",
             "quote": "Three rings for the elven-kings, seven for the dwarves, nine for mortal men — and one to rule them all.",
             "actionEffect": "Apply Strengthened <sprite name=\"strengthened\"> (2 turns) to a random controlled character.",
             "type": "Character",

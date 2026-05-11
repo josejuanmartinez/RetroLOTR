@@ -3669,6 +3669,7 @@
         {
             "cardId": 1013,
             "name": "The Deceiver",
+            "characterGroup": "sauron",
             "quote": "I came bearing gifts of knowledge and craft. That they called them Rings of Power was already the beginning of their ruin.",
             "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 25 on a visible enemy settlement.",
             "type": "Character",

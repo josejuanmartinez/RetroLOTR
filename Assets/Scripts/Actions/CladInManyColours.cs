@@ -1,21 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
-public class CladInManyColours : CharacterAction
+public class CladInManyColours : EventAction
 {
-    private static bool IsAllied(Character source, Character target)
+    private const int Radius = 2;
+    private const int StolenBuffTurns = 2;
+    private const int WoundDamage = 25;
+
+    private static readonly StatusEffectEnum[] PositiveEffects =
+    {
+        StatusEffectEnum.Hope,
+        StatusEffectEnum.Encouraged,
+        StatusEffectEnum.Haste,
+        StatusEffectEnum.ArcaneInsight,
+        StatusEffectEnum.Strengthened,
+        StatusEffectEnum.Fortified,
+        StatusEffectEnum.DuelSupremacy,
+    };
+
+    private static bool IsEnemy(Character source, Character target)
     {
         if (source == null || target == null) return false;
-        if (target.GetOwner() == source.GetOwner()) return true;
-        return source.GetAlignment() != AlignmentEnum.neutral
-            && target.GetAlignment() == source.GetAlignment()
-            && target.GetAlignment() != AlignmentEnum.neutral;
+        if (target.GetOwner() == source.GetOwner()) return false;
+        return target.GetAlignment() != source.GetAlignment() || source.GetAlignment() == AlignmentEnum.neutral;
     }
 
-    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
         var originalCondition = condition;
@@ -26,30 +38,49 @@ public class CladInManyColours : CharacterAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            List<Character> inArea = character.hex.GetHexesInRadius(1)
+            List<Hex> area = character.hex.GetHexesInRadius(Radius);
+
+            // Reveal hidden enemies — his many-coloured light strips all shadow
+            int revealedCount = 0;
+            foreach (Hex h in area)
+            {
+                if (h?.characters == null) continue;
+                foreach (Character enemy in h.characters
+                    .Where(ch => ch != null && !ch.killed && IsEnemy(character, ch) && ch.HasStatusEffect(StatusEffectEnum.Hidden))
+                    .ToList())
+                {
+                    enemy.ClearStatusEffect(StatusEffectEnum.Hidden);
+                    revealedCount++;
+                }
+            }
+
+            List<Character> enemies = area
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed)
+                .Where(ch => ch != null && !ch.killed && IsEnemy(character, ch))
                 .Distinct()
                 .ToList();
 
-            if (inArea.Count == 0) return false;
+            // Wound every enemy — the fracturing light cuts as well as blinds
+            foreach (Character enemy in enemies)
+                enemy.Wounded(character.GetOwner(), WoundDamage);
 
-            List<Character> allies = inArea.Where(ch => IsAllied(character, ch)).ToList();
-            List<Character> enemies = inArea.Where(ch => !IsAllied(character, ch)).ToList();
-
-            foreach (Character ally in allies)
-            {
-                ally.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
-                ally.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1);
-            }
-
+            // Steal positive status effects from enemies and claim them for Saruman
+            int stolenCount = 0;
             foreach (Character enemy in enemies)
             {
-                enemy.ApplyStatusEffect(StatusEffectEnum.Despair, 1);
+                foreach (StatusEffectEnum buff in PositiveEffects)
+                {
+                    if (!enemy.HasStatusEffect(buff)) continue;
+                    enemy.ClearStatusEffect(buff);
+                    character.ApplyStatusEffect(buff, StolenBuffTurns);
+                    stolenCount++;
+                }
             }
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Clad in Many Colours empowers {allies.Count} ally unit(s); {enemies.Count} enemy unit(s) gain Despair.", Color.magenta);
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Clad in Many Colours: {revealedCount} hidden enemy(ies) exposed; {enemies.Count} foe(s) wounded; {stolenCount} buff(s) consumed.",
+                Color.magenta);
             return true;
         };
 

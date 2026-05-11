@@ -4316,6 +4316,7 @@
         {
             "cardId": 1006,
             "name": "Stormcrow",
+            "characterGroup": "gandalf",
             "quote": "They call me ill-omened. Let them. A stormcrow carries truer counsel than those who wait for calm skies.",
             "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",

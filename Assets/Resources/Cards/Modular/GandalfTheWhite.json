@@ -3876,6 +3876,7 @@
         {
             "cardId": 1004,
             "name": "Gandalf the White",
+            "characterGroup": "gandalf",
             "quote": "I have passed through fire and deep water. I come back to you now at the turn of the tide.",
             "actionEffect": "Encourage <sprite name=\"encouraged\"> all controlled characters for 3 turn(s).",
             "type": "Character",

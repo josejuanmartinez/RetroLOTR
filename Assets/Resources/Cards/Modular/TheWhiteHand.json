@@ -3367,6 +3367,7 @@
         {
             "cardId": 1010,
             "name": "The White Hand",
+            "characterGroup": "saruman",
             "quote": "A new power is rising. Its victory is at hand. The age of courtesy is ended — the age of the White Hand has begun.",
             "actionEffect": "Recruit 3 hi <sprite name=\"hi\"> to a controlled army.",
             "type": "Character",

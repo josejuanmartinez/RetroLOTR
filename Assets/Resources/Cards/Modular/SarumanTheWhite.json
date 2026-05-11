@@ -2496,6 +2496,7 @@
         {
             "cardId": 1009,
             "name": "Saruman the White",
+            "characterGroup": "saruman",
             "quote": "The White Council holds against the Shadow, and I am its head. Power is mine to wield in service, not in dominion.",
             "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
             "type": "Character",

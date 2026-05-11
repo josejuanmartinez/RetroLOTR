@@ -152,6 +152,13 @@ public class Hex : MonoBehaviour
     // public float bannerOutlineSize = 70f;
     private int darknessTurnsRemaining = 0;
 
+    [Header("Selection Alpha")]
+    [SerializeField] private float selectedBlinkMinAlpha = 0.5f;
+    [SerializeField] private float selectedBlinkMaxAlpha = 1f;
+    [SerializeField] private float selectedBlinkSpeed = 2f;
+    private const float NonSelectedCharacterAlpha = 0.9f;
+    private bool isCharacterHovered = false;
+
     void Awake()
     {
         pc = null;
@@ -178,6 +185,11 @@ public class Hex : MonoBehaviour
         UpdateMinimapTerrain(IsHexRevealed());
         UpdateVisibilityForFog();
         UpdateParticles();
+    }
+
+    void Update()
+    {
+        UpdateCharacterSpriteAlpha();
     }
 
     public bool IsHexRevealed() => isRevealed;
@@ -640,7 +652,6 @@ public class Hex : MonoBehaviour
         if (!IsHidden())
         {
             SetActiveFast(hoverHexFrame, false);
-            SetSharedSelectedParticlesActive(true);
             isSelected = true;
             if (lookAt) LookAt(duration, delay);
         }
@@ -650,7 +661,6 @@ public class Hex : MonoBehaviour
     {
         isSelected = false;
         SetActiveFast(hoverHexFrame, false);
-        SetSharedSelectedParticlesActive(false);
     }
 
     public void LookAt(float duration = 1.0f, float delay = 0.0f)
@@ -980,7 +990,6 @@ public class Hex : MonoBehaviour
         if (revealed)
         {
             SetActiveFast(hoverHexFrame, false);
-            SetSharedSelectedParticlesActive(seen && isSelected);
             if (freeArmiesAtHexHover) SetActiveFast(freeArmiesAtHexHover.gameObject, seen);
             if (neutralArmiesAtHexHover) SetActiveFast(neutralArmiesAtHexHover.gameObject, seen);
             if (darkServantArmiesAtHexHover) SetActiveFast(darkServantArmiesAtHexHover.gameObject, seen);
@@ -2345,6 +2354,41 @@ public class Hex : MonoBehaviour
 
         Color nationColor = pc.owner.nationColor;
         return $"#{ColorUtility.ToHtmlStringRGB(nationColor)}";
+    }
+
+    public void SetCharacterHovered(bool hovered)
+    {
+        if (isCharacterHovered == hovered) return;
+        isCharacterHovered = hovered;
+    }
+
+    private void UpdateCharacterSpriteAlpha()
+    {
+        if (characterSpriteRenderer == null || !characterSpriteRenderer.gameObject.activeSelf) return;
+
+        if (isCharacterHovered)
+        {
+            SetSpriteAlpha(characterSpriteRenderer, 1f);
+            return;
+        }
+
+        if (board == null) board = FindFirstObjectByType<Board>();
+        Character selected = board != null ? board.selectedCharacter : null;
+
+        if (selected != null && selected.hex == this && characterSpriteRenderer.sprite != null && characterSpriteRenderer.sprite != defaultCharacterSprite)
+        {
+            float t = Mathf.PingPong(Time.time * selectedBlinkSpeed, 1f);
+            float alpha = Mathf.Lerp(selectedBlinkMinAlpha, selectedBlinkMaxAlpha, t);
+            SetSpriteAlpha(characterSpriteRenderer, alpha);
+        }
+        else if (selected != null)
+        {
+            SetSpriteAlpha(characterSpriteRenderer, NonSelectedCharacterAlpha);
+        }
+        else
+        {
+            SetSpriteAlpha(characterSpriteRenderer, 1f);
+        }
     }
 
     private string GetPcAlignmentMarkColorHex()

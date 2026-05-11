@@ -1694,6 +1694,7 @@
         {
             "cardId": 1001,
             "name": "Saruman",
+            "characterGroup": "saruman",
             "quote": "The time of the Elves is over. The age of Men, of the Ring, has come. I have chosen wisely — will you?",
             "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 15 on a visible enemy settlement.",
             "type": "Character",

@@ -123,6 +123,7 @@ public class CardData
     public string statusEffect;
     public int procChance;
     public string portraitName;
+    public string characterGroup;
     public string referenceDeckId;
     public int referenceCardId;
     public List<EncounterOptionData> encounterOptions = new();
