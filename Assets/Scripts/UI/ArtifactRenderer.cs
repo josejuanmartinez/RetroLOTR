@@ -11,7 +11,7 @@ public class ArtifactRenderer : MonoBehaviour
 
     public void Initialize(Artifact artifact)
     {
-        string spriteText = $"<sprite name=\"{artifact.GetSpriteString()}\">{artifact.GetSpriteString()}";
+        string spriteText = $"<sprite name=\"{artifact.GetSpriteString()}\">";
         artifactText.text = spriteText;
         hover.Initialize(artifact.GetHoverText(), 8);
     }

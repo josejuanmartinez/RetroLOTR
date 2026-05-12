@@ -118,6 +118,7 @@ public class CardData
     public string action;
     public string spriteName;
     public string region;
+    public string description;
     public string requirementsText;
     public string historyText;
     public string statusEffect;
@@ -352,6 +353,11 @@ public class CardData
         if (grants.Count > 0)
         {
             parts.Add(string.Join(string.Empty, grants));
+        }
+
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            parts.Add($"Reveals hexes and allows founding PCs originally from {PcDescriptionBuilder.FormatDisplayRegionName(name)}.");
         }
 
         return string.Join(" ", parts.Where(part => !string.IsNullOrWhiteSpace(part)));
@@ -598,6 +604,8 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private bool initializeOnStart = true;
     [SerializeField] private string cardsManifestResourcePath = "Cards";
     [SerializeField] private int fallbackHandSize = 5;
+    [Tooltip("Extra vertical offset (pixels) applied to the zoomed card above the default lift. Increase to push the zoom card higher up.")]
+    [SerializeField] private float zoomCardYOffset = 30f;
 
     [Header("Debug")]
     [SerializeField] private bool logInitialization = true;
@@ -624,6 +632,19 @@ public class DeckManager : MonoBehaviour
     private void OnValidate()
     {
         availableStatusEffectIds = Enum.GetNames(typeof(StatusEffectEnum)).ToList();
+        ApplyZoomCardYOffsetToHand();
+    }
+
+    private void ApplyZoomCardYOffsetToHand()
+    {
+        foreach (GameObject go in handCardInstances)
+        {
+            if (go == null) continue;
+            if (go.TryGetComponent<Card>(out Card card))
+            {
+                card.ZoomYOffset = zoomCardYOffset;
+            }
+        }
     }
 
     private void Awake()
@@ -1150,6 +1171,7 @@ public class DeckManager : MonoBehaviour
                     continue;
                 }
 
+                cardComponent.ZoomYOffset = zoomCardYOffset;
                 cardComponent.Initialize(card);
             }
         }

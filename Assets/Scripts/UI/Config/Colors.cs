@@ -26,6 +26,7 @@ public class Colors : SearcherByName
     [FormerlySerializedAs("eventCard")] public Color @event;
     [FormerlySerializedAs("actionCard")] public Color action;
     [FormerlySerializedAs("spellCard")] public Color spell;
+    public Color encounter;
     public Color MAX;
 
     private Dictionary<string, FieldInfo> normalizedLookup;

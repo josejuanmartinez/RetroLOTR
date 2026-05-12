@@ -356,6 +356,17 @@ public class DeckExplorerWindow : EditorWindow
         EditorGUILayout.LabelField("Costs", BuildCostSummary(card));
         EditorGUILayout.LabelField("Grants", BuildGrantSummary(card));
         EditorGUILayout.LabelField("Requirements text", card.requirementsText ?? string.Empty);
+
+        if (card.GetCardType() == CardTypeEnum.Land && !string.IsNullOrWhiteSpace(card.name))
+        {
+            string areaLabel = PcDescriptionBuilder.FormatDisplayRegionName(card.name);
+            EditorGUILayout.LabelField($"Reveals hexes and allows founding PCs originally from {areaLabel}.", EditorStyles.wordWrappedLabel);
+        }
+
+        if (card.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(card.name))
+        {
+            EditorGUILayout.LabelField($"Allows recruiting characters born in {card.name}.", EditorStyles.wordWrappedLabel);
+        }
     }
 
     private void DrawCopyToDeckControls(CardData card)
@@ -2051,6 +2062,12 @@ public class DeckExplorerWindow : EditorWindow
     {
         if (data == null) return string.Empty;
 
+        if (data.GetCardType() == CardTypeEnum.Encounter)
+        {
+            string encounterDesc = string.IsNullOrWhiteSpace(data.description) ? string.Empty : data.description.Trim();
+            return PrefixWithCardType(FormatCardTypeLabel(CardTypeEnum.Encounter), encounterDesc);
+        }
+
         string body = data.GetRenderedDescription(true);
         if (!string.IsNullOrWhiteSpace(body))
         {
@@ -2500,6 +2517,7 @@ public class DeckExplorerWindow : EditorWindow
             CardTypeEnum.Event => "Event",
             CardTypeEnum.Action => "Action",
             CardTypeEnum.Spell => "Spell",
+            CardTypeEnum.Encounter => "Encounter",
             _ => string.Empty
         };
 
@@ -2515,6 +2533,7 @@ public class DeckExplorerWindow : EditorWindow
             CardTypeEnum.Event => "event",
             CardTypeEnum.Action => "action",
             CardTypeEnum.Spell => "spell",
+            CardTypeEnum.Encounter => "encounter",
             _ => null
         };
 

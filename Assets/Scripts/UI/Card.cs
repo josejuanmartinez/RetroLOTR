@@ -46,6 +46,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] private GameObject playIndicator;
     [FormerlySerializedAs("discardButton")]
     [SerializeField] private GameObject shadowObject;
+    [SerializeField] private GameObject discardButton;
     [SerializeField] private TextMeshProUGUI requirementsMessage;
 
     [Header("Prefabs")]
@@ -56,6 +57,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] private float hoverScale = 1.15f;
     [SerializeField] private float hoverSpeed = 10f;
     [SerializeField] private float hoverLiftMultiplier = 0.5f;
+    public float HoverLiftMultiplier { get => hoverLiftMultiplier; set => hoverLiftMultiplier = value; }
+    public float ZoomYOffset { get; set; }
     [SerializeField] private float dragAlpha = 0.6f;
     [SerializeField] private float playDropThresholdY = 200f;
     [SerializeField] private Color requirementsMessageColor = Color.red;
@@ -75,8 +78,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private bool isHovered;
     private bool isDragging;
     private bool hoverSortingRaised;
+    private DiscardButtonHoverTracker discardButtonHover;
     private GameObject dragProxy;
     private GameObject zoomProxy;
+    private Coroutine zoomPopCoroutine;
     private int originalSiblingIndex;
     private Transform originalParent;
     private SelectedCharacterIcon selectedCharacterIcon;
@@ -126,9 +131,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         CreateHitProxy();
         BindLegacyPrefabReferences();
         RestrictRaycastsToRootCard();
+        EnsureDiscardButtonHoverTracker();
 
         if (highlightImage != null) highlightImage.enabled = false;
         if (playIndicator != null) playIndicator.SetActive(false);
+        if (shadowObject != null) shadowObject.SetActive(false);
+        UpdateDiscardButtonState();
 
         activeCards.Add(this);
     }
@@ -244,7 +252,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (cardBackgroundImage == null) cardBackgroundImage = FindImageByName("Border");
         if (highlightImage == null) highlightImage = FindImageByName("TitleBackground");
 
-        if (playIndicator == null) playIndicator = FindChildByName("Discard");
+        if (discardButton == null) discardButton = FindChildByName("Discard");
+        if (playIndicator == null) playIndicator = FindChildByName("PlayIndicator");
         if (shadowObject == null) shadowObject = FindChildByName("Hover");
     }
 
@@ -428,6 +437,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             CardTypeEnum.Event => "Event",
             CardTypeEnum.Action => "Action",
             CardTypeEnum.Spell => "Spell",
+            CardTypeEnum.Encounter => "Encounter",
             _ => string.Empty
         };
 
@@ -442,6 +452,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             CardTypeEnum.Event => "event",
             CardTypeEnum.Action => "action",
             CardTypeEnum.Spell => "spell",
+            CardTypeEnum.Encounter => "encounter",
             _ => null
         };
 
@@ -556,6 +567,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             highlightImage.enabled = isPlayable && isHovered;
         }
+
+        UpdateDiscardButtonState();
     }
 
     private void Update()
@@ -571,11 +584,20 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         UpdateHitProxy();
+
+        if (zoomProxy != null && discardButtonHover != null && discardButtonHover.IsHovered)
+        {
+            DestroyZoomProxy();
+            isHovered = false;
+            if (highlightImage != null) highlightImage.enabled = false;
+            cursorManager?.SetDefaultCursor();
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (isDragging) return;
+        if (discardButtonHover != null && discardButtonHover.IsHovered) return;
         isHovered = true;
         CreateZoomProxy();
         if (highlightImage != null && cardData != null && cardData.isPlayable) highlightImage.enabled = true;
@@ -616,6 +638,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         DestroyZoomProxy();
         isDragging = true;
         isHovered = false;
+        UpdateDiscardButtonState();
         targetScale = originalScale;
         rectTransform.localScale = originalScale;
         AdjustHoverPosition(false);
@@ -659,6 +682,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (!isDragging) return;
         isDragging = false;
+        UpdateDiscardButtonState();
 
         if (cursorManager != null)
         {
@@ -962,6 +986,79 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return game != null ? game.player : null;
     }
 
+    private void UpdateDiscardButtonState()
+    {
+        if (discardButton == null) return;
+        Button btn = discardButton.GetComponent<Button>();
+        if (btn == null) return;
+        btn.interactable = !isDragging && cardData != null && !cardData.IsEncounterCard();
+    }
+
+    public void Discard()
+    {
+        _ = TryDiscardAsync();
+    }
+
+    private async Task<bool> TryDiscardAsync()
+    {
+        if (cardData == null || isDragging) return false;
+
+        EnsureManagersLoaded();
+        if (deckManager == null) return false;
+
+        Leader humanLeader = GetHumanPlayerLeader();
+        if (humanLeader is not PlayableLeader playable) return false;
+
+        Game game = FindFirstObjectByType<Game>();
+        if (game == null || !game.IsPlayerCurrentlyPlaying()) return false;
+
+        bool confirm = await ConfirmationDialog.AskImmediate($"Discard {cardData.name} for a random resource?", "Yes", "No");
+        if (!confirm) return false;
+
+        if (!deckManager.TryDiscardCard(playable, cardData.name, out CardData discarded)) return false;
+
+        GrantRandomResource(playable);
+
+        if (this != null && gameObject != null)
+        {
+            Destroy(gameObject);
+        }
+        return true;
+    }
+
+    private void GrantRandomResource(PlayableLeader leader)
+    {
+        if (leader == null || cardData == null) return;
+
+        string[] resourceNames = { "gold", "timber", "leather", "mounts", "iron", "steel", "mithril" };
+        string resourceName = resourceNames[UnityEngine.Random.Range(0, resourceNames.Length)];
+
+        switch (resourceName)
+        {
+            case "gold": leader.AddGold(1); break;
+            case "timber": leader.AddTimber(1); break;
+            case "leather": leader.AddLeather(1); break;
+            case "mounts": leader.AddMounts(1); break;
+            case "iron": leader.AddIron(1); break;
+            case "steel": leader.AddSteel(1); break;
+            case "mithril": leader.AddMithril(1); break;
+        }
+
+        string message = $"{cardData.name} transformed into {resourceName}";
+        MessageDisplay.ShowMessage(message, Color.yellow);
+    }
+
+    private void EnsureDiscardButtonHoverTracker()
+    {
+        if (discardButton == null) return;
+        if (discardButtonHover != null) return;
+        discardButtonHover = discardButton.GetComponent<DiscardButtonHoverTracker>();
+        if (discardButtonHover == null)
+        {
+            discardButtonHover = discardButton.AddComponent<DiscardButtonHoverTracker>();
+        }
+    }
+
     private void CreateHitProxy()
     {
         if (hitProxyImage != null) return;
@@ -1005,6 +1102,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private void CreateZoomProxy()
     {
         if (zoomProxy != null) return;
+        if (discardButtonHover != null && discardButtonHover.IsHovered) return;
 
         GameObject prefab = dragProxyPrefab != null ? dragProxyPrefab : gameObject;
         zoomProxy = Instantiate(prefab, transform.parent);
@@ -1040,9 +1138,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         float height = proxyRect.rect.height;
         float lift = height * hoverLiftMultiplier;
         proxyRect.pivot = new Vector2(0.5f, 0f);
-        proxyRect.anchoredPosition = originalRect.anchoredPosition + Vector2.up * (lift - originalRect.pivot.y * height);
+        proxyRect.anchoredPosition = originalRect.anchoredPosition + Vector2.up * (lift - originalRect.pivot.y * height + ZoomYOffset);
 
-        proxyRect.localScale = originalScale * hoverScale;
+        proxyRect.localScale = originalScale * 0.85f;
+        if (zoomPopCoroutine != null)
+        {
+            StopCoroutine(zoomPopCoroutine);
+        }
+        zoomPopCoroutine = StartCoroutine(AnimateZoomPop(proxyRect, originalScale * hoverScale));
 
         Canvas proxyCanvas = zoomProxy.GetComponent<Canvas>();
         if (proxyCanvas != null)
@@ -1056,6 +1159,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private void DestroyZoomProxy()
     {
+        if (zoomPopCoroutine != null)
+        {
+            StopCoroutine(zoomPopCoroutine);
+            zoomPopCoroutine = null;
+        }
         if (zoomProxy != null)
         {
             if (Application.isPlaying)
@@ -1064,6 +1172,38 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 DestroyImmediate(zoomProxy);
             zoomProxy = null;
         }
+    }
+
+    private IEnumerator AnimateZoomPop(RectTransform proxyRect, Vector3 targetScale)
+    {
+        float duration = 0.22f;
+        float elapsed = 0f;
+        Vector3 startScale = originalScale * 0.85f;
+
+        while (elapsed < duration)
+        {
+            if (proxyRect == null) yield break;
+            float t = elapsed / duration;
+            float eased = 1f + 2.70158f * Mathf.Pow(t - 1f, 3f) + 1.70158f * Mathf.Pow(t - 1f, 2f);
+            proxyRect.localScale = Vector3.LerpUnclamped(startScale, targetScale * 1.08f, eased);
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        elapsed = 0f;
+        duration = 0.1f;
+        Vector3 overshoot = targetScale * 1.08f;
+        while (elapsed < duration)
+        {
+            if (proxyRect == null) yield break;
+            float t = elapsed / duration;
+            proxyRect.localScale = Vector3.Lerp(overshoot, targetScale, t);
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (proxyRect != null)
+            proxyRect.localScale = targetScale;
     }
 
     private void AdjustHoverPosition(bool hovered)
@@ -1227,7 +1367,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         // Try to consume the card from hand first
         // We use the card name now as the ID
-        bool drawReplacementCard = !TutorialManager.Instance.IsActiveFor(playerLeader);
+        bool drawReplacementCard = false;
         if (!deckManager.TryConsumeActionCard(playerLeader, actionRef, drawReplacementCard, out _, cardData.name))
         {
             return false;
@@ -1261,7 +1401,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         PlayableLeader playerLeader = game != null ? game.player : null;
         if (playerLeader == null) return false;
 
-        bool drawReplacementCard = !TutorialManager.Instance.IsActiveFor(playerLeader);
+        bool drawReplacementCard = false;
         if (!deckManager.TryConsumeCard(playerLeader, cardData.name, drawReplacementCard, out _))
         {
             return false;
@@ -1292,7 +1432,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return Task.FromResult(false);
         }
 
-        bool drawReplacementCard = !TutorialManager.Instance.IsActiveFor(playerLeader);
+        bool drawReplacementCard = false;
         if (!deckManager.TryConsumeCard(playerLeader, cardData.name, drawReplacementCard, out _))
         {
             return Task.FromResult(false);
@@ -1399,5 +1539,20 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         // Army cards represent mustering troops
         return Task.FromResult(false);
+    }
+
+    private class DiscardButtonHoverTracker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    {
+        public bool IsHovered { get; private set; }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            IsHovered = true;
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            IsHovered = false;
+        }
     }
 }

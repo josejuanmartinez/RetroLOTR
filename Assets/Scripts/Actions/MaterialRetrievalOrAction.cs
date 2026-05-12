@@ -256,6 +256,10 @@ public static class PcDescriptionBuilder
         {
             if (sb.Length > 0) sb.Append(" ");
             sb.Append("Can be founded in ").Append(regionName).Append(".");
+            if (!string.IsNullOrWhiteSpace(data.name))
+            {
+                sb.Append(" Allows recruiting characters born in ").Append(data.name).Append(".");
+            }
         }
 
         string body = sb.ToString();

@@ -7971,7 +7971,8 @@ MonoBehaviour:
   - m_GUID: 993822137eb7a1a40a38ff6cb0f829ea
     m_Address: Assets/Art/Cursor/draggableIcon.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 994ea194b42a6ae49af22169d10123c0
     m_Address: Assets/Art/Cards/Characters/Taladhan.jpg
@@ -8826,6 +8827,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a700ef41e799b654992aed8a7f5a7bd5
     m_Address: Assets/Art/Hexes/Tiles/044 2.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a71dd28ca36ae3c499f9f1fd9aa3fe91
+    m_Address: Assets/Art/Cards/Actions/SabotagePort.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9744,7 +9751,8 @@ MonoBehaviour:
   - m_GUID: ba0e0e34f6a27c246b63b7c565d893b3
     m_Address: Assets/Art/Cursor/disabled.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ba1dd9c396b3b5245bd5164eb1e7f270
     m_Address: Assets/Art/Cards/Actions/Events/RoadsideArgument.png
