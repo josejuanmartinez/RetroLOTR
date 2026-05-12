@@ -76,6 +76,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private bool isDragging;
     private bool hoverSortingRaised;
     private GameObject dragProxy;
+    private GameObject zoomProxy;
     private int originalSiblingIndex;
     private Transform originalParent;
     private SelectedCharacterIcon selectedCharacterIcon;
@@ -84,6 +85,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private static DeckManager deckManager;
     private static ActionsManager actionsManager;
     private static Colors colors;
+    private static CursorManager cursorManager;
 
     private void Awake()
     {
@@ -159,6 +161,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private void OnDestroy()
     {
         activeCards.Remove(this);
+        DestroyZoomProxy();
     }
 
     private void Start()
@@ -172,6 +175,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (deckManager == null) deckManager = FindFirstObjectByType<DeckManager>();
         if (actionsManager == null) actionsManager = FindFirstObjectByType<ActionsManager>();
         if (colors == null) colors = FindFirstObjectByType<Colors>();
+        if (cursorManager == null) cursorManager = FindFirstObjectByType<CursorManager>();
     }
 
     public void Initialize(CardData data)
@@ -573,10 +577,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (isDragging) return;
         isHovered = true;
-        SetHoverSorting(true);
-        targetScale = originalScale * hoverScale;
-        AdjustHoverPosition(true);
+        CreateZoomProxy();
         if (highlightImage != null && cardData != null && cardData.isPlayable) highlightImage.enabled = true;
+        if (cursorManager != null)
+        {
+            if (cardData != null && cardData.isPlayable)
+                cursorManager.SetDraggableCursor();
+            else
+                cursorManager.SetDisableCursor();
+        }
         Sounds.Instance?.PlayUiHover();
     }
 
@@ -584,10 +593,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (isDragging) return;
         isHovered = false;
-        targetScale = originalScale;
-        AdjustHoverPosition(false);
-        SetHoverSorting(false);
+        DestroyZoomProxy();
         if (highlightImage != null) highlightImage.enabled = false;
+        cursorManager?.SetDefaultCursor();
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -605,6 +613,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (cardData == null) return;
         if (canvasGroup != null && !canvasGroup.interactable) return;
 
+        DestroyZoomProxy();
         isDragging = true;
         isHovered = false;
         targetScale = originalScale;
@@ -650,6 +659,21 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (!isDragging) return;
         isDragging = false;
+
+        if (cursorManager != null)
+        {
+            if (rectTransform != null && RectTransformUtility.RectangleContainsScreenPoint(rectTransform, eventData.position, eventData.pressEventCamera))
+            {
+                if (cardData != null && cardData.isPlayable)
+                    cursorManager.SetDraggableCursor();
+                else
+                    cursorManager.SetDisableCursor();
+            }
+            else
+            {
+                cursorManager.SetDefaultCursor();
+            }
+        }
 
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;
@@ -976,6 +1000,70 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             sx != 0 ? (-offset.x / sx) - anchorCenterOffset.x : -offset.x,
             sy != 0 ? (-offset.y / sy) - anchorCenterOffset.y : -offset.y
         );
+    }
+
+    private void CreateZoomProxy()
+    {
+        if (zoomProxy != null) return;
+
+        GameObject prefab = dragProxyPrefab != null ? dragProxyPrefab : gameObject;
+        zoomProxy = Instantiate(prefab, transform.parent);
+
+        Card proxyCard = zoomProxy.GetComponent<Card>();
+        if (proxyCard != null)
+        {
+            proxyCard.enabled = false;
+        }
+
+        CanvasGroup proxyGroup = zoomProxy.GetComponent<CanvasGroup>();
+        if (proxyGroup != null)
+        {
+            proxyGroup.blocksRaycasts = false;
+            proxyGroup.interactable = false;
+        }
+
+        LayoutElement proxyLayout = zoomProxy.GetComponent<LayoutElement>();
+        if (proxyLayout != null)
+        {
+            proxyLayout.ignoreLayout = true;
+        }
+
+        RectTransform proxyRect = zoomProxy.GetComponent<RectTransform>();
+        RectTransform originalRect = rectTransform;
+
+        proxyRect.anchorMin = originalRect.anchorMin;
+        proxyRect.anchorMax = originalRect.anchorMax;
+        proxyRect.pivot = originalRect.pivot;
+        proxyRect.sizeDelta = originalRect.sizeDelta;
+        proxyRect.anchoredPosition = originalRect.anchoredPosition;
+
+        float height = proxyRect.rect.height;
+        float lift = height * hoverLiftMultiplier;
+        proxyRect.pivot = new Vector2(0.5f, 0f);
+        proxyRect.anchoredPosition = originalRect.anchoredPosition + Vector2.up * (lift - originalRect.pivot.y * height);
+
+        proxyRect.localScale = originalScale * hoverScale;
+
+        Canvas proxyCanvas = zoomProxy.GetComponent<Canvas>();
+        if (proxyCanvas != null)
+        {
+            proxyCanvas.overrideSorting = true;
+            proxyCanvas.sortingOrder = 1000;
+        }
+
+        zoomProxy.transform.SetAsLastSibling();
+    }
+
+    private void DestroyZoomProxy()
+    {
+        if (zoomProxy != null)
+        {
+            if (Application.isPlaying)
+                Destroy(zoomProxy);
+            else
+                DestroyImmediate(zoomProxy);
+            zoomProxy = null;
+        }
     }
 
     private void AdjustHoverPosition(bool hovered)

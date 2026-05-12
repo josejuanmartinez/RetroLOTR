@@ -646,7 +646,7 @@ MonoBehaviour:
   artifactHover: {fileID: 3726000899118390701}
   spriteRendererLayoutIcon: {fileID: 5707050488477407365, guid: 3684c0112ce62014a842462cbe19e367, type: 3}
   characterClassesIconGrid: {fileID: 523687915249350636}
-  armyIconGrid: {fileID: 8562272294012321577}
+  armyCharactersIconGrid: {fileID: 8562272294012321577}
   terrainType: 0
   terrainTexture: {fileID: 1202935138384858293}
   terrainOrNoneMinimapTexture: {fileID: 8698702104223577937}
@@ -16029,7 +16029,7 @@ GameObject:
   - component: {fileID: 585888745348916050}
   - component: {fileID: 8562272294012321577}
   m_Layer: 6
-  m_Name: ArmiesSpriteRendererLayout
+  m_Name: ArmiesAndCharactersSpriteRendererLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -12,6 +12,7 @@ public class OnHoverTile : MonoBehaviour
     private static HexPathRenderer pathRenderer;
     private static bool isRightMouseDown = false;
     private static Vector2Int currentHoverCoordinates = Vector2Int.one * -1;
+    private static bool movementCursorDisabled = false;
 
     void Start()
     {
@@ -116,6 +117,7 @@ public class OnHoverTile : MonoBehaviour
             if (PopupManager.IsShowing)
             {
                 if(pathRenderer) pathRenderer.HidePath();
+                ResetMovementCursor();
                 return;
             }
             if(pathRenderer) pathRenderer.HidePath();
@@ -124,6 +126,7 @@ public class OnHoverTile : MonoBehaviour
                 Hex hex = board.GetHex(currentHoverCoordinates);
                 if (hex) hex.Unhover();
             }
+            ResetMovementCursor();
             return;
         }
 
@@ -132,26 +135,39 @@ public class OnHoverTile : MonoBehaviour
         {
             isRightMouseDown = rightMouseDown;
 
-            // If button is released, log movement
-            if (!isRightMouseDown && pathRenderer != null && currentHoverCoordinates != Vector2.one * -1)
+            if (!isRightMouseDown)
             {
-                pathRenderer.HidePath();
-                if (board.selectedCharacter != null && board.selectedCharacter.moved < board.selectedCharacter.GetMaxMovement())
-                {
-                    board.Move(board.selectedCharacter, currentHoverCoordinates);
-                } else
+                // Button released
+                if (pathRenderer != null && currentHoverCoordinates != Vector2.one * -1)
                 {
                     pathRenderer.HidePath();
+                    if (board.selectedCharacter != null && board.selectedCharacter.moved < board.selectedCharacter.GetMaxMovement())
+                    {
+                        board.Move(board.selectedCharacter, currentHoverCoordinates);
+                    }
+                    else
+                    {
+                        pathRenderer.HidePath();
+                    }
                 }
-            }
-            else if(board.selectedCharacter != null && board.selectedCharacter.moved < board.selectedCharacter.GetMaxMovement())
-            {
-                // Update path rendering based on new state
-                UpdatePathRendering(board);
+                ResetMovementCursor();
             }
             else
             {
-                pathRenderer.HidePath();
+                // Button pressed down
+                if (board.selectedCharacter != null && board.selectedCharacter.moved < board.selectedCharacter.GetMaxMovement())
+                {
+                    UpdatePathRendering(board);
+                }
+                else
+                {
+                    pathRenderer.HidePath();
+                    if (board.selectedCharacter != null && board.selectedCharacter.moved >= board.selectedCharacter.GetMaxMovement())
+                    {
+                        CursorManager.Instance?.SetDisableCursor();
+                        movementCursorDisabled = true;
+                    }
+                }
             }
         }
     }
@@ -188,6 +204,15 @@ public class OnHoverTile : MonoBehaviour
             pathRenderer.HidePath();
         }
     }
+    private static void ResetMovementCursor()
+    {
+        if (movementCursorDisabled)
+        {
+            CursorManager.Instance?.SetDefaultCursor();
+            movementCursorDisabled = false;
+        }
+    }
+
     private static bool IsPointerOverVisibleUIElement()
     {
         if (EventSystem.current == null)

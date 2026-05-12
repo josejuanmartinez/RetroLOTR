@@ -53,7 +53,7 @@ public class Hex : MonoBehaviour
 
     public GameObject spriteRendererLayoutIcon;
     public SpriteRendererGridLayout characterClassesIconGrid;
-    public SpriteRendererGridLayout armyIconGrid;
+    public SpriteRendererGridLayout armyCharactersIconGrid;
     private Coroutine armyArrangeCoroutine;
     private Coroutine classArrangeCoroutine;
 
@@ -315,12 +315,12 @@ public class Hex : MonoBehaviour
 
     public GameObject GetArmyIconForCommander(Character commander)
     {
-        if (armyIconGrid == null || commander == null) return null;
-        Transform gridTransform = armyIconGrid.transform;
+        if (armyCharactersIconGrid == null || commander == null) return null;
+        Transform gridTransform = armyCharactersIconGrid.transform;
         for (int i = 0; i < gridTransform.childCount; i++)
         {
             GameObject child = gridTransform.GetChild(i).gameObject;
-            ArmyIconManager manager = child.GetComponent<ArmyIconManager>();
+            SpriteRendererIconManager manager = child.GetComponent<SpriteRendererIconManager>();
             if (manager != null && manager.character == commander)
             {
                 return child;
@@ -438,27 +438,55 @@ public class Hex : MonoBehaviour
 
         bool hasArmies = armies.Count > 0;
         bool seen = IsHexSeen();
+        bool hasVisibleCharacters = false;
 
-        if (seen && hasArmies && spriteRendererLayoutIcon != null && armyIconGrid != null)
+        if (seen && spriteRendererLayoutIcon != null && armyCharactersIconGrid != null)
         {
+            PlayableLeader viewer = GetPlayer();
+            bool isScouted = IsScouted(viewer);
+
             for (int i = 0, n = armies.Count; i < n; i++)
             {
                 Army army = armies[i];
                 Character commander = army?.GetCommander();
                 if (commander == null) continue;
 
-                GameObject icon = Instantiate(spriteRendererLayoutIcon, armyIconGrid.transform);
-                ArmyIconManager manager = icon.GetComponent<ArmyIconManager>();
+                GameObject icon = Instantiate(spriteRendererLayoutIcon, armyCharactersIconGrid.transform);
+                SpriteRendererIconManager manager = icon.GetComponent<SpriteRendererIconManager>();
                 if (manager != null)
                 {
                     manager.Initialize(commander);
                 }
             }
+
+            for (int i = 0, n = characters.Count; i < n; i++)
+            {
+                Character ch = characters[i];
+                if (ch == null || ch.killed || ch.hex != this) continue;
+                if (ch.IsArmyCommander()) continue;
+
+                bool isFriendly = IsFriendlyCharacter(ch, viewer);
+                bool canSee = isScouted || isFriendly;
+                if (!canSee) continue;
+
+                hasVisibleCharacters = true;
+                string spriteName = ch.GetOwner() != null
+                    ? ch.GetOwner().GetAlignment().ToString() + "Character"
+                    : "unknownCharacter";
+
+                GameObject icon = Instantiate(spriteRendererLayoutIcon, armyCharactersIconGrid.transform);
+                SpriteRendererIconManager manager = icon.GetComponent<SpriteRendererIconManager>();
+                if (manager != null)
+                {
+                    manager.Initialize(ch, spriteName);
+                }
+            }
+
             if (armyArrangeCoroutine != null) StopCoroutine(armyArrangeCoroutine);
             armyArrangeCoroutine = StartCoroutine(DelayedArrangeArmies());
         }
 
-        SetActiveFast(armyIconGrid != null ? armyIconGrid.gameObject : null, seen && hasArmies);
+        SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, seen && (hasArmies || hasVisibleCharacters));
         UpdatePortIcon();
 
         if (refreshHoverText) RefreshHoverText();
@@ -467,19 +495,19 @@ public class Hex : MonoBehaviour
     private IEnumerator DelayedArrangeArmies()
     {
         yield return null;
-        if (armyIconGrid != null) armyIconGrid.Arrange();
+        if (armyCharactersIconGrid != null) armyCharactersIconGrid.Arrange();
         armyArrangeCoroutine = null;
     }
 
     private void ClearArmyIcons()
     {
-        if (armyIconGrid == null) return;
+        if (armyCharactersIconGrid == null) return;
         if (armyArrangeCoroutine != null)
         {
             StopCoroutine(armyArrangeCoroutine);
             armyArrangeCoroutine = null;
         }
-        Transform gridTransform = armyIconGrid.transform;
+        Transform gridTransform = armyCharactersIconGrid.transform;
         for (int i = gridTransform.childCount - 1; i >= 0; i--)
         {
             Destroy(gridTransform.GetChild(i).gameObject);
@@ -1021,7 +1049,7 @@ public class Hex : MonoBehaviour
             return;
         }
 
-        SetActiveFast(armyIconGrid != null ? armyIconGrid.gameObject : null, false);
+        SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, false);
         SetActiveFast(characterSpriteRenderer.gameObject, false);
         SetActiveFast(artifact, false);
         if (artifactHover) SetActiveFast(artifactHover.gameObject, false);
@@ -1103,7 +1131,7 @@ public class Hex : MonoBehaviour
         {
             if (level <= 0) return;
             GameObject icon = Instantiate(spriteRendererLayoutIcon, characterClassesIconGrid.transform);
-            ArmyIconManager manager = icon.GetComponent<ArmyIconManager>();
+            SpriteRendererIconManager manager = icon.GetComponent<SpriteRendererIconManager>();
             if (manager != null)
             {
                 Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(className, false) : null;

@@ -3,29 +3,42 @@ using UnityEngine.EventSystems;
 
 public class CursorManager : MonoBehaviour
 {
-    public Texture2D uiCursor;
+    public static CursorManager Instance { get; private set; }
+
+    public Texture2D clickableCursor;
+    public Texture2D draggableCursor;
     public Texture2D defaultCursor;
+    public Texture2D waitingCursor;
+    public Texture2D disableCursor;
     public Vector2 hotSpot = Vector2.zero;
 
-    void Update()
+    void Awake()
     {
-        // Check if mouse is over any UI element
-        /*if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        if (Instance != null && Instance != this)
         {
-            if (CursorTextureCurrently(defaultCursor))
-                Cursor.SetCursor(uiCursor, hotSpot, CursorMode.Auto);
+            Destroy(gameObject);
+            return;
         }
-        else
-        {
-            if (CursorTextureCurrently(uiCursor))
-                Cursor.SetCursor(defaultCursor, hotSpot, CursorMode.Auto);
-        }*/
+        Instance = this;
     }
-    /*
-    private bool CursorTextureCurrently(Texture2D tex)
+
+    public void SetDraggableCursor()
     {
-        // There's no direct way to get current cursor texture,
-        // so you can track it manually instead.
-        return true;
-    }*/
+        if (draggableCursor != null)
+            Cursor.SetCursor(draggableCursor, hotSpot, CursorMode.Auto);
+    }
+
+    public void SetDisableCursor()
+    {
+        if (disableCursor != null)
+            Cursor.SetCursor(disableCursor, hotSpot, CursorMode.Auto);
+    }
+
+    public void SetDefaultCursor()
+    {
+        if (defaultCursor != null)
+            Cursor.SetCursor(defaultCursor, hotSpot, CursorMode.Auto);
+        else
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+    }
 }

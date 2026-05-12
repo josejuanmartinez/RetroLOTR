@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class ArmyIconManager : MonoBehaviour
+public class SpriteRendererIconManager : MonoBehaviour
 {
     public TextMeshPro nationText;
     public SpriteRenderer armySprite;
@@ -47,5 +47,14 @@ public class ArmyIconManager : MonoBehaviour
         Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(alignmentEnum.ToString()) : null;
         if (armySprite != null) armySprite.sprite = sprite;
         if (nationText != null) nationText.text = GetInitials(character.GetOwner().GetBiome().nationName);
+    }
+
+    public void Initialize(Character character, string spriteName)
+    {
+        this.character = character;
+        illustrations = FindFirstObjectByType<Illustrations>();
+        Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(spriteName) : null;
+        if (armySprite != null) armySprite.sprite = sprite;
+        if (nationText != null) nationText.text = GetInitials(character.GetOwner()?.GetBiome()?.nationName);
     }
 }

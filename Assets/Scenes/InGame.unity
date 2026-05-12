@@ -854,8 +854,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8481bceb7d45e44d898d0236f582b62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiCursor: {fileID: 2800000, guid: a0390a21577c2ab41942cc44c5bb8af3, type: 3}
-  defaultCursor: {fileID: 2800000, guid: 37b7b36b6c5ca3149a1a12af08ae822b, type: 3}
+  clickableCursor: {fileID: 0}
+  draggableCursor: {fileID: 2800000, guid: 993822137eb7a1a40a38ff6cb0f829ea, type: 3}
+  defaultCursor: {fileID: 0}
+  waitingCursor: {fileID: 0}
+  disableCursor: {fileID: 2800000, guid: ba0e0e34f6a27c246b63b7c565d893b3, type: 3}
   hotSpot: {x: 0, y: 0}
 --- !u!4 &97839868
 Transform:
@@ -1708,8 +1711,12 @@ PrefabInstance:
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 4957997208339764818, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
+      propertyPath: m_text
+      value: New Game
+      objectReference: {fileID: 0}
+    - target: {fileID: 4957997208339764818, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_fontSize
-      value: 21.35
+      value: 29.85
       objectReference: {fileID: 0}
     - target: {fileID: 4957997208339764818, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_fontAsset
@@ -1780,8 +1787,12 @@ PrefabInstance:
       value: 25.93103
       objectReference: {fileID: 0}
     - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
+      propertyPath: m_text
+      value: <sprite name="tutorial"> Tutorial
+      objectReference: {fileID: 0}
+    - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_fontSize
-      value: 22.1
+      value: 28.75
       objectReference: {fileID: 0}
     - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_fontAsset
@@ -1804,9 +1815,17 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+    - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6487237202401463048, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_fontColor32.rgba
       value: 4294967295
@@ -9167,7 +9186,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4845752909459727288, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 0.000022888184
       objectReference: {fileID: 0}
     - target: {fileID: 4868598037499691253, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -15745,11 +15764,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.911782
+      value: 0.9117028
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.911782
+      value: 0.9117028
       objectReference: {fileID: 0}
     - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_Enabled
