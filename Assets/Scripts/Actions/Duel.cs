@@ -96,8 +96,8 @@ public class Duel : CharacterAction
             return;
         }
 
-        float attackerScore = GetDuelScore(attacker);
-        float defenderScore = GetDuelScore(defender);
+        float attackerScore = GetDuelScore(attacker, defender);
+        float defenderScore = GetDuelScore(defender, attacker);
         bool defenderAutoWins = defender.HasDuelSupremacy();
         bool attackerWins = !defenderAutoWins && attackerScore > defenderScore;
         if (!defenderAutoWins && Mathf.Approximately(attackerScore, defenderScore))
@@ -112,7 +112,7 @@ public class Duel : CharacterAction
         int baseWound = Mathf.Clamp(Mathf.RoundToInt(diff * 10f), 0, 100);
         if (baseWound == 0) baseWound = UnityEngine.Random.Range(5, 16);
 
-        int defenseBonus = GetArtifactDefense(loser);
+        int defenseBonus = GetArtifactDefense(loser, winner);
         int wound = Mathf.Max(0, baseWound - defenseBonus * 5);
         int loserHealthBefore = loser.health;
 
@@ -139,8 +139,8 @@ public class Duel : CharacterAction
 
     private void ResolveGuaranteedDefenderWin(Character attacker, Character defender)
     {
-        float attackerScore = GetDuelScore(attacker);
-        float defenderScore = GetDuelScore(defender);
+        float attackerScore = GetDuelScore(attacker, defender);
+        float defenderScore = GetDuelScore(defender, attacker);
         Character winner = defender;
         Character loser = attacker;
 
@@ -148,7 +148,7 @@ public class Duel : CharacterAction
         int baseWound = Mathf.Clamp(Mathf.RoundToInt(diff * 10f), 0, 100);
         if (baseWound == 0) baseWound = UnityEngine.Random.Range(5, 16);
 
-        int defenseBonus = GetArtifactDefense(loser);
+        int defenseBonus = GetArtifactDefense(loser, winner);
         int wound = Mathf.Max(0, baseWound - defenseBonus * 5);
         int loserHealthBefore = loser.health;
 
@@ -182,8 +182,8 @@ public class Duel : CharacterAction
         string winnerName = winner.characterName;
         string loserName = loser.characterName;
         bool fatal = wound >= loserHealthBefore;
-        int winnerArtifactAttack = GetArtifactAttack(winner);
-        int loserArtifactDefense = GetArtifactDefense(loser);
+        int winnerArtifactAttack = GetArtifactAttack(winner, loser);
+        int loserArtifactDefense = GetArtifactDefense(loser, winner);
 
         switch (template)
         {
@@ -240,13 +240,18 @@ public class Duel : CharacterAction
 
     private float GetDuelScore(Character character)
     {
+        return GetDuelScore(character, null);
+    }
+
+    private float GetDuelScore(Character character, Character opponent)
+    {
         if (character == null) return 0f;
         float baseScore = character.GetBaseCommander() * 1f
                           + character.GetBaseMage() * 1f
                           + character.GetBaseAgent() * 0.5f
                           + character.GetBaseEmmissary() * 0.25f;
 
-        float score = baseScore + GetArtifactCombatScore(character);
+        float score = baseScore + GetArtifactCombatScore(character, opponent);
 
         if (character.HasStatusEffect(StatusEffectEnum.Strengthened))
         {
@@ -261,22 +266,37 @@ public class Duel : CharacterAction
         return score;
     }
 
-    private int GetArtifactCombatScore(Character character)
+    private int GetArtifactCombatScore(Character character, Character opponent)
     {
         if (character == null || character.artifacts == null) return 0;
-        return character.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack) + Mathf.Max(0, a.bonusDefense));
+        int score = character.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack) + Mathf.Max(0, a.bonusDefense));
+        if (opponent != null)
+        {
+            score += character.artifacts.Sum(a => a != null ? a.GetAttackBonusVsRace(opponent.race) + a.GetDefenseBonusVsRace(opponent.race) : 0);
+        }
+        return score;
     }
 
-    private int GetArtifactAttack(Character character)
+    private int GetArtifactAttack(Character character, Character opponent)
     {
         if (character == null || character.artifacts == null) return 0;
-        return character.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack));
+        int atk = character.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack));
+        if (opponent != null)
+        {
+            atk += character.artifacts.Sum(a => a != null ? a.GetAttackBonusVsRace(opponent.race) : 0);
+        }
+        return atk;
     }
 
-    private int GetArtifactDefense(Character character)
+    private int GetArtifactDefense(Character character, Character opponent)
     {
         if (character == null || character.artifacts == null) return 0;
-        return character.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense));
+        int def = character.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense));
+        if (opponent != null)
+        {
+            def += character.artifacts.Sum(a => a != null ? a.GetDefenseBonusVsRace(opponent.race) : 0);
+        }
+        return def;
     }
 
     private bool PlayerCanSeeHex(Hex hex)

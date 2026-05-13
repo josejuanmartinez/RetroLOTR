@@ -37,36 +37,8 @@
             "mage": 1,
             "race": 4,
             "artifacts": [
-                {
-                    "artifactName": "Yellow boots",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true,
-                    "spriteString": "boots"
-                },
-                {
-                    "artifactName": "Blue Jacket",
-                    "hidden": false,
-                    "alignment": 2,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HopeChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true,
-                    "spriteString": "flower"
-                }
+                "Yellow boots",
+                "Blue Jacket"
             ],
             "troopType": 0,
             "specialAbilities": [],

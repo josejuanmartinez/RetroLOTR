@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [Serializable]
 public class ArtifactCollection
 {
-	public List<Artifact> artifacts = new ();
+    public List<Artifact> artifacts = new ();
 }
 
 
@@ -12,7 +12,7 @@ public class ArtifactCollection
 public class Artifact
 {
     public string artifactName;
-    public bool hidden = false; 
+    public bool hidden = false;
     public AlignmentEnum alignment = AlignmentEnum.neutral;
     public int commanderBonus = 0;
     public int agentBonus = 0;
@@ -20,13 +20,51 @@ public class Artifact
     public int mageBonus = 0;
     public int bonusAttack = 0;
     public int bonusDefense = 0;
+
+    // Legacy passive system — kept for backward compatibility with runtime-created artifacts
     public string passiveEffectId = "";
     public int passiveEffectValue = 0;
+
     public bool transferable = true;
     public string spriteString = "";
 
+    // ---- New deterministic stat fields ----
+    public int healPerTurn = 0;
+    public int movementBonus = 0;
+    public bool ignoreTerrainMovementPenalty = false;
+    public bool grantsHasteAtSea = false;
+    public int autoScoutRadius = 0;
+    public int detectionEvasion = 0;
+
+    public string attackBonusVsRace = "";
+    public int attackBonusVsRaceValue = 0;
+    public string attackBonusVsTroopType = "";
+    public int attackBonusVsTroopTypeValue = 0;
+
+    public string defenseBonusVsRace = "";
+    public int defenseBonusVsRaceValue = 0;
+    public string defenseBonusVsTroopType = "";
+    public int defenseBonusVsTroopTypeValue = 0;
+
+    public int armyAttackStrengthBonus = 0;
+    public int armyDefenseStrengthBonus = 0;
+    public int enemyArmyDefensePenaltySameHex = 0;
+
+    public int recruitBonusMenAtArms = 0;
+    public int scryAreaBonus = 0;
+    public int scryArtifactBonus = 0;
+
+    public string negativeStatusImmunity = "";
+    public int negativeStatusDurationReduction = 0;
+    public int negativeStatusDamageReduction = 0;
+    public int positiveStatusDurationBonus = 0;
+    public int positiveStatusEffectBonus = 0;
+
+    public bool grantsEnvironmentalImmunity = false;
+    // ----------------------------------------
+
     public const int OppositeAlignmentHealthPenalty = 10;
-    
+
     public string GetSpriteString()
     {
         return spriteString != "" ? spriteString : "artifact";
@@ -46,7 +84,7 @@ public class Artifact
     public string GetHoverText()
     {
         List<string> sb = new() {$"<sprite name=\"{GetSpriteString()}\">{GetSpriteString()}<u>{artifactName}</u>"};
-        
+
         List<string> sbDetails = BuildMechanicalDetails();
         if (sbDetails.Count > 0)
         {
@@ -66,351 +104,219 @@ public class Artifact
         if (bonusAttack > 0) details.Add($"+{bonusAttack} attack");
         if (bonusDefense > 0) details.Add($"+{bonusDefense} defense");
 
-        string passiveDetail = GetPassiveEffectDescription();
-        if (!string.IsNullOrWhiteSpace(passiveDetail))
-        {
-            details.Add(passiveDetail);
-        }
+        // New deterministic stats
+        if (healPerTurn > 0) details.Add($"heals {healPerTurn} each turn");
+        if (movementBonus > 0) details.Add($"+{movementBonus} movement");
+        if (ignoreTerrainMovementPenalty) details.Add("ignores terrain movement penalties");
+        if (grantsHasteAtSea) details.Add("grants Haste at sea");
+        if (autoScoutRadius > 0) details.Add($"auto-scouts radius {autoScoutRadius}");
+        if (detectionEvasion > 0) details.Add($"+{detectionEvasion * 10}% harder to detect");
+
+        if (!string.IsNullOrWhiteSpace(attackBonusVsRace) && attackBonusVsRaceValue > 0)
+            details.Add($"+{attackBonusVsRaceValue} attack vs {attackBonusVsRace}");
+        if (!string.IsNullOrWhiteSpace(attackBonusVsTroopType) && attackBonusVsTroopTypeValue > 0)
+            details.Add($"+{attackBonusVsTroopTypeValue} attack vs {attackBonusVsTroopType}");
+
+        if (!string.IsNullOrWhiteSpace(defenseBonusVsRace) && defenseBonusVsRaceValue > 0)
+            details.Add($"+{defenseBonusVsRaceValue} defense vs {defenseBonusVsRace}");
+        if (!string.IsNullOrWhiteSpace(defenseBonusVsTroopType) && defenseBonusVsTroopTypeValue > 0)
+            details.Add($"+{defenseBonusVsTroopTypeValue} defense vs {defenseBonusVsTroopType}");
+
+        if (armyAttackStrengthBonus > 0) details.Add($"+{armyAttackStrengthBonus} army attack");
+        if (armyDefenseStrengthBonus > 0) details.Add($"+{armyDefenseStrengthBonus} army defense");
+        if (enemyArmyDefensePenaltySameHex > 0) details.Add($"-{enemyArmyDefensePenaltySameHex} enemy army defense in same hex");
+
+        if (recruitBonusMenAtArms > 0) details.Add($"+{recruitBonusMenAtArms} men-at-arms recruited");
+        if (scryAreaBonus > 0) details.Add($"+{scryAreaBonus} Scry Area range");
+        if (scryArtifactBonus > 0) details.Add($"+{scryArtifactBonus} Find Artifact");
+
+        if (!string.IsNullOrWhiteSpace(negativeStatusImmunity))
+            details.Add($"immune to <sprite name=\"{negativeStatusImmunity.ToLower()}\">{negativeStatusImmunity}");
+        if (negativeStatusDurationReduction > 0) details.Add($"-{negativeStatusDurationReduction} negative status duration");
+        if (negativeStatusDamageReduction > 0) details.Add($"-{negativeStatusDamageReduction} negative status damage");
+        if (positiveStatusDurationBonus > 0) details.Add($"+{positiveStatusDurationBonus} positive status duration");
+        if (positiveStatusEffectBonus > 0) details.Add($"+{positiveStatusEffectBonus} positive status healing");
+
+        if (grantsEnvironmentalImmunity) details.Add("immune to negative environmental cards");
 
         if (!transferable) details.Add("non-transferable");
         return details;
     }
 
-    private string GetPassiveEffectDescription()
-    {
-        if (string.IsNullOrWhiteSpace(passiveEffectId)) return null;
+    // ---- Typed getters (new fields only) ----
 
-        return passiveEffectId switch
-        {
-            "HealPerTurn" => $"heals {Math.Max(0, passiveEffectValue)} each turn",
-            "FindArtifactDifficultyReduction" => $"-{Math.Max(0, passiveEffectValue)} difficulty to Find Artifact",
-            "ArmyAttackStrengthBonus" => $"+{Math.Max(0, passiveEffectValue)} army attack",
-            "ArmyDefenseStrengthBonus" => $"+{Math.Max(0, passiveEffectValue)} army defense",
-            "EnemyArmyDefensePenaltySameHex" => $"-{Math.Max(0, passiveEffectValue)} enemy army defense in same hex",
-            "ArmySuccessfulAttackBurningChance" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance to inflict Burning after a successful army attack",
-            "EnvironmentalImmunity" => "immune to negative environmental cards",
-            "RevealHiddenEnemyPcOnOccupiedHex" => "reveals a hidden enemy PC on the occupied hex",
-            "HopeChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to gain Hope",
-            "ForestHiddenChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to become Hidden in forests",
-            "AlliedPcMoraleChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to raise allied PC loyalty",
-            "HexEnemyFearChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to inflict Fear on an enemy in the hex",
-            "HexEnemyDespairChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to inflict Despair on an enemy in the hex",
-            "HexEnemyFearAndDespairChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to inflict Fear and Despair on an enemy in the hex",
-            "SelfDespairChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to suffer Despair",
-            "ArkenstoneGoldAndDespair" => "+10% gold chance each turn, but 5% chance each turn to suffer Despair",
-            "RandomHexRevealChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to reveal a random hex",
-            "HasteAtSea" => "grants Haste at sea",
-            "SelfFearAndDespairCleanseChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to cleanse Fear and Despair",
-            "HexEnemyBurningChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to inflict Burning on an enemy in the hex",
-            "HexEnemyHaltChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to inflict Halted on an enemy in the hex",
-            "HexEnemyPoisonChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to inflict Poisoned on an enemy in the hex",
-            "MountsChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to gain +1 <sprite name=\"mounts\">",
-            "HasteChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to gain Haste",
-            "GoldChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to gain +1 <sprite name=\"gold\">",
-            "HideOccupiedPcWhilePresent" => "hides the occupied PC while present",
-            "BlockEnemyCharactersOnHex" => "blocks enemy characters on this hex",
-            "EncouragedChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to gain Courage",
-            "LiquourCourageAndSleep" => "15% chance each turn to gain Courage, 5% chance each turn to fall asleep",
-            "BlockedSelfChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to become Blocked",
-            "FreePeopleNonMenHaltChancePerTurn" => $"{Math.Clamp(passiveEffectValue, 0, 100)}% chance each turn to Halt non-Man Free People enemies in the hex",
-            _ => HumanizePassiveEffectId(passiveEffectId, passiveEffectValue)
-        };
+    public int GetHealPerTurn()
+    {
+        return Math.Max(0, healPerTurn);
     }
 
-    private static string HumanizePassiveEffectId(string effectId, int effectValue)
+    public int GetMovementBonus()
     {
-        if (string.IsNullOrWhiteSpace(effectId)) return null;
-
-        List<char> chars = new(effectId.Length + 4);
-        for (int i = 0; i < effectId.Length; i++)
-        {
-            char current = effectId[i];
-            if (i > 0 && char.IsUpper(current) && !char.IsUpper(effectId[i - 1]))
-            {
-                chars.Add(' ');
-            }
-            chars.Add(current);
-        }
-
-        string label = new string(chars.ToArray()).Trim();
-        return effectValue > 0 ? $"{label} ({effectValue})" : label;
+        return Math.Max(0, movementBonus);
     }
 
-    public int GetPassiveHealPerTurn()
+    public bool GetIgnoreTerrainMovementPenalty()
     {
-        if (string.Equals(passiveEffectId, "HealPerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Max(0, passiveEffectValue);
-        }
+        return ignoreTerrainMovementPenalty;
+    }
 
+    public int GetAutoScoutRadius()
+    {
+        return Math.Max(0, autoScoutRadius);
+    }
+
+    public int GetDetectionEvasion()
+    {
+        return Math.Max(0, detectionEvasion);
+    }
+
+    public int GetAttackBonusVsRace(RacesEnum race)
+    {
+        if (attackBonusVsRaceValue > 0 && string.Equals(attackBonusVsRace, race.ToString(), StringComparison.OrdinalIgnoreCase))
+            return attackBonusVsRaceValue;
         return 0;
     }
 
+    public int GetAttackBonusVsTroopType(TroopsTypeEnum troopType)
+    {
+        if (attackBonusVsTroopTypeValue > 0 && string.Equals(attackBonusVsTroopType, troopType.ToString(), StringComparison.OrdinalIgnoreCase))
+            return attackBonusVsTroopTypeValue;
+        return 0;
+    }
+
+    public int GetDefenseBonusVsRace(RacesEnum race)
+    {
+        if (defenseBonusVsRaceValue > 0 && string.Equals(defenseBonusVsRace, race.ToString(), StringComparison.OrdinalIgnoreCase))
+            return defenseBonusVsRaceValue;
+        return 0;
+    }
+
+    public int GetDefenseBonusVsTroopType(TroopsTypeEnum troopType)
+    {
+        if (defenseBonusVsTroopTypeValue > 0 && string.Equals(defenseBonusVsTroopType, troopType.ToString(), StringComparison.OrdinalIgnoreCase))
+            return defenseBonusVsTroopTypeValue;
+        return 0;
+    }
+
+    public int GetRecruitBonusMenAtArms()
+    {
+        return Math.Max(0, recruitBonusMenAtArms);
+    }
+
+    public int GetScryAreaBonus()
+    {
+        return Math.Max(0, scryAreaBonus);
+    }
+
+    public int GetScryArtifactBonus()
+    {
+        return Math.Max(0, scryArtifactBonus);
+    }
+
+    public bool GetNegativeStatusImmunity(StatusEffectEnum effect)
+    {
+        return !string.IsNullOrWhiteSpace(negativeStatusImmunity)
+            && string.Equals(negativeStatusImmunity, effect.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    public int GetNegativeStatusDurationReduction()
+    {
+        return Math.Max(0, negativeStatusDurationReduction);
+    }
+
+    public int GetNegativeStatusDamageReduction()
+    {
+        return Math.Max(0, negativeStatusDamageReduction);
+    }
+
+    public int GetPositiveStatusDurationBonus()
+    {
+        return Math.Max(0, positiveStatusDurationBonus);
+    }
+
+    public int GetPositiveStatusEffectBonus()
+    {
+        return Math.Max(0, positiveStatusEffectBonus);
+    }
+
+    // ---- Remaining typed getters ----
+
     public int GetActionDifficultyReduction(string actionClassName)
     {
-        if (string.Equals(passiveEffectId, "FindArtifactDifficultyReduction", StringComparison.OrdinalIgnoreCase)
-            && string.Equals(actionClassName, "FindArtifact", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Max(0, passiveEffectValue);
-        }
-
+        if (scryArtifactBonus > 0 && string.Equals(actionClassName, "FindArtifact", StringComparison.OrdinalIgnoreCase))
+            return scryArtifactBonus;
         return 0;
     }
 
     public int GetArmyAttackStrengthBonus()
     {
-        if (string.Equals(passiveEffectId, "ArmyAttackStrengthBonus", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Max(0, passiveEffectValue);
-        }
-
-        return 0;
+        return Math.Max(0, armyAttackStrengthBonus);
     }
 
     public int GetArmyDefenseStrengthBonus()
     {
-        if (string.Equals(passiveEffectId, "ArmyDefenseStrengthBonus", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Max(0, passiveEffectValue);
-        }
-
-        return 0;
+        return Math.Max(0, armyDefenseStrengthBonus);
     }
 
     public int GetEnemyArmyDefensePenaltySameHex()
     {
-        if (string.Equals(passiveEffectId, "EnemyArmyDefensePenaltySameHex", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Max(0, passiveEffectValue);
-        }
-
-        return 0;
-    }
-
-    public int GetArmySuccessfulAttackBurningChancePercent()
-    {
-        if (string.Equals(passiveEffectId, "ArmySuccessfulAttackBurningChance", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
+        return Math.Max(0, enemyArmyDefensePenaltySameHex);
     }
 
     public bool GrantsEnvironmentalImmunity()
     {
-        return string.Equals(passiveEffectId, "EnvironmentalImmunity", StringComparison.OrdinalIgnoreCase);
-    }
-
-    public bool RevealsHiddenEnemyPcOnOccupiedHex()
-    {
-        return string.Equals(passiveEffectId, "RevealHiddenEnemyPcOnOccupiedHex", StringComparison.OrdinalIgnoreCase);
-    }
-
-    public int GetHopeChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "HopeChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetForestHiddenChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "ForestHiddenChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetAlliedPcMoraleChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "AlliedPcMoraleChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetHexEnemyFearChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "HexEnemyFearChancePerTurn", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(passiveEffectId, "HexEnemyFearAndDespairChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetHexEnemyDespairChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "HexEnemyDespairChancePerTurn", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(passiveEffectId, "HexEnemyFearAndDespairChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetSelfDespairChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "SelfDespairChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        if (string.Equals(passiveEffectId, "ArkenstoneGoldAndDespair", StringComparison.OrdinalIgnoreCase))
-        {
-            return 5;
-        }
-
-        return 0;
-    }
-
-    public int GetRandomHexRevealChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "RandomHexRevealChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
+        return grantsEnvironmentalImmunity;
     }
 
     public bool GrantsHasteAtSea()
     {
-        return string.Equals(passiveEffectId, "HasteAtSea", StringComparison.OrdinalIgnoreCase);
+        return grantsHasteAtSea;
     }
 
-    public int GetSelfFearAndDespairCleanseChancePerTurnPercent()
+    public Artifact Clone()
     {
-        if (string.Equals(passiveEffectId, "SelfFearAndDespairCleanseChancePerTurn", StringComparison.OrdinalIgnoreCase))
+        if (this == null) return null;
+        return new Artifact
         {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetHexEnemyBurningChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "HexEnemyBurningChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetHexEnemyHaltChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "HexEnemyHaltChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetHexEnemyPoisonChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "HexEnemyPoisonChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetMountsChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "MountsChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetHasteChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "HasteChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
-    }
-
-    public int GetGoldChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "GoldChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        if (string.Equals(passiveEffectId, "ArkenstoneGoldAndDespair", StringComparison.OrdinalIgnoreCase))
-        {
-            return 10;
-        }
-
-        return 0;
-    }
-
-    public bool HidesOccupiedPcWhilePresent()
-    {
-        return string.Equals(passiveEffectId, "HideOccupiedPcWhilePresent", StringComparison.OrdinalIgnoreCase);
-    }
-
-    public bool BlocksEnemyCharactersOnHex()
-    {
-        return string.Equals(passiveEffectId, "BlockEnemyCharactersOnHex", StringComparison.OrdinalIgnoreCase);
-    }
-
-    public int GetEncouragedChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "EncouragedChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        if (string.Equals(passiveEffectId, "LiquourCourageAndSleep", StringComparison.OrdinalIgnoreCase))
-        {
-            return 15;
-        }
-
-        return 0;
-    }
-
-    public int GetBlockedSelfChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "BlockedSelfChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        if (string.Equals(passiveEffectId, "LiquourCourageAndSleep", StringComparison.OrdinalIgnoreCase))
-        {
-            return 5;
-        }
-
-        return 0;
-    }
-
-    public int GetFreePeopleNonMenHaltChancePerTurnPercent()
-    {
-        if (string.Equals(passiveEffectId, "FreePeopleNonMenHaltChancePerTurn", StringComparison.OrdinalIgnoreCase))
-        {
-            return Math.Clamp(passiveEffectValue, 0, 100);
-        }
-
-        return 0;
+            artifactName = this.artifactName,
+            hidden = this.hidden,
+            alignment = this.alignment,
+            commanderBonus = this.commanderBonus,
+            agentBonus = this.agentBonus,
+            emmissaryBonus = this.emmissaryBonus,
+            mageBonus = this.mageBonus,
+            bonusAttack = this.bonusAttack,
+            bonusDefense = this.bonusDefense,
+            passiveEffectId = this.passiveEffectId,
+            passiveEffectValue = this.passiveEffectValue,
+            transferable = this.transferable,
+            spriteString = this.spriteString,
+            healPerTurn = this.healPerTurn,
+            movementBonus = this.movementBonus,
+            ignoreTerrainMovementPenalty = this.ignoreTerrainMovementPenalty,
+            grantsHasteAtSea = this.grantsHasteAtSea,
+            autoScoutRadius = this.autoScoutRadius,
+            detectionEvasion = this.detectionEvasion,
+            attackBonusVsRace = this.attackBonusVsRace,
+            attackBonusVsRaceValue = this.attackBonusVsRaceValue,
+            attackBonusVsTroopType = this.attackBonusVsTroopType,
+            attackBonusVsTroopTypeValue = this.attackBonusVsTroopTypeValue,
+            defenseBonusVsRace = this.defenseBonusVsRace,
+            defenseBonusVsRaceValue = this.defenseBonusVsRaceValue,
+            defenseBonusVsTroopType = this.defenseBonusVsTroopType,
+            defenseBonusVsTroopTypeValue = this.defenseBonusVsTroopTypeValue,
+            armyAttackStrengthBonus = this.armyAttackStrengthBonus,
+            armyDefenseStrengthBonus = this.armyDefenseStrengthBonus,
+            enemyArmyDefensePenaltySameHex = this.enemyArmyDefensePenaltySameHex,
+            recruitBonusMenAtArms = this.recruitBonusMenAtArms,
+            scryAreaBonus = this.scryAreaBonus,
+            scryArtifactBonus = this.scryArtifactBonus,
+            negativeStatusImmunity = this.negativeStatusImmunity,
+            negativeStatusDurationReduction = this.negativeStatusDurationReduction,
+            negativeStatusDamageReduction = this.negativeStatusDamageReduction,
+            positiveStatusDurationBonus = this.positiveStatusDurationBonus,
+            positiveStatusEffectBonus = this.positiveStatusEffectBonus,
+            grantsEnvironmentalImmunity = this.grantsEnvironmentalImmunity
+        };
     }
 }

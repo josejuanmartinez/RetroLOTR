@@ -12,7 +12,6 @@ public class LeaderVariantConfig
 {
     public string variantId;
     public string displayName;
-    public string nationName;
     public string description;
     public string deckIdentity;
     public string subdeckId;
@@ -23,6 +22,7 @@ public class LeaderVariantConfig
 public class LeaderBiomeConfig: BiomeConfig
 {
     public string nationName;
+    public string nationInitials;
     public string description;
     public string deckIdentity;
     public string subdeckId;
@@ -42,7 +42,7 @@ public class LeaderBiomeConfig: BiomeConfig
     public bool startsWithPort;
 
     public List<BiomeConfig> startingCharacters = new();
-    public List<Artifact> tutorialArtifacts = new();
+    public List<string> tutorialArtifacts = new();
     public List<string> tutorialAnchors = new();
 
     public List<string> newCharacters = new();

@@ -1464,7 +1464,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 commander = cardData.commander,
                 agent = cardData.agent,
                 emmissary = cardData.emmissary,
-                mage = cardData.mage
+                mage = cardData.mage,
+                artifacts = cardData.artifacts != null ? new List<string>(cardData.artifacts) : new List<string>()
             };
 
             Character newCharacter = instantiator.InstantiateCharacter(playerLeader, hex, config);

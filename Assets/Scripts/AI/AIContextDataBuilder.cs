@@ -218,8 +218,7 @@ public static class AIContextDataBuilder
     private static float CalculateNationArtifacts(PlayableLeader leader)
     {
         if (leader == null) return 0f;
-        Game game = GameObject.FindFirstObjectByType<Game>();
-        float totalArtifacts = game != null ? game.artifacts.Count * 1f : 1f;
+        float totalArtifacts = ArtifactRepository.Count * 1f;
         return leader.controlledCharacters.Sum(ch => ch != null ? ch.artifacts.Count * 1f : 0f) / Mathf.Max(1f, totalArtifacts);
     }
 

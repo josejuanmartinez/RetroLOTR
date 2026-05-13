@@ -16,7 +16,7 @@ public class BiomeConfig
     public int emmissary = 0;
     public int mage = 0;
 
-    public List<Artifact> artifacts = new ();
+    public List<string> artifacts = new ();
     public int startingArmySize = 0;
     public int startingWarships = 0;
     public TroopsTypeEnum preferedTroopType = TroopsTypeEnum.ma;

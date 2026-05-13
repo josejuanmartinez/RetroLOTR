@@ -37,51 +37,9 @@
             "mage": 0,
             "race": 0,
             "artifacts": [
-                {
-                    "artifactName": "Herugrim",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "sword"
-                },
-                {
-                    "artifactName": "Golden Armor of Rohan",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 1,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "armor"
-                },
-                {
-                    "artifactName": "Snowmane",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true,
-                    "spriteString": "hc"
-                }
+                "Herugrim",
+                "Golden Armor of Rohan",
+                "Snowmane"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -2195,21 +2153,7 @@
             "mage": 0,
             "race": 13,
             "artifacts": [
-                {
-                    "artifactName": "High Pass Toll",
-                    "hidden": false,
-                    "alignment": 2,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HexEnemyHaltChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": false,
-                    "spriteString": "gold"
-                }
+                "High Pass Toll"
             ],
             "troopType": 0,
             "specialAbilities": [],

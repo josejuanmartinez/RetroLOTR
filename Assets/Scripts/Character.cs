@@ -147,6 +147,17 @@ public class Character : MonoBehaviour
     {
         if (!awaken) Awake();
         this.characterBiome = characterBiome;
+
+        List<Artifact> resolvedArtifacts = new();
+        if (characterBiome.artifacts != null)
+        {
+            foreach (string artifactName in characterBiome.artifacts)
+            {
+                Artifact artifact = ArtifactRepository.GetByName(artifactName);
+                if (artifact != null) resolvedArtifacts.Add(artifact);
+            }
+        }
+
         Initialize(
             leader, 
             characterBiome.alignment, 
@@ -158,7 +169,7 @@ public class Character : MonoBehaviour
             characterBiome.mage, 
             characterBiome.race, 
             characterBiome.sex,
-            characterBiome.artifacts,
+            resolvedArtifacts,
             characterBiome.startingArmySize,
             characterBiome.preferedTroopType,
             characterBiome.startingWarships,
@@ -311,7 +322,24 @@ public class Character : MonoBehaviour
             InitializeStatusEffects();
         }
 
+        // Artifact immunity check
+        if (IsNegativeStatus(effect) && IsImmuneToStatusEffect(effect))
+            return;
+
         turns = GetNormalizedStatusTurns(effect, turns);
+
+        // Artifact duration modifiers
+        if (IsNegativeStatus(effect))
+        {
+            int reduction = GetTotalNegativeStatusDurationReduction();
+            turns = Mathf.Max(1, turns - reduction);
+        }
+        else if (IsPositiveStatus(effect))
+        {
+            int bonus = GetTotalPositiveStatusDurationBonus();
+            turns += bonus;
+        }
+
         if (IsEncouraged() && IsBlockedByEncouraged(effect)) return;
         if (effect == StatusEffectEnum.Haste && HasStatusEffect(StatusEffectEnum.Frozen)) return;
 
@@ -354,6 +382,16 @@ public class Character : MonoBehaviour
             InitializeStatusEffects();
         }
 
+        // Detection evasion: resist attempts to clear Hidden status
+        if (effect == StatusEffectEnum.Hidden && HasStatusEffect(StatusEffectEnum.Hidden))
+        {
+            int evasion = GetTotalDetectionEvasion();
+            if (evasion > 0 && UnityEngine.Random.Range(0, 100) < evasion * 10)
+            {
+                return;
+            }
+        }
+
         statusEffectTurns[effect] = 0;
         statusEffects?.Remove(effect);
         ResetStatusSpecialState(effect);
@@ -389,8 +427,9 @@ public class Character : MonoBehaviour
         }
         if (HasStatusEffect(StatusEffectEnum.Hope) && health < 100)
         {
-            health = Mathf.Min(100, health + 5);
-            MessageDisplayNoUI.ShowMessage(hex, this, "Hope restores +5 health.", Color.green);
+            int bonus = GetTotalPositiveStatusEffectBonus();
+            health = Mathf.Min(100, health + 5 + bonus);
+            MessageDisplayNoUI.ShowMessage(hex, this, $"Hope restores +{5 + bonus} health.", Color.green);
         }
 
         ApplyArtifactPassiveEffects();
@@ -663,6 +702,19 @@ public class Character : MonoBehaviour
             MovementType.ArmyCommanderCavalryOnly => AdjustMovementByRace(FindFirstObjectByType<Game>().cavalryMovement, isInWater),
             _ => AdjustMovementByRace(FindFirstObjectByType<Game>().characterMovement, isInWater)
         };
+
+        // Artifact movement bonuses
+        if (artifacts != null)
+        {
+            for (int i = 0; i < artifacts.Count; i++)
+            {
+                Artifact a = artifacts[i];
+                if (a == null) continue;
+                baseMovement += a.GetMovementBonus();
+                if (isInWater && a.GrantsHasteAtSea())
+                    baseMovement += 2;
+            }
+        }
 
         if (HasStatusEffect(StatusEffectEnum.Haste))
         {
@@ -1109,16 +1161,9 @@ public class Character : MonoBehaviour
         return artifacts.Any(a => a != null && a.GrantsEnvironmentalImmunity());
     }
 
-    public int GetArmySuccessfulAttackBurningChancePercent()
-    {
-        if (artifacts == null || artifacts.Count == 0) return 0;
-        return artifacts.Sum(a => a != null ? a.GetArmySuccessfulAttackBurningChancePercent() : 0);
-    }
-
     public bool HidesOccupiedPcWithArtifact()
     {
-        if (artifacts == null || artifacts.Count == 0) return false;
-        return artifacts.Any(a => a != null && a.HidesOccupiedPcWhilePresent());
+        return false;
     }
 
     public static void RefreshArtifactPcVisibilityForHex(Hex hex)
@@ -1147,6 +1192,124 @@ public class Character : MonoBehaviour
         pc.SetArtifactOccupancyHidden(shouldHide);
         hex.RefreshVisibilityRendering();
     }
+
+    // ---- New artifact stat helpers ----
+
+    public int GetTotalDetectionEvasion()
+    {
+        if (artifacts == null || artifacts.Count == 0) return 0;
+        int total = 0;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null) total += artifacts[i].GetDetectionEvasion();
+        return total;
+    }
+
+    public bool GetIgnoreTerrainMovementPenalty()
+    {
+        if (artifacts == null || artifacts.Count == 0) return false;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null && artifacts[i].GetIgnoreTerrainMovementPenalty())
+                return true;
+        return false;
+    }
+
+    public int GetTotalNegativeStatusDurationReduction()
+    {
+        if (artifacts == null || artifacts.Count == 0) return 0;
+        int total = 0;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null) total += artifacts[i].GetNegativeStatusDurationReduction();
+        return total;
+    }
+
+    public int GetTotalPositiveStatusDurationBonus()
+    {
+        if (artifacts == null || artifacts.Count == 0) return 0;
+        int total = 0;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null) total += artifacts[i].GetPositiveStatusDurationBonus();
+        return total;
+    }
+
+    public int GetTotalNegativeStatusDamageReduction()
+    {
+        if (artifacts == null || artifacts.Count == 0) return 0;
+        int total = 0;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null) total += artifacts[i].GetNegativeStatusDamageReduction();
+        return total;
+    }
+
+    public int GetTotalPositiveStatusEffectBonus()
+    {
+        if (artifacts == null || artifacts.Count == 0) return 0;
+        int total = 0;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null) total += artifacts[i].GetPositiveStatusEffectBonus();
+        return total;
+    }
+
+    public bool IsImmuneToStatusEffect(StatusEffectEnum effect)
+    {
+        if (artifacts == null || artifacts.Count == 0) return false;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null && artifacts[i].GetNegativeStatusImmunity(effect))
+                return true;
+        return false;
+    }
+
+    public int GetTotalRecruitBonusMenAtArms()
+    {
+        if (artifacts == null || artifacts.Count == 0) return 0;
+        int total = 0;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null) total += artifacts[i].GetRecruitBonusMenAtArms();
+        return total;
+    }
+
+    public int GetTotalScryAreaBonus()
+    {
+        if (artifacts == null || artifacts.Count == 0) return 0;
+        int total = 0;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null) total += artifacts[i].GetScryAreaBonus();
+        return total;
+    }
+
+    public int GetTotalScryArtifactBonus()
+    {
+        if (artifacts == null || artifacts.Count == 0) return 0;
+        int total = 0;
+        for (int i = 0; i < artifacts.Count; i++)
+            if (artifacts[i] != null) total += artifacts[i].GetScryArtifactBonus();
+        return total;
+    }
+
+    private static bool IsNegativeStatus(StatusEffectEnum effect)
+    {
+        return effect == StatusEffectEnum.Halted
+            || effect == StatusEffectEnum.Poisoned
+            || effect == StatusEffectEnum.Burning
+            || effect == StatusEffectEnum.Frozen
+            || effect == StatusEffectEnum.Blocked
+            || effect == StatusEffectEnum.Despair
+            || effect == StatusEffectEnum.Fear
+            || effect == StatusEffectEnum.Bleeding
+            || effect == StatusEffectEnum.MorgulTouch;
+    }
+
+    private static bool IsPositiveStatus(StatusEffectEnum effect)
+    {
+        return effect == StatusEffectEnum.Encouraged
+            || effect == StatusEffectEnum.Hope
+            || effect == StatusEffectEnum.Haste
+            || effect == StatusEffectEnum.Hidden
+            || effect == StatusEffectEnum.ArcaneInsight
+            || effect == StatusEffectEnum.Strengthened
+            || effect == StatusEffectEnum.Fortified
+            || effect == StatusEffectEnum.DuelSupremacy;
+    }
+    // -----------------------------------
 
     private void TickDoubledByTurns()
     {
@@ -1325,243 +1488,26 @@ public class Character : MonoBehaviour
             Artifact artifact = artifacts[i];
             if (artifact == null) continue;
 
-            if (artifact.HidesOccupiedPcWhilePresent())
+            int heal = artifact.GetHealPerTurn();
+            if (heal > 0 && this.health < 100)
             {
-                RefreshArtifactPcVisibilityForHex(hex);
-            }
-
-            if (artifact.BlocksEnemyCharactersOnHex() && hex != null && hex.characters != null)
-            {
-                for (int j = 0; j < hex.characters.Count; j++)
+                int previousHealth = this.health;
+                this.health = Mathf.Min(100, this.health + Mathf.Max(0, heal));
+                int healedAmount = Mathf.Max(0, this.health - previousHealth);
+                if (healedAmount > 0)
                 {
-                    Character target = hex.characters[j];
-                    if (target == null || target == this || target.killed) continue;
-                    if (target.GetOwner() == GetOwner()) continue;
-                    if (target.GetAlignment() == GetAlignment() && target.GetAlignment() != AlignmentEnum.neutral) continue;
-
-                    target.ApplyStatusEffect(StatusEffectEnum.Blocked, 1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} blocks {target.characterName}.", Color.magenta);
+                    RefreshSelectedCharacterIconIfSelected();
+                    CharacterIcons.RefreshForHumanPlayerCharacter(this);
                 }
             }
 
-            int healPerTurn = artifact.GetPassiveHealPerTurn();
-            if (healPerTurn > 0)
+            int scoutRadius = artifact.GetAutoScoutRadius();
+            if (scoutRadius > 0 && GetOwner() is PlayableLeader pl && hex != null)
             {
-                Heal(healPerTurn);
-            }
-
-            if (artifact.RevealsHiddenEnemyPcOnOccupiedHex())
-            {
-                RevealHiddenEnemyPcOnCurrentHex(artifact);
-            }
-
-            int hopeChance = artifact.GetHopeChancePerTurnPercent();
-            if (hopeChance > 0 && UnityEngine.Random.Range(0, 100) < hopeChance)
-            {
-                ApplyStatusEffect(StatusEffectEnum.Hope, 1);
-                MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} grants Hope.", Color.green);
-            }
-
-            if (artifact.GrantsHasteAtSea()
-                && hex != null
-                && hex.IsWaterTerrain())
-            {
-                ApplyStatusEffect(StatusEffectEnum.Haste, 1);
-                MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} grants Haste at sea.", Color.green);
-            }
-
-            int selfCleanseChance = artifact.GetSelfFearAndDespairCleanseChancePerTurnPercent();
-            if (selfCleanseChance > 0 && UnityEngine.Random.Range(0, 100) < selfCleanseChance)
-            {
-                bool clearedFear = HasStatusEffect(StatusEffectEnum.Fear);
-                bool clearedDespair = HasStatusEffect(StatusEffectEnum.Despair);
-                if (clearedFear) ClearStatusEffect(StatusEffectEnum.Fear);
-                if (clearedDespair) ClearStatusEffect(StatusEffectEnum.Despair);
-
-                if (clearedFear || clearedDespair)
-                {
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} lifts Fear and Despair.", Color.green);
-                }
-            }
-
-            int encouragedChance = artifact.GetEncouragedChancePerTurnPercent();
-            if (encouragedChance > 0 && UnityEngine.Random.Range(0, 100) < encouragedChance)
-            {
-                Encourage(1);
-                MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} grants Courage.", Color.green);
-            }
-
-            int blockedSelfChance = artifact.GetBlockedSelfChancePerTurnPercent();
-            if (blockedSelfChance > 0 && UnityEngine.Random.Range(0, 100) < blockedSelfChance)
-            {
-                ApplyStatusEffect(StatusEffectEnum.Blocked, 1);
-                MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} causes Sleep.", Color.yellow);
-            }
-
-            int freePeopleNonMenHaltChance = artifact.GetFreePeopleNonMenHaltChancePerTurnPercent();
-            if (freePeopleNonMenHaltChance > 0
-                && GetAlignment() == AlignmentEnum.freePeople
-                && hex != null
-                && hex.characters != null
-                && UnityEngine.Random.Range(0, 100) < freePeopleNonMenHaltChance)
-            {
-                for (int j = 0; j < hex.characters.Count; j++)
-                {
-                    Character target = hex.characters[j];
-                    if (target == null || target == this || target.killed) continue;
-                    if (target.GetOwner() == GetOwner()) continue;
-                    if (target.GetAlignment() == GetAlignment() && target.GetAlignment() != AlignmentEnum.neutral) continue;
-                    if (IsManRace(target.race)) continue;
-
-                    target.Halt(1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} halts {target.characterName}.", Color.green);
-                }
-            }
-
-            int forestHiddenChance = artifact.GetForestHiddenChancePerTurnPercent();
-            if (forestHiddenChance > 0
-                && hex != null
-                && hex.terrainType == TerrainEnum.forest
-                && UnityEngine.Random.Range(0, 100) < forestHiddenChance)
-            {
-                Hide(1);
-                MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} shrouds {characterName}.", Color.green);
-            }
-
-            int pcMoraleChance = artifact.GetAlliedPcMoraleChancePerTurnPercent();
-            if (pcMoraleChance > 0
-                && hex != null
-                && UnityEngine.Random.Range(0, 100) < pcMoraleChance)
-            {
-                PC pc = hex.GetPC();
-                if (pc != null && pc.owner != null)
-                {
-                    AlignmentEnum pcAlignment = pc.owner.GetAlignment();
-                    bool alliedPc = pc.owner == GetOwner()
-                        || (pcAlignment != AlignmentEnum.neutral && pcAlignment == GetAlignment());
-                    if (alliedPc && pc.loyalty < 100)
-                    {
-                        pc.IncreaseLoyalty(5, this);
-                    }
-                }
-            }
-
-            int fearChance = artifact.GetHexEnemyFearChancePerTurnPercent();
-            if (fearChance > 0 && UnityEngine.Random.Range(0, 100) < fearChance)
-            {
-                Character fearTarget = FindEnemyForArtifactStatusPulse();
-                if (fearTarget != null)
-                {
-                    fearTarget.ApplyStatusEffect(StatusEffectEnum.Fear, 1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} spreads Fear to {fearTarget.characterName}.", Color.magenta);
-                }
-            }
-
-            int despairChance = artifact.GetHexEnemyDespairChancePerTurnPercent();
-            if (despairChance > 0 && UnityEngine.Random.Range(0, 100) < despairChance)
-            {
-                Character despairTarget = FindEnemyForArtifactStatusPulse();
-                if (despairTarget != null)
-                {
-                    despairTarget.ApplyStatusEffect(StatusEffectEnum.Despair, 1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} spreads Despair to {despairTarget.characterName}.", Color.magenta);
-                }
-            }
-
-            int selfDespairChance = artifact.GetSelfDespairChancePerTurnPercent();
-            if (selfDespairChance > 0 && UnityEngine.Random.Range(0, 100) < selfDespairChance)
-            {
-                ApplyStatusEffect(StatusEffectEnum.Despair, 1);
-                MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} brings Despair.", Color.magenta);
-            }
-
-            int randomHexRevealChance = artifact.GetRandomHexRevealChancePerTurnPercent();
-            if (randomHexRevealChance > 0 && UnityEngine.Random.Range(0, 100) < randomHexRevealChance)
-            {
-                Leader artifactOwner = GetOwner();
-                Board board = FindFirstObjectByType<Board>();
-                if (artifactOwner != null && board != null)
-                {
-                    List<Hex> allHexes = board.GetHexes();
-                    List<Hex> eligibleHexes = allHexes
-                        .Where(h => h != null && !h.IsScoutedBy(artifactOwner))
-                        .ToList();
-
-                    List<Hex> source = eligibleHexes.Count > 0 ? eligibleHexes : allHexes.Where(h => h != null).ToList();
-                    if (source.Count > 0)
-                    {
-                        Hex revealedHex = source[UnityEngine.Random.Range(0, source.Count)];
-                        revealedHex.Reveal(artifactOwner);
-                        revealedHex.RefreshVisibilityRendering();
-                        MessageDisplayNoUI.ShowMessage(revealedHex, this, $"{artifact.artifactName} reveals a distant hex.", Color.green);
-                    }
-                }
-            }
-
-            int burningChance = artifact.GetHexEnemyBurningChancePerTurnPercent();
-            if (burningChance > 0 && UnityEngine.Random.Range(0, 100) < burningChance)
-            {
-                Character burningTarget = FindEnemyForArtifactStatusPulse();
-                if (burningTarget != null)
-                {
-                    burningTarget.ApplyStatusEffect(StatusEffectEnum.Burning, 1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} burns {burningTarget.characterName}.", Color.red);
-                }
-            }
-
-            int haltChance = artifact.GetHexEnemyHaltChancePerTurnPercent();
-            if (haltChance > 0 && UnityEngine.Random.Range(0, 100) < haltChance)
-            {
-                Character haltTarget = FindEnemyForArtifactStatusPulse();
-                if (haltTarget != null)
-                {
-                    haltTarget.Halt(1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} halts {haltTarget.characterName}.", Color.yellow);
-                }
-            }
-
-            int poisonChance = artifact.GetHexEnemyPoisonChancePerTurnPercent();
-            if (poisonChance > 0 && UnityEngine.Random.Range(0, 100) < poisonChance)
-            {
-                Character poisonTarget = FindEnemyForArtifactStatusPulse();
-                if (poisonTarget != null)
-                {
-                    poisonTarget.ApplyStatusEffect(StatusEffectEnum.Poisoned, 1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} poisons {poisonTarget.characterName}.", Color.magenta);
-                }
-            }
-
-            int mountsChance = artifact.GetMountsChancePerTurnPercent();
-            if (mountsChance > 0 && UnityEngine.Random.Range(0, 100) < mountsChance)
-            {
-                Leader artifactOwner = GetOwner();
-                if (artifactOwner != null)
-                {
-                    artifactOwner.AddMounts(1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} provides +1 <sprite name=\"mounts\">.", Color.green);
-                }
-            }
-
-            int hasteChance = artifact.GetHasteChancePerTurnPercent();
-            if (hasteChance > 0 && UnityEngine.Random.Range(0, 100) < hasteChance)
-            {
-                ApplyStatusEffect(StatusEffectEnum.Haste, 1);
-                MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} grants Haste.", Color.green);
-            }
-
-            int goldChance = artifact.GetGoldChancePerTurnPercent();
-            if (goldChance > 0 && UnityEngine.Random.Range(0, 100) < goldChance)
-            {
-                Leader artifactOwner = GetOwner();
-                if (artifactOwner != null)
-                {
-                    artifactOwner.AddGold(1);
-                    MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} provides +1 <sprite name=\"gold\">.", Color.green);
-                }
+                hex.RevealArea(scoutRadius, false, pl);
             }
         }
     }
-
     private Character FindEnemyForArtifactStatusPulse()
     {
         if (hex == null || hex.characters == null) return null;
@@ -1761,6 +1707,8 @@ public class Character : MonoBehaviour
 
     private void ApplyStatusDamage(int damage, string sourceName)
     {
+        int reduction = GetTotalNegativeStatusDamageReduction();
+        damage = Mathf.Max(0, damage - reduction);
         health = Mathf.Max(0, health - Mathf.Max(0, damage));
         MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} takes {damage} damage from {sourceName}.", Color.red);
         Sounds.Instance?.PlayVoicePain(this);

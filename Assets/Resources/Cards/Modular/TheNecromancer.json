@@ -219,36 +219,8 @@
             "mage": 0,
             "race": 10,
             "artifacts": [
-                {
-                    "artifactName": "Sword of Flame",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": false,
-                    "spriteString": "fire_sword"
-                },
-                {
-                    "artifactName": "Fire Whip",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": false,
-                    "spriteString": "whip"
-                }
+                "Sword of Flame",
+                "Fire Whip"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -313,21 +285,7 @@
             "mage": 0,
             "race": 9,
             "artifacts": [
-                {
-                    "artifactName": "Dragon Wings",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": false,
-                    "spriteString": "wing"
-                }
+                "Dragon Wings"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -391,21 +349,7 @@
             "mage": 0,
             "race": 16,
             "artifacts": [
-                {
-                    "artifactName": "Goblin Cleaver",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "scimitar"
-                }
+                "Goblin Cleaver"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -469,36 +413,8 @@
             "mage": 1,
             "race": 11,
             "artifacts": [
-                {
-                    "artifactName": "Westernesse Blade",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "sword"
-                },
-                {
-                    "artifactName": "Gripping Bone",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HexEnemyFearChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true,
-                    "spriteString": "skeleton_arm"
-                }
+                "Westernesse Blade",
+                "Gripping Bone"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -1188,7 +1104,7 @@
             "alignment": 0,
             "actionClassName": "",
             "action": "",
-            "spriteName": "Undead",
+            "spriteName": "Undeads",
             "region": "",
             "requirementsText": "",
             "historyText": "",
@@ -3771,66 +3687,10 @@
             "mage": 0,
             "race": 7,
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true,
-                    "spriteString": "hc"
-                },
-                {
-                    "artifactName": "Khamul's Ring",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 1,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "ring"
-                },
-                {
-                    "artifactName": "Easterling Helmet",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 2,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "helmet"
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "alignment": 1,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true,
-                    "spriteString": "dagger"
-                }
+                "Black Horse",
+                "Khamul's Ring",
+                "Easterling Helmet",
+                "Morgul's Blade"
             ],
             "troopType": 0,
             "specialAbilities": [],

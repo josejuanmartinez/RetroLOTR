@@ -262,8 +262,7 @@ public class Board : MonoBehaviour
         // Get all hexes
         List<Hex> hexes = GetHexes();
 
-        TextAsset jsonFile = Resources.Load<TextAsset>("Artifacts");
-        List<Artifact> hiddenArtifacts = JsonUtility.FromJson<ArtifactCollection>(jsonFile.text).artifacts;
+        List<Artifact> hiddenArtifacts = ArtifactRepository.GetAllClones();
 
         PlaceTutorialArtifacts(hiddenArtifacts);
 
@@ -309,7 +308,7 @@ public class Board : MonoBehaviour
             {
                 Artifact artifact = hiddenArtifacts[i];
                 if (artifact == null) continue;
-                if (biome.tutorialArtifacts.Any(a => a != null && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase)))
+                if (biome.tutorialArtifacts.Any(a => !string.IsNullOrWhiteSpace(a) && string.Equals(a, artifact.artifactName, StringComparison.OrdinalIgnoreCase)))
                 {
                     hiddenArtifacts.RemoveAt(i);
                 }
@@ -341,9 +340,11 @@ public class Board : MonoBehaviour
                 .ToList();
 
             int candidateIndex = 0;
-            foreach (Artifact artifact in biome.tutorialArtifacts)
+            foreach (string artifactName in biome.tutorialArtifacts)
             {
-                if (artifact == null || string.IsNullOrWhiteSpace(artifact.artifactName)) continue;
+                if (string.IsNullOrWhiteSpace(artifactName)) continue;
+                Artifact artifact = ArtifactRepository.GetByName(artifactName);
+                if (artifact == null) continue;
 
                 Hex target = null;
                 while (candidateIndex < candidates.Count)
@@ -356,31 +357,10 @@ public class Board : MonoBehaviour
                 }
 
                 if (target == null) target = leader.hex;
-                target.hiddenArtifacts.Add(CloneArtifact(artifact));
+                target.hiddenArtifacts.Add(artifact.Clone());
                 usedHexes.Add(target);
             }
         }
-    }
-
-    private static Artifact CloneArtifact(Artifact source)
-    {
-        if (source == null) return null;
-        return new Artifact
-        {
-            artifactName = source.artifactName,
-            hidden = source.hidden,
-            alignment = source.alignment,
-            commanderBonus = source.commanderBonus,
-            agentBonus = source.agentBonus,
-            emmissaryBonus = source.emmissaryBonus,
-            mageBonus = source.mageBonus,
-            bonusAttack = source.bonusAttack,
-            bonusDefense = source.bonusDefense,
-            passiveEffectId = source.passiveEffectId,
-            passiveEffectValue = source.passiveEffectValue,
-            transferable = source.transferable,
-            spriteString = source.spriteString
-        };
     }
 
     public void StartGame()

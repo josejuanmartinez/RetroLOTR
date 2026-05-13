@@ -110,6 +110,12 @@ public class Army
     }
     public void Recruit(TroopsTypeEnum troopsType, int amount, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null, int specialAbilityProcChance = 100)
     {
+        // Artifact recruitment bonus for men-at-arms
+        if (troopsType == TroopsTypeEnum.ma && commander != null)
+        {
+            amount += commander.GetTotalRecruitBonusMenAtArms();
+        }
+
         MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\">", Color.green);
         if (troopsType == TroopsTypeEnum.ma) ma += amount;
         if (troopsType == TroopsTypeEnum.ar) ar += amount;
@@ -242,7 +248,7 @@ public class Army
 
         strength = ApplyCommanderBonus(strength);
         strength = ApplyTrainingBonus(strength);
-        strength = ApplyArtifactAttackBonus(strength);
+        strength = ApplyArtifactAttackBonus(strength, enemyArmy);
         strength = ApplyStatusAttackBonus(strength);
         strength = ApplyChargingAttackModifier(strength, enemyArmy);
         return strength;
@@ -282,7 +288,7 @@ public class Army
 
         defence = ApplyCommanderBonus(defence);
         defence = ApplyTrainingBonus(defence);
-        defence = ApplyArtifactDefenseBonus(defence);
+        defence = ApplyArtifactDefenseBonus(defence, enemyArmy);
         defence = ApplyEnemyArtifactDefensePenalty(defence);
         defence = ApplyStatusDefenseBonus(defence);
         defence = ApplyPikemenDefenseModifier(defence, enemyArmy);
@@ -304,19 +310,63 @@ public class Army
         return Mathf.Max(0, Mathf.RoundToInt(value * trainingMultiplier));
     }
 
-    private int ApplyArtifactAttackBonus(int value)
+    private int ApplyArtifactAttackBonus(int value, Army enemyArmy)
     {
         if (commander == null) return value;
         int bonus = commander.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
         bonus += commander.artifacts.Sum(a => a != null ? a.GetArmyAttackStrengthBonus() : 0);
+
+        if (enemyArmy != null && enemyArmy.commander != null)
+        {
+            RacesEnum enemyRace = enemyArmy.commander.race;
+            foreach (var artifact in commander.artifacts)
+            {
+                if (artifact == null) continue;
+                bonus += artifact.GetAttackBonusVsRace(enemyRace) * 3;
+            }
+
+            var enemyTroops = enemyArmy.GetTroopGroups();
+            foreach (var artifact in commander.artifacts)
+            {
+                if (artifact == null) continue;
+                foreach (var group in enemyTroops)
+                {
+                    if (group == null) continue;
+                    bonus += artifact.GetAttackBonusVsTroopType(group.troopType) * 3;
+                }
+            }
+        }
+
         return Mathf.Max(0, value + bonus);
     }
 
-    private int ApplyArtifactDefenseBonus(int value)
+    private int ApplyArtifactDefenseBonus(int value, Army enemyArmy)
     {
         if (commander == null) return value;
         int bonus = commander.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
         bonus += commander.artifacts.Sum(a => a != null ? a.GetArmyDefenseStrengthBonus() : 0);
+
+        if (enemyArmy != null && enemyArmy.commander != null)
+        {
+            RacesEnum enemyRace = enemyArmy.commander.race;
+            foreach (var artifact in commander.artifacts)
+            {
+                if (artifact == null) continue;
+                bonus += artifact.GetDefenseBonusVsRace(enemyRace) * 3;
+            }
+
+            var enemyTroops = enemyArmy.GetTroopGroups();
+            foreach (var artifact in commander.artifacts)
+            {
+                if (artifact == null) continue;
+                foreach (var group in enemyTroops)
+                {
+                    if (group == null) continue;
+                    bonus += artifact.GetDefenseBonusVsTroopType(group.troopType) * 3;
+                }
+            }
+        }
+
         return Mathf.Max(0, value + bonus);
     }
 
@@ -874,7 +924,6 @@ public class Army
             hudMessages.Add(($"XP gained: {attackerName} {FormatDelta(attackerXpDelta)}, {defenderName} {FormatDelta(defenderXpDelta)}", Color.cyan));
         }
 
-        TryApplyCommanderArtifactBurningOnSuccessfulAttack(defenderArmy, attackerDamage);
     }
 
 
@@ -1143,19 +1192,7 @@ public class Army
         return $"{string.Join(", ", clauses.Take(clauses.Count - 1))}, and {clauses[^1]}";
     }
 
-    private void TryApplyCommanderArtifactBurningOnSuccessfulAttack(Army defenderArmy, float attackerDamage)
-    {
-        if (attackerDamage <= 0f) return;
-        if (commander == null || commander.killed) return;
-        if (defenderArmy == null || defenderArmy.commander == null || defenderArmy.commander.killed) return;
 
-        int burnChance = commander.GetArmySuccessfulAttackBurningChancePercent();
-        if (burnChance <= 0) return;
-        if (UnityEngine.Random.Range(0, 100) >= burnChance) return;
-
-        defenderArmy.commander.ApplyStatusEffect(StatusEffectEnum.Burning, 1);
-        MessageDisplayNoUI.ShowMessage(defenderArmy.commander.hex, commander, $"{commander.characterName}'s attack sets {defenderArmy.commander.characterName}'s army ablaze.", Color.red);
-    }
 
     private string BuildSiegeDescription(
         string location,

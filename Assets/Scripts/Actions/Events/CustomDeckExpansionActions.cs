@@ -490,28 +490,7 @@ public class HiddenTreasureAction : EventAction
 
 public class TrollsHoardGrantArtifactAction : EventAction
 {
-    private static Artifact CloneArtifact(Artifact source)
-    {
-        if (source == null) return null;
-        return new Artifact
-        {
-            artifactName = source.artifactName,
-            hidden = source.hidden,
-            alignment = source.alignment,
-            commanderBonus = source.commanderBonus,
-            agentBonus = source.agentBonus,
-            emmissaryBonus = source.emmissaryBonus,
-            mageBonus = source.mageBonus,
-            bonusAttack = source.bonusAttack,
-            bonusDefense = source.bonusDefense,
-            passiveEffectId = source.passiveEffectId,
-            passiveEffectValue = source.passiveEffectValue,
-            transferable = source.transferable,
-            spriteString = source.spriteString
-        };
-    }
-
-    private static HashSet<string> GetOwnedOrHiddenArtifactNames(Game game, Board board)
+    private static HashSet<string> GetOwnedOrHiddenArtifactNames(Board board)
     {
         HashSet<string> names = new(StringComparer.OrdinalIgnoreCase);
 
@@ -530,20 +509,17 @@ public class TrollsHoardGrantArtifactAction : EventAction
             }
         }
 
-        if (game != null)
+        foreach (Leader leader in UnityEngine.Object.FindObjectsByType<Leader>(FindObjectsSortMode.None))
         {
-            foreach (Leader leader in UnityEngine.Object.FindObjectsByType<Leader>(FindObjectsSortMode.None))
+            if (leader?.controlledCharacters == null) continue;
+            foreach (Character ch in leader.controlledCharacters)
             {
-                if (leader?.controlledCharacters == null) continue;
-                foreach (Character ch in leader.controlledCharacters)
+                if (ch?.artifacts == null) continue;
+                foreach (Artifact artifact in ch.artifacts)
                 {
-                    if (ch?.artifacts == null) continue;
-                    foreach (Artifact artifact in ch.artifacts)
+                    if (artifact != null && !string.IsNullOrWhiteSpace(artifact.artifactName))
                     {
-                        if (artifact != null && !string.IsNullOrWhiteSpace(artifact.artifactName))
-                        {
-                            names.Add(artifact.artifactName);
-                        }
+                        names.Add(artifact.artifactName);
                     }
                 }
             }
@@ -564,23 +540,19 @@ public class TrollsHoardGrantArtifactAction : EventAction
             if (character == null) return false;
             if (character.artifacts.Count >= Character.MAX_ARTIFACTS) return false;
 
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
             Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
-            if (game == null || game.artifacts == null) return false;
 
-            HashSet<string> unavailable = GetOwnedOrHiddenArtifactNames(game, board);
+            HashSet<string> unavailable = GetOwnedOrHiddenArtifactNames(board);
             foreach (Artifact owned in character.artifacts)
             {
                 if (owned != null && !string.IsNullOrWhiteSpace(owned.artifactName)) unavailable.Add(owned.artifactName);
             }
 
-            List<Artifact> candidates = game.artifacts
-                .Where(a => a != null && !string.IsNullOrWhiteSpace(a.artifactName) && !unavailable.Contains(a.artifactName))
-                .ToList();
+            List<Artifact> candidates = ArtifactRepository.GetUnused(unavailable);
 
             if (candidates.Count == 0) return false;
 
-            Artifact chosen = CloneArtifact(candidates[UnityEngine.Random.Range(0, candidates.Count)]);
+            Artifact chosen = candidates[UnityEngine.Random.Range(0, candidates.Count)];
             if (chosen == null) return false;
 
             character.artifacts.Add(chosen);
@@ -596,17 +568,15 @@ public class TrollsHoardGrantArtifactAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.artifacts.Count >= Character.MAX_ARTIFACTS) return false;
 
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
             Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
-            if (game == null || game.artifacts == null) return false;
 
-            HashSet<string> unavailable = GetOwnedOrHiddenArtifactNames(game, board);
+            HashSet<string> unavailable = GetOwnedOrHiddenArtifactNames(board);
             foreach (Artifact owned in character.artifacts)
             {
                 if (owned != null && !string.IsNullOrWhiteSpace(owned.artifactName)) unavailable.Add(owned.artifactName);
             }
 
-            return game.artifacts.Any(a => a != null && !string.IsNullOrWhiteSpace(a.artifactName) && !unavailable.Contains(a.artifactName));
+            return ArtifactRepository.GetUnused(unavailable).Count > 0;
         };
 
         asyncEffect = async (character) =>

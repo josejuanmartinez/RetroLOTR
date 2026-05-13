@@ -134,7 +134,7 @@ public class CardData
     public int emmissary;
     public int mage;
     public RacesEnum race;
-    public List<Artifact> artifacts = new();
+    public List<string> artifacts = new();
     public TroopsTypeEnum troopType;
     public List<ArmySpecialAbilityEnum> specialAbilities = new();
 
@@ -1288,7 +1288,7 @@ public class DeckManager : MonoBehaviour
             emmissary = card.emmissary,
             mage = card.mage,
             race = card.race,
-            artifacts = card.artifacts != null ? new List<Artifact>(card.artifacts) : new List<Artifact>(),
+            artifacts = card.artifacts != null ? new List<string>(card.artifacts) : new List<string>(),
             troopType = card.troopType,
             specialAbilities = card.specialAbilities != null ? new List<ArmySpecialAbilityEnum>(card.specialAbilities) : new List<ArmySpecialAbilityEnum>(),
             spriteName = card.spriteName,

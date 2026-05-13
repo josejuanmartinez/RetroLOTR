@@ -38,8 +38,7 @@ public class Game : MonoBehaviour
     public List<NonPlayableLeader> npcs;
     [Header("Currently Playing")]
     public PlayableLeader currentlyPlaying;
-    [Header("Artifacts")]
-    public List<Artifact> artifacts = new();
+    // Artifact catalog now lives in ArtifactRepository (loads from Artifacts.json)
 
     [Header("Movement")]
     public int characterMovement = 5;
@@ -346,7 +345,8 @@ public class Game : MonoBehaviour
         if (shouldPrompt)
         {
             bool hasPendingActions = player.controlledCharacters.Any(x => !x.killed && !x.hasActionedThisTurn);
-            string message = hasPendingActions
+            bool hasPlayableCards = HasPlayableCardsInHand();
+            string message = (hasPendingActions && hasPlayableCards)
                 ? "Some characters have not actioned yet. End turn?"
                 : "End turn?";
 
@@ -879,6 +879,34 @@ public class Game : MonoBehaviour
     {
         if (!blockLookAtUntilStartupPopupCloses || !startupPopupShown) return;
         blockLookAtUntilStartupPopupCloses = false;
+    }
+
+    private bool HasPlayableCardsInHand()
+    {
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null || player == null) return false;
+
+        IReadOnlyList<CardData> hand = deckManager.GetHand(player);
+        if (hand == null || hand.Count == 0) return false;
+
+        List<Character> unactioned = player.controlledCharacters
+            .Where(c => c != null && !c.killed && !c.hasActionedThisTurn)
+            .ToList();
+
+        if (unactioned.Count == 0) return false;
+
+        foreach (Character character in unactioned)
+        {
+            foreach (CardData card in hand)
+            {
+                if (card == null) continue;
+                if (card.EvaluatePlayability(character, null, null))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private sealed class AlliedTradeOffer

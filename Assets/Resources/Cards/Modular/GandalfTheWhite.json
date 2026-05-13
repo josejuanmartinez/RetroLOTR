@@ -1565,51 +1565,9 @@
             "mage": 0,
             "race": 12,
             "artifacts": [
-                {
-                    "artifactName": "Ring of Barahir",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 1,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "ring"
-                },
-                {
-                    "artifactName": "Shards of Narsil",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 1,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 1,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "broken_sword"
-                },
-                {
-                    "artifactName": "Athelas",
-                    "hidden": false,
-                    "alignment": 2,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HealPerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true,
-                    "spriteString": "herb"
-                }
+                "Ring of Barahir",
+                "Shards of Narsil",
+                "Athelas"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -1734,21 +1692,7 @@
             "mage": 0,
             "race": 17,
             "artifacts": [
-                {
-                    "artifactName": "Ent-draught",
-                    "hidden": false,
-                    "alignment": 2,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 1,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "potion"
-                }
+                "Ent-draught"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -1812,36 +1756,8 @@
             "mage": 0,
             "race": 0,
             "artifacts": [
-                {
-                    "artifactName": "The White Tree",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": false,
-                    "spriteString": "plant"
-                },
-                {
-                    "artifactName": "Palantir of Minas Tirith",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true,
-                    "spriteString": "palantir"
-                }
+                "The White Tree",
+                "Palantir of Minas Tirith"
             ],
             "troopType": 0,
             "specialAbilities": [],

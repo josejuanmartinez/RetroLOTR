@@ -37,51 +37,9 @@
             "mage": 2,
             "race": 1,
             "artifacts": [
-                {
-                    "artifactName": "Nenya",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 1,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "ring"
-                },
-                {
-                    "artifactName": "Lembas",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HealPerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true,
-                    "spriteString": "bread"
-                },
-                {
-                    "artifactName": "Light of Earendil",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true,
-                    "spriteString": "potion"
-                }
+                "Nenya",
+                "Lembas",
+                "Light of Earendil"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -143,36 +101,8 @@
             "mage": 1,
             "race": 1,
             "artifacts": [
-                {
-                    "artifactName": "Miruvor",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HealPerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true,
-                    "spriteString": "potion"
-                },
-                {
-                    "artifactName": "Vilya",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "FindArtifactDifficultyReduction",
-                    "passiveEffectValue": 25,
-                    "transferable": true,
-                    "spriteString": "ring"
-                }
+                "Miruvor",
+                "Vilya"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -236,36 +166,8 @@
             "mage": 0,
             "race": 1,
             "artifacts": [
-                {
-                    "artifactName": "Lasgalen Gems",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 1,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "pendant"
-                },
-                {
-                    "artifactName": "Wooden Crown",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 1,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0,
-                    "transferable": true,
-                    "spriteString": "crown"
-                }
+                "Lasgalen Gems",
+                "Wooden Crown"
             ],
             "troopType": 0,
             "specialAbilities": [],
@@ -329,21 +231,7 @@
             "mage": 0,
             "race": 1,
             "artifacts": [
-                {
-                    "artifactName": "Palantir of Elostirion",
-                    "hidden": false,
-                    "alignment": 0,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true,
-                    "spriteString": "palantir"
-                }
+                "Palantir of Elostirion"
             ],
             "troopType": 0,
             "specialAbilities": [],

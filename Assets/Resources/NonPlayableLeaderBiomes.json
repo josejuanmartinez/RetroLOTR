@@ -10,51 +10,9 @@
             "race": 1,
             "banner": "banner_elven_leaf",
             "artifacts": [
-                {
-                    "artifactName": "Nenya",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 1,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 0,
-                    "passiveEffectId": "",
-                    "transferable": true,
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Lembas",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "bread",
-                    "alignment": 0,
-                    "passiveEffectId": "HealPerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Light of Earendil",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "potion",
-                    "alignment": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
+                "Nenya",
+                "Lembas",
+                "Light of Earendil"
             ],
             "terrain": 5,
             "startingCityName": "Caras Galadhon",
@@ -98,7 +56,8 @@
             "sex": 1,
             "startingCityRegion": "Lothlorien",
             "nationName": "Sinda Elves",
-            "characterSprite": "GaladrielCharacter"
+            "characterSprite": "GaladrielCharacter",
+            "nationInitials": "SE"
         },
         {
             "characterName": "Elrond",
@@ -110,36 +69,8 @@
             "race": 1,
             "banner": "banner_blue_star_harp",
             "artifacts": [
-                {
-                    "artifactName": "Miruvor",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "potion",
-                    "alignment": 0,
-                    "passiveEffectId": "HealPerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Vilya",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 0,
-                    "passiveEffectId": "FindArtifactDifficultyReduction",
-                    "passiveEffectValue": 25,
-                    "transferable": true
-                }
+                "Miruvor",
+                "Vilya"
             ],
             "terrain": 5,
             "startingCityName": "Imladris",
@@ -188,55 +119,10 @@
                     "mage": 0,
                     "race": 3,
                     "artifacts": [
-                        {
-                            "artifactName": "Sting",
-                            "hidden": false,
-                            "commanderBonus": 0,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 1,
-                            "bonusDefense": 0,
-                            "spriteString": "dagger",
-                            "alignment": 0
-                        },
-                        {
-                            "artifactName": "Mithril coat",
-                            "hidden": false,
-                            "commanderBonus": 0,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 0,
-                            "bonusDefense": 1,
-                            "spriteString": "armor",
-                            "alignment": 0
-                        },
-                        {
-                            "artifactName": "Elven song",
-                            "hidden": false,
-                            "commanderBonus": 0,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 0,
-                            "bonusDefense": 0,
-                            "spriteString": "song",
-                            "alignment": 0
-                        },
-                        {
-                            "artifactName": "Riddle",
-                            "hidden": false,
-                            "commanderBonus": 0,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 0,
-                            "bonusDefense": 0,
-                            "transferable": false,
-                            "spriteString": "scroll",
-                            "alignment": 2
-                        }
+                        "Sting",
+                        "Mithril coat",
+                        "Elven song",
+                        "Riddle"
                     ],
                     "sex": 0,
                     "characterSprite": "Hobbit"
@@ -245,7 +131,8 @@
             "sex": 0,
             "startingCityRegion": "Rivendell",
             "nationName": "Noldor Elves",
-            "characterSprite": "Elf"
+            "characterSprite": "Elf",
+            "nationInitials": "NE"
         },
         {
             "characterName": "Thranduil",
@@ -257,36 +144,8 @@
             "race": 1,
             "banner": "banner_green_bows_sword",
             "artifacts": [
-                {
-                    "artifactName": "Lasgalen Gems",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 1,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "pendant",
-                    "alignment": 0,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Wooden Crown",
-                    "hidden": false,
-                    "commanderBonus": 1,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "crown",
-                    "alignment": 0,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                }
+                "Lasgalen Gems",
+                "Wooden Crown"
             ],
             "terrain": 5,
             "startingCityName": "Thanduil's Halls",
@@ -309,30 +168,8 @@
                     "mage": 0,
                     "race": 1,
                     "artifacts": [
-                        {
-                            "artifactName": "Lembas",
-                            "hidden": false,
-                            "commanderBonus": 0,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 0,
-                            "bonusDefense": 0,
-                            "spriteString": "bread",
-                            "alignment": 0
-                        },
-                        {
-                            "artifactName": "Legolas' Bow",
-                            "hidden": false,
-                            "commanderBonus": 1,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 0,
-                            "bonusDefense": 0,
-                            "spriteString": "bow",
-                            "alignment": 0
-                        }
+                        "Lembas",
+                        "Legolas' Bow"
                     ],
                     "sex": 0,
                     "characterSprite": "Elf"
@@ -341,7 +178,8 @@
             "sex": 0,
             "startingCityRegion": "NorthernMirkwood",
             "nationName": "Woodland Elves",
-            "characterSprite": "Elf"
+            "characterSprite": "Elf",
+            "nationInitials": "WE"
         },
         {
             "characterName": "Murazor",
@@ -353,66 +191,10 @@
             "race": 7,
             "banner": "banner_nazgul_helmet",
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Iron Crown",
-                    "hidden": false,
-                    "commanderBonus": 1,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "crown",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Murazor's Ring",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 1,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "dagger",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Black Horse",
+                "Iron Crown",
+                "Murazor's Ring",
+                "Morgul's Blade"
             ],
             "terrain": 0,
             "startingCityName": "Minas Morgul",
@@ -428,8 +210,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Ungol",
-            "nationName": "Nazgûl",
-            "characterSprite": "Nazgul"
+            "nationName": "The Witch King",
+            "characterSprite": "Nazgul",
+            "nationInitials": "WK"
         },
         {
             "characterName": "Khamul",
@@ -441,66 +224,10 @@
             "race": 7,
             "banner": "banner_green_eye",
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Khamul's Ring",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 1,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Easterling Helmet",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 2,
-                    "spriteString": "helmet",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "dagger",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Black Horse",
+                "Khamul's Ring",
+                "Easterling Helmet",
+                "Morgul's Blade"
             ],
             "terrain": 5,
             "startingCityName": "Dol Guldur",
@@ -516,8 +243,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "SouthernMirkwood",
-            "nationName": "Nazgûl",
-            "characterSprite": "Nazgul"
+            "nationName": "The Dragon Lord",
+            "characterSprite": "Nazgul",
+            "nationInitials": "DL"
         },
         {
             "characterName": "Akhorahil",
@@ -529,66 +257,10 @@
             "race": 7,
             "banner": "banner_akhorahil",
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Gem eyes",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "jewel",
-                    "alignment": 1,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10
-                },
-                {
-                    "artifactName": "Akhorahil's Ring",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 1,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "dagger",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Black Horse",
+                "Gem eyes",
+                "Akhorahil's Ring",
+                "Morgul's Blade"
             ],
             "terrain": 10,
             "feature": 2,
@@ -605,8 +277,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Nurn",
-            "nationName": "Nazgûl",
-            "characterSprite": "Nazgul"
+            "nationName": "The Blind Sorcerer",
+            "characterSprite": "Nazgul",
+            "nationInitials": "BS"
         },
         {
             "characterName": "Ji Indur",
@@ -618,66 +291,10 @@
             "race": 7,
             "banner": "banner_ji_indur",
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Mumak helmet",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "spriteString": "helmet",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Indur's Ring",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 1,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "dagger",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Black Horse",
+                "Mumak helmet",
+                "Indur's Ring",
+                "Morgul's Blade"
             ],
             "terrain": 10,
             "startingCityName": "Kal Nargil",
@@ -693,8 +310,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Nurn",
-            "nationName": "Nazgûl",
-            "characterSprite": "Nazgul"
+            "nationName": "The Cloud Lord",
+            "characterSprite": "Nazgul",
+            "nationInitials": "CL"
         },
         {
             "characterName": "Ovatha",
@@ -706,51 +324,9 @@
             "race": 7,
             "banner": "banner_ovatha",
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Ovatha's Ring",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 1,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "dagger",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Black Horse",
+                "Ovatha's Ring",
+                "Morgul's Blade"
             ],
             "terrain": 4,
             "feature": 2,
@@ -778,18 +354,7 @@
                     "preferedTroopType": 0,
                     "startingWarships": 1,
                     "artifacts": [
-                        {
-                            "artifactName": "Black Horse",
-                            "hidden": false,
-                            "commanderBonus": 0,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 0,
-                            "bonusDefense": 0,
-                            "spriteString": "hc",
-                            "alignment": 2
-                        }
+                        "Black Horse"
                     ],
                     "sex": 0,
                     "characterSprite": "Common"
@@ -797,8 +362,9 @@
             ],
             "sex": 0,
             "startingCityRegion": "SeaOfRhun",
-            "nationName": "Nazgûl",
-            "characterSprite": "Nazgul"
+            "nationName": "The Long Rider",
+            "characterSprite": "Nazgul",
+            "nationInitials": "LR"
         },
         {
             "characterName": "Adunaphel",
@@ -810,51 +376,9 @@
             "race": 7,
             "banner": "banner_adunaphel",
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Adunaphel's Ring",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 1,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "dagger",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Black Horse",
+                "Adunaphel's Ring",
+                "Morgul's Blade"
             ],
             "terrain": 9,
             "feature": 1,
@@ -871,8 +395,9 @@
             "startingCharacters": [],
             "sex": 1,
             "startingCityRegion": "FarHarad",
-            "nationName": "Nazgûl",
-            "characterSprite": "Nazgul"
+            "nationName": "The Quiet Avenger",
+            "characterSprite": "Nazgul",
+            "nationInitials": "QA"
         },
         {
             "characterName": "Ren the Unclean",
@@ -884,51 +409,9 @@
             "race": 7,
             "banner": "banner_fire_iron",
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Ren's Ring",
-                    "hidden": false,
-                    "commanderBonus": 1,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "dagger",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Black Horse",
+                "Ren's Ring",
+                "Morgul's Blade"
             ],
             "terrain": 10,
             "startingCityName": "Barad Ungol",
@@ -944,8 +427,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Ungol",
-            "nationName": "Nazgûl",
-            "characterSprite": "Nazgul"
+            "nationName": "The Fire King",
+            "characterSprite": "Nazgul",
+            "nationInitials": "FK"
         },
         {
             "characterName": "Hoarmurath",
@@ -957,51 +441,9 @@
             "race": 7,
             "banner": "banner_hoarmurath",
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Hoarmurath's Ring",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 1,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "dagger",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Black Horse",
+                "Hoarmurath's Ring",
+                "Morgul's Blade"
             ],
             "terrain": 0,
             "startingCityName": "Durthang",
@@ -1017,8 +459,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Ithilien",
-            "nationName": "Nazgûl",
-            "characterSprite": "Nazgul"
+            "nationName": "The Ice King",
+            "characterSprite": "Nazgul",
+            "nationInitials": "IK"
         },
         {
             "characterName": "Dendra Dwar",
@@ -1030,66 +473,10 @@
             "race": 7,
             "banner": "banner_wolf",
             "artifacts": [
-                {
-                    "artifactName": "Black Horse",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Dwar's Ring",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 1,
-                    "passiveEffectId": "MountsChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Warg's Helmet",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "spriteString": "helmet",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Morgul's Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "dagger",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Black Horse",
+                "Dwar's Ring",
+                "Warg's Helmet",
+                "Morgul's Blade"
             ],
             "terrain": 10,
             "startingCityName": "Morannon",
@@ -1105,8 +492,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Udun",
-            "nationName": "Nazgûl",
-            "characterSprite": "Nazgul"
+            "nationName": "The Dog Lord",
+            "characterSprite": "Nazgul",
+            "nationInitials": "DL"
         },
         {
             "characterName": "Aragorn",
@@ -1118,51 +506,9 @@
             "race": 12,
             "banner": "banner_blue_white_tree",
             "artifacts": [
-                {
-                    "artifactName": "Ring of Barahir",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 1,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "ring",
-                    "alignment": 0,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Shards of Narsil",
-                    "hidden": false,
-                    "commanderBonus": 1,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 1,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "broken_sword",
-                    "alignment": 0,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Athelas",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HealPerTurn",
-                    "passiveEffectValue": 5,
-                    "spriteString": "herb",
-                    "alignment": 2,
-                    "transferable": true
-                }
+                "Ring of Barahir",
+                "Shards of Narsil",
+                "Athelas"
             ],
             "terrain": 2,
             "startingCityName": "Sarn Ford",
@@ -1204,7 +550,8 @@
             "sex": 0,
             "startingCityRegion": "Cardolan",
             "nationName": "Dúnedain",
-            "characterSprite": "Dunedain"
+            "characterSprite": "Dunedain",
+            "nationInitials": "D"
         },
         {
             "characterName": "Waulfa",
@@ -1229,7 +576,8 @@
             "sex": 1,
             "startingCityRegion": "Dunland",
             "nationName": "Dunlendings",
-            "characterSprite": "Easterling"
+            "characterSprite": "Easterling",
+            "nationInitials": "Du"
         },
         {
             "characterName": "Beoraborn",
@@ -1241,21 +589,7 @@
             "race": 13,
             "banner": "banner_bear",
             "artifacts": [
-                {
-                    "artifactName": "High Pass Toll",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "gold",
-                    "alignment": 2,
-                    "passiveEffectId": "HexEnemyHaltChancePerTurn",
-                    "passiveEffectValue": 5
-                }
+                "High Pass Toll"
             ],
             "terrain": 2,
             "startingCityName": "The Carrock",
@@ -1272,7 +606,8 @@
             "sex": 0,
             "startingCityRegion": "Anduin",
             "nationName": "Beornings",
-            "characterSprite": "Beorning"
+            "characterSprite": "Beorning",
+            "nationInitials": "B"
         },
         {
             "characterName": "Ingomer",
@@ -1297,7 +632,8 @@
             "sex": 0,
             "startingCityRegion": "SouthernMirkwood",
             "nationName": "Woodmen",
-            "characterSprite": "Common"
+            "characterSprite": "Common",
+            "nationInitials": "Wo"
         },
         {
             "characterName": "Shelob",
@@ -1309,21 +645,7 @@
             "race": 8,
             "banner": "banner_shelob",
             "artifacts": [
-                {
-                    "artifactName": "Poison",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "poison",
-                    "alignment": 2,
-                    "passiveEffectId": "HexEnemyPoisonChancePerTurn",
-                    "passiveEffectValue": 5
-                }
+                "Poison"
             ],
             "terrain": 0,
             "startingCityName": "Shelob's Lair",
@@ -1340,7 +662,8 @@
             "sex": 1,
             "startingCityRegion": "Ungol",
             "nationName": "Spiders",
-            "characterSprite": "Spider"
+            "characterSprite": "Spider",
+            "nationInitials": "Sh"
         },
         {
             "characterName": "Balrog",
@@ -1352,36 +675,8 @@
             "race": 10,
             "banner": "banner_balrog",
             "artifacts": [
-                {
-                    "artifactName": "Sword of Flame",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "fire_sword",
-                    "alignment": 1,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Fire Whip",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "whip",
-                    "alignment": 1,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                }
+                "Sword of Flame",
+                "Fire Whip"
             ],
             "terrain": 0,
             "startingCityName": "Khazad-Dum",
@@ -1398,7 +693,8 @@
             "sex": 0,
             "startingCityRegion": "MistyMountains",
             "nationName": "Balrog",
-            "characterSprite": "Balrog"
+            "characterSprite": "Balrog",
+            "nationInitials": "Ba"
         },
         {
             "characterName": "Smaug",
@@ -1410,21 +706,7 @@
             "race": 9,
             "banner": "banner_smaug",
             "artifacts": [
-                {
-                    "artifactName": "Dragon Wings",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "wing",
-                    "alignment": 1,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10
-                }
+                "Dragon Wings"
             ],
             "terrain": 0,
             "startingCityName": "Erebor (Lost)",
@@ -1440,8 +722,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Rhovanion",
-            "nationName": "Dragon",
-            "characterSprite": "Dragon"
+            "nationName": "Smaug",
+            "characterSprite": "Dragon",
+            "nationInitials": "Sm"
         },
         {
             "characterName": "Bard",
@@ -1469,8 +752,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Rhovanion",
-            "nationName": "Men of Dale",
-            "characterSprite": "Common"
+            "nationName": "Northmen",
+            "characterSprite": "Common",
+            "nationInitials": "NM"
         },
         {
             "characterName": "Uvatha",
@@ -1496,8 +780,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Khand",
-            "nationName": "Khand",
-            "characterSprite": "Easterling"
+            "nationName": "Khand Easterlings",
+            "characterSprite": "Easterling",
+            "nationInitials": "KE"
         },
         {
             "characterName": "Haruth Rammam",
@@ -1524,7 +809,8 @@
             "sex": 0,
             "startingCityRegion": "FarHarad",
             "nationName": "Haradrim",
-            "characterSprite": "Southron"
+            "characterSprite": "Southron",
+            "nationInitials": "H"
         },
         {
             "characterName": "Sangarunya",
@@ -1548,8 +834,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Umbar",
-            "nationName": "Umbar",
-            "characterSprite": "Southron"
+            "nationName": "Corsairs",
+            "characterSprite": "Southron",
+            "nationInitials": "C"
         },
         {
             "characterName": "Cirdan",
@@ -1561,21 +848,7 @@
             "race": 1,
             "banner": "banner_swans",
             "artifacts": [
-                {
-                    "artifactName": "Palantir of Elostirion",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "palantir",
-                    "alignment": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
+                "Palantir of Elostirion"
             ],
             "terrain": 4,
             "startingCityName": "The Grey Havens",
@@ -1592,7 +865,8 @@
             "sex": 0,
             "startingCityRegion": "Lindon",
             "nationName": "Grey Elves",
-            "characterSprite": "Elf"
+            "characterSprite": "Elf",
+            "nationInitials": "GE"
         },
         {
             "characterName": "Denethor",
@@ -1604,36 +878,8 @@
             "race": 0,
             "banner": "banner_white_green_tree",
             "artifacts": [
-                {
-                    "artifactName": "The White Tree",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "plant",
-                    "alignment": 0,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Palantir of Minas Tirith",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "palantir",
-                    "alignment": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
+                "The White Tree",
+                "Palantir of Minas Tirith"
             ],
             "terrain": 3,
             "startingCityName": "Minas Tirith",
@@ -1658,18 +904,7 @@
                     "startingArmySize": 3,
                     "preferedTroopType": 3,
                     "artifacts": [
-                        {
-                            "artifactName": "Horn of Gondor",
-                            "hidden": false,
-                            "commanderBonus": 0,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 0,
-                            "bonusDefense": 0,
-                            "spriteString": "mounts",
-                            "alignment": 0
-                        }
+                        "Horn of Gondor"
                     ],
                     "sex": 0,
                     "characterSprite": "Common"
@@ -1678,7 +913,8 @@
             "sex": 0,
             "startingCityRegion": "NorthernGondor",
             "nationName": "Gondor",
-            "characterSprite": "Common"
+            "characterSprite": "Common",
+            "nationInitials": "Go"
         },
         {
             "characterName": "Faramir",
@@ -1703,8 +939,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Ithilien",
-            "nationName": "Gondor",
-            "characterSprite": "Common"
+            "nationName": "Rangers of Ithilien",
+            "characterSprite": "Common",
+            "nationInitials": "RI"
         },
         {
             "characterName": "Theoden",
@@ -1716,51 +953,9 @@
             "race": 0,
             "banner": "banner_green_horse",
             "artifacts": [
-                {
-                    "artifactName": "Herugrim",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "spriteString": "sword",
-                    "alignment": 0,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Golden Armor of Rohan",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 1,
-                    "spriteString": "armor",
-                    "alignment": 0,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Snowmane",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hc",
-                    "alignment": 0,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
+                "Herugrim",
+                "Golden Armor of Rohan",
+                "Snowmane"
             ],
             "terrain": 2,
             "startingCityName": "Edoras",
@@ -1797,18 +992,7 @@
                     "startingArmySize": 2,
                     "preferedTroopType": 5,
                     "artifacts": [
-                        {
-                            "artifactName": "Firefoot",
-                            "hidden": false,
-                            "commanderBonus": 0,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 0,
-                            "bonusDefense": 0,
-                            "spriteString": "hc",
-                            "alignment": 0
-                        }
+                        "Firefoot"
                     ],
                     "sex": 0,
                     "characterSprite": "Common"
@@ -1816,8 +1000,9 @@
             ],
             "sex": 0,
             "startingCityRegion": "Rohan",
-            "nationName": "Rohan",
-            "characterSprite": "Common"
+            "nationName": "Riders of Rohan",
+            "characterSprite": "Common",
+            "nationInitials": "RR"
         },
         {
             "characterName": "Dain",
@@ -1844,7 +1029,8 @@
             "sex": 0,
             "startingCityRegion": "IronHills",
             "nationName": "Iron Hills",
-            "characterSprite": "Dwarf"
+            "characterSprite": "Dwarf",
+            "nationInitials": "IH"
         },
         {
             "characterName": "Gloin",
@@ -1877,18 +1063,7 @@
                     "mage": 0,
                     "race": 2,
                     "artifacts": [
-                        {
-                            "artifactName": "Gimli's Axe",
-                            "hidden": false,
-                            "commanderBonus": 1,
-                            "agentBonus": 0,
-                            "emmissaryBonus": 0,
-                            "mageBonus": 0,
-                            "bonusAttack": 0,
-                            "bonusDefense": 0,
-                            "spriteString": "axe",
-                            "alignment": 0
-                        }
+                        "Gimli's Axe"
                     ],
                     "sex": 0,
                     "characterSprite": "Dwarf"
@@ -1897,7 +1072,8 @@
             "sex": 0,
             "startingCityRegion": "EredLuin",
             "nationName": "Blue Mountains",
-            "characterSprite": "Dwarf"
+            "characterSprite": "Dwarf",
+            "nationInitials": "BM"
         },
         {
             "characterName": "Radagast",
@@ -1909,36 +1085,8 @@
             "race": 4,
             "banner": "banner_elk",
             "artifacts": [
-                {
-                    "artifactName": "Rabbits of Rhosgobel",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "tail",
-                    "alignment": 0,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10
-                },
-                {
-                    "artifactName": "Birds of Mirkwood",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "bird",
-                    "alignment": 2,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10
-                }
+                "Rabbits of Rhosgobel",
+                "Birds of Mirkwood"
             ],
             "terrain": 5,
             "startingCityName": "Rhosgobel",
@@ -1955,7 +1103,8 @@
             "sex": 0,
             "startingCityRegion": "SouthernMirkwood",
             "nationName": "Brown Wizard",
-            "characterSprite": "RadagastCharacter"
+            "characterSprite": "RadagastCharacter",
+            "nationInitials": "R"
         },
         {
             "characterName": "GhanBuriGhan",
@@ -1982,7 +1131,8 @@
             "sex": 0,
             "startingCityRegion": "NorthernGondor",
             "nationName": "Drúedain",
-            "characterSprite": "Wose"
+            "characterSprite": "Wose",
+            "nationInitials": "Dr"
         },
         {
             "characterName": "Goblin King",
@@ -1994,21 +1144,7 @@
             "race": 16,
             "banner": "banner_orc_helmet_2",
             "artifacts": [
-                {
-                    "artifactName": "Goblin Cleaver",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "spriteString": "scimitar",
-                    "alignment": 1,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                }
+                "Goblin Cleaver"
             ],
             "terrain": 0,
             "startingCityName": "Goblin Gate",
@@ -2024,8 +1160,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "MistyMountains",
-            "nationName": "Goblins",
-            "characterSprite": "Goblin"
+            "nationName": "Goblin Gate",
+            "characterSprite": "Goblin",
+            "nationInitials": "GG"
         },
         {
             "characterName": "Tom Bombadil",
@@ -2037,36 +1174,8 @@
             "race": 4,
             "banner": "banner_green_shield",
             "artifacts": [
-                {
-                    "artifactName": "Yellow boots",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "boots",
-                    "alignment": 0,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Blue Jacket",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "flower",
-                    "alignment": 2,
-                    "passiveEffectId": "HopeChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
+                "Yellow boots",
+                "Blue Jacket"
             ],
             "terrain": 5,
             "startingCityName": "Old Forest",
@@ -2083,7 +1192,8 @@
             "sex": 0,
             "startingCityRegion": "TheShire",
             "nationName": "Old Forest",
-            "characterSprite": "Maia"
+            "characterSprite": "Maia",
+            "nationInitials": "OF"
         },
         {
             "characterName": "The Undead King",
@@ -2110,7 +1220,8 @@
             "sex": 0,
             "startingCityRegion": "SouthernGondor",
             "nationName": "Oathbreakers",
-            "characterSprite": "Undead"
+            "characterSprite": "Undead",
+            "nationInitials": "O"
         },
         {
             "characterName": "Pallando",
@@ -2122,36 +1233,8 @@
             "race": 4,
             "banner": "banner_white_star_wings",
             "artifacts": [
-                {
-                    "artifactName": "Robes of Aman",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "cloak",
-                    "alignment": 2,
-                    "passiveEffectId": "RevealHiddenEnemyPcOnOccupiedHex",
-                    "passiveEffectValue": 1,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Hood of Stars",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "hood",
-                    "alignment": 2,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
+                "Robes of Aman",
+                "Hood of Stars"
             ],
             "terrain": 2,
             "startingCityName": "Elgaer",
@@ -2168,7 +1251,8 @@
             "sex": 0,
             "startingCityRegion": "Rhun",
             "nationName": "Purple Wizard",
-            "characterSprite": "PallandoCharacter"
+            "characterSprite": "PallandoCharacter",
+            "nationInitials": "P"
         },
         {
             "characterName": "Alatar",
@@ -2180,36 +1264,8 @@
             "race": 4,
             "banner": "banner_brown_sun",
             "artifacts": [
-                {
-                    "artifactName": "Blue Bow",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 2,
-                    "bonusDefense": 0,
-                    "spriteString": "bow",
-                    "alignment": 2,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Robes of Aman",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "cloak",
-                    "alignment": 2,
-                    "passiveEffectId": "RevealHiddenEnemyPcOnOccupiedHex",
-                    "passiveEffectValue": 1,
-                    "transferable": true
-                }
+                "Blue Bow",
+                "Robes of Aman"
             ],
             "terrain": 9,
             "startingCityName": "Laorki",
@@ -2226,7 +1282,8 @@
             "sex": 0,
             "startingCityRegion": "Khand",
             "nationName": "Blue Wizard",
-            "characterSprite": "AlatarCharacter"
+            "characterSprite": "AlatarCharacter",
+            "nationInitials": "A"
         },
         {
             "characterName": "Treebeard",
@@ -2238,21 +1295,7 @@
             "race": 17,
             "banner": "banner_green_tree",
             "artifacts": [
-                {
-                    "artifactName": "Ent-draught",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 1,
-                    "spriteString": "potion",
-                    "alignment": 2,
-                    "transferable": true,
-                    "passiveEffectId": "",
-                    "passiveEffectValue": 0
-                }
+                "Ent-draught"
             ],
             "terrain": 5,
             "startingCityName": "Derndingle",
@@ -2269,7 +1312,8 @@
             "sex": 0,
             "startingCityRegion": "Rohan",
             "nationName": "Ents",
-            "characterSprite": "Ent"
+            "characterSprite": "Ent",
+            "nationInitials": "E"
         },
         {
             "characterName": "Celdacil",
@@ -2296,8 +1340,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Anduin",
-            "nationName": "Northmen",
-            "characterSprite": "Common"
+            "nationName": "Rivermen",
+            "characterSprite": "Common",
+            "nationInitials": "Ri"
         },
         {
             "characterName": "Annatorion",
@@ -2309,36 +1354,8 @@
             "race": 0,
             "banner": "banner_red_wine",
             "artifacts": [
-                {
-                    "artifactName": "Wine of Dorwinion",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "wine",
-                    "alignment": 2,
-                    "passiveEffectId": "EncouragedChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                },
-                {
-                    "artifactName": "Dorwinion Grapes",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "grapes",
-                    "alignment": 2,
-                    "passiveEffectId": "EncouragedChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": true
-                }
+                "Wine of Dorwinion",
+                "Dorwinion Grapes"
             ],
             "terrain": 4,
             "feature": 2,
@@ -2356,7 +1373,8 @@
             "sex": 0,
             "startingCityRegion": "Dorwinion",
             "nationName": "Dorwinion",
-            "characterSprite": "Common"
+            "characterSprite": "Common",
+            "nationInitials": "Do"
         },
         {
             "characterName": "Barrow-wight",
@@ -2368,36 +1386,8 @@
             "race": 11,
             "banner": "banner_barrow_wight",
             "artifacts": [
-                {
-                    "artifactName": "Westernesse Blade",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "spriteString": "sword",
-                    "alignment": 1,
-                    "passiveEffectId": "",
-                    "transferable": true,
-                    "passiveEffectValue": 0
-                },
-                {
-                    "artifactName": "Gripping Bone",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "spriteString": "skeleton_arm",
-                    "alignment": 1,
-                    "passiveEffectId": "HexEnemyFearChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": true
-                }
+                "Westernesse Blade",
+                "Gripping Bone"
             ],
             "terrain": 1,
             "startingCityName": "Barrow-downs",
@@ -2414,7 +1404,8 @@
             "sex": 0,
             "startingCityRegion": "Cardolan",
             "nationName": "Barrow-wights",
-            "characterSprite": "Undead"
+            "characterSprite": "Undead",
+            "nationInitials": "BW"
         },
         {
             "characterName": "Gwaihir",
@@ -2441,7 +1432,8 @@
             "sex": 0,
             "startingCityRegion": "MistyMountains",
             "nationName": "Eagles",
-            "characterSprite": "Eagle"
+            "characterSprite": "Eagle",
+            "nationInitials": "Ea"
         },
         {
             "characterName": "Huz",
@@ -2467,8 +1459,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "Dorwinion",
-            "nationName": "Dorwinion",
-            "characterSprite": "Easterling"
+            "nationName": "Rhun Easterlings",
+            "characterSprite": "Easterling",
+            "nationInitials": "RE"
         },
         {
             "characterName": "Azog",
@@ -2507,8 +1500,9 @@
             ],
             "sex": 0,
             "startingCityRegion": "Angmar",
-            "nationName": "Gundabad",
-            "characterSprite": "Orc"
+            "nationName": "Misty Mountains",
+            "characterSprite": "Orc",
+            "nationInitials": "MM"
         },
         {
             "characterName": "Merry",
@@ -2534,8 +1528,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "TheShire",
-            "nationName": "Hobbits",
-            "characterSprite": "Hobbit"
+            "nationName": "Hobbits of Buckland",
+            "characterSprite": "Hobbit",
+            "nationInitials": "HB"
         },
         {
             "characterName": "Pippin",
@@ -2561,8 +1556,9 @@
             "startingCharacters": [],
             "sex": 0,
             "startingCityRegion": "TheShire",
-            "nationName": "Hobbits",
-            "characterSprite": "Hobbit"
+            "nationName": "Michel Delving Hobbits",
+            "characterSprite": "Hobbit",
+            "nationInitials": "DH"
         },
         {
             "characterName": "Frodo",
@@ -2602,8 +1598,9 @@
             "spawnPcWithoutOwner": false,
             "sex": 0,
             "startingCityRegion": "TheShire",
-            "nationName": "Hobbits",
-            "characterSprite": "Hobbit"
+            "nationName": "Hobbits of Hobbiton",
+            "characterSprite": "Hobbit",
+            "nationInitials": "HH"
         },
         {
             "characterName": "Orthanc",
@@ -2631,7 +1628,8 @@
             "sex": 0,
             "startingCityRegion": "GapOfRohan",
             "nationName": "Isengard",
-            "characterSprite": "Maia"
+            "characterSprite": "Maia",
+            "nationInitials": "I"
         },
         {
             "characterName": "Barad-dur",
@@ -2659,7 +1657,8 @@
             "sex": 0,
             "startingCityRegion": "Gorgoroth",
             "nationName": "Mordor",
-            "characterSprite": "Maia"
+            "characterSprite": "Maia",
+            "nationInitials": "M"
         }
     ]
 }

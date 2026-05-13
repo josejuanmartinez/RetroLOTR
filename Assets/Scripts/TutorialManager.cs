@@ -695,7 +695,7 @@ public class TutorialManager : MonoBehaviour
             {
                 Artifact artifact = GetArtifactByName(artifactName);
                 if (artifact == null) continue;
-                actor.artifacts.Add(CloneArtifact(artifact));
+                actor.artifacts.Add(artifact.Clone());
                 Character.RefreshArtifactPcVisibilityForHex(actor.hex);
                 MessageDisplayNoUI.ShowMessage(actor.hex, actor, $"{actor.characterName} received {artifact.artifactName}", Color.green);
             }
@@ -1187,51 +1187,21 @@ public class TutorialManager : MonoBehaviour
 
     private void BuildArtifactCatalog()
     {
+        // ArtifactRepository now provides the canonical catalog loaded from Artifacts.json
         artifactCatalog = new Dictionary<string, Artifact>(StringComparer.OrdinalIgnoreCase);
-
-        PlayableLeaders playable = FindFirstObjectByType<PlayableLeaders>();
-        if (playable?.playableLeaders?.biomes != null)
+        foreach (Artifact template in ArtifactRepository.GetAll())
         {
-            foreach (LeaderBiomeConfig biome in playable.playableLeaders.biomes)
+            if (template == null || string.IsNullOrWhiteSpace(template.artifactName)) continue;
+            if (!artifactCatalog.ContainsKey(template.artifactName))
             {
-                if (biome == null || biome.tutorialArtifacts == null) continue;
-                foreach (Artifact artifact in biome.tutorialArtifacts)
-                {
-                    if (artifact == null || string.IsNullOrWhiteSpace(artifact.artifactName)) continue;
-                    if (!artifactCatalog.ContainsKey(artifact.artifactName))
-                    {
-                        artifactCatalog[artifact.artifactName] = artifact;
-                    }
-                }
+                artifactCatalog[template.artifactName] = template;
             }
         }
     }
 
     private Artifact GetArtifactByName(string artifactName)
     {
-        if (string.IsNullOrWhiteSpace(artifactName) || artifactCatalog == null) return null;
-        return artifactCatalog.TryGetValue(artifactName, out Artifact artifact) ? artifact : null;
-    }
-
-    private static Artifact CloneArtifact(Artifact source)
-    {
-        if (source == null) return null;
-        return new Artifact
-        {
-            artifactName = source.artifactName,
-            hidden = source.hidden,
-            alignment = source.alignment,
-            commanderBonus = source.commanderBonus,
-            agentBonus = source.agentBonus,
-            emmissaryBonus = source.emmissaryBonus,
-            mageBonus = source.mageBonus,
-            bonusAttack = source.bonusAttack,
-            bonusDefense = source.bonusDefense,
-            passiveEffectId = source.passiveEffectId,
-            passiveEffectValue = source.passiveEffectValue,
-            transferable = source.transferable,
-            spriteString = source.spriteString
-        };
+        return ArtifactRepository.GetByName(artifactName);
     }
 
     private void ApplySkipStateAllegiance(TutorialStep step, PlayableLeader playableLeader)
@@ -1270,7 +1240,7 @@ public class TutorialManager : MonoBehaviour
                 if (artifact == null) continue;
                 if (actor.artifacts.Any(a => a != null && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase))) continue;
                 if (actor.artifacts.Count >= Character.MAX_ARTIFACTS) break;
-                actor.artifacts.Add(CloneArtifact(artifact));
+                actor.artifacts.Add(artifact.Clone());
                 Character.RefreshArtifactPcVisibilityForHex(actor.hex);
             }
         }
@@ -1432,15 +1402,17 @@ public class TutorialManager : MonoBehaviour
         if (biome?.tutorialArtifacts == null || biome.tutorialArtifacts.Count == 0) return;
 
         HashSet<string> grantedNames = new(StringComparer.OrdinalIgnoreCase);
-        foreach (Artifact artifact in biome.tutorialArtifacts)
+        foreach (string artifactName in biome.tutorialArtifacts)
         {
-            if (artifact == null || string.IsNullOrWhiteSpace(artifact.artifactName)) continue;
-            grantedNames.Add(artifact.artifactName);
+            if (string.IsNullOrWhiteSpace(artifactName)) continue;
+            grantedNames.Add(artifactName);
 
-            bool alreadyOwned = playableLeader.artifacts.Any(a => a != null && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase));
+            bool alreadyOwned = playableLeader.artifacts.Any(a => a != null && string.Equals(a.artifactName, artifactName, StringComparison.OrdinalIgnoreCase));
             if (alreadyOwned) continue;
             if (playableLeader.artifacts.Count >= Character.MAX_ARTIFACTS) break;
-            playableLeader.artifacts.Add(CloneArtifact(artifact));
+            Artifact artifact = ArtifactRepository.GetByName(artifactName);
+            if (artifact == null) continue;
+            playableLeader.artifacts.Add(artifact.Clone());
             Character.RefreshArtifactPcVisibilityForHex(playableLeader.hex);
         }
 

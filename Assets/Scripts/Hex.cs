@@ -1798,6 +1798,8 @@ public class Hex : MonoBehaviour
 
     public int GetTerrainCost(Character character)
     {
+        if (character != null && character.GetIgnoreTerrainMovementPenalty())
+            return 1;
         return character.IsArmyCommander() ? TerrainData.terrainCosts[terrainType] : 1;
     }
 

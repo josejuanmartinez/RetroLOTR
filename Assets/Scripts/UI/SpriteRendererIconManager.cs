@@ -46,7 +46,9 @@ public class SpriteRendererIconManager : MonoBehaviour
         AlignmentEnum alignmentEnum = character.GetOwner().GetAlignment();
         Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(alignmentEnum.ToString()) : null;
         if (armySprite != null) armySprite.sprite = sprite;
-        if (nationText != null) nationText.text = GetInitials(character.GetOwner().GetBiome().nationName);
+        var biome = character.GetOwner().GetBiome();
+        string initials = !string.IsNullOrEmpty(biome?.nationInitials) ? biome.nationInitials : GetInitials(biome?.nationName);
+        if (nationText != null) nationText.text = initials;
     }
 
     public void Initialize(Character character, string spriteName)
@@ -55,6 +57,8 @@ public class SpriteRendererIconManager : MonoBehaviour
         illustrations = FindFirstObjectByType<Illustrations>();
         Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(spriteName) : null;
         if (armySprite != null) armySprite.sprite = sprite;
-        if (nationText != null) nationText.text = GetInitials(character.GetOwner()?.GetBiome()?.nationName);
+        var biome = character.GetOwner()?.GetBiome();
+        string initials = !string.IsNullOrEmpty(biome?.nationInitials) ? biome.nationInitials : GetInitials(biome?.nationName);
+        if (nationText != null) nationText.text = initials;
     }
 }

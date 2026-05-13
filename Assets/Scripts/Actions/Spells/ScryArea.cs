@@ -20,7 +20,7 @@ public class ScryArea : Spell
                 // Select a random hex from the list
                 int randomIndex = UnityEngine.Random.Range(0, eligibleHexes.Count);
                 Hex randomHex = eligibleHexes[randomIndex];
-                int radius = Math.Max(1, ApplySpellEffectMultiplier(c, Math.Max(1, c.GetMage() / 2)));
+                int radius = Math.Max(1, ApplySpellEffectMultiplier(c, Math.Max(1, c.GetMage() / 2)) + c.GetTotalScryAreaBonus());
                 randomHex.RevealArea(radius);
                 var radiusHexes = randomHex.GetHexesInRadius(radius);
                 c.GetOwner()?.AddTemporarySeenHexes(radiusHexes);

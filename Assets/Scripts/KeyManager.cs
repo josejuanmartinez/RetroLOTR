@@ -185,16 +185,6 @@ public class KeyManager : MonoBehaviour
             }
         }
 
-        if (!game) game = FindFirstObjectByType<Game>();
-        if (game != null && game.artifacts != null && game.artifacts.Count > 0)
-        {
-            foreach (var art in game.artifacts)
-            {
-                if (art == null) continue;
-                entries.Add($"{art.artifactName} (game list)");
-            }
-        }
-
         if (entries.Count == 0)
         {
             Debug.Log("CTRL+Shift+A -> No artifacts found");

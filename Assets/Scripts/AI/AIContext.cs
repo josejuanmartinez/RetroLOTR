@@ -642,7 +642,7 @@ public class AIContext
     private float CalculateNationArtifacts()
     {
         if (Leader == null) return 0;
-        return Leader.controlledCharacters.Sum(ch => ch != null ? ch.artifacts.Count * 1f : 0f) / Math.Max(1f, GameObject.FindFirstObjectByType<Game>().artifacts.Count * 1f);
+        return Leader.controlledCharacters.Sum(ch => ch != null ? ch.artifacts.Count * 1f : 0f) / Math.Max(1f, ArtifactRepository.Count * 1f);
     }
 
     private bool IsEnemy(Leader other)
