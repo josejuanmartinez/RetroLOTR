@@ -475,11 +475,48 @@ public class CardData
 
         if (GetCardType() != CardTypeEnum.PC) return true;
         if (string.IsNullOrWhiteSpace(region)) return true;
-        if (playableLeader.HasPlayedLandCardForRegion(region)) return true;
+        if (IsRegionDiscovered(region, owner)) return true;
 
         reason = $"{region} not discovered yet.";
         return false;
     }
+
+    private bool IsRegionDiscovered(string region, Leader owner)
+    {
+        if (string.IsNullOrWhiteSpace(region) || owner == null) return true;
+
+        Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+        Board board = game?.board != null ? game.board : UnityEngine.Object.FindFirstObjectByType<Board>();
+        if (board == null) return false;
+
+        DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        string normalizedTarget = NormalizeRegion(region);
+
+        foreach (Hex hex in board.hexes.Values)
+        {
+            if (hex == null) continue;
+
+            string hexRegion = hex.GetLandRegion();
+            if (string.IsNullOrWhiteSpace(hexRegion))
+            {
+                PC pc = hex.GetPCData();
+                if (pc != null && deckManager != null)
+                {
+                    hexRegion = deckManager.ResolveRegionForPc(pc);
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(hexRegion)) continue;
+            if (!string.Equals(NormalizeRegion(hexRegion), normalizedTarget, StringComparison.Ordinal)) continue;
+
+            if (hex.IsHexRevealed() || hex.IsScoutedBy(owner)) return true;
+        }
+
+        return false;
+    }
+
+    private static string NormalizeRegion(string s)
+        => string.IsNullOrWhiteSpace(s) ? string.Empty : new string(s.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
 
     private static string GetDefaultTroopName(TroopsTypeEnum troopType)
     {
@@ -1026,16 +1063,19 @@ public class DeckManager : MonoBehaviour
 
         List<Hex> revealedPcHexes = null;
         string revealMessage = null;
+        string discoveryRegion = null;
         switch (card.GetCardType())
         {
             case CardTypeEnum.Land:
-                revealedPcHexes = RevealRegion(board, card.name, leader);
+                revealedPcHexes = RevealRegion(board, card.name, leader, maxHexes: 3);
                 revealMessage = $"The lands of {FormatDisplayName(card.name)} were revealed";
+                discoveryRegion = card.name;
                 break;
             case CardTypeEnum.PC:
                 string pcRegion = !string.IsNullOrWhiteSpace(card.region) ? card.region : card.name;
                 revealedPcHexes = RevealRegion(board, pcRegion, leader);
                 revealMessage = $"The lands of {FormatDisplayName(pcRegion)} were revealed";
+                discoveryRegion = pcRegion;
                 break;
         }
 
@@ -1044,6 +1084,13 @@ public class DeckManager : MonoBehaviour
         {
             Debug.LogWarning($"DeckManager: No hexes matched reveal region '{(card.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(card.region) ? card.region : card.name)}'.");
         }
+
+        if (leader is PlayableLeader pl && revealedPcHexes != null && revealedPcHexes.Count > 0
+            && !string.IsNullOrWhiteSpace(discoveryRegion) && pl.TryDiscoverRegion(discoveryRegion))
+        {
+            NotifyRegionDiscovered(discoveryRegion, ChooseFocusHex(revealedPcHexes));
+        }
+
         QueueRevealMessages(revealedPcHexes, revealMessage);
     }
 
@@ -1630,10 +1677,10 @@ public class DeckManager : MonoBehaviour
         return !string.IsNullOrWhiteSpace(card.GetActionRef());
     }
 
-    private List<Hex> RevealRegion(Board board, string region, Leader owner)
+    private List<Hex> RevealRegion(Board board, string region, Leader owner, int maxHexes = -1)
     {
-        List<Hex> revealedHexes = new();
-        if (board == null || string.IsNullOrWhiteSpace(region)) return revealedHexes;
+        List<Hex> candidates = new();
+        if (board == null || string.IsNullOrWhiteSpace(region)) return candidates;
 
         string normalizedRegion = NormalizeCardName(region);
         foreach (Hex hex in board.hexes.Values)
@@ -1644,20 +1691,27 @@ public class DeckManager : MonoBehaviour
             if (string.IsNullOrWhiteSpace(hexRegion))
             {
                 PC pc = hex.GetPCData();
-                if (pc != null)
-                {
-                    hexRegion = ResolveRegionForPc(pc);
-                }
+                if (pc != null) hexRegion = ResolveRegionForPc(pc);
             }
 
             if (string.IsNullOrWhiteSpace(hexRegion)) continue;
             if (!string.Equals(NormalizeCardName(hexRegion), normalizedRegion, StringComparison.Ordinal)) continue;
 
-            hex.RevealMapOnlyArea(1, false, false);
-            revealedHexes.Add(hex);
+            candidates.Add(hex);
         }
 
-        return revealedHexes;
+        if (maxHexes > 0 && candidates.Count > maxHexes)
+        {
+            for (int i = candidates.Count - 1; i > 0; i--)
+            {
+                int j = UnityEngine.Random.Range(0, i + 1);
+                (candidates[i], candidates[j]) = (candidates[j], candidates[i]);
+            }
+            candidates = candidates.Take(maxHexes).ToList();
+        }
+
+        foreach (Hex hex in candidates) hex.RevealMapOnlyArea(1, false, false);
+        return candidates;
     }
 
     private List<Hex> RevealPcOnMapOnly(Board board, string pcName)
@@ -1707,6 +1761,32 @@ public class DeckManager : MonoBehaviour
     {
         if (string.IsNullOrWhiteSpace(cardName)) return string.Empty;
         return new string(cardName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+    }
+
+    public static void NotifyRegionDiscovered(string regionName, Hex anchorHex)
+    {
+        if (string.IsNullOrWhiteSpace(regionName)) return;
+
+        EventIconsManager iconsManager = EventIconsManager.FindManager();
+        BoardNavigator navigator = BoardNavigator.Instance != null ? BoardNavigator.Instance : FindFirstObjectByType<BoardNavigator>();
+        string displayName = FormatDisplayName(regionName);
+        string text = $"{displayName} discovered!";
+        Action showMessage = () => MessageDisplay.ShowMessage(text, Color.cyan, true);
+
+        if (iconsManager != null)
+        {
+            iconsManager.AddEventIcon(EventIconType.Discovery, true, () =>
+            {
+                if (navigator != null && anchorHex != null)
+                    navigator.EnqueueFocus(anchorHex, 0.5f, 0.18f, true, showMessage);
+                else
+                    showMessage();
+            });
+        }
+        else
+        {
+            showMessage();
+        }
     }
 
     private static void QueueRevealMessages(List<Hex> revealedPcHexes, string message)

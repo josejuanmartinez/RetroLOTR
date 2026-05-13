@@ -7,8 +7,6 @@ using UnityEngine;
 
 public class PCAction : MaterialRetrieval
 {
-    private const int FoundingGoldCost = 10;
-
     public override void Initialize(Character c, CardData card = null, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -24,7 +22,20 @@ public class PCAction : MaterialRetrieval
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            return character != null;
+            if (character == null || character.killed || character.hex == null) return false;
+            if (!IsOnAssociatedRegion(character)) return false;
+            if (character.hex.IsWaterTerrain()) return false;
+            if (!IsRegionDiscovered(character)) return false;
+
+            PC hexPc = character.hex.GetPCData();
+            if (hexPc != null && hexPc.citySize != PCSizeEnum.NONE)
+            {
+                string targetName = NormalizePcLookupKey(ResolveAssociatedPcName());
+                string hexPcName = NormalizePcLookupKey(hexPc.pcName);
+                if (hexPcName != targetName) return false;
+            }
+
+            return true;
         };
 
         asyncEffect = async (character) =>
@@ -33,9 +44,31 @@ public class PCAction : MaterialRetrieval
             if (character == null) return true;
 
             PC existingPc = FindAssociatedPcInGame();
-            if (existingPc == null)
-                TryFoundAssociatedPc(character);
-            ShowCaravanNotification(character, existingPc);
+            if (existingPc != null)
+            {
+                if (existingPc.hex != null)
+                {
+                    Leader owner = character.GetOwner();
+                    if (owner != null)
+                    {
+                        existingPc.hex.Reveal(owner);
+                    }
+                }
+                ShowCaravanNotification(character, existingPc);
+            }
+            else
+            {
+                bool founded = TryFoundAssociatedPc(character);
+                if (founded)
+                {
+                    ShowCaravanNotification(character, null);
+                }
+                else
+                {
+                    string pcName = ResolveAssociatedPcName();
+                    MessageDisplayNoUI.ShowMessage(character.hex, character, $"Could not found {pcName}.", Color.red);
+                }
+            }
 
             return true;
         };
@@ -86,8 +119,6 @@ public class PCAction : MaterialRetrieval
         Leader owner = character.GetOwner();
         if (owner == null || character.hex == null) return false;
 
-        owner.RemoveGold(FoundingGoldCost);
-
         string pcName = ResolveAssociatedPcName();
         PC foundedPc = new(owner, pcName, PCSizeEnum.camp, FortSizeEnum.NONE, false, false, character.hex, false, 75);
         character.hex.RedrawPC();
@@ -98,22 +129,15 @@ public class PCAction : MaterialRetrieval
     private bool CanFoundAssociatedPc(Character character)
     {
         if (character == null || character.killed || character.hex == null) return false;
-
-        Leader owner = character.GetOwner();
-        if (owner == null || owner.goldAmount < FoundingGoldCost) return false;
         if (!IsOnAssociatedRegion(character)) return false;
         if (character.hex.IsWaterTerrain()) return false;
-        if (character.hex.HasAnyPC()) return false;
-        if (character.GetCommander() < 2 && character.GetEmmissary() < 1) return false;
 
-        List<Army> armies = character.hex.armies;
-        if (armies == null) return true;
-
-        for (int i = 0; i < armies.Count; i++)
+        PC hexPc = character.hex.GetPCData();
+        if (hexPc != null && hexPc.citySize != PCSizeEnum.NONE)
         {
-            Army army = armies[i];
-            if (army == null || army.killed || army.commander == null || army.commander.killed) continue;
-            if (IsEnemyArmy(character, army)) return false;
+            string targetName = NormalizePcLookupKey(ResolveAssociatedPcName());
+            string hexPcName = NormalizePcLookupKey(hexPc.pcName);
+            if (hexPcName != targetName) return false;
         }
 
         return true;
@@ -130,16 +154,53 @@ public class PCAction : MaterialRetrieval
         return string.Equals(NormalizePcLookupKey(pcRegion), NormalizePcLookupKey(hexRegion), StringComparison.OrdinalIgnoreCase);
     }
 
-    private static bool IsEnemyArmy(Character character, Army army)
+    private bool IsRegionDiscovered(Character character)
     {
-        if (character == null || army == null || army.commander == null) return false;
-        if (army.commander.GetOwner() == character.GetOwner()) return false;
+        string pcRegion = ResolveAssociatedPcRegion();
+        if (string.IsNullOrWhiteSpace(pcRegion)) return true;
 
-        AlignmentEnum sourceAlignment = character.GetAlignment();
-        AlignmentEnum targetAlignment = army.GetAlignment();
-        if (targetAlignment == AlignmentEnum.neutral) return true;
-        if (sourceAlignment == AlignmentEnum.neutral) return true;
-        return targetAlignment != sourceAlignment;
+        Leader owner = character.GetOwner();
+        if (owner == null) return false;
+
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return false;
+
+        string normalizedTarget = NormalizePcLookupKey(pcRegion);
+
+        foreach (Hex hex in board.GetHexes())
+        {
+            if (hex == null) continue;
+
+            string hexRegion = hex.GetLandRegion();
+            if (string.IsNullOrWhiteSpace(hexRegion))
+            {
+                PC pc = hex.GetPCData();
+                if (pc != null)
+                {
+                    hexRegion = ResolveRegionForPc(pc);
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(hexRegion)) continue;
+            if (!string.Equals(NormalizePcLookupKey(hexRegion), normalizedTarget, StringComparison.OrdinalIgnoreCase)) continue;
+
+            if (hex.IsHexRevealed() || hex.IsScoutedBy(owner)) return true;
+        }
+
+        return false;
+    }
+
+    private string ResolveRegionForPc(PC pc)
+    {
+        if (pc == null) return null;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager != null)
+        {
+            return deckManager.ResolveRegionForPc(pc);
+        }
+
+        return null;
     }
 
     private PC FindAssociatedPcInGame()

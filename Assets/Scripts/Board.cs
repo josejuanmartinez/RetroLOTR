@@ -1360,7 +1360,24 @@ public class Board : MonoBehaviour
             if (character.GetOwner() == FindFirstObjectByType<Game>().player)
             {
                 if (lookAt) newHex.LookAt();
-                character.hex.RevealArea(1, lookAt);                
+                character.hex.RevealArea(1, lookAt);
+
+                if (g != null && g.player is PlayableLeader movingLeader)
+                {
+                    string hexRegion = newHex.GetLandRegion();
+                    if (string.IsNullOrWhiteSpace(hexRegion))
+                    {
+                        PC pc = newHex.GetPCData();
+                        if (pc != null)
+                        {
+                            DeckManager dm = FindFirstObjectByType<DeckManager>();
+                            if (dm != null) hexRegion = dm.ResolveRegionForPc(pc);
+                        }
+                    }
+                    if (!string.IsNullOrWhiteSpace(hexRegion) && movingLeader.TryDiscoverRegion(hexRegion))
+                        DeckManager.NotifyRegionDiscovered(hexRegion, newHex);
+                }
+
                 if(finishMovement) {
                     UnselectHex();
                     SelectHex(newHex, lookAt);

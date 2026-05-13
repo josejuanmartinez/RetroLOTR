@@ -8,6 +8,7 @@ public class PlayableLeader : Leader
     public VictoryPoints victoryPoints;
     private readonly HashSet<string> playedLandCards = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> playedPcCards = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> discoveredRegions = new(StringComparer.OrdinalIgnoreCase);
     private string selectedSubdeckId;
     private string selectedDeckIdentity;
     private string selectedLeaderDescription;
@@ -25,6 +26,7 @@ public class PlayableLeader : Leader
         victoryPoints = null;
         playedLandCards.Clear();
         playedPcCards.Clear();
+        discoveredRegions.Clear();
         selectedSubdeckId = playableLeaderBiome?.subdeckId;
         selectedDeckIdentity = playableLeaderBiome?.deckIdentity;
         selectedLeaderDescription = playableLeaderBiome?.description;
@@ -90,6 +92,12 @@ public class PlayableLeader : Leader
     {
         string normalizedPc = NormalizeCardName(pcName);
         return !string.IsNullOrEmpty(normalizedPc) && playedPcCards.Contains(normalizedPc);
+    }
+
+    public bool TryDiscoverRegion(string region)
+    {
+        if (string.IsNullOrWhiteSpace(region)) return false;
+        return discoveredRegions.Add(NormalizeCardName(region));
     }
 
     public bool HasPlayedLandCardThisTurn()

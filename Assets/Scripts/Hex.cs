@@ -30,6 +30,7 @@ public class Hex : MonoBehaviour
     [Header("References")]
     public Sprite defaultCharacterSprite;
     public TextMeshPro messageNoUI;
+    public SpriteRenderer hexRegion;
 
     [Header("Character")]
     public SpriteRenderer characterSpriteRenderer;
@@ -297,6 +298,7 @@ public class Hex : MonoBehaviour
     {
         v2 = new Vector2Int(row, col);
         assignedLandRegion = null;
+        if (hexRegion != null) hexRegion.enabled = false;
         if (game == null) game = FindFirstObjectByType<Game>();
         terrainTexture.sortingOrder = int.MaxValue - row;
     }
@@ -1033,6 +1035,7 @@ public class Hex : MonoBehaviour
     {
         bool revealed = IsHexRevealed();
         bool seen = IsHexSeen();
+        ApplyRegionColor();
         if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, revealed);
         UpdateTerrainVisualAlpha();
         if (revealed)
@@ -1935,6 +1938,15 @@ public class Hex : MonoBehaviour
     public void SetLandRegion(string region)
     {
         assignedLandRegion = string.IsNullOrWhiteSpace(region) ? null : region.Trim();
+        ApplyRegionColor();
+    }
+
+    private void ApplyRegionColor()
+    {
+        if (hexRegion == null) return;
+        bool show = !string.IsNullOrWhiteSpace(assignedLandRegion) && IsHexRevealed();
+        hexRegion.enabled = show;
+        if (show) hexRegion.color = RegionColors.GetColor(assignedLandRegion);
     }
 
     public string GetLandRegion()
