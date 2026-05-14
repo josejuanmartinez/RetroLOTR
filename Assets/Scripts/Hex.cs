@@ -31,6 +31,7 @@ public class Hex : MonoBehaviour
     public Sprite defaultCharacterSprite;
     public TextMeshPro messageNoUI;
     public SpriteRenderer hexRegion;
+    public SpriteRenderer hexRegionMinimap;
 
     [Header("Character")]
     public SpriteRenderer characterSpriteRenderer;
@@ -299,6 +300,7 @@ public class Hex : MonoBehaviour
         v2 = new Vector2Int(row, col);
         assignedLandRegion = null;
         if (hexRegion != null) hexRegion.enabled = false;
+        if (hexRegionMinimap != null) hexRegionMinimap.enabled = false;
         if (game == null) game = FindFirstObjectByType<Game>();
         terrainTexture.sortingOrder = int.MaxValue - row;
     }
@@ -1019,6 +1021,7 @@ public class Hex : MonoBehaviour
 
     private void UpdateMinimapTerrain(bool revealed)
     {
+        /* Terrain or None logic commented out — using hexRegion only.
         if (!terrainOrNoneMinimapTexture) return;
         terrainOrNoneMinimapTexture.sprite = terrainTexture ? terrainTexture.sprite : null;
         if (revealed)
@@ -1029,6 +1032,7 @@ public class Hex : MonoBehaviour
         {
             SetSpriteAlpha(terrainOrNoneMinimapTexture, 0f);
         }
+        */
     }
 
     private void UpdateVisibilityForFog()
@@ -1660,6 +1664,7 @@ public class Hex : MonoBehaviour
         }
 
         revealPulseCoroutine = null;
+        ApplyRegionColor();
     }
 
     public void ClearScouting()
@@ -1944,9 +1949,15 @@ public class Hex : MonoBehaviour
     private void ApplyRegionColor()
     {
         if (hexRegion == null) return;
-        bool show = !string.IsNullOrWhiteSpace(assignedLandRegion) && IsHexRevealed();
+        bool show = !string.IsNullOrWhiteSpace(assignedLandRegion) && IsHexRevealed() && revealPulseCoroutine == null;
         hexRegion.enabled = show;
-        if (show) hexRegion.color = RegionColors.GetColor(assignedLandRegion);
+        if (show) hexRegion.color = RegionColors.GetColor(assignedLandRegion, alpha: 1f);
+
+        if (hexRegionMinimap != null)
+        {
+            hexRegionMinimap.enabled = show;
+            if (show) hexRegionMinimap.color = RegionColors.GetColor(assignedLandRegion, alpha: 1f);
+        }
     }
 
     public string GetLandRegion()

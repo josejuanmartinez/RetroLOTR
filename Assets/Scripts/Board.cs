@@ -83,6 +83,7 @@ public class Board : MonoBehaviour
     };
 
     private bool initialized = false;
+    private bool terrainTexturesHidden = false;
 
     private Game GetGame()
     {
@@ -381,6 +382,21 @@ public class Board : MonoBehaviour
         foreach (var hex in hexes.Values)
         {
             hex?.ClearScouting();
+        }
+    }
+
+    public void ToggleAllTerrainTextures()
+    {
+        if (hexes == null) return;
+        terrainTexturesHidden = !terrainTexturesHidden;
+        foreach (var hex in hexes.Values)
+        {
+            if (hex == null) continue;
+            bool revealed = hex.IsHexRevealed();
+            if (hex.terrainTexture != null)
+                hex.terrainTexture.gameObject.SetActive(revealed && !terrainTexturesHidden);
+            if (hex.hexRegion != null)
+                hex.hexRegion.enabled = revealed && terrainTexturesHidden;
         }
     }
 
