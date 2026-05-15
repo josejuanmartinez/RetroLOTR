@@ -1038,7 +1038,7 @@ public class Hex : MonoBehaviour
         bool revealed = IsHexRevealed();
         bool seen = IsHexSeen();
         ApplyRegionColor();
-        if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, true);
+        if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, revealed);
         UpdateTerrainVisualAlpha();
         if (revealed)
         {
@@ -2120,8 +2120,16 @@ public class Hex : MonoBehaviour
 
     private void RefreshFrontierRowVisuals()
     {
+        bool revealed = IsHexRevealed();
         bool isWaterHex = terrainType == TerrainEnum.shallowWater || terrainType == TerrainEnum.deepWater;
         float frontierAlpha = isCurrentlyUnseen ? 0.1f : 1f;
+
+        if (!revealed)
+        {
+            SetActiveFast(cliffGameObject, false);
+            SetActiveFast(hexTextureWater, false);
+            return;
+        }
 
         SetActiveFast(hexTextureWater, isWaterHex);
         SetActiveFast(cliffGameObject, !isWaterHex);

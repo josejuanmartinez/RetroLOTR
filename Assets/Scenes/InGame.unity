@@ -4228,6 +4228,8 @@ MonoBehaviour:
   mapBackgroundSprite: {fileID: 3410282373739146071, guid: e8931b908e802f846beef859a9bface1, type: 3}
   overlayMapScale: 1
   minimapCameraZoom: 1
+  renderTextureScale: 2
+  regionLabelsLayerName: RegionLabels
 --- !u!114 &1079303152 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4904374232764889521, guid: b2dfa42094faee747b01ac9ac7233299, type: 3}
@@ -8001,7 +8003,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3386198231772407560, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -13.999878
+      value: -14
       objectReference: {fileID: 0}
     - target: {fileID: 3386198231772407560, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -9271,7 +9273,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4845752909459727288, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000015258789
+      value: 0.000022888184
       objectReference: {fileID: 0}
     - target: {fileID: 4868598037499691253, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -13373,7 +13375,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3060822472368473399, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
       propertyPath: orthographic size
-      value: 12
+      value: 18.4
       objectReference: {fileID: 0}
     - target: {fileID: 3060822472368473399, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
       propertyPath: m_OcclusionCulling
@@ -13401,11 +13403,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4691146156426639077, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12
+      value: 19.8
       objectReference: {fileID: 0}
     - target: {fileID: 4691146156426639077, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8
+      value: 17.7
       objectReference: {fileID: 0}
     - target: {fileID: 4691146156426639077, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -15777,7 +15779,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1215681646781524398, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 247
+      value: 759
       objectReference: {fileID: 0}
     - target: {fileID: 1945544799847697755, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_Name
@@ -15905,11 +15907,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.9113777
+      value: 0.9114584
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.9113777
+      value: 0.9114584
       objectReference: {fileID: 0}
     - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_Enabled
@@ -16506,7 +16508,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: width
-      value: 80
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: colors
@@ -16514,7 +16516,7 @@ PrefabInstance:
       objectReference: {fileID: 1079303152}
     - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: height
-      value: 20
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: drawMark
@@ -16735,6 +16737,10 @@ PrefabInstance:
     - target: {fileID: 6570169573634531441, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8482426780866661264, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
+      propertyPath: billboard
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

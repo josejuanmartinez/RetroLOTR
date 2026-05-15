@@ -82,7 +82,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 25
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
@@ -259,7 +259,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 15
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6231044458718751821, guid: b975edd0cd3931343a863e109d9b12c7, type: 3}
@@ -352,7 +352,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 6
   m_MaskInteraction: 0
   m_Sprite: {fileID: 902240045765890844, guid: 118a3ddc13798b44daba9ab1a226f423, type: 3}
@@ -458,7 +458,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: bb02c2d8027f8464ca90283410b7e2f5, type: 3}
@@ -550,7 +550,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 5
   m_MaskInteraction: 0
   m_Sprite: {fileID: 5574276203004148195, guid: ea67fc94e52398944b81931b06f332d4, type: 3}
@@ -939,7 +939,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 5
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 458e3468be76328488f165566861d35e, type: 3}
@@ -1065,7 +1065,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 46830afc8560d584d868804d29a9bb1a, type: 3}
@@ -1156,7 +1156,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: bb02c2d8027f8464ca90283410b7e2f5, type: 3}
@@ -1251,7 +1251,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 32767
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
@@ -1478,7 +1478,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: bb02c2d8027f8464ca90283410b7e2f5, type: 3}
@@ -1570,7 +1570,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 32767
   m_MaskInteraction: 0
   m_RenderMode: 0
@@ -6313,7 +6313,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 32767
   m_MaskInteraction: 0
   m_RenderMode: 0
@@ -11056,7 +11056,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 9999
   m_MaskInteraction: 0
   m_RenderMode: 0
@@ -15802,7 +15802,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: -9999
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: bb02c2d8027f8464ca90283410b7e2f5, type: 3}
@@ -15897,7 +15897,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 7ae449b918319aa47b6952fca1586bdf, type: 3}
@@ -15991,7 +15991,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 7
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: bb02c2d8027f8464ca90283410b7e2f5, type: 3}
@@ -16146,7 +16146,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: bb02c2d8027f8464ca90283410b7e2f5, type: 3}
@@ -16334,7 +16334,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 32767
   m_MaskInteraction: 0
   m_RenderMode: 0
@@ -21080,7 +21080,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 3
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
@@ -21303,7 +21303,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: -32768
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: dc55d874e90a07341a1b2bdee5fc28e0, type: 3}
@@ -21395,7 +21395,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 32767
   m_MaskInteraction: 0
   m_RenderMode: 0
@@ -30862,7 +30862,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_RenderMode: 0
@@ -30992,7 +30992,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: -32768
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: be9f1102d7c06fd489cd975f31ad2714, type: 3}
