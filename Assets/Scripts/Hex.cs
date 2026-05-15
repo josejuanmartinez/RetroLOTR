@@ -31,7 +31,6 @@ public class Hex : MonoBehaviour
     public Sprite defaultCharacterSprite;
     public TextMeshPro messageNoUI;
     public SpriteRenderer hexRegion;
-    public SpriteRenderer hexRegionMinimap;
 
     [Header("Character")]
     public SpriteRenderer characterSpriteRenderer;
@@ -61,7 +60,6 @@ public class Hex : MonoBehaviour
 
     public TerrainEnum terrainType;
     public SpriteRenderer terrainTexture;
-    public SpriteRenderer terrainOrNoneMinimapTexture;
     public GameObject cliffGameObject;
     public GameObject hexTextureWater;
 
@@ -300,9 +298,9 @@ public class Hex : MonoBehaviour
         v2 = new Vector2Int(row, col);
         assignedLandRegion = null;
         if (hexRegion != null) hexRegion.enabled = false;
-        if (hexRegionMinimap != null) hexRegionMinimap.enabled = false;
         if (game == null) game = FindFirstObjectByType<Game>();
         terrainTexture.sortingOrder = int.MaxValue - row;
+        if (terrainTexture != null) terrainTexture.gameObject.SetActive(true);
     }
 
     public SpriteRenderer GetCharacterSpriteRendererOnHex()
@@ -1040,7 +1038,7 @@ public class Hex : MonoBehaviour
         bool revealed = IsHexRevealed();
         bool seen = IsHexSeen();
         ApplyRegionColor();
-        if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, revealed);
+        if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, true);
         UpdateTerrainVisualAlpha();
         if (revealed)
         {
@@ -1952,12 +1950,6 @@ public class Hex : MonoBehaviour
         bool show = !string.IsNullOrWhiteSpace(assignedLandRegion) && IsHexRevealed() && revealPulseCoroutine == null;
         hexRegion.enabled = show;
         if (show) hexRegion.color = RegionColors.GetColor(assignedLandRegion, alpha: 1f);
-
-        if (hexRegionMinimap != null)
-        {
-            hexRegionMinimap.enabled = show;
-            if (show) hexRegionMinimap.color = RegionColors.GetColor(assignedLandRegion, alpha: 1f);
-        }
     }
 
     public string GetLandRegion()
@@ -2128,16 +2120,8 @@ public class Hex : MonoBehaviour
 
     private void RefreshFrontierRowVisuals()
     {
-        bool revealed = IsHexRevealed();
         bool isWaterHex = terrainType == TerrainEnum.shallowWater || terrainType == TerrainEnum.deepWater;
-        float frontierAlpha = isCurrentlyUnseen ? 0.1f : 1f; 
-
-        if (!revealed)
-        {
-            SetActiveFast(cliffGameObject, false);
-            SetActiveFast(hexTextureWater, false);
-            return;
-        }
+        float frontierAlpha = isCurrentlyUnseen ? 0.1f : 1f;
 
         SetActiveFast(hexTextureWater, isWaterHex);
         SetActiveFast(cliffGameObject, !isWaterHex);
@@ -2370,6 +2354,7 @@ public class Hex : MonoBehaviour
         if (terrainTexture == null) return;
         if (hexTextureMapping == null) hexTextureMapping = GetComponent<HexTextureMapping>();
 
+        terrainTexture.gameObject.SetActive(true);
         Sprite sprite = hexTextureMapping != null ? hexTextureMapping.GetSprite(this) : baseTerrainSprite;
         terrainTexture.sprite = sprite;
         UpdateTerrainVisualAlpha();

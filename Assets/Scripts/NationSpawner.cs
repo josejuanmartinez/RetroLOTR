@@ -244,21 +244,19 @@ public class NationSpawner : MonoBehaviour
             .Where(hex => hex != null && string.IsNullOrWhiteSpace(hex.GetLandRegion()))
             .ToList();
 
+        // Collect all PC seed positions so fallback seeds can be spread away from them
+        var existingSeedPositions = seedQueue.Select(s => s.position).ToList();
+
         foreach (string region in fallbackRegions)
         {
             if (unassignedHexes.Count == 0) break;
 
-            Hex startHex = unassignedHexes.FirstOrDefault(hex => hex != null && !hex.HasAnyPC() && !hex.IsWaterTerrain())
-                ?? unassignedHexes.FirstOrDefault(hex => hex != null && !hex.HasAnyPC())
-                ?? unassignedHexes.FirstOrDefault();
-
-            if (startHex == null)
-            {
-                continue;
-            }
+            Hex startHex = PickFurthestUnassignedHex(unassignedHexes, existingSeedPositions);
+            if (startHex == null) continue;
 
             startHex.SetLandRegion(region.Trim());
             seedQueue.Enqueue(new RegionSeed(startHex.v2, region.Trim()));
+            existingSeedPositions.Add(startHex.v2);
 
             unassignedHexes = board.GetHexes()
                 .Where(hex => hex != null && string.IsNullOrWhiteSpace(hex.GetLandRegion()))
@@ -335,6 +333,42 @@ public class NationSpawner : MonoBehaviour
         }
 
         return null;
+    }
+
+    private static Hex PickFurthestUnassignedHex(List<Hex> candidates, List<Vector2Int> existingSeeds)
+    {
+        if (candidates.Count == 0) return null;
+
+        Hex best = null;
+        float bestMinDist = float.MinValue;
+
+        // Two passes: prefer non-PC land hexes, fall back to anything
+        for (int pass = 0; pass < 2; pass++)
+        {
+            foreach (var hex in candidates)
+            {
+                if (hex == null) continue;
+                if (pass == 0 && (hex.HasAnyPC() || hex.IsWaterTerrain())) continue;
+
+                if (existingSeeds.Count == 0)
+                    return hex;
+
+                float minDist = float.MaxValue;
+                foreach (var seed in existingSeeds)
+                {
+                    float dx = hex.v2.x - seed.x;
+                    float dy = hex.v2.y - seed.y;
+                    float d = dx * dx + dy * dy;
+                    if (d < minDist) minDist = d;
+                }
+
+                if (minDist > bestMinDist) { bestMinDist = minDist; best = hex; }
+            }
+
+            if (best != null) return best;
+        }
+
+        return best;
     }
 
     private void FloodAssignRegions(Queue<RegionSeed> seeds, HashSet<Vector2Int> assignedPositions, int maxAssignmentsPerRegion = int.MaxValue)

@@ -46,8 +46,6 @@ public class Game : MonoBehaviour
     public int cavalryMovement = 7;
 
     [Header("Caps")]
-    public static int MAX_BOARD_WIDTH = 25;
-    public static int MAX_BOARD_HEIGHT = 75;
     public static int MAX_ARTIFACTS = 100;
     public static int MAX_CHARACTERS = 100;
     public static int MAX_PCS = 100;

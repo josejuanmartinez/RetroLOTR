@@ -10,8 +10,8 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour
 {
     [Header("Board Size")]
-    [SerializeField] int width = 25;
-    [SerializeField] int height = 75;
+    [SerializeField] [Range(1, 200)] int width = 80;
+    [SerializeField] [Range(1, 200)] int height = 80;
 
     [Header("Hex Configuration")]
     public GameObject hexPrefab;
@@ -52,6 +52,9 @@ public class Board : MonoBehaviour
     public BoardGenerator boardGenerator;
     // Nation Spawner
     public NationSpawner nationSpawner;
+
+    [Header("Region Labels")]
+    public RegionLabelManager regionLabelManager;
 
     // Array to store the terrain types
     public TerrainEnum[,] terrainGrid;
@@ -129,6 +132,9 @@ public class Board : MonoBehaviour
         }
         nationSpawner.Initialize(this);
 
+        if (regionLabelManager == null)
+            regionLabelManager = FindFirstObjectByType<RegionLabelManager>();
+
         // Subscribe to generation progress events
         boardGenerator.OnGenerationProgress += UpdateGenerationProgress;
 
@@ -144,15 +150,9 @@ public class Board : MonoBehaviour
         }
     }
 
-    public int GetWidth()
-    {
-        return Math.Min(width, Game.MAX_BOARD_WIDTH);
-    }
+    public int GetWidth() => width;
 
-    public int GetHeight()
-    {
-        return Math.Min(height, Game.MAX_BOARD_HEIGHT);
-    }
+    public int GetHeight() => height;
 
     public void ForceDraw()
     {
@@ -164,7 +164,9 @@ public class Board : MonoBehaviour
         if (!initialized || forced)
         {
             // Generate terrain first
-            if (terrainGrid == null || regenerate)
+            bool gridSizeMismatch = terrainGrid != null &&
+                (terrainGrid.GetLength(0) != GetHeight() || terrainGrid.GetLength(1) != GetWidth());
+            if (terrainGrid == null || regenerate || gridSizeMismatch)
             {
                 yield return StartCoroutine(boardGenerator.GenerateTerrainCoroutine(OnTerrainGenerated));
             }
@@ -200,6 +202,10 @@ public class Board : MonoBehaviour
         }
 
         nationSpawner.Spawn();
+
+        if (regionLabelManager != null && hexes != null)
+            regionLabelManager.Generate(hexes.Values);
+
         initialized = true;
         startButton.interactable = true;
         tutorialButton.interactable = true;

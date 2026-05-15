@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2391223479585344954}
   - component: {fileID: 8672206908900510878}
   - component: {fileID: 2623480377557684074}
+  - component: {fileID: 8482426780866661264}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -55,31 +56,22 @@ MonoBehaviour:
   progressBar: {fileID: 0}
   statusText: {fileID: 0}
   drawMark: 0
-  minIslands: 1
-  maxIslands: 5
-  waterPercentage: 0.15
-  deepWaterProportion: 0.85
-  desertPercentage: 0.1395
-  grasslandsProbability: 0.5
-  coastDepth: 0.15
-  mountainChainCount: 3
-  mountainChainLengthMultiplier: 1.2
-  majorForestCount: 1
-  minorForestCount: 4
-  swampCount: 1
-  swampSize: 5
-  majorWastelandCount: 1
-  minorWastelandCount: 2
   selectedHex: {x: -1, y: -1}
   selectedCharacter: {fileID: 0}
   moving: 0
+  characterMoverImage: {fileID: 0}
+  characterMoverBackground: {fileID: 0}
+  freeArmyMoverImage: {fileID: 0}
+  darkServantsMoverImage: {fileID: 0}
+  neutralMoverImage: {fileID: 0}
   startButton: {fileID: 0}
+  tutorialButton: {fileID: 0}
   redraw: 0
   regenerate: 0
   colors: {fileID: 0}
-  textures: {fileID: 0}
   boardGenerator: {fileID: 4799891737429854110}
   nationSpawner: {fileID: 2391223479585344954}
+  regionLabelManager: {fileID: 0}
   hexesWithCharacters: []
   hexesWithPCs: []
   hexesWithArtifacts: []
@@ -98,7 +90,26 @@ MonoBehaviour:
   cellsPerBatch: 200
   hexesPerBatch: 200
   generationFrameBudgetSeconds: 0.25
+  maximumGenerationBuget: 2000
   board: {fileID: 577319869002409797}
+  minIslands: 1
+  maxIslands: 5
+  waterPercentage: 0.15
+  deepWaterProportion: 0.85
+  desertPercentage: 0.1395
+  grasslandsProbability: 0.5
+  coastDepth: 0.15
+  shoreProbability: 0.85
+  mountainChainCount: 3
+  mountainChainLengthMultiplier: 1.5
+  majorForestCount: 2
+  minorForestCount: 5
+  swampCount: 2
+  swampSize: 4
+  majorWastelandCount: 1
+  minorWastelandCount: 2
+  rivers: 2
+  lakes: 2
 --- !u!114 &2391223479585344954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,7 +137,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!120 &2623480377557684074
 LineRenderer:
-  serializedVersion: 2
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -145,6 +156,8 @@ LineRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -166,9 +179,11 @@ LineRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 952655989
   m_SortingLayer: 1
   m_SortingOrder: 12
+  m_MaskInteraction: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 1}
@@ -227,7 +242,31 @@ LineRenderer:
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
-  m_MaskInteraction: 0
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &8482426780866661264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6570169573634531441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c640db4d81978fa46935f00ba7c4cfed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RegionLabelManager
+  labelsParent: {fileID: 0}
+  labelPrefab: {fileID: 4489218603556781100, guid: 8153f2a82524857449b85d0558860c35, type: 3}
+  labelOffset: {x: 0, y: 0, z: -1}
+  sortingLayerName: UI
+  sortingOrder: 100
+  useCurvedText: 1
+  curveRadius: 10
+  arcAngle: 20
+  billboard: 1
+  autoSize: 1
+  minFontSize: 2
+  maxFontSize: 6
+  useBoundsCenter: 1

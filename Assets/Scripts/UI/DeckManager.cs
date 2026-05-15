@@ -248,6 +248,7 @@ public class CardData
             CardTypeEnum.Land => GetLandDescription(),
             CardTypeEnum.PC => PcDescriptionBuilder.BuildBody(this, includeFoundingText),
             CardTypeEnum.Event or CardTypeEnum.Action or CardTypeEnum.Spell => GetActionEffectText(),
+            CardTypeEnum.Encounter => !string.IsNullOrWhiteSpace(description) ? description.Trim() : string.Empty,
             _ => string.Empty
         };
 

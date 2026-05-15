@@ -12276,7 +12276,8 @@ MonoBehaviour:
   - m_GUID: e8931b908e802f846beef859a9bface1
     m_Address: Assets/Art/Other/map_10.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e8a0a72ef3085984196c0410b875f0b1
     m_Address: Assets/Art/Cards/Armies/TowerGuards.jpg

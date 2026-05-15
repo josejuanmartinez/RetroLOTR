@@ -17,6 +17,11 @@ public class MinimapManager : MonoBehaviour
     public float overlayMapScale = 0.5f;
     [Tooltip("Zoom level of the minimap camera. 1.0 = default, < 1 = zoom in (bigger), > 1 = zoom out (smaller).")]
     public float minimapCameraZoom = 1f;
+    [Tooltip("Render texture resolution as a multiple of screen resolution. 1 = full res, 2 = 2× supersampled.")]
+    [Range(0.25f, 4f)]
+    public float renderTextureScale = 2f;
+    [Tooltip("Layer name for region labels. Labels on this layer are added to the minimap camera only when the overlay is open.")]
+    public string regionLabelsLayerName = "RegionLabels";
 
     private bool refreshing = false;
     private bool isExpanded = false;
@@ -26,6 +31,7 @@ public class MinimapManager : MonoBehaviour
     private int savedRtWidth;
     private int savedRtHeight;
     private float savedCameraSize;
+    private int savedCullingMask;
 
     private void Awake()
     {
@@ -84,9 +90,10 @@ public class MinimapManager : MonoBehaviour
         RefreshLegend();
 
         ApplyCameraZoom();
+        AddLabelsLayerToCamera();
         ResizeRenderTexture(
-            Mathf.RoundToInt(Screen.width * 0.5f),
-            Mathf.RoundToInt(Screen.height * 0.5f));
+            Mathf.RoundToInt(Screen.width * renderTextureScale),
+            Mathf.RoundToInt(Screen.height * renderTextureScale));
     }
 
     private void Close()
@@ -100,6 +107,22 @@ public class MinimapManager : MonoBehaviour
             ResizeRenderTexture(savedRtWidth, savedRtHeight);
 
         RestoreCameraZoom();
+        RestoreLabelsLayerOnCamera();
+    }
+
+    private void AddLabelsLayerToCamera()
+    {
+        if (minimapCamera == null) return;
+        int layer = LayerMask.NameToLayer(regionLabelsLayerName);
+        if (layer < 0) return;
+        savedCullingMask = minimapCamera.cullingMask;
+        minimapCamera.cullingMask |= 1 << layer;
+    }
+
+    private void RestoreLabelsLayerOnCamera()
+    {
+        if (minimapCamera == null) return;
+        minimapCamera.cullingMask = savedCullingMask;
     }
 
     private void CreateOverlay()
