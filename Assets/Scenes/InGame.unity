@@ -4222,36 +4222,22 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &1037650508 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1312088051340465479, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
-  m_PrefabInstance: {fileID: 1245582523}
-  m_PrefabAsset: {fileID: 0}
 --- !u!20 &1039817016 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 3060822472368473399, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
   m_PrefabInstance: {fileID: 1245582523}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1039817017
+--- !u!114 &1039817020 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 8350047492710493533, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
+  m_PrefabInstance: {fileID: 1245582523}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1037650508}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aac4a1861c5e8484caac952f79dacaee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.92156863}
-  escFontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  minimapCamera: {fileID: 1039817016}
-  mapBackgroundSprite: {fileID: 3410282373739146071, guid: e8931b908e802f846beef859a9bface1, type: 3}
-  overlayMapScale: 1
-  minimapCameraZoom: 1
-  renderTextureScale: 2
-  regionLabelsLayerName: RegionLabels
 --- !u!114 &1079303152 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4904374232764889521, guid: b2dfa42094faee747b01ac9ac7233299, type: 3}
@@ -8419,7 +8405,7 @@ PrefabInstance:
     - target: {fileID: 3587190282464256738, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1039817017}
+      objectReference: {fileID: 1039817020}
     - target: {fileID: 3587190282464256738, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -9754,6 +9740,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5138018990536906404, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: selectedCharacterIcon
+      value: 
+      objectReference: {fileID: 2049389261}
     - target: {fileID: 5151822499211277438, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_fontSize
       value: 24.2
@@ -13797,7 +13787,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3060822472368473399, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
       propertyPath: orthographic size
-      value: 18.4
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 3060822472368473399, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
       propertyPath: m_OcclusionCulling
@@ -13911,13 +13901,14 @@ PrefabInstance:
       propertyPath: m_RequiresOpaqueTextureOption
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8350047492710493533, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
+      propertyPath: minimapCamera
+      value: 
+      objectReference: {fileID: 1039817016}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1312088051340465479, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1039817017}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5a29f2fbe95fec42b40f706b829376e, type: 3}
 --- !u!1 &1253059471
 GameObject:
@@ -16020,6 +16011,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1369154340722270438, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
   m_PrefabInstance: {fileID: 1212030918}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2049389261 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5198166638811136188, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+  m_PrefabInstance: {fileID: 1212030918}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 429185fc932ba474cb9c40c269c536ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2080766161
 GameObject:
   m_ObjectHideFlags: 0
@@ -16163,7 +16165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1215681646781524398, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 759
+      value: 247
       objectReference: {fileID: 0}
     - target: {fileID: 1945544799847697755, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_Name
@@ -16291,11 +16293,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.91126525
+      value: 0.9113056
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.91126525
+      value: 0.9113056
       objectReference: {fileID: 0}
     - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_Enabled

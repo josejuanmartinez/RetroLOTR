@@ -163,6 +163,7 @@ public class CardData
 
     public string startingPC = string.Empty;
     public InspireEffectData inspireEffectData;
+    public int amount = 1;
 
     [NonSerialized] public bool isPlayable;
     [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
@@ -628,6 +629,7 @@ public class DeckManager : MonoBehaviour
         public readonly List<CardData> drawPile = new();
         public readonly List<CardData> hand = new();
         public readonly List<CardData> discardPile = new();
+        public int turnsWithoutRegionCard;
     }
 
     public static DeckManager Instance { get; private set; }
@@ -812,6 +814,12 @@ public class DeckManager : MonoBehaviour
         if (game.player != null)
         {
             EnsureTutorialHandForPlayer(game.player);
+            if (!ShouldSkipTurnRefillForTutorialHuman(game.player)
+                && playerDecks.TryGetValue(game.player, out PlayerDeckState humanState))
+            {
+                EnsureRegionCardInHand(humanState);
+                humanState.turnsWithoutRegionCard = HandHasRegionCard(humanState) ? 0 : 1;
+            }
         }
         RefreshHumanPlayerHandUI();
         return true;
@@ -1068,7 +1076,7 @@ public class DeckManager : MonoBehaviour
         switch (card.GetCardType())
         {
             case CardTypeEnum.Land:
-                revealedPcHexes = RevealRegion(board, card.name, leader, maxHexes: 3);
+                revealedPcHexes = RevealRegion(board, card.name, leader, maxHexes: 1);
                 revealMessage = $"The lands of {FormatDisplayName(card.name)} were revealed";
                 discoveryRegion = card.name;
                 break;
@@ -1167,6 +1175,8 @@ public class DeckManager : MonoBehaviour
 
         playerDecks[leader] = rebuilt;
         RefillHandToCount(rebuilt, Mathf.Max(0, cardsToDraw));
+        EnsureRegionCardInHand(rebuilt);
+        rebuilt.turnsWithoutRegionCard = HandHasRegionCard(rebuilt) ? 0 : 1;
         RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
@@ -1185,6 +1195,7 @@ public class DeckManager : MonoBehaviour
         }
 
         RefillHandToCount(state, handSize);
+        ApplyRegionCardGuarantee(state);
         RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
@@ -1272,6 +1283,63 @@ public class DeckManager : MonoBehaviour
         }
     }
 
+    private static bool HandHasRegionCard(PlayerDeckState state)
+    {
+        for (int i = 0; i < state.hand.Count; i++)
+        {
+            if (state.hand[i] != null && state.hand[i].GetCardType() == CardTypeEnum.Land) return true;
+        }
+        return false;
+    }
+
+    private void EnsureRegionCardInHand(PlayerDeckState state)
+    {
+        if (state == null || HandHasRegionCard(state)) return;
+
+        int landIndex = state.drawPile.FindIndex(c => c != null && c.GetCardType() == CardTypeEnum.Land);
+        if (landIndex < 0)
+        {
+            int discardLandIndex = state.discardPile.FindIndex(c => c != null && c.GetCardType() == CardTypeEnum.Land);
+            if (discardLandIndex < 0) return;
+            CardData fromDiscard = state.discardPile[discardLandIndex];
+            state.discardPile.RemoveAt(discardLandIndex);
+            state.drawPile.Insert(0, fromDiscard);
+            landIndex = 0;
+        }
+
+        CardData land = state.drawPile[landIndex];
+        state.drawPile.RemoveAt(landIndex);
+
+        if (state.hand.Count >= handSize)
+        {
+            int returnIndex = state.hand.FindLastIndex(c => c != null && c.GetCardType() != CardTypeEnum.Land);
+            if (returnIndex < 0) returnIndex = state.hand.Count - 1;
+            CardData returnCard = state.hand[returnIndex];
+            state.hand.RemoveAt(returnIndex);
+            state.drawPile.Insert(0, returnCard);
+        }
+
+        state.hand.Add(land);
+    }
+
+    private void ApplyRegionCardGuarantee(PlayerDeckState state)
+    {
+        if (state == null) return;
+        if (HandHasRegionCard(state))
+        {
+            state.turnsWithoutRegionCard = 0;
+        }
+        else
+        {
+            state.turnsWithoutRegionCard++;
+            if (state.turnsWithoutRegionCard >= 2)
+            {
+                EnsureRegionCardInHand(state);
+                state.turnsWithoutRegionCard = 0;
+            }
+        }
+    }
+
     private CardData FindActionCardForLeader(PlayableLeader leader, string actionClassName)
     {
         if (leader == null || string.IsNullOrWhiteSpace(actionClassName)) return null;
@@ -1318,9 +1386,11 @@ public class DeckManager : MonoBehaviour
         if (card == null) return null;
         return new CardData
         {
+            cardId = card.cardId,
             name = card.name,
             quote = card.quote,
             actionEffect = card.actionEffect,
+            description = card.description,
             type = card.type,
             tags = card.tags != null ? new List<string>(card.tags) : new List<string>(),
             deckId = card.deckId,
@@ -1346,6 +1416,7 @@ public class DeckManager : MonoBehaviour
             statusEffect = card.statusEffect,
             procChance = card.procChance,
             portraitName = card.portraitName,
+            characterGroup = card.characterGroup,
             referenceDeckId = card.referenceDeckId,
             referenceCardId = card.referenceCardId,
             encounterOptions = card.encounterOptions != null ? CloneEncounterOptions(card.encounterOptions) : new List<EncounterOptionData>(),
@@ -1367,7 +1438,8 @@ public class DeckManager : MonoBehaviour
             mithrilGranted = card.mithrilGranted,
             goldGranted = card.goldGranted,
             startingPC = card.startingPC,
-            inspireEffectData = card.inspireEffectData
+            inspireEffectData = card.inspireEffectData,
+            amount = card.amount
         };
     }
 
@@ -1910,7 +1982,7 @@ public class DeckManager : MonoBehaviour
                 basePool.AddRange(
                     ownedDeck.cards
                         .Where(card => ShouldIncludeCardInDeck(state.deckId, ownedDeck.deckId, card))
-                        .Select(CloneCard)
+                        .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
                         .Where(card => card != null));
             }
 
@@ -1919,7 +1991,7 @@ public class DeckManager : MonoBehaviour
                 subdeckPool.AddRange(
                     leafDeck.cards
                         .Where(card => ShouldIncludeCardInDeck(state.deckId, leafDeck.deckId, card))
-                        .Select(CloneCard)
+                        .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
                         .Where(card => card != null));
             }
 
@@ -1938,7 +2010,7 @@ public class DeckManager : MonoBehaviour
                 basePool.AddRange(
                     baseDeck.cards
                         .Where(card => ShouldIncludeCardInDeck(state.deckId, baseDeck.deckId, card))
-                        .Select(CloneCard)
+                        .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
                         .Where(card => card != null));
             }
 
@@ -1948,7 +2020,7 @@ public class DeckManager : MonoBehaviour
                 subdeckPool.AddRange(
                     descendantDeck.cards
                         .Where(card => ShouldIncludeCardInDeck(state.deckId, descendantDeck.deckId, card))
-                        .Select(CloneCard)
+                        .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
                         .Where(card => card != null));
             }
 
@@ -1962,7 +2034,7 @@ public class DeckManager : MonoBehaviour
             sharedPool.AddRange(
                 sharedDeck.cards
                     .Where(card => ShouldIncludeCardInDeck(state.deckId, sharedDeck.deckId, card))
-                    .Select(CloneCard)
+                    .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
                     .Where(card => card != null));
         }
         Shuffle(sharedPool);

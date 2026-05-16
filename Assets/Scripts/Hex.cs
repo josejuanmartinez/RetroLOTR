@@ -1612,6 +1612,7 @@ public class Hex : MonoBehaviour
             StopCoroutine(revealPulseCoroutine);
         }
 
+        if (hexRegion != null) hexRegion.enabled = false;
         revealPulseCoroutine = StartCoroutine(AnimateRevealPulse());
     }
 

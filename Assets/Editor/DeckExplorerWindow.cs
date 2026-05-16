@@ -80,6 +80,7 @@ public class DeckExplorerWindow : EditorWindow
     private int editedCharacterEmissary;
     private int editedCharacterMage;
     private string editedStartingPC = string.Empty;
+    private int editedAmount;
 
     private TextAsset manifestAsset;
     private CardsManifest cardsManifest;
@@ -328,6 +329,7 @@ public class DeckExplorerWindow : EditorWindow
     private void DrawCardDetails(CardData card)
     {
         EditorGUILayout.LabelField("Name", FormatCardTitle(card.name));
+        EditorGUILayout.LabelField("Amount", card.amount.ToString());
         EditorGUILayout.LabelField("Type", FormatCardTypeLabel(card.GetCardType()), CreateRichTextStyle(EditorStyles.label));
         EditorGUILayout.LabelField("Deck", card.deckId ?? string.Empty);
         if (IsReferenceCard(card))
@@ -412,6 +414,9 @@ public class DeckExplorerWindow : EditorWindow
         SyncEditableCardFields(card);
 
         EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
+        editedAmount = EditorGUILayout.IntField("Amount (copies)", editedAmount);
+
+        GUILayout.Space(4);
         editedCommanderSkillRequired = EditorGUILayout.IntField("Commander", editedCommanderSkillRequired);
         editedAgentSkillRequired = EditorGUILayout.IntField("Agent", editedAgentSkillRequired);
         editedEmissarySkillRequired = EditorGUILayout.IntField("Emissary", editedEmissarySkillRequired);
@@ -635,6 +640,7 @@ public class DeckExplorerWindow : EditorWindow
         editedCharacterEmissary = Mathf.Max(0, card.emmissary);
         editedCharacterMage = Mathf.Max(0, card.mage);
         editedStartingPC = card.startingPC ?? string.Empty;
+        editedAmount = Mathf.Max(1, card.amount);
     }
 
     private static string GetEditableRequirementsKey(CardData card)
@@ -660,6 +666,7 @@ public class DeckExplorerWindow : EditorWindow
             target = card;
         }
 
+        target.amount = Mathf.Max(1, editedAmount);
         target.commanderSkillRequired = Mathf.Max(0, editedCommanderSkillRequired);
         target.agentSkillRequired = Mathf.Max(0, editedAgentSkillRequired);
         target.emissarySkillRequired = Mathf.Max(0, editedEmissarySkillRequired);
