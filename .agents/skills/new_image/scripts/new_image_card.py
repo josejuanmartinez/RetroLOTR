@@ -226,7 +226,6 @@ def save_generated_image(
             {
                 "type": "image_generation",
                 "action": "generate",
-                "input_fidelity": "high",
                 "size": size,
                 "quality": "high",
                 "background": "opaque",
@@ -345,7 +344,6 @@ def main() -> int:
                     {
                         "type": "image_generation",
                         "action": "generate",
-                        "input_fidelity": "high",
                         "size": args.size,
                         "quality": "high",
                         "background": "opaque",

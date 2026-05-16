@@ -10,7 +10,6 @@ using UnityEngine.Serialization;
 [Serializable]
 public class CardsManifest
 {
-    public int handSize = 5;
     public int deckCount = 0;
     public List<DeckManifestEntry> decks = new();
 }
@@ -32,7 +31,6 @@ public class DeckManifestEntry
 [Serializable]
 public class DeckData
 {
-    public int handSize = 5;
     public string deckId;
     public string nation;
     public int alignment;
@@ -643,7 +641,7 @@ public class DeckManager : MonoBehaviour
     [Header("Config")]
     [SerializeField] private bool initializeOnStart = true;
     [SerializeField] private string cardsManifestResourcePath = "Cards";
-    [SerializeField] private int fallbackHandSize = 5;
+    [SerializeField] private int handSize = 6;
     [Tooltip("Extra vertical offset (pixels) applied to the zoomed card above the default lift. Increase to push the zoom card higher up.")]
     [SerializeField] private float zoomCardYOffset = 30f;
 
@@ -663,7 +661,6 @@ public class DeckManager : MonoBehaviour
     private readonly Dictionary<PlayableLeader, PlayerDeckState> playerDecks = new();
     private readonly List<GameObject> handCardInstances = new();
 
-    private int handSize = 5;
     private bool loaded;
     private bool isRefreshingHumanHandUI;
 
@@ -725,7 +722,6 @@ public class DeckManager : MonoBehaviour
         if (manifestAsset == null)
         {
             Debug.LogWarning($"DeckManager: Could not load cards manifest from Resources/{cardsManifestResourcePath}.json");
-            handSize = fallbackHandSize;
             return false;
         }
 
@@ -733,11 +729,9 @@ public class DeckManager : MonoBehaviour
         if (manifest == null || manifest.decks == null || manifest.decks.Count == 0)
         {
             Debug.LogWarning("DeckManager: Cards manifest is empty or malformed.");
-            handSize = fallbackHandSize;
             return false;
         }
 
-        handSize = manifest.handSize > 0 ? manifest.handSize : fallbackHandSize;
         foreach (DeckManifestEntry entry in manifest.decks)
         {
             if (entry == null || string.IsNullOrWhiteSpace(entry.deckId)) continue;
@@ -819,6 +813,7 @@ public class DeckManager : MonoBehaviour
             {
                 EnsureRegionCardInHand(humanState);
                 humanState.turnsWithoutRegionCard = HandHasRegionCard(humanState) ? 0 : 1;
+                EnsureSharedBaseCardInHand(humanState);
             }
         }
         RefreshHumanPlayerHandUI();
@@ -1143,6 +1138,23 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
+    public bool TryReshuffleHandIntoDeckAndRedraw(PlayableLeader leader, int targetHandSize)
+    {
+        if (leader == null) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
+
+        state.drawPile.AddRange(state.hand);
+        state.hand.Clear();
+        state.drawPile.AddRange(state.discardPile);
+        state.discardPile.Clear();
+
+        ApplyBalancedDrawOrdering(state.drawPile);
+        RefillHandToCount(state, targetHandSize);
+        EnsureSharedBaseCardInHand(state);
+        RefreshHumanPlayerHandUIIfHuman(leader);
+        return true;
+    }
+
     public bool SetTutorialActionCards(PlayableLeader leader, IEnumerable<string> actionClassNames)
     {
         if (leader == null) return false;
@@ -1165,7 +1177,7 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
-    public bool RestoreStandardHandAfterTutorial(PlayableLeader leader, int cardsToDraw = 5)
+    public bool RestoreStandardHandAfterTutorial(PlayableLeader leader, int cardsToDraw = -1)
     {
         if (leader == null) return false;
         if (!loaded && !InitializeFromResources()) return false;
@@ -1174,9 +1186,10 @@ public class DeckManager : MonoBehaviour
         if (rebuilt == null) return false;
 
         playerDecks[leader] = rebuilt;
-        RefillHandToCount(rebuilt, Mathf.Max(0, cardsToDraw));
+        RefillHandToCount(rebuilt, Mathf.Max(0, cardsToDraw < 0 ? handSize : cardsToDraw));
         EnsureRegionCardInHand(rebuilt);
         rebuilt.turnsWithoutRegionCard = HandHasRegionCard(rebuilt) ? 0 : 1;
+        EnsureSharedBaseCardInHand(rebuilt);
         RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
@@ -1196,6 +1209,7 @@ public class DeckManager : MonoBehaviour
 
         RefillHandToCount(state, handSize);
         ApplyRegionCardGuarantee(state);
+        EnsureSharedBaseCardInHand(state);
         RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
@@ -1338,6 +1352,48 @@ public class DeckManager : MonoBehaviour
                 state.turnsWithoutRegionCard = 0;
             }
         }
+    }
+
+    private static bool HandHasSharedBaseCard(PlayerDeckState state)
+    {
+        if (state == null) return false;
+        return state.hand.Any(c => c != null
+            && string.Equals(c.deckId, "shared_base", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void EnsureSharedBaseCardInHand(PlayerDeckState state)
+    {
+        if (state == null || HandHasSharedBaseCard(state)) return;
+
+        int drawIndex = state.drawPile.FindIndex(c => c != null
+            && string.Equals(c.deckId, "shared_base", StringComparison.OrdinalIgnoreCase));
+
+        if (drawIndex < 0)
+        {
+            int discardIndex = state.discardPile.FindIndex(c => c != null
+                && string.Equals(c.deckId, "shared_base", StringComparison.OrdinalIgnoreCase));
+            if (discardIndex < 0) return;
+            CardData fromDiscard = state.discardPile[discardIndex];
+            state.discardPile.RemoveAt(discardIndex);
+            state.drawPile.Insert(0, fromDiscard);
+            drawIndex = 0;
+        }
+
+        CardData sharedCard = state.drawPile[drawIndex];
+        state.drawPile.RemoveAt(drawIndex);
+
+        if (state.hand.Count >= handSize)
+        {
+            // Make room by returning a non-shared-base card to the top of the draw pile.
+            int returnIndex = state.hand.FindLastIndex(c => c != null
+                && !string.Equals(c.deckId, "shared_base", StringComparison.OrdinalIgnoreCase));
+            if (returnIndex < 0) returnIndex = state.hand.Count - 1;
+            CardData returnCard = state.hand[returnIndex];
+            state.hand.RemoveAt(returnIndex);
+            state.drawPile.Insert(0, returnCard);
+        }
+
+        state.hand.Add(sharedCard);
     }
 
     private CardData FindActionCardForLeader(PlayableLeader leader, string actionClassName)

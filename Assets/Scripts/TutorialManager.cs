@@ -451,7 +451,7 @@ public class TutorialManager : MonoBehaviour
         if (leader == null) return;
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
         if (deckManager == null) return;
-        deckManager.RestoreStandardHandAfterTutorial(leader, 5);
+        deckManager.RestoreStandardHandAfterTutorial(leader, deckManager.GetHandSize());
     }
 
     private void FinalizeTutorialSetup()

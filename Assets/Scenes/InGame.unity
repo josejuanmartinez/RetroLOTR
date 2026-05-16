@@ -7542,6 +7542,10 @@ PrefabInstance:
       propertyPath: cardCameObject
       value: 
       objectReference: {fileID: 2897054775155552835, guid: 905c1c5a61a62c04ea9c5baa9f3ec596, type: 3}
+    - target: {fileID: 2710898653337743923, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: fallbackHandSize
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 2718249864357175824, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -16293,11 +16297,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.9113056
+      value: 0.911322
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.9113056
+      value: 0.911322
       objectReference: {fileID: 0}
     - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_Enabled

@@ -82,6 +82,12 @@ public class DeckExplorerWindow : EditorWindow
     private string editedStartingPC = string.Empty;
     private int editedAmount;
 
+    private const float PreviewCardW = 390f;
+    private const float PreviewCardH = 555f;
+    private const float PreviewPad   = 15f;
+    private const float PreviewCanvasW = PreviewCardW + PreviewPad * 2f; // 420
+    private const float PreviewCanvasH = PreviewCardH + PreviewPad * 2f; // 585
+
     private TextAsset manifestAsset;
     private CardsManifest cardsManifest;
     private GameObject cardPrefabAsset;
@@ -901,6 +907,14 @@ public class DeckExplorerWindow : EditorWindow
         ApplyPreviewData(card);
         previewCardObject.transform.SetAsLastSibling();
 
+        // Force TMP to compute mesh bounds immediately so ContentSizeFitter
+        // gets correct preferred heights before the layout rebuild runs.
+        // Without this, pivot-Y=0 containers collapse or overflow in the editor.
+        foreach (TextMeshProUGUI tmp in previewCardObject.GetComponentsInChildren<TextMeshProUGUI>(true))
+        {
+            tmp.ForceMeshUpdate();
+        }
+
         Canvas.ForceUpdateCanvases();
         RectTransform cardRect = previewCardObject.GetComponent<RectTransform>();
         if (cardRect != null)
@@ -911,12 +925,14 @@ public class DeckExplorerWindow : EditorWindow
         previewCamera.backgroundColor = Color.black;
         previewCamera.orthographic = true;
         previewCamera.orthographicSize = 6f;
+        previewCamera.aspect = PreviewCanvasW / PreviewCanvasH; // match fixed canvas ratio
         previewCamera.clearFlags = CameraClearFlags.SolidColor;
         previewCamera.targetTexture = previewRenderTexture;
         previewCamera.Render();
         previewCamera.targetTexture = null;
 
-        GUI.DrawTexture(rect, previewRenderTexture, ScaleMode.StretchToFill, false);
+        // ScaleToFit: card shrinks to fit the pane without distortion.
+        GUI.DrawTexture(rect, previewRenderTexture, ScaleMode.ScaleToFit, false);
     }
 
     private void ApplyPreviewData(CardData card)
@@ -1049,18 +1065,24 @@ public class DeckExplorerWindow : EditorWindow
 
         if (previewCanvasRoot == null)
         {
-            previewCanvasRoot = new GameObject("DeckExplorerPreviewCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            // WorldSpace canvas at a fixed card-sized rect so the preview is
+            // independent of editor-pane dimensions.  No CanvasScaler needed.
+            previewCanvasRoot = new GameObject("DeckExplorerPreviewCanvas", typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster));
             previewCanvasRoot.hideFlags = HideFlags.HideAndDontSave;
             previewCanvasRoot.layer = 5;
             previewCanvasRoot.transform.SetParent(previewRoot.transform, false);
 
-            RectTransform canvasRect = previewCanvasRoot.GetComponent<RectTransform>();
-            canvasRect.sizeDelta = new Vector2(1200f, 1600f);
-
             Canvas canvas = previewCanvasRoot.GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = previewCamera;
-            canvas.planeDistance = 10f;
+            canvas.renderMode = RenderMode.WorldSpace;
+
+            // Scale canvas so its full height fills the camera's ortho view
+            // (orthoSize = 6 → 12 world-unit span).
+            float worldScale = previewCamera.orthographicSize * 2f / PreviewCanvasH;
+            RectTransform canvasRect = previewCanvasRoot.GetComponent<RectTransform>();
+            canvasRect.sizeDelta = new Vector2(PreviewCanvasW, PreviewCanvasH);
+            canvasRect.localPosition = new Vector3(0f, 0f, 10f); // 10 units in front of camera
+            canvasRect.localRotation = Quaternion.identity;
+            canvasRect.localScale = Vector3.one * worldScale;
         }
 
         if (previewCardObject == null)
@@ -1078,9 +1100,8 @@ public class DeckExplorerWindow : EditorWindow
             {
                 cardRect.anchorMin = new Vector2(0.5f, 0.5f);
                 cardRect.anchorMax = new Vector2(0.5f, 0.5f);
-                cardRect.pivot = new Vector2(0.5f, 0.5f);
-                cardRect.sizeDelta = new Vector2(390f, 555f);
-                cardRect.anchoredPosition = new Vector2(0f, -45f);
+                cardRect.sizeDelta = new Vector2(PreviewCardW, PreviewCardH);
+                cardRect.anchoredPosition = Vector2.zero;
                 cardRect.localScale = Vector3.one;
             }
 
@@ -1091,7 +1112,7 @@ public class DeckExplorerWindow : EditorWindow
 
         ConfigurePreviewTextMeshPro();
 
-        EnsureRenderTexture(rect);
+        EnsureRenderTexture();
     }
 
     private void ConfigurePreviewTextMeshPro()
@@ -1124,14 +1145,14 @@ public class DeckExplorerWindow : EditorWindow
         tmp.richText = true;
     }
 
-    private void EnsureRenderTexture(Rect rect)
+    private void EnsureRenderTexture()
     {
-        int width = Mathf.Max(1, Mathf.CeilToInt(rect.width));
-        int height = Mathf.Max(1, Mathf.CeilToInt(rect.height));
-        if (previewRenderTexture != null && previewRenderTexture.width == width && previewRenderTexture.height == height)
-        {
+        int width  = Mathf.RoundToInt(PreviewCanvasW);
+        int height = Mathf.RoundToInt(PreviewCanvasH);
+        if (previewRenderTexture != null
+            && previewRenderTexture.width  == width
+            && previewRenderTexture.height == height)
             return;
-        }
 
         if (previewRenderTexture != null)
         {
