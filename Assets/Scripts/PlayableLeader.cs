@@ -100,6 +100,12 @@ public class PlayableLeader : Leader
         return discoveredRegions.Add(NormalizeCardName(region));
     }
 
+    public bool HasDiscoveredRegion(string region)
+    {
+        if (string.IsNullOrWhiteSpace(region)) return false;
+        return discoveredRegions.Contains(NormalizeCardName(region));
+    }
+
     public bool HasPlayedLandCardThisTurn()
     {
         return HasPlayedLandThisTurn();

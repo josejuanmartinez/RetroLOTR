@@ -43,6 +43,15 @@ public class MinimapManager : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+
+        // Ensure region labels are excluded from the small always-visible minimap thumbnail.
+        // AddLabelsLayerToCamera / RestoreLabelsLayerOnCamera handle adding them only for the overlay.
+        if (minimapCamera != null)
+        {
+            int layer = LayerMask.NameToLayer(regionLabelsLayerName);
+            if (layer >= 0)
+                minimapCamera.cullingMask &= ~(1 << layer);
+        }
     }
 
     private void Update()

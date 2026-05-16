@@ -136,6 +136,7 @@ public class Game : MonoBehaviour
         InitializePlayableLeaderIcons();
         InitializeNonPlayableLeaderIcons();
         board.StartGame();
+        DiscoverStartingRegions();
         HookBoardSelectionRefresh();
         AssignAIandHumans();
         VictoryPoints.RecalculateAndAssign(this);
@@ -156,6 +157,18 @@ public class Game : MonoBehaviour
         StartCoroutine(RefreshDeckUiAfterStartup());
         MessageDisplay.ClearPersistent();
 
+    }
+
+    private void DiscoverStartingRegions()
+    {
+        if (player == null || board?.regionLabelManager == null) return;
+        foreach (var character in player.controlledCharacters)
+        {
+            string region = character.hex?.GetLandRegion();
+            if (string.IsNullOrWhiteSpace(region)) continue;
+            player.TryDiscoverRegion(region);
+            board.regionLabelManager.ShowLabel(region.Trim());
+        }
     }
 
     private void HookBoardSelectionRefresh()

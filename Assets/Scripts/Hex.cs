@@ -36,29 +36,25 @@ public class Hex : MonoBehaviour
     public SpriteRenderer characterSpriteRenderer;
     public SpriteRenderer bannerSpriteRenderer;
 
-    [Header("Rendering")]
+    [Header("PC Name")]
     public TextMeshPro pcName;
-    
-    [SerializeField]
-    private float revealDuration = 1f;
+    [SerializeField] private bool showPcMarkBackgroundColor = false;
+
+    [Header("Reveal")]
+    [SerializeField] private float revealDuration = 1f;
 
     [Header("Hover")]
     [SerializeField] private float tooltipFontSize = 2f;
 
-    public HoverNoUI freeArmiesAtHexHover;
-    public HoverNoUI neutralArmiesAtHexHover;
-    public HoverNoUI darkServantArmiesAtHexHover;
     public HoverNoUI charactersAtHexHover;
     public GameObject artifact;
     public HoverNoUI artifactHover;
 
+    [Header("Grid Sprite Rendereres")]
     public GameObject spriteRendererLayoutIcon;
     public SpriteRendererGridLayout characterClassesIconGrid;
     public SpriteRendererGridLayout armyCharactersIconGrid;
-    private Coroutine armyArrangeCoroutine;
-    private Coroutine classArrangeCoroutine;
 
-    public TerrainEnum terrainType;
     public SpriteRenderer terrainTexture;
     public GameObject cliffGameObject;
     public GameObject hexTextureWater;
@@ -83,6 +79,15 @@ public class Hex : MonoBehaviour
     public GameObject hopeParticles;
 
 
+    [Header("Outline")]
+    public float characterOutlineSize = 10f;
+    // public float bannerOutlineSize = 70f;
+    private int darknessTurnsRemaining = 0;
+
+    [Header("Selection Alpha")]
+    [SerializeField] private float selectedBlinkMinAlpha = 0.5f;
+    [SerializeField] private float selectedBlinkMaxAlpha = 1f;
+    [SerializeField] private float selectedBlinkSpeed = 2f;
 
     [Header("Data")]
     [SerializeField] private PC pc;
@@ -90,10 +95,14 @@ public class Hex : MonoBehaviour
     [SerializeField] private bool isRevealed;
     [SerializeField] private bool mapOnlyRevealed;
     [SerializeField] private bool isCurrentlyUnseen;
-
+    public TerrainEnum terrainType;    
     public List<Army> armies = new();
     public List<Character> characters = new();
     public List<Artifact> hiddenArtifacts = new();
+
+
+    private Coroutine armyArrangeCoroutine;
+    private Coroutine classArrangeCoroutine;
     private bool artifactRevealed = false;
 
     // Use HashSet for O(1) contains
@@ -149,15 +158,6 @@ public class Hex : MonoBehaviour
     // private const string BannerOutlineMaterialPath = "Materials/BannerOutline";
     private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
     private static readonly int OutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
-    [Header("Outline")]
-    public float characterOutlineSize = 10f;
-    // public float bannerOutlineSize = 70f;
-    private int darknessTurnsRemaining = 0;
-
-    [Header("Selection Alpha")]
-    [SerializeField] private float selectedBlinkMinAlpha = 0.5f;
-    [SerializeField] private float selectedBlinkMaxAlpha = 1f;
-    [SerializeField] private float selectedBlinkSpeed = 2f;
     private const float NonSelectedCharacterAlpha = 0.9f;
     private bool isCharacterHovered = false;
 
@@ -662,10 +662,7 @@ public class Hex : MonoBehaviour
         }
 
         // Trim trailing newlines and always push an explicit refresh, even when the hex is empty.
-        if (charactersAtHexHover != null) charactersAtHexHover.Initialize(sbChars.ToString().TrimEnd('\n'), tooltipFontSize);
-        if (freeArmiesAtHexHover != null) freeArmiesAtHexHover.Initialize(sbFree.ToString().TrimEnd('\n'), tooltipFontSize);
-        if (darkServantArmiesAtHexHover != null) darkServantArmiesAtHexHover.Initialize(sbDark.ToString().TrimEnd('\n'), tooltipFontSize);
-        if (neutralArmiesAtHexHover != null) neutralArmiesAtHexHover.Initialize(sbNeutral.ToString().TrimEnd('\n'), tooltipFontSize);
+        if (charactersAtHexHover != null) charactersAtHexHover.Initialize(sbChars.ToString().TrimEnd('\n'), tooltipFontSize);        
     }
 
 
@@ -1043,9 +1040,6 @@ public class Hex : MonoBehaviour
         if (revealed)
         {
             SetActiveFast(hoverHexFrame, false);
-            if (freeArmiesAtHexHover) SetActiveFast(freeArmiesAtHexHover.gameObject, seen);
-            if (neutralArmiesAtHexHover) SetActiveFast(neutralArmiesAtHexHover.gameObject, seen);
-            if (darkServantArmiesAtHexHover) SetActiveFast(darkServantArmiesAtHexHover.gameObject, seen);
             if (charactersAtHexHover) SetActiveFast(charactersAtHexHover.gameObject, seen);
             UpdateArtifactVisibility();
             UpdateParticles();
@@ -1069,9 +1063,6 @@ public class Hex : MonoBehaviour
         SetActiveFast(scoutedHexFrame, false);
         SetActiveFast(darknessHexFrame, false);
 
-        if (freeArmiesAtHexHover) { freeArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(freeArmiesAtHexHover.gameObject, false); }
-        if (neutralArmiesAtHexHover) { neutralArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(neutralArmiesAtHexHover.gameObject, false); }
-        if (darkServantArmiesAtHexHover) { darkServantArmiesAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(darkServantArmiesAtHexHover.gameObject, false); }
         if (charactersAtHexHover) { charactersAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(charactersAtHexHover.gameObject, false); }
         UpdatePcWorldText(false);
 
@@ -2419,9 +2410,14 @@ public class Hex : MonoBehaviour
         string formattedName = pc.pcName ?? string.Empty;
 
         StringBuilder builder = new();
-        builder.Append("<mark=");
-        builder.Append(GetPcAlignmentMarkColorHex());
-        builder.Append("><color=");
+        if(showPcMarkBackgroundColor)
+        {
+            builder.Append("<mark=");
+            builder.Append(GetPcAlignmentMarkColorHex());
+            builder.Append(">");
+        }
+
+        builder.Append("<color=");
         builder.Append(GetPcNationColorHex());
         builder.Append('>');
         builder.Append(formattedName);
@@ -2454,7 +2450,7 @@ public class Hex : MonoBehaviour
 
         if (pc.hasPort) builder.Append(" <sprite name=\"port\">");
 
-        builder.Append("</mark>");
+        if(showPcMarkBackgroundColor) builder.Append("</mark>");
 
         return builder.ToString();
     }

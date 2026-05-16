@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4691146156426639077}
   - component: {fileID: 3060822472368473399}
   - component: {fileID: 5324350084249676662}
+  - component: {fileID: 8350047492710493533}
   m_Layer: 6
   m_Name: MinimapCamera
   m_TagString: Untagged
@@ -120,7 +121,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -128,3 +128,24 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
+--- !u!114 &8350047492710493533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312088051340465479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aac4a1861c5e8484caac952f79dacaee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.92156863}
+  escFontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  minimapCamera: {fileID: 3060822472368473399}
+  mapBackgroundSprite: {fileID: 21300000, guid: 0a3c27bf9881a234e8b4a28b91187577, type: 3}
+  overlayMapScale: 1
+  minimapCameraZoom: 1
+  renderTextureScale: 2
+  regionLabelsLayerName: RegionLabels

@@ -47,7 +47,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [FormerlySerializedAs("discardButton")]
     [SerializeField] private GameObject shadowObject;
     [SerializeField] private GameObject discardButton;
-    [SerializeField] private TextMeshProUGUI requirementsMessage;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject dragProxyPrefab;
@@ -78,6 +77,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private bool isHovered;
     private bool isDragging;
     private bool hoverSortingRaised;
+    private string baseDescription = string.Empty;
     private DiscardButtonHoverTracker discardButtonHover;
     private GameObject dragProxy;
     private GameObject zoomProxy;
@@ -198,7 +198,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (descriptionText != null)
         {
-            descriptionText.text = GetActionDescription(data);
+            baseDescription = GetActionDescription(data);
+            descriptionText.text = baseDescription;
         }
 
         if (requirementsText != null)
@@ -557,10 +558,26 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             canvasGroup.blocksRaycasts = true;
         }
 
-        if (requirementsMessage != null)
+        if (descriptionText != null)
         {
-            requirementsMessage.text = isPlayable ? string.Empty : BuildRequirementsMessageText(selected, resourceOwner);
-            requirementsMessage.color = isPlayable ? Color.white : requirementsMessageColor;
+            if (isPlayable)
+            {
+                descriptionText.text = baseDescription;
+            }
+            else
+            {
+                string errorText = BuildRequirementsMessageText(selected, resourceOwner);
+                if (!string.IsNullOrWhiteSpace(errorText))
+                {
+                    string colorHex = ColorUtility.ToHtmlStringRGB(requirementsMessageColor);
+                    string separator = string.IsNullOrWhiteSpace(baseDescription) ? string.Empty : "\n";
+                    descriptionText.text = $"{baseDescription}{separator}<color=#{colorHex}>{errorText}</color>";
+                }
+                else
+                {
+                    descriptionText.text = baseDescription;
+                }
+            }
         }
 
         if (highlightImage != null)

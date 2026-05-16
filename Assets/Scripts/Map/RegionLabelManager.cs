@@ -113,6 +113,20 @@ public class RegionLabelManager : MonoBehaviour
 
         if (resolveOverlaps)
             ResolveOverlaps();
+
+        foreach (var label in spawnedLabels.Values)
+        {
+            if (label != null && label.SpawnedLabel != null)
+                label.SpawnedLabel.gameObject.SetActive(false);
+        }
+    }
+
+    public void ShowLabel(string regionName)
+    {
+        if (string.IsNullOrWhiteSpace(regionName)) return;
+        string key = regionName.Trim();
+        if (spawnedLabels.TryGetValue(key, out RegionLabel label) && label != null && label.SpawnedLabel != null)
+            label.SpawnedLabel.gameObject.SetActive(true);
     }
 
     private void ResolveOverlaps()

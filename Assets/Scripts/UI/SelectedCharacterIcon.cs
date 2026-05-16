@@ -23,7 +23,6 @@ public class SelectedCharacterIcon : MonoBehaviour
     public RawImage rawImage;
     public VideoPlayer video;
     public TextMeshProUGUI textWidget;
-    public Image alignmentIcon;
 
     [Header("Health")]
     public Image health;
@@ -211,8 +210,6 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetVisible(true);
         border.SetActive(true);
         SetCharacterVisuals(GetIllustrationByName(c.characterName));
-        alignmentIcon.enabled = true;
-        alignmentIcon.sprite = GetIllustrationByName(c.GetAlignment().ToString());
         string baseHoverText = BuildSelectedCharacterTitle(c);
         string kidnappingText = BuildKidnappingStatusText(c);
         textWidget.text = string.IsNullOrWhiteSpace(kidnappingText)
@@ -273,8 +270,6 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetVisible(true);
         border.SetActive(true);
         SetCharacterVisuals(GetIllustrationByName(c.characterName));
-        alignmentIcon.enabled = true;
-        alignmentIcon.sprite = GetIllustrationByName(c.GetAlignment().ToString());
         textWidget.text = string.IsNullOrWhiteSpace(hoverText) ? BuildSelectedCharacterTitle(c) : hoverText;
 
         actioned.SetActive(false);
@@ -304,7 +299,6 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetDropTargetHighlight(false);
         SetVisible(false);
         border.SetActive(false);
-        alignmentIcon.enabled = false;
         // Video path disabled for now; static illustrations only.
         // if (video != null)
         // {

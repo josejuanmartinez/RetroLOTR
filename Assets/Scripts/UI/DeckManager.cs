@@ -1768,6 +1768,8 @@ public class DeckManager : MonoBehaviour
     {
         if (string.IsNullOrWhiteSpace(regionName)) return;
 
+        FindFirstObjectByType<RegionLabelManager>()?.ShowLabel(regionName.Trim());
+
         EventIconsManager iconsManager = EventIconsManager.FindManager();
         BoardNavigator navigator = BoardNavigator.Instance != null ? BoardNavigator.Instance : FindFirstObjectByType<BoardNavigator>();
         string displayName = FormatDisplayName(regionName);

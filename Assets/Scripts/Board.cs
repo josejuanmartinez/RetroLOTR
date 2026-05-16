@@ -401,8 +401,18 @@ public class Board : MonoBehaviour
             bool revealed = hex.IsHexRevealed();
             if (hex.terrainTexture != null)
                 hex.terrainTexture.gameObject.SetActive(revealed && !terrainTexturesHidden);
-            if (hex.hexRegion != null)
-                hex.hexRegion.enabled = revealed && terrainTexturesHidden;
+        }
+
+        if (Camera.main != null && regionLabelManager != null)
+        {
+            int layer = LayerMask.NameToLayer(regionLabelManager.labelsLayerName);
+            if (layer >= 0)
+            {
+                if (terrainTexturesHidden)
+                    Camera.main.cullingMask |= 1 << layer;
+                else
+                    Camera.main.cullingMask &= ~(1 << layer);
+            }
         }
     }
 
