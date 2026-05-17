@@ -12,6 +12,7 @@ public class Illustrations : SearcherByName
     {
         "Assets/Art/Cards/",
         "Assets/Art/UI/",
+        "Assets/Art/UI/",
         "Assets/Art/Animation/",
         "Assets/Art/Characters/"
     };

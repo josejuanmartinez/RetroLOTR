@@ -1,8 +1,9 @@
-using UnityEngine;
-using UnityEngine.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class EventIconsManager : MonoBehaviour
 {
@@ -38,14 +39,14 @@ public class EventIconsManager : MonoBehaviour
         Transform parent = gridLayout != null ? gridLayout.transform : transform;
         GameObject iconInstance = Instantiate(eventIcon, parent);
         iconInstance.transform.SetAsLastSibling();
-        iconInstance.transform.localScale = Vector3.one;
+        iconInstance.transform.localScale = Vector3.zero;
 
         CanvasGroup canvasGroup = iconInstance.GetComponent<CanvasGroup>();
         if (canvasGroup == null)
         {
             canvasGroup = iconInstance.AddComponent<CanvasGroup>();
         }
-        canvasGroup.alpha = 1f;
+        canvasGroup.alpha = 0f;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
 
@@ -79,7 +80,28 @@ public class EventIconsManager : MonoBehaviour
         icon.Configure(type, discardable, onOpen, removal, portrait);
         activeIcons.Add(icon);
         RefreshLayout(parent as RectTransform);
+        StartCoroutine(AnimateIconIn(iconInstance.transform, canvasGroup));
         return icon;
+    }
+
+    private IEnumerator AnimateIconIn(Transform iconTransform, CanvasGroup cg)
+    {
+        float duration = 0.28f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (iconTransform == null) yield break;
+            float p = elapsed / duration;
+            float eased = 1f + 2.70158f * Mathf.Pow(p - 1f, 3f) + 1.70158f * Mathf.Pow(p - 1f, 2f);
+            iconTransform.localScale = Vector3.LerpUnclamped(Vector3.zero, Vector3.one, eased);
+            if (cg != null) cg.alpha = Mathf.Clamp01(p * 3f);
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (iconTransform != null) iconTransform.localScale = Vector3.one;
+        if (cg != null) cg.alpha = 1f;
     }
 
     private void RemoveIcon(EventIcon icon)

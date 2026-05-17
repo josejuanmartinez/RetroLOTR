@@ -22,6 +22,7 @@ public class CharacterSpriteHover : MonoBehaviour
         if (!hex.TryGetKnownCharacterForIcon(out Character character)) return;
 
         hex.SetCharacterHovered(true);
+        hex.Hover();
 
         board ??= FindFirstObjectByType<Board>();
         if (board != null && board.selectedCharacter == character) return;

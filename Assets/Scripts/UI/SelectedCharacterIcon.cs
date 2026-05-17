@@ -18,6 +18,9 @@ public class SelectedCharacterIcon : MonoBehaviour
     public GameObject border;
     public GameObject otherCharacters;
 
+    [Header("Banner")]
+    public Image bannerImage;
+
     [Header("Leader")]
     public Image icon;
     public RawImage rawImage;
@@ -209,6 +212,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetDropTargetHighlight(false);
         SetVisible(true);
         border.SetActive(true);
+        SetBannerImage(c);
         SetCharacterVisuals(GetIllustrationByName(c.characterName));
         string baseHoverText = BuildSelectedCharacterTitle(c);
         string kidnappingText = BuildKidnappingStatusText(c);
@@ -269,6 +273,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetDropTargetHighlight(false);
         SetVisible(true);
         border.SetActive(true);
+        SetBannerImage(c);
         SetCharacterVisuals(GetIllustrationByName(c.characterName));
         textWidget.text = string.IsNullOrWhiteSpace(hoverText) ? BuildSelectedCharacterTitle(c) : hoverText;
 
@@ -292,6 +297,57 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetPlayedCardVisible(false);
     }
 
+
+    public void RefreshForArmy(Army army)
+    {
+        if (army == null || army.commander == null) { Hide(); return; }
+
+        SetDropTargetHighlight(false);
+        SetVisible(true);
+        border.SetActive(true);
+        SetCharacterVisuals(ResolveArmySprite(army));
+        textWidget.text = army.GetHoverTextNoXp();
+
+        actioned.SetActive(false);
+        moved.SetActive(false);
+        actionedIcon.SetActive(false);
+        unactionedIcon.SetActive(false);
+
+        commander.text = army.GetSize().ToString();
+        agent.text = "-";
+        emmissary.text = "-";
+        mage.text = "-";
+        movementLeft.text = "-";
+
+        health.gameObject.SetActive(false);
+        RefreshArtifacts(null);
+        ClearPlayedCardInstances();
+        SetPlayedCardVisible(false);
+    }
+
+    private Sprite ResolveArmySprite(Army army)
+    {
+        string troopName = army.GetTroopGroups().FirstOrDefault()?.troopName;
+        if (!string.IsNullOrWhiteSpace(troopName))
+        {
+            DeckManager deckManager = FindFirstObjectByType<DeckManager>();
+            if (deckManager != null)
+            {
+                CardData card = deckManager.cards.FirstOrDefault(c =>
+                    string.Equals(c.name, troopName, System.StringComparison.OrdinalIgnoreCase));
+                if (card != null)
+                {
+                    foreach (string candidate in new[] { card.spriteName, card.portraitName, card.name })
+                    {
+                        if (string.IsNullOrWhiteSpace(candidate)) continue;
+                        Sprite s = GetIllustrationByName(candidate, false);
+                        if (s != null) return s;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     // Update is called once per frame
     public void Hide()
@@ -325,6 +381,43 @@ public class SelectedCharacterIcon : MonoBehaviour
     public void RefreshMovementLeft(Character c)
     {
         movementLeft.text = c.GetMovementLeft().ToString();
+    }
+
+    private void SetBannerImage(Character c)
+    {
+        if (bannerImage == null) return;
+        Leader owner = c?.GetOwner();
+        Sprite sprite = ResolveBannerSprite(owner);
+        bannerImage.sprite = sprite;
+        bannerImage.enabled = sprite != null;
+    }
+
+    private Sprite ResolveBannerSprite(Leader owner)
+    {
+        if (owner == null) return null;
+        LeaderBiomeConfig biome = owner.GetBiome();
+        if (biome == null) return null;
+
+        string bannerName = null;
+        if (owner is PlayableLeader playableLeader)
+        {
+            string subdeckId = playableLeader.GetSelectedSubdeckId();
+            if (!string.IsNullOrWhiteSpace(subdeckId) && biome.variants != null)
+            {
+                LeaderVariantConfig variant = biome.variants.Find(v =>
+                    v != null
+                    && ((!string.IsNullOrWhiteSpace(v.variantId) && string.Equals(v.variantId, subdeckId, System.StringComparison.OrdinalIgnoreCase))
+                        || (!string.IsNullOrWhiteSpace(v.subdeckId) && string.Equals(v.subdeckId, subdeckId, System.StringComparison.OrdinalIgnoreCase))));
+                if (!string.IsNullOrWhiteSpace(variant?.banner))
+                    bannerName = variant.banner;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(bannerName))
+            bannerName = biome.banner;
+
+        if (string.IsNullOrWhiteSpace(bannerName)) return null;
+        return GetIllustrationByName(bannerName, false);
     }
 
     private Sprite GetIllustrationByName(string name)

@@ -145,6 +145,19 @@ public class Army
         return $" {string.Join(',', result)}{xpText}";
     }
 
+    public string GetHoverTextHexInfo()
+    {
+        List<string> lines = BuildTroopHoverLines().Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
+        string xpText = GetXpHoverText();
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < lines.Count; i++)
+        {
+            sb.Append("\n  - ").Append(lines[i]);
+            if (i == lines.Count - 1) sb.Append(xpText);
+        }
+        return sb.ToString();
+    }
+
     public string GetHoverTextNoXp()
     {
         return $" {string.Join(',', BuildTroopHoverLines())}";

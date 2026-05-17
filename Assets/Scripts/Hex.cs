@@ -44,11 +44,14 @@ public class Hex : MonoBehaviour
     [SerializeField] private float revealDuration = 1f;
 
     [Header("Hover")]
-    [SerializeField] private float tooltipFontSize = 2f;
-
-    public HoverNoUI charactersAtHexHover;
     public GameObject artifact;
     public HoverNoUI artifactHover;
+
+    [Header("Hex Info Panel")]
+    public GameObject hexInfoArrow;
+    public GameObject hexInfo;
+    public TextMeshPro hexInfoText;
+    [SerializeField] private float hexInfoHoverDelay = 2f;
 
     [Header("Grid Sprite Rendereres")]
     public GameObject spriteRendererLayoutIcon;
@@ -103,7 +106,15 @@ public class Hex : MonoBehaviour
 
     private Coroutine armyArrangeCoroutine;
     private Coroutine classArrangeCoroutine;
+    private Coroutine hexInfoShowCoroutine;
+    private Coroutine _arrowBounceCoroutine;
+    private float _arrowOriginX;
+    private readonly List<Character> _hexInfoCharacters = new();
+    private readonly List<Army> _hexInfoArmies = new();   // null entry = character link, non-null = army link
+    private int _lastHexInfoLinkIdx = -1;
+    private SelectedCharacterIcon _selectedIcon;
     private bool artifactRevealed = false;
+    private static Hex s_hexInfoActiveHex;
 
     // Use HashSet for O(1) contains
     private HashSet<Leader> scoutedBy = new();
@@ -187,11 +198,20 @@ public class Hex : MonoBehaviour
         UpdateMinimapTerrain(IsHexRevealed());
         UpdateVisibilityForFog();
         UpdateParticles();
+        SetActiveFast(hexInfoArrow, false);
+        SetActiveFast(hexInfo, false);
     }
 
     void Update()
     {
         UpdateCharacterSpriteAlpha();
+        if (hexInfo != null && hexInfo.activeSelf)
+        {
+            if (!IsMouseOverHexOrPanel())
+                Unhover();
+            else
+                UpdateHexInfoLinkHover();
+        }
     }
 
     public bool IsHexRevealed() => isRevealed;
@@ -584,6 +604,8 @@ public class Hex : MonoBehaviour
         sbFree.Clear();
         sbDark.Clear();
         sbNeutral.Clear();
+        _hexInfoCharacters.Clear();
+        _hexInfoArmies.Clear();
 
         // Track whether we've already shown an Unknown for each bucket
         bool unkCharsShown = false;
@@ -619,21 +641,31 @@ public class Hex : MonoBehaviour
                     npl.RevealToLeader(g.currentlyPlaying, isHuman);
                 }
                 
-                var charName = ch.GetHoverText(true, true, true, true, false, true);
+                var charName = ch.GetHoverText(true, true, true, false, false, true);
+                int linkIdx = _hexInfoCharacters.Count;
+                _hexInfoCharacters.Add(ch);
+                _hexInfoArmies.Add(null);
+                string linkedName = $"<link=\"{linkIdx}\"><color=#FFD700>{charName}</color></link>";
                 if (ch.IsArmyCommander())
                 {
-                    var text = ch.GetHoverText(false, true, true, true, false, true);
+                    Army army = ch.GetArmy();
+                    var armyText = army != null ? army.GetHoverText() : ch.GetHoverText(false, false, false, true, false, false);
                     switch (ch.alignment)
                     {
-                        case AlignmentEnum.freePeople: sbFree.Append(text).Append('\n'); break;
-                        case AlignmentEnum.neutral: sbNeutral.Append(text).Append('\n'); break;
-                        case AlignmentEnum.darkServants: sbDark.Append(text).Append('\n'); break;
+                        case AlignmentEnum.freePeople: sbFree.Append(armyText).Append('\n'); break;
+                        case AlignmentEnum.neutral: sbNeutral.Append(armyText).Append('\n'); break;
+                        case AlignmentEnum.darkServants: sbDark.Append(armyText).Append('\n'); break;
                     }
-                    sbChars.Append(charName).Append('\n');
+                    int armyLinkIdx = _hexInfoCharacters.Count;
+                    _hexInfoCharacters.Add(ch);
+                    _hexInfoArmies.Add(army);
+                    string armyDisplay = army != null ? army.GetHoverTextHexInfo() : $"\n\t{armyText.Trim()}";
+                    string linkedArmy = $"<link=\"{armyLinkIdx}\"><color=#FFD700>{armyDisplay}</color></link>";
+                    sbChars.Append(linkedName).Append(linkedArmy).Append('\n');
                 }
                 else
                 {
-                    sbChars.Append(charName).Append('\n');
+                    sbChars.Append(linkedName).Append('\n');
                 }
             }
             else
@@ -662,7 +694,8 @@ public class Hex : MonoBehaviour
         }
 
         // Trim trailing newlines and always push an explicit refresh, even when the hex is empty.
-        if (charactersAtHexHover != null) charactersAtHexHover.Initialize(sbChars.ToString().TrimEnd('\n'), tooltipFontSize);        
+        string hoverText = sbChars.ToString().TrimEnd('\n');
+        if (hexInfoText != null) hexInfoText.text = hoverText;
     }
 
 
@@ -680,6 +713,12 @@ public class Hex : MonoBehaviour
             return;
         }
 
+        if (s_hexInfoActiveHex != null && s_hexInfoActiveHex != this && s_hexInfoActiveHex.IsMouseOverHexOrPanel())
+            return;
+
+        if (hexInfoShowCoroutine == null && (hexInfo == null || !hexInfo.activeSelf))
+            hexInfoShowCoroutine = StartCoroutine(ShowHexInfoAfterDelay());
+
         if (isSelected)
         {
             SetActiveFast(hoverHexFrame, false);
@@ -689,9 +728,215 @@ public class Hex : MonoBehaviour
         SetActiveFast(hoverHexFrame, true);
     }
 
+    private IEnumerator ShowHexInfoAfterDelay()
+    {
+        yield return new WaitForSeconds(hexInfoHoverDelay);
+        bool hasText = hexInfoText != null && !string.IsNullOrWhiteSpace(hexInfoText.text);
+        SetActiveFast(hexInfoArrow, hasText);
+        SetActiveFast(hexInfo, hasText);
+        if (hasText)
+        {
+            s_hexInfoActiveHex = this;
+            StartArrowBounce();
+        }
+        hexInfoShowCoroutine = null;
+    }
+
+    private void StartArrowBounce()
+    {
+        if (_arrowBounceCoroutine != null) StopCoroutine(_arrowBounceCoroutine);
+        if (hexInfoArrow == null) return;
+        _arrowOriginX = hexInfoArrow.transform.localPosition.x;
+        _arrowBounceCoroutine = StartCoroutine(ArrowBounceCoroutine());
+    }
+
+    private void StopArrowBounce()
+    {
+        if (_arrowBounceCoroutine == null) return;
+        StopCoroutine(_arrowBounceCoroutine);
+        _arrowBounceCoroutine = null;
+        if (hexInfoArrow != null)
+        {
+            Vector3 p = hexInfoArrow.transform.localPosition;
+            p.x = _arrowOriginX;
+            hexInfoArrow.transform.localPosition = p;
+        }
+    }
+
+    private IEnumerator ArrowBounceCoroutine()
+    {
+        Transform t = hexInfoArrow.transform;
+        float elapsed = 0f;
+        while (true)
+        {
+            elapsed += Time.deltaTime;
+            float t01 = Mathf.PingPong(elapsed, 1f);
+            t01 = t01 * t01 * (3f - 2f * t01); // smoothstep
+            Vector3 p = t.localPosition;
+            p.x = Mathf.Lerp(_arrowOriginX, 0.2f, t01);
+            t.localPosition = p;
+            yield return null;
+        }
+    }
+
     public void Unhover()
     {
         SetActiveFast(hoverHexFrame, false);
+        if (IsMouseOverHexOrPanel()) return;
+        if (hexInfoShowCoroutine != null) { StopCoroutine(hexInfoShowCoroutine); hexInfoShowCoroutine = null; }
+        if (_lastHexInfoLinkIdx >= 0) ApplyHexInfoLinkHighlight(-1);
+        _lastHexInfoLinkIdx = -1;
+        StopArrowBounce();
+        SetActiveFast(hexInfoArrow, false);
+        SetActiveFast(hexInfo, false);
+        if (s_hexInfoActiveHex == this) s_hexInfoActiveHex = null;
+    }
+
+    private void UpdateHexInfoLinkHover()
+    {
+        if (hexInfoText == null) return;
+        Camera cam = Camera.main;
+        if (cam == null) return;
+
+        int linkIdx = GetHoveredHexInfoLinkIndex(cam);
+        if (linkIdx == _lastHexInfoLinkIdx) return;
+        _lastHexInfoLinkIdx = linkIdx;
+        ApplyHexInfoLinkHighlight(linkIdx);
+
+        if (_selectedIcon == null) _selectedIcon = FindFirstObjectByType<SelectedCharacterIcon>();
+        if (_selectedIcon == null) return;
+
+        if (linkIdx >= 0 && linkIdx < _hexInfoCharacters.Count)
+        {
+            Army army = linkIdx < _hexInfoArmies.Count ? _hexInfoArmies[linkIdx] : null;
+            if (army != null)
+            {
+                _selectedIcon.RefreshForArmy(army);
+            }
+            else
+            {
+                Character ch = _hexInfoCharacters[linkIdx];
+                if (ch != null && !ch.killed)
+                {
+                    TryGetPreviewTextForCharacter(ch, out string hoverText);
+                    bool isScouted = IsScouted();
+                    _selectedIcon.RefreshHoverPreview(ch, hoverText, isScouted, isScouted);
+                }
+            }
+        }
+        else
+        {
+            if (board != null && board.selectedCharacter != null)
+                _selectedIcon.Refresh(board.selectedCharacter);
+            else
+                _selectedIcon.Hide();
+        }
+    }
+
+    private static readonly Color32 LinkColorDefault = new(0xFF, 0xD7, 0x00, 0xFF);
+    private static readonly Color32 LinkColorHover   = new(0xFF, 0xFF, 0xFF, 0xFF);
+
+    private void ApplyHexInfoLinkHighlight(int hoveredLinkIdx)
+    {
+        if (hexInfoText == null) return;
+        hexInfoText.ForceMeshUpdate();
+        TMP_TextInfo ti = hexInfoText.textInfo;
+
+        for (int i = 0; i < ti.linkCount; i++)
+        {
+            Color32 col = i == hoveredLinkIdx ? LinkColorHover : LinkColorDefault;
+            TMP_LinkInfo link = ti.linkInfo[i];
+            for (int j = 0; j < link.linkTextLength; j++)
+            {
+                int ci = link.linkTextfirstCharacterIndex + j;
+                if (ci >= ti.characterCount) break;
+                TMP_CharacterInfo ch = ti.characterInfo[ci];
+                if (!ch.isVisible) continue;
+                int vi = ch.vertexIndex;
+                int mi = ch.materialReferenceIndex;
+                ti.meshInfo[mi].colors32[vi]     = col;
+                ti.meshInfo[mi].colors32[vi + 1] = col;
+                ti.meshInfo[mi].colors32[vi + 2] = col;
+                ti.meshInfo[mi].colors32[vi + 3] = col;
+            }
+        }
+        hexInfoText.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+    }
+
+    private int GetHoveredHexInfoLinkIndex(Camera cam)
+    {
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        Plane textPlane = new Plane(hexInfoText.transform.forward, hexInfoText.transform.position);
+        if (!textPlane.Raycast(ray, out float dist)) return -1;
+
+        Vector3 localHit = hexInfoText.transform.InverseTransformPoint(ray.GetPoint(dist));
+        TMP_TextInfo info = hexInfoText.textInfo;
+        for (int i = 0; i < info.linkCount; i++)
+        {
+            TMP_LinkInfo link = info.linkInfo[i];
+            float minX = float.MaxValue, maxX = float.MinValue;
+            float minY = float.MaxValue, maxY = float.MinValue;
+            bool hasVisible = false;
+            for (int j = 0; j < link.linkTextLength; j++)
+            {
+                int ci = link.linkTextfirstCharacterIndex + j;
+                if (ci >= info.characterCount) break;
+                TMP_CharacterInfo ch = info.characterInfo[ci];
+                if (!ch.isVisible) continue;
+                hasVisible = true;
+                minX = Mathf.Min(minX, ch.bottomLeft.x);
+                maxX = Mathf.Max(maxX, ch.topRight.x);
+                minY = Mathf.Min(minY, ch.bottomLeft.y);
+                maxY = Mathf.Max(maxY, ch.topRight.y);
+            }
+            if (hasVisible &&
+                localHit.x >= minX && localHit.x <= maxX &&
+                localHit.y >= minY && localHit.y <= maxY)
+                return i;
+        }
+        return -1;
+    }
+
+    private bool IsMouseOverHexOrPanel()
+    {
+        Camera cam = Camera.main;
+        if (cam == null) return false;
+
+        // 3D raycast — hex uses BoxCollider (not Collider2D)
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        var hits3d = Physics.RaycastAll(ray);
+        for (int i = 0; i < hits3d.Length; i++)
+        {
+            Transform t = hits3d[i].transform;
+            while (t != null)
+            {
+                if (t == transform) return true;
+                t = t.parent;
+            }
+        }
+
+        // Check hexInfo and hexInfoArrow sprite bounds (no collider required)
+        Vector3 mouseWorld = cam.ScreenToWorldPoint(new Vector3(
+            Input.mousePosition.x, Input.mousePosition.y,
+            transform.position.z - cam.transform.position.z));
+        if (IsMouseOverSprites(hexInfo, mouseWorld)) return true;
+        if (IsMouseOverSprites(hexInfoArrow, mouseWorld)) return true;
+
+        return false;
+    }
+
+    private static bool IsMouseOverSprites(GameObject go, Vector3 mouseWorld)
+    {
+        if (go == null || !go.activeSelf) return false;
+        var renderers = go.GetComponentsInChildren<SpriteRenderer>();
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Bounds b = renderers[i].bounds;
+            if (mouseWorld.x >= b.min.x && mouseWorld.x <= b.max.x &&
+                mouseWorld.y >= b.min.y && mouseWorld.y <= b.max.y)
+                return true;
+        }
+        return false;
     }
 
     public void Select(bool lookAt = true, float duration = 1.0f, float delay = 0.0f)
@@ -1040,7 +1285,6 @@ public class Hex : MonoBehaviour
         if (revealed)
         {
             SetActiveFast(hoverHexFrame, false);
-            if (charactersAtHexHover) SetActiveFast(charactersAtHexHover.gameObject, seen);
             UpdateArtifactVisibility();
             UpdateParticles();
             RefreshFrontierRowVisuals();
@@ -1063,7 +1307,6 @@ public class Hex : MonoBehaviour
         SetActiveFast(scoutedHexFrame, false);
         SetActiveFast(darknessHexFrame, false);
 
-        if (charactersAtHexHover) { charactersAtHexHover.Initialize("", tooltipFontSize); SetActiveFast(charactersAtHexHover.gameObject, false); }
         UpdatePcWorldText(false);
 
         UpdateParticles();

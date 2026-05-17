@@ -47,6 +47,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [FormerlySerializedAs("discardButton")]
     [SerializeField] private GameObject shadowObject;
     [SerializeField] private GameObject discardButton;
+    [SerializeField] private Image deckTypeImage;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject dragProxyPrefab;
@@ -212,6 +213,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             Sprite sprite = ResolveCardArtwork(data);
             cardArtImage.sprite = sprite;
             cardArtImage.enabled = sprite != null;
+        }
+
+        if (deckTypeImage != null && !string.IsNullOrWhiteSpace(data.deckSpriteName) && illustrations != null)
+        {
+            if (illustrations.TryGetIllustrationByName(data.deckSpriteName, out Sprite deckSprite))
+            {
+                deckTypeImage.sprite = deckSprite;
+                deckTypeImage.enabled = true;
+            }
         }
 
         UpdateInteractableState();
@@ -1038,9 +1048,61 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (this != null && gameObject != null)
         {
-            Destroy(gameObject);
+            StartCoroutine(AnimateDiscardAndDestroy());
         }
         return true;
+    }
+
+    private IEnumerator AnimateDiscardAndDestroy()
+    {
+        // Block further interaction immediately.
+        if (canvasGroup != null)
+        {
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
+
+        // Escape the GridLayout so siblings reflow while we fly away.
+        Canvas.ForceUpdateCanvases();
+        Transform gridParent = rectTransform.parent;
+        Transform floatTarget = (gridParent != null && gridParent.parent != null) ? gridParent.parent : gridParent;
+        if (floatTarget != null && floatTarget != rectTransform.parent)
+        {
+            Vector3 worldPos = rectTransform.position;
+            rectTransform.SetParent(floatTarget, false);
+            rectTransform.position = worldPos;
+            rectTransform.SetAsLastSibling();
+        }
+        else if (layoutElement != null)
+        {
+            layoutElement.ignoreLayout = true;
+        }
+
+        Vector2 startPos = rectTransform.anchoredPosition;
+        float drift = UnityEngine.Random.Range(-70f, 70f);
+        Vector2 endPos = startPos + new Vector2(drift, 200f);
+        float startRot = rectTransform.localEulerAngles.z;
+        float endRot = startRot + UnityEngine.Random.Range(-18f, 18f);
+
+        float duration = 0.32f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (this == null) yield break;
+            float p = elapsed / duration;
+            float eased = 1f - (1f - p) * (1f - p);
+
+            rectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, eased);
+            rectTransform.localEulerAngles = new Vector3(0f, 0f, Mathf.Lerp(startRot, endRot, p));
+            rectTransform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 0.55f, p);
+            if (canvasGroup != null) canvasGroup.alpha = 1f - p;
+
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        Destroy(gameObject);
     }
 
     private void GrantRandomResource(PlayableLeader leader)

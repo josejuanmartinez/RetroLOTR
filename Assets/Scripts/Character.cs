@@ -677,14 +677,8 @@ public class Character : MonoBehaviour
     {
         const int blocks = 4;
         int filledBlocks = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(0, health) / 25f), 0, blocks);
-
-        StringBuilder sb = new(" ");
-        if (filledBlocks > 0)
-        {
-            string filledText = new string(' ', filledBlocks);
-            sb.Append($"<mark color=\"#ff0000\">{filledText}</mark>");
-        }
-        return sb.ToString();
+        if (filledBlocks <= 0) return string.Empty;
+        return " " + string.Concat(Enumerable.Repeat("<sprite name=\"health\">", filledBlocks));
     }
 
     public MovementType GetMovementType()

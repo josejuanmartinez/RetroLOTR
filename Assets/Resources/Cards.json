@@ -10,7 +10,8 @@
             "cardCount": 0,
             "sharedToAll": true,
             "parentDeckId": "",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "sharedDeck"
         },
         {
             "deckId": "encounter_shared",
@@ -21,7 +22,8 @@
             "cardCount": 82,
             "sharedToAll": true,
             "parentDeckId": "",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "sharedDeck"
         },
         {
             "deckId": "actions_deck",
@@ -32,7 +34,8 @@
             "cardCount": 52,
             "sharedToAll": true,
             "parentDeckId": "",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "sharedDeck"
         },
         {
             "deckId": "spells_deck",
@@ -43,7 +46,8 @@
             "cardCount": 30,
             "sharedToAll": false,
             "parentDeckId": "",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "sharedDeck"
         },
         {
             "deckId": "gandalf_base",
@@ -54,7 +58,8 @@
             "cardCount": 49,
             "sharedToAll": false,
             "parentDeckId": "",
-            "isBaseDeck": true
+            "isBaseDeck": true,
+            "deckSpriteName": "gandalfDeck"
         },
         {
             "deckId": "gandalf_the_white",
@@ -65,7 +70,8 @@
             "cardCount": 77,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "gandalfTheWhiteSubdeck"
         },
         {
             "deckId": "mithrandir",
@@ -76,7 +82,8 @@
             "cardCount": 84,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "mithrandirSubdeck"
         },
         {
             "deckId": "stormcrow",
@@ -87,7 +94,8 @@
             "cardCount": 85,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "stormcrowSubdeck"
         },
         {
             "deckId": "disturber_of_the_peace",
@@ -98,7 +106,8 @@
             "cardCount": 74,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "disturberOfThePeaceSubdeck"
         },
         {
             "deckId": "tharkun",
@@ -109,7 +118,8 @@
             "cardCount": 75,
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "tharkunSubdeck"
         },
         {
             "deckId": "saruman_base",
@@ -120,7 +130,8 @@
             "cardCount": 35,
             "sharedToAll": false,
             "parentDeckId": "",
-            "isBaseDeck": true
+            "isBaseDeck": true,
+            "deckSpriteName": "sarumanDeck"
         },
         {
             "deckId": "saruman_the_white",
@@ -131,7 +142,8 @@
             "cardCount": 79,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "sarumanTheWhiteSubdeck"
         },
         {
             "deckId": "of_many_colours",
@@ -142,7 +154,8 @@
             "cardCount": 92,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "sarumanMulticolouredSubdeck"
         },
         {
             "deckId": "the_white_hand",
@@ -153,7 +166,8 @@
             "cardCount": 75,
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "sarumanTheWhiteHandSubdeck"
         },
         {
             "deckId": "sauron_base",
@@ -164,7 +178,8 @@
             "cardCount": 39,
             "sharedToAll": false,
             "parentDeckId": "",
-            "isBaseDeck": true
+            "isBaseDeck": true,
+            "deckSpriteName": "sauronDeck"
         },
         {
             "deckId": "the_dark_eye",
@@ -175,7 +190,8 @@
             "cardCount": 72,
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "theDarkEyeSubdeck"
         },
         {
             "deckId": "the_deceiver",
@@ -186,7 +202,8 @@
             "cardCount": 76,
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "theDeceiverSubdeck"
         },
         {
             "deckId": "the_necromancer",
@@ -197,7 +214,8 @@
             "cardCount": 65,
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "theNecromancerSubdeck"
         },
         {
             "deckId": "shadow_of_the_east",
@@ -208,7 +226,8 @@
             "cardCount": 75,
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "shadowOfTheEastSubdeck"
         },
         {
             "deckId": "the_iron_crown",
@@ -219,7 +238,8 @@
             "cardCount": 63,
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
-            "isBaseDeck": false
+            "isBaseDeck": false,
+            "deckSpriteName": "theIronCrownSubdeck"
         }
     ]
 }

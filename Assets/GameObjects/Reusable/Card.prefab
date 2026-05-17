@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 3399684968626738003}
   - component: {fileID: 1404234796093620007}
   m_Layer: 5
-  m_Name: Type (1)
+  m_Name: DeckType
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -330,6 +330,7 @@ MonoBehaviour:
   playIndicator: {fileID: 0}
   shadowObject: {fileID: 0}
   discardButton: {fileID: 4326284185771693084}
+  deckTypeImage: {fileID: 1404234796093620007}
   dragProxyPrefab: {fileID: 0}
   hoverScale: 3
   hoverSpeed: 10

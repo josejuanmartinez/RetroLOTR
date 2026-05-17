@@ -1444,7 +1444,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1d9d1af2ffa7ce94990f564eda763cc5
-    m_Address: Assets/Art/UI/Alignment/sarumanSubdeck.png
+    m_Address: Assets/Art/UI/Alignment/sarumanDeck.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2266,7 +2266,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2c511a3c5aafd814f82a005170031ca7
-    m_Address: Assets/Art/UI/Alignment/gandalfSubdeck.png
+    m_Address: Assets/Art/UI/Alignment/gandalfDeck.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5792,7 +5792,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6f527524a2a067a4584b9ab5d42526c4
-    m_Address: Assets/Art/UI/Alignment/sauronSubdeck.png
+    m_Address: Assets/Art/UI/Alignment/sauronDeck.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6663,6 +6663,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7cf32b1a4528bd649a545ce262a34d83
     m_Address: Assets/Art/Hexes/Tiles/087.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cfe3d48051ccb1469711ede116e4815
+    m_Address: Assets/Art/UI/Alignment/sharedDeck.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -11025,6 +11031,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0b615d48b0cd67458df79562c3ef6c1
+    m_Address: Assets/Art/UI/Alignment/sarumanTheWhiteHandSubdeck.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d0ce0e8b5dc520e4ca2a0b2a7250575c
     m_Address: Assets/Art/Cards/Lands/Dunland.jpg
     m_ReadOnly: 0
@@ -11087,6 +11099,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d27287a3f1fea6c438999e82d00b010b
     m_Address: Assets/Art/Cards/Actions/Spells/Curse.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d2be544eb2bdc6d42a47c8805c25a47a
+    m_Address: Assets/Art/UI/Alignment/theNecromancerSubdeck.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -13342,7 +13360,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fb6aed8283204674f88e8eae075faa15
-    m_Address: Assets/Art/UI/Alignment/itheIronCrownSubdeck.png
+    m_Address: Assets/Art/UI/Alignment/theIronCrownSubdeck.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -26,6 +27,7 @@ public class DeckManifestEntry
     public bool sharedToAll;
     public string parentDeckId;
     public bool isBaseDeck;
+    public string deckSpriteName;
 }
 
 [Serializable]
@@ -162,6 +164,7 @@ public class CardData
     public string startingPC = string.Empty;
     public InspireEffectData inspireEffectData;
     public int amount = 1;
+    public string deckSpriteName;
 
     [NonSerialized] public bool isPlayable;
     [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
@@ -762,6 +765,7 @@ public class DeckManager : MonoBehaviour
                 if (card == null) continue;
                 card.deckId = deckData.deckId;
                 card.alignment = deckData.alignment;
+                card.deckSpriteName = entry.deckSpriteName;
             }
 
             loadedDecksById[deckData.deckId] = deckData;
@@ -1084,9 +1088,9 @@ public class DeckManager : MonoBehaviour
         }
 
         MinimapManager.RefreshMinimap();
-        if (revealedPcHexes == null || revealedPcHexes.Count == 0)
+        if (!string.IsNullOrWhiteSpace(discoveryRegion) && (revealedPcHexes == null || revealedPcHexes.Count == 0))
         {
-            Debug.LogWarning($"DeckManager: No hexes matched reveal region '{(card.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(card.region) ? card.region : card.name)}'.");
+            Debug.LogWarning($"DeckManager: No hexes matched reveal region '{discoveryRegion}'.");
         }
 
         if (leader is PlayableLeader pl && revealedPcHexes != null && revealedPcHexes.Count > 0
@@ -1142,6 +1146,26 @@ public class DeckManager : MonoBehaviour
     {
         if (leader == null) return false;
         if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
+
+        Game game = FindFirstObjectByType<Game>();
+        bool isHuman = game != null && game.player == leader && handCardInstances.Count > 0;
+
+        if (isHuman)
+        {
+            List<GameObject> oldCards = new List<GameObject>(handCardInstances);
+            handCardInstances.Clear();
+
+            state.drawPile.AddRange(state.hand);
+            state.hand.Clear();
+            state.drawPile.AddRange(state.discardPile);
+            state.discardPile.Clear();
+            ApplyBalancedDrawOrdering(state.drawPile);
+            RefillHandToCount(state, targetHandSize);
+            EnsureSharedBaseCardInHand(state);
+
+            StartCoroutine(PlayReshuffleAnimation(oldCards));
+            return true;
+        }
 
         state.drawPile.AddRange(state.hand);
         state.hand.Clear();
@@ -1495,7 +1519,8 @@ public class DeckManager : MonoBehaviour
             goldGranted = card.goldGranted,
             startingPC = card.startingPC,
             inspireEffectData = card.inspireEffectData,
-            amount = card.amount
+            amount = card.amount,
+            deckSpriteName = card.deckSpriteName
         };
     }
 
@@ -2516,6 +2541,147 @@ public class DeckManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    private IEnumerator PlayReshuffleAnimation(List<GameObject> oldCards)
+    {
+        if (gridLayout == null) yield break;
+
+        // Force layout pass so rt.position values are current before we capture them.
+        Canvas.ForceUpdateCanvases();
+
+        Transform floatRoot = gridLayout.transform.parent;
+        int total = oldCards.Count;
+
+        // Capture all world positions in one pass before touching any parent.
+        Vector3[] worldPositions = new Vector3[total];
+        for (int i = 0; i < total; i++)
+        {
+            if (oldCards[i] == null) continue;
+            if (oldCards[i].TryGetComponent(out RectTransform rt))
+                worldPositions[i] = rt.position;
+        }
+
+        // Disable GridLayoutGroup so reparenting one card at a time doesn't
+        // cause the remaining siblings to jump around between iterations.
+        gridLayout.enabled = false;
+
+        for (int i = 0; i < total; i++)
+        {
+            GameObject card = oldCards[i];
+            if (card == null) continue;
+
+            RectTransform rt = card.GetComponent<RectTransform>();
+            if (rt == null) continue;
+
+            card.transform.SetParent(floatRoot, false);
+            rt.position = worldPositions[i];
+
+            LayoutElement le = card.GetComponent<LayoutElement>();
+            if (le != null) le.ignoreLayout = true;
+
+            StartCoroutine(ScatterCard(card, i, total));
+        }
+
+        gridLayout.enabled = true;
+
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        foreach (var go in oldCards)
+            if (go != null) Destroy(go);
+
+        RefreshHumanPlayerHandUI();
+
+        // Hide all new cards synchronously before any frame renders them,
+        // so there is no flash at their grid positions.
+        List<GameObject> newCards = new List<GameObject>(handCardInstances);
+        foreach (GameObject card in newCards)
+        {
+            if (card == null) continue;
+            RectTransform rt = card.GetComponent<RectTransform>();
+            CanvasGroup cg = card.GetComponent<CanvasGroup>();
+            if (rt != null) rt.localScale = Vector3.zero;
+            if (cg != null) cg.alpha = 0f;
+        }
+
+        for (int i = 0; i < newCards.Count; i++)
+            StartCoroutine(DealInCard(newCards[i], i * 0.07f));
+    }
+
+    private IEnumerator ScatterCard(GameObject card, int index, int total)
+    {
+        if (card == null) yield break;
+
+        RectTransform rt = card.GetComponent<RectTransform>();
+        CanvasGroup cg = card.GetComponent<CanvasGroup>();
+        if (rt == null) yield break;
+
+        float t0 = total > 1 ? (float)index / (total - 1) : 0.5f;
+        float baseAngle = Mathf.Lerp(-65f, 65f, t0);
+        float spin = UnityEngine.Random.Range(-20f, 20f);
+        float rad = (baseAngle + spin) * Mathf.Deg2Rad;
+        Vector2 dir = new Vector2(Mathf.Sin(rad), -Mathf.Abs(Mathf.Cos(rad)) - 0.3f).normalized;
+
+        Vector2 startPos = rt.anchoredPosition;
+        Vector2 endPos = startPos + dir * UnityEngine.Random.Range(380f, 520f);
+        float startRot = rt.localEulerAngles.z;
+        float endRot = startRot + UnityEngine.Random.Range(-30f, 30f);
+        Vector3 startScale = rt.localScale;
+
+        float delay = index * 0.025f;
+        if (delay > 0f) yield return new WaitForSecondsRealtime(delay);
+
+        float duration = 0.3f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (card == null) yield break;
+            float p = elapsed / duration;
+            float eased = p * p;
+
+            rt.anchoredPosition = Vector2.Lerp(startPos, endPos, eased);
+            rt.localEulerAngles = new Vector3(0f, 0f, Mathf.Lerp(startRot, endRot, p));
+            rt.localScale = Vector3.Lerp(startScale, startScale * 0.3f, eased);
+            if (cg != null) cg.alpha = 1f - p;
+
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+    }
+
+    private IEnumerator DealInCard(GameObject card, float delay)
+    {
+        if (delay > 0f) yield return new WaitForSecondsRealtime(delay);
+        if (card == null) yield break;
+
+        RectTransform rt = card.GetComponent<RectTransform>();
+        CanvasGroup cg = card.GetComponent<CanvasGroup>();
+        if (rt == null) yield break;
+
+        Vector3 targetScale = rt.localScale;
+        rt.localScale = Vector3.zero;
+        if (cg != null) cg.alpha = 0f;
+
+        float duration = 0.26f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (card == null) yield break;
+            float p = elapsed / duration;
+            float eased = 1f + 2.70158f * Mathf.Pow(p - 1f, 3f) + 1.70158f * Mathf.Pow(p - 1f, 2f);
+            rt.localScale = Vector3.LerpUnclamped(Vector3.zero, targetScale, eased);
+            if (cg != null) cg.alpha = Mathf.Clamp01(p * 2.5f);
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (card != null)
+        {
+            rt.localScale = targetScale;
+            if (cg != null) cg.alpha = 1f;
+        }
     }
 
     private void ClearHandCardInstances()
