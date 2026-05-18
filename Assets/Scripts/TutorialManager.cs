@@ -1222,7 +1222,10 @@ public class TutorialManager : MonoBehaviour
 
         if (targetPc.owner is NonPlayableLeader nonPlayableLeader)
         {
-            nonPlayableLeader.Joined(playableLeader);
+            if (!nonPlayableLeader.Joined(playableLeader))
+            {
+                targetPc.ClaimByAllegiance(playableLeader);
+            }
         }
     }
 

@@ -711,20 +711,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         isDragging = false;
         UpdateDiscardButtonState();
 
-        if (cursorManager != null)
-        {
-            if (rectTransform != null && RectTransformUtility.RectangleContainsScreenPoint(rectTransform, eventData.position, eventData.pressEventCamera))
-            {
-                if (cardData != null && cardData.isPlayable)
-                    cursorManager.SetDraggableCursor();
-                else
-                    cursorManager.SetDisableCursor();
-            }
-            else
-            {
-                cursorManager.SetDefaultCursor();
-            }
-        }
+        if (cursorManager != null) cursorManager.SetDefaultCursor();
 
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;

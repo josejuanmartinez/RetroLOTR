@@ -833,8 +833,8 @@ public class Hex : MonoBehaviour
         }
     }
 
-    private static readonly Color32 LinkColorDefault = new(0xFF, 0xD7, 0x00, 0xFF);
-    private static readonly Color32 LinkColorHover   = new(0xFF, 0xFF, 0xFF, 0xFF);
+    private static readonly Color32 LinkColorDefault = new(0xFF, 0xFF, 0xFF, 0xFF);
+    private static readonly Color32 LinkColorHover   = new(0xFF, 0xD7, 0x00, 0xFF);
 
     private void ApplyHexInfoLinkHighlight(int hoveredLinkIdx)
     {

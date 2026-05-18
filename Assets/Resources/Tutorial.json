@@ -84,12 +84,13 @@
                         "cardName": "Bounders",
                         "supportCards": [
                             "TheShire",
-                            "Bree"
+                            "Anduin",
+                            "Cardolan"
                         ],
                         "variantCards": [
                             {
                                 "variantId": "mithrandir",
-                                "cardName": "Half Elves"
+                                "cardName": "Bounders"
                             },
                             {
                                 "variantId": "stormcrow",
@@ -105,38 +106,39 @@
                             },
                             {
                                 "variantId": "gandalf_the_white",
-                                "cardName": "Swordmen"
+                                "cardName": "Light Cavalry"
                             }
                         ],
                         "variantSupportCards": [
                             {
                                 "variantId": "mithrandir",
                                 "cardNames": [
-                                    "The Grey Havens",
-                                    "Lindon"
+                                    "TheShire",
+                                    "Anduin",
+                                    "Cardolan"
                                 ]
                             },
                             {
                                 "variantId": "stormcrow",
                                 "cardNames": [
-                                    "Bree",
-                                    "Lindon"
+                                    "TheShire",
+                                    "Anduin",
+                                    "Cardolan"
                                 ]
                             },
                             {
                                 "variantId": "tharkun",
                                 "cardNames": [
-                                    "EredLuin",
-                                    "Lindon",
-                                    "Bree"
+                                    "Rhovanion",
+                                    "GapOfRohan",
+                                    "EredLuin"
                                 ]
                             },
                             {
                                 "variantId": "gandalf_the_white",
                                 "cardNames": [
-                                    "Minas Tirith",
-                                    "Lindon",
-                                    "Bree"
+                                    "NorthernGondor",
+                                    "SouthernGondor"
                                 ]
                             }
                         ]
@@ -305,7 +307,8 @@
                         "cardName": "Dunlending Warriors",
                         "supportCards": [
                             "Dunland",
-                            "GapOfRohan"
+                            "GapOfRohan",
+                            "Anduin"
                         ],
                         "variantCards": [
                             {
@@ -313,19 +316,15 @@
                                 "cardName": "Dunlending Warriors"
                             },
                             {
-                                "variantId": "sharkey",
-                                "cardName": "Men Of Bree"
+                                "variantId": "saruman_the_white",
+                                "cardName": "Men At Arms"
+                            },
+                            {
+                                "variantId": "of_many_colours",
+                                "cardName": "Men At Arms"
                             }
                         ],
-                        "variantSupportCards": [
-                            {
-                                "variantId": "sharkey",
-                                "cardNames": [
-                                    "TheShire",
-                                    "Bree"
-                                ]
-                            }
-                        ]
+                        "variantSupportCards": []
                     }
                 }
             ]
@@ -462,23 +461,32 @@
                     "actor1": "Gothmog",
                     "requirements": {
                         "actorCharacter": "Gothmog",
-                        "cardName": "Orcs",
+                        "cardName": "Half Orcs",
                         "supportCards": [
                             "Nurn",
-                            "Udun"
+                            "Udun",
+                            "Gorgoroth"
                         ],
                         "variantCards": [
                             {
                                 "variantId": "the_necromancer",
-                                "cardName": "Orcs"
+                                "cardName": "Half Orcs"
                             },
                             {
                                 "variantId": "the_dark_eye",
-                                "cardName": "Orcs"
+                                "cardName": "Half Orcs"
                             },
                             {
                                 "variantId": "the_deceiver",
-                                "cardName": "Swordmen"
+                                "cardName": "Haradrim Infantry"
+                            },
+                            {
+                                "variantId": "shadow_of_the_east",
+                                "cardName": "Hounds"
+                            },
+                            {
+                                "variantId": "the_iron_crown",
+                                "cardName": "Angmarin"
                             }
                         ],
                         "variantSupportCards": [
@@ -487,6 +495,21 @@
                                 "cardNames": [
                                     "Khand",
                                     "NearHarad"
+                                ]
+                            },
+                            {
+                                "variantId": "shadow_of_the_east",
+                                "cardNames": [
+                                    "Rhun",
+                                    "Rhovanion"
+                                ]
+                            },
+                            {
+                                "variantId": "the_iron_crown",
+                                "cardNames": [
+                                    "Angmar",
+                                    "Rhudaur",
+                                    "CarnDum"
                                 ]
                             }
                         ]
