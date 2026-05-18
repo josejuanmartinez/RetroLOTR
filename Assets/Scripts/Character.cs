@@ -158,22 +158,31 @@ public class Character : MonoBehaviour
             }
         }
 
+        bool useCardArmy = !string.IsNullOrEmpty(characterBiome.startingArmyCard);
         Initialize(
-            leader, 
-            characterBiome.alignment, 
-            hex, 
-            characterBiome.characterName, 
-            characterBiome.commander, 
-            characterBiome.agent, 
-            characterBiome.emmissary, 
-            characterBiome.mage, 
-            characterBiome.race, 
+            leader,
+            characterBiome.alignment,
+            hex,
+            characterBiome.characterName,
+            characterBiome.commander,
+            characterBiome.agent,
+            characterBiome.emmissary,
+            characterBiome.mage,
+            characterBiome.race,
             characterBiome.sex,
             resolvedArtifacts,
-            characterBiome.startingArmySize,
+            useCardArmy ? 0 : characterBiome.startingArmySize,
             characterBiome.preferedTroopType,
-            characterBiome.startingWarships,
+            useCardArmy ? 0 : characterBiome.startingWarships,
             showSpawnMessage);
+
+        if (useCardArmy && (characterBiome.startingArmySize > 0 || characterBiome.startingWarships > 0))
+        {
+            DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+            CardData card = deckManager?.FindArmyCardByName(characterBiome.startingArmyCard);
+            if (card != null)
+                CreateArmy(card.troopType, characterBiome.startingArmySize, startingCharacter, characterBiome.startingWarships, card.specialAbilities);
+        }
     }
 
     public void Initialize(

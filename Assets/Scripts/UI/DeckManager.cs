@@ -1461,6 +1461,16 @@ public class DeckManager : MonoBehaviour
             && string.Equals(card.name, cardName, StringComparison.OrdinalIgnoreCase));
     }
 
+    public CardData FindArmyCardByName(string cardName)
+    {
+        if (string.IsNullOrWhiteSpace(cardName)) return null;
+        if (!loaded && !InitializeFromResources()) return null;
+        return cards.FirstOrDefault(card =>
+            card != null
+            && card.GetCardType() == CardTypeEnum.Army
+            && string.Equals(card.name, cardName, StringComparison.OrdinalIgnoreCase));
+    }
+
     private static CardData CloneCard(CardData card)
     {
         if (card == null) return null;

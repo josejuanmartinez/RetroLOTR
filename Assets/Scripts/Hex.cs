@@ -645,7 +645,7 @@ public class Hex : MonoBehaviour
                 int linkIdx = _hexInfoCharacters.Count;
                 _hexInfoCharacters.Add(ch);
                 _hexInfoArmies.Add(null);
-                string linkedName = $"<link=\"{linkIdx}\"><color=#FFD700>{charName}</color></link>";
+                string linkedName = $"<link=\"{linkIdx}\"><color=#FFFFFF>{charName}</color></link>";
                 if (ch.IsArmyCommander())
                 {
                     Army army = ch.GetArmy();
@@ -660,7 +660,7 @@ public class Hex : MonoBehaviour
                     _hexInfoCharacters.Add(ch);
                     _hexInfoArmies.Add(army);
                     string armyDisplay = army != null ? army.GetHoverTextHexInfo() : $"\n\t{armyText.Trim()}";
-                    string linkedArmy = $"<link=\"{armyLinkIdx}\"><color=#FFD700>{armyDisplay}</color></link>";
+                    string linkedArmy = $"<link=\"{armyLinkIdx}\"><color=#FFFFFF>{armyDisplay}</color></link>";
                     sbChars.Append(linkedName).Append(linkedArmy).Append('\n');
                 }
                 else

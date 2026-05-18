@@ -19,5 +19,6 @@ public class BiomeConfig
     public List<string> artifacts = new ();
     public int startingArmySize = 0;
     public int startingWarships = 0;
+    public string startingArmyCard = "";
     public TroopsTypeEnum preferedTroopType = TroopsTypeEnum.ma;
 }
