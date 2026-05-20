@@ -2430,3 +2430,421 @@ public class CounselOfTheWise : EventAction
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
+
+public class TheOldMillAction : EventAction
+{
+    private const int LoyaltyLoss = 10;
+    private const int ResourceDrain = 3;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            PC pc = character.hex.GetPC();
+            string loyaltyMsg = "";
+            string drainMsg = "";
+
+            if (pc != null)
+            {
+                if (pc.loyalty > 0)
+                {
+                    pc.DecreaseLoyalty(LoyaltyLoss, character);
+                    loyaltyMsg = $" {pc.pcName} loses {LoyaltyLoss} loyalty.";
+                }
+
+                Leader pcOwner = pc.owner;
+                if (pcOwner != null && pcOwner != owner)
+                {
+                    int d = ResourceDrain;
+                    pcOwner.RemoveLeather(Mathf.Min(d, pcOwner.leatherAmount), false);
+                    pcOwner.RemoveMounts(Mathf.Min(d, pcOwner.mountsAmount), false);
+                    pcOwner.RemoveTimber(Mathf.Min(d, pcOwner.timberAmount), false);
+                    pcOwner.RemoveIron(Mathf.Min(d, pcOwner.ironAmount), false);
+                    pcOwner.RemoveSteel(Mathf.Min(d, pcOwner.steelAmount), false);
+                    pcOwner.RemoveMithril(Mathf.Min(d, pcOwner.mithrilAmount), false);
+                    pcOwner.RemoveGold(Mathf.Min(d, pcOwner.goldAmount), false);
+                    drainMsg = $" {pcOwner.characterName} loses up to {d} of each resource.";
+                }
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Destroy the Mill.{loyaltyMsg}{drainMsg}",
+                Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null && character.hex != null;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class TheBattleOfBywaterAction : EventAction
+{
+    private const int Radius = 3;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            List<Army> targets = character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null && h.armies != null)
+                .SelectMany(h => h.armies)
+                .Where(a => a != null && !a.killed && a.commander != null && a.commander.GetOwner() != owner && a.li > 0)
+                .Distinct()
+                .ToList();
+
+            if (targets.Count == 0) return false;
+
+            foreach (Army target in targets)
+            {
+                Hex targetHex = target.commander?.hex;
+                target.Killed(owner);
+                targetHex?.RedrawArmies();
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"The Battle of Bywater routs {targets.Count} enemy light infantry force(s) in radius {Radius}.", Color.green);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            return character.hex.GetHexesInRadius(Radius)
+                .Where(h => h != null && h.armies != null)
+                .SelectMany(h => h.armies)
+                .Any(a => a != null && !a.killed && a.commander != null && a.commander.GetOwner() != owner && a.li > 0);
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class ImprisonmentAction : EventAction
+{
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+            Leader owner = character.GetOwner();
+
+            Character target = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && ch.GetOwner() != owner
+                    && !(ch is Leader) && !ch.IsKidnapped() && !ch.IsArmyCommander())
+                .OrderBy(ch => ch.GetTotalSkillLevel())
+                .FirstOrDefault();
+
+            if (target == null) return false;
+
+            Leader originalOwner = target.GetOwner();
+            if (originalOwner == null) return false;
+
+            Hex previousHex = target.hex;
+            if (previousHex != null && previousHex.characters.Contains(target))
+                previousHex.characters.Remove(target);
+
+            if (character.kidnappedCharacters == null) character.kidnappedCharacters = new System.Collections.Generic.List<Character.KidnappedCharacterRecord>();
+            target.kidnappedBy = character;
+            target.kidnappedOriginalOwner = originalOwner;
+            target.hex = character.hex;
+            target.hasActionedThisTurn = true;
+            target.moved = target.GetMaxMovement();
+            if (target.hex != null && !target.hex.characters.Contains(target))
+                target.hex.characters.Add(target);
+
+            character.kidnappedCharacters.Add(new Character.KidnappedCharacterRecord { character = target, originalOwner = originalOwner });
+
+            previousHex?.RedrawCharacters();
+            character.RefreshKidnappedCharactersPosition();
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Imprisonment: {target.characterName} dragged to the Lockholes!", Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+            Leader owner = character.GetOwner();
+
+            return character.hex.characters.Any(ch => ch != null && !ch.killed && ch.GetOwner() != owner
+                && !(ch is Leader) && !ch.IsKidnapped() && !ch.IsArmyCommander());
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class IndustrializationAction : EventAction
+{
+    private const int Radius = 5;
+    private const int IronGain = 5;
+    private const int SteelGain = 5;
+    private const int LoyaltyLoss = 15;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            owner.AddIron(IronGain, false);
+            owner.AddSteel(SteelGain, false);
+
+            int pcCount = 0;
+            foreach (Hex h in character.hex.GetHexesInRadius(Radius))
+            {
+                PC pc = h?.GetPC();
+                if (pc == null || pc.loyalty <= 0) continue;
+                pc.DecreaseLoyalty(LoyaltyLoss, character);
+                pcCount++;
+            }
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character,
+                $"Industrialization yields +{IronGain} <sprite name=\"iron\">, +{SteelGain} <sprite name=\"steel\"> and lowers {pcCount} PC(s) loyalty by {LoyaltyLoss}.",
+                Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null && character.hex != null;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class LothosPurseAction : EventAction
+{
+    private const int GoldGain = 15;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            owner.AddGold(GoldGain);
+            owner.leatherAmount = 0;
+            owner.timberAmount = 0;
+
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Lotho's Purse: +{GoldGain} <sprite name=\"gold\">, leather and timber plundered to 0.", Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class PipeweedMonopolyAction : EventAction
+{
+    private const int GoldGain = 5;
+    private static readonly string[] DrawCardNames = { "Lured by Halflings' Leaf", "TheLureOfTheSenses" };
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null) return false;
+
+            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Leader owner = character.GetOwner();
+            if (owner == null) return false;
+
+            owner.AddGold(GoldGain);
+
+            int drawn = 0;
+            if (game != null && deckManager != null && owner is PlayableLeader playerLeader && playerLeader == game.player)
+            {
+                foreach (string cardName in DrawCardNames)
+                {
+                    if (deckManager.GetHand(playerLeader).Count >= deckManager.GetHandSize()) break;
+                    CardData card = deckManager.FindCardByNameForLeader(playerLeader, cardName);
+                    if (card != null && deckManager.TryAddCardToHand(playerLeader, card)) drawn++;
+                }
+            }
+
+            string drawnText = drawn > 0 ? $" and draws {drawn} card(s)." : ".";
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Pipe-weed Monopoly: +{GoldGain} <sprite name=\"gold\">{drawnText}", Color.yellow);
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            return character != null;
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}
+
+public class GrimasKnifeAction : EventAction
+{
+    private const int WoundDamage = 50;
+
+    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
+    {
+        var originalEffect = effect;
+        var originalCondition = condition;
+        var originalAsyncEffect = asyncEffect;
+
+        effect = (character) =>
+        {
+            if (originalEffect != null && !originalEffect(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+            Leader owner = character.GetOwner();
+
+            Character target = character.hex.characters
+                .Where(ch => ch != null && !ch.killed && ch.GetOwner() != owner && !(ch is Leader) && !ch.IsArmyCommander())
+                .OrderBy(ch => ch.GetTotalSkillLevel())
+                .FirstOrDefault();
+
+            if (target == null) return false;
+
+            int roll = UnityEngine.Random.Range(0, 100);
+
+            if (roll < 25)
+            {
+                MessageDisplayNoUI.ShowMessage(character.hex, character,
+                    $"Grima's Knife: rolled {roll} — the blade turns! {character.characterName} is assassinated!", Color.red);
+                character.Killed(target.GetOwner());
+            }
+            else if (roll < 50)
+            {
+                MessageDisplayNoUI.ShowMessage(character.hex, character,
+                    $"Grima's Knife: rolled {roll} — the blade slips! {character.characterName} is wounded.", Color.red);
+                character.Wounded(target.GetOwner(), WoundDamage);
+                character.hex?.RedrawCharacters();
+            }
+            else if (roll < 75)
+            {
+                MessageDisplayNoUI.ShowMessage(character.hex, character,
+                    $"Grima's Knife: rolled {roll} — a glancing blow! {target.characterName} is wounded.", Color.yellow);
+                target.Wounded(owner, WoundDamage);
+                target.hex?.RedrawCharacters();
+            }
+            else
+            {
+                MessageDisplayNoUI.ShowMessage(character.hex, character,
+                    $"Grima's Knife: rolled {roll} — a killing stroke! {target.characterName} is slain!", Color.green);
+                target.Killed(owner);
+            }
+
+            return true;
+        };
+
+        condition = (character) =>
+        {
+            if (originalCondition != null && !originalCondition(character)) return false;
+            if (character == null || character.hex == null || character.hex.characters == null) return false;
+            Leader owner = character.GetOwner();
+            return character.hex.characters.Any(ch => ch != null && !ch.killed && ch.GetOwner() != owner
+                && !(ch is Leader) && !ch.IsArmyCommander());
+        };
+
+        asyncEffect = async (character) =>
+        {
+            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
+            return true;
+        };
+
+        base.Initialize(c, condition, effect, asyncEffect);
+    }
+}

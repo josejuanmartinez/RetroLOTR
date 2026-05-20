@@ -201,6 +201,14 @@
                     "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> Isengard's forged war machine: <sprite name=\"commander\"><sprite name=\"agent\"> drive iron-will infantry, furnaces thunder, Uruk discipline makes aggression systematic. No sorcery <sprite name=\"mage\">; what he lacks in art, he pays in <sprite name=\"leather\">.",
                     "subdeckId": "the_white_hand",
                     "banner": "banner_saruman_the_white_hand"
+                },
+                {
+                    "variantId": "sharkey",
+                    "displayName": "Sharkey",
+                    "description": "<u>Sharkey</u> is the name they give him in the Shire, and he wears it like a snarl. Stripped of tower and art and title, what remains is spite: a bitter will that turns the Shire's fields into quarries, pens the hobbits in lockholes, and burns what it cannot own. He does not conquer — he poisons. He does not command armies — he directs ruffians, extortion, and the slow erasure of everything pleasant about a people who never harmed him.<br><br>This variant operates without sorcery and without great armies. It wins through intimidation, pipe-weed monopoly, occupation of settlements, and the grinding cruelty of petty authority over a land that has no walls.",
+                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> No towers, no spells <sprite name=\"mage\">, no cavalry <sprite name=\"mounts\"> — Sharkey rules through <sprite name=\"agent\"><sprite name=\"emmissary\"> and the fear they carry. <sprite name=\"gold\"><sprite name=\"leather\"> flow from an occupied Shire; his ruffians are cheap and mean.",
+                    "subdeckId": "sharkey",
+                    "banner": "banner_saruman_sharkey"
                 }
             ],
             "subdeckId": "saruman_the_white",

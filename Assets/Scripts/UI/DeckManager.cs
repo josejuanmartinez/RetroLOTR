@@ -387,7 +387,7 @@ public class CardData
             lines.Add(string.Join(" ", classParts));
         }
 
-        return lines.Count > 0 ? string.Join("\n", lines) : string.Empty;
+        return lines.Count > 0 ? string.Join(" ", lines) : string.Empty;
     }
 
     public bool EvaluatePlayability(Character selectedCharacter, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)

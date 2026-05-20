@@ -7,7 +7,7 @@
             "thematic": "Shared world layer of neutral encounters, roaming creatures, opportunistic events, and generic pressures that can touch any faction. This is less about tribe or race identity and more about map texture, uncertainty, travel danger, and emergent stories; it adds flexible utility, surprise pivots, and world-state moments that make every run feel less scripted.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/SharedBase",
-            "cardCount": 0,
+            "cardCount": 1,
             "sharedToAll": true,
             "parentDeckId": "",
             "isBaseDeck": false,
@@ -127,7 +127,7 @@
             "thematic": "Core Isengard strategy deck blending manipulation, coercion, industrial preparation, mixed evil-men support, and practical force. Its races and allies can include Dunlendings, opportunistic Men, Orcs, and wizard-led control pieces; in play it is about pressure through planning, resource leverage, positioning, political influence, and midrange control before committing to a sharper Saruman identity.",
             "alignment": 2,
             "resourcePath": "Cards/Modular/SarumanBase",
-            "cardCount": 35,
+            "cardCount": 34,
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true,
@@ -168,6 +168,18 @@
             "parentDeckId": "saruman_base",
             "isBaseDeck": false,
             "deckSpriteName": "sarumanTheWhiteHandSubdeck"
+        },
+        {
+            "deckId": "sharkey",
+            "nation": "Saruman",
+            "thematic": "The fallen Saruman as Sharkey, master of the Shire's ruffians. This subdeck is about coercion, intimidation, and petty cruelty: agent and emissary tactics that dominate civilian settlements through fear, pipe-weed monopoly, and Grima's whispered betrayals. No magic remains — only spite, cunning, and the relentless grinding-down of everything pleasant.",
+            "alignment": 1,
+            "resourcePath": "Cards/Modular/Sharkey",
+            "cardCount": 72,
+            "sharedToAll": false,
+            "parentDeckId": "saruman_base",
+            "isBaseDeck": false,
+            "deckSpriteName": "sharkeySubdeck"
         },
         {
             "deckId": "sauron_base",
