@@ -17,6 +17,7 @@ public class Character : MonoBehaviour
 
     [Header("Given name")]
     public string characterName;
+    public string illustrationName;
     public string characterGroup;
     
     [Header("Allegiance")]
@@ -185,8 +186,21 @@ public class Character : MonoBehaviour
         }
     }
 
+    public void ApplyStatsFromCard(CardData card)
+    {
+        if (card == null) return;
+        alignment = (AlignmentEnum)card.alignment;
+        commander = Mathf.Clamp(card.commander, 0, MAX_SKILL_LEVEL);
+        agent = Mathf.Clamp(card.agent, 0, MAX_SKILL_LEVEL);
+        emmissary = Mathf.Clamp(card.emmissary, 0, MAX_SKILL_LEVEL);
+        mage = Mathf.Clamp(card.mage, 0, MAX_SKILL_LEVEL);
+        race = card.race;
+        if (!string.IsNullOrWhiteSpace(card.spriteName))
+            illustrationName = card.spriteName;
+    }
+
     public void Initialize(
-        Leader owner, 
+        Leader owner,
         AlignmentEnum alignment, 
         Hex hex, 
         string characterName,

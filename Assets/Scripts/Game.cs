@@ -86,6 +86,37 @@ public class Game : MonoBehaviour
         }
     }
 
+    private void RandomizeCompetitorVariants()
+    {
+        if (competitors == null || competitors.Count == 0) return;
+
+        PlayableLeaders playableLeaders = FindAnyObjectByType<PlayableLeaders>();
+        if (playableLeaders?.playableLeaders?.biomes == null) return;
+
+        foreach (PlayableLeader competitor in competitors)
+        {
+            if (competitor == null) continue;
+
+            LeaderBiomeConfig biome = playableLeaders.playableLeaders.biomes
+                .Find(b => string.Equals(b.characterName, competitor.characterName, StringComparison.OrdinalIgnoreCase));
+            if (biome == null) continue;
+
+            int variantCount = biome.variants?.Count ?? 0;
+            int pick = UnityEngine.Random.Range(0, variantCount + 1);
+
+            if (pick == 0 || variantCount == 0)
+            {
+                competitor.SetDeckSelection(biome.subdeckId, biome.deckIdentity, biome.description, null);
+            }
+            else
+            {
+                LeaderVariantConfig variant = biome.variants[pick - 1];
+                string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? biome.subdeckId : variant.subdeckId;
+                competitor.SetDeckSelection(subdeckId, variant.deckIdentity, biome.description, variant.displayName, variant.characterName);
+            }
+        }
+    }
+
     private void AssignAIandHumans()
     {
         // Find all ML-Agents in the scene
@@ -120,6 +151,7 @@ public class Game : MonoBehaviour
     public void StartGame(bool skipTutorial)
     {
         FindFirstObjectByType<LeaderSelector>()?.ApplyCurrentSelection();
+        RandomizeCompetitorVariants();
         FindFirstObjectByType<Initialize>()?.UndoInitialState();
 
         turn = 0;

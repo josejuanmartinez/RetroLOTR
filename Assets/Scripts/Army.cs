@@ -117,6 +117,7 @@ public class Army
         }
 
         MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\">", Color.green);
+        int sizeBefore = GetSize();
         if (troopsType == TroopsTypeEnum.ma) ma += amount;
         if (troopsType == TroopsTypeEnum.ar) ar += amount;
         if (troopsType == TroopsTypeEnum.li) li += amount;
@@ -125,6 +126,9 @@ public class Army
         if (troopsType == TroopsTypeEnum.hc) hc += amount;
         if (troopsType == TroopsTypeEnum.ca) ca += amount;
         if (troopsType == TroopsTypeEnum.ws) ws += amount;
+        int totalSize = sizeBefore + amount;
+        if (totalSize > 0)
+            xp = Mathf.Clamp(Mathf.RoundToInt((xp * sizeBefore + 25 * amount) / (float)totalSize), 0, 100);
         this.specialAbilityProcChance = Mathf.Clamp(specialAbilityProcChance <= 0 ? 100 : specialAbilityProcChance, 1, 100);
         AddTroopGroup(troopsType, amount, troopName, specialAbilities);
     }

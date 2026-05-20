@@ -100,6 +100,14 @@ public class MinimapManager : MonoBehaviour
 
         ApplyCameraZoom();
         AddLabelsLayerToCamera();
+
+        RenderTexture rtBeforeOpen = minimapCamera != null ? minimapCamera.targetTexture : null;
+        if (rtBeforeOpen != null)
+        {
+            savedRtWidth = rtBeforeOpen.width;
+            savedRtHeight = rtBeforeOpen.height;
+        }
+
         ResizeRenderTexture(
             Mathf.RoundToInt(Screen.width * renderTextureScale),
             Mathf.RoundToInt(Screen.height * renderTextureScale));
@@ -112,11 +120,13 @@ public class MinimapManager : MonoBehaviour
         if (minimapOverlay != null)
             minimapOverlay.SetActive(false);
 
-        if (savedRtWidth > 0)
-            ResizeRenderTexture(savedRtWidth, savedRtHeight);
-
         RestoreCameraZoom();
         RestoreLabelsLayerOnCamera();
+
+        if (savedRtWidth > 0)
+            ResizeRenderTexture(savedRtWidth, savedRtHeight);
+        else
+            RefreshMinimap();
     }
 
     private void AddLabelsLayerToCamera()
@@ -305,12 +315,6 @@ public class MinimapManager : MonoBehaviour
     {
         RenderTexture rt = minimapCamera.targetTexture;
         if (rt == null) return;
-
-        if (!isExpanded)
-        {
-            savedRtWidth = rt.width;
-            savedRtHeight = rt.height;
-        }
 
         rt.Release();
         rt.width = width;

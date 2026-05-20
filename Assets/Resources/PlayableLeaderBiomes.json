@@ -1,475 +1,459 @@
 {
-    "biomes": [
-        {
-            "characterName": "Gandalf",
-            "alignment": 0,
-            "commander": 1,
-            "agent": 0,
-            "emmissary": 2,
-            "mage": 2,
-            "race": 4,
-            "banner": "banner_gandalf_mithrandir",
-            "artifacts": [],
-            "description": "<u>Gandalf</u> is the grey pilgrim, a wanderer of hidden roads and quiet counsel. He walks the edge between shadow and hope, guiding the small and the humble because he knows their courage can outlast any sword. He trusts in patience, in wisdom earned by travel, and in the spark that lights when others have given in to fear.<br><br>His road stretches beyond the Shire into the wider lanes of Eriador and the scattered strongholds of the Free Peoples. He gathers trusted companions, listens for uneasy rumors, and searches old ground for relics and allies that still matter long after the first road is taken.",
-            "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> Grey and uncommitted — <sprite name=\"commander\"><sprite name=\"agent\"><sprite name=\"emmissary\"><sprite name=\"mage\"> spread thin, armies light. No road yet chosen.",
-            "variants": [
-                {
-                    "variantId": "mithrandir",
-                    "displayName": "Mithrandir",
-                    "description": "<u>Mithrandir</u>, pilgrim of the West, passes like an old song through Rivendell, Lothlorien, and the hidden paths where the Wise still keep watch against the ancient Shadow. In him abide memory, mercy, and the secret fire set against a darkness older than the kingdoms of Men, and where he treads, veils are lifted and the designs of the Enemy are read before they ripen to ruin.<br><br>Under <b>Mithrandir</b>, the game turns toward revelation, warding, foresight, and spellcraft wielded with patient precision rather than open might.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> The grey wanderer walks every road — <sprite name=\"commander\"><sprite name=\"agent\"><sprite name=\"emmissary\"><sprite name=\"mage\"> all grown deep, and his host many-armed: Elves, scouts, and fleets. <sprite name=\"gold\"> runs swift; the price of every open road is steep.",
-                    "subdeckId": "mithrandir",
-                    "banner": "banner_gandalf_mithrandir"
-                },
-                {
-                    "variantId": "stormcrow",
-                    "displayName": "Stormcrow",
-                    "description": "<u>Stormcrow</u> they name him in the troubled halls of kings, for his coming is the whisper before the war-horn, the black wing against a paling sky. He is seen where Rohan wavers, where Gondor keeps weary watch, and where the old roads of the North begin once more to feel the breath of Angmar, Isengard, and Mordor upon their stones.<br><br>This variant carries the weight of vigilance, strained loyalties, bitter choices, and endurance beneath a darkening sky.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> The Stormcrow's web of lands <sprite name=\"pc\"> and roads produces <sprite name=\"mounts\"><sprite name=\"leather\"> in abundance — needing no supply line. His armies are thin and sorcery <sprite name=\"mage\"> slight; he wins by presence, not force.",
-                    "subdeckId": "stormcrow",
-                    "banner": "banner_gandalf_stormcrow"
-                },
-                {
-                    "variantId": "disturber_of_the_peace",
-                    "displayName": "Disturber of Peace",
-                    "description": "At Bag End and along the Bree-road, in fireworks, whispers, and the sudden knock at dusk, <u>the Disturber of the Peace</u> unsettles the comfortable world. From those small provocations spring journeys, riddles, unlikely fellowships, and the turning of humble lives toward deeds that will outlast towers and crowns.<br><br>This variant leans into the Shire, Bree-land, and the long road through Eriador: hobbit-scale mischief, roadside wonders, strange meetings, and the little interruptions that reroute an entire tale.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> A mischief deck: <sprite name=\"agent\"> saturates every shadow, archers <sprite name=\"bow\"> ready where blades would be heard. Hobbits and wanderers turn Bree-land into disruption. No sorcery <sprite name=\"mage\">, no heavy arms — only the deed done before it is suspected.",
-                    "subdeckId": "disturber_of_the_peace",
-                    "banner": "banner_gandalf_disturber_of_the_peace"
-                },
-                {
-                    "variantId": "tharkun",
-                    "displayName": "Tharkun",
-                    "description": "<u>Tharkun</u> is the name the Dwarves remember: friend of the House of Durin, walker in the deeps, and counselor in halls where stone keeps faith longer than flesh. He knows the grief buried in Khazad-dum, the splendor of Erebor restored, and the peril that lies ever beside gold, mithril, and the pride of mountain kings.<br><br>This variant turns toward hidden wealth, mountain fortitude, and alliances tempered in the dark under stone.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> Gandalf as dwarf-friend: <sprite name=\"commander\"> towers high, <sprite name=\"mithril\"> flows self-sustaining from deep veins, Dwarven axemen grinding hard endurance under stone. No sorcery <sprite name=\"mage\"> — what he builds, he builds with toil.",
-                    "subdeckId": "tharkun",
-                    "banner": "banner_gandalf_tharkun"
-                },
-                {
-                    "variantId": "gandalf_the_white",
-                    "displayName": "The White",
-                    "description": "Clothed in white and returned from death, <u>the White Rider</u> comes from Fangorn like a judgment upon despair. He breaks the pride of Saruman, scatters the poison of Wormtongue, and stands in the last defence of the West as hidden wisdom is transfigured into open command beneath the sunlit banners of hope.<br><br>This variant is one of cleansing, renewal, fearless command, and the sudden turning of darkness beneath a greater light.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> Returned white authority: <sprite name=\"commander\"> dominant, heavy horse and fleets of Gondor and Rohan at his back, lords rallied wide <sprite name=\"pc\">. The mage's art <sprite name=\"mage\"> is spent — he leads now by command, not craft.",
-                    "subdeckId": "gandalf_the_white",
-                    "banner": "banner_gandalf_gandalf_the_white"
-                }
-            ],
-            "subdeckId": "mithrandir",
-            "terrain": 3,
-            "startingCityName": "Bree",
-            "startingCitySize": 0,
-            "startingCityFortSize": 0,
-            "pcFeature": "halflingHouse00",
-            "fortFeature": "",
-            "startingArmySize": 0,
-            "preferedTroopType": 0,
-            "startingCityIsHidden": false,
-            "startsWithPort": false,
-            "startingWarships": 0,
-            "startingCharacters": [],
-            "tutorialAnchors": [
-                "Hobbiton",
-                "Frodo",
-                "Merry",
-                "Pippin"
-            ],
-            "sex": 0,
-            "tutorialArtifacts": [
-                {
-                    "artifactName": "Narya",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "spriteString": "ring",
-                    "transferable": false,
-                    "alignment": 0
-                },
-                {
-                    "artifactName": "Wizard Staff",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HexEnemyHaltChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "spriteString": "staff",
-                    "transferable": false,
-                    "alignment": 0
-                },
-                {
-                    "artifactName": "Glamdring",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "spriteString": "sword",
-                    "alignment": 0
-                },
-                {
-                    "artifactName": "Wizard's Cart",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "AlliedPcMoraleChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "spriteString": "fireworks",
-                    "alignment": 0
-                },
-                {
-                    "artifactName": "Longpipe",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 1,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "tobacco",
-                    "alignment": 0
-                },
-                {
-                    "artifactName": "Shadowfax",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HasteChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "spriteString": "hc",
-                    "transferable": false,
-                    "alignment": 0
-                }
-            ],
-            "startingCityRegion": "Arthedain",
-            "nationName": "Gandalf",
-            "characterSprite": "Maia",
-            "nationInitials": "G"
-        },
-        {
-            "characterName": "Saruman",
-            "alignment": 2,
-            "commander": 0,
-            "agent": 0,
-            "emmissary": 2,
-            "mage": 3,
-            "race": 4,
-            "artifacts": [],
-            "description": "<u>Saruman</u> is the master of Orthanc, once the chief of the wise, now the architect of his own dominion.His voice bends courts, his mind measures every weakness, and his ambition refuses to wait for permission. He builds in silence, gathering strength behind fair words, and he intends to remake the world in the image of his will.<br><br>His design begins with a careful reach into the courts of Rohan, the securing of a pliant voice, and the quiet unearthing of power long buried. From Orthanc he turns influence into force and raises the first ranks of his war.",
-            "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> The white before the breaking — <sprite name=\"commander\"><sprite name=\"agent\"><sprite name=\"emmissary\"><sprite name=\"mage\"> each open, <sprite name=\"steel\"> already turning. No road yet chosen.",
-            "banner": "banner_saruman_saruman_the_white",
-            "variants": [
-                {
-                    "variantId": "saruman_the_white",
-                    "displayName": "The White",
-                    "description": "<u>Saruman the White</u> stands in the majesty of Orthanc, chief of the Istari, master of lore, ring-craft, and the long devices of the Wise. His voice is a weapon finer than steel, entering the counsels of kings and bending proud hearts with honeyed reason until obedience seems wisdom and surrender seems peace.<br><br>This variant favors influence, manipulation, and command exercised with polished restraint.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> Voice, art, and argument — <sprite name=\"agent\"><sprite name=\"emmissary\"><sprite name=\"mage\"> all keen, with events reshaping the board. His host is numerous but common-born <sprite name=\"leather\">, and his territories <sprite name=\"pc\"> spread thin.",
-                    "subdeckId": "saruman_the_white",
-                    "banner": "banner_saruman_saruman_the_white"
-                },
-                {
-                    "variantId": "of_many_colours",
-                    "displayName": "Saruman Multicoloured",
-                    "description": "Saruman <u>the Many-Coloured</u> shatters the white that once signified order and reveals the glittering fracture of pride. In that figure are gathered ring-lore, engines, subtle arts, and the cold brilliance of a mind that would rival the makers of old, yet all are bent now toward dominion, display, and the blasphemous imitation of a power once sent to oppose the Shadow.<br><br>This variant leans into grand sorcery, layered effects, and the dangerous splendor of power unbound by humility.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> The widest host and richest harvest — cavalry <sprite name=\"mounts\"> no other master fields so deep, <sprite name=\"leather\"><sprite name=\"gold\"> in flood, grand sorcery <sprite name=\"mage\"> and many colours. <sprite name=\"iron\"> is scarce; the forge runs cold.",
-                    "subdeckId": "of_many_colours",
-                    "banner": "banner_saruman_of_many_colours"
-                },
-                {
-                    "variantId": "the_white_hand",
-                    "displayName": "The White Hand",
-                    "description": "<u>The White Hand</u> rises over Isengard like a blasphemous banner, and beneath it the world is remade in smoke, iron, and ruin. Fangorn falls to the axe, the furnaces thunder without ceasing, and from the black pits march Uruk-hai and wolf-riders, forged for the breaking of Helm's Deep and the humiliation of the Mark.<br><br>This variant drives forward with industry, relentless pressure, and the hard discipline of Isengard at war.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> Isengard's forged war machine: <sprite name=\"commander\"><sprite name=\"agent\"> drive iron-will infantry, furnaces thunder, Uruk discipline makes aggression systematic. No sorcery <sprite name=\"mage\">; what he lacks in art, he pays in <sprite name=\"leather\">.",
-                    "subdeckId": "the_white_hand",
-                    "banner": "banner_saruman_the_white_hand"
-                },
-                {
-                    "variantId": "sharkey",
-                    "displayName": "Sharkey",
-                    "description": "<u>Sharkey</u> is the name they give him in the Shire, and he wears it like a snarl. Stripped of tower and art and title, what remains is spite: a bitter will that turns the Shire's fields into quarries, pens the hobbits in lockholes, and burns what it cannot own. He does not conquer — he poisons. He does not command armies — he directs ruffians, extortion, and the slow erasure of everything pleasant about a people who never harmed him.<br><br>This variant operates without sorcery and without great armies. It wins through intimidation, pipe-weed monopoly, occupation of settlements, and the grinding cruelty of petty authority over a land that has no walls.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> No towers, no spells <sprite name=\"mage\">, no cavalry <sprite name=\"mounts\"> — Sharkey rules through <sprite name=\"agent\"><sprite name=\"emmissary\"> and the fear they carry. <sprite name=\"gold\"><sprite name=\"leather\"> flow from an occupied Shire; his ruffians are cheap and mean.",
-                    "subdeckId": "sharkey",
-                    "banner": "banner_saruman_sharkey"
-                }
-            ],
-            "subdeckId": "saruman_the_white",
-            "terrain": 1,
-            "startingCityName": "Orthanc",
-            "startingCitySize": 0,
-            "startingCityFortSize": 1,
-            "pcFeature": "clayPit01_dark",
-            "fortFeature": "wizardTowerDark00",
-            "startingArmySize": 0,
-            "preferedTroopType": 0,
-            "startingCityIsHidden": false,
-            "startsWithPort": false,
-            "startingWarships": 0,
-            "startingCharacters": [],
-            "tutorialAnchors": [
-                "Theoden",
-                "Orthanc"
-            ],
-            "sex": 0,
-            "tutorialArtifacts": [
-                {
-                    "artifactName": "Ring of Orthanc",
-                    "hidden": false,
-                    "commanderBonus": 1,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "spriteString": "ring",
-                    "transferable": false,
-                    "alignment": 2
-                },
-                {
-                    "artifactName": "White Hand Banner",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "spriteString": "banner",
-                    "alignment": 2
-                },
-                {
-                    "artifactName": "Many-coloured robes",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 1,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "transferable": false,
-                    "spriteString": "cloak",
-                    "alignment": 2
-                },
-                {
-                    "artifactName": "Yellow teeth",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 1,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "transferable": false,
-                    "spriteString": "tooth",
-                    "alignment": 2
-                },
-                {
-                    "artifactName": "Palantir of Orthanc",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "spriteString": "palantir",
-                    "alignment": 2
-                },
-                {
-                    "artifactName": "Saruman's Staff",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HexEnemyHaltChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "spriteString": "staff",
-                    "transferable": false,
-                    "alignment": 2
-                }
-            ],
-            "startingCityRegion": "GapOfRohan",
-            "nationName": "Saruman",
-            "characterSprite": "SarumanCharacter",
-            "nationInitials": "S"
-        },
-        {
-            "characterName": "Sauron",
-            "alignment": 1,
-            "commander": 2,
-            "agent": 0,
-            "emmissary": 0,
-            "mage": 3,
-            "race": 4,
-            "artifacts": [],
-            "description": "<u>Sauron</u> is the Dark Lord returned, a will of iron that has never forgotten its claim. From Barad-dur he bends the lands through fear and patience, drawing all things toward a single purpose. He does not need love or loyalty, only obedience, and he will take it by force or by dread.<br><br>The hunt begins in the shadow of Minas Morgul, where the trail is secured and a relic of power is drawn from cursed ground. From there the march moves toward the Black Gate, where the first disciplined hosts take shape under a hard command.",
-            "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> Every shadow he has ever worn still breathes — <sprite name=\"commander\"><sprite name=\"agent\"><sprite name=\"emmissary\"> waking, cavalry <sprite name=\"mounts\"> restless. No shape yet fixed.",
-            "banner": "banner_sauron_the_dark_eye",
-            "variants": [
-                {
-                    "variantId": "the_dark_eye",
-                    "displayName": "The Dark Eye",
-                    "description": "<u>The Dark Eye</u> burns above Barad-dur like a star of malice that never sets, sleepless over Gorgoroth, the Black Gate, and the dead roads beneath Ephel Duath. It is dread made watchful, a will that peers through palantiri, dreams, and trembling rumor until no secrecy feels safe and every hidden movement seems already betrayed.<br><br>This variant is built on exposure, fear, and a suffocating dominion that narrows the enemy's every choice.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> Nothing hidden survives — <sprite name=\"commander\"> towers above all peers, captains answer as one across twenty domains <sprite name=\"pc\">. Heavy infantry holds every field; he is slow to mount <sprite name=\"mounts\">.",
-                    "subdeckId": "the_dark_eye",
-                    "banner": "banner_sauron_the_dark_eye"
-                },
-                {
-                    "variantId": "the_deceiver",
-                    "displayName": "The Deceiver",
-                    "description": "<u>The Deceiver</u> walks in the memory of the Second Age: Annatar, Lord of Gifts, whispering to the smiths of Eregion; corrupter of Celebrimbor's great labor; and dark counselor to the pride of Numenor in its final blasphemy. Fair-seeming, patient, and terrible in wisdom misused, he raises no banner at first, but teaches the mighty to forge their own chains until kingdoms drown, temples burn, and the bent world itself bears witness to his fraud.<br><br>This variant leans into deceit, seduction, false gifts, and the hidden mastery won long before the sword is drawn.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> The Deceiver's tongue <sprite name=\"emmissary\"> outpaces every sword; <sprite name=\"gold\"> and armies flood from his dominion, PCs <sprite name=\"pc\"> spanning wide. Little sorcery <sprite name=\"mage\"> and few great events — his power is bought, not conjured.",
-                    "subdeckId": "the_deceiver",
-                    "banner": "banner_sauron_the_deceiver"
-                },
-                {
-                    "variantId": "the_necromancer",
-                    "displayName": "The Necromancer",
-                    "description": "<u>The Necromancer</u> broods in Dol Guldur, and Greenwood the Great withers into Mirkwood beneath the shadow of his hidden throne. From that hill of sorcery crawl spiders, wraiths, and corrupted things, while fear seeps through root and branch until the very forest seems to remember some older terror returning from forgotten ages.<br><br>This variant favors haunted pressure, monstrous servants, dark sorcery, and corruption that lingers long after the first blow.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> From Dol Guldur, <sprite name=\"mithril\"> seeps endlessly; dark art <sprite name=\"mage\"> and heavy infantry grind the forest to shadow. No agents <sprite name=\"agent\"> and no emissaries <sprite name=\"emmissary\"> — he does not parley; he waits.",
-                    "subdeckId": "the_necromancer",
-                    "banner": "banner_sauron_the_necromancer"
-                },
-                {
-                    "variantId": "shadow_of_the_east",
-                    "displayName": "Shadow of the East",
-                    "description": "<u>The Shadow of the East</u> stirs where the sun rises over the Sea of Rhûn and the red war-spears of the Easterlings gather beneath whispers older than their tribal kings. Sauron has walked there in secret, leaving gifts of iron and fear among the horse-lords and wagon-folk, and now the eastern steppes breed armies that look westward with hungry patience. From the lands beyond the maps of the Wise, a tide of bondage and blade gathers, and the Free Peoples feel the first cold wind of a storm born far beyond their walls.<br><br>This variant is built on eastern hordes, dark diplomacy, and the patient raising of vast armies through emissary craft and whispered threats.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> The shadow rides east on tireless horse <sprite name=\"mounts\"> — cavalry and agents <sprite name=\"agent\"> spreading darkness before armies know it has arrived. No spells <sprite name=\"mage\"> and no envoys <sprite name=\"emmissary\">; he moves too fast for councils.",
-                    "subdeckId": "shadow_of_the_east",
-                    "banner": "banner_shadow_of_the_east"
-                },
-                {
-                    "variantId": "the_iron_crown",
-                    "displayName": "The Iron Crown",
-                    "description": "<u>The Iron Crown</u> rises in the Witch-realm of Angmar, where the Witch-king wears cold dominion over the ruined hills of Eriador. He does not come with open war at first, but with deception, plague, and the slow breaking of hope among the Men of Arnor and Cardolan. From the mountain holds of the North, Orcs and Trolls are bred like a pestilence, while slavers and false counsel gnaw at the edges of a kingdom that no longer trusts its own shadow. Dark sorcery flows from Carn Dûm like a black river, and the crown upon the Witch-king's brow is the seal of a winter that will not end until the last hearth in the West is cold.<br><br>This variant favors deceit, recruitment through terror, slaving, monstrous hordes from the mountains, and sorcery that bends the will before the blade is drawn.",
-                    "deckIdentity": "<sprite name=\"deck\"> <i>Deck identity:</i> The Iron Crown forges strength in iron <sprite name=\"iron\"> and commands columns that do not break <sprite name=\"fortified\">. No spy <sprite name=\"agent\"> and few diplomats <sprite name=\"emmissary\">; it does not negotiate — it occupies.",
-                    "subdeckId": "the_iron_crown",
-                    "banner": "banner_the_iron_crown"
-                }
-            ],
-            "subdeckId": "the_dark_eye",
-            "terrain": 10,
-            "startingCityName": "Barad-dur",
-            "startingCitySize": 0,
-            "startingCityFortSize": 1,
-            "startingArmySize": 0,
-            "pcFeature": "volcanoCave",
-            "fortFeature": "wizardTowerRuins00_sauron",
-            "preferedTroopType": 0,
-            "startingCityIsHidden": false,
-            "startsWithPort": false,
-            "startingWarships": 0,
-            "startingCharacters": [],
-            "tutorialAnchors": [
-                "Dendra Dwar",
-                "Murazor",
-                "Barad-dur"
-            ],
-            "sex": 0,
-            "tutorialArtifacts": [
-                {
-                    "artifactName": "Dark Lord Banner",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 1,
-                    "bonusDefense": 0,
-                    "spriteString": "banner",
-                    "alignment": 1
-                },
-                {
-                    "artifactName": "Palantir of Ithil",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "RandomHexRevealChancePerTurn",
-                    "passiveEffectValue": 10,
-                    "spriteString": "palantir",
-                    "alignment": 1
-                },
-                {
-                    "artifactName": "Morgul Veil",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HideOccupiedPcWhilePresent",
-                    "passiveEffectValue": 1,
-                    "transferable": false,
-                    "spriteString": "veil",
-                    "alignment": 1
-                },
-                {
-                    "artifactName": "Lidless eye",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "RevealHiddenEnemyPcOnOccupiedHex",
-                    "passiveEffectValue": 1,
-                    "transferable": false,
-                    "spriteString": "darkServants",
-                    "alignment": 1
-                },
-                {
-                    "artifactName": "Voice of the Dark Tower",
-                    "hidden": false,
-                    "commanderBonus": 0,
-                    "agentBonus": 0,
-                    "emmissaryBonus": 0,
-                    "mageBonus": 0,
-                    "bonusAttack": 0,
-                    "bonusDefense": 0,
-                    "passiveEffectId": "HexEnemyFearAndDespairChancePerTurn",
-                    "passiveEffectValue": 5,
-                    "transferable": false,
-                    "spriteString": "speech",
-                    "alignment": 1
-                }
-            ],
-            "startingCityRegion": "Gorgoroth",
-            "nationName": "Mordor",
-            "characterSprite": "SauronCharacter",
-            "nationInitials": "S"
-        }
-    ]
+    "biomes":  [
+                   {
+                       "characterName":  "Gandalf",
+                       "banner":  "banner_gandalf_mithrandir",
+                       "artifacts":  [
+
+                                     ],
+                       "description":  "\u003cu\u003eGandalf\u003c/u\u003e is the grey pilgrim, a wanderer of hidden roads and quiet counsel. He walks the edge between shadow and hope, guiding the small and the humble because he knows their courage can outlast any sword. He trusts in patience, in wisdom earned by travel, and in the spark that lights when others have given in to fear.\u003cbr\u003e\u003cbr\u003eHis road stretches beyond the Shire into the wider lanes of Eriador and the scattered strongholds of the Free Peoples. He gathers trusted companions, listens for uneasy rumors, and searches old ground for relics and allies that still matter long after the first road is taken.",
+                       "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e Grey and uncommitted — \u003csprite name=\"commander\"\u003e\u003csprite name=\"agent\"\u003e\u003csprite name=\"emmissary\"\u003e\u003csprite name=\"mage\"\u003e spread thin, armies light. No road yet chosen.",
+                       "variants":  [
+                                        {
+                                            "variantId":  "mithrandir",
+                                            "displayName":  "Mithrandir",
+                                            "description":  "\u003cu\u003eMithrandir\u003c/u\u003e, pilgrim of the West, passes like an old song through Rivendell, Lothlorien, and the hidden paths where the Wise still keep watch against the ancient Shadow. In him abide memory, mercy, and the secret fire set against a darkness older than the kingdoms of Men, and where he treads, veils are lifted and the designs of the Enemy are read before they ripen to ruin.\u003cbr\u003e\u003cbr\u003eUnder \u003cb\u003eMithrandir\u003c/b\u003e, the game turns toward revelation, warding, foresight, and spellcraft wielded with patient precision rather than open might.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e The grey wanderer walks every road — \u003csprite name=\"commander\"\u003e\u003csprite name=\"agent\"\u003e\u003csprite name=\"emmissary\"\u003e\u003csprite name=\"mage\"\u003e all grown deep, and his host many-armed: Elves, scouts, and fleets. \u003csprite name=\"gold\"\u003e runs swift; the price of every open road is steep.",
+                                            "subdeckId":  "mithrandir",
+                                            "banner":  "banner_gandalf_mithrandir",
+                                            "characterName":  "Mithrandir"
+                                        },
+                                        {
+                                            "variantId":  "stormcrow",
+                                            "displayName":  "Stormcrow",
+                                            "description":  "\u003cu\u003eStormcrow\u003c/u\u003e they name him in the troubled halls of kings, for his coming is the whisper before the war-horn, the black wing against a paling sky. He is seen where Rohan wavers, where Gondor keeps weary watch, and where the old roads of the North begin once more to feel the breath of Angmar, Isengard, and Mordor upon their stones.\u003cbr\u003e\u003cbr\u003eThis variant carries the weight of vigilance, strained loyalties, bitter choices, and endurance beneath a darkening sky.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e The Stormcrow\u0027s web of lands \u003csprite name=\"pc\"\u003e and roads produces \u003csprite name=\"mounts\"\u003e\u003csprite name=\"leather\"\u003e in abundance — needing no supply line. His armies are thin and sorcery \u003csprite name=\"mage\"\u003e slight; he wins by presence, not force.",
+                                            "subdeckId":  "stormcrow",
+                                            "banner":  "banner_gandalf_stormcrow",
+                                            "characterName":  "Stormcrow"
+                                        },
+                                        {
+                                            "variantId":  "disturber_of_the_peace",
+                                            "displayName":  "Disturber of Peace",
+                                            "description":  "At Bag End and along the Bree-road, in fireworks, whispers, and the sudden knock at dusk, \u003cu\u003ethe Disturber of the Peace\u003c/u\u003e unsettles the comfortable world. From those small provocations spring journeys, riddles, unlikely fellowships, and the turning of humble lives toward deeds that will outlast towers and crowns.\u003cbr\u003e\u003cbr\u003eThis variant leans into the Shire, Bree-land, and the long road through Eriador: hobbit-scale mischief, roadside wonders, strange meetings, and the little interruptions that reroute an entire tale.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e A mischief deck: \u003csprite name=\"agent\"\u003e saturates every shadow, archers \u003csprite name=\"bow\"\u003e ready where blades would be heard. Hobbits and wanderers turn Bree-land into disruption. No sorcery \u003csprite name=\"mage\"\u003e, no heavy arms — only the deed done before it is suspected.",
+                                            "subdeckId":  "disturber_of_the_peace",
+                                            "banner":  "banner_gandalf_disturber_of_the_peace",
+                                            "characterName":  "Disturber of the Peace"
+                                        },
+                                        {
+                                            "variantId":  "tharkun",
+                                            "displayName":  "Tharkun",
+                                            "description":  "\u003cu\u003eTharkun\u003c/u\u003e is the name the Dwarves remember: friend of the House of Durin, walker in the deeps, and counselor in halls where stone keeps faith longer than flesh. He knows the grief buried in Khazad-dum, the splendor of Erebor restored, and the peril that lies ever beside gold, mithril, and the pride of mountain kings.\u003cbr\u003e\u003cbr\u003eThis variant turns toward hidden wealth, mountain fortitude, and alliances tempered in the dark under stone.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e Gandalf as dwarf-friend: \u003csprite name=\"commander\"\u003e towers high, \u003csprite name=\"mithril\"\u003e flows self-sustaining from deep veins, Dwarven axemen grinding hard endurance under stone. No sorcery \u003csprite name=\"mage\"\u003e — what he builds, he builds with toil.",
+                                            "subdeckId":  "tharkun",
+                                            "banner":  "banner_gandalf_tharkun",
+                                            "characterName":  "Tharkun"
+                                        },
+                                        {
+                                            "variantId":  "gandalf_the_white",
+                                            "displayName":  "The White",
+                                            "description":  "Clothed in white and returned from death, \u003cu\u003ethe White Rider\u003c/u\u003e comes from Fangorn like a judgment upon despair. He breaks the pride of Saruman, scatters the poison of Wormtongue, and stands in the last defence of the West as hidden wisdom is transfigured into open command beneath the sunlit banners of hope.\u003cbr\u003e\u003cbr\u003eThis variant is one of cleansing, renewal, fearless command, and the sudden turning of darkness beneath a greater light.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e Returned white authority: \u003csprite name=\"commander\"\u003e dominant, heavy horse and fleets of Gondor and Rohan at his back, lords rallied wide \u003csprite name=\"pc\"\u003e. The mage\u0027s art \u003csprite name=\"mage\"\u003e is spent — he leads now by command, not craft.",
+                                            "subdeckId":  "gandalf_the_white",
+                                            "banner":  "banner_gandalf_gandalf_the_white",
+                                            "characterName":  "Gandalf the White"
+                                        }
+                                    ],
+                       "subdeckId":  "mithrandir",
+                       "terrain":  3,
+                       "startingArmySize":  0,
+                       "preferedTroopType":  0,
+                       "startingCityIsHidden":  false,
+                       "startsWithPort":  false,
+                       "startingWarships":  0,
+                       "tutorialAnchors":  [
+                                               "Hobbiton",
+                                               "Frodo",
+                                               "Merry",
+                                               "Pippin"
+                                           ],
+                       "sex":  0,
+                       "tutorialArtifacts":  [
+                                                 {
+                                                     "artifactName":  "Narya",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                                     "passiveEffectValue":  10,
+                                                     "spriteString":  "ring",
+                                                     "transferable":  false,
+                                                     "alignment":  0
+                                                 },
+                                                 {
+                                                     "artifactName":  "Wizard Staff",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "HexEnemyHaltChancePerTurn",
+                                                     "passiveEffectValue":  10,
+                                                     "spriteString":  "staff",
+                                                     "transferable":  false,
+                                                     "alignment":  0
+                                                 },
+                                                 {
+                                                     "artifactName":  "Glamdring",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  1,
+                                                     "bonusDefense":  0,
+                                                     "spriteString":  "sword",
+                                                     "alignment":  0
+                                                 },
+                                                 {
+                                                     "artifactName":  "Wizard\u0027s Cart",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "AlliedPcMoraleChancePerTurn",
+                                                     "passiveEffectValue":  10,
+                                                     "spriteString":  "fireworks",
+                                                     "alignment":  0
+                                                 },
+                                                 {
+                                                     "artifactName":  "Longpipe",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  1,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "transferable":  false,
+                                                     "spriteString":  "tobacco",
+                                                     "alignment":  0
+                                                 },
+                                                 {
+                                                     "artifactName":  "Shadowfax",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "HasteChancePerTurn",
+                                                     "passiveEffectValue":  10,
+                                                     "spriteString":  "hc",
+                                                     "transferable":  false,
+                                                     "alignment":  0
+                                                 }
+                                             ],
+                       "startingCityRegion":  "Arthedain",
+                       "nationName":  "Gandalf",
+                       "characterSprite":  "Maia",
+                       "nationInitials":  "G"
+                   },
+                   {
+                       "characterName":  "Saruman",
+                       "artifacts":  [
+
+                                     ],
+                       "description":  "\u003cu\u003eSaruman\u003c/u\u003e is the master of Orthanc, once the chief of the wise, now the architect of his own dominion.His voice bends courts, his mind measures every weakness, and his ambition refuses to wait for permission. He builds in silence, gathering strength behind fair words, and he intends to remake the world in the image of his will.\u003cbr\u003e\u003cbr\u003eHis design begins with a careful reach into the courts of Rohan, the securing of a pliant voice, and the quiet unearthing of power long buried. From Orthanc he turns influence into force and raises the first ranks of his war.",
+                       "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e The white before the breaking — \u003csprite name=\"commander\"\u003e\u003csprite name=\"agent\"\u003e\u003csprite name=\"emmissary\"\u003e\u003csprite name=\"mage\"\u003e each open, \u003csprite name=\"steel\"\u003e already turning. No road yet chosen.",
+                       "banner":  "banner_saruman_saruman_the_white",
+                       "variants":  [
+                                        {
+                                            "variantId":  "saruman_the_white",
+                                            "displayName":  "The White",
+                                            "description":  "\u003cu\u003eSaruman the White\u003c/u\u003e stands in the majesty of Orthanc, chief of the Istari, master of lore, ring-craft, and the long devices of the Wise. His voice is a weapon finer than steel, entering the counsels of kings and bending proud hearts with honeyed reason until obedience seems wisdom and surrender seems peace.\u003cbr\u003e\u003cbr\u003eThis variant favors influence, manipulation, and command exercised with polished restraint.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e Voice, art, and argument — \u003csprite name=\"agent\"\u003e\u003csprite name=\"emmissary\"\u003e\u003csprite name=\"mage\"\u003e all keen, with events reshaping the board. His host is numerous but common-born \u003csprite name=\"leather\"\u003e, and his territories \u003csprite name=\"pc\"\u003e spread thin.",
+                                            "subdeckId":  "saruman_the_white",
+                                            "banner":  "banner_saruman_saruman_the_white",
+                                            "characterName":  "Saruman the White"
+                                        },
+                                        {
+                                            "variantId":  "of_many_colours",
+                                            "displayName":  "Saruman Multicoloured",
+                                            "description":  "Saruman \u003cu\u003ethe Many-Coloured\u003c/u\u003e shatters the white that once signified order and reveals the glittering fracture of pride. In that figure are gathered ring-lore, engines, subtle arts, and the cold brilliance of a mind that would rival the makers of old, yet all are bent now toward dominion, display, and the blasphemous imitation of a power once sent to oppose the Shadow.\u003cbr\u003e\u003cbr\u003eThis variant leans into grand sorcery, layered effects, and the dangerous splendor of power unbound by humility.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e The widest host and richest harvest — cavalry \u003csprite name=\"mounts\"\u003e no other master fields so deep, \u003csprite name=\"leather\"\u003e\u003csprite name=\"gold\"\u003e in flood, grand sorcery \u003csprite name=\"mage\"\u003e and many colours. \u003csprite name=\"iron\"\u003e is scarce; the forge runs cold.",
+                                            "subdeckId":  "of_many_colours",
+                                            "banner":  "banner_saruman_of_many_colours",
+                                            "characterName":  "Saruman Multicoloured"
+                                        },
+                                        {
+                                            "variantId":  "the_white_hand",
+                                            "displayName":  "The White Hand",
+                                            "description":  "\u003cu\u003eThe White Hand\u003c/u\u003e rises over Isengard like a blasphemous banner, and beneath it the world is remade in smoke, iron, and ruin. Fangorn falls to the axe, the furnaces thunder without ceasing, and from the black pits march Uruk-hai and wolf-riders, forged for the breaking of Helm\u0027s Deep and the humiliation of the Mark.\u003cbr\u003e\u003cbr\u003eThis variant drives forward with industry, relentless pressure, and the hard discipline of Isengard at war.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e Isengard\u0027s forged war machine: \u003csprite name=\"commander\"\u003e\u003csprite name=\"agent\"\u003e drive iron-will infantry, furnaces thunder, Uruk discipline makes aggression systematic. No sorcery \u003csprite name=\"mage\"\u003e; what he lacks in art, he pays in \u003csprite name=\"leather\"\u003e.",
+                                            "subdeckId":  "the_white_hand",
+                                            "banner":  "banner_saruman_the_white_hand",
+                                            "characterName":  "The White Hand"
+                                        },
+                                        {
+                                            "variantId":  "sharkey",
+                                            "displayName":  "Sharkey",
+                                            "description":  "\u003cu\u003eSharkey\u003c/u\u003e is the name they give him in the Shire, and he wears it like a snarl. Stripped of tower and art and title, what remains is spite: a bitter will that turns the Shire\u0027s fields into quarries, pens the hobbits in lockholes, and burns what it cannot own. He does not conquer — he poisons. He does not command armies — he directs ruffians, extortion, and the slow erasure of everything pleasant about a people who never harmed him.\u003cbr\u003e\u003cbr\u003eThis variant operates without sorcery and without great armies. It wins through intimidation, pipe-weed monopoly, occupation of settlements, and the grinding cruelty of petty authority over a land that has no walls.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e No towers, no spells \u003csprite name=\"mage\"\u003e, no cavalry \u003csprite name=\"mounts\"\u003e — Sharkey rules through \u003csprite name=\"agent\"\u003e\u003csprite name=\"emmissary\"\u003e and the fear they carry. \u003csprite name=\"gold\"\u003e\u003csprite name=\"leather\"\u003e flow from an occupied Shire; his ruffians are cheap and mean.",
+                                            "subdeckId":  "sharkey",
+                                            "banner":  "banner_saruman_sharkey",
+                                            "characterName":  "Sharkey"
+                                        }
+                                    ],
+                       "subdeckId":  "saruman_the_white",
+                       "terrain":  1,
+                       "startingArmySize":  0,
+                       "preferedTroopType":  0,
+                       "startingCityIsHidden":  false,
+                       "startsWithPort":  false,
+                       "startingWarships":  0,
+                       "tutorialAnchors":  [
+                                               "Theoden",
+                                               "Orthanc"
+                                           ],
+                       "sex":  0,
+                       "tutorialArtifacts":  [
+                                                 {
+                                                     "artifactName":  "Ring of Orthanc",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  1,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "HexEnemyFearAndDespairChancePerTurn",
+                                                     "passiveEffectValue":  5,
+                                                     "spriteString":  "ring",
+                                                     "transferable":  false,
+                                                     "alignment":  2
+                                                 },
+                                                 {
+                                                     "artifactName":  "White Hand Banner",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  1,
+                                                     "bonusDefense":  0,
+                                                     "spriteString":  "banner",
+                                                     "alignment":  2
+                                                 },
+                                                 {
+                                                     "artifactName":  "Many-coloured robes",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  1,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                                     "passiveEffectValue":  10,
+                                                     "transferable":  false,
+                                                     "spriteString":  "cloak",
+                                                     "alignment":  2
+                                                 },
+                                                 {
+                                                     "artifactName":  "Yellow teeth",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  1,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "transferable":  false,
+                                                     "spriteString":  "tooth",
+                                                     "alignment":  2
+                                                 },
+                                                 {
+                                                     "artifactName":  "Palantir of Orthanc",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                                     "passiveEffectValue":  10,
+                                                     "spriteString":  "palantir",
+                                                     "alignment":  2
+                                                 },
+                                                 {
+                                                     "artifactName":  "Saruman\u0027s Staff",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "HexEnemyHaltChancePerTurn",
+                                                     "passiveEffectValue":  10,
+                                                     "spriteString":  "staff",
+                                                     "transferable":  false,
+                                                     "alignment":  2
+                                                 }
+                                             ],
+                       "startingCityRegion":  "GapOfRohan",
+                       "nationName":  "Saruman",
+                       "characterSprite":  "SarumanCharacter",
+                       "nationInitials":  "S"
+                   },
+                   {
+                       "characterName":  "Sauron",
+                       "artifacts":  [
+
+                                     ],
+                       "description":  "\u003cu\u003eSauron\u003c/u\u003e is the Dark Lord returned, a will of iron that has never forgotten its claim. From Barad-dur he bends the lands through fear and patience, drawing all things toward a single purpose. He does not need love or loyalty, only obedience, and he will take it by force or by dread.\u003cbr\u003e\u003cbr\u003eThe hunt begins in the shadow of Minas Morgul, where the trail is secured and a relic of power is drawn from cursed ground. From there the march moves toward the Black Gate, where the first disciplined hosts take shape under a hard command.",
+                       "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e Every shadow he has ever worn still breathes — \u003csprite name=\"commander\"\u003e\u003csprite name=\"agent\"\u003e\u003csprite name=\"emmissary\"\u003e waking, cavalry \u003csprite name=\"mounts\"\u003e restless. No shape yet fixed.",
+                       "banner":  "banner_sauron_the_dark_eye",
+                       "variants":  [
+                                        {
+                                            "variantId":  "the_dark_eye",
+                                            "displayName":  "The Dark Eye",
+                                            "description":  "\u003cu\u003eThe Dark Eye\u003c/u\u003e burns above Barad-dur like a star of malice that never sets, sleepless over Gorgoroth, the Black Gate, and the dead roads beneath Ephel Duath. It is dread made watchful, a will that peers through palantiri, dreams, and trembling rumor until no secrecy feels safe and every hidden movement seems already betrayed.\u003cbr\u003e\u003cbr\u003eThis variant is built on exposure, fear, and a suffocating dominion that narrows the enemy\u0027s every choice.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e Nothing hidden survives — \u003csprite name=\"commander\"\u003e towers above all peers, captains answer as one across twenty domains \u003csprite name=\"pc\"\u003e. Heavy infantry holds every field; he is slow to mount \u003csprite name=\"mounts\"\u003e.",
+                                            "subdeckId":  "the_dark_eye",
+                                            "banner":  "banner_sauron_the_dark_eye",
+                                            "characterName":  "Sauron"
+                                        },
+                                        {
+                                            "variantId":  "the_deceiver",
+                                            "displayName":  "The Deceiver",
+                                            "description":  "\u003cu\u003eThe Deceiver\u003c/u\u003e walks in the memory of the Second Age: Annatar, Lord of Gifts, whispering to the smiths of Eregion; corrupter of Celebrimbor\u0027s great labor; and dark counselor to the pride of Numenor in its final blasphemy. Fair-seeming, patient, and terrible in wisdom misused, he raises no banner at first, but teaches the mighty to forge their own chains until kingdoms drown, temples burn, and the bent world itself bears witness to his fraud.\u003cbr\u003e\u003cbr\u003eThis variant leans into deceit, seduction, false gifts, and the hidden mastery won long before the sword is drawn.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e The Deceiver\u0027s tongue \u003csprite name=\"emmissary\"\u003e outpaces every sword; \u003csprite name=\"gold\"\u003e and armies flood from his dominion, PCs \u003csprite name=\"pc\"\u003e spanning wide. Little sorcery \u003csprite name=\"mage\"\u003e and few great events — his power is bought, not conjured.",
+                                            "subdeckId":  "the_deceiver",
+                                            "banner":  "banner_sauron_the_deceiver",
+                                            "characterName":  "Annatar"
+                                        },
+                                        {
+                                            "variantId":  "the_necromancer",
+                                            "displayName":  "The Necromancer",
+                                            "description":  "\u003cu\u003eThe Necromancer\u003c/u\u003e broods in Dol Guldur, and Greenwood the Great withers into Mirkwood beneath the shadow of his hidden throne. From that hill of sorcery crawl spiders, wraiths, and corrupted things, while fear seeps through root and branch until the very forest seems to remember some older terror returning from forgotten ages.\u003cbr\u003e\u003cbr\u003eThis variant favors haunted pressure, monstrous servants, dark sorcery, and corruption that lingers long after the first blow.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e From Dol Guldur, \u003csprite name=\"mithril\"\u003e seeps endlessly; dark art \u003csprite name=\"mage\"\u003e and heavy infantry grind the forest to shadow. No agents \u003csprite name=\"agent\"\u003e and no emissaries \u003csprite name=\"emmissary\"\u003e — he does not parley; he waits.",
+                                            "subdeckId":  "the_necromancer",
+                                            "banner":  "banner_sauron_the_necromancer",
+                                            "characterName":  "The Necromancer"
+                                        },
+                                        {
+                                            "variantId":  "shadow_of_the_east",
+                                            "displayName":  "Shadow of the East",
+                                            "description":  "\u003cu\u003eThe Shadow of the East\u003c/u\u003e stirs where the sun rises over the Sea of Rhûn and the red war-spears of the Easterlings gather beneath whispers older than their tribal kings. Sauron has walked there in secret, leaving gifts of iron and fear among the horse-lords and wagon-folk, and now the eastern steppes breed armies that look westward with hungry patience. From the lands beyond the maps of the Wise, a tide of bondage and blade gathers, and the Free Peoples feel the first cold wind of a storm born far beyond their walls.\u003cbr\u003e\u003cbr\u003eThis variant is built on eastern hordes, dark diplomacy, and the patient raising of vast armies through emissary craft and whispered threats.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e The shadow rides east on tireless horse \u003csprite name=\"mounts\"\u003e — cavalry and agents \u003csprite name=\"agent\"\u003e spreading darkness before armies know it has arrived. No spells \u003csprite name=\"mage\"\u003e and no envoys \u003csprite name=\"emmissary\"\u003e; he moves too fast for councils.",
+                                            "subdeckId":  "shadow_of_the_east",
+                                            "banner":  "banner_shadow_of_the_east",
+                                            "characterName":  "Shadow of the East"
+                                        },
+                                        {
+                                            "variantId":  "the_iron_crown",
+                                            "displayName":  "The Iron Crown",
+                                            "description":  "\u003cu\u003eThe Iron Crown\u003c/u\u003e rises in the Witch-realm of Angmar, where the Witch-king wears cold dominion over the ruined hills of Eriador. He does not come with open war at first, but with deception, plague, and the slow breaking of hope among the Men of Arnor and Cardolan. From the mountain holds of the North, Orcs and Trolls are bred like a pestilence, while slavers and false counsel gnaw at the edges of a kingdom that no longer trusts its own shadow. Dark sorcery flows from Carn Dûm like a black river, and the crown upon the Witch-king\u0027s brow is the seal of a winter that will not end until the last hearth in the West is cold.\u003cbr\u003e\u003cbr\u003eThis variant favors deceit, recruitment through terror, slaving, monstrous hordes from the mountains, and sorcery that bends the will before the blade is drawn.",
+                                            "deckIdentity":  "\u003csprite name=\"deck\"\u003e \u003ci\u003eDeck identity:\u003c/i\u003e The Iron Crown forges strength in iron \u003csprite name=\"iron\"\u003e and commands columns that do not break \u003csprite name=\"fortified\"\u003e. No spy \u003csprite name=\"agent\"\u003e and few diplomats \u003csprite name=\"emmissary\"\u003e; it does not negotiate — it occupies.",
+                                            "subdeckId":  "the_iron_crown",
+                                            "banner":  "banner_the_iron_crown",
+                                            "characterName":  "The Iron Crown"
+                                        }
+                                    ],
+                       "subdeckId":  "the_dark_eye",
+                       "terrain":  10,
+                       "startingArmySize":  0,
+                       "preferedTroopType":  0,
+                       "startingCityIsHidden":  false,
+                       "startsWithPort":  false,
+                       "startingWarships":  0,
+                       "tutorialAnchors":  [
+                                               "Dendra Dwar",
+                                               "Murazor",
+                                               "Barad-dur"
+                                           ],
+                       "sex":  0,
+                       "tutorialArtifacts":  [
+                                                 {
+                                                     "artifactName":  "Dark Lord Banner",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  1,
+                                                     "bonusDefense":  0,
+                                                     "spriteString":  "banner",
+                                                     "alignment":  1
+                                                 },
+                                                 {
+                                                     "artifactName":  "Palantir of Ithil",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "RandomHexRevealChancePerTurn",
+                                                     "passiveEffectValue":  10,
+                                                     "spriteString":  "palantir",
+                                                     "alignment":  1
+                                                 },
+                                                 {
+                                                     "artifactName":  "Morgul Veil",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "HideOccupiedPcWhilePresent",
+                                                     "passiveEffectValue":  1,
+                                                     "transferable":  false,
+                                                     "spriteString":  "veil",
+                                                     "alignment":  1
+                                                 },
+                                                 {
+                                                     "artifactName":  "Lidless eye",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "RevealHiddenEnemyPcOnOccupiedHex",
+                                                     "passiveEffectValue":  1,
+                                                     "transferable":  false,
+                                                     "spriteString":  "darkServants",
+                                                     "alignment":  1
+                                                 },
+                                                 {
+                                                     "artifactName":  "Voice of the Dark Tower",
+                                                     "hidden":  false,
+                                                     "commanderBonus":  0,
+                                                     "agentBonus":  0,
+                                                     "emmissaryBonus":  0,
+                                                     "mageBonus":  0,
+                                                     "bonusAttack":  0,
+                                                     "bonusDefense":  0,
+                                                     "passiveEffectId":  "HexEnemyFearAndDespairChancePerTurn",
+                                                     "passiveEffectValue":  5,
+                                                     "transferable":  false,
+                                                     "spriteString":  "speech",
+                                                     "alignment":  1
+                                                 }
+                                             ],
+                       "startingCityRegion":  "Gorgoroth",
+                       "nationName":  "Mordor",
+                       "characterSprite":  "SauronCharacter",
+                       "nationInitials":  "S"
+                   }
+               ]
 }

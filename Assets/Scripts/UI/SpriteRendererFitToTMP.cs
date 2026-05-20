@@ -36,7 +36,7 @@ public class SpriteRendererFitToTMP : MonoBehaviour
             return;
         }
 
-        label.enableWordWrapping = false;
+        label.textWrappingMode = TextWrappingModes.NoWrap;
         label.overflowMode = TextOverflowModes.Overflow;
 
         // preferredWidth is position-independent — avoids feedback loops from textBounds.

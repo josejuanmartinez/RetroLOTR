@@ -95,7 +95,11 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             }
 
             var illustrations = FindFirstObjectByType<Illustrations>();
-            if (illustrations != null) image.sprite = illustrations.GetIllustrationByName(character.characterName);
+            if (illustrations != null)
+            {
+                string lookupName = !string.IsNullOrWhiteSpace(character.illustrationName) ? character.illustrationName : character.characterName;
+                image.sprite = illustrations.GetIllustrationByName(lookupName);
+            }
             if (healthBar != null) healthBar.fillAmount = character.killed ? 0f : Mathf.Clamp01(character.health / 100f);
         }
 

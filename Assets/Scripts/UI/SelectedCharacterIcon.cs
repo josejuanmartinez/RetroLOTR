@@ -213,7 +213,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
-        SetCharacterVisuals(GetIllustrationByName(c.characterName));
+        SetCharacterVisuals(GetIllustrationByName(!string.IsNullOrWhiteSpace(c.illustrationName) ? c.illustrationName : c.characterName));
         string baseHoverText = BuildSelectedCharacterTitle(c);
         string kidnappingText = BuildKidnappingStatusText(c);
         textWidget.text = string.IsNullOrWhiteSpace(kidnappingText)
@@ -274,7 +274,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
-        SetCharacterVisuals(GetIllustrationByName(c.characterName));
+        SetCharacterVisuals(GetIllustrationByName(!string.IsNullOrWhiteSpace(c.illustrationName) ? c.illustrationName : c.characterName));
         textWidget.text = string.IsNullOrWhiteSpace(hoverText) ? BuildSelectedCharacterTitle(c) : hoverText;
 
         actioned.SetActive(false);

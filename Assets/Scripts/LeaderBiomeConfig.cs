@@ -11,6 +11,7 @@ public class LeaderBiomeConfigCollection
 public class LeaderVariantConfig
 {
     public string variantId;
+    public string characterName;
     public string displayName;
     public string description;
     public string deckIdentity;

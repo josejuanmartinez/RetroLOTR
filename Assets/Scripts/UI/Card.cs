@@ -83,6 +83,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private GameObject dragProxy;
     private GameObject zoomProxy;
     private Coroutine zoomPopCoroutine;
+    private Image encounterArtOverlay;
+    private TextMeshProUGUI encounterQuestionMark;
+    private Coroutine descriptionTypewriterCoroutine;
     private int originalSiblingIndex;
     private Transform originalParent;
     private SelectedCharacterIcon selectedCharacterIcon;
@@ -224,6 +227,27 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             }
         }
 
+        if (data.IsEncounterCard())
+        {
+            AssignEncounterTargetHexIfNeeded(data);
+            if (!data.encounterRevealed)
+                SetupEncounterHiddenVisuals(data);
+        }
+
+        UpdateInteractableState();
+
+        if (!data.hasShownHandAnimation && descriptionText != null && !string.IsNullOrEmpty(baseDescription))
+        {
+            descriptionText.text = string.Empty;
+            descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine(baseDescription, data));
+        }
+    }
+
+    private IEnumerator HandDrawTypewriterCoroutine(string text, CardData data)
+    {
+        yield return StartCoroutine(TypewriterEffectCoroutine(descriptionText, text));
+        if (data != null) data.hasShownHandAnimation = true;
+        descriptionTypewriterCoroutine = null;
         UpdateInteractableState();
     }
 
@@ -250,6 +274,71 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         return null;
+    }
+
+    private static void AssignEncounterTargetHexIfNeeded(CardData data)
+    {
+        if (data.encounterTargetHex != null) return;
+
+        Game game = FindFirstObjectByType<Game>();
+        Leader leader = game?.player;
+        if (leader == null) return;
+
+        var candidates = new HashSet<Hex>();
+        if (leader.hex != null && !leader.killed)
+        {
+            foreach (Hex h in leader.hex.GetHexesInRadius(5)) candidates.Add(h);
+        }
+        if (leader.controlledCharacters != null)
+        {
+            foreach (Character c in leader.controlledCharacters)
+            {
+                if (c == null || c.killed || c.hex == null) continue;
+                foreach (Hex h in c.hex.GetHexesInRadius(5)) candidates.Add(h);
+            }
+        }
+
+        if (candidates.Count == 0) return;
+        var list = new List<Hex>(candidates);
+        data.encounterTargetHex = list[UnityEngine.Random.Range(0, list.Count)];
+    }
+
+    private void SetupEncounterHiddenVisuals(CardData data)
+    {
+        if (titleText != null) titleText.text = "Encounter";
+
+        if (encounterArtOverlay == null && cardArtImage != null)
+        {
+            var overlayGo = new GameObject("EncounterOverlay", typeof(RectTransform), typeof(Image));
+            overlayGo.transform.SetParent(cardArtImage.transform, false);
+            var overlayRect = overlayGo.GetComponent<RectTransform>();
+            overlayRect.anchorMin = Vector2.zero;
+            overlayRect.anchorMax = Vector2.one;
+            overlayRect.offsetMin = Vector2.zero;
+            overlayRect.offsetMax = Vector2.zero;
+            encounterArtOverlay = overlayGo.GetComponent<Image>();
+            encounterArtOverlay.color = Color.black;
+
+            var qGo = new GameObject("QuestionMark", typeof(RectTransform), typeof(TextMeshProUGUI));
+            qGo.transform.SetParent(overlayGo.transform, false);
+            var qRect = qGo.GetComponent<RectTransform>();
+            qRect.anchorMin = Vector2.zero;
+            qRect.anchorMax = Vector2.one;
+            qRect.offsetMin = Vector2.zero;
+            qRect.offsetMax = Vector2.zero;
+            encounterQuestionMark = qGo.GetComponent<TextMeshProUGUI>();
+            encounterQuestionMark.text = "?";
+            encounterQuestionMark.fontSize = 64f;
+            encounterQuestionMark.alignment = TextAlignmentOptions.Center;
+            encounterQuestionMark.color = Color.white;
+            encounterQuestionMark.fontStyle = FontStyles.Bold;
+        }
+
+        string hexCoords = data.encounterTargetHex != null
+            ? $"{data.encounterTargetHex.v2.x}, {data.encounterTargetHex.v2.y}"
+            : "unknown";
+        baseDescription = $"An encounter can be investigated at hex {hexCoords}";
+        if (descriptionText != null) descriptionText.text = baseDescription;
     }
 
     private void BindLegacyPrefabReferences()
@@ -520,6 +609,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (cardData == null) return;
 
+        bool isTypewriting = descriptionTypewriterCoroutine != null;
+
         Board board = FindFirstObjectByType<Board>();
         Character selected = board != null ? board.selectedCharacter : null;
         Leader resourceOwner = GetHumanPlayerLeader();
@@ -568,7 +659,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             canvasGroup.blocksRaycasts = true;
         }
 
-        if (descriptionText != null)
+        if (!isTypewriting && descriptionText != null)
         {
             if (isPlayable)
             {
@@ -1176,6 +1267,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         Card proxyCard = zoomProxy.GetComponent<Card>();
         if (proxyCard != null)
         {
+            if (cardData != null && cardData.IsEncounterCard() && !cardData.encounterRevealed)
+            {
+                proxyCard.Initialize(cardData);
+            }
             proxyCard.enabled = false;
         }
 
@@ -1343,7 +1438,19 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (cardData.playability.failsActionConditions)
         {
-            messages.Add("<sprite name=\"error\">Action conditions not met.");
+            if (cardData.IsEncounterCard() && cardData.encounterTargetHex != null)
+            {
+                string hexCoords = $"{cardData.encounterTargetHex.v2.x}, {cardData.encounterTargetHex.v2.y}";
+                messages.Add($"<sprite name=\"error\">Move your character to hex {hexCoords} to investigate.");
+            }
+            else if (cardData.IsEncounterCard())
+            {
+                messages.Add("<sprite name=\"error\">Move your character to that hex to investigate.");
+            }
+            else
+            {
+                messages.Add("<sprite name=\"error\">Action conditions not met.");
+            }
         }
 
         if (cardData.playability.failsCardHistoryRequirements)
@@ -1463,6 +1570,13 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private async Task<bool> HandleEncounterCardPlayed(Character selected)
     {
+        if (!cardData.encounterRevealed)
+        {
+            if (canvasGroup != null) canvasGroup.interactable = false;
+            await RevealEncounterCardAsync();
+            cardData.encounterRevealed = true;
+        }
+
         Game game = FindFirstObjectByType<Game>();
         PlayableLeader playerLeader = game != null ? game.player : null;
         if (playerLeader == null) return false;
@@ -1480,6 +1594,69 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         return resolved;
+    }
+
+    private async Task RevealEncounterCardAsync()
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        StartCoroutine(RevealEncounterCoroutine(tcs));
+        await tcs.Task;
+    }
+
+    private IEnumerator RevealEncounterCoroutine(TaskCompletionSource<bool> tcs)
+    {
+        const float FadeDuration = 0.8f;
+        float elapsed = 0f;
+
+        while (elapsed < FadeDuration)
+        {
+            if (this == null) { tcs.TrySetResult(false); yield break; }
+            float alpha = 1f - elapsed / FadeDuration;
+
+            if (encounterArtOverlay != null)
+            {
+                Color c = encounterArtOverlay.color;
+                c.a = alpha;
+                encounterArtOverlay.color = c;
+            }
+            if (encounterQuestionMark != null)
+            {
+                Color c = encounterQuestionMark.color;
+                c.a = alpha;
+                encounterQuestionMark.color = c;
+            }
+
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (encounterArtOverlay != null)
+        {
+            Destroy(encounterArtOverlay.gameObject);
+            encounterArtOverlay = null;
+            encounterQuestionMark = null;
+        }
+
+        if (titleText != null) titleText.text = FormatCardTitle(cardData.name);
+
+        string realDescription = GetActionDescription(cardData);
+        yield return StartCoroutine(TypewriterEffectCoroutine(descriptionText, realDescription));
+        baseDescription = realDescription;
+
+        tcs.SetResult(true);
+    }
+
+    private IEnumerator TypewriterEffectCoroutine(TextMeshProUGUI textComponent, string fullText)
+    {
+        if (textComponent == null || string.IsNullOrEmpty(fullText)) yield break;
+        textComponent.text = string.Empty;
+        float delay = Mathf.Min(0.05f, 2f / fullText.Length);
+        foreach (char c in fullText)
+        {
+            if (textComponent == null) yield break;
+            textComponent.text += c;
+            yield return new WaitForSecondsRealtime(delay);
+        }
     }
 
     private Task<bool> HandleCharacterCardPlayed(Character selected)

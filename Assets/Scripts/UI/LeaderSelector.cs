@@ -13,6 +13,7 @@ public class LeaderSelector : SearcherByName
     private class LeaderSelectionEntry
     {
         public string baseLeaderName;
+        public string characterName;
         public AlignmentEnum alignment;
         public string displayName;
         public string variantName;
@@ -336,7 +337,7 @@ public class LeaderSelector : SearcherByName
             string assetName = ResolveVariantAssetName(playableLeader.characterName, variant.displayName, variant.variantId);
             string variantDescription = NormalizeLeaderDescription(variant.description);
             string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? biome.subdeckId : variant.subdeckId;
-            AddSelectionEntry(playableLeader, biome.alignment, displayName, baseDescription, variantDescription, variant.deckIdentity, subdeckId, variantName, assetName);
+            AddSelectionEntry(playableLeader, biome.alignment, displayName, baseDescription, variantDescription, variant.deckIdentity, subdeckId, variantName, assetName, variant.characterName);
         }
     }
 
@@ -418,7 +419,7 @@ public class LeaderSelector : SearcherByName
         return $"{baseLeaderName} {displayName}";
     }
 
-    void AddSelectionEntry(PlayableLeader playableLeader, AlignmentEnum alignment, string displayName, string baseDescription, string variantDescription, string deckIdentity, string subdeckId, string variantName = null, string assetName = null)
+    void AddSelectionEntry(PlayableLeader playableLeader, AlignmentEnum alignment, string displayName, string baseDescription, string variantDescription, string deckIdentity, string subdeckId, string variantName = null, string assetName = null, string variantCharacterName = null)
     {
         Illustrations illustrations = FindFirstObjectByType<Illustrations>();
         Sprite carouselSprite = illustrations != null ? illustrations.GetIllustrationByName(assetName) ?? illustrations.GetIllustrationByName(playableLeader.characterName) : null;
@@ -426,6 +427,7 @@ public class LeaderSelector : SearcherByName
         LeaderSelectionEntry selectionEntry = new()
         {
             baseLeaderName = playableLeader.characterName,
+            characterName = string.IsNullOrWhiteSpace(variantCharacterName) ? playableLeader.characterName : variantCharacterName,
             alignment = alignment,
             displayName = displayName,
             variantName = variantName,
@@ -515,7 +517,7 @@ public class LeaderSelector : SearcherByName
                 .Find(x => x.characterName.ToLower() == selection.baseLeaderName.ToLower());
             if (player != null)
             {
-                player.SetDeckSelection(selection.subdeckId, selection.deckIdentity, leaderText, selection.variantName);
+                player.SetDeckSelection(selection.subdeckId, selection.deckIdentity, leaderText, selection.variantName, selection.characterName);
             }
 
             UpdateBannerImage(player);

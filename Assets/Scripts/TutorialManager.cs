@@ -460,6 +460,13 @@ public class TutorialManager : MonoBehaviour
         RestorePostTutorialHand();
         MoveStartingCharactersToCapitalsForAllLeaders();
         SyncCharacterControlFlags();
+        StartCoroutine(TransformToVariantAfterTutorial());
+    }
+
+    private IEnumerator TransformToVariantAfterTutorial()
+    {
+        yield return new WaitForSeconds(1.5f);
+        leader?.ApplyVariantTransformation();
     }
 
     private void FinalizeSkippedTutorialSetup()
@@ -468,6 +475,7 @@ public class TutorialManager : MonoBehaviour
         RestorePostTutorialHand();
         MovePlayerCharactersToCapital();
         SyncCharacterControlFlags();
+        leader?.ApplyVariantTransformation();
     }
 
     public void RefreshObjectiveUI()

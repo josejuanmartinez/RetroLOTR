@@ -168,6 +168,9 @@ public class CardData
 
     [NonSerialized] public bool isPlayable;
     [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
+    [NonSerialized] public Hex encounterTargetHex;
+    [NonSerialized] public bool encounterRevealed;
+    [NonSerialized] public bool hasShownHandAnimation;
 
     public CardTypeEnum GetCardType()
     {
@@ -394,6 +397,16 @@ public class CardData
     {
         playability ??= new CardPlayabilityResult();
         playability.Reset();
+
+        if (GetCardType() == CardTypeEnum.Encounter)
+        {
+            bool atTargetHex = selectedCharacter != null &&
+                               (encounterTargetHex == null || selectedCharacter.hex == encounterTargetHex);
+            playability.failsActionConditions = !atTargetHex;
+            isPlayable = atTargetHex;
+            playability.isPlayable = isPlayable;
+            return isPlayable;
+        }
 
         if (GetCardType() == CardTypeEnum.Character || GetCardType() == CardTypeEnum.Army)
         {
@@ -874,6 +887,7 @@ public class DeckManager : MonoBehaviour
 
         EnsureSubdeckCardIfNeeded(state);
         card = state.drawPile[0];
+        card.hasShownHandAnimation = false;
         state.drawPile.RemoveAt(0);
         state.hand.Add(card);
         RefreshHumanPlayerHandUIIfHuman(leader);
@@ -2408,6 +2422,7 @@ public class DeckManager : MonoBehaviour
         {
             EnsureSubdeckCardIfNeeded(state);
             CardData card = state.drawPile[0];
+            card.hasShownHandAnimation = false;
             state.drawPile.RemoveAt(0);
             state.hand.Add(card);
         }

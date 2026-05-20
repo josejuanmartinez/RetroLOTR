@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class PlayableLeader : Leader
 {
@@ -13,6 +14,7 @@ public class PlayableLeader : Leader
     private string selectedDeckIdentity;
     private string selectedLeaderDescription;
     private string selectedVariantName;
+    private string selectedVariantCharacterName;
 
     private static string NormalizeCardName(string cardName)
     {
@@ -31,14 +33,39 @@ public class PlayableLeader : Leader
         selectedDeckIdentity = playableLeaderBiome?.deckIdentity;
         selectedLeaderDescription = playableLeaderBiome?.description;
         selectedVariantName = null;
+        RefreshStatsFromCard();
     }
 
-    public void SetDeckSelection(string subdeckId, string deckIdentity = null, string leaderDescription = null, string variantName = null)
+    public void SetDeckSelection(string subdeckId, string deckIdentity = null, string leaderDescription = null, string variantName = null, string variantCharacterName = null)
     {
         selectedSubdeckId = subdeckId;
         selectedDeckIdentity = deckIdentity;
         selectedLeaderDescription = leaderDescription;
         selectedVariantName = variantName;
+        selectedVariantCharacterName = variantCharacterName;
+    }
+
+    public void RefreshStatsFromCard(string name = null)
+    {
+        string lookup = string.IsNullOrWhiteSpace(name) ? characterName : name;
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        CardData card = deckManager?.cards?.Find(c =>
+            string.Equals(c.name, lookup, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(c.type, "Character", StringComparison.OrdinalIgnoreCase));
+        ApplyStatsFromCard(card);
+    }
+
+    public void ApplyVariantTransformation()
+    {
+        if (string.IsNullOrWhiteSpace(selectedVariantCharacterName)) return;
+        if (string.Equals(characterName, selectedVariantCharacterName, StringComparison.OrdinalIgnoreCase)) return;
+
+        string fromName = characterName;
+        characterName = selectedVariantCharacterName;
+        RefreshStatsFromCard();
+        MessageDisplay.ShowMessage($"{fromName} steps forward as {selectedVariantCharacterName}.", new Color(1f, 0.84f, 0f));
+        Sounds.Instance?.PlayArtifactFound();
+        CharacterIcons.RefreshForHumanPlayerOf(this);
     }
 
     public string GetSelectedSubdeckId()
