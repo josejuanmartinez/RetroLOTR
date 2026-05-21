@@ -28,6 +28,12 @@ public class CursorManager : MonoBehaviour
             Cursor.SetCursor(draggableCursor, hotSpot, CursorMode.Auto);
     }
 
+    public void SetClickableCursor()
+    {
+        if (clickableCursor != null)
+            Cursor.SetCursor(clickableCursor, hotSpot, CursorMode.Auto);
+    }
+
     public void SetDisableCursor()
     {
         if (disableCursor != null)

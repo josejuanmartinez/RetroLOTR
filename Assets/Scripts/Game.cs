@@ -187,8 +187,40 @@ public class Game : MonoBehaviour
         BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
         StartCoroutine(RefreshDeckUiAfterStartup());
+        StartCoroutine(ShowTurnZeroBanner());
         MessageDisplay.ClearPersistent();
 
+    }
+
+    private IEnumerator ShowTurnZeroBanner()
+    {
+        yield return new WaitForSeconds(1.1f);
+        TurnBanner.Show(turn, ResolveBannerSprite(player));
+    }
+
+    private static Sprite ResolveBannerSprite(PlayableLeader leader)
+    {
+        if (leader == null) return null;
+        LeaderBiomeConfig biome = leader.GetBiome();
+        if (biome == null) return null;
+
+        string bannerName = null;
+        string subdeckId = leader.GetSelectedSubdeckId();
+        if (!string.IsNullOrWhiteSpace(subdeckId) && biome.variants != null)
+        {
+            LeaderVariantConfig variant = biome.variants.Find(v =>
+                v != null &&
+                ((!string.IsNullOrWhiteSpace(v.variantId) && string.Equals(v.variantId, subdeckId, System.StringComparison.OrdinalIgnoreCase)) ||
+                 (!string.IsNullOrWhiteSpace(v.subdeckId) && string.Equals(v.subdeckId, subdeckId, System.StringComparison.OrdinalIgnoreCase))));
+            if (!string.IsNullOrWhiteSpace(variant?.banner))
+                bannerName = variant.banner;
+        }
+        if (string.IsNullOrWhiteSpace(bannerName))
+            bannerName = biome.banner;
+        if (string.IsNullOrWhiteSpace(bannerName)) return null;
+
+        Illustrations illustrations = FindFirstObjectByType<Illustrations>();
+        return illustrations != null ? illustrations.GetIllustrationByName(bannerName, false) : null;
     }
 
     private void DiscoverStartingRegions()
@@ -457,7 +489,7 @@ public class Game : MonoBehaviour
         AdvanceTemporaryPcVisibility();
         board?.ClearAllScouting();
         AnnounceScoutingStatus();
-        MessageDisplay.ShowMessage($"Turn {turn}", Color.green, true);
+        TurnBanner.Show(turn, ResolveBannerSprite(player));
         NewTurnStarted?.Invoke(turn);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         storesManager.AdvanceTurn();

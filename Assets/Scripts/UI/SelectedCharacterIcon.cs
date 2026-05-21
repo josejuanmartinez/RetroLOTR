@@ -81,6 +81,8 @@ public class SelectedCharacterIcon : MonoBehaviour
         BindPlayedCardTemplate();
         ClearPlayedCardInstances();
         SetPlayedCardVisible(false);
+        if (icon != null && icon.GetComponent<CharacterShineEffect>() == null)
+            icon.gameObject.AddComponent<CharacterShineEffect>();
     }
 
     private void OnDisable()

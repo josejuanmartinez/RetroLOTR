@@ -26,13 +26,6 @@ public class Leader : Character
     public int mithrilAmount = 0;
     public int goldAmount = 0;
 
-    [Header("Creation Slots")]
-    [SerializeField] private int characterSlotsAvailable = 0;
-    [SerializeField] private int pcSlotsAvailable = 0;
-    [SerializeField] private int createdCharacters = 0;
-    [SerializeField] private int createdPcs = 0;
-    [SerializeField] private int nextCharacterSlotTurn = 1;
-    [SerializeField] private int nextPcSlotTurn = 1;
     private Game game;
     private LeaderBiomeConfig leaderBiome;
 
@@ -48,76 +41,11 @@ public class Leader : Character
         return leaderBiome;
     }
 
-    private void EvaluateCreationSlots()
-    {
-        if (game == null) game = FindFirstObjectByType<Game>();
-        int currentTurn = game != null ? game.turn : 0;
+    public bool HasCharacterSlot() => true;
+    public bool HasPcSlot() => true;
 
-        bool characterSlotAdded = false;
-        bool pcSlotAdded = false;
-
-        if (createdCharacters < 5 && currentTurn >= nextCharacterSlotTurn)
-        {
-            characterSlotsAvailable = Math.Min(characterSlotsAvailable + 1, 5 - createdCharacters);
-            nextCharacterSlotTurn += 10;
-            characterSlotAdded = true;
-        }
-
-        if (createdPcs < 5 && currentTurn >= nextPcSlotTurn)
-        {
-            pcSlotsAvailable = Math.Min(pcSlotsAvailable + 1, 5 - createdPcs);
-            nextPcSlotTurn += 10;
-            pcSlotAdded = true;
-        }
-
-        if (game != null && game.IsPlayerCurrentlyPlaying() && (characterSlotAdded || pcSlotAdded))
-        {
-            string message = characterSlotAdded && pcSlotAdded
-                ? "A new character slot and a new pc slot are available."
-                : characterSlotAdded
-                    ? "A new character slot is available."
-                    : "A new pc slot is available.";
-            string costHint = BuildCreationCostHint(characterSlotAdded, pcSlotAdded);
-            if (!string.IsNullOrWhiteSpace(costHint)) message += $" {costHint}";
-            MessageDisplay.ShowMessage(message, Color.yellow);
-        }
-    }
-
-    public bool HasCharacterSlot() => characterSlotsAvailable > 0 && createdCharacters < 5;
-    public bool HasPcSlot() => pcSlotsAvailable > 0 && createdPcs < 5;
-
-    public bool TryConsumeCharacterSlot()
-    {
-        if (!HasCharacterSlot()) return false;
-        characterSlotsAvailable--;
-        createdCharacters++;
-        return true;
-    }
-
-    public bool TryConsumePcSlot()
-    {
-        if (!HasPcSlot()) return false;
-        pcSlotsAvailable--;
-        createdPcs++;
-        return true;
-    }
-
-    public int GetCreatedCharactersCount() => createdCharacters;
-    public int GetCreatedPcsCount() => createdPcs;
-
-    public string GetNextNewCharacterName()
-    {
-        if (leaderBiome?.newCharacters == null) return null;
-        if (createdCharacters >= leaderBiome.newCharacters.Count) return null;
-        return leaderBiome.newCharacters[createdCharacters];
-    }
-
-    public string GetNextNewPcName()
-    {
-        if (leaderBiome?.newPCs == null) return null;
-        if (createdPcs >= leaderBiome.newPCs.Count) return null;
-        return leaderBiome.newPCs[createdPcs];
-    }
+    public bool TryConsumeCharacterSlot() => true;
+    public bool TryConsumePcSlot() => true;
 
     public int GetLeatherPerTurn()
     {
@@ -167,8 +95,6 @@ public class Leader : Character
         if (!killed && goldAmount < -10) Killed(this);
 
         if (killed) return;
-
-        EvaluateCreationSlots();
 
         Army.ResolveStartOfTurnRangedVolleysForLeader(this);
         
@@ -604,54 +530,6 @@ public class Leader : Character
     public int GetAllPoints()
     {
         return GetCharacterPoints() + GetPCPoints() + GetArmyPoints() + GetStorePoints();
-    }
-
-    private string BuildCreationCostHint(bool characterSlotAdded, bool pcSlotAdded)
-    {
-        List<string> parts = new();
-        if (pcSlotAdded)
-        {
-            int? campCost = GetActionGoldCost("PostCamp");
-            if (campCost.HasValue) parts.Add($"Posting a new camp costs {campCost.Value} gold.");
-        }
-        if (characterSlotAdded)
-        {
-            (int min, int max)? range = GetActionGoldCostRange("NameCommander", "NameAgent", "NameEmmissary", "NameMage");
-            if (range.HasValue)
-            {
-                string costText = range.Value.min == range.Value.max
-                    ? range.Value.min.ToString()
-                    : $"{range.Value.min}-{range.Value.max}";
-                parts.Add($"Creating a new character costs {costText} gold.");
-            }
-        }
-        return string.Join(" ", parts);
-    }
-
-    private (int min, int max)? GetActionGoldCostRange(params string[] classNames)
-    {
-        if (classNames == null || classNames.Length == 0) return null;
-        List<int> costs = new();
-        for (int i = 0; i < classNames.Length; i++)
-        {
-            int? cost = GetActionGoldCost(classNames[i]);
-            if (cost.HasValue) costs.Add(cost.Value);
-        }
-
-        if (costs.Count == 0) return null;
-        int min = costs.Min();
-        int max = costs.Max();
-        return (min, max);
-    }
-
-    private int? GetActionGoldCost(string className)
-    {
-        if (string.IsNullOrWhiteSpace(className)) return null;
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        if (deckManager == null || deckManager.cards == null) return null;
-
-        CardData card = deckManager.cards.FirstOrDefault(c => string.Equals(c.GetActionRef(), className, StringComparison.OrdinalIgnoreCase));
-        return card != null ? card.GetTotalGoldCost() : null;
     }
 
     public override void Killed(Leader killedBy, bool onlyMask = false)

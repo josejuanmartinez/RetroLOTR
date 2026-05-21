@@ -86,6 +86,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private Image encounterArtOverlay;
     private TextMeshProUGUI encounterQuestionMark;
     private Coroutine descriptionTypewriterCoroutine;
+    private Coroutine encounterHintCoroutine;
     private int originalSiblingIndex;
     private Transform originalParent;
     private SelectedCharacterIcon selectedCharacterIcon;
@@ -216,6 +217,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             Sprite sprite = ResolveCardArtwork(data);
             cardArtImage.sprite = sprite;
             cardArtImage.enabled = sprite != null;
+
+            if (cardArtImage.GetComponent<CardShineEffect>() == null)
+                cardArtImage.gameObject.AddComponent<CardShineEffect>();
         }
 
         if (deckTypeImage != null && !string.IsNullOrWhiteSpace(data.deckSpriteName) && illustrations != null)
@@ -238,17 +242,44 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (!data.hasShownHandAnimation && descriptionText != null && !string.IsNullOrEmpty(baseDescription))
         {
-            descriptionText.text = string.Empty;
-            descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine(baseDescription, data));
+            string quoteBlock = data.GetQuoteBlock();
+            if (!string.IsNullOrWhiteSpace(quoteBlock) && baseDescription.Contains(quoteBlock))
+            {
+                int quoteStart = baseDescription.LastIndexOf(quoteBlock, StringComparison.Ordinal);
+                string immediateText = baseDescription.Substring(0, quoteStart).TrimEnd();
+                descriptionText.text = immediateText;
+                descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine("\n\n" + quoteBlock, data, append: true));
+            }
+            else
+            {
+                descriptionText.text = string.Empty;
+                descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine(baseDescription, data));
+            }
         }
     }
 
-    private IEnumerator HandDrawTypewriterCoroutine(string text, CardData data)
+    private IEnumerator HandDrawTypewriterCoroutine(string text, CardData data, bool append = false)
     {
-        yield return StartCoroutine(TypewriterEffectCoroutine(descriptionText, text));
+        if (append)
+            yield return StartCoroutine(AppendTypewriterEffectCoroutine(descriptionText, text));
+        else
+            yield return StartCoroutine(TypewriterEffectCoroutine(descriptionText, text));
         if (data != null) data.hasShownHandAnimation = true;
         descriptionTypewriterCoroutine = null;
         UpdateInteractableState();
+    }
+
+    private IEnumerator AppendTypewriterEffectCoroutine(TextMeshProUGUI textComponent, string appendText)
+    {
+        if (textComponent == null || string.IsNullOrEmpty(appendText)) yield break;
+        string prefix = textComponent.text;
+        float delay = Mathf.Min(0.05f, 2f / appendText.Length);
+        for (int i = 0; i < appendText.Length; i++)
+        {
+            if (textComponent == null) yield break;
+            textComponent.text = prefix + appendText.Substring(0, i + 1);
+            yield return new WaitForSecondsRealtime(delay);
+        }
     }
 
     private Sprite ResolveCardArtwork(CardData data)
@@ -301,6 +332,28 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (candidates.Count == 0) return;
         var list = new List<Hex>(candidates);
         data.encounterTargetHex = list[UnityEngine.Random.Range(0, list.Count)];
+    }
+
+    private bool IsUnplayedEncounterWithHex() =>
+        cardData != null &&
+        cardData.IsEncounterCard() &&
+        !cardData.encounterRevealed &&
+        cardData.encounterTargetHex != null;
+
+    private void FlashEncounterHintFrame(Hex hex)
+    {
+        if (hex == null || hex.tipHexFrame == null) return;
+        if (encounterHintCoroutine != null) StopCoroutine(encounterHintCoroutine);
+        encounterHintCoroutine = StartCoroutine(EncounterHintFrameCoroutine(hex));
+    }
+
+    private IEnumerator EncounterHintFrameCoroutine(Hex hex)
+    {
+        hex.tipHexFrame.SetActive(true);
+        yield return new WaitForSecondsRealtime(5f);
+        if (hex != null && hex.tipHexFrame != null)
+            hex.tipHexFrame.SetActive(false);
+        encounterHintCoroutine = null;
     }
 
     private void SetupEncounterHiddenVisuals(CardData data)
@@ -723,6 +776,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             if (cardData != null && cardData.isPlayable)
                 cursorManager.SetDraggableCursor();
+            else if (IsUnplayedEncounterWithHex())
+                cursorManager.SetClickableCursor();
             else
                 cursorManager.SetDisableCursor();
         }
@@ -741,9 +796,17 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public void OnPointerClick(PointerEventData eventData)
     {
         if (isDragging) return;
-        if (canvasGroup != null && !canvasGroup.interactable) return;
         if (eventData.button == PointerEventData.InputButton.Left)
         {
+            if (canvasGroup != null && !canvasGroup.interactable)
+            {
+                if (IsUnplayedEncounterWithHex())
+                {
+                    BoardNavigator.Instance?.LookAt(cardData.encounterTargetHex.transform.position);
+                    FlashEncounterHintFrame(cardData.encounterTargetHex);
+                }
+                return;
+            }
             TryPlayCard();
         }
     }

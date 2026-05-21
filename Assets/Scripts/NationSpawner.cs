@@ -157,6 +157,10 @@ public class NationSpawner : MonoBehaviour
         leaderPositions.Clear();
         startingCityPositionsByRegion.Clear();
 
+        // Pre-spawn ownerless PCs first so their startingCityRegions are registered
+        // before playable leaders look them up (e.g. Sauron needs "Gorgoroth" from Barad-dur)
+        PreSpawnOwnerlessPcs(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
+
         InstantiateLeadersAndCharacters(playableLeaders.playableLeaders.biomes, placedPositions);
         InstantiateLeadersAndCharacters(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
         AssignLandRegions();
@@ -444,6 +448,17 @@ public class NationSpawner : MonoBehaviour
         }
     }
 
+    private void PreSpawnOwnerlessPcs(List<NonPlayableLeaderBiomeConfig> nonPlayableleaderBiomes, List<Vector2Int> placedPositions)
+    {
+        foreach (NonPlayableLeaderBiomeConfig config in nonPlayableleaderBiomes)
+        {
+            if (config == null || !config.spawnPcWithoutOwner) continue;
+            Vector2Int? position = InstantiateOwnerlessPc(config, placedPositions, null);
+            if (position.HasValue && !string.IsNullOrWhiteSpace(config.characterName))
+                leaderPositions[config.characterName] = position.Value;
+        }
+    }
+
     private void InstantiateLeadersAndCharacters(List<NonPlayableLeaderBiomeConfig> nonPlayableleaderBiomes, List<Vector2Int> placedPositions)
     {
         IEnumerable<NonPlayableLeaderBiomeConfig> orderedBiomes = nonPlayableleaderBiomes
@@ -452,6 +467,14 @@ public class NationSpawner : MonoBehaviour
 
         foreach (NonPlayableLeaderBiomeConfig nonPlayableleaderBiomeConfig in orderedBiomes)
         {
+            // Skip ownerless PCs already placed in the pre-spawn pass
+            if (nonPlayableleaderBiomeConfig.spawnPcWithoutOwner &&
+                !string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName) &&
+                leaderPositions.ContainsKey(nonPlayableleaderBiomeConfig.characterName))
+            {
+                continue;
+            }
+
             Vector2Int? preferredPosition = null;
             if (!string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName) &&
                 tutorialAnchorByNpl.TryGetValue(nonPlayableleaderBiomeConfig.characterName, out string anchorName) &&
@@ -776,7 +799,7 @@ public class NationSpawner : MonoBehaviour
         }
 
         return suitableHexes
-            .Where(pos => board.hexes.TryGetValue(pos, out Hex h) && !h.HasAnyPC())
+            .Where(pos => board.hexes.TryGetValue(pos, out Hex h) && !h.HasAnyPC() && (h.characters == null || h.characters.Count == 0))
             .ToList();
     }
 
