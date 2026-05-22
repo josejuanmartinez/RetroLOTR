@@ -642,8 +642,41 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         AppendRequirement(reqs, "steel", data.steelRequired);
         AppendRequirement(reqs, "mithril", data.mithrilRequired);
 
+        string situationLabel = FormatSituationLabel(data);
+        if (!string.IsNullOrWhiteSpace(situationLabel))
+        {
+            string costPart = reqs.Count > 0 ? $"\n{string.Join(" ", reqs)}" : string.Empty;
+            return $"{situationLabel}{costPart}";
+        }
+
         if (reqs.Count == 0) return string.Empty;
         return $"{string.Join(" ", reqs)}";
+    }
+
+    private string FormatSituationLabel(CardData data)
+    {
+        if (data == null || data.GetCardType() != CardTypeEnum.Action) return string.Empty;
+        CardSituationEnum situation = data.GetSituation();
+        if (situation == CardSituationEnum.None) return string.Empty;
+
+        string label = situation switch
+        {
+            CardSituationEnum.ArmyAtEnemyPC                    => "Army at enemy PC",
+            CardSituationEnum.AgentAtEnemyPC                   => "Agent at enemy PC",
+            CardSituationEnum.EmmissaryAtEnemyPC               => "Emissary at enemy PC",
+            CardSituationEnum.ArmyAtFriendlyPC                 => "Army at friendly PC",
+            CardSituationEnum.EmmissaryAtOwnPC                 => "Emissary at own PC",
+            CardSituationEnum.AgentAtOwnPC                     => "Agent at own PC",
+            CardSituationEnum.ArmyAtHexWithEnemyArmyAndNoPC   => "Army meets enemy army",
+            CardSituationEnum.AgentAtHexWithEnemyCharacter     => "Agent meets enemy",
+            CardSituationEnum.EmmissaryAtHexWithEnemyCharacter => "Emissary meets enemy",
+            CardSituationEnum.MageAtHexWithEnemyCharacter      => "Mage meets enemy",
+            CardSituationEnum.MageAtArtifactHex                => "Mage at artifact",
+            CardSituationEnum.CommanderAtOwnPC                 => "Commander at own PC",
+            _                                                   => string.Empty
+        };
+
+        return string.IsNullOrWhiteSpace(label) ? string.Empty : $"When: {label}";
     }
 
     private void AppendRequirement(List<string> requirements, string spriteName, int count)

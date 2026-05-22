@@ -43,7 +43,7 @@ public class LeaderBiomeConfig: BiomeConfig
     public bool startsWithPort;
 
     public List<BiomeConfig> startingCharacters = new();
-    public List<string> tutorialArtifacts = new();
+    public List<Artifact> tutorialArtifacts = new();
     public List<string> tutorialAnchors = new();
 
     public List<string> newCharacters = new();

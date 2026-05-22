@@ -47,15 +47,13 @@ public class Corruption : DarkNeutralSpell
 
             if (target == null) return false;
 
-            int baseDamage = UnityEngine.Random.Range(5, 16) * Math.Max(1, caster.GetMage());
-            int damage = Math.Max(1, ApplySpellEffectMultiplier(caster, baseDamage));
-            target.Wounded(caster.GetOwner(), damage);
-            target.ApplyStatusEffect(StatusEffectEnum.Fear, 2);
+            int turns = Math.Max(1, ApplySpellEffectMultiplier(caster, 1 + Mathf.FloorToInt(caster.GetMage() / 2f)));
+            target.ApplyStatusEffect(StatusEffectEnum.Poisoned, turns);
 
             MessageDisplayNoUI.ShowMessage(
                 caster.hex,
                 caster,
-                $"{target.characterName} is corrupted: {damage} damage and Fear (2).",
+                $"{target.characterName} is poisoned ({turns} turns).",
                 Color.magenta);
             return true;
         }

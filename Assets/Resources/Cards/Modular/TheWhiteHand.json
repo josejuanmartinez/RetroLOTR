@@ -73,7 +73,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 711,
@@ -145,7 +146,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 712,
@@ -217,7 +219,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 713,
@@ -289,7 +292,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 589,
@@ -363,79 +367,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
-        },
-        {
-            "cardId": 590,
-            "name": "Dunlending Warriors",
-            "quote": "Fierce and proud, they charge forth to reclaim their lost lands.",
-            "actionEffect": "",
-            "type": "Army",
-            "tags": [],
-            "deckId": "the_white_hand",
-            "alignment": 0,
-            "actionClassName": "",
-            "action": "",
-            "spriteName": "DunlendingWarriors",
-            "region": "",
-            "description": "",
-            "requirementsText": "",
-            "historyText": "",
-            "statusEffect": "",
-            "procChance": 0,
-            "portraitName": "",
-            "characterGroup": "",
-            "referenceDeckId": "",
-            "referenceCardId": 0,
-            "encounterOptions": [],
-            "fleeOption": {
-                "optionId": "",
-                "label": "",
-                "description": "",
-                "outcomes": []
-            },
-            "commander": 0,
-            "agent": 0,
-            "emmissary": 0,
-            "mage": 0,
-            "race": 0,
-            "artifacts": [],
-            "troopType": 0,
-            "specialAbilities": [],
-            "commanderSkillRequired": 1,
-            "agentSkillRequired": 0,
-            "emissarySkillRequired": 0,
-            "mageSkillRequired": 0,
-            "difficulty": 0,
-            "leatherRequired": 3,
-            "mountsRequired": 0,
-            "timberRequired": 1,
-            "ironRequired": 1,
-            "steelRequired": 0,
-            "mithrilRequired": 0,
-            "goldRequired": 2,
-            "jokerRequired": 0,
-            "leatherGranted": 0,
-            "mountsGranted": 0,
-            "timberGranted": 0,
-            "ironGranted": 0,
-            "steelGranted": 0,
-            "mithrilGranted": 0,
-            "goldGranted": 0,
-            "startingPC": "",
-            "inspireEffectData": {
-                "type": "",
-                "statusEffect": "",
-                "turns": 0,
-                "amount": 0,
-                "troopType": "",
-                "resourceType": "",
-                "skillType": "",
-                "allCharacters": true,
-                "nearest": true
-            },
-            "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 625,
@@ -509,7 +442,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 644,
@@ -583,7 +517,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 647,
@@ -657,7 +592,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 678,
@@ -731,7 +667,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 715,
@@ -803,7 +740,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 716,
@@ -875,7 +813,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 717,
@@ -949,7 +888,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 718,
@@ -1021,7 +961,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 719,
@@ -1093,79 +1034,8 @@
                 "nearest": false
             },
             "amount": 1,
-            "deckSpriteName": ""
-        },
-        {
-            "cardId": 720,
-            "name": "Grima",
-            "quote": "Words are my blade, cutting through the hearts of men.",
-            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 20 on a visible enemy settlement.",
-            "type": "Character",
-            "tags": [],
-            "deckId": "the_white_hand",
-            "alignment": 0,
-            "actionClassName": "",
-            "action": "",
-            "spriteName": "Grima",
-            "region": "",
-            "description": "",
-            "requirementsText": "",
-            "historyText": "",
-            "statusEffect": "",
-            "procChance": 0,
-            "portraitName": "",
-            "characterGroup": "",
-            "referenceDeckId": "",
-            "referenceCardId": 0,
-            "encounterOptions": [],
-            "fleeOption": {
-                "optionId": "",
-                "label": "",
-                "description": "",
-                "outcomes": []
-            },
-            "commander": 0,
-            "agent": 1,
-            "emmissary": 1,
-            "mage": 0,
-            "race": 0,
-            "artifacts": [],
-            "troopType": 0,
-            "specialAbilities": [],
-            "commanderSkillRequired": 0,
-            "agentSkillRequired": 0,
-            "emissarySkillRequired": 0,
-            "mageSkillRequired": 0,
-            "difficulty": 0,
-            "leatherRequired": 0,
-            "mountsRequired": 0,
-            "timberRequired": 0,
-            "ironRequired": 0,
-            "steelRequired": 0,
-            "mithrilRequired": 0,
-            "goldRequired": 0,
-            "jokerRequired": 0,
-            "leatherGranted": 0,
-            "mountsGranted": 0,
-            "timberGranted": 0,
-            "ironGranted": 0,
-            "steelGranted": 0,
-            "mithrilGranted": 0,
-            "goldGranted": 0,
-            "startingPC": "Edoras",
-            "inspireEffectData": {
-                "type": "DecreaseLoyalty",
-                "statusEffect": "",
-                "turns": 0,
-                "amount": 20,
-                "troopType": "",
-                "resourceType": "",
-                "skillType": "",
-                "allCharacters": true,
-                "nearest": true
-            },
-            "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 721,
@@ -1237,7 +1107,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 722,
@@ -1309,7 +1180,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 723,
@@ -1381,79 +1253,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
-        },
-        {
-            "cardId": 724,
-            "name": "Waulfa",
-            "quote": "Strength of the earth flows through my veins; I will not falter.",
-            "actionEffect": "Recruit 2 lc <sprite name=\"lc\"> to a controlled army.",
-            "type": "Character",
-            "tags": [],
-            "deckId": "the_white_hand",
-            "alignment": 0,
-            "actionClassName": "",
-            "action": "",
-            "spriteName": "Waulfa",
-            "region": "",
-            "description": "",
-            "requirementsText": "",
-            "historyText": "",
-            "statusEffect": "",
-            "procChance": 0,
-            "portraitName": "",
-            "characterGroup": "",
-            "referenceDeckId": "",
-            "referenceCardId": 0,
-            "encounterOptions": [],
-            "fleeOption": {
-                "optionId": "",
-                "label": "",
-                "description": "",
-                "outcomes": []
-            },
-            "commander": 1,
-            "agent": 0,
-            "emmissary": 0,
-            "mage": 0,
-            "race": 19,
-            "artifacts": [],
-            "troopType": 0,
-            "specialAbilities": [],
-            "commanderSkillRequired": 0,
-            "agentSkillRequired": 0,
-            "emissarySkillRequired": 0,
-            "mageSkillRequired": 0,
-            "difficulty": 0,
-            "leatherRequired": 0,
-            "mountsRequired": 0,
-            "timberRequired": 0,
-            "ironRequired": 0,
-            "steelRequired": 0,
-            "mithrilRequired": 0,
-            "goldRequired": 0,
-            "jokerRequired": 0,
-            "leatherGranted": 0,
-            "mountsGranted": 0,
-            "timberGranted": 0,
-            "ironGranted": 0,
-            "steelGranted": 0,
-            "mithrilGranted": 0,
-            "goldGranted": 0,
-            "startingPC": "Enedhir",
-            "inspireEffectData": {
-                "type": "RecruitTroops",
-                "statusEffect": "",
-                "turns": 0,
-                "amount": 2,
-                "troopType": "lc",
-                "resourceType": "",
-                "skillType": "",
-                "allCharacters": true,
-                "nearest": true
-            },
-            "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 725,
@@ -1525,7 +1326,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 726,
@@ -1599,7 +1401,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 727,
@@ -1673,7 +1476,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 921,
@@ -1750,7 +1554,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 922,
@@ -1824,7 +1629,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 923,
@@ -1901,7 +1707,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 924,
@@ -1973,7 +1780,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 925,
@@ -2045,7 +1853,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 926,
@@ -2119,7 +1928,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 927,
@@ -2191,7 +2001,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 929,
@@ -2263,7 +2074,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 930,
@@ -2337,7 +2149,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 931,
@@ -2411,7 +2224,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 932,
@@ -2483,7 +2297,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 933,
@@ -2555,7 +2370,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 934,
@@ -2627,7 +2443,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 935,
@@ -2701,7 +2518,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 936,
@@ -2775,7 +2593,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 937,
@@ -2849,7 +2668,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 938,
@@ -2923,7 +2743,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 939,
@@ -2997,7 +2818,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 940,
@@ -3071,7 +2893,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 941,
@@ -3145,7 +2968,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 942,
@@ -3219,7 +3043,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 943,
@@ -3293,7 +3118,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 945,
@@ -3365,7 +3191,8 @@
                 "nearest": true
             },
             "amount": 5,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 947,
@@ -3439,7 +3266,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 948,
@@ -3513,7 +3341,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 949,
@@ -3587,7 +3416,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 950,
@@ -3661,7 +3491,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 951,
@@ -3733,7 +3564,8 @@
                 "nearest": true
             },
             "amount": 5,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 952,
@@ -3807,7 +3639,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 954,
@@ -3879,7 +3712,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 979,
@@ -3951,7 +3785,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 980,
@@ -4023,7 +3858,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 981,
@@ -4095,7 +3931,8 @@
                 "nearest": true
             },
             "amount": 5,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1010,
@@ -4167,7 +4004,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1011,
@@ -4239,7 +4077,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1012,
@@ -4311,7 +4150,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1013,
@@ -4383,7 +4223,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1014,
@@ -4457,7 +4298,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1015,
@@ -4529,7 +4371,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1017,
@@ -4603,7 +4446,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1060,
@@ -4675,7 +4519,8 @@
                 "nearest": true
             },
             "amount": 5,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1061,
@@ -4749,7 +4594,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1062,
@@ -4821,7 +4667,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1063,
@@ -4893,7 +4740,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1064,
@@ -4967,7 +4815,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1065,
@@ -5041,7 +4890,8 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
         },
         {
             "cardId": 1066,
@@ -5115,7 +4965,154 @@
                 "nearest": true
             },
             "amount": 1,
-            "deckSpriteName": ""
+            "deckSpriteName": "",
+            "situation": ""
+        },
+        {
+            "cardId": 1067,
+            "name": "Curse",
+            "quote": "Words spoken in malice carry weight beyond measure.",
+            "actionEffect": "Wound an enemy character.",
+            "type": "Spell",
+            "tags": [],
+            "deckId": "the_white_hand",
+            "alignment": 2,
+            "actionClassName": "Curse",
+            "action": "Curse",
+            "spriteName": "Curse",
+            "region": "",
+            "description": "",
+            "requirementsText": "",
+            "historyText": "",
+            "statusEffect": "",
+            "procChance": 0,
+            "portraitName": "",
+            "characterGroup": "",
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 1010,
+            "encounterOptions": [],
+            "fleeOption": {
+                "optionId": "",
+                "label": "",
+                "description": "",
+                "outcomes": []
+            },
+            "commander": 0,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 0,
+            "artifacts": [],
+            "troopType": 0,
+            "specialAbilities": [],
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 3,
+            "difficulty": 60,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 4,
+            "jokerRequired": 0,
+            "leatherGranted": 0,
+            "mountsGranted": 0,
+            "timberGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0,
+            "goldGranted": 0,
+            "startingPC": "",
+            "inspireEffectData": {
+                "type": "",
+                "statusEffect": "",
+                "turns": 0,
+                "amount": 0,
+                "troopType": "",
+                "resourceType": "",
+                "skillType": "",
+                "allCharacters": true,
+                "nearest": true
+            },
+            "amount": 1,
+            "deckSpriteName": "",
+            "situation": ""
+        },
+        {
+            "cardId": 1068,
+            "name": "",
+            "quote": "",
+            "actionEffect": "",
+            "type": "",
+            "tags": [],
+            "deckId": "the_white_hand",
+            "alignment": 0,
+            "actionClassName": "",
+            "action": "",
+            "spriteName": "",
+            "region": "",
+            "description": "",
+            "requirementsText": "",
+            "historyText": "",
+            "statusEffect": "",
+            "procChance": 0,
+            "portraitName": "",
+            "characterGroup": "",
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 1011,
+            "encounterOptions": [],
+            "fleeOption": {
+                "optionId": "",
+                "label": "",
+                "description": "",
+                "outcomes": []
+            },
+            "commander": 0,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 0,
+            "artifacts": [],
+            "troopType": 0,
+            "specialAbilities": [],
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "jokerRequired": 0,
+            "leatherGranted": 0,
+            "mountsGranted": 0,
+            "timberGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0,
+            "goldGranted": 0,
+            "startingPC": "",
+            "inspireEffectData": {
+                "type": "",
+                "statusEffect": "",
+                "turns": 0,
+                "amount": 0,
+                "troopType": "",
+                "resourceType": "",
+                "skillType": "",
+                "allCharacters": true,
+                "nearest": true
+            },
+            "amount": 1,
+            "deckSpriteName": "",
+            "situation": ""
         }
     ]
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public class Possession : DarkNeutralSpell
 {
@@ -15,7 +14,7 @@ public class Possession : DarkNeutralSpell
         condition = (c) =>
         {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return FindEnemyCharacterTargetAtHex(c) != null;
+            return FindEnemyCharactersAtHex(c).Any(t => c.CanPossess(t));
         };
 
         async System.Threading.Tasks.Task<bool> possessionAsync(Character caster)
@@ -23,7 +22,9 @@ public class Possession : DarkNeutralSpell
             if (originalEffect != null && !originalEffect(caster)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(caster)) return false;
 
-            List<Character> enemies = FindEnemyCharactersAtHex(caster);
+            List<Character> enemies = FindEnemyCharactersAtHex(caster)
+                .Where(t => caster.CanPossess(t))
+                .ToList();
             if (enemies.Count < 1) return false;
 
             bool isAI = !caster.isPlayerControlled;
@@ -31,7 +32,7 @@ public class Possession : DarkNeutralSpell
             if (!isAI)
             {
                 string targetCharacter = await SelectionDialog.Ask(
-                    "Select enemy character",
+                    "Select enemy character to possess",
                     "Ok",
                     "Cancel",
                     enemies.Select(x => x.characterName).ToList(),
@@ -42,21 +43,14 @@ public class Possession : DarkNeutralSpell
             }
             else
             {
-                target = FindEnemyCharacterTargetAtHex(caster);
+                target = enemies.OrderByDescending(t => t.GetMage())
+                                .ThenByDescending(t => t.GetAgent())
+                                .First();
             }
 
             if (target == null) return false;
 
-            int turns = Math.Max(1, ApplySpellEffectMultiplier(caster, 1 + Mathf.FloorToInt(caster.GetMage() / 2f)));
-            target.Doubled(caster.GetOwner(), turns);
-            target.Halt(turns);
-
-            MessageDisplayNoUI.ShowMessage(
-                caster.hex,
-                caster,
-                $"{target.characterName} is possessed for {turns} turns: doubled and halted.",
-                Color.magenta);
-            return true;
+            return caster.Possess(target);
         }
 
         base.Initialize(c, condition, effect, possessionAsync);

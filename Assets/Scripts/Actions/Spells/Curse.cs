@@ -13,34 +13,45 @@ public class Curse : DarkNeutralSpell
         effect = (c) => true;
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return FindEnemyCharacterTargetAtHex(c) != null; 
+            return FindEnemyCharacterTargetAtHex(c) != null;
         };
-        async System.Threading.Tasks.Task<bool> curseAsync(Character c)
+        async System.Threading.Tasks.Task<bool> curseAsync(Character caster)
         {
-            if (originalEffect != null && !originalEffect(c)) return false;
-            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
+            if (originalEffect != null && !originalEffect(caster)) return false;
+            if (originalAsyncEffect != null && !await originalAsyncEffect(caster)) return false;
 
-            List<Character> enemies = FindEnemyCharactersAtHex(c);
+            List<Character> enemies = FindEnemyCharactersAtHex(caster);
             if (enemies.Count < 1) return false;
 
-            bool isAI = !c.isPlayerControlled;
+            bool isAI = !caster.isPlayerControlled;
             Character enemy = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select enemy character", "Ok", "Cancel", enemies.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string targetCharacter = await SelectionDialog.Ask(
+                    "Select enemy character",
+                    "Ok",
+                    "Cancel",
+                    enemies.Select(x => x.characterName).ToList(),
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(caster) : null);
                 if (string.IsNullOrEmpty(targetCharacter)) return false;
                 enemy = enemies.Find(x => x.characterName == targetCharacter);
             }
             else
             {
-                enemy = FindEnemyCharacterTargetAtHex(c);
+                enemy = FindEnemyCharacterTargetAtHex(caster);
             }
 
             if (enemy == null) return false;
 
-            int damage = UnityEngine.Random.Range(0, 20) * c.GetMage();
-            damage = Math.Max(0, ApplySpellEffectMultiplier(c, damage));
-            enemy.Wounded(c.GetOwner(), damage);
+            int turns = Math.Max(1, ApplySpellEffectMultiplier(caster, 1 + Mathf.FloorToInt(caster.GetMage() / 2f)));
+            enemy.ApplyStatusEffect(StatusEffectEnum.MorgulTouch, turns);
+
+            MessageDisplayNoUI.ShowMessage(
+                caster.hex,
+                caster,
+                $"{enemy.characterName} is afflicted with the Morgul Touch ({turns} turns).",
+                Color.magenta);
             return true;
         }
         base.Initialize(c, condition, effect, curseAsync);

@@ -165,6 +165,10 @@ public class CardData
     public InspireEffectData inspireEffectData;
     public int amount = 1;
     public string deckSpriteName;
+    public string situation = string.Empty;
+
+    public CardSituationEnum GetSituation()
+        => Enum.TryParse(situation, true, out CardSituationEnum s) ? s : CardSituationEnum.None;
 
     [NonSerialized] public bool isPlayable;
     [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
@@ -643,6 +647,7 @@ public class DeckManager : MonoBehaviour
         public readonly List<CardData> drawPile = new();
         public readonly List<CardData> hand = new();
         public readonly List<CardData> discardPile = new();
+        public readonly List<CardData> situationPool = new List<CardData>();
         public int turnsWithoutRegionCard;
     }
 
@@ -857,6 +862,30 @@ public class DeckManager : MonoBehaviour
     {
         if (leader == null) return Array.Empty<CardData>();
         return playerDecks.TryGetValue(leader, out PlayerDeckState state) ? state.hand : Array.Empty<CardData>();
+    }
+
+    // Returns up to 2 affordable situation cards (max 1 per active situation, priority-ordered).
+    public List<CardData> GetSituationCards(PlayableLeader leader, Character character, Hex hex)
+    {
+        var result = new List<CardData>();
+        if (leader == null || character == null || hex == null) return result;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return result;
+
+        List<CardSituationEnum> activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
+
+        foreach (CardSituationEnum situation in activeSituations)
+        {
+            if (result.Count >= 2) break;
+
+            CardData match = state.situationPool.FirstOrDefault(card =>
+                card != null
+                && card.GetSituation() == situation
+                && card.EvaluatePlayability(character));
+
+            if (match != null) result.Add(match);
+        }
+
+        return result;
     }
 
     public IReadOnlyList<CardData> GetDrawPile(PlayableLeader leader)
@@ -2151,7 +2180,26 @@ public class DeckManager : MonoBehaviour
 
         ApplyBalancedDrawOrdering(state.drawPile);
         DrawUpToHandSize(state);
+
+        PopulateSituationPool(state, deckId);
+
         return state;
+    }
+
+    private void PopulateSituationPool(PlayerDeckState state, string deckId)
+    {
+        state.situationPool.Clear();
+        IEnumerable<DeckData> allDecks = GetDeckTree(deckId).Concat(GetSharedDecks());
+        foreach (DeckData deck in allDecks)
+        {
+            if (deck?.cards == null) continue;
+            foreach (CardData card in deck.cards)
+            {
+                if (!ShouldIncludeCardInSituationPool(card)) continue;
+                CardData clone = CloneCard(card);
+                if (clone != null) state.situationPool.Add(clone);
+            }
+        }
     }
 
     private static void AddMergedPool(List<CardData> destination, List<CardData> basePool, List<CardData> leafPool)
@@ -2346,7 +2394,17 @@ public class DeckManager : MonoBehaviour
             return string.Equals(sourceDeckId, "encounter_shared", StringComparison.OrdinalIgnoreCase);
         }
 
+        // Action cards live in the situation pool, not the draw pile.
+        if (card.GetCardType() == CardTypeEnum.Action)
+            return false;
+
         return true;
+    }
+
+    private static bool ShouldIncludeCardInSituationPool(CardData card)
+    {
+        if (card == null) return false;
+        return card.GetCardType() == CardTypeEnum.Action;
     }
 
     private IEnumerable<DeckData> GetSharedDecks()

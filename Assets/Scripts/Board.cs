@@ -315,7 +315,7 @@ public class Board : MonoBehaviour
             {
                 Artifact artifact = hiddenArtifacts[i];
                 if (artifact == null) continue;
-                if (biome.tutorialArtifacts.Any(a => !string.IsNullOrWhiteSpace(a) && string.Equals(a, artifact.artifactName, StringComparison.OrdinalIgnoreCase)))
+                if (biome.tutorialArtifacts.Any(a => a != null && !string.IsNullOrWhiteSpace(a.artifactName) && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase)))
                 {
                     hiddenArtifacts.RemoveAt(i);
                 }
@@ -347,11 +347,10 @@ public class Board : MonoBehaviour
                 .ToList();
 
             int candidateIndex = 0;
-            foreach (string artifactName in biome.tutorialArtifacts)
+            foreach (Artifact template in biome.tutorialArtifacts)
             {
-                if (string.IsNullOrWhiteSpace(artifactName)) continue;
-                Artifact artifact = ArtifactRepository.GetByName(artifactName);
-                if (artifact == null) continue;
+                if (template == null || string.IsNullOrWhiteSpace(template.artifactName)) continue;
+                Artifact artifact = template.Clone();
 
                 Hex target = null;
                 while (candidateIndex < candidates.Count)
@@ -1439,6 +1438,8 @@ public class Board : MonoBehaviour
                 RefreshCardInteractions();
             }
 
+            CheckAndShowSituationCards(character, newHex);
+
             if ((!wasWater && isWater) || (wasWater && !isWater) || finishMovement)
             {
                 character.moved = character.GetMaxMovement();
@@ -1609,6 +1610,23 @@ public class Board : MonoBehaviour
         Card.RequestInteractionRefreshAll();
         FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
     }
+
+    private void CheckAndShowSituationCards(Character character, Hex hex)
+    {
+        if (character == null || hex == null) return;
+        Game g = FindFirstObjectByType<Game>();
+        if (g == null || !g.IsPlayerCurrentlyPlaying() || g.player != character.GetOwner()) return;
+
+        DeckManager deckManager = FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return;
+
+        List<CardData> situationCards = deckManager.GetSituationCards(g.player, character, hex);
+        if (situationCards == null || situationCards.Count == 0) return;
+
+        // TODO: fire the gold center-screen situation UI with situationCards
+        // SituationCardsUI.Instance?.Show(situationCards, character);
+    }
+
     private void UpdateGenerationProgress(float progress, string stage)
     {
         // Update the progress bar

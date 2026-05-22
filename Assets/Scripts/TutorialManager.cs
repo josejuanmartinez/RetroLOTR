@@ -1058,21 +1058,26 @@ public class TutorialManager : MonoBehaviour
         {
             completed = true;
         }
-        else if (!string.IsNullOrWhiteSpace(requiredCardName)
-            && TryGetSkipArmyDefinition(actor.GetOwner() as PlayableLeader, requiredCardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName, out int procChance))
+        else if (!string.IsNullOrWhiteSpace(requiredCardName))
         {
-            if (!actor.IsArmyCommander())
+            CardData armyCard = FindArmyCard(actor.GetOwner() as PlayableLeader, requiredCardName);
+            if (armyCard != null)
             {
-                actor.CreateArmy(troopType, 1, false, 0, specialAbilities, troopName, procChance);
+                List<ArmySpecialAbilityEnum> specialAbilities = armyCard.specialAbilities != null ? new List<ArmySpecialAbilityEnum>(armyCard.specialAbilities) : new List<ArmySpecialAbilityEnum>();
+                int procChance = Mathf.Clamp(armyCard.procChance <= 0 ? 100 : armyCard.procChance, 1, 100);
+                if (!actor.IsArmyCommander())
+                {
+                    actor.CreateArmy(armyCard.troopType, 1, false, 0, specialAbilities, armyCard.name, procChance);
+                }
+                else
+                {
+                    actor.GetArmy()?.Recruit(armyCard.troopType, 1, specialAbilities, armyCard.name, procChance);
+                    actor.hex?.RedrawCharacters();
+                    actor.hex?.RedrawArmies();
+                    actor.RefreshSelectedCharacterIconIfSelected();
+                }
+                completed = true;
             }
-            else
-            {
-                actor.GetArmy()?.Recruit(troopType, 1, specialAbilities, troopName, procChance);
-                actor.hex?.RedrawCharacters();
-                actor.hex?.RedrawArmies();
-                actor.RefreshSelectedCharacterIconIfSelected();
-            }
-            completed = true;
         }
         else
         {
@@ -1271,15 +1276,19 @@ public class TutorialManager : MonoBehaviour
         string requiredCardName = ResolveRequiredCardName(step, playableLeader);
         if (string.IsNullOrWhiteSpace(requiredCardName)) return;
 
-        if (!TryGetSkipArmyDefinition(playableLeader, requiredCardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName, out int procChance)) return;
+        CardData armyCard = FindArmyCard(playableLeader, requiredCardName);
+        if (armyCard == null) return;
+
+        List<ArmySpecialAbilityEnum> specialAbilities = armyCard.specialAbilities != null ? new List<ArmySpecialAbilityEnum>(armyCard.specialAbilities) : new List<ArmySpecialAbilityEnum>();
+        int procChance = Mathf.Clamp(armyCard.procChance <= 0 ? 100 : armyCard.procChance, 1, 100);
 
         if (!actor.IsArmyCommander())
         {
-            actor.CreateArmy(troopType, 1, false, 0, specialAbilities, troopName, procChance);
+            actor.CreateArmy(armyCard.troopType, 1, false, 0, specialAbilities, armyCard.name, procChance);
         }
         else
         {
-            actor.GetArmy()?.Recruit(troopType, 1, specialAbilities, troopName, procChance);
+            actor.GetArmy()?.Recruit(armyCard.troopType, 1, specialAbilities, armyCard.name, procChance);
             actor.hex?.RedrawCharacters();
             actor.hex?.RedrawArmies();
             actor.RefreshSelectedCharacterIconIfSelected();
@@ -1387,23 +1396,14 @@ public class TutorialManager : MonoBehaviour
         Debug.Log($"{TutorialDebugPrefix} leader='{leader.characterName}' stepIndex={requiredStepIndex} step='{stepId}' card='{requiredCard}' :: {message}");
     }
 
-    private bool TryGetSkipArmyDefinition(PlayableLeader playableLeader, string cardName, out TroopsTypeEnum troopType, out List<ArmySpecialAbilityEnum> specialAbilities, out string troopName, out int procChance)
+    private static CardData FindArmyCard(PlayableLeader playableLeader, string cardName)
     {
-        troopType = default;
-        specialAbilities = null;
-        troopName = null;
-        procChance = 100;
-        if (string.IsNullOrWhiteSpace(cardName)) return false;
-
+        if (string.IsNullOrWhiteSpace(cardName)) return null;
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        CardData card = deckManager != null ? deckManager.FindCardByNameForLeader(playableLeader, cardName) : null;
-        if (card == null || card.GetCardType() != CardTypeEnum.Army) return false;
-
-        troopType = card.troopType;
-        specialAbilities = card.specialAbilities != null ? new List<ArmySpecialAbilityEnum>(card.specialAbilities) : new List<ArmySpecialAbilityEnum>();
-        troopName = card.name;
-        procChance = Mathf.Clamp(card.procChance <= 0 ? 100 : card.procChance, 1, 100);
-        return true;
+        if (deckManager == null) return null;
+        CardData card = playableLeader != null ? deckManager.FindCardByNameForLeader(playableLeader, cardName) : null;
+        if (card != null && card.GetCardType() == CardTypeEnum.Army) return card;
+        return deckManager.FindArmyCardByName(cardName);
     }
 
     private void GrantAllBiomeTutorialArtifacts(PlayableLeader playableLeader)
@@ -1413,17 +1413,15 @@ public class TutorialManager : MonoBehaviour
         if (biome?.tutorialArtifacts == null || biome.tutorialArtifacts.Count == 0) return;
 
         HashSet<string> grantedNames = new(StringComparer.OrdinalIgnoreCase);
-        foreach (string artifactName in biome.tutorialArtifacts)
+        foreach (Artifact template in biome.tutorialArtifacts)
         {
-            if (string.IsNullOrWhiteSpace(artifactName)) continue;
-            grantedNames.Add(artifactName);
+            if (template == null || string.IsNullOrWhiteSpace(template.artifactName)) continue;
+            grantedNames.Add(template.artifactName);
 
-            bool alreadyOwned = playableLeader.artifacts.Any(a => a != null && string.Equals(a.artifactName, artifactName, StringComparison.OrdinalIgnoreCase));
+            bool alreadyOwned = playableLeader.artifacts.Any(a => a != null && string.Equals(a.artifactName, template.artifactName, StringComparison.OrdinalIgnoreCase));
             if (alreadyOwned) continue;
             if (playableLeader.artifacts.Count >= Character.MAX_ARTIFACTS) break;
-            Artifact artifact = ArtifactRepository.GetByName(artifactName);
-            if (artifact == null) continue;
-            playableLeader.artifacts.Add(artifact.Clone());
+            playableLeader.artifacts.Add(template.Clone());
             Character.RefreshArtifactPcVisibilityForHex(playableLeader.hex);
         }
 

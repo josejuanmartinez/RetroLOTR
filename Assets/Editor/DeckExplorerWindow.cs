@@ -81,6 +81,8 @@ public class DeckExplorerWindow : EditorWindow
     private int editedCharacterMage;
     private string editedStartingPC = string.Empty;
     private int editedAmount;
+    private CardTypeEnum editedCardType;
+    private CardSituationEnum editedSituation;
 
     private const float PreviewCardW = 390f;
     private const float PreviewCardH = 555f;
@@ -420,6 +422,27 @@ public class DeckExplorerWindow : EditorWindow
         SyncEditableCardFields(card);
 
         EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
+
+        EditorGUILayout.BeginHorizontal();
+        editedCardType = (CardTypeEnum)EditorGUILayout.EnumPopup("Card Type", editedCardType);
+        if (GUILayout.Button("Save type", GUILayout.Width(90)))
+        {
+            SaveCardType(card);
+        }
+        EditorGUILayout.EndHorizontal();
+
+        if (editedCardType == CardTypeEnum.Action)
+        {
+            EditorGUILayout.BeginHorizontal();
+            editedSituation = (CardSituationEnum)EditorGUILayout.EnumPopup("Situation", editedSituation);
+            if (GUILayout.Button("Save", GUILayout.Width(90)))
+            {
+                SaveSituation(card);
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+        GUILayout.Space(4);
         editedAmount = EditorGUILayout.IntField("Amount (copies)", editedAmount);
 
         GUILayout.Space(4);
@@ -647,6 +670,8 @@ public class DeckExplorerWindow : EditorWindow
         editedCharacterMage = Mathf.Max(0, card.mage);
         editedStartingPC = card.startingPC ?? string.Empty;
         editedAmount = Mathf.Max(1, card.amount);
+        editedCardType = card.GetCardType();
+        editedSituation = card.GetSituation();
     }
 
     private static string GetEditableRequirementsKey(CardData card)
@@ -851,6 +876,51 @@ public class DeckExplorerWindow : EditorWindow
         Debug.Log($"DeckExplorerWindow: saved army type for '{card.name}'.");
     }
 
+    private void SaveCardType(CardData card)
+    {
+        DeckEntryView deckView = GetSelectedDeckView();
+        if (card == null || deckView?.deckData?.cards == null) return;
+
+        CardData target = deckView.deckData.cards.FirstOrDefault(c => c != null && c.cardId == card.cardId) ?? card;
+        target.type = editedCardType.ToString();
+
+        string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving card type.");
+            return;
+        }
+
+        File.WriteAllText(assetPath, JsonUtility.ToJson(deckView.deckData, true));
+        AssetDatabase.ImportAsset(ToAssetPath(assetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
+        ReloadSelectedCard();
+        EditorUtility.SetDirty(this);
+        Debug.Log($"DeckExplorerWindow: saved card type '{editedCardType}' for '{card.name}'.");
+    }
+
+    private void SaveSituation(CardData card)
+    {
+        DeckEntryView deckView = GetSelectedDeckView();
+        if (card == null || deckView?.deckData?.cards == null) return;
+
+        CardData target = deckView.deckData.cards.FirstOrDefault(c => c != null && c.cardId == card.cardId) ?? card;
+        target.situation = editedSituation == CardSituationEnum.None ? string.Empty : editedSituation.ToString();
+
+        string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving situation.");
+            return;
+        }
+
+        File.WriteAllText(assetPath, JsonUtility.ToJson(deckView.deckData, true));
+        AssetDatabase.ImportAsset(ToAssetPath(assetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
+        ReloadSelectedCard();
+        EditorUtility.SetDirty(this);
+        Debug.Log($"DeckExplorerWindow: saved situation '{editedSituation}' for '{card.name}'.");
+    }
 
     private static string GetDeckAssetPath(string resourcePath)
     {

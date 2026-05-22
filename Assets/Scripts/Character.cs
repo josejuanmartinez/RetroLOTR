@@ -895,10 +895,30 @@ public class Character : MonoBehaviour
         return true;
     }
 
+    public bool CanPossess(Character target)
+    {
+        if (target == null || target == this || killed || target.killed) return false;
+        if (target.IsArmyCommander()) return false;
+        if (target is Leader) return false;
+        if (target.GetOwner() == GetOwner()) return false;
+        if (target.IsKidnapped()) return false;
+        return true;
+    }
+
     public bool Kidnap(Character target)
     {
         if (!CanKidnap(target)) return false;
+        return CaptureCharacter(target, $"{characterName} kidnapped {target.characterName}!");
+    }
 
+    public bool Possess(Character target)
+    {
+        if (!CanPossess(target)) return false;
+        return CaptureCharacter(target, $"{characterName} possessed {target.characterName}!");
+    }
+
+    private bool CaptureCharacter(Character target, string message)
+    {
         if (kidnappedCharacters == null) kidnappedCharacters = new();
 
         Leader originalOwner = target.GetOwner();
@@ -924,7 +944,7 @@ public class Character : MonoBehaviour
         previousHex?.RedrawCharacters();
         if (target.hex != null && target.hex != previousHex) target.hex.RedrawCharacters();
         RefreshKidnappedCharactersPosition();
-        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} kidnapped {target.characterName}!", Color.green);
+        MessageDisplayNoUI.ShowMessage(hex, this, message, Color.green);
         RefreshSelectedCharacterIconIfSelected();
         RefreshActionsIfSelected();
         target.RefreshSelectedCharacterIconIfSelected();
