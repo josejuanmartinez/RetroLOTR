@@ -5,6 +5,49 @@ using UnityEngine;
 
 public class Sun : EventAction
 {
+    private static bool IsManOrHobbit(RacesEnum r) =>
+        r == RacesEnum.Common || r == RacesEnum.Dunedain || r == RacesEnum.Hobbit
+        || r == RacesEnum.Southron || r == RacesEnum.Easterling;
+
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> allChars = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed)
+            .Distinct().ToList();
+
+        int encouraged = 0, halted = 0, despaired = 0;
+        foreach (Character ch in allChars)
+        {
+            if (IsManOrHobbit(ch.race))
+            {
+                ch.Encourage(1);
+                // Cavalry commanders ride better in sunshine
+                Army army = ch.IsArmyCommander() ? ch.GetArmy() : null;
+                if (army != null && (army.lc > 0 || army.hc > 0))
+                    ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                encouraged++;
+            }
+            else if (ch.race == RacesEnum.Troll)
+            {
+                ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+                halted++;
+            }
+            else if (ch.race == RacesEnum.Undead)
+            {
+                ch.ApplyStatusEffect(StatusEffectEnum.Despair, 1);
+                despaired++;
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Sun (ongoing): {encouraged} Men/Hobbits encouraged; {halted} Trolls halted by sunlight; {despaired} Undead despaired.",
+            Color.yellow);
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

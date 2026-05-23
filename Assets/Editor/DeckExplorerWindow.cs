@@ -2621,6 +2621,7 @@ public class DeckExplorerWindow : EditorWindow
             CardTypeEnum.Action => "Action",
             CardTypeEnum.Spell => "Spell",
             CardTypeEnum.Encounter => "Encounter",
+            CardTypeEnum.Environmental => "Environmental",
             _ => string.Empty
         };
 
@@ -2637,6 +2638,7 @@ public class DeckExplorerWindow : EditorWindow
             CardTypeEnum.Action => "action",
             CardTypeEnum.Spell => "spell",
             CardTypeEnum.Encounter => "encounter",
+            CardTypeEnum.Environmental => "environmental",
             _ => null
         };
 
@@ -2650,14 +2652,22 @@ public class DeckExplorerWindow : EditorWindow
             return label;
         }
 
-        try
+        Color c;
+        try { c = colors.GetColorByName(colorName); }
+        catch { c = Color.clear; }
+
+        if (c.a < 0.01f)
         {
-            return $"<color={colors.GetHexColorByName(colorName)}>{label}</color>";
+            c = colorName switch
+            {
+                "environmental" => new Color(0.42f, 0.67f, 0.42f, 1f),
+                _ => Color.clear
+            };
         }
-        catch
-        {
-            return label;
-        }
+
+        if (c.a < 0.01f) return label;
+
+        return $"<color=#{ColorUtility.ToHtmlStringRGB(c)}>{label}</color>";
     }
 
     private static Colors GetColorsForEditor()

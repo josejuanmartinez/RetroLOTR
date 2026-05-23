@@ -5,6 +5,44 @@ using UnityEngine;
 
 public class Dawn : EventAction
 {
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> allUnits = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed)
+            .Distinct().ToList();
+
+        int encouraged = 0, feared = 0, halted = 0;
+        foreach (Character ch in allUnits)
+        {
+            AlignmentEnum al = ch.GetAlignment();
+            if (al == AlignmentEnum.freePeople)
+            {
+                ch.ClearStatusEffect(StatusEffectEnum.Fear);
+                ch.ClearStatusEffect(StatusEffectEnum.Despair);
+                ch.Encourage(1);
+                encouraged++;
+            }
+            else if (al == AlignmentEnum.darkServants)
+            {
+                ch.ApplyStatusEffect(StatusEffectEnum.Despair, 1);
+                if (ch.race == RacesEnum.Troll || ch.race == RacesEnum.Undead)
+                {
+                    ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+                    halted++;
+                }
+                feared++;
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Dawn (ongoing): {encouraged} Free People encouraged; {feared} dark servants despaired; {halted} sun-weakened creatures halted.",
+            Color.yellow);
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

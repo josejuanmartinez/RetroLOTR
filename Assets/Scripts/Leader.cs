@@ -84,12 +84,6 @@ public class Leader : Character
     new public void NewTurn()
     {
         playedLandThisTurn = false;
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        if (deckManager != null && this is PlayableLeader playable)
-        {
-            deckManager.ReplenishHandForTurn(playable);
-        }
-
         DecrementTemporarySeenHexes();
         DecrementTemporaryScoutCenters();
         if (!killed && goldAmount < -10) Killed(this);
@@ -97,9 +91,15 @@ public class Leader : Character
         if (killed) return;
 
         Army.ResolveStartOfTurnRangedVolleysForLeader(this);
-        
+
         // Make all characters in nation act!
         controlledCharacters.FindAll(c => !c.killed).ForEach(x => x.NewTurn());
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager != null && this is PlayableLeader playable)
+        {
+            deckManager.ReplenishHandForTurn(playable);
+        }
         StartCoroutine(WaitUntilEndOfTurn());
     }
 

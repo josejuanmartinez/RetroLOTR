@@ -5,6 +5,38 @@ using UnityEngine;
 
 public class UnderTheRhunicSun : EventAction
 {
+    private static bool IsEasterling(Character ch) =>
+        ch != null && (ch.race == RacesEnum.Easterling || ch.race == RacesEnum.Southron);
+
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        int encouraged = 0, hasted = 0;
+        foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null))
+        {
+            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed && IsEasterling(ch)).ToList())
+            {
+                ch.Encourage(1);
+                encouraged++;
+                if (ch.IsArmyCommander())
+                {
+                    hex.RevealArea(1, true, ch.GetOwner());
+                    Army army = ch.GetArmy();
+                    if (army != null && (army.lc > 0 || army.hc > 0))
+                    {
+                        ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                        hasted++;
+                    }
+                }
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Under the Rhunic Sun (ongoing): {encouraged} Easterlings/Southrons encouraged; {hasted} cavalry hasted; commanders reveal hexes.",
+            Color.yellow);
+    }
+
     private static bool IsAllied(Character source, Character target)
     {
         if (source == null || target == null) return false;

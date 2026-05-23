@@ -7,6 +7,50 @@ public class FullMoon : EventAction
 {
     private const int TeleportRadius = 5;
 
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> allChars = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed)
+            .Distinct().ToList();
+
+        int nazgulHasted = 0, revealed = 0, agentHasted = 0;
+        foreach (Character ch in allChars)
+        {
+            if (ch.race == RacesEnum.Nazgul)
+            {
+                ch.ClearStatusEffect(StatusEffectEnum.Halted);
+                ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                nazgulHasted++;
+            }
+            else if (ch.GetAlignment() == AlignmentEnum.darkServants && ch.GetAgent() > 0)
+            {
+                // Dark agents work best under the full moon
+                ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                agentHasted++;
+            }
+            else if (ch.GetAlignment() == AlignmentEnum.freePeople)
+            {
+                // Free People near any Nazgul are revealed and suffer Fear
+                bool nearNazgul = allChars.Any(n => n.race == RacesEnum.Nazgul && n.hex != null
+                    && ch.hex != null && n.hex.GetHexesInRadius(2).Contains(ch.hex));
+                if (nearNazgul)
+                {
+                    ch.ClearStatusEffect(StatusEffectEnum.Hidden);
+                    ch.ApplyStatusEffect(StatusEffectEnum.Fear, 1);
+                    revealed++;
+                }
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Full Moon (ongoing): {nazgulHasted} Nazgul hasted; {agentHasted} dark agents hasted; {revealed} Free People near Nazgul revealed and feared.",
+            Color.magenta);
+    }
+
     private static bool IsFreePeople(Character ch) =>
         ch != null && ch.GetAlignment() == AlignmentEnum.freePeople;
 

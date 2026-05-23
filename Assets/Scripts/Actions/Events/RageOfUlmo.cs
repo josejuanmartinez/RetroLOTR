@@ -6,6 +6,7 @@ using UnityEngine;
 public class RageOfUlmo : EventAction
 {
     private const int Damage = 18;
+    private const int OngoingDamage = 10;
 
     private static bool IsSeaAdjacentHex(Hex hex)
     {
@@ -16,14 +17,38 @@ public class RageOfUlmo : EventAction
     {
         if (ch == null || ch.killed) return false;
         if (ch.isEmbarked) return true;
-
-        if (ch.IsArmyCommander())
-        {
-            Army army = ch.GetArmy();
-            if (army != null && army.ws > 0) return true;
-        }
-
+        if (ch.IsArmyCommander()) { Army a = ch.GetArmy(); if (a != null && a.ws > 0) return true; }
         return false;
+    }
+
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> targets = board.GetHexes()
+            .Where(h => h != null && IsSeaAdjacentHex(h) && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => IsNavyOrEmbarked(ch) && !ch.IsImmuneToNegativeEnvironmentalCards())
+            .Distinct().ToList();
+
+        int affected = 0;
+        foreach (Character target in targets)
+        {
+            target.health = Mathf.Max(1, target.health - OngoingDamage);
+            if (!target.killed) target.Halt(1);
+            // Destroy a warship each turn with 25% chance
+            if (target.IsArmyCommander())
+            {
+                Army army = target.GetArmy();
+                if (army != null && army.ws > 0 && UnityEngine.Random.value < 0.25f)
+                    army.ws = Mathf.Max(0, army.ws - 1);
+            }
+            affected++;
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Rage of Ulmo (ongoing): {affected} naval unit(s) battered by {OngoingDamage} damage and halted; some ships may be lost.",
+            Color.cyan);
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)

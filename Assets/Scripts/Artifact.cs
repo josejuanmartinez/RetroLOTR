@@ -83,7 +83,7 @@ public class Artifact
 
     public string GetHoverText()
     {
-        List<string> sb = new() {$"<sprite name=\"{GetSpriteString()}\">{GetSpriteString()}<u>{artifactName}</u>"};
+        List<string> sb = new() {$"<sprite name=\"{GetSpriteString()}\">{artifactName}"};
 
         List<string> sbDetails = BuildMechanicalDetails();
         if (sbDetails.Count > 0)
@@ -97,10 +97,10 @@ public class Artifact
     private List<string> BuildMechanicalDetails()
     {
         List<string> details = new();
-        if (commanderBonus > 0) details.Add($"+{commanderBonus}<sprite name=\"commander\">commander");
-        if (agentBonus > 0) details.Add($"+{agentBonus}<sprite name=\"agent\">agent");
-        if (emmissaryBonus > 0) details.Add($"+{emmissaryBonus}<sprite name=\"emmissary\">emmissary");
-        if (mageBonus > 0) details.Add($"+{mageBonus}<sprite name=\"mage\">mage");
+        if (commanderBonus > 0) details.Add($"+{commanderBonus}<sprite name=\"commander\">");
+        if (agentBonus > 0) details.Add($"+{agentBonus}<sprite name=\"agent\">");
+        if (emmissaryBonus > 0) details.Add($"+{emmissaryBonus}<sprite name=\"emmissary\">");
+        if (mageBonus > 0) details.Add($"+{mageBonus}<sprite name=\"mage\">e");
         if (bonusAttack > 0) details.Add($"+{bonusAttack} attack");
         if (bonusDefense > 0) details.Add($"+{bonusDefense} defense");
 

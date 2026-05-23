@@ -6,6 +6,37 @@ using UnityEngine;
 public class OldManWillowSongAction : EventAction
 {
     private const int Radius = 1;
+    private const float ForestTrapChance = 0.15f;
+
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        int hobbitsTrapped = 0, forestHalted = 0;
+        foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null))
+        {
+            bool isForest = hex.terrainType == TerrainEnum.forest;
+            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed).ToList())
+            {
+                if (ch.race == RacesEnum.Hobbit && UnityEngine.Random.value < 0.33f)
+                {
+                    ch.ApplyStatusEffect(StatusEffectEnum.Blocked, 1);
+                    ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+                    hobbitsTrapped++;
+                }
+                else if (isForest && !ch.IsImmuneToNegativeEnvironmentalCards()
+                    && UnityEngine.Random.value < ForestTrapChance)
+                {
+                    ch.Halt(1);
+                    forestHalted++;
+                }
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Old Man Willow (ongoing): {hobbitsTrapped} Hobbits blocked and halted by the old wood; {forestHalted} forest units trapped.",
+            Color.green);
+    }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {

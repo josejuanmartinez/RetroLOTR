@@ -210,13 +210,11 @@ public class SelectionDialog : MonoBehaviour
 
     private void HideInstant()
     {
-        DebugLogHierarchyState("HideInstant before");
         content.SetActive(false);
         IsShowing = false;
         activeRequest = null;
         SetOptionDescriptionVisible(false);
         UpdatePortrait(null);
-        DebugLogHierarchyState("HideInstant after");
     }
 
     private void ShowActive()
@@ -233,7 +231,6 @@ public class SelectionDialog : MonoBehaviour
     private void ShowInternal(DialogRequest request)
     {
         if (request == null) return;
-        DebugLogHierarchyState("ShowInternal before");
         BindUiReferences();
         WireUiListeners();
         content.SetActive(true);
@@ -267,7 +264,6 @@ public class SelectionDialog : MonoBehaviour
         UpdateCaptionColor();
         UpdateOptionDescription();
         UpdateCloseButtonState();
-        DebugLogHierarchyState("ShowInternal after");
     }
 
     private void EnsureDialogHierarchyActive()
@@ -303,18 +299,6 @@ public class SelectionDialog : MonoBehaviour
             SetUiObjectActive(portraitImage.gameObject, true);
             SetRectScale(portraitImage.gameObject, Vector3.one);
         }
-        DebugLogHierarchyState("EnsureDialogHierarchyActive");
-    }
-
-    private void DebugLogHierarchyState(string prefix)
-    {
-        string contentState = DescribeObject(content);
-        string imageState = DescribeObject(FindDialogChild("Image"));
-        string bgState = DescribeObject(portraitCanvasGroup != null ? portraitCanvasGroup.gameObject : FindDialogChild("CharacterImageBg"));
-        string portraitState = DescribeObject(portraitImage != null ? portraitImage.gameObject : FindDialogChild("CharacterImage"));
-        string dropdownState = DescribeObject(dropdown != null ? dropdown.gameObject : FindDialogChild("Dropdown"));
-        string buttonState = DescribeObject(noButton != null ? noButton.gameObject : FindDialogChild("CloseButton"));
-        Debug.Log($"[SelectionDialog] {prefix} | content={contentState} | image={imageState} | bg={bgState} | portrait={portraitState} | dropdown={dropdownState} | close={buttonState}");
     }
 
     private static string DescribeObject(GameObject target)

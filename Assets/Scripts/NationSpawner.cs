@@ -164,7 +164,6 @@ public class NationSpawner : MonoBehaviour
         InstantiateLeadersAndCharacters(playableLeaders.playableLeaders.biomes, placedPositions);
         InstantiateLeadersAndCharacters(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
         AssignLandRegions();
-        PositionPlayableLeadersNearTutorialPcs();
     }
 
     public bool EnsureLandRegionsAssigned()

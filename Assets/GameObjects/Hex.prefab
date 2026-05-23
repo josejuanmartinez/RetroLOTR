@@ -683,6 +683,8 @@ MonoBehaviour:
     artifactOccupancyHidden: 0
     temporaryHiddenTurns: 0
     temporaryRevealTurns: 0
+    guardLevel: 0
+    guardTurns: 0
   assignedLandRegion: 
   isRevealed: 0
   mapOnlyRevealed: 0

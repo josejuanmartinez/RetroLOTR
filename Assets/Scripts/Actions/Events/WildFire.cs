@@ -6,6 +6,38 @@ using UnityEngine;
 public class WildFire : EventAction
 {
     private const int Radius = 2;
+    private const float BurningChance = 0.15f;
+
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> forestChars = board.GetHexes()
+            .Where(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && !ch.IsImmuneToNegativeEnvironmentalCards())
+            .Distinct().ToList();
+
+        int ignited = 0, halted = 0;
+        foreach (Character ch in forestChars)
+        {
+            if (ch.HasStatusEffect(StatusEffectEnum.Burning))
+            {
+                // Already burning units can't move
+                ch.Halt(1);
+                halted++;
+            }
+            else if (UnityEngine.Random.value < BurningChance)
+            {
+                ch.ApplyStatusEffect(StatusEffectEnum.Burning, 1);
+                ignited++;
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Wild Fire (ongoing): {ignited} forest units ignited; {halted} already-burning units halted.",
+            Color.red);
+    }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {

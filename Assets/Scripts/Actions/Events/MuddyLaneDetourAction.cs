@@ -7,6 +7,39 @@ public class MuddyLaneDetourAction : EventAction
 {
     private const int TotalDrainValue = 10;
 
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> commanders = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander())
+            .Distinct().ToList();
+
+        int cavalryHalted = 0, siegeBlocked = 0, slowed = 0;
+        foreach (Character ch in commanders)
+        {
+            Army army = ch.GetArmy();
+            if (army == null) continue;
+            // Cavalry struggles through mud — lose one movement
+            if (army.lc > 0 || army.hc > 0) { ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement()); cavalryHalted++; }
+            // Siege engines bog down — 25% chance to be Blocked
+            else if (army.ca > 0 && UnityEngine.Random.value < 0.25f) { ch.ApplyStatusEffect(StatusEffectEnum.Blocked, 1); siegeBlocked++; }
+            else
+            {
+                // All other armies slowed
+                ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+                slowed++;
+            }
+        }
+        // Agents travel on foot and are unaffected (they find paths through the mud)
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Muddy Lane (ongoing): {cavalryHalted} cavalry slowed by mud; {siegeBlocked} siege blocked; {slowed} armies slowed. Agents unaffected.",
+            Color.gray);
+    }
+
     private static int GetResourceValue(ProducesEnum resourceType)
     {
         return resourceType switch

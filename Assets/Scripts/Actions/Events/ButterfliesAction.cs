@@ -7,6 +7,41 @@ public class ButterfliesAction : EventAction
 {
     private const int Radius = 3;
 
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        // Reveal all forest and swamp hexes globally
+        foreach (Hex hex in board.GetHexes().Where(h => h != null
+            && (h.terrainType == TerrainEnum.forest || h.terrainType == TerrainEnum.swamp)))
+        {
+            hex.RevealArea(0, false);
+        }
+
+        // Allied characters in forest gain ArcaneInsight (nature attunement)
+        List<Character> forestAllies = board.GetHexes()
+            .Where(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.freePeople)
+            .Distinct().ToList();
+
+        // Hidden enemies in forest revealed
+        List<Character> hiddenEnemies = board.GetHexes()
+            .Where(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.darkServants
+                && ch.HasStatusEffect(StatusEffectEnum.Hidden))
+            .Distinct().ToList();
+
+        foreach (Character ch in forestAllies) ch.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1);
+        foreach (Character ch in hiddenEnemies) ch.ClearStatusEffect(StatusEffectEnum.Hidden);
+
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Butterflies (ongoing): forest/swamp revealed; {forestAllies.Count} allied forest units gain insight; {hiddenEnemies.Count} hidden enemies exposed.",
+            Color.green);
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

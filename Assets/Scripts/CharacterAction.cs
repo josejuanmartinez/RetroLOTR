@@ -71,6 +71,9 @@ public class CharacterAction
 
     protected virtual bool ConsumesAction => true;
 
+    // Called every turn by EnvironmentalCardManager while this card is the active environmental card.
+    public virtual void ApplyOngoingEffect() { }
+
     protected static T FindFirstObjectByType<T>() where T : UnityEngine.Object
     {
         return UnityEngine.Object.FindFirstObjectByType<T>();

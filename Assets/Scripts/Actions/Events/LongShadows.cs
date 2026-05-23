@@ -12,6 +12,28 @@ public class LongShadows : EventAction
         race == RacesEnum.Troll || race == RacesEnum.Goblin || race == RacesEnum.Spider
         || race == RacesEnum.Dragon || race == RacesEnum.Undead || race == RacesEnum.Beast;
 
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        int encouraged = 0, hidden = 0;
+        foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null && h.terrainType == TerrainEnum.forest))
+        {
+            foreach (Character beast in hex.characters.Where(ch => ch != null && !ch.killed && IsBeastRace(ch.race)).ToList())
+            {
+                beast.moved = 0;
+                beast.Encourage(1);
+                beast.Hide(1);
+                encouraged++;
+                hidden++;
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Long Shadows (ongoing): {encouraged} beasts in forest reset movement, encouraged and hidden in shadow.",
+            Color.gray);
+    }
+
     private static bool IsAllied(Character source, Character target)
     {
         if (source == null || target == null) return false;

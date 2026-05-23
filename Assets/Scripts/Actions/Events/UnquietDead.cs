@@ -8,6 +8,52 @@ public class UnquietDead : EventAction
 {
     private const int ReviveHealth = 50;
 
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Hex> allHexes = board.GetHexes().Where(h => h != null).ToList();
+
+        // Haste all Undead and collect their hexes for death-aura adjacency
+        int undeadHasted = 0, enemiesHalted = 0;
+        HashSet<Hex> undeadHexes = new HashSet<Hex>();
+        foreach (Hex hex in allHexes)
+        {
+            if (hex.characters == null) continue;
+            foreach (Character u in hex.characters.Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Undead).ToList())
+            {
+                u.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                undeadHasted++;
+                undeadHexes.Add(hex);
+            }
+        }
+
+        // Death aura: enemies on hexes adjacent to any Undead hex — 25% chance to be slowed
+        HashSet<Hex> adjToUndead = new HashSet<Hex>();
+        foreach (Hex uh in undeadHexes)
+            foreach (Hex adj in uh.GetHexesInRadius(1))
+                if (adj != null) adjToUndead.Add(adj);
+
+        foreach (Hex adj in adjToUndead)
+        {
+            if (adj.characters == null) continue;
+            foreach (Character enemy in adj.characters.Where(ch => ch != null && !ch.killed
+                && ch.race != RacesEnum.Undead
+                && !ch.IsImmuneToNegativeEnvironmentalCards()).ToList())
+            {
+                if (UnityEngine.Random.value < 0.25f)
+                {
+                    enemy.moved = Mathf.Min(enemy.moved + 1, enemy.GetMaxMovement());
+                    enemiesHalted++;
+                }
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Unquiet Dead (ongoing): {undeadHasted} Undead hasted; {enemiesHalted} nearby enemies halted by death aura.",
+            Color.magenta);
+    }
+
     private static bool IsEnemy(Character source, Character target)
     {
         if (source == null || target == null) return false;

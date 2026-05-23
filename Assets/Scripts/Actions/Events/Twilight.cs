@@ -1,10 +1,39 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Twilight : EventAction
 {
     private const int Radius = 2;
+
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        int hidden = 0;
+        foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null))
+        {
+            bool isConcealingTerrain = hex.terrainType == TerrainEnum.forest
+                || hex.terrainType == TerrainEnum.swamp
+                || hex.terrainType == TerrainEnum.mountains;
+            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed).ToList())
+            {
+                if (isConcealingTerrain && (ch.GetAlignment() == AlignmentEnum.darkServants || ch.GetAgent() > 0))
+                {
+                    ch.Hide(1);
+                    hidden++;
+                }
+            }
+        }
+        foreach (Hex hex in board.GetHexes().Where(h => h != null))
+            hex.Obscure();
+
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Twilight (ongoing): {hidden} dark servants/agents hidden in concealing terrain; visibility reduced across the board.",
+            Color.gray);
+    }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {

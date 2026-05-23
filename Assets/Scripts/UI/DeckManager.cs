@@ -256,7 +256,7 @@ public class CardData
             CardTypeEnum.Army => GetArmyDescription(),
             CardTypeEnum.Land => GetLandDescription(),
             CardTypeEnum.PC => PcDescriptionBuilder.BuildBody(this, includeFoundingText),
-            CardTypeEnum.Event or CardTypeEnum.Action or CardTypeEnum.Spell => GetActionEffectText(),
+            CardTypeEnum.Event or CardTypeEnum.Action or CardTypeEnum.Spell or CardTypeEnum.Environmental => GetActionEffectText(),
             CardTypeEnum.Encounter => !string.IsNullOrWhiteSpace(description) ? description.Trim() : string.Empty,
             _ => string.Empty
         };
@@ -270,6 +270,7 @@ public class CardData
         return cardType == CardTypeEnum.Action
             || cardType == CardTypeEnum.Event
             || cardType == CardTypeEnum.Spell
+            || cardType == CardTypeEnum.Environmental
             || cardType == CardTypeEnum.Land
             || cardType == CardTypeEnum.PC
                 ? AppendCardStatusText(body)
@@ -614,6 +615,7 @@ public class DeckManager : MonoBehaviour
     {
         Army,
         Event,
+        Environmental,
         PC,
         Land,
         Encounter,
@@ -629,6 +631,7 @@ public class DeckManager : MonoBehaviour
         BalancedDeckBucket.Event,
         BalancedDeckBucket.Event,
         BalancedDeckBucket.Event,
+        BalancedDeckBucket.Environmental,
         BalancedDeckBucket.PC,
         BalancedDeckBucket.Land,
         BalancedDeckBucket.Land,
@@ -871,17 +874,25 @@ public class DeckManager : MonoBehaviour
         if (leader == null || character == null || hex == null) return result;
         if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return result;
 
+        int poolSize = state.situationPool.Count;
+        int withSituation = state.situationPool.Count(c => c != null && c.GetSituation() != CardSituationEnum.None);
+        Debug.Log($"[SituationCards] pool size={poolSize}, cards with situation set={withSituation}");
+
         List<CardSituationEnum> activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
 
         foreach (CardSituationEnum situation in activeSituations)
         {
             if (result.Count >= 2) break;
 
-            CardData match = state.situationPool.FirstOrDefault(card =>
-                card != null
-                && card.GetSituation() == situation
-                && card.EvaluatePlayability(character));
+            var candidates = state.situationPool.Where(c => c != null && c.GetSituation() == situation).ToList();
+            Debug.Log($"[SituationCards] situation={situation}: {candidates.Count} candidate(s) in pool");
+            foreach (var c in candidates)
+            {
+                bool playable = c.EvaluatePlayability(character);
+                Debug.Log($"[SituationCards]   '{c.name}' playable={playable} (lvl={character.GetCommander()}/{character.GetAgent()}/{character.GetEmmissary()}/{character.GetMage()} req={c.commanderSkillRequired}/{c.agentSkillRequired}/{c.emissarySkillRequired}/{c.mageSkillRequired})");
+            }
 
+            CardData match = candidates.FirstOrDefault(c => c.EvaluatePlayability(character));
             if (match != null) result.Add(match);
         }
 
@@ -1360,6 +1371,12 @@ public class DeckManager : MonoBehaviour
             EnsureSubdeckCardIfNeeded(state);
             CardData card = state.drawPile[0];
             state.drawPile.RemoveAt(0);
+            if (card.GetCardType() == CardTypeEnum.Encounter &&
+                state.hand.Any(h => h != null && h.GetCardType() == CardTypeEnum.Encounter))
+            {
+                state.discardPile.Add(card);
+                continue;
+            }
             state.hand.Add(card);
         }
     }
@@ -1573,7 +1590,8 @@ public class DeckManager : MonoBehaviour
             startingPC = card.startingPC,
             inspireEffectData = card.inspireEffectData,
             amount = card.amount,
-            deckSpriteName = card.deckSpriteName
+            deckSpriteName = card.deckSpriteName,
+            situation = card.situation
         };
     }
 
@@ -2313,6 +2331,7 @@ public class DeckManager : MonoBehaviour
         {
             CardTypeEnum.Army => BalancedDeckBucket.Army,
             CardTypeEnum.Event => BalancedDeckBucket.Event,
+            CardTypeEnum.Environmental => BalancedDeckBucket.Environmental,
             CardTypeEnum.PC => BalancedDeckBucket.PC,
             CardTypeEnum.Land => BalancedDeckBucket.Land,
             CardTypeEnum.Encounter => BalancedDeckBucket.Encounter,
@@ -2813,6 +2832,10 @@ public class DeckManager : MonoBehaviour
 
         return cardCameObject;
     }
+
+    public GameObject GetCardPrefabTemplate() => ResolveCardPrefab();
+
+    public Vector2 GetCardSize() => gridLayout != null ? gridLayout.cellSize : new Vector2(120f, 170f);
 
     private CanvasGroup ResolveHandCanvasGroup()
     {

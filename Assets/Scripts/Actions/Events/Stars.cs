@@ -5,6 +5,39 @@ using UnityEngine;
 
 public class Stars : EventAction
 {
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> allChars = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed)
+            .Distinct().ToList();
+
+        int hopeGranted = 0, revealed = 0;
+        foreach (Character ch in allChars)
+        {
+            if (ch.race == RacesEnum.Elf)
+            {
+                ch.ApplyStatusEffect(StatusEffectEnum.Hope, 1);
+                hopeGranted++;
+            }
+            else if (ch.GetAlignment() == AlignmentEnum.darkServants
+                && ch.HasStatusEffect(StatusEffectEnum.Hidden))
+            {
+                // Starlight pierces shadow — all hidden dark servants are revealed
+                ch.ClearStatusEffect(StatusEffectEnum.Hidden);
+                revealed++;
+            }
+        }
+
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Stars (ongoing): {hopeGranted} Elves gain Hope; {revealed} hidden enemies revealed by starlight.",
+            Color.cyan);
+    }
+
     private static bool IsEnemy(Character source, Character target)
     {
         if (source == null || target == null) return false;

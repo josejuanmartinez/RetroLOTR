@@ -7,10 +7,48 @@ public class FirstLightOnTheThirdDay : EventAction
 {
     private const int Radius = 3;
 
-    private static bool IsHumanOrDunedain(Character ch)
+    private static bool IsHumanOrDunedain(Character ch) =>
+        ch != null && (ch.race == RacesEnum.Common || ch.race == RacesEnum.Dunedain);
+
+    public override void ApplyOngoingEffect()
     {
-        if (ch == null) return false;
-        return ch.race == RacesEnum.Common || ch.race == RacesEnum.Dunedain;
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        int encouraged = 0, cavalryHasted = 0, despaired = 0;
+        foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null))
+        {
+            bool isOpenTerrain = hex.terrainType == TerrainEnum.plains
+                || hex.terrainType == TerrainEnum.grasslands
+                || hex.terrainType == TerrainEnum.wastelands;
+            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed).ToList())
+            {
+                if (IsHumanOrDunedain(ch) && ch.GetAlignment() == AlignmentEnum.freePeople)
+                {
+                    ch.Encourage(1);
+                    ch.ApplyStatusEffect(StatusEffectEnum.Hope, 1);
+                    encouraged++;
+                    if (ch.IsArmyCommander())
+                    {
+                        Army army = ch.GetArmy();
+                        if (army != null && (army.lc > 0 || army.hc > 0))
+                        {
+                            ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                            cavalryHasted++;
+                        }
+                    }
+                }
+                else if (isOpenTerrain && ch.GetAlignment() == AlignmentEnum.darkServants
+                    && !ch.IsImmuneToNegativeEnvironmentalCards())
+                {
+                    ch.ApplyStatusEffect(StatusEffectEnum.Despair, 1);
+                    despaired++;
+                }
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"First Light (ongoing): {encouraged} Humans/Dunedain encouraged+hope; {cavalryHasted} cavalry hasted; {despaired} enemies despaired in the open.",
+            Color.yellow);
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)

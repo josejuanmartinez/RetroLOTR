@@ -1613,18 +1613,29 @@ public class Board : MonoBehaviour
 
     private void CheckAndShowSituationCards(Character character, Hex hex)
     {
-        if (character == null || hex == null) return;
+        if (character == null || hex == null) { Debug.Log("[SituationCards] null character or hex"); return; }
         Game g = FindFirstObjectByType<Game>();
-        if (g == null || !g.IsPlayerCurrentlyPlaying() || g.player != character.GetOwner()) return;
+        if (g == null) { Debug.Log("[SituationCards] no Game found"); return; }
+        if (!g.IsPlayerCurrentlyPlaying()) { Debug.Log("[SituationCards] not player's turn"); return; }
+        if (g.player != character.GetOwner()) { Debug.Log($"[SituationCards] character {character.characterName} not owned by player"); return; }
 
         DeckManager deckManager = FindFirstObjectByType<DeckManager>();
-        if (deckManager == null) return;
+        if (deckManager == null) { Debug.Log("[SituationCards] no DeckManager found"); return; }
+
+        var activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
+        Debug.Log($"[SituationCards] {character.characterName} @ {hex.name} — active situations: [{string.Join(", ", activeSituations)}]");
 
         List<CardData> situationCards = deckManager.GetSituationCards(g.player, character, hex);
+        Debug.Log($"[SituationCards] matched cards: {situationCards.Count} — [{string.Join(", ", situationCards.Select(c => c.name))}]");
+
         if (situationCards == null || situationCards.Count == 0) return;
 
-        // TODO: fire the gold center-screen situation UI with situationCards
-        // SituationCardsUI.Instance?.Show(situationCards, character);
+        if (SituationCardsUI.Instance == null)
+        {
+            var go = new GameObject("SituationCardsUI");
+            go.AddComponent<SituationCardsUI>();
+        }
+        SituationCardsUI.Instance.Show(situationCards, character);
     }
 
     private void UpdateGenerationProgress(float progress, string stage)

@@ -5,6 +5,38 @@ using UnityEngine;
 
 public class FiresOfDoom : EventAction
 {
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<(Character ch, AlignmentEnum al)> wastelandChars = board.GetHexes()
+            .Where(h => h != null && h.terrainType == TerrainEnum.wastelands && h.characters != null)
+            .SelectMany(h => h.characters.Select(ch => (ch, al: ch?.GetAlignment() ?? AlignmentEnum.neutral)))
+            .Where(t => t.ch != null && !t.ch.killed)
+            .Distinct().ToList();
+
+        int ignited = 0, despaired = 0, allied = 0;
+        foreach (var (ch, al) in wastelandChars)
+        {
+            if (al == AlignmentEnum.darkServants)
+            {
+                // Dark servants thrive in Mordor's wastes
+                ch.Encourage(1);
+                allied++;
+            }
+            else if (!ch.IsImmuneToNegativeEnvironmentalCards())
+            {
+                ch.ApplyStatusEffect(StatusEffectEnum.Burning, 1);
+                if (ch.HasStatusEffect(StatusEffectEnum.Burning)) { ch.ApplyStatusEffect(StatusEffectEnum.Despair, 1); despaired++; }
+                ignited++;
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Fires of Doom (ongoing): {ignited} enemies burning on wastelands; {despaired} despaired; {allied} dark servants encouraged.",
+            Color.red);
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

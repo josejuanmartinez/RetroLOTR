@@ -8,6 +8,35 @@ public class DurinsDay : EventAction
     private const int ArtifactRadius = 3;
     private const int DwarfRadius = 3;
 
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        int hopeGranted = 0, mountainBoosted = 0, enemiesSlowed = 0;
+        foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null))
+        {
+            bool isMountain = hex.terrainType == TerrainEnum.mountains;
+            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed).ToList())
+            {
+                if (ch.race == RacesEnum.Dwarf)
+                {
+                    ch.ApplyStatusEffect(StatusEffectEnum.Hope, 1);
+                    hopeGranted++;
+                    if (isMountain) { ch.Encourage(1); mountainBoosted++; }
+                }
+                else if (isMountain && !ch.IsImmuneToNegativeEnvironmentalCards())
+                {
+                    ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+                    enemiesSlowed++;
+                }
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Durin's Day (ongoing): {hopeGranted} Dwarves gain Hope; {mountainBoosted} mountain Dwarves encouraged; {enemiesSlowed} enemy mountain units slowed.",
+            Color.cyan);
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

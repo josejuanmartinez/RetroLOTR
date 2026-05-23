@@ -8,6 +8,36 @@ public class ElvesGoingWest : CharacterAction
 {
     private const int Radius = 3;
 
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> elves = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Elf)
+            .Distinct().ToList();
+
+        if (elves.Count == 0) return;
+
+        // One random elf per turn succumbs to sea-longing
+        Character chosen = elves[UnityEngine.Random.Range(0, elves.Count)];
+        chosen.hasActionedThisTurn = true;
+        chosen.ApplyStatusEffect(StatusEffectEnum.Despair, 1);
+        chosen.ClearStatusEffect(StatusEffectEnum.Hidden);
+
+        // Other Elves feel the grief — 25% chance each loses Hope
+        foreach (Character elf in elves.Where(e => e != chosen))
+        {
+            if (UnityEngine.Random.value < 0.25f)
+                elf.ClearStatusEffect(StatusEffectEnum.Hope);
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Elves Going West (ongoing): {chosen.characterName} consumed by sea-longing — loses action and gains Despair.",
+            Color.cyan);
+    }
+
     private static void MoveCharacterToHex(Character character, Hex targetHex)
     {
         if (character == null || targetHex == null || character.hex == targetHex) return;

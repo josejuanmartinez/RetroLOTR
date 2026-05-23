@@ -1,5 +1,4 @@
 ﻿{
-    "handSize":  5,
     "deckId":  "tharkun",
     "nation":  "Gandalf",
     "alignment":  0,
@@ -19,11 +18,13 @@
                       "action":  "",
                       "spriteName":  "Dain",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -72,10 +73,18 @@
                       "startingPC":  "Azanulimbar-Dum",
                       "inspireEffectData":  {
                                                 "type":  "RecruitTroops",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  3,
                                                 "troopType":  "hi",
-                                                "amount":  3
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  744,
@@ -92,11 +101,13 @@
                       "action":  "",
                       "spriteName":  "Gloin",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -145,9 +156,18 @@
                       "startingPC":  "Norr-dum",
                       "inspireEffectData":  {
                                                 "type":  "ArmyXp",
-                                                "amount":  15
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  15,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  578,
@@ -164,11 +184,13 @@
                       "action":  "",
                       "spriteName":  "ConquerorsOfMoria",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  40,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -215,7 +237,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  587,
@@ -232,11 +267,13 @@
                       "action":  "",
                       "spriteName":  "DragonHunters",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  40,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "disturber_of_the_peace",
                       "referenceCardId":  831,
                       "encounterOptions":  [
@@ -283,7 +320,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  594,
@@ -300,11 +350,13 @@
                       "action":  "",
                       "spriteName":  "DwarvenArchers",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  40,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -351,7 +403,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  595,
@@ -368,11 +433,13 @@
                       "action":  "",
                       "spriteName":  "DwarvenAxemen",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  40,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -419,7 +486,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  596,
@@ -436,11 +516,13 @@
                       "action":  "",
                       "spriteName":  "DwarvenExplorers",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -487,7 +569,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  597,
@@ -504,11 +599,13 @@
                       "action":  "",
                       "spriteName":  "DwarvenMiners",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  40,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -555,7 +652,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  598,
@@ -572,11 +682,13 @@
                       "action":  "",
                       "spriteName":  "DwarvenPikeshields",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  40,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -623,7 +735,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  599,
@@ -640,11 +765,13 @@
                       "action":  "",
                       "spriteName":  "DwarvenSiege",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  40,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -691,7 +818,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  611,
@@ -708,11 +848,13 @@
                       "action":  "",
                       "spriteName":  "GoatRiders",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  40,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -759,7 +901,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  643,
@@ -776,11 +931,13 @@
                       "action":  "",
                       "spriteName":  "Miners",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -827,7 +984,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  659,
@@ -844,11 +1014,13 @@
                       "action":  "",
                       "spriteName":  "ReclaimersOfErebor",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  40,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -895,7 +1067,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  31,
@@ -912,11 +1097,13 @@
                       "action":  "PCAction",
                       "spriteName":  "AzanulimbarDum",
                       "region":  "IronHills",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -963,7 +1150,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  1,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  32,
@@ -980,11 +1180,13 @@
                       "action":  "MaterialRetrieval",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -1031,7 +1233,20 @@
                       "mithrilGranted":  2,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  5
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  126,
@@ -1048,11 +1263,13 @@
                       "action":  "MaterialRetrieval",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -1099,7 +1316,20 @@
                       "mithrilGranted":  1,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  5
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  305,
@@ -1116,11 +1346,13 @@
                       "action":  "PCAction",
                       "spriteName":  "BarakShathur",
                       "region":  "IronHills",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -1167,7 +1399,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  3,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  306,
@@ -1184,11 +1429,13 @@
                       "action":  "PCAction",
                       "spriteName":  "Belegost",
                       "region":  "EredLuin",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -1235,7 +1482,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  1,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  372,
@@ -1252,11 +1512,13 @@
                       "action":  "PCAction",
                       "spriteName":  "Noegrod",
                       "region":  "EredLuin",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -1303,7 +1565,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  388,
@@ -1320,11 +1595,13 @@
                       "action":  "PCAction",
                       "spriteName":  "ThorinHall",
                       "region":  "EredLuin",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -1371,7 +1648,20 @@
                       "mithrilGranted":  1,
                       "goldGranted":  2,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  292,
@@ -1388,11 +1678,13 @@
                       "action":  "PCAction",
                       "spriteName":  "Aglarond",
                       "region":  "GapOfRohan",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -1439,7 +1731,20 @@
                       "mithrilGranted":  1,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  859,
@@ -1459,11 +1764,13 @@
                       "action":  "FloatingInBarrelsAction",
                       "spriteName":  "FloatingInBarrels",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "disturber_of_the_peace",
                       "referenceCardId":  826,
                       "encounterOptions":  [
@@ -1510,7 +1817,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  860,
@@ -1527,11 +1847,13 @@
                       "action":  "GoingOnAnAdventure",
                       "spriteName":  "GoingOnAnAdventure",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "disturber_of_the_peace",
                       "referenceCardId":  433,
                       "encounterOptions":  [
@@ -1578,7 +1900,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  861,
@@ -1598,11 +1933,13 @@
                       "action":  "GreenwayDiversionAction",
                       "spriteName":  "GreenwayDiversion",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "disturber_of_the_peace",
                       "referenceCardId":  811,
                       "encounterOptions":  [
@@ -1649,7 +1986,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  862,
@@ -1666,11 +2016,13 @@
                       "action":  "RiddleAction",
                       "spriteName":  "Riddle",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "disturber_of_the_peace",
                       "referenceCardId":  476,
                       "encounterOptions":  [
@@ -1717,7 +2069,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  863,
@@ -1737,11 +2102,13 @@
                       "action":  "PrancingPonyPassageAction",
                       "spriteName":  "PrancingPonyPassage",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "disturber_of_the_peace",
                       "referenceCardId":  810,
                       "encounterOptions":  [
@@ -1788,7 +2155,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  864,
@@ -1808,11 +2188,13 @@
                       "action":  "RoadToRivendellAction",
                       "spriteName":  "RoadToRivendell",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "disturber_of_the_peace",
                       "referenceCardId":  809,
                       "encounterOptions":  [
@@ -1859,7 +2241,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  865,
@@ -1879,11 +2274,13 @@
                       "action":  "RoomAtTheLastInnAction",
                       "spriteName":  "RoomAtTheLastInn",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "disturber_of_the_peace",
                       "referenceCardId":  808,
                       "encounterOptions":  [
@@ -1930,7 +2327,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  866,
@@ -1950,11 +2360,13 @@
                       "action":  "EreborBeckonsAction",
                       "spriteName":  "EreborBeckons",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2001,7 +2413,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  867,
@@ -2021,11 +2446,13 @@
                       "action":  "ThroughMirkwoodShadowsAction",
                       "spriteName":  "ThroughMirkwoodShadows",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2072,7 +2499,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  868,
@@ -2092,11 +2532,13 @@
                       "action":  "UnderMountainBannersAction",
                       "spriteName":  "UnderMountainBanners",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2143,7 +2585,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  869,
@@ -2163,11 +2618,13 @@
                       "action":  "HiddenTreasureAction",
                       "spriteName":  "HiddenTreasure",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2214,7 +2671,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  870,
@@ -2234,11 +2704,13 @@
                       "action":  "TrollsHoardGrantArtifactAction",
                       "spriteName":  "TrollsHoard",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2285,7 +2757,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  871,
@@ -2305,11 +2790,13 @@
                       "action":  "VeinOfTrueSilverAction",
                       "spriteName":  "VeinOfTrueSilver",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2356,7 +2843,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  872,
@@ -2376,11 +2876,13 @@
                       "action":  "SealTheLowerGatesAction",
                       "spriteName":  "SealTheLowerGates",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2427,7 +2929,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  873,
@@ -2447,11 +2962,13 @@
                       "action":  "HallOfOathsAction",
                       "spriteName":  "HallOfOaths",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2498,7 +3015,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  874,
@@ -2518,11 +3048,13 @@
                       "action":  "AshenBreathRepaidAction",
                       "spriteName":  "AshenBreathRepaid",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2569,7 +3101,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  875,
@@ -2589,11 +3134,13 @@
                       "action":  "ForgefireKeptAction",
                       "spriteName":  "ForgefireKept",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2640,7 +3187,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  876,
@@ -2660,11 +3220,13 @@
                       "action":  "WallOfOakAndIronAction",
                       "spriteName":  "WallOfOakAndIron",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2711,7 +3273,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  877,
@@ -2731,11 +3306,13 @@
                       "action":  "PitchFromTheMurderHolesAction",
                       "spriteName":  "PitchFromTheMurderHoles",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2782,7 +3359,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  878,
@@ -2802,11 +3392,13 @@
                       "action":  "RaiseTheInnerBastionAction",
                       "spriteName":  "RaiseTheInnerBastion",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2853,7 +3445,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  879,
@@ -2870,11 +3475,13 @@
                       "action":  "",
                       "spriteName":  "Balin",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2923,9 +3530,18 @@
                       "startingPC":  "Khazad-Dum",
                       "inspireEffectData":  {
                                                 "type":  "IncreaseLoyalty",
-                                                "amount":  15
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  15,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  880,
@@ -2942,11 +3558,13 @@
                       "action":  "",
                       "spriteName":  "Fili",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -2995,9 +3613,18 @@
                       "startingPC":  "Noegrod",
                       "inspireEffectData":  {
                                                 "type":  "ResetMovement",
-                                                "allCharacters":  false
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  false,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  881,
@@ -3014,11 +3641,13 @@
                       "action":  "",
                       "spriteName":  "Thorin",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3066,9 +3695,19 @@
                       "goldGranted":  0,
                       "startingPC":  "ThorinHall",
                       "inspireEffectData":  {
-                                                "type":  "RevealArtifact"
+                                                "type":  "RevealArtifact",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  882,
@@ -3085,11 +3724,13 @@
                       "action":  "",
                       "spriteName":  "Nain",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3138,9 +3779,18 @@
                       "startingPC":  "Kheled-nala",
                       "inspireEffectData":  {
                                                 "type":  "ArmyXp",
-                                                "amount":  15
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  15,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  883,
@@ -3157,11 +3807,13 @@
                       "action":  "",
                       "spriteName":  "Thrain",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3210,10 +3862,18 @@
                       "startingPC":  "Zarak-dum",
                       "inspireEffectData":  {
                                                 "type":  "GainResource",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  3,
+                                                "troopType":  "",
                                                 "resourceType":  "Gold",
-                                                "amount":  3
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  894,
@@ -3233,11 +3893,13 @@
                       "action":  "KingUnderTheMountainAction",
                       "spriteName":  "KingUnderTheMountain",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3284,7 +3946,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  895,
@@ -3304,11 +3979,13 @@
                       "action":  "DoorsOfTheDeepDelvedAction",
                       "spriteName":  "DoorsOfTheDeepDelved",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3355,7 +4032,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  896,
@@ -3372,11 +4062,13 @@
                       "action":  "MithrilCoat",
                       "spriteName":  "A Mithril coat",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3423,7 +4115,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  897,
@@ -3440,11 +4145,13 @@
                       "action":  "MaterialRetrieval",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3491,7 +4198,20 @@
                       "mithrilGranted":  2,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  5
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  898,
@@ -3508,12 +4228,14 @@
                       "action":  "MaterialRetrieval",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
-                      "referenceDeckId":  "gandalf",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "mithrandir",
                       "referenceCardId":  899,
                       "encounterOptions":  [
 
@@ -3559,7 +4281,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  2,
                       "startingPC":  "",
-                      "amount":  5
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  899,
@@ -3576,11 +4311,13 @@
                       "action":  "PCAction",
                       "spriteName":  "EagleSEyrie",
                       "region":  "MistyMountains",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "stormcrow",
                       "referenceCardId":  909,
                       "encounterOptions":  [
@@ -3627,14 +4364,27 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  900,
                       "name":  "Durin\u0027s Day",
                       "quote":  "On Durin\u0027s Day the mountain door may yet remember.",
                       "actionEffect":  "Environmental event. Grants Hope \u003csprite name=\"hope\"\u003e to all Dwarves for 1 turn.",
-                      "type":  "Event",
+                      "type":  "Environmental",
                       "tags":  [
                                    "environmental"
                                ],
@@ -3644,11 +4394,13 @@
                       "action":  "DurinsDay",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3684,8 +4436,8 @@
                       "timberRequired":  0,
                       "ironRequired":  0,
                       "steelRequired":  0,
-                      "mithrilRequired":  1,
-                      "goldRequired":  3,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
                       "jokerRequired":  0,
                       "leatherGranted":  0,
                       "mountsGranted":  0,
@@ -3695,7 +4447,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  901,
@@ -3712,11 +4477,13 @@
                       "action":  "HeartOfTheMountain",
                       "spriteName":  "Heart of the Mountain",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3763,7 +4530,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  902,
@@ -3780,11 +4560,13 @@
                       "action":  "ReclaimingErebor",
                       "spriteName":  "ReclaimingErebor",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -3831,7 +4613,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  903,
@@ -3848,11 +4643,13 @@
                       "action":  "PCAction",
                       "spriteName":  "EreborLost",
                       "region":  "Rhovanion",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "the_necromancer",
                       "referenceCardId":  773,
                       "encounterOptions":  [
@@ -3899,7 +4696,20 @@
                       "mithrilGranted":  1,
                       "goldGranted":  2,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  904,
@@ -3916,11 +4726,13 @@
                       "action":  "PCAction",
                       "spriteName":  "KhazadDum",
                       "region":  "MistyMountains",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "the_necromancer",
                       "referenceCardId":  774,
                       "encounterOptions":  [
@@ -3967,7 +4779,20 @@
                       "mithrilGranted":  2,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  974,
@@ -3984,11 +4809,13 @@
                       "action":  "",
                       "spriteName":  "Gimli",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4039,14 +4866,20 @@
                                                 "type":  "ApplyStatusEffect",
                                                 "statusEffect":  "Fortified",
                                                 "turns":  2,
-                                                "allCharacters":  false
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  false,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1007,
                       "name":  "Tharkun",
-                      "characterGroup":  "gandalf",
                       "quote":  "Gold speaks to Dwarves, but I spoke first — in deed, in memory, and in the long patience of friendship.",
                       "actionEffect":  "Gain 1 Mithril \u003csprite name=\"mithril\"\u003e.",
                       "type":  "Character",
@@ -4059,11 +4892,13 @@
                       "action":  "",
                       "spriteName":  "Gandalf-Tharkun",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "gandalf",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4112,17 +4947,25 @@
                       "startingPC":  "Hobbiton",
                       "inspireEffectData":  {
                                                 "type":  "GainResource",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  1,
+                                                "troopType":  "",
                                                 "resourceType":  "Mithril",
-                                                "amount":  1
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1008,
                       "name":  "Cruel Winter",
                       "quote":  "The biting cold is my ally, and despair is my weapon.",
                       "actionEffect":  "Environmental event. All mountain enemy units have 7.5% chance to become Frozen \u003csprite name=\"frozen\"\u003e.",
-                      "type":  "Event",
+                      "type":  "Environmental",
                       "tags":  [
                                    "environmental"
                                ],
@@ -4132,11 +4975,13 @@
                       "action":  "CruelWinter",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "the_iron_crown",
                       "referenceCardId":  1015,
                       "encounterOptions":  [
@@ -4173,7 +5018,7 @@
                       "ironRequired":  0,
                       "steelRequired":  0,
                       "mithrilRequired":  0,
-                      "goldRequired":  1,
+                      "goldRequired":  0,
                       "jokerRequired":  0,
                       "leatherGranted":  0,
                       "mountsGranted":  0,
@@ -4183,7 +5028,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1009,
@@ -4200,11 +5058,13 @@
                       "action":  "DragonBreath",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "the_necromancer",
                       "referenceCardId":  1017,
                       "encounterOptions":  [
@@ -4251,7 +5111,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1010,
@@ -4268,11 +5141,13 @@
                       "action":  "MaterialRetrieval",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "stormcrow",
                       "referenceCardId":  855,
                       "encounterOptions":  [
@@ -4319,7 +5194,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  1,
                       "startingPC":  "",
-                      "amount":  5
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1011,
@@ -4336,11 +5224,13 @@
                       "action":  "MaterialRetrieval",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "of_many_colours",
                       "referenceCardId":  984,
                       "encounterOptions":  [
@@ -4387,7 +5277,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  1,
                       "startingPC":  "",
-                      "amount":  5
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1062,
@@ -4404,11 +5307,13 @@
                       "action":  "PCAction",
                       "spriteName":  "NorrDum",
                       "region":  "WitheredHeath",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4455,7 +5360,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  0,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1063,
@@ -4472,11 +5390,13 @@
                       "action":  "PCAction",
                       "spriteName":  "Celebost",
                       "region":  "WitheredHeath",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4523,7 +5443,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  1,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1064,
@@ -4540,11 +5473,13 @@
                       "action":  "PCAction",
                       "spriteName":  "KheledNala",
                       "region":  "IronHills",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4591,7 +5526,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  2,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1065,
@@ -4608,11 +5556,13 @@
                       "action":  "PCAction",
                       "spriteName":  "Telenaug",
                       "region":  "EredLuin",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4659,7 +5609,20 @@
                       "mithrilGranted":  0,
                       "goldGranted":  1,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1067,
@@ -4676,11 +5639,13 @@
                       "action":  "",
                       "spriteName":  "Thror",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4729,10 +5694,18 @@
                       "startingPC":  "Telenaug",
                       "inspireEffectData":  {
                                                 "type":  "GainResource",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  3,
+                                                "troopType":  "",
                                                 "resourceType":  "Gold",
-                                                "amount":  3
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1068,
@@ -4749,11 +5722,13 @@
                       "action":  "",
                       "spriteName":  "Dwalin",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4801,9 +5776,19 @@
                       "goldGranted":  0,
                       "startingPC":  "Belegost",
                       "inspireEffectData":  {
-                                                "type":  "IncreaseFort"
+                                                "type":  "IncreaseFort",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1069,
@@ -4820,11 +5805,13 @@
                       "action":  "",
                       "spriteName":  "Kili",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4873,10 +5860,18 @@
                       "startingPC":  "Noegrod",
                       "inspireEffectData":  {
                                                 "type":  "RecruitTroops",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  2,
                                                 "troopType":  "ar",
-                                                "amount":  2
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1070,
@@ -4893,11 +5888,13 @@
                       "action":  "",
                       "spriteName":  "Bombur",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -4946,10 +5943,18 @@
                       "startingPC":  "BarakShathur",
                       "inspireEffectData":  {
                                                 "type":  "Heal",
+                                                "statusEffect":  "",
+                                                "turns":  0,
                                                 "amount":  20,
-                                                "allCharacters":  false
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  false,
+                                                "nearest":  true
                                             },
-                      "amount":  1
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1073,
@@ -4966,11 +5971,13 @@
                       "action":  "PCAction",
                       "spriteName":  "ZarakDum",
                       "region":  "Angmar",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "",
                       "referenceCardId":  0,
                       "encounterOptions":  [
@@ -5017,7 +6024,20 @@
                       "mithrilGranted":  1,
                       "goldGranted":  1,
                       "startingPC":  "",
-                      "amount":  1
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1074,
@@ -5034,11 +6054,13 @@
                       "action":  "MaterialRetrieval",
                       "spriteName":  "",
                       "region":  "",
+                      "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
                       "statusEffect":  "",
                       "procChance":  0,
                       "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "the_iron_crown",
                       "referenceCardId":  1,
                       "encounterOptions":  [
@@ -5085,19 +6107,186 @@
                       "mithrilGranted":  1,
                       "goldGranted":  1,
                       "startingPC":  "",
-                      "amount":  5
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1075,
+                      "name":  "Hobbiton",
+                      "quote":  "The green of Hobbiton seems soft, yet it has a watchful heart.",
+                      "actionEffect":  "",
+                      "type":  "PC",
+                      "tags":  [
+                                   "TheShire"
+                               ],
+                      "deckId":  "tharkun",
+                      "alignment":  0,
+                      "actionClassName":  "",
+                      "action":  "PCAction",
+                      "spriteName":  "Hobbiton",
+                      "region":  "TheShire",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "gandalf_base",
                       "referenceCardId":  1003,
-                      "amount":  1
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  3,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   },
                   {
                       "cardId":  1076,
+                      "name":  "TheShire",
+                      "quote":  "The Shire endures by patience and many watchful hands.",
+                      "actionEffect":  "",
+                      "type":  "Land",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "tharkun",
+                      "alignment":  0,
+                      "actionClassName":  "",
+                      "action":  "MaterialRetrieval",
+                      "spriteName":  "TheShire",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
                       "referenceDeckId":  "disturber_of_the_peace",
                       "referenceCardId":  851,
-                      "amount":  1
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  1,
+                      "mountsGranted":  1,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  3,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   }
               ]
 }

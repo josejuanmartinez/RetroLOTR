@@ -8,6 +8,36 @@ public class FarShoreFadedStar : EventAction
     private const int BorderDistance = 5;
     private const int Duration = 3;
 
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> allChars = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.freePeople)
+            .Distinct().ToList();
+
+        int boosted = 0, navalBoosted = 0;
+        foreach (Character ch in allChars)
+        {
+            bool nearBorder = ch.hex != null && IsNearBorder(ch.hex, board);
+            bool isNaval = ch.IsArmyCommander() && ch.GetArmy() is Army a && a.ws > 0;
+
+            if (nearBorder || isNaval)
+            {
+                ch.ApplyStatusEffect(StatusEffectEnum.Hope, 1);
+                ch.Encourage(1);
+                if (ch.GetEmmissary() > 0) ch.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1);
+                if (isNaval) navalBoosted++; else boosted++;
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Far Shore, Faded Star (ongoing): {boosted} border units hope+encouraged; {navalBoosted} naval commanders boosted.",
+            Color.cyan);
+    }
+
     private static bool IsAllied(Character source, Character target)
     {
         if (source == null || target == null) return false;

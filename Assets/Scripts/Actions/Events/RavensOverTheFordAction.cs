@@ -16,10 +16,42 @@ public class RavensOverTheFordAction : EventAction
             && target.GetAlignment() != AlignmentEnum.neutral;
     }
 
-    private static bool IsHumanLike(Character ch)
+    private static bool IsHumanLike(Character ch) =>
+        ch != null && (ch.race == RacesEnum.Common || ch.race == RacesEnum.Dunedain);
+
+    public override void ApplyOngoingEffect()
     {
-        if (ch == null) return false;
-        return ch.race == RacesEnum.Common || ch.race == RacesEnum.Dunedain;
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> allChars = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed)
+            .Distinct().ToList();
+
+        // Allied Humans/Dunedain get Haste; enemy Humans/Dunedain get Fear+Halted
+        // Ravens bring intelligence: all agents gain ArcaneInsight
+        int hasted = 0, feared = 0, insight = 0;
+        foreach (Character ch in allChars)
+        {
+            if (ch.GetAgent() > 0) { ch.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1); insight++; }
+            if (!IsHumanLike(ch)) continue;
+            if (ch.GetAlignment() == AlignmentEnum.freePeople)
+            {
+                ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                hasted++;
+            }
+            else if (ch.GetAlignment() == AlignmentEnum.darkServants)
+            {
+                ch.ApplyStatusEffect(StatusEffectEnum.Fear, 1);
+                ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+                feared++;
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Ravens (ongoing): {hasted} allied Men/Dunedain hasted; {feared} enemy Men feared and halted; {insight} agents gain insight.",
+            Color.gray);
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)

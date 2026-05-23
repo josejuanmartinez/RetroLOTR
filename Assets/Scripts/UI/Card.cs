@@ -191,6 +191,20 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (cursorManager == null) cursorManager = FindFirstObjectByType<CursorManager>();
     }
 
+    public void SetEnvironmentalPulse(bool active)
+    {
+        CardEnvironmentalPulseEffect existing = GetComponent<CardEnvironmentalPulseEffect>();
+        if (active)
+        {
+            if (existing == null) gameObject.AddComponent<CardEnvironmentalPulseEffect>();
+            else existing.enabled = true;
+        }
+        else if (existing != null)
+        {
+            existing.enabled = false;
+        }
+    }
+
     public void Initialize(CardData data)
     {
         cardData = data;
@@ -591,6 +605,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             CardTypeEnum.Action => "Action",
             CardTypeEnum.Spell => "Spell",
             CardTypeEnum.Encounter => "Encounter",
+            CardTypeEnum.Environmental => "Environmental",
             _ => string.Empty
         };
 
@@ -606,20 +621,29 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             CardTypeEnum.Action => "action",
             CardTypeEnum.Spell => "spell",
             CardTypeEnum.Encounter => "encounter",
+            CardTypeEnum.Environmental => "environmental",
             _ => null
         };
 
-        if (string.IsNullOrWhiteSpace(colorName))
-        {
+        if (string.IsNullOrWhiteSpace(colorName) || colors == null)
             return label;
+
+        Color c;
+        try { c = colors.GetColorByName(colorName); }
+        catch { c = Color.clear; }
+
+        if (c.a < 0.01f)
+        {
+            c = colorName switch
+            {
+                "environmental" => new Color(0.42f, 0.67f, 0.42f, 1f),
+                _ => Color.clear
+            };
         }
 
-        if (colors == null)
-        {
-            return label;
-        }
+        if (c.a < 0.01f) return label;
 
-        return $"<color={colors.GetHexColorByName(colorName)}>{label}</color>";
+        return $"<color=#{ColorUtility.ToHtmlStringRGB(c)}>{label}</color>";
     }
 
     private string BuildRequirementsText(CardData data)
@@ -717,26 +741,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             selected,
             _ => resourceOwner == null || cardData.MeetsResourceRequirements(resourceOwner),
             _ => actionConditionsMet);
-
-        if (cardData != null && (string.Equals(cardData.name, "AFriendOrThree", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(cardData.name, "TheShire", StringComparison.OrdinalIgnoreCase)))
-        {
-            string selectedName = selected != null ? selected.characterName : "none";
-            string selectedHex = selected != null && selected.hex != null ? selected.hex.name : "none";
-            Leader owner = selected != null ? selected.GetOwner() : null;
-            string ownerName = owner != null ? owner.characterName : "none";
-            int ownerGold = owner != null ? owner.goldAmount : -1;
-            string resourceOwnerName = resourceOwner != null ? resourceOwner.characterName : "none";
-            int resourceOwnerGold = resourceOwner != null ? resourceOwner.goldAmount : -1;
-            Debug.Log(
-                $"[TutorialDebug] Playability '{cardData.name}' selected='{selectedName}' hex='{selectedHex}' " +
-                $"owner='{ownerName}' gold={ownerGold} cardGold={cardData.GetTotalGoldCost()} " +
-                $"resourceOwner='{resourceOwnerName}' resourceGold={resourceOwnerGold} " +
-                $"playable={isPlayable} level={cardData.playability.failsLevelRequirements == false} " +
-                $"resources={cardData.playability.failsResourceRequirements == false} " +
-                $"action={cardData.playability.failsActionConditions == false} " +
-                $"history={cardData.playability.failsCardHistoryRequirements == false}");
-        }
 
         if (canvasGroup != null)
         {
@@ -1137,6 +1141,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             case CardTypeEnum.Army:
                 success = await HandleArmyCardPlayed(playedSelected);
                 break;
+            case CardTypeEnum.Environmental:
+                success = await HandleEnvironmentalCardPlayed(playedSelected);
+                break;
         }
 
         if (!this)
@@ -1394,8 +1401,22 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         float height = proxyRect.rect.height;
         float lift = height * hoverLiftMultiplier;
-        proxyRect.pivot = new Vector2(0.5f, 0f);
-        proxyRect.anchoredPosition = originalRect.anchoredPosition + Vector2.up * (lift - originalRect.pivot.y * height + ZoomYOffset);
+
+        Canvas rootCanvas = GetComponentInParent<Canvas>();
+        Camera canvasCam = rootCanvas != null ? rootCanvas.worldCamera : null;
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(canvasCam, originalRect.position);
+        bool isInTopHalf = screenPos.y > Screen.height * 0.5f;
+
+        if (isInTopHalf)
+        {
+            proxyRect.pivot = new Vector2(0.5f, 1f);
+            proxyRect.anchoredPosition = originalRect.anchoredPosition - Vector2.up * (lift + originalRect.pivot.y * height + ZoomYOffset);
+        }
+        else
+        {
+            proxyRect.pivot = new Vector2(0.5f, 0f);
+            proxyRect.anchoredPosition = originalRect.anchoredPosition + Vector2.up * (lift - originalRect.pivot.y * height + ZoomYOffset);
+        }
 
         proxyRect.localScale = originalScale * 0.85f;
         if (zoomPopCoroutine != null)
@@ -1661,6 +1682,23 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             playerLeader.RecordPlayedCard(cardData);
         }
 
+        return true;
+    }
+
+    private async Task<bool> HandleEnvironmentalCardPlayed(Character selected)
+    {
+        Game game = FindFirstObjectByType<Game>();
+        if (game == null) return false;
+        PlayableLeader playerLeader = game.player;
+        if (playerLeader == null) return false;
+
+        if (!deckManager.TryConsumeCard(playerLeader, cardData.name, false, out _))
+            return false;
+
+        EnvironmentalCardManager.GetOrCreate().SetActiveCard(cardData);
+        playerLeader.RecordPlayedCard(cardData);
+
+        await Task.Yield();
         return true;
     }
 

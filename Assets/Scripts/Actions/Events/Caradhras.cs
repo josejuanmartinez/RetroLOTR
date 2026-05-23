@@ -5,6 +5,43 @@ using UnityEngine;
 
 public class Caradhras : EventAction
 {
+    private const float MountainFreezeChance = 0.20f;
+    private const float CavalryFreezeChance = 0.40f;
+
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> mountainChars = board.GetHexes()
+            .Where(h => h != null && h.terrainType == TerrainEnum.mountains && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && ch.race != RacesEnum.Dwarf
+                && !ch.IsImmuneToNegativeEnvironmentalCards())
+            .Distinct().ToList();
+
+        int frozen = 0, halted = 0;
+        foreach (Character ch in mountainChars)
+        {
+            bool isCavalry = ch.IsArmyCommander() && ch.GetArmy() is Army a && (a.lc > 0 || a.hc > 0);
+            float chance = isCavalry ? CavalryFreezeChance : MountainFreezeChance;
+            if (UnityEngine.Random.value < chance)
+            {
+                ch.ApplyStatusEffect(StatusEffectEnum.Frozen, 1);
+                frozen++;
+            }
+            // Non-dwarf commanders always halted in Caradhras
+            if (ch.IsArmyCommander())
+            {
+                ch.Halt(1);
+                halted++;
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Caradhras (ongoing): {frozen} mountain units frozen; {halted} army commanders halted. Dwarves are unaffected.",
+            Color.cyan);
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

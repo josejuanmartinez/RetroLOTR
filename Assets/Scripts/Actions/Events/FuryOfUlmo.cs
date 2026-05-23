@@ -9,14 +9,34 @@ public class FuryOfUlmo : EventAction
     {
         if (ch == null || ch.killed) return false;
         if (ch.isEmbarked) return true;
-
-        if (ch.IsArmyCommander())
-        {
-            Army army = ch.GetArmy();
-            if (army != null && army.ws > 0) return true;
-        }
-
+        if (ch.IsArmyCommander()) { Army a = ch.GetArmy(); if (a != null && a.ws > 0) return true; }
         return false;
+    }
+
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> naval = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(IsNavyOrEmbarked)
+            .Distinct().ToList();
+
+        // Characters on water/shore suffer movement penalty
+        List<Character> coastal = board.GetHexes()
+            .Where(h => h != null && (h.terrainType == TerrainEnum.shore || h.IsWaterTerrain()) && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed && !IsNavyOrEmbarked(ch))
+            .Distinct().ToList();
+
+        foreach (Character ch in naval) ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+        foreach (Character ch in coastal) ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Fury of Ulmo (ongoing): {naval.Count} naval/embarked slowed; {coastal.Count} coastal units slowed.",
+            Color.cyan);
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)

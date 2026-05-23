@@ -6,6 +6,42 @@ using UnityEngine;
 public class BarrowChillAction : EventAction
 {
     private const int Radius = 2;
+    private const float FreezeChance = 0.10f;
+
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        int frozen = 0, hobbitsBlocked = 0, undeadHasted = 0;
+        foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null))
+        {
+            bool isBarrowTerrain = hex.terrainType == TerrainEnum.swamp
+                || hex.terrainType == TerrainEnum.mountains
+                || hex.terrainType == TerrainEnum.hills;
+            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed).ToList())
+            {
+                if (ch.race == RacesEnum.Undead && isBarrowTerrain)
+                {
+                    ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+                    undeadHasted++;
+                }
+                else if (ch.race == RacesEnum.Hobbit && UnityEngine.Random.value < 0.33f)
+                {
+                    ch.ApplyStatusEffect(StatusEffectEnum.Blocked, 1);
+                    hobbitsBlocked++;
+                }
+                else if (ch.race != RacesEnum.Undead && !ch.IsImmuneToNegativeEnvironmentalCards() && UnityEngine.Random.value < FreezeChance)
+                {
+                    ch.ApplyStatusEffect(StatusEffectEnum.Frozen, 1);
+                    frozen++;
+                }
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Barrow Chill (ongoing): {frozen} units frozen by barrow cold; {hobbitsBlocked} Hobbits blocked; {undeadHasted} Undead in barrow terrain hasted.",
+            Color.cyan);
+    }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {

@@ -8,6 +8,50 @@ public class Rain : EventAction
     private const int Radius = 2;
     private const int MovementPenalty = 4;
 
+    public override void ApplyOngoingEffect()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Character> allChars = board.GetHexes()
+            .Where(h => h != null && h.characters != null)
+            .SelectMany(h => h.characters)
+            .Where(ch => ch != null && !ch.killed)
+            .Distinct().ToList();
+
+        int burningCleared = 0, cavalrySlowed = 0, siegeHalted = 0;
+        foreach (Character ch in allChars)
+        {
+            // Clear burning from all (rain puts out fires)
+            if (ch.HasStatusEffect(StatusEffectEnum.Burning))
+            {
+                ch.ClearStatusEffect(StatusEffectEnum.Burning);
+                burningCleared++;
+            }
+            // Universal movement penalty: mud slows everyone
+            ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+
+            if (!ch.IsArmyCommander()) continue;
+            Army army = ch.GetArmy();
+            if (army == null) continue;
+            // Cavalry suffers extra mud penalty
+            if (army.lc > 0 || army.hc > 0)
+            {
+                ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+                cavalrySlowed++;
+            }
+            // Catapults bog down in mud — 30% chance
+            if (army.ca > 0 && UnityEngine.Random.value < 0.30f)
+            {
+                ch.Halt(1);
+                siegeHalted++;
+            }
+        }
+        MessageDisplayNoUI.ShowMessage(null, null,
+            $"Rain (ongoing): {burningCleared} Burning cleared; {cavalrySlowed} cavalry slowed by mud; {siegeHalted} siege engines halted.",
+            Color.cyan);
+    }
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;

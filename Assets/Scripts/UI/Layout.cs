@@ -8,6 +8,22 @@ public class Layout : MonoBehaviour
     private ActionsManager actionsManager;
     [SerializeField]
     private HexNumberManager hexNumberManager;
+    [SerializeField]
+    private Card environmentalCard;
+
+    private void Awake()
+    {
+        if (environmentalCard != null) environmentalCard.gameObject.SetActive(false);
+    }
+
+    public void SetEnvironmentalCard(CardData card)
+    {
+        if (environmentalCard == null) return;
+        if (card == null) { environmentalCard.SetEnvironmentalPulse(false); environmentalCard.gameObject.SetActive(false); return; }
+        environmentalCard.gameObject.SetActive(true);
+        environmentalCard.Initialize(card);
+        environmentalCard.SetEnvironmentalPulse(true);
+    }
 
     public SelectedCharacterIcon GetSelectedCharacterIcon()
     {
