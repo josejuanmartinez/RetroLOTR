@@ -20,6 +20,7 @@ public class RemoveFortifications : CommanderPCAction
             if (pc == null || pc.fortSize <= FortSizeEnum.NONE) return false;
 
             pc.DecreaseFort();
+            actor.GetOwner()?.AddGold(10);
             MessageDisplayNoUI.ShowMessage(pc.hex, actor, $"Fortifications at {pc.pcName} were reduced.", Color.yellow);
             return true;
         };

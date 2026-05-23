@@ -1940,6 +1940,11 @@ public class DeckExplorerWindow : EditorWindow
     private DeckData LoadDeckData(string resourcePath)
     {
         if (string.IsNullOrWhiteSpace(resourcePath)) return null;
+        string assetPath = GetDeckAssetPath(resourcePath);
+        if (!string.IsNullOrWhiteSpace(assetPath) && File.Exists(assetPath))
+        {
+            return JsonUtility.FromJson<DeckData>(File.ReadAllText(assetPath));
+        }
         TextAsset deckAsset = Resources.Load<TextAsset>(resourcePath);
         if (deckAsset == null) return null;
         return JsonUtility.FromJson<DeckData>(deckAsset.text);

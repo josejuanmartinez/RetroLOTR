@@ -443,7 +443,7 @@ public class Board : MonoBehaviour
                 }
 
                 // If same hex, I loop through characters
-                List<Character> myCharacters = hexes[selection].characters.FindAll(x => x.GetOwner() == player.GetOwner());
+                List<Character> myCharacters = hexes[selection].characters.FindAll(x => x.GetOwner() == player.GetOwner() && !x.IsKidnapped());
 
                 if (myCharacters.Count < 1)
                 {

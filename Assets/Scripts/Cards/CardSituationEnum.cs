@@ -12,5 +12,14 @@ public enum CardSituationEnum
     EmmissaryAtHexWithEnemyCharacter = 9,
     MageAtHexWithEnemyCharacter = 10,
     MageAtArtifactHex = 11,
-    CommanderAtOwnPC = 12
+    CommanderAtOwnPC = 12,
+    EmmissaryAtFriendlyPC = 13,
+    AgentWithHostage = 14,
+    ArmyAtEnemyPCorEnemyArmy = 15,
+    EnemyAgentWithMyHostageAtHex = 16,
+    OwnDoubledCharacterByEnemyAtHex = 17,
+    EnemyCharacterAtHex = 18,
+    EnemyCharacterAtHexNoArmyCommander = 19,
+    EnemyMageAtHex = 20,
+    FriendlyCharacterAtHex = 21
 }

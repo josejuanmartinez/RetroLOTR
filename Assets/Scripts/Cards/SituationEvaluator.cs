@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public static class SituationEvaluator
 {
@@ -8,15 +9,24 @@ public static class SituationEvaluator
         CardSituationEnum.ArmyAtEnemyPC,
         CardSituationEnum.AgentAtEnemyPC,
         CardSituationEnum.EmmissaryAtEnemyPC,
+        CardSituationEnum.ArmyAtEnemyPCorEnemyArmy,
         CardSituationEnum.ArmyAtHexWithEnemyArmyAndNoPC,
         CardSituationEnum.AgentAtHexWithEnemyCharacter,
         CardSituationEnum.EmmissaryAtHexWithEnemyCharacter,
+        CardSituationEnum.EnemyMageAtHex,
         CardSituationEnum.MageAtHexWithEnemyCharacter,
         CardSituationEnum.MageAtArtifactHex,
+        CardSituationEnum.EnemyCharacterAtHex,
+        CardSituationEnum.EnemyCharacterAtHexNoArmyCommander,
         CardSituationEnum.CommanderAtOwnPC,
         CardSituationEnum.EmmissaryAtOwnPC,
+        CardSituationEnum.EmmissaryAtFriendlyPC,
         CardSituationEnum.AgentAtOwnPC,
         CardSituationEnum.ArmyAtFriendlyPC,
+        CardSituationEnum.AgentWithHostage,
+        CardSituationEnum.EnemyAgentWithMyHostageAtHex,
+        CardSituationEnum.OwnDoubledCharacterByEnemyAtHex,
+        CardSituationEnum.FriendlyCharacterAtHex,
     };
 
     public static List<CardSituationEnum> GetActiveSituations(Character character, Hex hex)
@@ -35,27 +45,42 @@ public static class SituationEvaluator
         bool atFriendlyPC = pc != null && IsFriendlyPC(pc, character);
         bool atEnemyPC    = pc != null && IsEnemyPC(pc, character);
 
-        bool enemyCharacterOnHex = HasEnemyCharacter(hex, character);
-        bool enemyArmyOnHex      = HasEnemyArmy(hex, character);
-        bool hasArtifact          = hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0;
+        bool friendlyCharacterOnHex         = HasFriendlyCharacter(hex, character);
+        bool enemyCharacterOnHex            = HasEnemyCharacter(hex, character);
+        bool enemyCharacterNoCommanderOnHex = HasEnemyCharacterNoArmyCommander(hex, character);
+        bool enemyMageOnHex                 = HasEnemyMage(hex, character);
+        bool enemyArmyOnHex                 = HasEnemyArmy(hex, character);
+        bool hasArtifact                    = hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0;
+        bool hasHostage                     = character.kidnappedCharacters != null && character.kidnappedCharacters.Any(r => r != null && r.character != null && !r.character.killed);
+        bool enemyHoldsMyHostage            = HasEnemyWithMyHostage(hex, character);
+        bool ownCharDoubledByEnemy          = HasOwnCharacterDoubledByEnemy(hex, character);
 
         foreach (CardSituationEnum situation in Priority)
         {
             bool matches = situation switch
             {
-                CardSituationEnum.ArmyAtEnemyPC                    => hasArmy      && atEnemyPC,
-                CardSituationEnum.AgentAtEnemyPC                   => hasAgent     && atEnemyPC,
-                CardSituationEnum.EmmissaryAtEnemyPC               => hasEmmissary && atEnemyPC,
-                CardSituationEnum.ArmyAtFriendlyPC                 => hasArmy      && atFriendlyPC,
-                CardSituationEnum.EmmissaryAtOwnPC                 => hasEmmissary && atOwnPC,
-                CardSituationEnum.AgentAtOwnPC                     => hasAgent     && atOwnPC,
-                CardSituationEnum.ArmyAtHexWithEnemyArmyAndNoPC   => hasArmy      && enemyArmyOnHex && pc == null,
-                CardSituationEnum.AgentAtHexWithEnemyCharacter     => hasAgent     && enemyCharacterOnHex,
-                CardSituationEnum.EmmissaryAtHexWithEnemyCharacter => hasEmmissary && enemyCharacterOnHex,
-                CardSituationEnum.MageAtHexWithEnemyCharacter      => hasMage      && enemyCharacterOnHex,
-                CardSituationEnum.MageAtArtifactHex                => hasMage      && hasArtifact,
-                CardSituationEnum.CommanderAtOwnPC                 => hasCommander && atOwnPC,
-                _                                                   => false
+                CardSituationEnum.ArmyAtEnemyPC                      => hasArmy      && atEnemyPC,
+                CardSituationEnum.AgentAtEnemyPC                     => hasAgent     && atEnemyPC,
+                CardSituationEnum.EmmissaryAtEnemyPC                 => hasEmmissary && atEnemyPC,
+                CardSituationEnum.ArmyAtFriendlyPC                   => hasArmy      && atFriendlyPC,
+                CardSituationEnum.EmmissaryAtOwnPC                   => hasEmmissary && atOwnPC,
+                CardSituationEnum.EmmissaryAtFriendlyPC              => hasEmmissary && atFriendlyPC,
+                CardSituationEnum.AgentAtOwnPC                       => hasAgent     && atOwnPC,
+                CardSituationEnum.ArmyAtHexWithEnemyArmyAndNoPC     => hasArmy      && enemyArmyOnHex && pc == null,
+                CardSituationEnum.ArmyAtEnemyPCorEnemyArmy          => hasArmy      && (atEnemyPC || enemyArmyOnHex),
+                CardSituationEnum.AgentAtHexWithEnemyCharacter       => hasAgent     && enemyCharacterOnHex,
+                CardSituationEnum.EmmissaryAtHexWithEnemyCharacter   => hasEmmissary && enemyCharacterOnHex,
+                CardSituationEnum.EnemyMageAtHex                     => hasMage      && enemyMageOnHex,
+                CardSituationEnum.MageAtHexWithEnemyCharacter        => hasMage      && enemyCharacterOnHex,
+                CardSituationEnum.MageAtArtifactHex                  => hasMage      && hasArtifact,
+                CardSituationEnum.CommanderAtOwnPC                   => hasCommander && atOwnPC,
+                CardSituationEnum.AgentWithHostage                   => hasAgent     && hasHostage,
+                CardSituationEnum.EnemyAgentWithMyHostageAtHex       => enemyHoldsMyHostage,
+                CardSituationEnum.OwnDoubledCharacterByEnemyAtHex    => ownCharDoubledByEnemy,
+                CardSituationEnum.FriendlyCharacterAtHex             => friendlyCharacterOnHex,
+                CardSituationEnum.EnemyCharacterAtHex                => enemyCharacterOnHex,
+                CardSituationEnum.EnemyCharacterAtHexNoArmyCommander => enemyCharacterNoCommanderOnHex,
+                _                                                     => false
             };
 
             if (matches) active.Add(situation);
@@ -85,6 +110,18 @@ public static class SituationEvaluator
         return pcAlignment == AlignmentEnum.neutral || myAlignment == AlignmentEnum.neutral || pcAlignment != myAlignment;
     }
 
+    private static bool HasFriendlyCharacter(Hex hex, Character character)
+    {
+        if (hex.characters == null) return false;
+        Leader owner = character.GetOwner();
+        foreach (Character other in hex.characters)
+        {
+            if (other == null || other == character || other.killed) continue;
+            if (other.GetOwner() == owner) return true;
+        }
+        return false;
+    }
+
     private static bool HasEnemyCharacter(Hex hex, Character character)
     {
         if (hex.characters == null) return false;
@@ -97,6 +134,72 @@ public static class SituationEvaluator
             if (otherOwner == null || otherOwner == owner) continue;
             AlignmentEnum otherAlignment = other.GetAlignment();
             if (otherAlignment == AlignmentEnum.neutral || myAlignment == AlignmentEnum.neutral || otherAlignment != myAlignment)
+                return true;
+        }
+        return false;
+    }
+
+    private static bool HasEnemyCharacterNoArmyCommander(Hex hex, Character character)
+    {
+        if (hex.characters == null) return false;
+        Leader owner = character.GetOwner();
+        AlignmentEnum myAlignment = character.GetAlignment();
+        foreach (Character other in hex.characters)
+        {
+            if (other == null || other == character || other.killed) continue;
+            if (other.IsArmyCommander()) continue;
+            Leader otherOwner = other.GetOwner();
+            if (otherOwner == null || otherOwner == owner) continue;
+            AlignmentEnum otherAlignment = other.GetAlignment();
+            if (otherAlignment == AlignmentEnum.neutral || myAlignment == AlignmentEnum.neutral || otherAlignment != myAlignment)
+                return true;
+        }
+        return false;
+    }
+
+    private static bool HasEnemyMage(Hex hex, Character character)
+    {
+        if (hex.characters == null) return false;
+        Leader owner = character.GetOwner();
+        AlignmentEnum myAlignment = character.GetAlignment();
+        foreach (Character other in hex.characters)
+        {
+            if (other == null || other == character || other.killed) continue;
+            if (other.IsHidden() || other.IsRefusingDuels()) continue;
+            if (other.GetMage() < 1) continue;
+            Leader otherOwner = other.GetOwner();
+            if (otherOwner == null || otherOwner == owner) continue;
+            AlignmentEnum otherAlignment = other.GetAlignment();
+            if (otherAlignment == AlignmentEnum.neutral || myAlignment == AlignmentEnum.neutral || otherAlignment != myAlignment)
+                return true;
+        }
+        return false;
+    }
+
+    private static bool HasEnemyWithMyHostage(Hex hex, Character character)
+    {
+        if (hex.characters == null) return false;
+        Leader myOwner = character.GetOwner();
+        foreach (Character other in hex.characters)
+        {
+            if (other == null || other == character || other.killed) continue;
+            if (other.GetOwner() == myOwner) continue;
+            if (other.kidnappedCharacters == null) continue;
+            if (other.kidnappedCharacters.Any(r => r != null && r.character != null && !r.character.killed && r.character.GetOwner() == myOwner))
+                return true;
+        }
+        return false;
+    }
+
+    private static bool HasOwnCharacterDoubledByEnemy(Hex hex, Character character)
+    {
+        if (hex.characters == null) return false;
+        Leader myOwner = character.GetOwner();
+        foreach (Character other in hex.characters)
+        {
+            if (other == null || other == character || other.killed) continue;
+            if (other.GetOwner() != myOwner) continue;
+            if (other.doubledBy != null && other.doubledBy.Any(l => l != null && l != myOwner))
                 return true;
         }
         return false;

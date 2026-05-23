@@ -274,6 +274,7 @@ public class CharacterAction
             {
                 effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + 25);
             }
+            effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + GetGuardPenalty(character, actionHex));
             bool failedByChance = UnityEngine.Random.Range(0, 100) < effectiveDifficulty;
             character?.ConsumeTemporaryActionDifficultyReduction(GetType().Name, actionHex);
 
@@ -383,6 +384,30 @@ public class CharacterAction
         return ShouldIgnoreScouting(actorOwner) || actor.hex.IsScoutedBy(actorOwner);
     }
 
+    private int GetGuardPenalty(Character actor, Hex hex)
+    {
+        if (actor == null || hex == null) return 0;
+        Leader actorOwner = actor.GetOwner();
+        int penalty = 0;
+
+        PC pc = hex.GetPC();
+        if (pc != null && pc.guardLevel > 0 && pc.owner != null && pc.owner != actorOwner)
+            penalty = Mathf.Max(penalty, pc.guardLevel * 10);
+
+        if (hex.characters != null)
+        {
+            foreach (Character ch in hex.characters)
+            {
+                if (ch == null || ch.killed || ch == actor) continue;
+                if (ch.GetOwner() == actorOwner) continue;
+                if (ch.guardLevel > 0)
+                    penalty = Mathf.Max(penalty, ch.guardLevel * 10);
+            }
+        }
+
+        return penalty;
+    }
+
     private bool ShouldApplyUnscoutedPenalty(Character actor)
     {
         if (actor == null || actor.hex == null) return false;
@@ -417,6 +442,7 @@ public class CharacterAction
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.Find(
             x => IsCharacterKnownAtHex(c, x) &&
+            !x.IsHidden() &&
             x.GetOwner() != c.GetOwner() &&
             x.GetAlignment() != c.GetAlignment() &&
             x.GetAlignment() != AlignmentEnum.neutral &&
@@ -428,6 +454,7 @@ public class CharacterAction
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.Find(
             x => IsCharacterKnownAtHex(c, x) &&
+            !x.IsHidden() &&
             x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment()) && (x is not PlayableLeader)
         );
@@ -438,6 +465,7 @@ public class CharacterAction
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.Find(
             x => IsCharacterKnownAtHex(c, x) &&
+            !x.IsHidden() &&
             x.GetOwner() != c.GetOwner() &&
             x.GetAlignment() != c.GetAlignment() &&
             x.GetAlignment() != AlignmentEnum.neutral
@@ -449,6 +477,7 @@ public class CharacterAction
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.Find(
             x => IsCharacterKnownAtHex(c, x) &&
+            !x.IsHidden() &&
             x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
         );
@@ -458,6 +487,7 @@ public class CharacterAction
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.FindAll(
             x => IsCharacterKnownAtHex(c, x) &&
+            !x.IsHidden() &&
             x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
         );
@@ -467,6 +497,7 @@ public class CharacterAction
         // Always prioritize free people or dark servants  (but leaders will be difficult as they will be guarded)
         return c.hex.characters.FindAll(
             x => IsCharacterKnownAtHex(c, x) &&
+            !x.IsHidden() &&
             !x.IsArmyCommander() && x.GetOwner() != c.GetOwner() &&
             (x.GetAlignment() == AlignmentEnum.neutral || x.GetAlignment() != c.GetAlignment())
         );

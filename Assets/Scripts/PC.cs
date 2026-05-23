@@ -23,6 +23,8 @@ public class PC
     [SerializeField] public bool artifactOccupancyHidden;
     [SerializeField] public int temporaryHiddenTurns;
     [SerializeField] public int temporaryRevealTurns;
+    [SerializeField] public int guardLevel;
+    [SerializeField] public int guardTurns;
 
 
     public PC(Leader owner, string pcName, PCSizeEnum citySize, FortSizeEnum fortSize, bool hasPort, bool isHidden, Hex hex, bool isCapital = false, int loyalty = 75)
@@ -123,6 +125,17 @@ public class PC
     {
         if (temporaryHiddenTurns > 0) temporaryHiddenTurns--;
         if (temporaryRevealTurns > 0) temporaryRevealTurns--;
+        if (guardTurns > 0)
+        {
+            guardTurns--;
+            if (guardTurns == 0) guardLevel = 0;
+        }
+    }
+
+    public void SetGuard(int level)
+    {
+        guardLevel = Mathf.Max(guardLevel, level);
+        guardTurns = Mathf.Max(guardTurns, 1);
     }
 
     public string GetLoyaltyText()

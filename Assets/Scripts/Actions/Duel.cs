@@ -17,7 +17,7 @@ public class Duel : CharacterAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.IsRefusingDuels()) return false;
-            return FindEnemyCharactersAtHex(character).Any(x => x != null && !x.IsHidden() && !x.IsRefusingDuels());
+            return FindEnemyCharactersAtHex(character).Any(x => x != null && !x.IsHidden() && !x.IsRefusingDuels() && !x.IsArmyCommander());
         };
 
         async Task<bool> duelAsync(Character character)
@@ -26,7 +26,7 @@ public class Duel : CharacterAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
 
             List<Character> enemies = FindEnemyCharactersAtHex(character)
-                .Where(x => x != null && !x.IsHidden() && !x.IsRefusingDuels())
+                .Where(x => x != null && !x.IsHidden() && !x.IsRefusingDuels() && !x.IsArmyCommander())
                 .ToList();
             if (enemies.Count < 1) return false;
 

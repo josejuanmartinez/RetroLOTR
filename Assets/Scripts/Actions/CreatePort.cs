@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class SabotagePort : AgentPCAction
+public class CreatePort : CommanderPCAction
 {
     public override void Initialize(
         Character c,
@@ -17,11 +17,10 @@ public class SabotagePort : AgentPCAction
         {
             if (originalEffect != null && !originalEffect(actor)) return false;
             PC pc = actor.hex.GetPC();
-            if (pc == null || !pc.hasPort) return false;
+            if (pc == null || pc.hasPort) return false;
 
-            pc.hasPort = false;
-            RemoveWarshipsFromPcOwner(pc);
-            MessageDisplayNoUI.ShowMessage(pc.hex, actor, $"{pc.pcName} port sabotaged!", Color.red);
+            pc.hasPort = true;
+            MessageDisplayNoUI.ShowMessage(pc.hex, actor, $"A port was built at {pc.pcName}.", Color.cyan);
             pc.hex.RedrawPC();
             pc.hex.RedrawArmies();
             pc.hex.RedrawCharacters();
@@ -32,7 +31,9 @@ public class SabotagePort : AgentPCAction
         {
             if (originalCondition != null && !originalCondition(actor)) return false;
             PC pc = actor.hex.GetPC();
-            return pc != null && pc.hasPort && actor.GetAgent() >= 4;
+            if (pc == null || pc.hasPort || pc.owner == null) return false;
+            if (pc.owner != actor.GetOwner()) return false;
+            return actor.GetCommander() >= 2;
         };
 
         asyncEffect = async (actor) =>
@@ -42,16 +43,5 @@ public class SabotagePort : AgentPCAction
         };
 
         base.Initialize(c, condition, effect, asyncEffect);
-    }
-
-    private static void RemoveWarshipsFromPcOwner(PC pc)
-    {
-        if (pc == null || pc.hex == null || pc.owner == null) return;
-        foreach (Army army in pc.hex.armies)
-        {
-            if (army == null || army.commander == null) continue;
-            if (army.commander.GetOwner() != pc.owner) continue;
-            if (army.ws > 0) army.ws = 0;
-        }
     }
 }

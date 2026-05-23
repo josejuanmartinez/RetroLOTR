@@ -488,7 +488,7 @@ public class Hex : MonoBehaviour
                 if (ch.IsArmyCommander()) continue;
 
                 bool isFriendly = IsFriendlyCharacter(ch, viewer);
-                bool canSee = isScouted || isFriendly;
+                bool canSee = isFriendly || (isScouted && !ch.IsHidden());
                 if (!canSee) continue;
 
                 hasVisibleCharacters = true;
@@ -621,7 +621,7 @@ public class Hex : MonoBehaviour
                 continue;
             }
             bool isFriendly = IsFriendlyCharacter(ch, viewer);
-            bool canSeeNonCommander = isScouted || isFriendly;
+            bool canSeeNonCommander = isFriendly || (isScouted && !ch.IsHidden());
             bool canSeeCommander = canSeeNonCommander || viewerHasCharacter || seen;
             bool canSee = ch.IsArmyCommander() ? canSeeCommander : canSeeNonCommander;
 
@@ -1166,7 +1166,7 @@ public class Hex : MonoBehaviour
                 if (ch == null) continue;
                 if (ch.GetOwner() is not NonPlayableLeader owner) continue;
                 if (owner.IsRevealedToLeader(leader)) continue;
-                bool canReveal = ch.IsArmyCommander() || isScouted;
+                bool canReveal = !ch.IsHidden() && (ch.IsArmyCommander() || isScouted);
                 if (!canReveal) continue;
                 npl = owner;
                 break;
@@ -1195,7 +1195,7 @@ public class Hex : MonoBehaviour
                     if (ch == null) continue;
                     if (ch.GetOwner() is not NonPlayableLeader owner) continue;
                     if (!owner.ShouldShowPlayerRevealPopup()) continue;
-                    bool canReveal = ch.IsArmyCommander() || isScouted;
+                    bool canReveal = !ch.IsHidden() && (ch.IsArmyCommander() || isScouted);
                     if (!canReveal) continue;
                     pending = owner;
                     break;
@@ -2217,7 +2217,7 @@ public class Hex : MonoBehaviour
     public List<Character> GetEnemyCharacters(Leader leader)
     {
         if (ShouldIgnoreScouting(leader) || scoutedBy.Contains(leader))
-            return characters.FindAll(x => x.GetOwner() != leader && (x.GetAlignment() != leader.GetAlignment() || x.GetAlignment() == AlignmentEnum.neutral)).ToList();
+            return characters.FindAll(x => !x.IsHidden() && x.GetOwner() != leader && (x.GetAlignment() != leader.GetAlignment() || x.GetAlignment() == AlignmentEnum.neutral)).ToList();
         return new(){};
     }
 

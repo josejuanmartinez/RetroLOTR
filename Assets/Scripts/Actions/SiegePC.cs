@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class SiegePC : CommanderEnemyPCAction
@@ -8,20 +9,30 @@ public class SiegePC : CommanderEnemyPCAction
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
-        int baseDifficulty = difficulty;
-        if (c != null && c.GetArmy() != null)
+
+        if (c != null && c.GetArmy() != null && c.hex != null)
         {
-            int catapults = Math.Max(0, c.GetArmy().ca);
-            int reduction = Math.Min(40, catapults * 10);
-            difficulty = Math.Max(5, baseDifficulty - reduction);
+            Army army = c.GetArmy();
+            PC pc = c.hex.GetPC();
+            int catapults = Math.Max(0, army.ca);
+            int fortLevel = pc != null ? (int)pc.fortSize : 0;
+            int commanderSkill = c.GetCommander();
+            var enemyArmies = c.hex.armies?
+                .Where(a => a != null && !a.killed && a.commander != null && a.commander.GetOwner() != c.GetOwner())
+                .ToList();
+            int enemyCa = enemyArmies?.Sum(a => a.ca) ?? 0;
+            int enemyTotal = enemyArmies?.Sum(a => a.GetSize()) ?? 0;
+            int enemyPenalty = enemyCa * 10 + (enemyTotal - enemyCa) * 5;
+
+            int successChance = catapults * 10 - fortLevel * 5 + commanderSkill * 5 - enemyPenalty;
+            difficulty = Math.Clamp(100 - successChance, 0, 100);
         }
 
         effect = (c) =>
         {
             if (originalEffect != null && !originalEffect(c)) return false;
             PC pc = c.hex.GetPC();
-            if (pc == null) return false;
-            if (pc.citySize <= PCSizeEnum.camp) return false;
+            if (pc == null || pc.citySize <= PCSizeEnum.camp) return false;
 
             pc.DecreaseSize();
             MessageDisplayNoUI.ShowMessage(pc.hex, c, $"{pc.pcName} suffers siege damage!", Color.red);
@@ -31,7 +42,9 @@ public class SiegePC : CommanderEnemyPCAction
         {
             if (originalCondition != null && !originalCondition(c)) return false;
             PC pc = c.hex.GetPC();
-            return pc != null && pc.citySize > PCSizeEnum.camp;
+            if (pc == null || pc.citySize <= PCSizeEnum.camp) return false;
+            Army army = c.GetArmy();
+            return army != null && army.ca >= 1;
         };
         asyncEffect = async (c) =>
         {

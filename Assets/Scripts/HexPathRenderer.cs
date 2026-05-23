@@ -170,6 +170,13 @@ public class HexPathRenderer : MonoBehaviour
                 bool isNeighborWater = IsWaterTerrain(neighbor);
                 bool isTerrainTransition = isCurrentWater != isNeighborWater;
 
+                // Block land-to-water movement for armies without enough warships (ws must be >= non-ws)
+                if (!isCurrentWater && isNeighborWater)
+                {
+                    Army army = character.GetArmy();
+                    if (army != null && army.ws < army.GetSize(true)) continue;
+                }
+
                 // Calculate movement cost
                 float terrainCost = GetTerrainCost(neighbor, character);
                 float tentativeGScore = gScore[current] + terrainCost;

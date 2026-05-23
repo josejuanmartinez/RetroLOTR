@@ -21,6 +21,7 @@ public class RemovePort : CommanderPCAction
 
             pc.hasPort = false;
             RemoveWarshipsFromPcOwner(pc);
+            actor.GetOwner()?.AddGold(10);
             MessageDisplayNoUI.ShowMessage(pc.hex, actor, $"{pc.pcName} port removed.", Color.yellow);
             pc.hex.RedrawPC();
             pc.hex.RedrawArmies();

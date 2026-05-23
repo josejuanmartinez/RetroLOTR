@@ -88,6 +88,7 @@ public class Character : MonoBehaviour
     private int temporaryActionDifficultyReductionValue;
     private int temporaryActionDifficultyReductionTurns;
     private Hex temporaryActionDifficultyReductionHex;
+    public int guardLevel = 0;
 
     private BiomeConfig characterBiome;
 
@@ -503,6 +504,12 @@ public class Character : MonoBehaviour
             playedCardSpritesThisTurn.Clear();
         }
 
+        if (IsKidnapped())
+        {
+            moved = GetMaxMovement();
+            hasActionedThisTurn = true;
+        }
+
         if (HasStatusEffect(StatusEffectEnum.Frozen))
         {
             MessageDisplayNoUI.ShowMessage(hex, this, "Frostbitten: -5 movement.", Color.cyan);
@@ -800,11 +807,7 @@ public class Character : MonoBehaviour
                 continue;
             }
 
-            Leader ownerToDrain = record.originalOwner != null ? record.originalOwner : prisoner.kidnappedOriginalOwner;
-            if (ownerToDrain != null)
-            {
-                ownerToDrain.RemoveGold(1, ownerToDrain == FindFirstObjectByType<Game>()?.player);
-            }
+            GetOwner()?.AddGold(1, GetOwner() == FindFirstObjectByType<Game>()?.player);
 
             int kidnapperAgentLevel = Mathf.Max(0, GetAgent());
             int escapeRoll = UnityEngine.Random.Range(0, 10);
@@ -969,6 +972,21 @@ public class Character : MonoBehaviour
             originalOwner.controlledCharacters.Add(this);
         }
 
+        if (escaped && originalOwner != null)
+        {
+            Board board = FindFirstObjectByType<Board>();
+            Hex capitalHex = board?.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == originalOwner && x.GetPC().isCapital);
+            if (capitalHex != null && capitalHex != hex)
+            {
+                if (hex != null) hex.characters.Remove(this);
+                hex = capitalHex;
+                if (!capitalHex.characters.Contains(this)) capitalHex.characters.Add(this);
+                capitalHex.RedrawCharacters();
+            }
+            moved = 0;
+            hasActionedThisTurn = false;
+        }
+
         Hex currentHex = hex;
         if (hex != null && !hex.characters.Contains(this))
         {
@@ -1053,6 +1071,7 @@ public class Character : MonoBehaviour
         {
             if(GetOwner().controlledCharacters.Contains(this)) GetOwner().controlledCharacters.Remove(this);
             if(hex.characters.Contains(this)) hex.characters.Remove(this);
+            DropArtifactsToHex();
             RefreshArtifactPcVisibilityForHex(hex);
         }
         health = 0;
@@ -1063,6 +1082,18 @@ public class Character : MonoBehaviour
         if(redrawArmies) hex.RedrawArmies();
         Leader owner = GetOwner();
         if (owner != null) CharacterIcons.RefreshForHumanPlayerOf(owner);
+    }
+
+    private void DropArtifactsToHex()
+    {
+        if (artifacts == null || artifacts.Count == 0) return;
+        if (hex == null) return;
+        hex.hiddenArtifacts ??= new System.Collections.Generic.List<Artifact>();
+        foreach (Artifact a in artifacts)
+        {
+            if (a != null) hex.hiddenArtifacts.Add(a);
+        }
+        artifacts.Clear();
     }
 
     public void RefreshSelectedCharacterIconIfSelected()
@@ -1344,7 +1375,8 @@ public class Character : MonoBehaviour
             || effect == StatusEffectEnum.ArcaneInsight
             || effect == StatusEffectEnum.Strengthened
             || effect == StatusEffectEnum.Fortified
-            || effect == StatusEffectEnum.DuelSupremacy;
+            || effect == StatusEffectEnum.DuelSupremacy
+            || effect == StatusEffectEnum.Guarded;
     }
     // -----------------------------------
 
@@ -1671,6 +1703,10 @@ public class Character : MonoBehaviour
         else if (effect == StatusEffectEnum.Poisoned)
         {
             poisonedFearTriggered = false;
+        }
+        else if (effect == StatusEffectEnum.Guarded)
+        {
+            guardLevel = 0;
         }
     }
 
