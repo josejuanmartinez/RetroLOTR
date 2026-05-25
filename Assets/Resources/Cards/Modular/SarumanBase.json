@@ -305,7 +305,7 @@
             "cardId": 203,
             "name": "Sun",
             "quote": "The sun lays bare what shadow would conceal.",
-            "actionEffect": "Environmental event. Grants Encouraged <sprite name=\"encouraged\"> to all Humans and Hobbits for 1 turn, and halts all Troll units.",
+            "actionEffect": "Grants Encouraged <sprite name=\"encouraged\"> to all Humans and Hobbits for 1 turn, and halts all Troll units.",
             "type": "Event",
             "tags": [
                 "environmental"
@@ -380,7 +380,7 @@
             "cardId": 204,
             "name": "Long Shadows",
             "quote": "When long shadows fall, old fears wake first.",
-            "actionEffect": "Environmental event. Grants Encouraged <sprite name=\"encouraged\"> to all beasts for 1 turn.",
+            "actionEffect": "Grants Encouraged <sprite name=\"encouraged\"> to all beasts for 1 turn.",
             "type": "Event",
             "tags": [
                 "environmental"

@@ -129,7 +129,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         if (iconsManager != null)
         {
             iconsManager.AddEventIcon(
-                EventIconType.Discovery,
+                EventIconType.LeaderRevealed,
                 true,
                 () => {
                     PopupManager.Show(

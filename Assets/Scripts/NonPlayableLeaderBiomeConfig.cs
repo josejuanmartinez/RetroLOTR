@@ -11,4 +11,5 @@ public class NonPlayableLeaderBiomeConfigCollection
 public class NonPlayableLeaderBiomeConfig: LeaderBiomeConfig
 {
     public bool spawnPcWithoutOwner = false;
+    public bool tutorialDummy = false;
 }

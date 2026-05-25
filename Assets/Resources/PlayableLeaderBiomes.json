@@ -82,8 +82,7 @@
                                                      "passiveEffectId":  "RandomHexRevealChancePerTurn",
                                                      "passiveEffectValue":  10,
                                                      "spriteString":  "ring",
-                                                     "transferable":  false,
-                                                     "alignment":  0
+                                                     "transferable":  false
                                                  },
                                                  {
                                                      "artifactName":  "Wizard Staff",
@@ -97,8 +96,7 @@
                                                      "passiveEffectId":  "HexEnemyHaltChancePerTurn",
                                                      "passiveEffectValue":  10,
                                                      "spriteString":  "staff",
-                                                     "transferable":  false,
-                                                     "alignment":  0
+                                                     "transferable":  false
                                                  },
                                                  {
                                                      "artifactName":  "Glamdring",
@@ -109,8 +107,7 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  1,
                                                      "bonusDefense":  0,
-                                                     "spriteString":  "sword",
-                                                     "alignment":  0
+                                                     "spriteString":  "sword"
                                                  },
                                                  {
                                                      "artifactName":  "Wizard\u0027s Cart",
@@ -123,8 +120,7 @@
                                                      "bonusDefense":  0,
                                                      "passiveEffectId":  "AlliedPcMoraleChancePerTurn",
                                                      "passiveEffectValue":  10,
-                                                     "spriteString":  "fireworks",
-                                                     "alignment":  0
+                                                     "spriteString":  "fireworks"
                                                  },
                                                  {
                                                      "artifactName":  "Longpipe",
@@ -136,8 +132,7 @@
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
                                                      "transferable":  false,
-                                                     "spriteString":  "tobacco",
-                                                     "alignment":  0
+                                                     "spriteString":  "tobacco"
                                                  },
                                                  {
                                                      "artifactName":  "Shadowfax",
@@ -151,8 +146,7 @@
                                                      "passiveEffectId":  "HasteChancePerTurn",
                                                      "passiveEffectValue":  10,
                                                      "spriteString":  "hc",
-                                                     "transferable":  false,
-                                                     "alignment":  0
+                                                     "transferable":  false
                                                  }
                                              ],
                        "startingCityRegion":  "Arthedain",
@@ -231,8 +225,7 @@
                                                      "passiveEffectId":  "HexEnemyFearAndDespairChancePerTurn",
                                                      "passiveEffectValue":  5,
                                                      "spriteString":  "ring",
-                                                     "transferable":  false,
-                                                     "alignment":  2
+                                                     "transferable":  false
                                                  },
                                                  {
                                                      "artifactName":  "White Hand Banner",
@@ -243,8 +236,7 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  1,
                                                      "bonusDefense":  0,
-                                                     "spriteString":  "banner",
-                                                     "alignment":  2
+                                                     "spriteString":  "banner"
                                                  },
                                                  {
                                                      "artifactName":  "Many-coloured robes",
@@ -258,8 +250,7 @@
                                                      "passiveEffectId":  "RandomHexRevealChancePerTurn",
                                                      "passiveEffectValue":  10,
                                                      "transferable":  false,
-                                                     "spriteString":  "cloak",
-                                                     "alignment":  2
+                                                     "spriteString":  "cloak"
                                                  },
                                                  {
                                                      "artifactName":  "Yellow teeth",
@@ -271,8 +262,7 @@
                                                      "bonusAttack":  0,
                                                      "bonusDefense":  0,
                                                      "transferable":  false,
-                                                     "spriteString":  "tooth",
-                                                     "alignment":  2
+                                                     "spriteString":  "tooth"
                                                  },
                                                  {
                                                      "artifactName":  "Palantir of Orthanc",
@@ -285,8 +275,7 @@
                                                      "bonusDefense":  0,
                                                      "passiveEffectId":  "RandomHexRevealChancePerTurn",
                                                      "passiveEffectValue":  10,
-                                                     "spriteString":  "palantir",
-                                                     "alignment":  2
+                                                     "spriteString":  "palantir"
                                                  },
                                                  {
                                                      "artifactName":  "Saruman\u0027s Staff",
@@ -300,8 +289,7 @@
                                                      "passiveEffectId":  "HexEnemyHaltChancePerTurn",
                                                      "passiveEffectValue":  10,
                                                      "spriteString":  "staff",
-                                                     "transferable":  false,
-                                                     "alignment":  2
+                                                     "transferable":  false
                                                  }
                                              ],
                        "startingCityRegion":  "GapOfRohan",
@@ -387,8 +375,7 @@
                                                      "mageBonus":  0,
                                                      "bonusAttack":  1,
                                                      "bonusDefense":  0,
-                                                     "spriteString":  "banner",
-                                                     "alignment":  1
+                                                     "spriteString":  "banner"
                                                  },
                                                  {
                                                      "artifactName":  "Palantir of Ithil",
@@ -401,8 +388,7 @@
                                                      "bonusDefense":  0,
                                                      "passiveEffectId":  "RandomHexRevealChancePerTurn",
                                                      "passiveEffectValue":  10,
-                                                     "spriteString":  "palantir",
-                                                     "alignment":  1
+                                                     "spriteString":  "palantir"
                                                  },
                                                  {
                                                      "artifactName":  "Morgul Veil",
@@ -416,8 +402,7 @@
                                                      "passiveEffectId":  "HideOccupiedPcWhilePresent",
                                                      "passiveEffectValue":  1,
                                                      "transferable":  false,
-                                                     "spriteString":  "veil",
-                                                     "alignment":  1
+                                                     "spriteString":  "veil"
                                                  },
                                                  {
                                                      "artifactName":  "Lidless eye",
@@ -431,8 +416,7 @@
                                                      "passiveEffectId":  "RevealHiddenEnemyPcOnOccupiedHex",
                                                      "passiveEffectValue":  1,
                                                      "transferable":  false,
-                                                     "spriteString":  "darkServants",
-                                                     "alignment":  1
+                                                     "spriteString":  "darkServants"
                                                  },
                                                  {
                                                      "artifactName":  "Voice of the Dark Tower",
@@ -446,8 +430,7 @@
                                                      "passiveEffectId":  "HexEnemyFearAndDespairChancePerTurn",
                                                      "passiveEffectValue":  5,
                                                      "transferable":  false,
-                                                     "spriteString":  "speech",
-                                                     "alignment":  1
+                                                     "spriteString":  "speech"
                                                  }
                                              ],
                        "startingCityRegion":  "Gorgoroth",

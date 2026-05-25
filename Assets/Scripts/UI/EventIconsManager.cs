@@ -76,7 +76,7 @@ public class EventIconsManager : MonoBehaviour
         }
 
         Action removal = onRemove ?? (() => RemoveIcon(icon));
-        Sprite portrait = characterPortrait ?? ResolveCharacterPortraitSprite();
+        Sprite portrait = characterPortrait ?? ResolveActiveLeaderPortrait();
         icon.Configure(type, discardable, onOpen, removal, portrait);
         activeIcons.Add(icon);
         RefreshLayout(parent as RectTransform);
@@ -149,34 +149,29 @@ public class EventIconsManager : MonoBehaviour
         }
     }
 
-    private Sprite ResolveCharacterPortraitSprite()
+    private static Sprite ResolveActiveLeaderPortrait()
     {
         SelectedCharacterIcon selectedIcon = FindFirstObjectByType<SelectedCharacterIcon>();
         if (selectedIcon != null)
         {
             if (selectedIcon.icon != null && selectedIcon.icon.sprite != null)
-            {
                 return selectedIcon.icon.sprite;
-            }
 
-            if (selectedIcon.rawImage != null && selectedIcon.rawImage.texture is Texture2D texture)
-            {
-                return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-            }
+            if (selectedIcon.rawImage != null && selectedIcon.rawImage.texture is Texture2D tex)
+                return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
         }
 
         Game game = FindFirstObjectByType<Game>();
         Leader leader = null;
         if (game != null)
-        {
-            leader = game.currentlyPlaying != null ? game.currentlyPlaying : game.player;
-        }
-        if (leader == null || string.IsNullOrWhiteSpace(leader.characterName))
-        {
-            return null;
-        }
+            leader = game.currentlyPlaying ?? game.player;
+
+        if (leader == null || string.IsNullOrWhiteSpace(leader.characterName)) return null;
 
         Illustrations illustrations = FindFirstObjectByType<Illustrations>();
-        return illustrations != null ? illustrations.GetIllustrationByName(leader.characterName, false) ?? illustrations.GetIllustrationByName(leader.characterName) : null;
+        if (illustrations == null) return null;
+
+        return illustrations.GetIllustrationByName(leader.characterName, false)
+            ?? illustrations.GetIllustrationByName(leader.characterName);
     }
 }

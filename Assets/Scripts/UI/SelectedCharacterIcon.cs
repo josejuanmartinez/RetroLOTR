@@ -41,16 +41,6 @@ public class SelectedCharacterIcon : MonoBehaviour
     public GameObject artifactPrefab;
     public Transform artifactsGridLayoutTransform;
 
-    [Header("Drop Target Hint")]
-    [SerializeField] private Color dropHintColor = new Color(1f, 0.92f, 0.35f, 1f);
-    [SerializeField] private Color dropReadyColor = new Color(0.55f, 1f, 0.72f, 1f);
-    [SerializeField] private float dropHintPulseSpeed = 8f;
-    [SerializeField] private float dropHintScaleMultiplier = 1.05f;
-    [SerializeField] private float dropReadyScaleMultiplier = 1.13f;
-    [SerializeField] private bool hideDetailsWhenDropReady = true;
-    [SerializeField] private Image rootImage;
-    [SerializeField] private Image borderImage;
-
     [Header("Played cards")]
     [SerializeField] private CanvasGroup cardCanvasGroup;
     [SerializeField] public GameObject playedCard;
@@ -58,15 +48,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     // private Videos videos;
     private Illustrations illustrations;
     private CanvasGroup canvasGroup;
-    private Color rootDefaultColor = Color.white;
-    private Color borderDefaultColor = Color.white;
-    private Vector3 defaultScale = Vector3.one;
-    private bool dropHintActive;
-    private float dropHintProximity;
-    private bool dropHintLocked;
-    private bool detailsHiddenForDropPreview;
-    private readonly Dictionary<GameObject, bool> cachedChildActiveStates = new();
-    private int lastRefreshedCharacterId = int.MinValue;
+
     private Character pendingRefreshCharacter;
     public Character CurrentCharacter { get; private set; }
     private bool refreshScheduled;
@@ -75,9 +57,6 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     private void Awake()
     {
-        if (rootImage != null) rootDefaultColor = rootImage.color;
-        if (borderImage != null) borderDefaultColor = borderImage.color;
-        defaultScale = transform.localScale;
         BindPlayedCardTemplate();
         ClearPlayedCardInstances();
         SetPlayedCardVisible(false);
@@ -87,105 +66,11 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     private void OnDisable()
     {
-        SetDropTargetHighlight(false);
         refreshScheduled = false;
         pendingRefreshCharacter = null;
         StopAllCoroutines();
     }
 
-    private void Update()
-    {
-        if (!dropHintActive) return;
-
-        float pulse = (Mathf.Sin(Time.unscaledTime * dropHintPulseSpeed) + 1f) * 0.5f;
-        float proximity = Mathf.Clamp01(dropHintProximity);
-        float lockBoost = dropHintLocked ? 1f : 0f;
-        float baseScale = Mathf.Lerp(dropHintScaleMultiplier, dropReadyScaleMultiplier, Mathf.Max(proximity, lockBoost));
-        float scaleLerp = Mathf.Lerp(0.4f, 1f, pulse);
-        transform.localScale = Vector3.Lerp(defaultScale, defaultScale * baseScale, scaleLerp);
-
-        if (rootImage != null)
-        {
-            Color targetColor = Color.Lerp(dropHintColor, dropReadyColor, Mathf.Max(proximity, lockBoost));
-            float tint = Mathf.Lerp(0.14f, 0.3f, proximity);
-            if (dropHintLocked) tint = Mathf.Max(tint, 0.36f);
-            rootImage.color = Color.Lerp(rootDefaultColor, targetColor, tint);
-        }
-        if (borderImage != null)
-        {
-            Color targetColor = Color.Lerp(dropHintColor, dropReadyColor, Mathf.Max(proximity, lockBoost));
-            float tint = Mathf.Lerp(0.72f, 0.96f, proximity);
-            if (dropHintLocked) tint = 1f;
-            borderImage.color = Color.Lerp(borderDefaultColor, targetColor, tint);
-        }
-
-        SetDropPreviewDetailsHidden(dropHintLocked);
-    }
-
-    public void SetDropTargetHighlight(bool active)
-    {
-        dropHintActive = active;
-        if (dropHintActive)
-        {
-            dropHintProximity = 0f;
-            dropHintLocked = false;
-            return;
-        }
-
-        dropHintProximity = 0f;
-        dropHintLocked = false;
-        SetDropPreviewDetailsHidden(false);
-        transform.localScale = defaultScale;
-        if (rootImage != null) rootImage.color = rootDefaultColor;
-        if (borderImage != null) borderImage.color = borderDefaultColor;
-    }
-
-    public void SetDropTargetProximity(float proximity, bool locked)
-    {
-        if (!dropHintActive) return;
-        dropHintProximity = Mathf.Clamp01(proximity);
-        dropHintLocked = locked;
-        if (!dropHintLocked)
-        {
-            SetDropPreviewDetailsHidden(false);
-        }
-    }
-
-    private void SetDropPreviewDetailsHidden(bool hidden)
-    {
-        if (!hideDetailsWhenDropReady) return;
-        if (detailsHiddenForDropPreview == hidden) return;
-
-        GameObject artifactsWidget = artifactsGridLayoutTransform != null ? artifactsGridLayoutTransform.gameObject : null;
-
-        if (hidden)
-        {
-            cachedChildActiveStates.Clear();
-            if (artifactsWidget != null)
-            {
-                cachedChildActiveStates[artifactsWidget] = artifactsWidget.activeSelf;
-                artifactsWidget.SetActive(false);
-            }
-            if (otherCharacters != null)
-            {
-                cachedChildActiveStates[otherCharacters] = otherCharacters.activeSelf;
-                otherCharacters.SetActive(false);
-            }
-        }
-        else
-        {
-            foreach (KeyValuePair<GameObject, bool> state in cachedChildActiveStates)
-            {
-                if (state.Key == null) continue;
-                state.Key.SetActive(state.Value);
-            }
-            cachedChildActiveStates.Clear();
-        }
-
-        detailsHiddenForDropPreview = hidden;
-    }
-
-    // Update is called once per frame
     public void Refresh(Character c)
     {
         pendingRefreshCharacter = c;
@@ -211,8 +96,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     private void ApplyRefresh(Character c)
     {
         CurrentCharacter = c;
-        SetDropTargetHighlight(false);
-        SetVisible(true);
+SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
         SetCharacterVisuals(GetIllustrationByName(!string.IsNullOrWhiteSpace(c.illustrationName) ? c.illustrationName : c.characterName));
@@ -240,8 +124,7 @@ public class SelectedCharacterIcon : MonoBehaviour
 
         if (c != null)
         {
-            lastRefreshedCharacterId = c.GetInstanceID();
-        }
+}
     }
 
     private string BuildKidnappingStatusText(Character c)
@@ -272,8 +155,7 @@ public class SelectedCharacterIcon : MonoBehaviour
             return;
         }
 
-        SetDropTargetHighlight(false);
-        SetVisible(true);
+SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
         SetCharacterVisuals(GetIllustrationByName(!string.IsNullOrWhiteSpace(c.illustrationName) ? c.illustrationName : c.characterName));
@@ -304,8 +186,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     {
         if (army == null || army.commander == null) { Hide(); return; }
 
-        SetDropTargetHighlight(false);
-        SetVisible(true);
+SetVisible(true);
         border.SetActive(true);
         SetCharacterVisuals(ResolveArmySprite(army));
         textWidget.text = army.GetHoverTextNoXp();
@@ -354,8 +235,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     // Update is called once per frame
     public void Hide()
     {
-        SetDropTargetHighlight(false);
-        SetVisible(false);
+SetVisible(false);
         border.SetActive(false);
         // Video path disabled for now; static illustrations only.
         // if (video != null)
@@ -374,7 +254,6 @@ public class SelectedCharacterIcon : MonoBehaviour
         health.gameObject.SetActive(false);
         ClearPlayedCardInstances();
         SetPlayedCardVisible(false);
-        lastRefreshedCharacterId = int.MinValue;
         pendingRefreshCharacter = null;
         CurrentCharacter = null;
         refreshScheduled = false;
@@ -638,7 +517,7 @@ public class SelectedCharacterIcon : MonoBehaviour
             return $"<u>{c.characterName}</u> (wandering)";
         }
 
-        return $"<u>{c.characterName}</u>, leading an army of {BuildArmyTroopSummary(c, army)}";
+        return $"<u>{c.characterName}</u>\n{BuildArmyTroopSummary(c, army)}";
     }
 
     private string BuildArmyTroopSummary(Character c, Army army)
@@ -646,11 +525,11 @@ public class SelectedCharacterIcon : MonoBehaviour
         List<string> troops = army != null
             ? army.GetTroopGroups()
                 .Where(group => group != null && group.amount > 0)
-                .Select(group => $"{group.amount}<sprite name=\"{group.troopType.ToString().ToLower()}\">{group.troopName}")
+                .Select(group => $" - {group.amount}<sprite name=\"{group.troopType.ToString().ToLower()}\">{group.troopName}")
                 .ToList()
             : new List<string>();
 
-        return string.Join(", ", troops);
+        return string.Join("\n", troops);
     }
 
 }

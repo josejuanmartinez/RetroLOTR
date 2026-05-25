@@ -659,16 +659,13 @@ public class DeckManager : MonoBehaviour
     [Header("References")]
     [FormerlySerializedAs("cardCameObject")]
     [SerializeField] GameObject cardCameObject;
-    [SerializeField] GridLayoutGroup gridLayout;
+    [SerializeField] CardBloomWheel cardBloomWheel;
     [SerializeField] CanvasGroup handCanvasGroup;
 
     [Header("Config")]
     [SerializeField] private bool initializeOnStart = true;
     [SerializeField] private string cardsManifestResourcePath = "Cards";
     [SerializeField] private int handSize = 6;
-    [Tooltip("Extra vertical offset (pixels) applied to the zoomed card above the default lift. Increase to push the zoom card higher up.")]
-    [SerializeField] private float zoomCardYOffset = 30f;
-
     [Header("Debug")]
     [SerializeField] private bool logInitialization = true;
 
@@ -693,19 +690,6 @@ public class DeckManager : MonoBehaviour
     private void OnValidate()
     {
         availableStatusEffectIds = Enum.GetNames(typeof(StatusEffectEnum)).ToList();
-        ApplyZoomCardYOffsetToHand();
-    }
-
-    private void ApplyZoomCardYOffsetToHand()
-    {
-        foreach (GameObject go in handCardInstances)
-        {
-            if (go == null) continue;
-            if (go.TryGetComponent<Card>(out Card card))
-            {
-                card.ZoomYOffset = zoomCardYOffset;
-            }
-        }
     }
 
     private void Awake()
@@ -929,6 +913,15 @@ public class DeckManager : MonoBehaviour
         card = state.drawPile[0];
         card.hasShownHandAnimation = false;
         state.drawPile.RemoveAt(0);
+
+        if (card.GetCardType() == CardTypeEnum.Encounter &&
+            state.hand.Any(h => h != null && h.GetCardType() == CardTypeEnum.Encounter))
+        {
+            state.discardPile.Add(card);
+            card = null;
+            return false;
+        }
+
         state.hand.Add(card);
         RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
@@ -1301,7 +1294,7 @@ public class DeckManager : MonoBehaviour
             ClearHandCardInstances();
 
             GameObject cardPrefab = ResolveCardPrefab();
-            if (cardPrefab == null || gridLayout == null) return;
+            if (cardPrefab == null || cardBloomWheel == null) return;
 
             Game game = FindFirstObjectByType<Game>();
             if (game == null || game.player == null) return;
@@ -1311,8 +1304,20 @@ public class DeckManager : MonoBehaviour
             {
                 if (card == null) continue;
 
-                GameObject cardGo = Instantiate(cardPrefab, gridLayout.transform);
+                GameObject cardGo = Instantiate(cardPrefab, cardBloomWheel.transform);
                 cardGo.SetActive(true);
+
+                if (cardGo.TryGetComponent(out RectTransform cardRect))
+                {
+                    // Capture rendered size before touching anchors so we can restore it.
+                    Vector2 prefabSize = cardRect.rect.size;
+                    cardRect.anchorMin = new Vector2(0.5f, 0.5f);
+                    cardRect.anchorMax = new Vector2(0.5f, 0.5f);
+                    cardRect.pivot = new Vector2(0.5f, 0f);
+                    cardRect.sizeDelta = prefabSize;
+                    cardRect.anchoredPosition = Vector2.zero;
+                }
+
                 handCardInstances.Add(cardGo);
 
                 Card cardComponent = cardGo.GetComponent<Card>();
@@ -1322,9 +1327,10 @@ public class DeckManager : MonoBehaviour
                     continue;
                 }
 
-                cardComponent.ZoomYOffset = zoomCardYOffset;
                 cardComponent.Initialize(card);
             }
+
+            cardBloomWheel.SetCards(handCardInstances);
         }
         finally
         {
@@ -2031,7 +2037,7 @@ public class DeckManager : MonoBehaviour
         if (iconsManager != null)
         {
             iconsManager.AddEventIcon(
-                EventIconType.HexMessage,
+                EventIconType.MapReveal,
                 true,
                 () =>
                 {
@@ -2501,6 +2507,12 @@ public class DeckManager : MonoBehaviour
             CardData card = state.drawPile[0];
             card.hasShownHandAnimation = false;
             state.drawPile.RemoveAt(0);
+            if (card.GetCardType() == CardTypeEnum.Encounter &&
+                state.hand.Any(h => h != null && h.GetCardType() == CardTypeEnum.Encounter))
+            {
+                state.discardPile.Add(card);
+                continue;
+            }
             state.hand.Add(card);
         }
     }
@@ -2647,15 +2659,13 @@ public class DeckManager : MonoBehaviour
 
     private IEnumerator PlayReshuffleAnimation(List<GameObject> oldCards)
     {
-        if (gridLayout == null) yield break;
+        if (cardBloomWheel == null) yield break;
 
-        // Force layout pass so rt.position values are current before we capture them.
         Canvas.ForceUpdateCanvases();
 
-        Transform floatRoot = gridLayout.transform.parent;
+        Transform floatRoot = cardBloomWheel.transform.parent;
         int total = oldCards.Count;
 
-        // Capture all world positions in one pass before touching any parent.
         Vector3[] worldPositions = new Vector3[total];
         for (int i = 0; i < total; i++)
         {
@@ -2663,10 +2673,6 @@ public class DeckManager : MonoBehaviour
             if (oldCards[i].TryGetComponent(out RectTransform rt))
                 worldPositions[i] = rt.position;
         }
-
-        // Disable GridLayoutGroup so reparenting one card at a time doesn't
-        // cause the remaining siblings to jump around between iterations.
-        gridLayout.enabled = false;
 
         for (int i = 0; i < total; i++)
         {
@@ -2685,29 +2691,12 @@ public class DeckManager : MonoBehaviour
             StartCoroutine(ScatterCard(card, i, total));
         }
 
-        gridLayout.enabled = true;
-
         yield return new WaitForSecondsRealtime(0.5f);
 
         foreach (var go in oldCards)
             if (go != null) Destroy(go);
 
         RefreshHumanPlayerHandUI();
-
-        // Hide all new cards synchronously before any frame renders them,
-        // so there is no flash at their grid positions.
-        List<GameObject> newCards = new List<GameObject>(handCardInstances);
-        foreach (GameObject card in newCards)
-        {
-            if (card == null) continue;
-            RectTransform rt = card.GetComponent<RectTransform>();
-            CanvasGroup cg = card.GetComponent<CanvasGroup>();
-            if (rt != null) rt.localScale = Vector3.zero;
-            if (cg != null) cg.alpha = 0f;
-        }
-
-        for (int i = 0; i < newCards.Count; i++)
-            StartCoroutine(DealInCard(newCards[i], i * 0.07f));
     }
 
     private IEnumerator ScatterCard(GameObject card, int index, int total)
@@ -2752,40 +2741,6 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    private IEnumerator DealInCard(GameObject card, float delay)
-    {
-        if (delay > 0f) yield return new WaitForSecondsRealtime(delay);
-        if (card == null) yield break;
-
-        RectTransform rt = card.GetComponent<RectTransform>();
-        CanvasGroup cg = card.GetComponent<CanvasGroup>();
-        if (rt == null) yield break;
-
-        Vector3 targetScale = rt.localScale;
-        rt.localScale = Vector3.zero;
-        if (cg != null) cg.alpha = 0f;
-
-        float duration = 0.26f;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            if (card == null) yield break;
-            float p = elapsed / duration;
-            float eased = 1f + 2.70158f * Mathf.Pow(p - 1f, 3f) + 1.70158f * Mathf.Pow(p - 1f, 2f);
-            rt.localScale = Vector3.LerpUnclamped(Vector3.zero, targetScale, eased);
-            if (cg != null) cg.alpha = Mathf.Clamp01(p * 2.5f);
-            elapsed += Time.unscaledDeltaTime;
-            yield return null;
-        }
-
-        if (card != null)
-        {
-            rt.localScale = targetScale;
-            if (cg != null) cg.alpha = 1f;
-        }
-    }
-
     private void ClearHandCardInstances()
     {
         foreach (GameObject card in handCardInstances)
@@ -2795,11 +2750,11 @@ public class DeckManager : MonoBehaviour
         }
         handCardInstances.Clear();
 
-        if (gridLayout == null) return;
+        if (cardBloomWheel == null) return;
 
-        for (int i = gridLayout.transform.childCount - 1; i >= 0; i--)
+        for (int i = cardBloomWheel.transform.childCount - 1; i >= 0; i--)
         {
-            Transform child = gridLayout.transform.GetChild(i);
+            Transform child = cardBloomWheel.transform.GetChild(i);
             if (child == null) continue;
             GameObject childGo = child.gameObject;
             if (childGo == null) continue;
@@ -2819,9 +2774,9 @@ public class DeckManager : MonoBehaviour
             }
             return cardCameObject;
         }
-        if (gridLayout == null) return null;
+        if (cardBloomWheel == null) return null;
 
-        Card existingCard = gridLayout.GetComponentInChildren<Card>(true);
+        Card existingCard = cardBloomWheel.GetComponentInChildren<Card>(true);
         if (existingCard == null) return null;
 
         cardCameObject = existingCard.gameObject;
@@ -2835,18 +2790,18 @@ public class DeckManager : MonoBehaviour
 
     public GameObject GetCardPrefabTemplate() => ResolveCardPrefab();
 
-    public Vector2 GetCardSize() => gridLayout != null ? gridLayout.cellSize : new Vector2(120f, 170f);
+    public Vector2 GetCardSize() => new(120f, 170f);
 
     private CanvasGroup ResolveHandCanvasGroup()
     {
         if (handCanvasGroup != null) return handCanvasGroup;
 
-        if (gridLayout != null)
+        if (cardBloomWheel != null)
         {
-            handCanvasGroup = gridLayout.GetComponent<CanvasGroup>();
+            handCanvasGroup = cardBloomWheel.GetComponent<CanvasGroup>();
             if (handCanvasGroup != null) return handCanvasGroup;
 
-            handCanvasGroup = gridLayout.GetComponentInParent<CanvasGroup>();
+            handCanvasGroup = cardBloomWheel.GetComponentInParent<CanvasGroup>();
         }
 
         if (handCanvasGroup == null)

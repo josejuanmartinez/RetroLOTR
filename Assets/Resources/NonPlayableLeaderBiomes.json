@@ -1,4 +1,4 @@
-{
+﻿{
     "biomes":  [
                    {
                        "characterName":  "Galadriel",
@@ -272,7 +272,7 @@
                        "startingWarships":  0,
                        "sex":  0,
                        "startingCityRegion":  "Cardolan",
-                       "nationName":  "Dúnedain",
+                       "nationName":  "DÃºnedain",
                        "characterSprite":  "Dunedain",
                        "nationInitials":  "D"
                    },
@@ -612,7 +612,7 @@
                        "startingWarships":  0,
                        "sex":  0,
                        "startingCityRegion":  "NorthernGondor",
-                       "nationName":  "Drúedain",
+                       "nationName":  "DrÃºedain",
                        "characterSprite":  "Wose",
                        "nationInitials":  "Dr"
                    },
@@ -922,7 +922,8 @@
                        "startingCityRegion":  "GapOfRohan",
                        "nationName":  "Isengard",
                        "characterSprite":  "Maia",
-                       "nationInitials":  "I"
+                       "nationInitials":  "I",
+                       "tutorialDummy":  true
                    },
                    {
                        "characterName":  "Barad-dur",
@@ -943,7 +944,8 @@
                        "startingCityRegion":  "Gorgoroth",
                        "nationName":  "Mordor",
                        "characterSprite":  "Maia",
-                       "nationInitials":  "M"
+                       "nationInitials":  "M",
+                       "tutorialDummy":  true
                    }
                ]
 }

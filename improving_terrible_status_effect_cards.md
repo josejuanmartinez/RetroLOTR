@@ -85,11 +85,11 @@ These card names appear in multiple decks with identical pure-status effects. Fi
 
 ### A4. "Long Shadows"
 **Decks:** `gandalf_base` (id:143), `saruman_base` (id:204), `sauron_base` (id:269)  
-**Current:** `Environmental event. Grants Encouraged to all beasts for 1 turn.`  
+**Current:** `Grants Encouraged to all beasts for 1 turn.`  
 **Problem:** Mass buff to one race type, no other effect.
 
 **New mechanic:**
-> Environmental event. All beast-type units in radius 4 may move again this turn. Enemy army commanders on forest tiles within radius 3 lose their scouting status — their surroundings become unseen. Beasts in radius 4 also gain Encouraged (1 turn).
+> All beast-type units in radius 4 may move again this turn. Enemy army commanders on forest tiles within radius 3 lose their scouting status — their surroundings become unseen. Beasts in radius 4 also gain Encouraged (1 turn).
 
 **Why it's better:** Movement reset is more impactful than a status; the scouting penalty creates real information asymmetry. Encouraged here is a flavor accent on a card that already does two meaningful things.
 
@@ -219,7 +219,7 @@ These card names appear in multiple decks with identical pure-status effects. Fi
 **Current:** `Grants Hope to all Elves for 1 turn.`
 
 **New mechanic:**
-> Environmental event. All Elf characters in radius 5 reveal hidden enemy units in their surrounding hexes (radius 1 each). Any Elf that was Hidden gains an extra action this turn.
+> All Elf characters in radius 5 reveal hidden enemy units in their surrounding hexes (radius 1 each). Any Elf that was Hidden gains an extra action this turn.
 
 ---
 
@@ -245,7 +245,7 @@ These card names appear in multiple decks with identical pure-status effects. Fi
 **Current:** `Grants Haste to all Nazgul for 1 turn.`
 
 **New mechanic:**
-> Environmental event. All Nazgul immediately teleport to the hex of the nearest Free People character within radius 5 and gain Haste (1 turn) upon arrival. If no target is in range, each Nazgul moves 2 hexes toward the nearest enemy instead. Targets revealed by this movement cannot become Hidden this turn.
+> All Nazgul immediately teleport to the hex of the nearest Free People character within radius 5 and gain Haste (1 turn) upon arrival. If no target is in range, each Nazgul moves 2 hexes toward the nearest enemy instead. Targets revealed by this movement cannot become Hidden this turn.
 
 ---
 
@@ -254,7 +254,7 @@ These card names appear in multiple decks with identical pure-status effects. Fi
 **Note:** Same concept, different names. Keep the dispel-Dawn interaction but add real mechanics.
 
 **New mechanic:**
-> Environmental event. All hexes within radius 4 of the caster lose their scouting status for 1 turn — allied and enemy scouts cannot see into them. Allied dark-aligned PCs in radius 4 become Hidden. Dispels Dawn if active.
+> All hexes within radius 4 of the caster lose their scouting status for 1 turn — allied and enemy scouts cannot see into them. Allied dark-aligned PCs in radius 4 become Hidden. Dispels Dawn if active.
 
 ---
 

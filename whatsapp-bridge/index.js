@@ -36,6 +36,8 @@ const EXCLUDED_DIRS = new Set([
 const BOT_PREFIX = '🤖🤖 ';
 
 let myId = null;
+const sessions = new Map(); // chatId → Claude session ID for memory continuity
+const busyChats = new Set(); // chatIds currently being processed
 
 // ─── WhatsApp Client ───
 const client = new Client({
@@ -142,15 +144,35 @@ client.on('message_create', async (msg) => {
 
     console.log(`[${timestamp}] 📩 Processing: ${userMessage.substring(0, 100)}${userMessage.length > 100 ? '...' : ''}`);
 
-    await chat.sendStateTyping();
+    const chatId = chat.id._serialized;
 
-    // Snapshot images before running Claude
-    const beforeImages = await scanImages(WORK_DIR);
-    console.log(`[${timestamp}] 📸 Before scan: ${beforeImages.size} images`);
+    // Reject concurrent requests for the same chat
+    if (busyChats.has(chatId)) {
+      console.log(`[${timestamp}] ⏳ Already processing for this chat — rejecting`);
+      try { await msg.react('⏳'); } catch {}
+      return;
+    }
 
-    // Run Claude
-    const runStartTime = Date.now();
-    const responseText = await runClaude(userMessage);
+    // Acknowledge receipt immediately
+    try { await msg.react('👀'); } catch {}
+    busyChats.add(chatId);
+
+    try {
+      await chat.sendStateTyping();
+
+      // Snapshot images before running Claude
+      const beforeImages = await scanImages(WORK_DIR);
+      console.log(`[${timestamp}] 📸 Before scan: ${beforeImages.size} images`);
+
+      // Run Claude (resume prior session if one exists for this chat)
+      const runStartTime = Date.now();
+      const sessionId = sessions.get(chatId);
+      const claudeResult = await runClaude(userMessage, sessionId);
+      const responseText = claudeResult.text;
+      if (claudeResult.sessionId) {
+        sessions.set(chatId, claudeResult.sessionId);
+        console.log(`[${timestamp}] 💾 Session saved: ${claudeResult.sessionId}`);
+      }
 
     // Snapshot images after running Claude
     const afterImages = await scanImages(WORK_DIR);
@@ -229,8 +251,11 @@ client.on('message_create', async (msg) => {
       }
     }
 
-    if (!responseText && newImages.length === 0) {
-      await sendBotMessage(chat, 'No output generated.', timestamp);
+      if (!responseText && newImages.length === 0) {
+        await sendBotMessage(chat, 'No output generated.', timestamp);
+      }
+    } finally {
+      busyChats.delete(chatId);
     }
   } catch (error) {
     console.error(`[${timestamp}] ❌ Error in message handler:`, error.message);
@@ -354,19 +379,22 @@ async function findRecentImages(dir, hours) {
 }
 
 // ─── Run Claude Subprocess ───
-function runClaude(prompt) {
+function runClaude(prompt, sessionId = null) {
   return new Promise((resolve, reject) => {
-    const args = [
-      '-p', prompt,
-      '--output-format', 'text',
-      '--dangerously-skip-permissions',
-    ];
+    const args = ['--output-format', 'json', '--dangerously-skip-permissions'];
+
+    if (sessionId) {
+      args.push('--resume', sessionId);
+    }
+
+    args.push('-p', prompt);
 
     console.log(`Running: claude ${args.map(a => (a.includes(' ') ? `"${a}"` : a)).join(' ')}`);
 
     const child = spawn('claude', args, {
       cwd: WORK_DIR,
       windowsHide: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
       env: { ...process.env }
     });
 
@@ -400,7 +428,7 @@ function runClaude(prompt) {
       }
 
       if (code === 0 || code === null) {
-        resolve(stdout.replace(/\r\n/g, '\n').trim());
+        resolve(parseClaudeOutput(stdout));
       } else {
         reject(new Error(`claude exited with code ${code}. stderr: ${stderr.trim()}`));
       }
@@ -411,6 +439,44 @@ function runClaude(prompt) {
       reject(new Error(`Failed to start claude: ${err.message}`));
     });
   });
+}
+
+// Parse JSON output from claude --output-format json
+// Returns { text, sessionId }
+function parseClaudeOutput(raw) {
+  const normalized = raw.replace(/\r\n/g, '\n').trim();
+
+  // Claude CLI with --output-format json may emit newline-delimited JSON objects.
+  // The result object has type="result"; earlier lines are tool-use events.
+  const lines = normalized.split('\n');
+  let text = '';
+  let outSessionId = null;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    try {
+      const obj = JSON.parse(trimmed);
+      if (obj.session_id) outSessionId = obj.session_id;
+      if (obj.type === 'result' && obj.result !== undefined) {
+        text = String(obj.result);
+      }
+    } catch {}
+  }
+
+  // Fallback: try the entire output as one JSON object
+  if (!text && normalized) {
+    try {
+      const obj = JSON.parse(normalized);
+      text = String(obj.result ?? obj.message ?? '');
+      outSessionId = outSessionId || obj.session_id || null;
+    } catch {
+      // Last resort: treat raw stdout as plain text
+      text = normalized;
+    }
+  }
+
+  return { text, sessionId: outSessionId };
 }
 
 // ─── Image Scanner ───

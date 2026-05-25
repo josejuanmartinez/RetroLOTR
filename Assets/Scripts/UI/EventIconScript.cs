@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,11 +12,16 @@ public enum EventIconType
     MultiChoice,
     Encounter,
     HexMessage,
-    Discovery
+    Discovery,
+    MapReveal,
+    CaravanArrival,
+    LeaderRevealed
 }
 
 public class EventIcon : MonoBehaviour, IPointerClickHandler
 {
+    public Image characterImage;
+    public Image eventImage;
     public Sprite storySprite;
     public Sprite tutorialSprite;
     public Sprite yesnoPopupSprite;
@@ -23,30 +29,19 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
     public Sprite encounterSprite;
     public Sprite hexMessageSprite;
     public Sprite discoverySprite;
+    public Sprite mapRevealSprite;
+    public Sprite caravanArrivalSprite;
+    public Sprite leaderRevealedSprite;
 
     private Action onOpenAction;
     private Action onRemoveAction;
     private bool discardable;
 
-    private Image eventImage;
     private Button button;
 
     private void Awake()
     {
         button = GetComponent<Button>();
-        if (eventImage == null)
-        {
-            Image[] images = GetComponentsInChildren<Image>(true);
-            for (int i = 0; i < images.Length; i++)
-            {
-                if (images[i] != null && string.Equals(images[i].gameObject.name, "EventImage", StringComparison.OrdinalIgnoreCase))
-                {
-                    eventImage = images[i];
-                    break;
-                }
-            }
-        }
-
         EnsureClickRouting();
     }
 
@@ -55,16 +50,12 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
         if (button != null)
         {
             button.interactable = true;
-            if (button.image != null)
-            {
+            if (button.image is not null)
                 button.image.raycastTarget = true;
-            }
         }
 
-        if (eventImage != null)
-        {
-            eventImage.raycastTarget = true;
-        }
+        if (eventImage is not null) eventImage.raycastTarget = true;
+        if (characterImage is not null) characterImage.raycastTarget = false;
     }
 
     public void Configure(EventIconType type, bool isDiscardable, Action onOpen, Action onRemove = null, Sprite characterPortrait = null)
@@ -75,8 +66,14 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
 
         if (eventImage != null)
         {
-            eventImage.sprite = characterPortrait != null ? characterPortrait : GetSprite(type);
+            eventImage.sprite = GetSprite(type);
             eventImage.enabled = eventImage.sprite != null;
+        }
+
+        if (characterImage != null)
+        {
+            characterImage.sprite = characterPortrait;
+            characterImage.enabled = characterPortrait != null;
         }
     }
 
@@ -123,6 +120,9 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
             EventIconType.Encounter => encounterSprite,
             EventIconType.HexMessage => hexMessageSprite,
             EventIconType.Discovery => discoverySprite,
+            EventIconType.MapReveal => mapRevealSprite,
+            EventIconType.CaravanArrival => caravanArrivalSprite,
+            EventIconType.LeaderRevealed => leaderRevealedSprite,
             _ => null
         };
     }

@@ -185,6 +185,25 @@ public class Character : MonoBehaviour
             if (card != null)
                 CreateArmy(card.troopType, characterBiome.startingArmySize, startingCharacter, characterBiome.startingWarships, card.specialAbilities);
         }
+
+        ApplyClassLevelsFromCharacterCard();
+    }
+
+    private void ApplyClassLevelsFromCharacterCard()
+    {
+        if (string.IsNullOrWhiteSpace(characterName)) return;
+
+        DeckManager dm = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        CardData card = dm?.cards?.Find(c =>
+            string.Equals(c.name, characterName, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(c.type, "Character", StringComparison.OrdinalIgnoreCase));
+        if (card == null) return;
+
+        commander = Mathf.Clamp(card.commander, 0, MAX_SKILL_LEVEL);
+        agent = Mathf.Clamp(card.agent, 0, MAX_SKILL_LEVEL);
+        emmissary = Mathf.Clamp(card.emmissary, 0, MAX_SKILL_LEVEL);
+        mage = Mathf.Clamp(card.mage, 0, MAX_SKILL_LEVEL);
+        alignment = (AlignmentEnum)card.alignment;
     }
 
     public void ApplyStatsFromCard(CardData card)

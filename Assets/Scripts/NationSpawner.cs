@@ -482,7 +482,9 @@ public class NationSpawner : MonoBehaviour
                 preferredPosition = anchorPosition;
             }
 
-            Vector2Int? position = nonPlayableleaderBiomeConfig.spawnPcWithoutOwner
+            // Tutorial dummies: spawn only the city, no leader or characters.
+            bool ownerlessSpawn = nonPlayableleaderBiomeConfig.tutorialDummy || nonPlayableleaderBiomeConfig.spawnPcWithoutOwner;
+            Vector2Int? position = ownerlessSpawn
                 ? InstantiateOwnerlessPc(nonPlayableleaderBiomeConfig, placedPositions, preferredPosition)
                 : InstantiateLeaderAndCharacters(nonPlayableleaderBiomeConfig, placedPositions, false, preferredPosition);
             if (position.HasValue && !string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName))

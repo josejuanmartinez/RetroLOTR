@@ -232,7 +232,7 @@ public class PCAction : MaterialRetrieval
         if (iconsManager == null) return;
 
         EventIcon icon = null;
-        icon = iconsManager.AddEventIcon(EventIconType.HexMessage, true, () =>
+        icon = iconsManager.AddEventIcon(EventIconType.CaravanArrival, true, () =>
         {
             if (isRevealed && BoardNavigator.Instance != null)
             {

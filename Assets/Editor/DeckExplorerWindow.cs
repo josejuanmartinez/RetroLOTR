@@ -975,6 +975,7 @@ public class DeckExplorerWindow : EditorWindow
         previewCardObject.SetActive(true);
         previewCanvasRoot.SetActive(true);
         ApplyPreviewData(card);
+        previewCardComponent.ShowRealCard();
         previewCardObject.transform.SetAsLastSibling();
 
         // Force TMP to compute mesh bounds immediately so ContentSizeFitter

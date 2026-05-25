@@ -12,7 +12,7 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     private static readonly List<Card> activeCards = new();
 
@@ -40,56 +40,31 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] private Image cardArtImage;
     [FormerlySerializedAs("borderImage")]
     [SerializeField] private Image cardBackgroundImage;
-    [FormerlySerializedAs("disabledReasonHover")]
-    [SerializeField] private Image highlightImage;
-    [FormerlySerializedAs("button")]
-    [SerializeField] private GameObject playIndicator;
-    [FormerlySerializedAs("discardButton")]
-    [SerializeField] private GameObject shadowObject;
     [SerializeField] private GameObject discardButton;
     [SerializeField] private Image deckTypeImage;
 
-    [Header("Prefabs")]
-    [SerializeField] private GameObject dragProxyPrefab;
+    [Header("Token / Card Flip")]
+    [SerializeField] private Image tokenImage;
+    [SerializeField] private CanvasGroup tokenCanvasGroup;
+    [SerializeField] private CanvasGroup realCardCanvasGroup;
 
     [Header("Tuning")]
-    [FormerlySerializedAs("HoverScaleMultiplier")]
-    [SerializeField] private float hoverScale = 1.15f;
-    [SerializeField] private float hoverSpeed = 10f;
-    [SerializeField] private float hoverLiftMultiplier = 0.5f;
-    public float HoverLiftMultiplier { get => hoverLiftMultiplier; set => hoverLiftMultiplier = value; }
-    public float ZoomYOffset { get; set; }
-    [SerializeField] private float dragAlpha = 0.6f;
-    [SerializeField] private float playDropThresholdY = 200f;
     [SerializeField] private Color requirementsMessageColor = Color.red;
 
     public CardData cardData { get; private set; }
 
     private CanvasGroup canvasGroup;
-    private Canvas dragCanvas;
     private LayoutElement layoutElement;
     private RectTransform rectTransform;
-    private Vector3 originalScale = Vector3.one;
-    private Vector3 targetScale = Vector3.one;
-    private Vector2 originalAnchoredPosition = Vector2.zero;
-    private Vector2 originalPivot;
-    private bool hoverPositionAdjusted;
-    private Image hitProxyImage;
-    private bool isHovered;
-    private bool isDragging;
-    private bool hoverSortingRaised;
+    private Graphic rootHitGraphic;
+    public bool SuppressHoverEffects { get; set; }
     private string baseDescription = string.Empty;
-    private DiscardButtonHoverTracker discardButtonHover;
-    private GameObject dragProxy;
-    private GameObject zoomProxy;
-    private Coroutine zoomPopCoroutine;
     private Image encounterArtOverlay;
     private TextMeshProUGUI encounterQuestionMark;
+    private Image encounterTokenOverlay;
+    private TextMeshProUGUI encounterTokenQuestionMark;
     private Coroutine descriptionTypewriterCoroutine;
     private Coroutine encounterHintCoroutine;
-    private int originalSiblingIndex;
-    private Transform originalParent;
-    private SelectedCharacterIcon selectedCharacterIcon;
 
     private static Illustrations illustrations;
     private static DeckManager deckManager;
@@ -108,19 +83,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         canvasGroup.interactable = true;
         canvasGroup.alpha = 1f;
 
-        dragCanvas = GetComponent<Canvas>();
-        if (dragCanvas == null)
-        {
-            dragCanvas = gameObject.AddComponent<Canvas>();
-        }
-        dragCanvas.overrideSorting = false;
-        dragCanvas.sortingOrder = 0;
-
-        if (GetComponent<GraphicRaycaster>() == null)
-        {
-            gameObject.AddComponent<GraphicRaycaster>();
-        }
-
         layoutElement = GetComponent<LayoutElement>();
         if (layoutElement == null)
         {
@@ -129,18 +91,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         layoutElement.ignoreLayout = false;
 
         rectTransform = GetComponent<RectTransform>();
-        originalScale = rectTransform.localScale;
-        targetScale = originalScale;
-        originalAnchoredPosition = rectTransform.anchoredPosition;
+        rootHitGraphic = GetComponent<Graphic>();
 
-        CreateHitProxy();
         BindLegacyPrefabReferences();
         RestrictRaycastsToRootCard();
-        EnsureDiscardButtonHoverTracker();
-
-        if (highlightImage != null) highlightImage.enabled = false;
-        if (playIndicator != null) playIndicator.SetActive(false);
-        if (shadowObject != null) shadowObject.SetActive(false);
         UpdateDiscardButtonState();
 
         activeCards.Add(this);
@@ -174,7 +128,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private void OnDestroy()
     {
         activeCards.Remove(this);
-        DestroyZoomProxy();
     }
 
     private void Start()
@@ -234,7 +187,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
             if (cardArtImage.GetComponent<CardShineEffect>() == null)
                 cardArtImage.gameObject.AddComponent<CardShineEffect>();
+
+            if (tokenImage != null) tokenImage.sprite = sprite;
         }
+
+        ShowToken();
 
         if (deckTypeImage != null && !string.IsNullOrWhiteSpace(data.deckSpriteName) && illustrations != null)
         {
@@ -401,6 +358,35 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             encounterQuestionMark.fontStyle = FontStyles.Bold;
         }
 
+        if (encounterTokenOverlay == null && tokenImage != null)
+        {
+            var tokenOverlayGo = new GameObject("EncounterTokenOverlay", typeof(RectTransform), typeof(Image));
+            tokenOverlayGo.transform.SetParent(tokenImage.transform, false);
+            var tokenOverlayRect = tokenOverlayGo.GetComponent<RectTransform>();
+            tokenOverlayRect.anchorMin = Vector2.zero;
+            tokenOverlayRect.anchorMax = Vector2.one;
+            tokenOverlayRect.offsetMin = Vector2.zero;
+            tokenOverlayRect.offsetMax = Vector2.zero;
+            encounterTokenOverlay = tokenOverlayGo.GetComponent<Image>();
+            encounterTokenOverlay.color = Color.black;
+            encounterTokenOverlay.raycastTarget = false;
+
+            var tqGo = new GameObject("QuestionMark", typeof(RectTransform), typeof(TextMeshProUGUI));
+            tqGo.transform.SetParent(tokenOverlayGo.transform, false);
+            var tqRect = tqGo.GetComponent<RectTransform>();
+            tqRect.anchorMin = Vector2.zero;
+            tqRect.anchorMax = Vector2.one;
+            tqRect.offsetMin = Vector2.zero;
+            tqRect.offsetMax = Vector2.zero;
+            encounterTokenQuestionMark = tqGo.GetComponent<TextMeshProUGUI>();
+            encounterTokenQuestionMark.text = "?";
+            encounterTokenQuestionMark.fontSize = 64f;
+            encounterTokenQuestionMark.alignment = TextAlignmentOptions.Center;
+            encounterTokenQuestionMark.color = Color.white;
+            encounterTokenQuestionMark.fontStyle = FontStyles.Bold;
+            encounterTokenQuestionMark.raycastTarget = false;
+        }
+
         string hexCoords = data.encounterTargetHex != null
             ? $"{data.encounterTargetHex.v2.x}, {data.encounterTargetHex.v2.y}"
             : "unknown";
@@ -417,11 +403,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (cardArtImage == null) cardArtImage = FindImageByName("Image");
         if (cardBackgroundImage == null) cardBackgroundImage = FindImageByName("Border");
-        if (highlightImage == null) highlightImage = FindImageByName("TitleBackground");
-
         if (discardButton == null) discardButton = FindChildByName("Discard");
-        if (playIndicator == null) playIndicator = FindChildByName("PlayIndicator");
-        if (shadowObject == null) shadowObject = FindChildByName("Hover");
     }
 
     private void RestrictRaycastsToRootCard()
@@ -433,7 +415,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (graphic == null) continue;
             if (graphic.gameObject == gameObject) continue;
             if (hover != null && graphic.gameObject == hover.gameObject) continue;
-            if (hitProxyImage != null && graphic == hitProxyImage) continue;
             if (graphic.GetComponent<Selectable>() != null) continue;
             graphic.raycastTarget = false;
         }
@@ -441,10 +422,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (cardBackgroundImage != null)
         {
             cardBackgroundImage.raycastTarget = true;
-        }
-        if (hitProxyImage != null)
-        {
-            hitProxyImage.raycastTarget = isHovered;
         }
     }
 
@@ -709,12 +686,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         requirements.Add($"{count}<sprite name=\"{spriteName}\">");
     }
 
-    private string FormatRequirementToken(string spriteName, int count)
-    {
-        if (string.IsNullOrWhiteSpace(spriteName) || count <= 0) return string.Empty;
-        return $"{count}<sprite name=\"{spriteName}\">";
-    }
-
     public void UpdateInteractableState()
     {
         if (cardData == null) return;
@@ -742,7 +713,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             _ => resourceOwner == null || cardData.MeetsResourceRequirements(resourceOwner),
             _ => actionConditionsMet);
 
-        if (canvasGroup != null)
+        if (!SuppressHoverEffects && canvasGroup != null)
         {
             canvasGroup.alpha = isPlayable ? 1f : 0.5f;
             canvasGroup.interactable = isPlayable;
@@ -771,68 +742,34 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             }
         }
 
-        if (highlightImage != null)
-        {
-            highlightImage.enabled = isPlayable && isHovered;
-        }
-
         UpdateDiscardButtonState();
-    }
-
-    private void Update()
-    {
-        if (rectTransform.localScale != targetScale)
-        {
-            rectTransform.localScale = Vector3.Lerp(rectTransform.localScale, targetScale, Time.unscaledDeltaTime * hoverSpeed);
-
-            if ((rectTransform.localScale - targetScale).sqrMagnitude < 0.000001f)
-            {
-                rectTransform.localScale = targetScale;
-            }
-        }
-
-        UpdateHitProxy();
-
-        if (zoomProxy != null && discardButtonHover != null && discardButtonHover.IsHovered)
-        {
-            DestroyZoomProxy();
-            isHovered = false;
-            if (highlightImage != null) highlightImage.enabled = false;
-            cursorManager?.SetDefaultCursor();
-        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (isDragging) return;
-        if (discardButtonHover != null && discardButtonHover.IsHovered) return;
-        isHovered = true;
-        CreateZoomProxy();
-        if (highlightImage != null && cardData != null && cardData.isPlayable) highlightImage.enabled = true;
+        if (!SuppressHoverEffects) ShowRealCard();
+        if (Sounds.Instance != null) Sounds.Instance.PlayUiHover();
+        if (SuppressHoverEffects) return;
         if (cursorManager != null)
         {
             if (cardData != null && cardData.isPlayable)
-                cursorManager.SetDraggableCursor();
+                cursorManager.SetClickableCursor();
             else if (IsUnplayedEncounterWithHex())
                 cursorManager.SetClickableCursor();
             else
                 cursorManager.SetDisableCursor();
         }
-        Sounds.Instance?.PlayUiHover();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (isDragging) return;
-        isHovered = false;
-        DestroyZoomProxy();
-        if (highlightImage != null) highlightImage.enabled = false;
-        cursorManager?.SetDefaultCursor();
+        if (!SuppressHoverEffects) ShowToken();
+        if (SuppressHoverEffects) return;
+        if (cursorManager != null) cursorManager.SetDefaultCursor();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isDragging) return;
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             if (canvasGroup != null && !canvasGroup.interactable)
@@ -848,233 +785,13 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        if (cardData == null) return;
-        if (canvasGroup != null && !canvasGroup.interactable) return;
-
-        DestroyZoomProxy();
-        isDragging = true;
-        isHovered = false;
-        UpdateDiscardButtonState();
-        targetScale = originalScale;
-        rectTransform.localScale = originalScale;
-        AdjustHoverPosition(false);
-        originalParent = transform.parent;
-        originalSiblingIndex = transform.GetSiblingIndex();
-
-        if (layoutElement != null)
-        {
-            layoutElement.ignoreLayout = true;
-        }
-
-        if (dragCanvas != null)
-        {
-            dragCanvas.overrideSorting = true;
-            dragCanvas.sortingOrder = 5000;
-        }
-
-        canvasGroup.alpha = dragAlpha;
-        canvasGroup.blocksRaycasts = false;
-
-        if (shadowObject != null) shadowObject.SetActive(true);
-        if (playIndicator != null) playIndicator.SetActive(true);
-
-        rectTransform.SetAsLastSibling();
-        UpdateSelectedCharacterDragHint(eventData);
-        Sounds.Instance?.PlayUiHover();
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        if (!isDragging) return;
-        transform.position = eventData.position;
-
-        // Visual feedback if dragged high enough to "play"
-        bool overPlayArea = eventData.position.y > playDropThresholdY;
-        if (playIndicator != null) playIndicator.SetActive(overPlayArea);
-        UpdateSelectedCharacterDragHint(eventData);
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        if (!isDragging) return;
-        isDragging = false;
-        UpdateDiscardButtonState();
-
-        if (cursorManager != null) cursorManager.SetDefaultCursor();
-
-        canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
-
-        if (shadowObject != null) shadowObject.SetActive(false);
-        if (playIndicator != null) playIndicator.SetActive(false);
-        if (selectedCharacterIcon != null)
-        {
-            selectedCharacterIcon.SetDropTargetHighlight(false);
-            selectedCharacterIcon = null;
-        }
-
-        bool overSelectedCharacter = IsPointerOverSelectedCharacterIcon(eventData);
-        if (overSelectedCharacter)
-        {
-            SelectedCharacterIcon icon = selectedCharacterIcon != null ? selectedCharacterIcon : FindFirstObjectByType<SelectedCharacterIcon>();
-            RectTransform iconRect = icon != null ? icon.transform as RectTransform : null;
-            SnapToSelectedCharacterIcon(iconRect);
-        }
-
-        if (layoutElement != null)
-        {
-            layoutElement.ignoreLayout = false;
-        }
-        if (dragCanvas != null)
-        {
-            dragCanvas.overrideSorting = false;
-            dragCanvas.sortingOrder = 0;
-        }
-
-        if (isHovered)
-        {
-            SetHoverSorting(true);
-        }
-        else
-        {
-            SetHoverSorting(false);
-        }
-
-        if (overSelectedCharacter)
-        {
-            TryPlayCard();
-        }
-        else
-        {
-            RestoreCardToHandLayout();
-        }
-    }
-
-    private void UpdateSelectedCharacterDragHint(PointerEventData eventData)
-    {
-        if (eventData == null)
-        {
-            return;
-        }
-
-        SelectedCharacterIcon icon = FindFirstObjectByType<SelectedCharacterIcon>();
-        if (icon == null)
-        {
-            if (selectedCharacterIcon != null)
-            {
-                selectedCharacterIcon.SetDropTargetHighlight(false);
-                selectedCharacterIcon = null;
-            }
-            return;
-        }
-
-        if (selectedCharacterIcon != icon)
-        {
-            if (selectedCharacterIcon != null)
-            {
-                selectedCharacterIcon.SetDropTargetHighlight(false);
-            }
-            selectedCharacterIcon = icon;
-            selectedCharacterIcon.SetDropTargetHighlight(true);
-        }
-
-        RectTransform iconRect = selectedCharacterIcon.transform as RectTransform;
-        if (iconRect == null)
-        {
-            selectedCharacterIcon.SetDropTargetProximity(0f, false);
-            return;
-        }
-
-        Vector3 iconWorldCenter = iconRect.TransformPoint(iconRect.rect.center);
-        Vector2 iconCenter = RectTransformUtility.WorldToScreenPoint(eventData.pressEventCamera, iconWorldCenter);
-        float distance = Vector2.Distance(eventData.position, iconCenter);
-        float radius = Mathf.Max(iconRect.rect.width, iconRect.rect.height) * 0.7f;
-        float proximity = 1f - Mathf.Clamp01(distance / Mathf.Max(1f, radius));
-        bool locked = RectTransformUtility.RectangleContainsScreenPoint(iconRect, eventData.position, eventData.pressEventCamera);
-        selectedCharacterIcon.SetDropTargetProximity(proximity, locked);
-        if (locked)
-        {
-            SnapToSelectedCharacterIcon(iconRect);
-        }
-    }
-
-    private void SnapToSelectedCharacterIcon(RectTransform iconRect)
-    {
-        if (rectTransform == null || iconRect == null) return;
-
-        Vector3 worldCenter = iconRect.TransformPoint(iconRect.rect.center);
-        rectTransform.position = worldCenter;
-        rectTransform.localScale = originalScale;
-    }
-
-    private void RestoreCardToHandLayout()
-    {
-        if (rectTransform == null) return;
-
-        if (transform.parent != originalParent && originalParent != null)
-        {
-            transform.SetParent(originalParent, false);
-        }
-
-        if (layoutElement != null)
-        {
-            layoutElement.ignoreLayout = false;
-        }
-
-        rectTransform.localScale = originalScale;
-        rectTransform.anchoredPosition = originalAnchoredPosition;
-        transform.SetSiblingIndex(originalSiblingIndex);
-        targetScale = originalScale;
-        AdjustHoverPosition(false);
-
-        if (originalParent is RectTransform parentRect)
-        {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
-        }
-
-        UpdateInteractableState();
-    }
-
-    private void SetHoverSorting(bool active)
-    {
-        if (dragCanvas == null || isDragging)
-        {
-            return;
-        }
-
-        hoverSortingRaised = active;
-        dragCanvas.overrideSorting = active;
-        dragCanvas.sortingOrder = active ? 1000 : 0;
-    }
-
-    private bool IsPointerOverSelectedCharacterIcon(PointerEventData eventData)
-    {
-        if (EventSystem.current == null || eventData == null) return false;
-
-        List<RaycastResult> results = new();
-        EventSystem.current.RaycastAll(eventData, results);
-        for (int i = 0; i < results.Count; i++)
-        {
-            GameObject hitObject = results[i].gameObject;
-            if (hitObject == null) continue;
-            if (hitObject.GetComponentInParent<SelectedCharacterIcon>() != null)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private async void TryPlayCard()
     {
         if (cardData == null) return;
         if (canvasGroup != null && !canvasGroup.interactable) return;
 
         Board board = FindFirstObjectByType<Board>();
-        SelectedCharacterIcon icon = selectedCharacterIcon != null ? selectedCharacterIcon : FindFirstObjectByType<SelectedCharacterIcon>();
+        SelectedCharacterIcon icon = FindFirstObjectByType<SelectedCharacterIcon>();
         Character selected = icon != null && icon.CurrentCharacter != null
             ? icon.CurrentCharacter
             : board != null ? board.selectedCharacter : null;
@@ -1118,6 +835,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             _ => resourceOwner == null || playedCard.MeetsResourceRequirements(resourceOwner),
             _ => actionConditionsMet))
         {
+            if (IsUnplayedEncounterWithHex())
+            {
+                BoardNavigator.Instance?.LookAt(cardData.encounterTargetHex.transform.position);
+                FlashEncounterHintFrame(cardData.encounterTargetHex);
+            }
             return;
         }
 
@@ -1163,27 +885,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
         else
         {
-            // Failed to play (e.g. cancelled target selection), return to hand
-            if (layoutElement != null)
-            {
-                layoutElement.ignoreLayout = false;
-            }
-            if (dragCanvas != null)
-            {
-                dragCanvas.overrideSorting = false;
-                dragCanvas.sortingOrder = 0;
-            }
-            if (transform.parent != originalParent)
-            {
-                transform.SetParent(originalParent, false);
-            }
-            if (rectTransform != null)
-            {
-                rectTransform.localScale = originalScale;
-            }
-            transform.SetSiblingIndex(originalSiblingIndex);
-            targetScale = originalScale;
-            AdjustHoverPosition(false);
             UpdateInteractableState();
         }
     }
@@ -1199,7 +900,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (discardButton == null) return;
         Button btn = discardButton.GetComponent<Button>();
         if (btn == null) return;
-        btn.interactable = !isDragging && cardData != null && !cardData.IsEncounterCard();
+        btn.interactable = cardData != null && !cardData.IsEncounterCard();
     }
 
     public void Discard()
@@ -1209,7 +910,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private async Task<bool> TryDiscardAsync()
     {
-        if (cardData == null || isDragging) return false;
+        if (cardData == null) return false;
 
         EnsureManagersLoaded();
         if (deckManager == null) return false;
@@ -1308,225 +1009,41 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         MessageDisplay.ShowMessage(message, Color.yellow);
     }
 
-    private void EnsureDiscardButtonHoverTracker()
+    public void ShowToken()
     {
-        if (discardButton == null) return;
-        if (discardButtonHover != null) return;
-        discardButtonHover = discardButton.GetComponent<DiscardButtonHoverTracker>();
-        if (discardButtonHover == null)
+        if (tokenCanvasGroup != null)
         {
-            discardButtonHover = discardButton.AddComponent<DiscardButtonHoverTracker>();
+            tokenCanvasGroup.alpha = 1f;
+            tokenCanvasGroup.blocksRaycasts = true;
+            tokenCanvasGroup.interactable = true;
         }
+        if (realCardCanvasGroup != null)
+        {
+            realCardCanvasGroup.alpha = 0f;
+            realCardCanvasGroup.blocksRaycasts = false;
+            realCardCanvasGroup.interactable = false;
+        }
+        if (tokenImage != null) tokenImage.raycastTarget = true;
+        if (rootHitGraphic != null) rootHitGraphic.raycastTarget = false;
     }
 
-    private void CreateHitProxy()
+    public void ShowRealCard()
     {
-        if (hitProxyImage != null) return;
-
-        GameObject proxy = new GameObject("HitProxy", typeof(RectTransform), typeof(Image));
-        proxy.transform.SetParent(transform, false);
-
-        hitProxyImage = proxy.GetComponent<Image>();
-        hitProxyImage.color = Color.clear;
-        hitProxyImage.raycastTarget = false;
-
-        RectTransform proxyRect = proxy.GetComponent<RectTransform>();
-        proxyRect.anchorMin = new Vector2(0.5f, 0.5f);
-        proxyRect.anchorMax = new Vector2(0.5f, 0.5f);
-        proxyRect.pivot = new Vector2(0.5f, 0.5f);
-        proxyRect.sizeDelta = rectTransform.rect.size;
-    }
-
-    private void UpdateHitProxy()
-    {
-        if (hitProxyImage == null || !isHovered || isDragging) return;
-
-        Vector2 offset = rectTransform.anchoredPosition - originalAnchoredPosition;
-        float sx = rectTransform.localScale.x;
-        float sy = rectTransform.localScale.y;
-
-        // When pivot changes, the geometric center of the parent rect shifts.
-        // The hit-proxy's (0.5,0.5) anchor reference point follows that shift,
-        // so we must subtract it to keep the proxy pinned to the original world position.
-        Vector2 anchorCenterOffset = new Vector2(
-            (0.5f - rectTransform.pivot.x) * rectTransform.rect.width,
-            (0.5f - rectTransform.pivot.y) * rectTransform.rect.height
-        );
-
-        hitProxyImage.rectTransform.anchoredPosition = new Vector2(
-            sx != 0 ? (-offset.x / sx) - anchorCenterOffset.x : -offset.x,
-            sy != 0 ? (-offset.y / sy) - anchorCenterOffset.y : -offset.y
-        );
-    }
-
-    private void CreateZoomProxy()
-    {
-        if (zoomProxy != null) return;
-        if (discardButtonHover != null && discardButtonHover.IsHovered) return;
-
-        GameObject prefab = dragProxyPrefab != null ? dragProxyPrefab : gameObject;
-        zoomProxy = Instantiate(prefab, transform.parent);
-
-        Card proxyCard = zoomProxy.GetComponent<Card>();
-        if (proxyCard != null)
+        if (tokenCanvasGroup != null)
         {
-            if (cardData != null && cardData.IsEncounterCard() && !cardData.encounterRevealed)
-            {
-                proxyCard.Initialize(cardData);
-            }
-            proxyCard.enabled = false;
+            tokenCanvasGroup.alpha = 0f;
+            tokenCanvasGroup.blocksRaycasts = false;
+            tokenCanvasGroup.interactable = false;
         }
-
-        CanvasGroup proxyGroup = zoomProxy.GetComponent<CanvasGroup>();
-        if (proxyGroup != null)
+        if (realCardCanvasGroup != null)
         {
-            proxyGroup.blocksRaycasts = false;
-            proxyGroup.interactable = false;
+            realCardCanvasGroup.alpha = 1f;
+            realCardCanvasGroup.blocksRaycasts = true;
+            realCardCanvasGroup.interactable = true;
         }
-
-        LayoutElement proxyLayout = zoomProxy.GetComponent<LayoutElement>();
-        if (proxyLayout != null)
-        {
-            proxyLayout.ignoreLayout = true;
-        }
-
-        RectTransform proxyRect = zoomProxy.GetComponent<RectTransform>();
-        RectTransform originalRect = rectTransform;
-
-        proxyRect.anchorMin = originalRect.anchorMin;
-        proxyRect.anchorMax = originalRect.anchorMax;
-        proxyRect.pivot = originalRect.pivot;
-        proxyRect.sizeDelta = originalRect.sizeDelta;
-        proxyRect.anchoredPosition = originalRect.anchoredPosition;
-
-        float height = proxyRect.rect.height;
-        float lift = height * hoverLiftMultiplier;
-
-        Canvas rootCanvas = GetComponentInParent<Canvas>();
-        Camera canvasCam = rootCanvas != null ? rootCanvas.worldCamera : null;
-        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(canvasCam, originalRect.position);
-        bool isInTopHalf = screenPos.y > Screen.height * 0.5f;
-
-        if (isInTopHalf)
-        {
-            proxyRect.pivot = new Vector2(0.5f, 1f);
-            proxyRect.anchoredPosition = originalRect.anchoredPosition - Vector2.up * (lift + originalRect.pivot.y * height + ZoomYOffset);
-        }
-        else
-        {
-            proxyRect.pivot = new Vector2(0.5f, 0f);
-            proxyRect.anchoredPosition = originalRect.anchoredPosition + Vector2.up * (lift - originalRect.pivot.y * height + ZoomYOffset);
-        }
-
-        proxyRect.localScale = originalScale * 0.85f;
-        if (zoomPopCoroutine != null)
-        {
-            StopCoroutine(zoomPopCoroutine);
-        }
-        zoomPopCoroutine = StartCoroutine(AnimateZoomPop(proxyRect, originalScale * hoverScale));
-
-        Canvas proxyCanvas = zoomProxy.GetComponent<Canvas>();
-        if (proxyCanvas != null)
-        {
-            proxyCanvas.overrideSorting = true;
-            proxyCanvas.sortingOrder = 1000;
-        }
-
-        zoomProxy.transform.SetAsLastSibling();
-    }
-
-    private void DestroyZoomProxy()
-    {
-        if (zoomPopCoroutine != null)
-        {
-            StopCoroutine(zoomPopCoroutine);
-            zoomPopCoroutine = null;
-        }
-        if (zoomProxy != null)
-        {
-            if (Application.isPlaying)
-                Destroy(zoomProxy);
-            else
-                DestroyImmediate(zoomProxy);
-            zoomProxy = null;
-        }
-    }
-
-    private IEnumerator AnimateZoomPop(RectTransform proxyRect, Vector3 targetScale)
-    {
-        float duration = 0.22f;
-        float elapsed = 0f;
-        Vector3 startScale = originalScale * 0.85f;
-
-        while (elapsed < duration)
-        {
-            if (proxyRect == null) yield break;
-            float t = elapsed / duration;
-            float eased = 1f + 2.70158f * Mathf.Pow(t - 1f, 3f) + 1.70158f * Mathf.Pow(t - 1f, 2f);
-            proxyRect.localScale = Vector3.LerpUnclamped(startScale, targetScale * 1.08f, eased);
-            elapsed += Time.unscaledDeltaTime;
-            yield return null;
-        }
-
-        elapsed = 0f;
-        duration = 0.1f;
-        Vector3 overshoot = targetScale * 1.08f;
-        while (elapsed < duration)
-        {
-            if (proxyRect == null) yield break;
-            float t = elapsed / duration;
-            proxyRect.localScale = Vector3.Lerp(overshoot, targetScale, t);
-            elapsed += Time.unscaledDeltaTime;
-            yield return null;
-        }
-
-        if (proxyRect != null)
-            proxyRect.localScale = targetScale;
-    }
-
-    private void AdjustHoverPosition(bool hovered)
-    {
-        if (rectTransform == null) return;
-
-        if (hovered)
-        {
-            if (hoverPositionAdjusted) return;
-            originalAnchoredPosition = rectTransform.anchoredPosition;
-            originalPivot = rectTransform.pivot;
-
-            if (layoutElement != null) layoutElement.ignoreLayout = true;
-
-            float height = rectTransform.rect.height;
-            float lift = height * hoverLiftMultiplier;
-
-            rectTransform.pivot = new Vector2(0.5f, 0f);
-            rectTransform.anchoredPosition = originalAnchoredPosition + Vector2.up * (lift - originalPivot.y * height);
-
-            if (hitProxyImage != null)
-            {
-                hitProxyImage.rectTransform.sizeDelta = rectTransform.rect.size;
-                hitProxyImage.raycastTarget = true;
-            }
-
-            hoverPositionAdjusted = true;
-        }
-        else
-        {
-            if (!hoverPositionAdjusted) return;
-
-            rectTransform.pivot = originalPivot;
-            rectTransform.anchoredPosition = originalAnchoredPosition;
-
-            if (hitProxyImage != null)
-            {
-                hitProxyImage.rectTransform.anchoredPosition = Vector2.zero;
-                hitProxyImage.raycastTarget = false;
-            }
-
-            if (layoutElement != null && !isDragging) layoutElement.ignoreLayout = false;
-
-            hoverPositionAdjusted = false;
-        }
+        if (tokenImage != null) tokenImage.raycastTarget = false;
+        if (rootHitGraphic != null) rootHitGraphic.raycastTarget = true;
+        if (cardBackgroundImage != null) cardBackgroundImage.raycastTarget = true;
     }
 
     private string BuildRequirementsMessageText(Character selected, Leader resourceOwner)
@@ -1709,6 +1226,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (canvasGroup != null) canvasGroup.interactable = false;
             await RevealEncounterCardAsync();
             cardData.encounterRevealed = true;
+            UpdateInteractableState();
         }
 
         Game game = FindFirstObjectByType<Game>();
@@ -1759,6 +1277,18 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 c.a = alpha;
                 encounterQuestionMark.color = c;
             }
+            if (encounterTokenOverlay != null)
+            {
+                Color c = encounterTokenOverlay.color;
+                c.a = alpha;
+                encounterTokenOverlay.color = c;
+            }
+            if (encounterTokenQuestionMark != null)
+            {
+                Color c = encounterTokenQuestionMark.color;
+                c.a = alpha;
+                encounterTokenQuestionMark.color = c;
+            }
 
             elapsed += Time.unscaledDeltaTime;
             yield return null;
@@ -1769,6 +1299,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             Destroy(encounterArtOverlay.gameObject);
             encounterArtOverlay = null;
             encounterQuestionMark = null;
+        }
+        if (encounterTokenOverlay != null)
+        {
+            Destroy(encounterTokenOverlay.gameObject);
+            encounterTokenOverlay = null;
+            encounterTokenQuestionMark = null;
         }
 
         if (titleText != null) titleText.text = FormatCardTitle(cardData.name);
@@ -1919,18 +1455,4 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return Task.FromResult(false);
     }
 
-    private class DiscardButtonHoverTracker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
-    {
-        public bool IsHovered { get; private set; }
-
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            IsHovered = true;
-        }
-
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            IsHovered = false;
-        }
-    }
 }
