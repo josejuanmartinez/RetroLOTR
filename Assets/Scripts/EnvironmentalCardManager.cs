@@ -7,6 +7,13 @@ public class EnvironmentalCardManager : MonoBehaviour
 
     public CardData ActiveCard { get; private set; }
 
+    // Per-turn modifier fields — reset each turn before ApplyOngoingEffect runs.
+    // Environmental card scripts set these in ApplyOngoingEffect; core systems read them.
+    public int FrozenMovementExtraPenalty = 0;
+    public float FrozenCombatAttackFactor = 1f;
+    public float FrozenCombatDefenseExtraFactor = 1f;
+    public float GlobalArmyAttackFactor = 1f;
+
     private Game subscribedGame;
 
     private void Awake()
@@ -40,8 +47,17 @@ public class EnvironmentalCardManager : MonoBehaviour
 
     private void OnNewTurn(int turn)
     {
+        ResetModifiers();
         if (ActiveCard == null) return;
         ApplyActiveCardEffect();
+    }
+
+    private void ResetModifiers()
+    {
+        FrozenMovementExtraPenalty = 0;
+        FrozenCombatAttackFactor = 1f;
+        FrozenCombatDefenseExtraFactor = 1f;
+        GlobalArmyAttackFactor = 1f;
     }
 
     private void ApplyActiveCardEffect()
@@ -67,6 +83,7 @@ public class EnvironmentalCardManager : MonoBehaviour
     public void ClearActiveCard()
     {
         ActiveCard = null;
+        ResetModifiers();
         Layout layout = FindFirstObjectByType<Layout>();
         layout?.SetEnvironmentalCard(null);
     }

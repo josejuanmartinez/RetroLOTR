@@ -414,6 +414,13 @@ public class Army
         {
             value = Mathf.RoundToInt(value * 1.10f);
         }
+        if (commander != null && commander.HasStatusEffect(StatusEffectEnum.Frozen))
+        {
+            float attackFactor = EnvironmentalCardManager.Instance?.FrozenCombatAttackFactor ?? 1f;
+            if (attackFactor < 1f) value = Mathf.RoundToInt(value * attackFactor);
+        }
+        float globalFactor = EnvironmentalCardManager.Instance?.GlobalArmyAttackFactor ?? 1f;
+        if (globalFactor != 1f) value = Mathf.RoundToInt(value * globalFactor);
         return Mathf.Max(0, value);
     }
 
@@ -425,8 +432,9 @@ public class Army
         }
         if (commander != null && commander.HasStatusEffect(StatusEffectEnum.Frozen))
         {
-            float frozenMultiplier = commander.hex != null && commander.hex.terrainType == TerrainEnum.mountains ? 0.75f : 0.90f;
-            value = Mathf.RoundToInt(value * frozenMultiplier);
+            float baseFrozen = commander.hex != null && commander.hex.terrainType == TerrainEnum.mountains ? 0.75f : 0.90f;
+            float extraFactor = EnvironmentalCardManager.Instance?.FrozenCombatDefenseExtraFactor ?? 1f;
+            value = Mathf.RoundToInt(value * baseFrozen * extraFactor);
         }
         return Mathf.Max(0, value);
     }
@@ -1197,6 +1205,7 @@ public class Army
             ArmySpecialAbilityEnum.MorgulTouch => "inflicting a black wound that lingers in fear and pain",
             ArmySpecialAbilityEnum.DuelSupremacy => "letting their champion seize the upper hand in single combat",
             ArmySpecialAbilityEnum.Bleeding => "opening cruel wounds that continue to weaken the foe",
+            ArmySpecialAbilityEnum.Flying => "sweeping overhead to strike from an angle the enemy cannot answer",
             _ => string.Empty
         };
     }
@@ -2083,6 +2092,14 @@ public class Army
                 $"A sudden near volley from {sourceName} batters a neighboring enemy line.",
                 $"{sourceName}'s skirmishers dart up and unleash a fierce burst at enemies only a stone's throw away.",
                 $"At the edge of the fighting, a quick storm from {sourceName}'s line slams into a nearby foe."
+            },
+            ArmySpecialAbilityEnum.Flying => new List<string>
+            {
+                $"{sourceName}'s winged host circles wide and stoops on the flank without warning.",
+                $"Riders of the air from {sourceName}'s force sweep low, scattering anything caught in the open.",
+                $"{sourceName}'s flying vanguard dives through the press from above, breaking the formation's edge.",
+                $"Wings darken the sky over {sourceName}'s line as the host strikes from an angle no shield can answer.",
+                $"{sourceName}'s airborne troops cut across the field at speed that no foot soldier can match."
             },
             _ => selfTargeted
                 ? new List<string>

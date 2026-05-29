@@ -84,8 +84,8 @@ public class DeckExplorerWindow : EditorWindow
     private CardTypeEnum editedCardType;
     private CardSituationEnum editedSituation;
 
-    private const float PreviewCardW = 390f;
-    private const float PreviewCardH = 555f;
+    private const float PreviewCardW = 275f;
+    private const float PreviewCardH = 325f;
     private const float PreviewPad   = 15f;
     private const float PreviewCanvasW = PreviewCardW + PreviewPad * 2f; // 420
     private const float PreviewCanvasH = PreviewCardH + PreviewPad * 2f; // 585

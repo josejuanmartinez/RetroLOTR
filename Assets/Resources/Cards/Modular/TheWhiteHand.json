@@ -1542,7 +1542,8 @@
                                     ],
                       "troopType":  0,
                       "specialAbilities":  [
-                                               23
+                                               23,
+                                               24
                                            ],
                       "commanderSkillRequired":  1,
                       "agentSkillRequired":  0,
@@ -2337,7 +2338,7 @@
                       "cardId":  931,
                       "name":  "Twilight",
                       "quote":  "In twilight\u0027s embrace, shadows lengthen and secrets are revealed.",
-                      "actionEffect":  "Environmental event: across the board, visibility falls and scouting is cleared; allied dark-aligned characters become temporarily hidden.",
+                      "actionEffect":  "Across the board, visibility falls and scouting is cleared; allied dark-aligned characters become temporarily hidden.",
                       "type":  "Environmental",
                       "tags":  [
                                    "environmental"
@@ -4661,7 +4662,7 @@
                       "cardId":  1014,
                       "name":  "WildFire",
                       "quote":  "The forest weeps as flames dance, a terrible beauty unleashed.",
-                      "actionEffect":  "Environmental event: apply Burning \u003csprite name=\"burning\"\u003e (1 turn) to all enemy units on forest tiles within radius 2.",
+                      "actionEffect":  "Apply Burning \u003csprite name=\"burning\"\u003e (1 turn) to all enemy units on forest tiles within radius 2.",
                       "type":  "Environmental",
                       "tags":  [
                                    "environmental"

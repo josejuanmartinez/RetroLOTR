@@ -243,7 +243,7 @@ public class Artifact
 
     public int GetActionDifficultyReduction(string actionClassName)
     {
-        if (scryArtifactBonus > 0 && string.Equals(actionClassName, "FindArtifact", StringComparison.OrdinalIgnoreCase))
+        if (scryArtifactBonus > 0 && string.Equals(actionClassName, FindArtifact.ActionRef, StringComparison.OrdinalIgnoreCase))
             return scryArtifactBonus;
         return 0;
     }

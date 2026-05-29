@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class StateAllegiance : EmmissaryAction
 {
+    public const string ActionRef = "StateAllegiance";
+
     override public void Initialize(
         Character c,
         Func<Character, bool> condition = null,

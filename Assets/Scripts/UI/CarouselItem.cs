@@ -12,37 +12,26 @@ public class CarouselItem : MonoBehaviour
         image.sprite = spr;
     }
 
-    public void SetLabel(string str)
+    public void SetLabel(string str, AlignmentEnum? alignment = null)
     {
         if (label == null) return;
         label.richText = true;
         label.extraPadding = true;
         label.overflowMode = TextOverflowModes.Overflow;
-        label.text = EnsureAlignmentSpritePrefix(str);
+        label.text = EnsureAlignmentSpritePrefix(str, alignment);
         label.ForceMeshUpdate(true, true);
     }
 
-    string EnsureAlignmentSpritePrefix(string value)
+    string EnsureAlignmentSpritePrefix(string value, AlignmentEnum? alignment)
     {
         if (string.IsNullOrWhiteSpace(value) || value.Contains("<sprite"))
         {
             return value;
         }
 
-        string trimmed = value.Trim();
-        string spriteName = trimmed switch
-        {
-            "Gandalf" => "freePeople",
-            "Saruman" => "darkServants",
-            "Sauron" => "darkServants",
-            _ => null
-        };
+        if (alignment == null) return value;
 
-        if (string.IsNullOrWhiteSpace(spriteName))
-        {
-            return value;
-        }
-
-        return $"<sprite name=\"{spriteName}\">{spriteName} {trimmed}";
+        string spriteName = alignment.Value.ToString();
+        return $"<sprite name=\"{spriteName}\">{spriteName} {value.Trim()}";
     }
 }

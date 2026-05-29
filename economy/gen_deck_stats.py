@@ -36,7 +36,7 @@ def empty_army_stats():
 
 
 def process_deck(deck_path: Path) -> dict:
-    with open(deck_path, encoding="utf-8") as f:
+    with open(deck_path, encoding="utf-8-sig") as f:
         data = json.load(f)
 
     cards = data.get("cards", [])

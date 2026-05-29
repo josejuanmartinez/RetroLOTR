@@ -278,7 +278,7 @@ public class Character : MonoBehaviour
     public async Task Pass()
     {
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
-        CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef("Pass") : null;
+        CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef(Pass.ActionRef) : null;
         if (action == null) return;
         action.Initialize(this, condition: null, effect: null, asyncEffect: null);
         await action.Execute();
@@ -766,7 +766,8 @@ public class Character : MonoBehaviour
 
         if (HasStatusEffect(StatusEffectEnum.Frozen))
         {
-            baseMovement -= 5;
+            int extraPenalty = EnvironmentalCardManager.Instance?.FrozenMovementExtraPenalty ?? 0;
+            baseMovement -= 5 + extraPenalty;
         }
 
         baseMovement += statusMovementBonusThisTurn;
@@ -1818,7 +1819,7 @@ public class Character : MonoBehaviour
         for (int i = 0; i < leaders.Length; i++)
         {
             Leader leader = leaders[i];
-            if (leader is PlayableLeader && !leader.killed && string.Equals(leader.characterName, "Sauron", StringComparison.OrdinalIgnoreCase))
+            if (leader is PlayableLeader && !leader.killed && leader.GetBiome().isMorgulMaster)
             {
                 return leader;
             }

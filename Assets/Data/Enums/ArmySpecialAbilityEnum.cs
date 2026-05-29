@@ -28,7 +28,8 @@ public enum ArmySpecialAbilityEnum
     Fortified = 20,
     MorgulTouch = 21,
     DuelSupremacy = 22,
-    Bleeding = 23
+    Bleeding = 23,
+    Flying = 24
 }
 
 [Serializable]

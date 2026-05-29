@@ -1,4 +1,4 @@
-{
+﻿{
     "deckId": "shadow_of_the_east",
     "nation": "Sauron",
     "alignment": 1,
@@ -5144,7 +5144,7 @@
             "race": 7,
             "artifacts": [],
             "troopType": 0,
-            "specialAbilities": [],
+            "specialAbilities": [24],
             "commanderSkillRequired": 0,
             "agentSkillRequired": 0,
             "emissarySkillRequired": 0,
@@ -5217,7 +5217,7 @@
             "race": 7,
             "artifacts": [],
             "troopType": 0,
-            "specialAbilities": [],
+            "specialAbilities": [24],
             "commanderSkillRequired": 0,
             "agentSkillRequired": 0,
             "emissarySkillRequired": 0,
@@ -5294,7 +5294,7 @@
                 "Morgul's Blade"
             ],
             "troopType": 0,
-            "specialAbilities": [],
+            "specialAbilities": [24],
             "commanderSkillRequired": 0,
             "agentSkillRequired": 0,
             "emissarySkillRequired": 0,

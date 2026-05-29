@@ -488,7 +488,7 @@ public class LeaderSelector : SearcherByName
         if (carouselItem != null)
         {
             carouselItem.SetSprite(sprite);
-            carouselItem.SetLabel(BuildCarouselLabel(selection));
+            carouselItem.SetLabel(BuildCarouselLabel(selection), selection.alignment);
         }
     }
 

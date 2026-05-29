@@ -24,7 +24,7 @@ public class ActionsManager : MonoBehaviour
     public void Start()
     {
         characterActions = Array.Empty<CharacterAction>();
-        DEFAULT = ResolveActionByRef("Pass");
+        DEFAULT = ResolveActionByRef(Pass.ActionRef);
 
         currentCharacter = null;
         availableActions.Clear();

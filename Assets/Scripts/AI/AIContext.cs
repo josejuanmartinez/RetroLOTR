@@ -511,7 +511,7 @@ public class AIContext
             preferredTargetType = preferred != null ? preferred.GetPC() != null ? "PC" : "Hex" : "None",
             preferredTarget = preferred != null ? preferred.v2 : Vector2Int.one * -1,
             preferredTargetDistance = preferred != null && Character != null && Character.hex != null ? Vector2.Distance(Character.hex.v2, preferred.v2) : -1f,
-            actionName = LastChosenAction != null ? LastChosenAction.actionName : "Pass",
+            actionName = LastChosenAction != null ? LastChosenAction.actionName : Pass.ActionRef,
             advisorType = LastAdvisor.ToString(),
             actionDifficulty = LastChosenAction != null ? ResolveCardDifficulty(LastChosenAction) : 0,
             actionGoldCost = LastChosenAction != null ? LastChosenAction.GetGoldCost() : 0,

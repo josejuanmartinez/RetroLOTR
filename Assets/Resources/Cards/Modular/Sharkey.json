@@ -2678,7 +2678,7 @@
                       "cardId":  9043,
                       "name":  "WildFire",
                       "quote":  "The forest weeps as flames dance, a terrible beauty unleashed.",
-                      "actionEffect":  "Environmental event: apply Burning \u003csprite name=\"burning\"\u003e (1 turn) to all enemy units on forest tiles within radius 2.",
+                      "actionEffect":  "Apply Burning \u003csprite name=\"burning\"\u003e (1 turn) to all enemy units on forest tiles within radius 2.",
                       "type":  "Event",
                       "tags":  [
                                    "environmental"

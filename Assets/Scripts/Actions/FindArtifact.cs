@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class FindArtifact: MageAction
 {
+    public const string ActionRef = "FindArtifact";
+
     private static List<Riddle> cachedRiddles;
     private static bool riddlesLoaded;
 

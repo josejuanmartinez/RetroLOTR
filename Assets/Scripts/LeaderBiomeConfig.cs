@@ -41,6 +41,7 @@ public class LeaderBiomeConfig: BiomeConfig
     public FortSizeEnum startingCityFortSize;
     public bool startingCityIsHidden;
     public bool startsWithPort;
+    public bool isMorgulMaster;
 
     public List<BiomeConfig> startingCharacters = new();
     public List<Artifact> tutorialArtifacts = new();

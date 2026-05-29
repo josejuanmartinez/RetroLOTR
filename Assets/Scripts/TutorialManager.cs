@@ -1124,7 +1124,7 @@ public class TutorialManager : MonoBehaviour
             }
         }
 
-        if (string.Equals(ResolveRequiredActionRef(step, actor.GetOwner() as PlayableLeader), "FindArtifact", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(ResolveRequiredActionRef(step, actor.GetOwner() as PlayableLeader), FindArtifact.ActionRef, StringComparison.OrdinalIgnoreCase))
         {
             if (actor.hex != null && actor.hex.hiddenArtifacts.Count > 0 && actor.artifacts.Count < Character.MAX_ARTIFACTS)
             {
@@ -1383,7 +1383,7 @@ public class TutorialManager : MonoBehaviour
 
     private static bool IsStateAllegianceTutorialStep(TutorialStep step, PlayableLeader playableLeader)
     {
-        return string.Equals(ResolveRequiredActionRef(step, playableLeader), "StateAllegiance", StringComparison.OrdinalIgnoreCase);
+        return string.Equals(ResolveRequiredActionRef(step, playableLeader), StateAllegiance.ActionRef, StringComparison.OrdinalIgnoreCase);
     }
 
     private void LogTutorialState(string message)
