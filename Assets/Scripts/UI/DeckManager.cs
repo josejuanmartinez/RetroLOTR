@@ -328,8 +328,8 @@ public class CardData
             if (abilities.Count > 0)
             {
                 return !string.IsNullOrWhiteSpace(raceLabel)
-                    ? $"{raceLabel}. {string.Join(", ", abilities)}."
-                    : string.Join(", ", abilities);
+                    ? $"{raceLabel}. {string.Join(". ", abilities)}."
+                    : string.Join(". ", abilities);
             }
 
             return raceLabel;
@@ -339,7 +339,7 @@ public class CardData
             ? $"{troopLabel} {spriteTag}."
             : $"{raceLabel}. {troopLabel} {spriteTag}.";
         return abilities.Count > 0
-            ? $"{baseText} {string.Join(", ", abilities)}."
+            ? $"{baseText} {string.Join(". ", abilities)}."
             : baseText;
     }
 
@@ -448,10 +448,13 @@ public class CardData
             return false;
         }
 
+        bool spellArcaneOverride = GetCardType() == CardTypeEnum.Spell
+            && selectedCharacter.HasStatusEffect(StatusEffectEnum.ArcaneInsight);
+
         bool levelsOk = selectedCharacter.GetCommander() >= commanderSkillRequired
             && selectedCharacter.GetAgent() >= agentSkillRequired
             && selectedCharacter.GetEmmissary() >= emissarySkillRequired
-            && selectedCharacter.GetMage() >= mageSkillRequired;
+            && (selectedCharacter.GetMage() >= mageSkillRequired || spellArcaneOverride);
 
         bool resourcesOk = resourceCheck != null
             ? resourceCheck(selectedCharacter)
@@ -567,11 +570,15 @@ public class CardData
     {
         if (specialAbilities == null || specialAbilities.Count == 0) return new List<string>();
 
-        ArmySpecialAbilityEnum ability = specialAbilities.First();
-        string label = FormatArmyAbilityLabel(ability);
-        if (string.IsNullOrWhiteSpace(label)) return new List<string>();
         int chance = Mathf.Clamp(procChance <= 0 ? 100 : procChance, 1, 100);
-        return new List<string> { $"{label} {chance}%" };
+        var labels = new List<string>();
+        foreach (ArmySpecialAbilityEnum ability in specialAbilities)
+        {
+            string label = FormatArmyAbilityLabel(ability);
+            if (!string.IsNullOrWhiteSpace(label))
+                labels.Add($"{label} {chance}%");
+        }
+        return labels;
     }
 
     private static string FormatArmyAbilityLabel(ArmySpecialAbilityEnum ability)

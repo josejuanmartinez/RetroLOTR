@@ -420,8 +420,8 @@ MonoBehaviour:
   emmissary: {fileID: 5864688947957197808}
   mage: {fileID: 7104661621034988600}
   movementLeft: {fileID: 8709030807026316613}
-  artifactPrefab: {fileID: 5637553499954410138, guid: 1802a87845bf4a845824b8e9596ad840, type: 3}
-  artifactsGridLayoutTransform: {fileID: 8751727250396390783}
+  artifactStatusPrefab: {fileID: 5637553499954410138, guid: 1802a87845bf4a845824b8e9596ad840, type: 3}
+  artifactStatusGridLayoutTransform: {fileID: 8751727250396390783}
   cardCanvasGroup: {fileID: 3428527786944334405}
   playedCard: {fileID: 4970419102239235587, guid: 5b3b6cce768a67f48a7ddb8000a97897, type: 3}
 --- !u!114 &7475116321720209069
@@ -619,7 +619,7 @@ GameObject:
   - component: {fileID: 334600216349732334}
   - component: {fileID: 4905061048046733502}
   m_Layer: 0
-  m_Name: Artifacts
+  m_Name: Artifacts-Status
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

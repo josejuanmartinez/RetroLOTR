@@ -1111,7 +1111,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         AppendMissingLevelMessage(messages, "Commander", cardData.commanderSkillRequired, selected.GetCommander());
         AppendMissingLevelMessage(messages, "Agent", cardData.agentSkillRequired, selected.GetAgent());
         AppendMissingLevelMessage(messages, "Emissary", cardData.emissarySkillRequired, selected.GetEmmissary());
-        AppendMissingLevelMessage(messages, "Mage", cardData.mageSkillRequired, selected.GetMage());
+        bool spellArcaneBypass = cardData.GetCardType() == CardTypeEnum.Spell
+            && selected.HasStatusEffect(StatusEffectEnum.ArcaneInsight);
+        if (!spellArcaneBypass)
+            AppendMissingLevelMessage(messages, "Mage", cardData.mageSkillRequired, selected.GetMage());
     }
 
     private void AppendMissingLevelMessage(List<string> messages, string label, int required, int current)

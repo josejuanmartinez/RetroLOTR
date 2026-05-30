@@ -3,48 +3,56 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// Decks: dark (sauron_base, shadow_of_the_east, the_deceiver), neutral (of_many_colours)
+// 4-part dark:    Southron/Easterling encouraged + get Strengthened | own non-Southron in desert slowed 1 | FP emissaries gain ArcaneInsight (desert winds carry secrets) | non-Southron desert units halted + cavalry 33% freeze
+// neutral rule:   Southrons encouraged | all non-Southron desert halted
 public class SandStorm : EventAction
 {
-    private static bool IsDesert(Hex h) =>
-        h != null && (h.terrainType == TerrainEnum.desert || h.terrainType == TerrainEnum.wastelands);
+    private static bool IsDesert(Hex h) => h != null && (h.terrainType == TerrainEnum.desert || h.terrainType == TerrainEnum.wastelands);
+    private static bool IsDesertRace(Character ch) => ch.race == RacesEnum.Southron || ch.race == RacesEnum.Easterling;
 
     public override void ApplyOngoingEffect()
     {
         Board board = FindFirstObjectByType<Board>();
         if (board == null) return;
 
-        List<(Character ch, Hex hex)> desertChars = board.GetHexes()
-            .Where(h => IsDesert(h) && h.characters != null)
-            .SelectMany(h => h.characters.Select(ch => (ch, h)))
-            .Where(t => t.ch != null && !t.ch.killed && !t.ch.IsImmuneToNegativeEnvironmentalCards())
-            .Distinct().ToList();
+        AlignmentEnum caster = GetCasterAlignment();
+        AlignmentEnum other = caster == AlignmentEnum.darkServants ? AlignmentEnum.freePeople
+            : caster == AlignmentEnum.freePeople ? AlignmentEnum.darkServants : AlignmentEnum.neutral;
 
-        int halted = 0, frozen = 0, siegeBlocked = 0, southronBuff = 0;
-        foreach (var (ch, hex) in desertChars)
+        int southronBuff = 0, ownSlowed = 0, otherSmall = 0, halted = 0, frozen = 0, blocked = 0;
+
+        foreach (var (ch, hex) in board.GetHexes().Where(h => IsDesert(h) && h.characters != null)
+            .SelectMany(h => h.characters.Select(ch => (ch, h))).Where(t => t.ch != null && !t.ch.killed))
         {
-            bool isSouthron = ch.race == RacesEnum.Southron || ch.race == RacesEnum.Easterling;
+            bool isSouthron = IsDesertRace(ch);
+
             if (isSouthron)
             {
-                // Home terrain advantage: Southrons thrive in the sand
-                ch.Encourage(1);
-                southronBuff++;
+                ch.Encourage(1); southronBuff++;                                               // big bonus own: Southron home terrain
+                if (caster != AlignmentEnum.neutral) ch.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
                 continue;
             }
-            // All desert units slowed by sand
-            ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
-            halted++;
-            if (ch.IsArmyCommander())
+
+            if (!ch.IsImmuneToNegativeEnvironmentalCards())
             {
-                Army army = ch.GetArmy();
-                if (army == null) continue;
-                // Horses panic in sandstorm — 33% chance to Freeze
-                if ((army.lc > 0 || army.hc > 0) && UnityEngine.Random.value < 0.33f) { ch.ApplyStatusEffect(StatusEffectEnum.Frozen, 1); frozen++; }
-                // Siege engines clog in sand — 25% chance to Block
-                if (army.ca > 0 && UnityEngine.Random.value < 0.25f) { ch.ApplyStatusEffect(StatusEffectEnum.Blocked, 1); siegeBlocked++; }
+                if (caster != AlignmentEnum.neutral && ch.GetAlignment() == caster)
+                { ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement()); ownSlowed++; continue; } // small debuff own
+
+                if (caster != AlignmentEnum.neutral && ch.GetAlignment() == other && ch.GetEmmissary() > 0)
+                { ch.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1); otherSmall++; }         // small bonus other
+
+                ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement()); halted++;                 // big debuff: slowed
+                Army army = ch.IsArmyCommander() ? ch.GetArmy() : null;
+                if (army != null)
+                {
+                    if ((army.lc > 0 || army.hc > 0) && UnityEngine.Random.value < 0.33f) { ch.ApplyStatusEffect(StatusEffectEnum.Frozen, 1); frozen++; }
+                    if (army.ca > 0 && UnityEngine.Random.value < 0.25f) { ch.ApplyStatusEffect(StatusEffectEnum.Blocked, 1); blocked++; }
+                }
             }
         }
         MessageDisplayNoUI.ShowMessage(null, null,
-            $"Sand Storm (ongoing): {halted} non-Southron desert units slowed; {frozen} cavalry frozen; {siegeBlocked} siege blocked; {southronBuff} Southrons encouraged.",
+            $"Sand Storm (ongoing): {southronBuff} Southrons strengthened; {halted} others slowed; {frozen} cavalry frozen; {blocked} siege blocked; {otherSmall} enemy emissaries guided.",
             Color.yellow);
     }
 
@@ -53,47 +61,25 @@ public class SandStorm : EventAction
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
-
-        effect = (c) =>
+        effect = (ch) =>
         {
-            if (originalEffect != null && !originalEffect(c)) return false;
-            if (c == null) return false;
-
+            if (originalEffect != null && !originalEffect(ch)) return false;
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
-
-            List<Character> targets = board.GetHexes()
-                .Where(h => h != null && h.terrainType == TerrainEnum.desert && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.race != RacesEnum.Southron && !ch.IsImmuneToNegativeEnvironmentalCards())
-                .Distinct()
-                .ToList();
-
+            var targets = board.GetHexes().Where(h => h != null && h.terrainType == TerrainEnum.desert && h.characters != null)
+                .SelectMany(h => h.characters).Where(x => x != null && !x.killed && !IsDesertRace(x) && !x.IsImmuneToNegativeEnvironmentalCards()).Distinct().ToList();
             if (targets.Count == 0) return false;
-
-            for (int i = 0; i < targets.Count; i++)
-            {
-                targets[i].Halt();
-            }
-
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Sand Storm halts {targets.Count} non-Southron unit(s) on desert tiles.", Color.yellow);
+            foreach (var t in targets) t.Halt();
+            MessageDisplayNoUI.ShowMessage(ch.hex, ch, $"Sand Storm halts {targets.Count} non-Southron units on desert tiles.", Color.yellow);
             return true;
         };
-
-        condition = (c) =>
+        condition = (ch) =>
         {
-            if (originalCondition != null && !originalCondition(c)) return false;
+            if (originalCondition != null && !originalCondition(ch)) return false;
             Board board = FindFirstObjectByType<Board>();
-            if (board == null) return false;
-            return board.GetHexes().Any(h => h != null && h.terrainType == TerrainEnum.desert && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race != RacesEnum.Southron && !ch.IsImmuneToNegativeEnvironmentalCards()));
+            return board != null && board.GetHexes().Any(h => h != null && h.terrainType == TerrainEnum.desert && h.characters != null && h.characters.Any(x => x != null && !x.killed && !IsDesertRace(x) && !x.IsImmuneToNegativeEnvironmentalCards()));
         };
-
-        asyncEffect = async (c) =>
-        {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
-            return true;
-        };
-
+        asyncEffect = async (ch) => { if (originalAsyncEffect != null && !await originalAsyncEffect(ch)) return false; return true; };
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }

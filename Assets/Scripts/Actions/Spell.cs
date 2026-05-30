@@ -20,7 +20,7 @@ public class Spell : CharacterAction
     public override bool IsRoleEligible(Character character)
     {
         if (character == null) return false;
-        return character.GetMage() > 0;
+        return character.GetMage() > 0 || character.HasStatusEffect(StatusEffectEnum.ArcaneInsight);
     }
 
     public override bool ShouldShowWhenUnavailable()
@@ -37,7 +37,7 @@ public class Spell : CharacterAction
             return originalEffect == null || originalEffect(c); };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.GetMage() > 0;
+            return c.GetMage() > 0 || c.HasStatusEffect(StatusEffectEnum.ArcaneInsight);
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

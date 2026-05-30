@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using System.Collections.Generic;
@@ -37,9 +38,11 @@ public class SelectedCharacterIcon : MonoBehaviour
     public TextMeshProUGUI mage;
     public TextMeshProUGUI movementLeft;
 
-    [Header("Artifacts")]
-    public GameObject artifactPrefab;
-    public Transform artifactsGridLayoutTransform;
+    [Header("Artifact-Status Items")]
+    [FormerlySerializedAs("artifactPrefab")]
+    public GameObject artifactStatusPrefab;
+    [FormerlySerializedAs("artifactsGridLayoutTransform")]
+    public Transform artifactStatusGridLayoutTransform;
 
     [Header("Played cards")]
     [SerializeField] private CanvasGroup cardCanvasGroup;
@@ -52,7 +55,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     private Character pendingRefreshCharacter;
     public Character CurrentCharacter { get; private set; }
     private bool refreshScheduled;
-    private readonly List<ArtifactRenderer> artifactRenderers = new();
+    private readonly List<ArtifactRenderer> artifactStatusRenderers = new();
     private readonly List<GameObject> playedCardInstances = new();
 
     private void Awake()
@@ -117,7 +120,7 @@ SetVisible(true);
         health.gameObject.SetActive(true);
         health.fillAmount = c.health / 100f;
 
-        RefreshArtifacts(c.artifacts);
+        RefreshArtifactStatusItems(c.artifacts, c);
         
         RefreshMovementLeft(c);
         RefreshPlayedCards(c);
@@ -175,7 +178,7 @@ SetVisible(true);
         health.gameObject.SetActive(showHealth);
         if (showHealth) health.fillAmount = c.health / 100f;
 
-        RefreshArtifacts(showArtifacts ? c.artifacts : null);
+        RefreshArtifactStatusItems(showArtifacts ? c.artifacts : null, showArtifacts ? c : null);
 
         ClearPlayedCardInstances();
         SetPlayedCardVisible(false);
@@ -203,7 +206,7 @@ SetVisible(true);
         movementLeft.text = "-";
 
         health.gameObject.SetActive(false);
-        RefreshArtifacts(null);
+        RefreshArtifactStatusItems(null, null);
         ClearPlayedCardInstances();
         SetPlayedCardVisible(false);
     }
@@ -481,29 +484,37 @@ SetVisible(false);
         playedCardInstances.Clear();
     }
 
-    private void RefreshArtifacts(List<Artifact> artifacts)
+    private void RefreshArtifactStatusItems(List<Artifact> artifacts, Character c)
     {
-        int requiredCount = artifacts != null ? artifacts.Count : 0;
+        var items = new List<(string spriteName, string label)>();
 
-        for (int i = artifactRenderers.Count; i < requiredCount; i++)
+        if (artifacts != null)
+            foreach (Artifact a in artifacts)
+                if (a != null) items.Add((a.GetSpriteString(), a.GetHoverText()));
+
+        if (c?.statusEffects != null)
+            foreach (StatusEffectEnum effect in c.statusEffects)
+            {
+                string spriteName = effect.ToString().ToLowerInvariant();
+                if (GetIllustrationByName(spriteName, false) != null)
+                    items.Add((spriteName, effect.ToString()));
+            }
+
+        for (int i = artifactStatusRenderers.Count; i < items.Count; i++)
         {
-            GameObject artifactGO = Instantiate(artifactPrefab, artifactsGridLayoutTransform);
-            ArtifactRenderer renderer = artifactGO.GetComponent<ArtifactRenderer>();
-            artifactRenderers.Add(renderer);
+            GameObject go = Instantiate(artifactStatusPrefab, artifactStatusGridLayoutTransform);
+            artifactStatusRenderers.Add(go.GetComponent<ArtifactRenderer>());
         }
 
-        for (int i = 0; i < artifactRenderers.Count; i++)
+        for (int i = 0; i < artifactStatusRenderers.Count; i++)
         {
-            ArtifactRenderer renderer = artifactRenderers[i];
+            ArtifactRenderer renderer = artifactStatusRenderers[i];
             if (renderer == null) continue;
-
-            bool active = i < requiredCount;
+            bool active = i < items.Count;
             renderer.gameObject.SetActive(active);
             if (!active) continue;
-
-            Artifact artifact = artifacts[i];
-            renderer.gameObject.name = artifact != null ? artifact.artifactName : $"Artifact {i + 1}";
-            renderer.Initialize(artifact);
+            renderer.gameObject.name = items[i].label;
+            renderer.Initialize(items[i].spriteName, items[i].label);
         }
     }
 

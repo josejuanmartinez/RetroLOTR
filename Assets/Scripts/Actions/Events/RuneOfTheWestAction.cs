@@ -5,63 +5,68 @@ using UnityEngine;
 
 public class RuneOfTheWestAction : EventAction
 {
+    private const int FarFromHomeRadius = 6;
+
     public override void ApplyOngoingEffect()
     {
         Board board = FindFirstObjectByType<Board>();
         if (board == null) return;
 
-        List<Character> allChars = board.GetHexes()
-            .Where(h => h != null && h.characters != null)
-            .SelectMany(h => h.characters)
-            .Where(ch => ch != null && !ch.killed)
-            .Distinct().ToList();
+        List<Hex> allHexes = board.GetHexes().Where(h => h != null).ToList();
 
-        int magesHidden = 0, emissariesHoped = 0, enemyMagesRevealed = 0;
-        foreach (Character ch in allChars)
+        // Build set of hex coordinates within radius 6 of any allied (free people) PC
+        HashSet<Vector2Int> nearAlliedPc = new();
+        foreach (Hex hex in allHexes)
         {
-            if (ch.GetAlignment() == AlignmentEnum.freePeople)
+            PC pc = hex.GetPC();
+            if (pc == null || pc.owner == null) continue;
+            if (pc.owner.GetAlignment() != AlignmentEnum.freePeople) continue;
+            foreach (Hex inRadius in hex.GetHexesInRadius(FarFromHomeRadius))
+                if (inRadius != null) nearAlliedPc.Add(inRadius.v2);
+        }
+
+        // Allied army commanders whose hex is outside radius 6 of every allied PC
+        int boosted = 0;
+        foreach (Hex hex in allHexes)
+        {
+            if (hex.characters == null || nearAlliedPc.Contains(hex.v2)) continue;
+            foreach (Character ch in hex.characters.Where(ch =>
+                ch != null && !ch.killed &&
+                ch.GetAlignment() == AlignmentEnum.freePeople &&
+                ch.IsArmyCommander()).ToList())
             {
-                if (ch.GetMage() > 0)
-                {
-                    ch.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1);
-                    ch.Hide(1);
-                    magesHidden++;
-                }
-                if (ch.GetEmmissary() > 0)
-                {
-                    ch.ApplyStatusEffect(StatusEffectEnum.Hope, 1);
-                    emissariesHoped++;
-                }
-            }
-            else if (ch.GetAlignment() == AlignmentEnum.darkServants && ch.GetMage() > 0)
-            {
-                // Western runes disrupt enemy spellwork
-                ch.ClearStatusEffect(StatusEffectEnum.Hidden);
-                enemyMagesRevealed++;
+                Army army = ch.GetArmy();
+                if (army == null) continue;
+                IncrementLargestTroopType(army);
+                boosted++;
             }
         }
+
         MessageDisplayNoUI.ShowMessage(null, null,
-            $"Rune of the West (ongoing): {magesHidden} allied mages hidden+insightful; {emissariesHoped} emissaries gain hope; {enemyMagesRevealed} enemy mages revealed.",
+            $"Star of Earendil: {boosted} allied commander(s) deep in enemy territory — their largest troop type grows by 1.",
             Color.cyan);
+    }
+
+    private static void IncrementLargestTroopType(Army army)
+    {
+        int max = Mathf.Max(army.ma, army.ar, army.li, army.hi, army.lc, army.hc, army.ca, army.ws);
+        if (max <= 0) return;
+        if      (army.ma == max) army.ma++;
+        else if (army.ar == max) army.ar++;
+        else if (army.li == max) army.li++;
+        else if (army.hi == max) army.hi++;
+        else if (army.lc == max) army.lc++;
+        else if (army.hc == max) army.hc++;
+        else if (army.ca == max) army.ca++;
+        else                     army.ws++;
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
-        var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
 
-        effect = (character) =>
-        {
-            if (originalEffect != null && !originalEffect(character)) return false;
-            if (character == null) return false;
-            character.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1);
-            character.Hide(1);
-            MessageDisplayNoUI.ShowMessage(character.hex, character,
-                $"{character.characterName} inscribed with a Rune of the West: ArcaneInsight and Hidden (1 turn).",
-                Color.cyan);
-            return true;
-        };
+        effect = (_) => true;
 
         condition = (character) =>
         {

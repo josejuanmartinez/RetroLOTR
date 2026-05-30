@@ -19,18 +19,25 @@ public class TypewriterEffect : MonoBehaviour
 
     void Start()
     {
-        if(textMeshPro == null) textMeshPro = GetComponent<TextMeshPro>();
-        if (fullText.Trim().Length == 0 && textMeshPro.text.Trim().Length > 0)
+        if (textMeshPro == null) textMeshPro = GetComponent<TMP_Text>();
+        fullText ??= string.Empty;
+        if (fullText.Trim().Length == 0 && textMeshPro != null && textMeshPro.text.Trim().Length > 0)
         {
             fullText = textMeshPro.text;
             textMeshPro.text = "";
         }
-        if (startUponInstantiating) StartWriting(fullText);    
+        if (startUponInstantiating) StartWriting(fullText);
     }
     public void StartWriting(string text = null)
     {
         if (coroutine != null) StopCoroutine(coroutine);
         coroutine = StartCoroutine(TypeText(text));
+    }
+
+    public void Clear()
+    {
+        if (coroutine != null) { StopCoroutine(coroutine); coroutine = null; }
+        if (textMeshPro != null) textMeshPro.text = string.Empty;
     }
 
     IEnumerator TypeText(string text = null)

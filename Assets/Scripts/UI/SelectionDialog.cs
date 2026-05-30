@@ -19,13 +19,20 @@ public class SelectionDialog : MonoBehaviour
     [SerializeField] private Image portraitImage;
     [SerializeField] private CanvasGroup portraitCanvasGroup;
     [SerializeField] private Illustrations illustrations;
-    [SerializeField] private TextMeshProUGUI optionDescriptionLabel;
     [SerializeField] private TextMeshProUGUI title;
+
+    [Header("Option Buttons — replaces dropdown when assigned")]
+    [SerializeField] private Transform optionButtonsContainer;
+
+    [Header("Typewriter")]
+    [SerializeField] private TypewriterEffect messageTypewriter;
 
     private readonly List<DialogRequest> queuedRequests = new();
     private readonly List<TMP_Dropdown.OptionData> dropdownOptions = new();
     private DialogRequest activeRequest;
-    private GameObject optionDescriptionPanel;
+    private readonly List<Button> optionButtons = new();
+    private int selectedButtonIndex = -1;
+    private Coroutine buttonAnimCoroutine;
 
     private void Awake()
     {
@@ -38,7 +45,6 @@ public class SelectionDialog : MonoBehaviour
         Instance = this;
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         BindUiReferences();
-        EnsureOptionDescriptionUi();
         WireUiListeners();
 
         DontDestroyOnLoad(gameObject);
@@ -181,11 +187,16 @@ public class SelectionDialog : MonoBehaviour
 
     private string GetSelectedOptionText()
     {
-        if (dropdown == null || activeRequest == null || !HasValidSelection())
+        if (activeRequest == null || !HasValidSelection()) return string.Empty;
+
+        if (UseButtonList)
         {
-            return string.Empty;
+            return selectedButtonIndex >= 0 && selectedButtonIndex < activeRequest.options.Count
+                ? activeRequest.options[selectedButtonIndex]
+                : string.Empty;
         }
 
+        if (dropdown == null) return string.Empty;
         int optionIndex = dropdown.value - 1;
         return optionIndex >= 0 && optionIndex < activeRequest.options.Count
             ? activeRequest.options[optionIndex]
@@ -197,7 +208,7 @@ public class SelectionDialog : MonoBehaviour
         Debug.Log($"[SelectionDialog] Resolve -> '{answer}'");
         DialogRequest requestToResolve = activeRequest;
         HideInstant();
-        requestToResolve?.tcs.TrySetResult(answer);
+        requestToResolve?.tcs?.TrySetResult(answer);
         activeRequest = null;
 
         if (queuedRequests.Count > 0)
@@ -213,7 +224,7 @@ public class SelectionDialog : MonoBehaviour
         content.SetActive(false);
         IsShowing = false;
         activeRequest = null;
-        SetOptionDescriptionVisible(false);
+        ClearOptionButtons();
         UpdatePortrait(null);
     }
 
@@ -228,6 +239,8 @@ public class SelectionDialog : MonoBehaviour
         OpenRequest(queuedRequests[0]);
     }
 
+    private bool UseButtonList => optionButtonsContainer != null;
+
     private void ShowInternal(DialogRequest request)
     {
         if (request == null) return;
@@ -241,28 +254,43 @@ public class SelectionDialog : MonoBehaviour
         bool hasCustomTitle = !string.IsNullOrWhiteSpace(request.title);
         if (messageLabel != null)
         {
-            messageLabel.text = request.message;
+            EnsureMessageTypewriter();
+            if (messageTypewriter != null)
+                messageTypewriter.StartWriting(request.message);
+            else
+                messageLabel.text = request.message;
         }
         if (title != null)
         {
-            title.text = hasCustomTitle ? request.title : string.Empty;
+            title.text = hasCustomTitle ? FormatTitle(request.title) : string.Empty;
             title.gameObject.SetActive(!string.IsNullOrWhiteSpace(title.text));
         }
         UpdatePortrait(request.portrait);
-        dropdownOptions.Clear();
-        string placeholderText = string.IsNullOrWhiteSpace(request.yesString) ? "Select an option" : request.yesString;
-        dropdownOptions.Add(new TMP_Dropdown.OptionData(placeholderText));
-        request.options.ForEach(x =>
+
+        if (UseButtonList)
         {
-            Color optionColor = GetReadableRandomColor();
-            dropdownOptions.Add(new TMP_Dropdown.OptionData(FormatOptionLabel(x, optionColor)) { color = optionColor });
-        });
-        dropdown.ClearOptions();
-        dropdown.AddOptions(dropdownOptions);
-        dropdown.SetValueWithoutNotify(0);
-        dropdown.RefreshShownValue();
-        UpdateCaptionColor();
-        UpdateOptionDescription();
+            if (dropdown != null) dropdown.gameObject.SetActive(false);
+            selectedButtonIndex = -1;
+            BuildOptionButtons(request.options, request.optionDescriptions);
+        }
+        else
+        {
+            if (dropdown != null) dropdown.gameObject.SetActive(true);
+            dropdownOptions.Clear();
+            string placeholderText = string.IsNullOrWhiteSpace(request.yesString) ? "Select an option" : request.yesString;
+            dropdownOptions.Add(new TMP_Dropdown.OptionData(placeholderText));
+            request.options.ForEach(x =>
+            {
+                Color optionColor = GetReadableRandomColor();
+                dropdownOptions.Add(new TMP_Dropdown.OptionData(FormatOptionLabel(x, optionColor)) { color = optionColor });
+            });
+            dropdown.ClearOptions();
+            dropdown.AddOptions(dropdownOptions);
+            dropdown.SetValueWithoutNotify(0);
+            dropdown.RefreshShownValue();
+            UpdateCaptionColor();
+        }
+
         UpdateCloseButtonState();
     }
 
@@ -273,8 +301,6 @@ public class SelectionDialog : MonoBehaviour
         SetUiObjectActive(messageLabel != null ? messageLabel.gameObject : null, true);
         SetUiObjectActive(noButton != null ? noButton.gameObject : null, true);
         SetUiObjectActive(dropdown != null ? dropdown.gameObject : null, true);
-        SetUiObjectActive(optionDescriptionPanel, true);
-
         GameObject imageRoot = FindDialogChild("Image");
         SetUiObjectActive(imageRoot, true);
         SetRectScale(imageRoot, Vector3.one);
@@ -407,6 +433,9 @@ public class SelectionDialog : MonoBehaviour
 
     private bool HasValidSelection()
     {
+        if (UseButtonList)
+            return selectedButtonIndex >= 0 && selectedButtonIndex < (activeRequest?.options.Count ?? 0);
+
         return dropdown != null
             && dropdown.options != null
             && dropdown.options.Count > 1
@@ -478,6 +507,34 @@ public class SelectionDialog : MonoBehaviour
         {
             illustrations = FindFirstObjectByType<Illustrations>();
         }
+
+        if (optionButtonsContainer == null)
+        {
+            GameObject containerObj = FindDialogChild("OptionsContainer") ?? FindDialogChild("OptionButtons");
+            if (containerObj != null) optionButtonsContainer = containerObj.transform;
+        }
+
+        if (optionButtonsContainer != null)
+        {
+            RectTransform containerRect = optionButtonsContainer.GetComponent<RectTransform>();
+            if (containerRect != null)
+                containerRect.pivot = new Vector2(containerRect.pivot.x, 0f);
+
+            ContentSizeFitter csf = optionButtonsContainer.GetComponent<ContentSizeFitter>()
+                ?? optionButtonsContainer.gameObject.AddComponent<ContentSizeFitter>();
+            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            csf.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+            VerticalLayoutGroup vlg = optionButtonsContainer.GetComponent<VerticalLayoutGroup>()
+                ?? optionButtonsContainer.gameObject.AddComponent<VerticalLayoutGroup>();
+            vlg.spacing = 6f;
+            vlg.childAlignment = TextAnchor.LowerLeft;
+            vlg.reverseArrangement = true;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = true;
+        }
     }
 
     private void WireUiListeners()
@@ -496,7 +553,6 @@ public class SelectionDialog : MonoBehaviour
             {
                 UpdateCloseButtonState();
                 UpdateCaptionColor();
-                UpdateOptionDescription();
             });
         }
     }
@@ -531,116 +587,6 @@ public class SelectionDialog : MonoBehaviour
             : Color.white;
     }
 
-    private void UpdateOptionDescription()
-    {
-        if (optionDescriptionLabel == null)
-        {
-            return;
-        }
-
-        string description = string.Empty;
-        if (activeRequest?.optionDescriptions != null && HasValidSelection())
-        {
-            int optionIndex = dropdown.value - 1;
-            if (optionIndex >= 0 && optionIndex < activeRequest.optionDescriptions.Count)
-            {
-                description = activeRequest.optionDescriptions[optionIndex];
-            }
-        }
-
-        optionDescriptionLabel.text = description ?? string.Empty;
-        SetOptionDescriptionVisible(!string.IsNullOrWhiteSpace(optionDescriptionLabel.text));
-    }
-
-    private void EnsureOptionDescriptionUi()
-    {
-        if (optionDescriptionLabel != null)
-        {
-            GameObject existingParent = optionDescriptionLabel.transform.parent != null
-                ? optionDescriptionLabel.transform.parent.gameObject
-                : null;
-
-            // In the current scene the serialized description label may live directly under
-            // the main dialog branch. Never treat a broad container like CharacterImageBg/Image/Content
-            // as the optional description panel, or hiding the description will hide the whole dialog.
-            if (existingParent != null
-                && !IsProtectedDialogContainer(existingParent))
-            {
-                optionDescriptionPanel = existingParent;
-            }
-            else
-            {
-                optionDescriptionPanel = null;
-            }
-            SetOptionDescriptionVisible(false);
-            return;
-        }
-
-        if (dropdown == null)
-        {
-            return;
-        }
-
-        RectTransform parent = dropdown.transform.parent as RectTransform;
-        if (parent == null)
-        {
-            return;
-        }
-
-        optionDescriptionPanel = new GameObject("OptionDescriptionPanel", typeof(RectTransform), typeof(Image));
-        optionDescriptionPanel.transform.SetParent(parent, false);
-
-        RectTransform panelRect = optionDescriptionPanel.GetComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0f, 0f);
-        panelRect.anchorMax = new Vector2(1f, 0f);
-        panelRect.pivot = new Vector2(0.5f, 0f);
-        panelRect.anchoredPosition = new Vector2(0f, 52f);
-        panelRect.sizeDelta = new Vector2(-10f, 74f);
-
-        Image panelImage = optionDescriptionPanel.GetComponent<Image>();
-        panelImage.color = new Color(0f, 0f, 0f, 0.72f);
-        panelImage.raycastTarget = false;
-
-        GameObject labelObject = new("OptionDescriptionLabel", typeof(RectTransform), typeof(TextMeshProUGUI));
-        labelObject.transform.SetParent(optionDescriptionPanel.transform, false);
-
-        RectTransform labelRect = labelObject.GetComponent<RectTransform>();
-        labelRect.anchorMin = Vector2.zero;
-        labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = new Vector2(10f, 8f);
-        labelRect.offsetMax = new Vector2(-10f, -8f);
-
-        optionDescriptionLabel = labelObject.GetComponent<TextMeshProUGUI>();
-        if (messageLabel != null)
-        {
-            optionDescriptionLabel.font = messageLabel.font;
-            optionDescriptionLabel.fontSharedMaterial = messageLabel.fontSharedMaterial;
-        }
-        optionDescriptionLabel.fontSize = 14f;
-        optionDescriptionLabel.enableAutoSizing = true;
-        optionDescriptionLabel.fontSizeMin = 10f;
-        optionDescriptionLabel.fontSizeMax = 14f;
-        optionDescriptionLabel.color = Color.white;
-        optionDescriptionLabel.alignment = TextAlignmentOptions.TopLeft;
-        optionDescriptionLabel.textWrappingMode = TextWrappingModes.Normal;
-        optionDescriptionLabel.raycastTarget = false;
-        optionDescriptionLabel.text = string.Empty;
-
-        SetOptionDescriptionVisible(false);
-    }
-
-    private void SetOptionDescriptionVisible(bool visible)
-    {
-        if (optionDescriptionPanel != null)
-        {
-            optionDescriptionPanel.SetActive(visible);
-        }
-        else if (optionDescriptionLabel != null)
-        {
-            optionDescriptionLabel.gameObject.SetActive(visible);
-        }
-    }
-
     private bool IsProtectedDialogContainer(GameObject target)
     {
         if (target == null) return false;
@@ -667,9 +613,264 @@ public class SelectionDialog : MonoBehaviour
         return $"<color=#{colorHex}>{text}</color>";
     }
 
+    private static string FormatTitle(string text)
+    {
+        return $"<sprite name=\"ring2\"> {text} <sprite name=\"ring2\">";
+    }
+
+    // ── Typewriter helpers ────────────────────────────────────────────────────
+
+    private void EnsureMessageTypewriter()
+    {
+        if (messageTypewriter != null || messageLabel == null) return;
+        messageTypewriter = messageLabel.GetComponent<TypewriterEffect>()
+            ?? messageLabel.gameObject.AddComponent<TypewriterEffect>();
+        messageTypewriter.textMeshPro = messageLabel;
+        messageTypewriter.typingSpeed = 28f;
+    }
+
+    // ── Option button list ────────────────────────────────────────────────────
+
+    private void BuildOptionButtons(List<string> options, List<string> descriptions = null)
+    {
+        ClearOptionButtons();
+        if (options == null || optionButtonsContainer == null) return;
+
+        for (int i = 0; i < options.Count; i++)
+        {
+            Color color = GetReadableRandomColor();
+            string desc = descriptions != null && i < descriptions.Count ? descriptions[i] : string.Empty;
+            optionButtons.Add(CreateOptionButton(options[i], desc, color, i));
+        }
+
+        if (Application.isPlaying)
+        {
+            if (buttonAnimCoroutine != null) StopCoroutine(buttonAnimCoroutine);
+            buttonAnimCoroutine = StartCoroutine(AnimateButtonsIn());
+        }
+        else
+        {
+            foreach (Button btn in optionButtons)
+            {
+                CanvasGroup cg = btn != null ? btn.GetComponent<CanvasGroup>() : null;
+                if (cg != null) { cg.alpha = 1f; btn.transform.localScale = Vector3.one; }
+            }
+        }
+    }
+
+    private void ClearOptionButtons()
+    {
+        if (buttonAnimCoroutine != null) { StopCoroutine(buttonAnimCoroutine); buttonAnimCoroutine = null; }
+        foreach (Button btn in optionButtons)
+        {
+            if (btn == null) continue;
+#if UNITY_EDITOR
+            if (!Application.isPlaying) { DestroyImmediate(btn.gameObject); continue; }
+#endif
+            Destroy(btn.gameObject);
+        }
+        optionButtons.Clear();
+        selectedButtonIndex = -1;
+    }
+
+    private Button CreateOptionButton(string text, string description, Color textColor, int index)
+    {
+        GameObject obj = new($"Option_{index}", typeof(RectTransform), typeof(Image), typeof(Button));
+        obj.transform.SetParent(optionButtonsContainer, false);
+
+        Image bg = obj.GetComponent<Image>();
+        bg.color = new Color(0.08f, 0.06f, 0.04f, 0.88f);
+
+        CanvasGroup cg = obj.AddComponent<CanvasGroup>();
+        cg.alpha = 0f;
+
+        bool hasDesc = !string.IsNullOrWhiteSpace(description);
+        LayoutElement le = obj.AddComponent<LayoutElement>();
+        le.preferredHeight = hasDesc ? 54f : 36f;
+        le.minHeight = hasDesc ? 44f : 28f;
+
+        Button btn = obj.GetComponent<Button>();
+        btn.targetGraphic = bg;
+        ColorBlock cb = btn.colors;
+        cb.normalColor = new Color(0.08f, 0.06f, 0.04f, 0.88f);
+        cb.highlightedColor = new Color(0.32f, 0.22f, 0.08f, 0.95f);
+        cb.selectedColor = new Color(0.42f, 0.30f, 0.10f, 1f);
+        cb.pressedColor = new Color(0.55f, 0.40f, 0.12f, 1f);
+        cb.fadeDuration = 0.08f;
+        btn.colors = cb;
+
+        // ">" indicator
+        GameObject arrowObj = new("Arrow", typeof(RectTransform), typeof(TextMeshProUGUI));
+        arrowObj.transform.SetParent(obj.transform, false);
+        RectTransform arrowRect = arrowObj.GetComponent<RectTransform>();
+        arrowRect.anchorMin = new Vector2(0f, 0f);
+        arrowRect.anchorMax = new Vector2(0f, 1f);
+        arrowRect.pivot = new Vector2(0f, 0.5f);
+        arrowRect.offsetMin = new Vector2(8f, 0f);
+        arrowRect.offsetMax = new Vector2(24f, 0f);
+        TextMeshProUGUI arrowTmp = arrowObj.GetComponent<TextMeshProUGUI>();
+        arrowTmp.text = ">";
+        arrowTmp.color = textColor;
+        arrowTmp.fontSize = 13f;
+        arrowTmp.alignment = TextAlignmentOptions.Midline;
+        arrowTmp.raycastTarget = false;
+        if (messageLabel != null) { arrowTmp.font = messageLabel.font; arrowTmp.fontSharedMaterial = messageLabel.fontSharedMaterial; }
+
+        // Option label
+        GameObject labelObj = new("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        labelObj.transform.SetParent(obj.transform, false);
+        RectTransform labelRect = labelObj.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = new Vector2(26f, 4f);
+        labelRect.offsetMax = new Vector2(-8f, -4f);
+        TextMeshProUGUI labelTmp = labelObj.GetComponent<TextMeshProUGUI>();
+        string colorHex = ColorUtility.ToHtmlStringRGB(textColor);
+        labelTmp.text = string.IsNullOrWhiteSpace(description)
+            ? $"<color=#{colorHex}>{text}</color>"
+            : $"<color=#{colorHex}>{text}</color>\n<color=#9C9C9C><size=11>{description}</size></color>";
+        labelTmp.color = Color.white;
+        labelTmp.fontSize = 14f;
+        labelTmp.fontSizeMin = 10f;
+        labelTmp.fontSizeMax = 14f;
+        labelTmp.enableAutoSizing = true;
+        labelTmp.alignment = TextAlignmentOptions.MidlineLeft;
+        labelTmp.raycastTarget = false;
+        if (messageLabel != null) { labelTmp.font = messageLabel.font; labelTmp.fontSharedMaterial = messageLabel.fontSharedMaterial; }
+
+        int capturedIndex = index;
+        btn.onClick.AddListener(() => SelectOptionButton(capturedIndex));
+
+        return btn;
+    }
+
+    private void SelectOptionButton(int index)
+    {
+        selectedButtonIndex = index;
+        UpdateButtonSelectionVisuals();
+        UpdateCloseButtonState();
+    }
+
+    private void UpdateButtonSelectionVisuals()
+    {
+        for (int i = 0; i < optionButtons.Count; i++)
+        {
+            if (optionButtons[i] == null) continue;
+            Image bg = optionButtons[i].GetComponent<Image>();
+            if (bg == null) continue;
+            bg.color = i == selectedButtonIndex
+                ? new Color(0.42f, 0.30f, 0.10f, 1f)
+                : new Color(0.08f, 0.06f, 0.04f, 0.88f);
+        }
+    }
+
+    private IEnumerator AnimateButtonsIn()
+    {
+        yield return null; // let layout settle
+        for (int i = 0; i < optionButtons.Count; i++)
+        {
+            Button btn = optionButtons[i];
+            if (btn == null) continue;
+            CanvasGroup cg = btn.GetComponent<CanvasGroup>() ?? btn.gameObject.AddComponent<CanvasGroup>();
+            StartCoroutine(FadeScaleInButton(btn.transform, cg));
+            yield return new WaitForSecondsRealtime(0.04f);
+        }
+        buttonAnimCoroutine = null;
+    }
+
+    private static IEnumerator FadeScaleInButton(Transform t, CanvasGroup cg)
+    {
+        float duration = 0.18f;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float p = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+            cg.alpha = p;
+            float s = Mathf.Lerp(0.92f, 1f, p);
+            t.localScale = new Vector3(s, s, 1f);
+            yield return null;
+        }
+        cg.alpha = 1f;
+        t.localScale = Vector3.one;
+    }
+
     public Sprite GetCharacterIllustration(Character character)
     {
         if (character == null || string.IsNullOrWhiteSpace(character.characterName)) return null;
         return illustrations != null ? illustrations.GetIllustrationByName(character.characterName) : null;
     }
+
+#if UNITY_EDITOR
+    public void EditorRenderExample()
+    {
+        BindUiReferences();
+        WireUiListeners();
+
+        if (content != null) content.SetActive(true);
+        EnsureDialogHierarchyActive();
+
+        var options = new List<string>
+        {
+            "Stand Beneath The Black Wing",
+            "Vanish Beneath Doom",
+            "Cry Up To Cataclysm"
+        };
+        var descriptions = new List<string>
+        {
+            "Face the world-shaking wyrm with all the strength you can gather before fire and shadow erase the field itself.",
+            "Use perfect timing and a hero's nerve to slip where such colossal destruction is least likely to fall.",
+            "Attempt the impossible and speak to the black doom as though pride, darkness, or tribute might stay it for a breath."
+        };
+
+        activeRequest = new DialogRequest
+        {
+            title = "Ancalon",
+            message = "You were crossing a mountain pass when the shadow of something vast swallowed the sun, and the stone beneath your feet began to tremble with each distant wingbeat.",
+            yesString = "Decide",
+            noString = "Cancel",
+            options = options,
+            optionDescriptions = descriptions,
+            portrait = null,
+            tcs = null
+        };
+
+        if (title != null) { title.text = FormatTitle(activeRequest.title); title.gameObject.SetActive(true); }
+        if (messageLabel != null) messageLabel.text = activeRequest.message;
+
+        if (UseButtonList)
+        {
+            if (dropdown != null) dropdown.gameObject.SetActive(false);
+            BuildOptionButtons(options, descriptions); // resets selectedButtonIndex to -1 internally
+            selectedButtonIndex = 0;                  // re-apply after build
+            UpdateButtonSelectionVisuals();
+        }
+        else if (dropdown != null)
+        {
+            dropdown.gameObject.SetActive(true);
+            dropdownOptions.Clear();
+            dropdownOptions.Add(new TMP_Dropdown.OptionData("Decide"));
+            options.ForEach(x =>
+            {
+                Color c = GetReadableRandomColor();
+                dropdownOptions.Add(new TMP_Dropdown.OptionData(FormatOptionLabel(x, c)) { color = c });
+            });
+            dropdown.ClearOptions();
+            dropdown.AddOptions(dropdownOptions);
+            dropdown.SetValueWithoutNotify(1);
+            dropdown.RefreshShownValue();
+            UpdateCaptionColor();
+        }
+
+        UpdateCloseButtonState();
+        UnityEditor.EditorUtility.SetDirty(gameObject);
+    }
+
+    public void EditorHide()
+    {
+        activeRequest = null;
+        HideInstant();
+        UnityEditor.EditorUtility.SetDirty(gameObject);
+    }
+#endif
 }

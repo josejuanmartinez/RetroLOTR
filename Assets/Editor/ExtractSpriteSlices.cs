@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.TextCore;
 
 public sealed class ExtractSpriteSlices : EditorWindow
 {
@@ -349,6 +351,105 @@ public sealed class ExtractSpriteSlices : EditorWindow
         texture.Apply();
         return texture;
     }
+
+    // ── Status-effect sprites ──────────────────────────────────────────────────
+
+    private static readonly string[] StatusEffectSpriteNames =
+    {
+        "halted", "encouraged", "refusingduels", "poisoned", "burning", "frozen",
+        "blocked", "hope", "despair", "fear", "haste", "hidden", "arcaneinsight",
+        "strengthened", "fortified", "morgultouch", "duelsupremacy", "bleeding"
+        // "guarded" has no matching sprite in the sheet
+    };
+
+    private const string StatusSpriteAssetPath = "Assets/Art/Fonts/Spritesheets/common_spritesheet.asset";
+    private const string StatusSpriteOutputFolder = "Assets/Art/UI/Statuses";
+
+    [MenuItem("Tools/Sprites/Extract Status Effect Sprites")]
+    public static void ExtractStatusEffectSprites()
+    {
+        TMP_SpriteAsset spriteAsset = AssetDatabase.LoadAssetAtPath<TMP_SpriteAsset>(StatusSpriteAssetPath);
+        if (spriteAsset == null)
+        {
+            Debug.LogError($"ExtractStatusEffectSprites: could not load TMP sprite asset at '{StatusSpriteAssetPath}'.");
+            return;
+        }
+
+        Texture2D atlas = spriteAsset.spriteSheet as Texture2D;
+        if (atlas == null)
+        {
+            Debug.LogError("ExtractStatusEffectSprites: sprite asset has no Texture2D atlas.");
+            return;
+        }
+
+        string texturePath = AssetDatabase.GetAssetPath(atlas);
+        TextureImporter importer = AssetImporter.GetAtPath(texturePath) as TextureImporter;
+        bool wasReadable = importer != null && importer.isReadable;
+        if (!wasReadable && importer != null)
+        {
+            importer.isReadable = true;
+            importer.SaveAndReimport();
+            atlas = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+        }
+
+        // Build name → glyph index lookup (case-insensitive)
+        var nameToGlyph = new Dictionary<string, uint>(System.StringComparer.OrdinalIgnoreCase);
+        foreach (TMP_SpriteCharacter ch in spriteAsset.spriteCharacterTable)
+            if (ch != null && !string.IsNullOrWhiteSpace(ch.name))
+                nameToGlyph[ch.name] = ch.glyphIndex;
+
+        // Build glyph index → rect lookup
+        var indexToRect = new Dictionary<uint, GlyphRect>();
+        foreach (TMP_SpriteGlyph glyph in spriteAsset.spriteGlyphTable)
+            if (glyph != null)
+                indexToRect[glyph.index] = glyph.glyphRect;
+
+        Directory.CreateDirectory(StatusSpriteOutputFolder);
+
+        int exported = 0;
+        foreach (string spriteName in StatusEffectSpriteNames)
+        {
+            if (!nameToGlyph.TryGetValue(spriteName, out uint glyphIndex))
+            {
+                Debug.LogWarning($"ExtractStatusEffectSprites: no sprite named '{spriteName}' in asset.");
+                continue;
+            }
+
+            if (!indexToRect.TryGetValue(glyphIndex, out GlyphRect rect) || rect.width <= 0 || rect.height <= 0)
+            {
+                Debug.LogWarning($"ExtractStatusEffectSprites: glyph rect missing or empty for '{spriteName}'.");
+                continue;
+            }
+
+            Texture2D extracted = new(rect.width, rect.height, TextureFormat.RGBA32, false)
+            {
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp
+            };
+            extracted.SetPixels(atlas.GetPixels(rect.x, rect.y, rect.width, rect.height));
+            extracted.Apply();
+
+            string outPath = $"{StatusSpriteOutputFolder}/{spriteName}.png";
+            File.WriteAllBytes(outPath, extracted.EncodeToPNG());
+            DestroyImmediate(extracted);
+
+            exported++;
+            Debug.Log($"ExtractStatusEffectSprites: exported '{spriteName}' -> {outPath}");
+        }
+
+        if (!wasReadable && importer != null)
+        {
+            importer.isReadable = false;
+            importer.SaveAndReimport();
+        }
+
+        AssetDatabase.Refresh();
+        ConfigureExtractedSprites(StatusSpriteOutputFolder);
+
+        Debug.Log($"ExtractStatusEffectSprites: done — {exported}/{StatusEffectSpriteNames.Length} sprites exported to {StatusSpriteOutputFolder}.");
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
 
     private static void ConfigureExtractedSprites(string outputFolder)
     {

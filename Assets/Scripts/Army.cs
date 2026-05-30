@@ -421,6 +421,14 @@ public class Army
         }
         float globalFactor = EnvironmentalCardManager.Instance?.GlobalArmyAttackFactor ?? 1f;
         if (globalFactor != 1f) value = Mathf.RoundToInt(value * globalFactor);
+        EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
+        if (env != null)
+        {
+            float alignFactor = GetAlignment() == AlignmentEnum.freePeople ? env.FreePeopleArmyAttackFactor
+                : GetAlignment() == AlignmentEnum.darkServants ? env.DarkServantsArmyAttackFactor
+                : 1f;
+            if (alignFactor != 1f) value = Mathf.RoundToInt(value * alignFactor);
+        }
         return Mathf.Max(0, value);
     }
 

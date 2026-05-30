@@ -278,7 +278,7 @@ public class Character : MonoBehaviour
     public async Task Pass()
     {
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
-        CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef(Pass.ActionRef) : null;
+        CharacterAction action = actionsManager?.ResolveActionByRef(global::Pass.ActionRef);
         if (action == null) return;
         action.Initialize(this, condition: null, effect: null, asyncEffect: null);
         await action.Execute();
@@ -1701,17 +1701,7 @@ public class Character : MonoBehaviour
 
     private void ProcessArcaneInsight()
     {
-        MessageDisplayNoUI.ShowMessage(hex, this, "Arcane Insight: Mage +1.", Color.cyan);
-        if (hex == null || UnityEngine.Random.Range(0, 100) >= 25) return;
-
-        List<Hex> artifactHexes = hex.GetHexesInRadius(2)
-            .Where(h => h != null && h.hiddenArtifacts != null && h.hiddenArtifacts.Count > 0)
-            .ToList();
-        if (artifactHexes.Count < 1) return;
-
-        Hex revealedHex = artifactHexes[UnityEngine.Random.Range(0, artifactHexes.Count)];
-        revealedHex.RevealArtifact();
-        MessageDisplayNoUI.ShowMessage(revealedHex, this, "Arcane Insight reveals an artifact site.", Color.cyan);
+        MessageDisplayNoUI.ShowMessage(hex, this, "Arcane Insight: can cast Spell cards of any level.", Color.cyan);
     }
 
     private void ResetStatusSpecialState(StatusEffectEnum effect)

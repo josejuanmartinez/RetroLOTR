@@ -33,7 +33,7 @@ public class UnderTheRhunicSun : EventAction
             }
         }
         MessageDisplayNoUI.ShowMessage(null, null,
-            $"Under the Rhunic Sun (ongoing): {encouraged} Easterlings/Southrons encouraged; {hasted} cavalry hasted; commanders reveal hexes.",
+            $"Red Sun (ongoing): {encouraged} Easterlings/Southrons encouraged; {hasted} cavalry hasted; commanders reveal hexes.",
             Color.yellow);
     }
 
@@ -91,7 +91,7 @@ public class UnderTheRhunicSun : EventAction
             }
 
             MessageDisplayNoUI.ShowMessage(character.hex, character,
-                $"Under the Rhunic Sun: {revealedCount} Easterling commander(s) reveal area; +1 LC for first army; {encouragedCount} unit(s) on patrol gain Courage.",
+                $"Red Sun: {revealedCount} Easterling commander(s) reveal area; +1 LC for first army; {encouragedCount} unit(s) on patrol gain Courage.",
                 Color.yellow);
             return true;
         };

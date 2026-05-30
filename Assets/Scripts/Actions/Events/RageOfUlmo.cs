@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// Decks: FP (gandalf_base), neutral (saruman_the_white), dark (the_deceiver)
+// 4-part FP:    own naval get Strengthened | own naval take 5 damage (fury is indiscriminate) | enemy emissaries ArcaneInsight (sea knowledge) | enemy naval 18 damage + halted + 20% warship loss + DS -10% atk
+// 4-part dark:  own naval get Strengthened | own naval take 8 damage | FP emissaries ArcaneInsight | FP naval 18 damage + halted + 25% warship loss + FP -10% atk
+// neutral rule: all naval 12 damage + halted; 20% warship loss all
 public class RageOfUlmo : EventAction
 {
-    private const int Damage = 18;
-    private const int OngoingDamage = 10;
-
-    private static bool IsSeaAdjacentHex(Hex hex)
-    {
-        return hex != null && (hex.terrainType == TerrainEnum.shore || hex.IsWaterTerrain());
-    }
-
-    private static bool IsNavyOrEmbarked(Character ch)
+    private static bool IsSeaHex(Hex hex) => hex != null && (hex.terrainType == TerrainEnum.shore || hex.IsWaterTerrain());
+    private static bool IsNaval(Character ch)
     {
         if (ch == null || ch.killed) return false;
         if (ch.isEmbarked) return true;
@@ -26,28 +23,61 @@ public class RageOfUlmo : EventAction
         Board board = FindFirstObjectByType<Board>();
         if (board == null) return;
 
-        List<Character> targets = board.GetHexes()
-            .Where(h => h != null && IsSeaAdjacentHex(h) && h.characters != null)
-            .SelectMany(h => h.characters)
-            .Where(ch => IsNavyOrEmbarked(ch) && !ch.IsImmuneToNegativeEnvironmentalCards())
-            .Distinct().ToList();
+        AlignmentEnum caster = GetCasterAlignment();
+        EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
 
-        int affected = 0;
-        foreach (Character target in targets)
+        if (caster == AlignmentEnum.neutral)
         {
-            target.health = Mathf.Max(1, target.health - OngoingDamage);
-            if (!target.killed) target.Halt(1);
-            // Destroy a warship each turn with 25% chance
-            if (target.IsArmyCommander())
+            // bonus: shore/coastal chars gain Haste (storm surge propels those on land)
+            // debuff: all naval 12 damage + halted; 20% warship loss
+            int shoreHasted = 0, affected = 0;
+            foreach (var hex in board.GetHexes().Where(h => h != null && h.characters != null))
             {
-                Army army = target.GetArmy();
-                if (army != null && army.ws > 0 && UnityEngine.Random.value < 0.25f)
-                    army.ws = Mathf.Max(0, army.ws - 1);
+                bool isShore = hex.terrainType == TerrainEnum.shore;
+                foreach (var ch in hex.characters.Where(ch => ch != null && !ch.killed).ToList())
+                {
+                    if (isShore && !IsNaval(ch)) { ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1); shoreHasted++; }
+                    if (IsSeaHex(hex) && IsNaval(ch) && !ch.IsImmuneToNegativeEnvironmentalCards())
+                    { ch.health = Mathf.Max(1, ch.health - 12); if (!ch.killed) ch.Halt(1); if (ch.IsArmyCommander()) { Army a = ch.GetArmy(); if (a != null && a.ws > 0 && UnityEngine.Random.value < 0.20f) a.ws = Mathf.Max(0, a.ws - 1); } affected++; }
+                }
             }
-            affected++;
+            MessageDisplayNoUI.ShowMessage(null, null, $"Rage of Ulmo (ongoing): {shoreHasted} shore chars gain Haste; {affected} naval battered 12 HP and halted.", Color.cyan);
+            return;
+        }
+
+        AlignmentEnum other = caster == AlignmentEnum.freePeople ? AlignmentEnum.darkServants : AlignmentEnum.freePeople;
+        if (env != null)
+        {
+            if (other == AlignmentEnum.darkServants) env.DarkServantsArmyAttackFactor = 0.90f;
+            else env.FreePeopleArmyAttackFactor = 0.90f;
+        }
+
+        int ownStrengthened = 0, ownDamaged = 0, otherSmall = 0, otherBattered = 0;
+        foreach (var hex in board.GetHexes().Where(h => h != null && IsSeaHex(h) && h.characters != null))
+        {
+            foreach (var ch in hex.characters.Where(ch => ch != null && !ch.killed).ToList())
+            {
+                if (ch.GetAlignment() == caster && IsNaval(ch))
+                {
+                    ch.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1); ownStrengthened++;     // big bonus own
+                    ch.health = Mathf.Max(1, ch.health - (caster == AlignmentEnum.freePeople ? 5 : 8)); ownDamaged++; // small debuff own
+                }
+                else if (ch.GetAlignment() == other)
+                {
+                    if (ch.GetEmmissary() > 0) { ch.ApplyStatusEffect(StatusEffectEnum.ArcaneInsight, 1); otherSmall++; } // small bonus other
+                    if (IsNaval(ch) && !ch.IsImmuneToNegativeEnvironmentalCards())
+                    {
+                        ch.health = Mathf.Max(1, ch.health - 18); if (!ch.killed) ch.Halt(1);
+                        Army a = ch.IsArmyCommander() ? ch.GetArmy() : null;
+                        float shipLoss = caster == AlignmentEnum.freePeople ? 0.20f : 0.25f;
+                        if (a != null && a.ws > 0 && UnityEngine.Random.value < shipLoss) a.ws = Mathf.Max(0, a.ws - 1);
+                        otherBattered++;                                                           // big debuff other
+                    }
+                }
+            }
         }
         MessageDisplayNoUI.ShowMessage(null, null,
-            $"Rage of Ulmo (ongoing): {affected} naval unit(s) battered by {OngoingDamage} damage and halted; some ships may be lost.",
+            $"Rage of Ulmo (ongoing): {ownStrengthened} own naval strengthened; {otherBattered} enemy naval battered 18 HP; {otherSmall} enemy emissaries gain sea knowledge.",
             Color.cyan);
     }
 
@@ -56,61 +86,27 @@ public class RageOfUlmo : EventAction
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
-
         effect = (character) =>
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
-
             Board board = FindFirstObjectByType<Board>();
             if (board == null) return false;
-
-            List<Character> targets = board.GetHexes()
-                .Where(h => h != null && IsSeaAdjacentHex(h) && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => IsNavyOrEmbarked(ch) && !ch.IsImmuneToNegativeEnvironmentalCards())
-                .Distinct()
-                .ToList();
-
+            var targets = board.GetHexes().Where(h => h != null && IsSeaHex(h) && h.characters != null)
+                .SelectMany(h => h.characters).Where(ch => IsNaval(ch) && !ch.IsImmuneToNegativeEnvironmentalCards()).Distinct().ToList();
             if (targets.Count == 0) return false;
-
             int affected = 0;
-            int burningCleared = 0;
-            for (int i = 0; i < targets.Count; i++)
-            {
-                Character target = targets[i];
-                if (target.HasStatusEffect(StatusEffectEnum.Burning))
-                {
-                    target.ClearStatusEffect(StatusEffectEnum.Burning);
-                    burningCleared++;
-                }
-                target.Wounded(character.GetOwner(), Damage);
-                if (!target.killed)
-                {
-                    target.Halt(1);
-                }
-                affected++;
-            }
-
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Rage of Ulmo batters {affected} naval or embarked unit(s): {Damage} damage, Halted (1), and Burning removed from {burningCleared}.", Color.cyan);
+            foreach (var t in targets) { if (t.HasStatusEffect(StatusEffectEnum.Burning)) t.ClearStatusEffect(StatusEffectEnum.Burning); t.Wounded(character.GetOwner(), 18); if (!t.killed) t.Halt(1); affected++; }
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Rage of Ulmo batters {affected} naval units: 18 damage, Halted.", Color.cyan);
             return true;
         };
-
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             Board board = FindFirstObjectByType<Board>();
-            if (board == null) return false;
-
-            return board.GetHexes().Any(h => h != null && IsSeaAdjacentHex(h) && h.characters != null && h.characters.Any(ch => IsNavyOrEmbarked(ch) && !ch.IsImmuneToNegativeEnvironmentalCards()));
+            return board != null && board.GetHexes().Any(h => h != null && IsSeaHex(h) && h.characters != null && h.characters.Any(ch => IsNaval(ch) && !ch.IsImmuneToNegativeEnvironmentalCards()));
         };
-
-        asyncEffect = async (character) =>
-        {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
-            return true;
-        };
-
+        asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }

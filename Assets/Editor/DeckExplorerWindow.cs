@@ -75,6 +75,7 @@ public class DeckExplorerWindow : EditorWindow
     private ArmySpecialAbilityEnum editedArmyAbilityToAdd;
     private TroopsTypeEnum editedTroopType;
     private int editedProcChance;
+    private string editedActionEffect = string.Empty;
     private int editedCharacterCommander;
     private int editedCharacterAgent;
     private int editedCharacterEmissary;
@@ -360,7 +361,16 @@ public class DeckExplorerWindow : EditorWindow
         }
         if (!string.IsNullOrWhiteSpace(card.actionEffect))
         {
-            EditorGUILayout.LabelField("Action Effect", card.actionEffect);
+            SyncEditableCardFields(card);
+            GUILayout.Space(4);
+            EditorGUILayout.LabelField("Action Effect", EditorStyles.boldLabel);
+            GUIStyle textAreaStyle = new GUIStyle(EditorStyles.textArea) { wordWrap = true };
+            editedActionEffect = EditorGUILayout.TextArea(editedActionEffect, textAreaStyle, GUILayout.MinHeight(60));
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Save effect", GUILayout.Width(100)))
+                SaveActionEffect(card);
+            EditorGUILayout.EndHorizontal();
         }
         EditorGUILayout.LabelField("Gold Cost", card.GetTotalGoldCost().ToString());
         EditorGUILayout.LabelField("Costs", BuildCostSummary(card));
@@ -530,30 +540,47 @@ public class DeckExplorerWindow : EditorWindow
         if (card == null) return;
 
         card.specialAbilities ??= new List<ArmySpecialAbilityEnum>();
-        if (card.specialAbilities.Count > 1)
-        {
-            card.specialAbilities = new List<ArmySpecialAbilityEnum> { card.specialAbilities[0] };
-        }
+        SyncEditableCardFields(card);
 
         EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
 
-        ArmySpecialAbilityEnum? currentAbility = card.specialAbilities.Count > 0 ? card.specialAbilities[0] : (ArmySpecialAbilityEnum?)null;
-        EditorGUILayout.LabelField("Ability", currentAbility.HasValue ? FormatArmyAbilityLabel(currentAbility.Value) : "None");
-        editedProcChance = EditorGUILayout.IntSlider("Proc Chance", Mathf.Clamp(editedProcChance <= 0 ? 100 : editedProcChance, 1, 100), 1, 100);
+        EditorGUILayout.LabelField("Abilities", EditorStyles.boldLabel);
+
+        int toRemove = -1;
+        for (int i = 0; i < card.specialAbilities.Count; i++)
+        {
+            EditorGUILayout.BeginHorizontal();
+            card.specialAbilities[i] = (ArmySpecialAbilityEnum)EditorGUILayout.EnumPopup(card.specialAbilities[i]);
+            if (GUILayout.Button("-", GUILayout.Width(25)))
+                toRemove = i;
+            EditorGUILayout.EndHorizontal();
+        }
+        if (toRemove >= 0)
+        {
+            card.specialAbilities.RemoveAt(toRemove);
+            SaveArmyAbilities(card);
+        }
 
         EditorGUILayout.BeginHorizontal();
-        editedArmyAbilityToAdd = (ArmySpecialAbilityEnum)EditorGUILayout.EnumPopup("Set Ability", currentAbility ?? editedArmyAbilityToAdd);
-        if (GUILayout.Button("Save", GUILayout.Width(60)))
+        editedArmyAbilityToAdd = (ArmySpecialAbilityEnum)EditorGUILayout.EnumPopup("Add", editedArmyAbilityToAdd);
+        if (GUILayout.Button("+", GUILayout.Width(25)))
         {
-            card.specialAbilities = new List<ArmySpecialAbilityEnum> { editedArmyAbilityToAdd };
-            SaveArmyAbilities(card);
-        }
-        if (GUILayout.Button("Clear", GUILayout.Width(60)))
-        {
-            card.specialAbilities.Clear();
-            SaveArmyAbilities(card);
+            if (!card.specialAbilities.Contains(editedArmyAbilityToAdd))
+            {
+                card.specialAbilities.Add(editedArmyAbilityToAdd);
+                SaveArmyAbilities(card);
+            }
         }
         EditorGUILayout.EndHorizontal();
+
+        GUILayout.Space(4);
+        editedProcChance = EditorGUILayout.IntSlider("Proc Chance", editedProcChance, 1, 100);
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("Save proc chance", GUILayout.Width(130)))
+            SaveArmyAbilities(card);
+        EditorGUILayout.EndHorizontal();
+
         EditorGUI.EndDisabledGroup();
     }
 
@@ -672,6 +699,7 @@ public class DeckExplorerWindow : EditorWindow
         editedAmount = Mathf.Max(1, card.amount);
         editedCardType = card.GetCardType();
         editedSituation = card.GetSituation();
+        editedActionEffect = card.actionEffect ?? string.Empty;
     }
 
     private static string GetEditableRequirementsKey(CardData card)
@@ -781,8 +809,8 @@ public class DeckExplorerWindow : EditorWindow
             target = card;
         }
 
-        target.specialAbilities = card.specialAbilities != null && card.specialAbilities.Count > 0
-            ? new List<ArmySpecialAbilityEnum> { card.specialAbilities[0] }
+        target.specialAbilities = card.specialAbilities != null
+            ? new List<ArmySpecialAbilityEnum>(card.specialAbilities)
             : new List<ArmySpecialAbilityEnum>();
         target.procChance = target.specialAbilities.Count > 0
             ? Mathf.Clamp(editedProcChance <= 0 ? 100 : editedProcChance, 1, 100)
@@ -804,6 +832,32 @@ public class DeckExplorerWindow : EditorWindow
         ReloadSelectedCard();
         EditorUtility.SetDirty(this);
         Debug.Log($"DeckExplorerWindow: saved army ability/proc chance for '{card.name}'.");
+    }
+
+    private void SaveActionEffect(CardData card)
+    {
+        DeckEntryView deckView = GetSelectedDeckView();
+        if (card == null || deckView?.deckData?.cards == null) return;
+
+        CardData target = deckView.deckData.cards.FirstOrDefault(c => c != null && c.cardId == card.cardId) ?? card;
+        target.actionEffect = editedActionEffect;
+        card.actionEffect = editedActionEffect;
+
+        string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving action effect.");
+            return;
+        }
+
+        string json = JsonUtility.ToJson(deckView.deckData, true);
+        File.WriteAllText(assetPath, json);
+        AssetDatabase.ImportAsset(ToAssetPath(assetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
+
+        ReloadSelectedCard();
+        EditorUtility.SetDirty(this);
+        Debug.Log($"DeckExplorerWindow: saved action effect for '{card.name}'.");
     }
 
     private void SaveCharacterStats(CardData card)
@@ -1938,17 +1992,24 @@ public class DeckExplorerWindow : EditorWindow
         return true;
     }
 
-    private DeckData LoadDeckData(string resourcePath)
+    private static DeckData LoadDeckData(string resourcePath)
     {
         if (string.IsNullOrWhiteSpace(resourcePath)) return null;
-        string assetPath = GetDeckAssetPath(resourcePath);
-        if (!string.IsNullOrWhiteSpace(assetPath) && File.Exists(assetPath))
+        try
         {
-            return JsonUtility.FromJson<DeckData>(File.ReadAllText(assetPath));
+            string assetPath = GetDeckAssetPath(resourcePath);
+            if (!string.IsNullOrWhiteSpace(assetPath) && File.Exists(assetPath))
+                return JsonUtility.FromJson<DeckData>(File.ReadAllText(assetPath));
+
+            TextAsset deckAsset = Resources.Load<TextAsset>(resourcePath);
+            if (deckAsset == null) return null;
+            return JsonUtility.FromJson<DeckData>(deckAsset.text);
         }
-        TextAsset deckAsset = Resources.Load<TextAsset>(resourcePath);
-        if (deckAsset == null) return null;
-        return JsonUtility.FromJson<DeckData>(deckAsset.text);
+        catch (Exception ex)
+        {
+            Debug.LogError($"[DeckExplorer] Failed to load deck '{resourcePath}': {ex.Message}");
+            return null;
+        }
     }
 
     private void RebuildFilteredCards()

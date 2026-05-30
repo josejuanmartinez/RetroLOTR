@@ -13,6 +13,8 @@ public class EnvironmentalCardManager : MonoBehaviour
     public float FrozenCombatAttackFactor = 1f;
     public float FrozenCombatDefenseExtraFactor = 1f;
     public float GlobalArmyAttackFactor = 1f;
+    public float FreePeopleArmyAttackFactor = 1f;
+    public float DarkServantsArmyAttackFactor = 1f;
 
     private Game subscribedGame;
 
@@ -58,6 +60,8 @@ public class EnvironmentalCardManager : MonoBehaviour
         FrozenCombatAttackFactor = 1f;
         FrozenCombatDefenseExtraFactor = 1f;
         GlobalArmyAttackFactor = 1f;
+        FreePeopleArmyAttackFactor = 1f;
+        DarkServantsArmyAttackFactor = 1f;
     }
 
     private void ApplyActiveCardEffect()

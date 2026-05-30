@@ -5,37 +5,7 @@ using UnityEngine;
 
 public class EasterlingHelm : EventAction
 {
-    private static bool IsEasterlingOrSouthron(Character ch) =>
-        ch != null && (ch.race == RacesEnum.Easterling || ch.race == RacesEnum.Southron);
-
-    public override void ApplyOngoingEffect()
-    {
-        Board board = FindFirstObjectByType<Board>();
-        if (board == null) return;
-
-        int fortified = 0, supremacy = 0;
-        foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null))
-        {
-            bool isOpenTerrain = hex.terrainType == TerrainEnum.plains
-                || hex.terrainType == TerrainEnum.grasslands
-                || hex.terrainType == TerrainEnum.wastelands
-                || hex.terrainType == TerrainEnum.desert;
-            if (!isOpenTerrain) continue;
-            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed && IsEasterlingOrSouthron(ch)).ToList())
-            {
-                ch.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
-                fortified++;
-                if (ch.GetCommander() > 0)
-                {
-                    ch.GainDuelSupremacy(1);
-                    supremacy++;
-                }
-            }
-        }
-        MessageDisplayNoUI.ShowMessage(null, null,
-            $"Easterling Resolve (ongoing): {fortified} Easterling/Southron units on open ground fortified; {supremacy} commanders gain duel supremacy.",
-            Color.yellow);
-    }
+    public override void ApplyOngoingEffect() { }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -47,18 +17,37 @@ public class EasterlingHelm : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
-            character.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
-            character.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
+
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+
+            List<Character> easterlingCommanders = board.GetHexes()
+                .Where(h => h != null && h.characters != null)
+                .SelectMany(h => h.characters)
+                .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander()
+                    && (ch.race == RacesEnum.Easterling || ch.race == RacesEnum.Southron))
+                .OrderByDescending(ch => ch.GetArmy()?.lc + ch.GetArmy()?.hc ?? 0)
+                .Take(2).ToList();
+
+            foreach (Character ch in easterlingCommanders)
+            {
+                Army army = ch.GetArmy();
+                if (army != null) { army.hc++; army.lc++; }
+            }
             MessageDisplayNoUI.ShowMessage(character.hex, character,
-                $"{character.characterName} dons the Easterling helm: Fortified and Haste (1 turn).",
+                $"Easterling Resolve: the 2 strongest Easterling cavalry armies gain +1 HC and +1 LC.",
                 Color.yellow);
-            return true;
+            return easterlingCommanders.Count > 0;
         };
 
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            return character != null && IsEasterlingOrSouthron(character);
+            Board board = FindFirstObjectByType<Board>();
+            if (board == null) return false;
+            return board.GetHexes().Any(h => h != null && h.characters != null
+                && h.characters.Any(ch => ch != null && !ch.killed && ch.IsArmyCommander()
+                    && (ch.race == RacesEnum.Easterling || ch.race == RacesEnum.Southron)));
         };
 
         asyncEffect = async (character) =>

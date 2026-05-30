@@ -5,34 +5,35 @@ using UnityEngine;
 
 public class RestlessEast : EventAction
 {
+    private static bool IsEasterlingOrSouthron(Character ch) =>
+        ch != null && (ch.race == RacesEnum.Easterling || ch.race == RacesEnum.Southron);
+
     public override void ApplyOngoingEffect()
     {
         Board board = FindFirstObjectByType<Board>();
         if (board == null) return;
 
-        List<Character> commanders = board.GetHexes()
-            .Where(h => h != null && h.characters != null)
-            .SelectMany(h => h.characters)
-            .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander()
-                && (ch.race == RacesEnum.Easterling || ch.race == RacesEnum.Southron))
-            .Distinct().ToList();
-
-        int encouraged = 0, hasted = 0;
-        foreach (Character ch in commanders)
+        int fortified = 0, supremacy = 0;
+        foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null))
         {
-            Army army = ch.GetArmy();
-            if (army == null) continue;
-            ch.Encourage(1);
-            encouraged++;
-            // Cavalry armies of the East ride with great speed
-            if (army.lc > 0 || army.hc > 0)
+            bool isOpenTerrain = hex.terrainType == TerrainEnum.plains
+                || hex.terrainType == TerrainEnum.grasslands
+                || hex.terrainType == TerrainEnum.wastelands
+                || hex.terrainType == TerrainEnum.desert;
+            if (!isOpenTerrain) continue;
+            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed && IsEasterlingOrSouthron(ch)).ToList())
             {
-                ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
-                hasted++;
+                ch.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
+                fortified++;
+                if (ch.GetCommander() > 0)
+                {
+                    ch.GainDuelSupremacy(1);
+                    supremacy++;
+                }
             }
         }
         MessageDisplayNoUI.ShowMessage(null, null,
-            $"Restless East (ongoing): {encouraged} Easterling/Southron army commanders encouraged; {hasted} cavalry commanders hasted.",
+            $"Restless East (ongoing): {fortified} Easterling/Southron units on open ground fortified; {supremacy} commanders gain duel supremacy.",
             Color.yellow);
     }
 
@@ -46,37 +47,18 @@ public class RestlessEast : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
-
-            Board board = FindFirstObjectByType<Board>();
-            if (board == null) return false;
-
-            List<Character> easterlingCommanders = board.GetHexes()
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.IsArmyCommander()
-                    && (ch.race == RacesEnum.Easterling || ch.race == RacesEnum.Southron))
-                .OrderByDescending(ch => ch.GetArmy()?.lc + ch.GetArmy()?.hc ?? 0)
-                .Take(2).ToList();
-
-            foreach (Character ch in easterlingCommanders)
-            {
-                Army army = ch.GetArmy();
-                if (army != null) { army.hc++; army.lc++; }
-            }
+            character.ApplyStatusEffect(StatusEffectEnum.Fortified, 1);
+            character.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
             MessageDisplayNoUI.ShowMessage(character.hex, character,
-                $"Restless East: the 2 strongest Easterling cavalry armies gain +1 HC and +1 LC.",
+                $"{character.characterName} stands firm under the Restless East: Fortified and Haste (1 turn).",
                 Color.yellow);
-            return easterlingCommanders.Count > 0;
+            return true;
         };
 
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
-            if (board == null) return false;
-            return board.GetHexes().Any(h => h != null && h.characters != null
-                && h.characters.Any(ch => ch != null && !ch.killed && ch.IsArmyCommander()
-                    && (ch.race == RacesEnum.Easterling || ch.race == RacesEnum.Southron)));
+            return character != null && IsEasterlingOrSouthron(character);
         };
 
         asyncEffect = async (character) =>

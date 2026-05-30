@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
+// Decks: dark (the_iron_crown, the_necromancer)
+// 4-part: Undead hasted + DS agents Hidden | DS non-Undead near enemy slowed 1 (death aura chills all) | FP near allied PCs gain Hope 1 (living resist death) | enemies near Undead 25% slowed + DS armies +8% atk
 public class UnquietDead : EventAction
 {
     private const int ReviveHealth = 50;
@@ -13,44 +15,46 @@ public class UnquietDead : EventAction
         Board board = FindFirstObjectByType<Board>();
         if (board == null) return;
 
+        EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
+        if (env != null) env.DarkServantsArmyAttackFactor = 1.08f;
+
         List<Hex> allHexes = board.GetHexes().Where(h => h != null).ToList();
 
-        // Haste all Undead and collect their hexes for death-aura adjacency
-        int undeadHasted = 0, enemiesHalted = 0;
-        HashSet<Hex> undeadHexes = new HashSet<Hex>();
-        foreach (Hex hex in allHexes)
+        int undeadHasted = 0, dsAgentHidden = 0, dsSlowed = 0, fpHoped = 0, enemiesSlowed = 0;
+        HashSet<Hex> undeadHexes = new();
+
+        foreach (var hex in allHexes)
         {
             if (hex.characters == null) continue;
-            foreach (Character u in hex.characters.Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Undead).ToList())
+            foreach (var ch in hex.characters.Where(ch => ch != null && !ch.killed).ToList())
             {
-                u.ApplyStatusEffect(StatusEffectEnum.Haste, 1);
-                undeadHasted++;
-                undeadHexes.Add(hex);
-            }
-        }
-
-        // Death aura: enemies on hexes adjacent to any Undead hex — 25% chance to be slowed
-        HashSet<Hex> adjToUndead = new HashSet<Hex>();
-        foreach (Hex uh in undeadHexes)
-            foreach (Hex adj in uh.GetHexesInRadius(1))
-                if (adj != null) adjToUndead.Add(adj);
-
-        foreach (Hex adj in adjToUndead)
-        {
-            if (adj.characters == null) continue;
-            foreach (Character enemy in adj.characters.Where(ch => ch != null && !ch.killed
-                && ch.race != RacesEnum.Undead
-                && !ch.IsImmuneToNegativeEnvironmentalCards()).ToList())
-            {
-                if (UnityEngine.Random.value < 0.25f)
+                if (ch.GetAlignment() == AlignmentEnum.darkServants)
                 {
-                    enemy.moved = Mathf.Min(enemy.moved + 1, enemy.GetMaxMovement());
-                    enemiesHalted++;
+                    if (ch.race == RacesEnum.Undead) { ch.ApplyStatusEffect(StatusEffectEnum.Haste, 1); undeadHasted++; undeadHexes.Add(hex); } // big bonus own
+                    if (ch.GetAgent() > 0) { ch.Hide(1); dsAgentHidden++; }                                    // big bonus own
+                    bool nearEnemy = hex.characters.Any(x => x != null && !x.killed && x.GetAlignment() == AlignmentEnum.freePeople);
+                    if (!nearEnemy && ch.race != RacesEnum.Undead) { ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement()); dsSlowed++; } // small debuff own
+                }
+                else if (ch.GetAlignment() == AlignmentEnum.freePeople)
+                {
+                    PC pc = hex.GetPC();
+                    bool nearAlliedPc = pc != null && pc.owner?.GetAlignment() == AlignmentEnum.freePeople;
+                    if (nearAlliedPc) { ch.ApplyStatusEffect(StatusEffectEnum.Hope, 1); fpHoped++; }           // small bonus other: living resist near settlements
                 }
             }
         }
+
+        HashSet<Hex> adjToUndead = new();
+        foreach (var uh in undeadHexes) foreach (var adj in uh.GetHexesInRadius(1)) if (adj != null) adjToUndead.Add(adj);
+        foreach (var adj in adjToUndead)
+        {
+            if (adj.characters == null) continue;
+            foreach (var enemy in adj.characters.Where(ch => ch != null && !ch.killed && ch.race != RacesEnum.Undead && !ch.IsImmuneToNegativeEnvironmentalCards()).ToList())
+                if (UnityEngine.Random.value < 0.25f) { enemy.moved = Mathf.Min(enemy.moved + 1, enemy.GetMaxMovement()); enemiesSlowed++; }  // big debuff other
+        }
+
         MessageDisplayNoUI.ShowMessage(null, null,
-            $"Unquiet Dead (ongoing): {undeadHasted} Undead hasted; {enemiesHalted} nearby enemies halted by death aura.",
+            $"Unquiet Dead (ongoing): {undeadHasted} Undead hasted; {dsAgentHidden} DS agents hidden; {enemiesSlowed} nearby enemies halted; {fpHoped} FP near settlements gain Hope.",
             Color.magenta);
     }
 
@@ -73,8 +77,7 @@ public class UnquietDead : EventAction
             if (character == null) return false;
             Leader owner = character.GetOwner();
             if (owner == null) return false;
-            return UnityEngine.Object.FindObjectsByType<Character>(FindObjectsSortMode.None)
-                .Any(ch => ch != null && ch.killed && ch.GetOwner() == owner);
+            return UnityEngine.Object.FindObjectsByType<Character>(FindObjectsSortMode.None).Any(ch => ch != null && ch.killed && ch.GetOwner() == owner);
         };
 
         async Task<bool> unquietAsync(Character character)
@@ -82,58 +85,29 @@ public class UnquietDead : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (character == null || character.hex == null) return false;
-
             Leader owner = character.GetOwner();
             if (owner == null) return false;
-
-            List<Character> deadAllies = UnityEngine.Object.FindObjectsByType<Character>(FindObjectsSortMode.None)
-                .Where(ch => ch != null && ch.killed && ch.GetOwner() == owner)
-                .ToList();
-
+            var deadAllies = UnityEngine.Object.FindObjectsByType<Character>(FindObjectsSortMode.None).Where(ch => ch != null && ch.killed && ch.GetOwner() == owner).ToList();
             if (deadAllies.Count == 0) return false;
-
             bool isAI = !character.isPlayerControlled;
             Character target = null;
-
             if (!isAI)
             {
-                string selected = await SelectionDialog.Ask(
-                    "Raise from the dead",
-                    "Ok",
-                    "Cancel",
-                    deadAllies.Select(x => x.characterName).ToList(),
-                    false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                string selected = await SelectionDialog.Ask("Raise from the dead", "Ok", "Cancel", deadAllies.Select(x => x.characterName).ToList(), false, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = deadAllies.FirstOrDefault(x => x.characterName == selected);
             }
-            else
-            {
-                target = deadAllies.OrderByDescending(x => x.GetCommander() + x.GetMage()).FirstOrDefault();
-            }
-
+            else target = deadAllies.OrderByDescending(x => x.GetCommander() + x.GetMage()).FirstOrDefault();
             if (target == null) return false;
-
             target.Revive(owner, character.hex, ReviveHealth);
-
-            // Enemies in radius 1 of caster are Halted
             int haltedCount = 0;
             if (character.hex != null)
-            {
-                foreach (Hex h in character.hex.GetHexesInRadius(1))
+                foreach (var h in character.hex.GetHexesInRadius(1))
                 {
                     if (h?.characters == null) continue;
-                    foreach (Character enemy in h.characters.Where(e => e != null && !e.killed && IsEnemy(character, e)).ToList())
-                    {
-                        enemy.Halt(1);
-                        haltedCount++;
-                    }
+                    foreach (var enemy in h.characters.Where(e => e != null && !e.killed && IsEnemy(character, e)).ToList()) { enemy.Halt(1); haltedCount++; }
                 }
-            }
-
-            MessageDisplayNoUI.ShowMessage(character.hex, character,
-                $"Unquiet Dead: {target.characterName} rises with {ReviveHealth}% HP. {haltedCount} enemy(ies) in radius 1 cannot act.",
-                new Color(0.5f, 0.8f, 0.5f));
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Unquiet Dead: {target.characterName} rises with {ReviveHealth}% HP. {haltedCount} enemies cannot act.", new Color(0.5f, 0.8f, 0.5f));
             return true;
         }
 

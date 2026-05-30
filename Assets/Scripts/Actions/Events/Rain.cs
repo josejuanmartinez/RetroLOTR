@@ -3,52 +3,69 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// Decks: FP (gandalf_base), dark (sauron_base), neutral (saruman_base)
+// 4-part FP:    burning cleared all (universal good) + own cavalry speed preserved | own slowed 1 | enemy cavalry slowed 2 + siege 40% halt | FP armies +5% atk
+// 4-part dark:  burning cleared + DS gain +5% atk | own siege 25% halt | FP cavalry slowed 2 + siege 50% halt | FP armies -10% atk
+// neutral rule: burning cleared, everyone slowed 1, siege 20% halt
 public class Rain : EventAction
 {
-    private const int Radius = 2;
-    private const int MovementPenalty = 4;
-
     public override void ApplyOngoingEffect()
     {
         Board board = FindFirstObjectByType<Board>();
         if (board == null) return;
 
+        EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
+        AlignmentEnum caster = GetCasterAlignment();
+        AlignmentEnum other = caster == AlignmentEnum.freePeople ? AlignmentEnum.darkServants
+            : caster == AlignmentEnum.darkServants ? AlignmentEnum.freePeople : AlignmentEnum.neutral;
+
         List<Character> allChars = board.GetHexes()
             .Where(h => h != null && h.characters != null)
             .SelectMany(h => h.characters)
-            .Where(ch => ch != null && !ch.killed)
-            .Distinct().ToList();
+            .Where(ch => ch != null && !ch.killed).Distinct().ToList();
 
-        int burningCleared = 0, cavalrySlowed = 0, siegeHalted = 0;
+        int burningCleared = 0, ownSlowed = 0, otherSlowed = 0, siegeHalted = 0;
         foreach (Character ch in allChars)
         {
-            // Clear burning from all (rain puts out fires)
-            if (ch.HasStatusEffect(StatusEffectEnum.Burning))
-            {
-                ch.ClearStatusEffect(StatusEffectEnum.Burning);
-                burningCleared++;
-            }
-            // Universal movement penalty: mud slows everyone
-            ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
+            if (ch.HasStatusEffect(StatusEffectEnum.Burning)) { ch.ClearStatusEffect(StatusEffectEnum.Burning); burningCleared++; }
 
-            if (!ch.IsArmyCommander()) continue;
-            Army army = ch.GetArmy();
-            if (army == null) continue;
-            // Cavalry suffers extra mud penalty
-            if (army.lc > 0 || army.hc > 0)
+            if (caster == AlignmentEnum.neutral)
             {
-                ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement());
-                cavalrySlowed++;
+                ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement()); ownSlowed++;
+                if (ch.IsArmyCommander()) { Army a = ch.GetArmy(); if (a != null && a.ca > 0 && UnityEngine.Random.value < 0.20f) { ch.Halt(1); siegeHalted++; } }
+                continue;
             }
-            // Catapults bog down in mud — 30% chance
-            if (army.ca > 0 && UnityEngine.Random.value < 0.30f)
+
+            bool isOwn = ch.GetAlignment() == caster;
+            bool isOther = ch.GetAlignment() == other;
+            Army army = ch.IsArmyCommander() ? ch.GetArmy() : null;
+
+            if (isOwn)
             {
-                ch.Halt(1);
-                siegeHalted++;
+                ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement()); ownSlowed++;                  // small debuff own: everyone slowed 1
+                if (army != null && army.ca > 0 && UnityEngine.Random.value < (caster == AlignmentEnum.darkServants ? 0.25f : 0.15f))
+                { ch.Halt(1); siegeHalted++; }                                                          // own siege occasionally halted
+            }
+            else if (isOther)
+            {
+                ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement()); otherSlowed++;
+                if (army != null && (army.lc > 0 || army.hc > 0)) { ch.moved = Mathf.Min(ch.moved + 1, ch.GetMaxMovement()); otherSlowed++; } // big debuff other: cavalry extra slowed
+                if (army != null && army.ca > 0 && UnityEngine.Random.value < (caster == AlignmentEnum.freePeople ? 0.40f : 0.50f))
+                { ch.Halt(1); siegeHalted++; }                                                          // big debuff other: siege heavily penalised
             }
         }
+
+        // Combat modifiers
+        if (env != null && caster != AlignmentEnum.neutral)
+        {
+            if (caster == AlignmentEnum.freePeople) env.FreePeopleArmyAttackFactor = 1.05f;
+            else env.DarkServantsArmyAttackFactor = 1.05f;
+            if (other == AlignmentEnum.freePeople) env.FreePeopleArmyAttackFactor = 0.90f;
+            else if (other == AlignmentEnum.darkServants) env.DarkServantsArmyAttackFactor = 0.90f;
+        }
+
         MessageDisplayNoUI.ShowMessage(null, null,
-            $"Rain (ongoing): {burningCleared} Burning cleared; {cavalrySlowed} cavalry slowed by mud; {siegeHalted} siege engines halted.",
+            $"Rain (ongoing): {burningCleared} Burning cleared; {ownSlowed} own slowed; {otherSlowed} enemy slowed; {siegeHalted} siege halted.",
             Color.cyan);
     }
 
@@ -57,102 +74,22 @@ public class Rain : EventAction
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
-
         effect = (character) =>
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
-
             Board board = FindFirstObjectByType<Board>();
-            Game game = FindFirstObjectByType<Game>();
-            if (board == null || game == null) return false;
-
-            List<Character> allUnits = board.GetHexes()
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed)
-                .Distinct()
-                .ToList();
-
-            int burningCleared = 0;
-            for (int i = 0; i < allUnits.Count; i++)
-            {
-                Character unit = allUnits[i];
-                if (!unit.HasStatusEffect(StatusEffectEnum.Burning)) continue;
-                unit.ClearStatusEffect(StatusEffectEnum.Burning);
-                burningCleared++;
-            }
-
-            List<Character> slowedUnits = character.hex.GetHexesInRadius(Radius)
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed)
-                .Distinct()
-                .ToList();
-
-            for (int i = 0; i < slowedUnits.Count; i++)
-            {
-                slowedUnits[i].moved += MovementPenalty;
-            }
-
-            bool obscuredVision = false;
-            if (character.GetOwner() == game.player)
-            {
-                List<Hex> radiusHexes = character.hex.GetHexesInRadius(Radius);
-                for (int i = 0; i < radiusHexes.Count; i++)
-                {
-                    Hex targetHex = radiusHexes[i];
-                    if (targetHex == null) continue;
-                    targetHex.ClearScoutingAll();
-                    targetHex.MarkDarknessByPlayer();
-                }
-
-                character.hex.ObscureArea(Radius, true, character.GetOwner());
-                for (int i = 0; i < radiusHexes.Count; i++)
-                {
-                    radiusHexes[i]?.RefreshVisibilityRendering();
-                }
-                obscuredVision = true;
-            }
-
-            if (burningCleared == 0 && slowedUnits.Count == 0 && !obscuredVision) return false;
-
-            string visionText = obscuredVision ? " Visibility is reduced in radius 2." : string.Empty;
-            MessageDisplayNoUI.ShowMessage(
-                character.hex,
-                character,
-                $"Rain clears Burning from {burningCleared} unit(s) and reduces movement for {slowedUnits.Count} unit(s) in radius 2.{visionText}",
-                Color.cyan);
+            if (board == null) return false;
+            int cleared = 0;
+            foreach (var ch in board.GetHexes().Where(h => h != null && h.characters != null).SelectMany(h => h.characters).Where(ch => ch != null && !ch.killed).ToList())
+                if (ch.HasStatusEffect(StatusEffectEnum.Burning)) { ch.ClearStatusEffect(StatusEffectEnum.Burning); cleared++; }
+            var slowed = character.hex.GetHexesInRadius(2).Where(h => h != null && h.characters != null).SelectMany(h => h.characters).Where(ch => ch != null && !ch.killed).Distinct().ToList();
+            foreach (var ch in slowed) ch.moved = Mathf.Min(ch.moved + 3, ch.GetMaxMovement());
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Rain: {cleared} Burning cleared; {slowed.Count} units slowed in radius 2.", Color.cyan);
             return true;
         };
-
-        condition = (character) =>
-        {
-            if (originalCondition != null && !originalCondition(character)) return false;
-            if (character == null || character.hex == null) return false;
-
-            Board board = FindFirstObjectByType<Board>();
-            Game game = FindFirstObjectByType<Game>();
-            if (board == null || game == null) return false;
-
-            bool anyBurning = board.GetHexes()
-                .Where(h => h != null && h.characters != null)
-                .SelectMany(h => h.characters)
-                .Any(ch => ch != null && !ch.killed && ch.HasStatusEffect(StatusEffectEnum.Burning));
-
-            bool anyNearbyUnits = character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed));
-
-            bool canReduceVisibility = character.GetOwner() == game.player;
-            return anyBurning || anyNearbyUnits || canReduceVisibility;
-        };
-
-        asyncEffect = async (character) =>
-        {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
-            return true;
-        };
-
+        condition = (character) => character != null && character.hex != null;
+        asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }

@@ -74,6 +74,13 @@ public class CharacterAction
     // Called every turn by EnvironmentalCardManager while this card is the active environmental card.
     public virtual void ApplyOngoingEffect() { }
 
+    // Which alignment played the active environmental card (reads the live ActiveCard).
+    protected static AlignmentEnum GetCasterAlignment()
+    {
+        int? a = EnvironmentalCardManager.Instance?.ActiveCard?.alignment;
+        return a switch { 0 => AlignmentEnum.freePeople, 1 => AlignmentEnum.darkServants, _ => AlignmentEnum.neutral };
+    }
+
     protected static T FindFirstObjectByType<T>() where T : UnityEngine.Object
     {
         return UnityEngine.Object.FindFirstObjectByType<T>();
