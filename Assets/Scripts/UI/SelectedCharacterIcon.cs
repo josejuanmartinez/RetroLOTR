@@ -53,6 +53,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     private CanvasGroup canvasGroup;
 
     private Character pendingRefreshCharacter;
+    private bool pendingIsHover;
     public Character CurrentCharacter { get; private set; }
     private bool refreshScheduled;
     private readonly List<ArtifactRenderer> artifactStatusRenderers = new();
@@ -77,6 +78,16 @@ public class SelectedCharacterIcon : MonoBehaviour
     public void Refresh(Character c)
     {
         pendingRefreshCharacter = c;
+        pendingIsHover = false;
+        if (refreshScheduled) return;
+        refreshScheduled = true;
+        StartCoroutine(RefreshNextFrame());
+    }
+
+    public void RefreshForHover(Character c)
+    {
+        pendingRefreshCharacter = c;
+        pendingIsHover = true;
         if (refreshScheduled) return;
         refreshScheduled = true;
         StartCoroutine(RefreshNextFrame());
@@ -87,16 +98,18 @@ public class SelectedCharacterIcon : MonoBehaviour
         yield return null;
         refreshScheduled = false;
         Character c = pendingRefreshCharacter;
+        bool isHover = pendingIsHover;
         pendingRefreshCharacter = null;
+        pendingIsHover = false;
         if (c == null)
         {
             Hide();
             yield break;
         }
-        ApplyRefresh(c);
+        ApplyRefresh(c, isHover);
     }
 
-    private void ApplyRefresh(Character c)
+    private void ApplyRefresh(Character c, bool isHover = false)
     {
         CurrentCharacter = c;
 SetVisible(true);
@@ -121,13 +134,10 @@ SetVisible(true);
         health.fillAmount = c.health / 100f;
 
         RefreshArtifactStatusItems(c.artifacts, c);
-        
+
         RefreshMovementLeft(c);
         RefreshPlayedCards(c);
-
-        if (c != null)
-        {
-}
+        if (!isHover) RefreshOtherCharacters(c);
     }
 
     private string BuildKidnappingStatusText(Character c)
@@ -260,6 +270,7 @@ SetVisible(false);
         pendingRefreshCharacter = null;
         CurrentCharacter = null;
         refreshScheduled = false;
+        RefreshOtherCharacters(null);
     }
 
     public void RefreshMovementLeft(Character c)
@@ -469,6 +480,23 @@ SetVisible(false);
                 break;
             }
         }
+    }
+
+    private void RefreshOtherCharacters(Character c)
+    {
+        if (otherCharacters == null) return;
+        if (!otherCharacters.TryGetComponent(out CharacterIcons icons)) return;
+        PlayableLeader owner = c != null ? c.GetOwner() as PlayableLeader : null;
+        if (owner == null)
+        {
+            Game game = FindFirstObjectByType<Game>();
+            owner = game != null ? game.player : null;
+        }
+        if (owner == null) { icons.Clear(); return; }
+        if (c != null)
+            icons.BuildIconsForPlayerExcluding(owner, c);
+        else
+            icons.BuildIconsForPlayer(owner);
     }
 
     private void ClearPlayedCardInstances()

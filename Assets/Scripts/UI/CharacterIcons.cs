@@ -72,6 +72,33 @@ public class CharacterIcons : MonoBehaviour
         }
     }
 
+    public void BuildIconsForPlayerExcluding(PlayableLeader player, Character exclude)
+    {
+        ClearIcons();
+        if (player == null || player.controlledCharacters == null) return;
+
+        Transform parent = gridLayout != null ? gridLayout : transform;
+        foreach (Character character in player.controlledCharacters)
+        {
+            if (character == null || character == exclude) continue;
+
+            GameObject iconGO = Instantiate(characterIconPrefab, parent);
+            iconGO.name = character.characterName;
+
+            CharacterIcon icon = iconGO.GetComponent<CharacterIcon>();
+            if (icon != null)
+            {
+                icon.Initialize(character);
+                characterIcons.Add(icon);
+            }
+        }
+    }
+
+    public void Clear()
+    {
+        ClearIcons();
+    }
+
     private void ClearIcons()
     {
         Transform parent = gridLayout != null ? gridLayout : transform;

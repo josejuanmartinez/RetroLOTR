@@ -13,7 +13,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     
 
-    public void Initialize(Character character)
+    public virtual void Initialize(Character character)
     {
         board = FindFirstObjectByType<Board>();
         selectedCharacterIcon = FindFirstObjectByType<SelectedCharacterIcon>();
@@ -51,7 +51,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
         if (selectedCharacterIcon == null) return;
 
-        selectedCharacterIcon.Refresh(character);
+        selectedCharacterIcon.RefreshForHover(character);
     }
 
     public void OnPointerExit(PointerEventData eventData)

@@ -17,14 +17,14 @@ public class CardBloomWheelEditor : Editor
         {
             if (GUILayout.Button("Bloom", GUILayout.Height(28)))
             {
-                Undo.RecordObject(wheel.gameObject, "Preview Bloom");
-                wheel.EditorPreviewBloom();
+                if (Application.isPlaying) wheel.DebugForceOpen();
+                else wheel.EditorPreviewBloom();
             }
 
             if (GUILayout.Button("Reset", GUILayout.Height(28)))
             {
-                Undo.RecordObject(wheel.gameObject, "Reset Bloom");
-                wheel.EditorResetBloom();
+                if (Application.isPlaying) wheel.DebugForceClose();
+                else wheel.EditorResetBloom();
             }
         }
     }

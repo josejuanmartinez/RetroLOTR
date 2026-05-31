@@ -6,10 +6,16 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
     public TextMeshProUGUI characterText;
     
 
+    public override void Initialize(Character character)
+    {
+        base.Initialize(character);
+        if (characterText != null && character != null)
+            characterText.text = character.characterName;
+    }
+
     public void Initialize(Character character, string text)
     {
-        board = FindFirstObjectByType<Board>();
-        selectedCharacterIcon = FindFirstObjectByType<SelectedCharacterIcon>();
+        base.Initialize(character);
         SetCharacterWithText(character, text);
     }
 
@@ -42,7 +48,7 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
         }
         if (selectedCharacterIcon == null) return;
 
-        selectedCharacterIcon.Refresh(character);
+        selectedCharacterIcon.RefreshForHover(character);
     }
 
     new public void OnPointerExit(PointerEventData eventData)
@@ -65,9 +71,10 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
         }
     }
 
-    public void Refresh(Character updatedCharacter, string text)
+    public void Refresh(Character updatedCharacter, string text = null)
     {
-        SetCharacterWithText(updatedCharacter, text);
+        string label = text ?? (updatedCharacter != null ? updatedCharacter.characterName : string.Empty);
+        SetCharacterWithText(updatedCharacter, label);
     }
 
     private void SetCharacterWithText(Character newCharacter, string text)

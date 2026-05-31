@@ -1,0 +1,546 @@
+fileFormatVersion: 2
+guid: ad6875d1509095648bd84e15b10a14b6
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 757965477552669768
+    second: Beast_spritesheet_right_0
+  - first:
+      213: -4943142794891550428
+    second: Beast_spritesheet_right_1
+  - first:
+      213: 5902032734456306575
+    second: Beast_spritesheet_right_2
+  - first:
+      213: -3333292168312847924
+    second: Beast_spritesheet_right_3
+  - first:
+      213: 8297243237496781416
+    second: Beast_spritesheet_right_4
+  - first:
+      213: -1930342707375216567
+    second: Beast_spritesheet_right_5
+  - first:
+      213: -7070627281056967720
+    second: Beast_spritesheet_right_6
+  - first:
+      213: 3580964655699191730
+    second: Beast_spritesheet_right_7
+  - first:
+      213: -215848675607983549
+    second: Beast_spritesheet_right_8
+  - first:
+      213: -7543339254809960578
+    second: Beast_spritesheet_right_9
+  - first:
+      213: -2360327822827933501
+    second: Beast_spritesheet_right_10
+  - first:
+      213: 7777206547487823068
+    second: Beast_spritesheet_right_11
+  - first:
+      213: 1406331580717072671
+    second: Beast_spritesheet_right_12
+  - first:
+      213: 5352085904066717200
+    second: Beast_spritesheet_right_13
+  - first:
+      213: 5986332738296915296
+    second: Beast_spritesheet_right_14
+  - first:
+      213: -4445056513644544730
+    second: Beast_spritesheet_right_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_0
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 6588
+        width: 1104
+        height: 1130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84449810695d48a00800000000000000
+      internalID: 757965477552669768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_1
+      rect:
+        serializedVersion: 2
+        x: 2508
+        y: 6578
+        width: 1040
+        height: 1125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 421257461dd666bb0800000000000000
+      internalID: -4943142794891550428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_2
+      rect:
+        serializedVersion: 2
+        x: 4535
+        y: 6604
+        width: 1048
+        height: 1083
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8bdefd608b38e150800000000000000
+      internalID: 5902032734456306575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_3
+      rect:
+        serializedVersion: 2
+        x: 6583
+        y: 6604
+        width: 1048
+        height: 1083
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc10f17fe64cdb1d0800000000000000
+      internalID: -3333292168312847924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_4
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 4512
+        width: 1519
+        height: 1153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86af10a83cab52370800000000000000
+      internalID: 8297243237496781416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_5
+      rect:
+        serializedVersion: 2
+        x: 2379
+        y: 4505
+        width: 1351
+        height: 1160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9486228f88b0635e0800000000000000
+      internalID: -1930342707375216567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_6
+      rect:
+        serializedVersion: 2
+        x: 4469
+        y: 4499
+        width: 1221
+        height: 1161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d3d96d13f510ed90800000000000000
+      internalID: -7070627281056967720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_7
+      rect:
+        serializedVersion: 2
+        x: 6552
+        y: 4520
+        width: 1168
+        height: 1145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b7ed20b16422b130800000000000000
+      internalID: 3580964655699191730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_8
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 2405
+        width: 1357
+        height: 1217
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34ac52de5c6210df0800000000000000
+      internalID: -215848675607983549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_9
+      rect:
+        serializedVersion: 2
+        x: 2395
+        y: 2431
+        width: 1463
+        height: 1199
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7fdac00aeca05790800000000000000
+      internalID: -7543339254809960578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_10
+      rect:
+        serializedVersion: 2
+        x: 4458
+        y: 2472
+        width: 1494
+        height: 1165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c0bed6c95e6e3fd0800000000000000
+      internalID: -2360327822827933501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_11
+      rect:
+        serializedVersion: 2
+        x: 6511
+        y: 2464
+        width: 1494
+        height: 1168
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd49ad746203eeb60800000000000000
+      internalID: 7777206547487823068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_12
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 362
+        width: 1225
+        height: 1233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f110e012f1b448310800000000000000
+      internalID: 1406331580717072671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_13
+      rect:
+        serializedVersion: 2
+        x: 2403
+        y: 362
+        width: 1234
+        height: 1228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 016a54fe5cd664a40800000000000000
+      internalID: 5352085904066717200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_14
+      rect:
+        serializedVersion: 2
+        x: 4448
+        y: 362
+        width: 1237
+        height: 1222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 065aa7598e9b31350800000000000000
+      internalID: 5986332738296915296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beast_spritesheet_right_15
+      rect:
+        serializedVersion: 2
+        x: 6501
+        y: 362
+        width: 1276
+        height: 1212
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62d3ea9d6acff42c0800000000000000
+      internalID: -4445056513644544730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Beast_spritesheet_right_0: 757965477552669768
+      Beast_spritesheet_right_1: -4943142794891550428
+      Beast_spritesheet_right_10: -2360327822827933501
+      Beast_spritesheet_right_11: 7777206547487823068
+      Beast_spritesheet_right_12: 1406331580717072671
+      Beast_spritesheet_right_13: 5352085904066717200
+      Beast_spritesheet_right_14: 5986332738296915296
+      Beast_spritesheet_right_15: -4445056513644544730
+      Beast_spritesheet_right_2: 5902032734456306575
+      Beast_spritesheet_right_3: -3333292168312847924
+      Beast_spritesheet_right_4: 8297243237496781416
+      Beast_spritesheet_right_5: -1930342707375216567
+      Beast_spritesheet_right_6: -7070627281056967720
+      Beast_spritesheet_right_7: 3580964655699191730
+      Beast_spritesheet_right_8: -215848675607983549
+      Beast_spritesheet_right_9: -7543339254809960578
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
