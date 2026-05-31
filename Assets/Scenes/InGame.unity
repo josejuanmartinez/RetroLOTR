@@ -6046,10 +6046,10 @@ PrefabInstance:
       propertyPath: m_text
       value: 'Bilbo
 
-        - 3<sprite name="hc">Easterling Cataphracts
+        <sprite name="hc">2 Easterling Cataphracts
 
-        -
-        2<sprite name=lc>elven '
+        <sprite
+        name=lc>3 Half-elves'
       objectReference: {fileID: 0}
     - target: {fileID: 565462555013215546, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_fontSize

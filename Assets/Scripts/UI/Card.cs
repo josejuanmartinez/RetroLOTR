@@ -45,6 +45,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     [Header("Token / Card Flip")]
     [SerializeField] private Image tokenImage;
+    [SerializeField] private Image tokenBorder;
     [SerializeField] private CanvasGroup tokenCanvasGroup;
     [SerializeField] private CanvasGroup realCardCanvasGroup;
 
@@ -146,10 +147,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void SetEnvironmentalPulse(bool active)
     {
-        CardEnvironmentalPulseEffect existing = GetComponent<CardEnvironmentalPulseEffect>();
+        GameObject target = tokenCanvasGroup != null ? tokenCanvasGroup.gameObject : gameObject;
+        CardEnvironmentalPulseEffect existing = target.GetComponent<CardEnvironmentalPulseEffect>();
         if (active)
         {
-            if (existing == null) gameObject.AddComponent<CardEnvironmentalPulseEffect>();
+            if (existing == null) target.AddComponent<CardEnvironmentalPulseEffect>();
             else existing.enabled = true;
         }
         else if (existing != null)
@@ -167,6 +169,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (titleText != null) titleText.text = FormatCardTitle(data.name);
         if (hover != null) hover.Initialize(FormatCardTypeLabel(data.GetCardType()));
+        ApplyCardTypeColor(data.GetCardType());
 
         if (descriptionText != null)
         {
@@ -568,10 +571,49 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return false;
     }
 
-    private string FormatCardTypeLabel(CardTypeEnum cardType)
+    private Color GetCardTypeColor(CardTypeEnum cardType)
     {
         if (colors == null) colors = FindFirstObjectByType<Colors>();
 
+        string colorName = cardType switch
+        {
+            CardTypeEnum.PC => "pc",
+            CardTypeEnum.Land => "land",
+            CardTypeEnum.Character => "character",
+            CardTypeEnum.Army => "army",
+            CardTypeEnum.Event => "event",
+            CardTypeEnum.Action => "action",
+            CardTypeEnum.Spell => "spell",
+            CardTypeEnum.Encounter => "encounter",
+            CardTypeEnum.Environmental => "environmental",
+            _ => null
+        };
+
+        if (string.IsNullOrWhiteSpace(colorName) || colors == null) return Color.clear;
+
+        Color c;
+        try { c = colors.GetColorByName(colorName); }
+        catch { c = Color.clear; }
+
+        if (c.a < 0.01f)
+            c = colorName switch { "environmental" => new Color(0.42f, 0.67f, 0.42f, 1f), _ => Color.clear };
+
+        return c;
+    }
+
+    private void ApplyCardTypeColor(CardTypeEnum cardType)
+    {
+        Color c = GetCardTypeColor(cardType);
+        if (c.a < 0.01f) return;
+
+        if (cardBackgroundImage != null)
+            cardBackgroundImage.color = new Color(c.r, c.g, c.b, cardBackgroundImage.color.a);
+        if (tokenBorder != null)
+            tokenBorder.color = new Color(c.r, c.g, c.b, tokenBorder.color.a);
+    }
+
+    private string FormatCardTypeLabel(CardTypeEnum cardType)
+    {
         string label = cardType switch
         {
             CardTypeEnum.PC => "PC",
@@ -588,36 +630,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (string.IsNullOrWhiteSpace(label)) return string.Empty;
 
-        string colorName = cardType switch
-        {
-            CardTypeEnum.PC => "pc",
-            CardTypeEnum.Land => "land",
-            CardTypeEnum.Character => "character",
-            CardTypeEnum.Army => "army",
-            CardTypeEnum.Event => "event",
-            CardTypeEnum.Action => "action",
-            CardTypeEnum.Spell => "spell",
-            CardTypeEnum.Encounter => "encounter",
-            CardTypeEnum.Environmental => "environmental",
-            _ => null
-        };
-
-        if (string.IsNullOrWhiteSpace(colorName) || colors == null)
-            return label;
-
-        Color c;
-        try { c = colors.GetColorByName(colorName); }
-        catch { c = Color.clear; }
-
-        if (c.a < 0.01f)
-        {
-            c = colorName switch
-            {
-                "environmental" => new Color(0.42f, 0.67f, 0.42f, 1f),
-                _ => Color.clear
-            };
-        }
-
+        Color c = GetCardTypeColor(cardType);
         if (c.a < 0.01f) return label;
 
         return $"<color=#{ColorUtility.ToHtmlStringRGB(c)}>{label}</color>";

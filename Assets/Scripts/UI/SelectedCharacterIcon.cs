@@ -556,19 +556,7 @@ SetVisible(false);
             return $"<u>{c.characterName}</u> (wandering)";
         }
 
-        return $"<u>{c.characterName}</u>\n{BuildArmyTroopSummary(c, army)}";
-    }
-
-    private string BuildArmyTroopSummary(Character c, Army army)
-    {
-        List<string> troops = army != null
-            ? army.GetTroopGroups()
-                .Where(group => group != null && group.amount > 0)
-                .Select(group => $" - {group.amount}<sprite name=\"{group.troopType.ToString().ToLower()}\">{group.troopName}")
-                .ToList()
-            : new List<string>();
-
-        return string.Join("\n", troops);
+        return $"<u>{c.characterName}</u>{army.GetHoverTextHexInfo()}";
     }
 
 }

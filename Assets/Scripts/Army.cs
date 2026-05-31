@@ -156,7 +156,7 @@ public class Army
         var sb = new System.Text.StringBuilder();
         for (int i = 0; i < lines.Count; i++)
         {
-            sb.Append("\n  - ").Append(lines[i]);
+            sb.Append("\n").Append(lines[i]);
             if (i == lines.Count - 1) sb.Append(xpText);
         }
         return sb.ToString();
@@ -2364,7 +2364,7 @@ public class Army
             ? group.abilities.Distinct().OrderBy(value => (int)value).ToList()
             : new List<ArmySpecialAbilityEnum>();
         if (abilities.Count == 0) return line;
-        return $"{line} ({string.Join(", ", abilities.Select(FormatAbilityLabel))})";
+        return $"{line} {string.Join(",", abilities.Select(FormatAbilityLabel))}";
     }
 
     private static string FormatAbilityLabel(ArmySpecialAbilityEnum ability)
