@@ -210,7 +210,11 @@ public class Hex : MonoBehaviour
             if (!IsMouseOverHexOrPanel())
                 Unhover();
             else
+            {
                 UpdateHexInfoLinkHover();
+                if (Input.GetMouseButtonDown(0) && _lastHexInfoLinkIdx >= 0)
+                    HandleHexInfoLinkClick(_lastHexInfoLinkIdx);
+            }
         }
     }
 
@@ -831,6 +835,15 @@ public class Hex : MonoBehaviour
             else
                 _selectedIcon.Hide();
         }
+    }
+
+    private void HandleHexInfoLinkClick(int linkIdx)
+    {
+        if (linkIdx < 0 || linkIdx >= _hexInfoCharacters.Count) return;
+        Character ch = _hexInfoCharacters[linkIdx];
+        if (ch == null || ch.killed) return;
+        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board != null) board.SelectCharacter(ch);
     }
 
     private static readonly Color32 LinkColorDefault = new(0xFF, 0xFF, 0xFF, 0xFF);

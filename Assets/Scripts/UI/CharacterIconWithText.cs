@@ -27,10 +27,7 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
         if (board != null)
         {
             Sounds.Instance?.PlayUiClick();
-            if (character.hex != null)
-            {
-                character.hex.LookAt();
-            }
+            board.SelectCharacter(character);
         }
     }
 
