@@ -1,0 +1,52 @@
+---
+name: restyle-hex
+description: Restyle RetroLOTR hex tile images using gpt-image-2. Keeps exact shapes, elements, and composition — changes only the art style to a D&D/Bakshi/Conan/LOTR/MERP/MECCG painted fantasy look. Outputs go to Assets/Art/Hexes/Tiles_Restyled/ by default to preserve originals.
+---
+
+# Restyle Hex
+
+Restyle an existing hex tile image using `gpt-image-2 images.edit`. Preserves all shapes and elements exactly; changes only the visual style.
+
+## Workflow
+1. Take one or more source tile paths from `Assets/Art/Hexes/Tiles/`.
+2. Run `scripts/restyle_hex.py` for each tile.
+3. Save outputs to `Assets/Art/Hexes/Tiles_Restyled/` unless the user asks to overwrite originals.
+
+## Default Prompt
+```text
+Can you change the style of this image, keeping exactly as it is, but with another style: d&d random bakshi conan lotr merpg meccg style without changing at all the shape, elements, or anything else - just style
+```
+
+## CLI Contract
+
+Dry-run example:
+```powershell
+python .agents/skills/restyle_hex/scripts/restyle_hex.py `
+  --image "Assets/Art/Hexes/Tiles/001 1.png" `
+  --out "Assets/Art/Hexes/Tiles_Restyled/001 1.png" `
+  --dry-run
+```
+
+Live run example:
+```powershell
+python .agents/skills/restyle_hex/scripts/restyle_hex.py `
+  --image "Assets/Art/Hexes/Tiles/001 1.png" `
+  --out "Assets/Art/Hexes/Tiles_Restyled/001 1.png" `
+  --force
+```
+
+## Rules
+- Model: `gpt-image-2`
+- Quality: `low`
+- Size: `1024x1024`
+- Upload max dim: `512` (downscales for upload, output is still full quality)
+- Never overwrite originals unless the user explicitly asks
+- No grayscale check — hex tiles are already in color
+- No card-name prefix — hex tiles don't have names
+
+## Completion Report
+Always report:
+- Source image path
+- Output image path
+- Model and quality used
+- Prompt used
