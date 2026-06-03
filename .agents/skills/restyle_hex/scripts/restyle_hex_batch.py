@@ -7,7 +7,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from restyle_hex import DEFAULT_PROMPT, DEFAULT_QUALITY, DEFAULT_SIZE, ensure_api_key, restyle_one
+from restyle_hex import DEFAULT_PROMPT, DEFAULT_QUALITY, DEFAULT_SIZE, build_prompt, ensure_api_key, restyle_one
 
 
 def parse_args() -> argparse.Namespace:
@@ -64,9 +64,10 @@ def main() -> int:
     try:
         for i, tile in enumerate(tiles, 1):
             out_path = out_dir / tile.name
+            tile_prompt = build_prompt(args.prompt, tile.stem)
             code, cost = restyle_one(
                 tile, out_path,
-                prompt=args.prompt,
+                prompt=tile_prompt,
                 quality=args.quality,
                 size=args.size,
                 force=args.force,

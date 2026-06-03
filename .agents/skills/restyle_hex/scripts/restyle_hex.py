@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import base64
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -16,7 +17,11 @@ DEFAULT_SIZE = "1024x1024"
 DEFAULT_QUALITY = "low"
 DEFAULT_OUTPUT_FORMAT = "png"
 DEFAULT_UPLOAD_MAX_DIM = 512
+DEFAULT_BOTTOM_PADDING_FRACTION = 0.20  # add 20% transparent height at bottom before upload
 MAX_IMAGE_BYTES = 50 * 1024 * 1024
+
+# Generic tile names: pure digits/spaces (001, "002 3") or any hex-prefixed name (hexDirtCastle00)
+_GENERIC_NAME_RE = re.compile(r'^hex|^[\d\s]+$', re.IGNORECASE)
 
 # $8/M image input, $8/M text input, $30/M output  (gpt-image-2 rates)
 COST_RATES = {
@@ -26,10 +31,47 @@ COST_RATES = {
 }
 
 DEFAULT_PROMPT = (
-    "Can you change the style of this image, keeping exactly as it is, but with "
-    "another style: d&d random bakshi conan lotr merpg meccg style without changing "
-    "at all the shape, elements, or anything else - just style"
+    "Restyle this hex tile in the aesthetic of classic fantasy illustration: "
+    "d&d, Bakshi, Conan, LOTR, MERPG, MECCG. "
+    "The art style must be isometric 2D — flat illustrated elements viewed from a fixed isometric angle, "
+    "like classic tabletop hex map tiles. "
+    "Keep the hex shape and overall composition, but you are free to redesign the interior elements "
+    "— terrain, structures, iconography, colors — to better evoke a Middle-earth feeling. "
+    "Do not add any text, labels, or lettering anywhere in the image. "
+    "Leave visible background space below the hex shape — the hex must not touch or bleed into the bottom edge."
 )
+
+
+def extract_place_name(stem: str) -> str | None:
+    """Return a human-readable place name if the filename looks meaningful, else None.
+
+    Generic names like '001', 'hex0A3F' return None.
+    Names like 'Barad_Dur', 'Minas_Tirith', 'The_Shire' return the cleaned string.
+    """
+    if _GENERIC_NAME_RE.match(stem):
+        return None
+    cleaned = stem.replace("_", " ").replace("-", " ").strip()
+    # Still generic if nothing alphabetic remains after cleaning
+    if not re.search(r'[a-zA-Z]', cleaned):
+        return None
+    return cleaned
+
+
+def build_prompt(base_prompt: str, stem: str) -> str:
+    """Return a tile-specific prompt, injecting place name when the filename is meaningful."""
+    place = extract_place_name(stem)
+    if not place:
+        return base_prompt
+    return base_prompt + (
+        f" This tile represents '{place}' from Middle-earth (Tolkien lore or fan lore). "
+        "You have full creative freedom to reimagine the interior elements of the hex — "
+        "replace or redesign the terrain, structures, symbols, and colors to authentically evoke the character, "
+        "history, and atmosphere of this specific location. "
+        "Draw from its lore: its peoples, architecture, landscape, and iconic imagery. "
+        "All elements must remain isometric 2D — flat illustrated, fixed isometric viewpoint, no perspective distortion. "
+        "The hex outline/silhouette must remain, and nothing may be added outside it. "
+        "The background outside the hex must remain solid black."
+    )
 
 
 def die(message: str, code: int = 1) -> None:
@@ -55,26 +97,42 @@ def calc_cost(usage) -> float:
     )
 
 
-def prepare_upload_image(image_path: Path, max_dim: int) -> tuple[Path, bool]:
-    if max_dim <= 0:
-        return image_path, False
+def prepare_upload_image(
+    image_path: Path,
+    max_dim: int,
+    bottom_padding_fraction: float = DEFAULT_BOTTOM_PADDING_FRACTION,
+) -> tuple[Path, bool]:
     try:
         from PIL import Image
     except ImportError:
         die("Pillow is required. Install it with `uv pip install pillow`.")
 
+    import tempfile
+
     with Image.open(image_path) as img:
-        if max(img.size) <= max_dim:
-            return image_path, False
-        import tempfile
         working = img.convert("RGBA") if img.mode not in {"RGB", "RGBA"} else img.copy()
+
+    needs_resize = max_dim > 0 and max(working.size) > max_dim
+    if needs_resize:
         working.thumbnail((max_dim, max_dim))
-        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-        tmp_path = Path(tmp.name)
-        try:
-            working.save(tmp, format="PNG")
-        finally:
-            tmp.close()
+
+    if bottom_padding_fraction > 0:
+        w, h = working.size
+        pad_h = max(1, int(h * bottom_padding_fraction))
+        padded = Image.new("RGBA", (w, h + pad_h), (0, 0, 0, 255))
+        padded.paste(working, (0, 0))
+        working = padded
+
+    needs_temp = needs_resize or bottom_padding_fraction > 0
+    if not needs_temp:
+        return image_path, False
+
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+    tmp_path = Path(tmp.name)
+    try:
+        working.save(tmp, format="PNG")
+    finally:
+        tmp.close()
     return tmp_path, True
 
 
@@ -108,6 +166,7 @@ def restyle_one(
     quality: str = DEFAULT_QUALITY,
     output_format: str = DEFAULT_OUTPUT_FORMAT,
     upload_max_dim: int = DEFAULT_UPLOAD_MAX_DIM,
+    bottom_padding_fraction: float = DEFAULT_BOTTOM_PADDING_FRACTION,
     force: bool = False,
 ) -> tuple[int, float]:
     """Restyle one tile. Returns (exit_code, cost_usd). exit_code 2 = moderation skip."""
@@ -123,7 +182,7 @@ def restyle_one(
         print(f"Error: Output exists: {out_path} (use force=True to overwrite)", file=sys.stderr)
         return 1, 0.0
 
-    upload_path, upload_is_temp = prepare_upload_image(image_path, upload_max_dim)
+    upload_path, upload_is_temp = prepare_upload_image(image_path, upload_max_dim, bottom_padding_fraction)
     client = create_client()
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -189,6 +248,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--quality", default=DEFAULT_QUALITY)
     parser.add_argument("--output-format", default=DEFAULT_OUTPUT_FORMAT)
     parser.add_argument("--upload-max-dim", type=int, default=DEFAULT_UPLOAD_MAX_DIM)
+    parser.add_argument("--bottom-padding-fraction", type=float, default=DEFAULT_BOTTOM_PADDING_FRACTION,
+                        help="Fraction of image height to add as transparent bottom padding (default 0.20)")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
     return parser.parse_args()
@@ -201,26 +262,30 @@ def main() -> int:
     image_path = Path(args.image)
     out_path = Path(args.out)
 
+    effective_prompt = build_prompt(args.prompt, image_path.stem)
+
     if args.dry_run:
-        upload_path, upload_is_temp = prepare_upload_image(image_path, args.upload_max_dim)
+        upload_path, upload_is_temp = prepare_upload_image(image_path, args.upload_max_dim, args.bottom_padding_fraction)
         print("restyle_hex dry-run")
         print(f"image={image_path}")
         print(f"upload_image={upload_path}")
         print(f"out={out_path}")
         print(f"model={args.model}  quality={args.quality}  size={args.size}")
-        print(f"prompt={args.prompt}")
+        print(f"bottom_padding_fraction={args.bottom_padding_fraction}")
+        print(f"prompt={effective_prompt}")
         if upload_is_temp and upload_path.exists():
             upload_path.unlink()
         return 0
 
     code, _ = restyle_one(
         image_path, out_path,
-        prompt=args.prompt,
+        prompt=effective_prompt,
         model=args.model,
         size=args.size,
         quality=args.quality,
         output_format=args.output_format,
         upload_max_dim=args.upload_max_dim,
+        bottom_padding_fraction=args.bottom_padding_fraction,
         force=args.force,
     )
     return code
