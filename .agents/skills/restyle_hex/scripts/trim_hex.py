@@ -163,7 +163,7 @@ def main() -> int:
 
     # batch mode
     source_dir = Path(args.source)
-    out_dir = Path(args.out_dir) if args.out_dir else source_dir.parent / "alpha"
+    out_dir = Path(args.out_dir) if args.out_dir else source_dir.parent / "Tiles_Restyled_Alpha"
     tiles = sorted(source_dir.glob("*.png"))
 
     if not tiles:

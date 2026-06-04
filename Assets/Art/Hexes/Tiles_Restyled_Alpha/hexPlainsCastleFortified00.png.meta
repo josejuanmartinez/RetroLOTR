@@ -1,0 +1,806 @@
+fileFormatVersion: 2
+guid: 10cbd016a32642944b0aa1cbaa0c4005
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3308938894071750654
+    second: hexPlainsCastleFortified00_0
+  - first:
+      213: 2315008268320188024
+    second: hexPlainsCastleFortified00_1
+  - first:
+      213: 9083313277891245216
+    second: hexPlainsCastleFortified00_2
+  - first:
+      213: -1644629520632818058
+    second: hexPlainsCastleFortified00_3
+  - first:
+      213: -5802567518571919121
+    second: hexPlainsCastleFortified00_4
+  - first:
+      213: 4817534149369136751
+    second: hexPlainsCastleFortified00_5
+  - first:
+      213: 8362904031048613492
+    second: hexPlainsCastleFortified00_6
+  - first:
+      213: 2876511181383300065
+    second: hexPlainsCastleFortified00_7
+  - first:
+      213: -8329117987118046269
+    second: hexPlainsCastleFortified00_8
+  - first:
+      213: 1421876459165069124
+    second: hexPlainsCastleFortified00_9
+  - first:
+      213: 7759648699862544091
+    second: hexPlainsCastleFortified00_10
+  - first:
+      213: 5958716905339711178
+    second: hexPlainsCastleFortified00_11
+  - first:
+      213: -1741086466157707723
+    second: hexPlainsCastleFortified00_12
+  - first:
+      213: -6084306923060032038
+    second: hexPlainsCastleFortified00_13
+  - first:
+      213: 3200638597277620556
+    second: hexPlainsCastleFortified00_14
+  - first:
+      213: 9128105270490472537
+    second: hexPlainsCastleFortified00_15
+  - first:
+      213: 8644939894429038639
+    second: hexPlainsCastleFortified00_16
+  - first:
+      213: 7131795055126677475
+    second: hexPlainsCastleFortified00_17
+  - first:
+      213: 222328090967878476
+    second: hexPlainsCastleFortified00_18
+  - first:
+      213: 326488062275515619
+    second: hexPlainsCastleFortified00_19
+  - first:
+      213: 8193339562135276430
+    second: hexPlainsCastleFortified00_20
+  - first:
+      213: -7296800332913384493
+    second: hexPlainsCastleFortified00_21
+  - first:
+      213: -464516100242713249
+    second: hexPlainsCastleFortified00_22
+  - first:
+      213: -6685604905030691795
+    second: hexPlainsCastleFortified00_23
+  - first:
+      213: -5600869044863676006
+    second: hexPlainsCastleFortified00_24
+  - first:
+      213: -440102450526520459
+    second: hexPlainsCastleFortified00_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 400
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_0
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 993
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: effde948466bbed20800000000000000
+      internalID: 3308938894071750654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_1
+      rect:
+        serializedVersion: 2
+        x: 453
+        y: 848
+        width: 65
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 876215d21cf802020800000000000000
+      internalID: 2315008268320188024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_2
+      rect:
+        serializedVersion: 2
+        x: 461
+        y: 951
+        width: 89
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a4fb400d496e0e70800000000000000
+      internalID: 9083313277891245216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_3
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 790
+        width: 85
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6765f832a2a1d29e0800000000000000
+      internalID: -1644629520632818058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_4
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 879
+        width: 60
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe80d4ec593297fa0800000000000000
+      internalID: -5802567518571919121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_5
+      rect:
+        serializedVersion: 2
+        x: 446
+        y: 929
+        width: 11
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f660672d8c15bd240800000000000000
+      internalID: 4817534149369136751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_6
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 874
+        width: 85
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47eb55d58e00f0470800000000000000
+      internalID: 8362904031048613492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_7
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 818
+        width: 40
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e37ac6ddab6be720800000000000000
+      internalID: 2876511181383300065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_8
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 814
+        width: 27
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c3238df157096c80800000000000000
+      internalID: -8329117987118046269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_9
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 807
+        width: 70
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44f260f2b158bb310800000000000000
+      internalID: 1421876459165069124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_10
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 697
+        width: 205
+        height: 155
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdee021516fcfab60800000000000000
+      internalID: 7759648699862544091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_11
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 785
+        width: 179
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ace63eb647d91b250800000000000000
+      internalID: 5958716905339711178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_12
+      rect:
+        serializedVersion: 2
+        x: 502
+        y: 797
+        width: 72
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53efd6d651b66d7e0800000000000000
+      internalID: -1741086466157707723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_13
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 843
+        width: 12
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: add8e8ae613309ba0800000000000000
+      internalID: -6084306923060032038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_14
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 601
+        width: 174
+        height: 236
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c491325b8d3fa6c20800000000000000
+      internalID: 3200638597277620556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_15
+      rect:
+        serializedVersion: 2
+        x: 549
+        y: 800
+        width: 38
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 950a4f7716b8dae70800000000000000
+      internalID: 9128105270490472537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_16
+      rect:
+        serializedVersion: 2
+        x: 564
+        y: 821
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f28bb08f70ff8f770800000000000000
+      internalID: 8644939894429038639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_17
+      rect:
+        serializedVersion: 2
+        x: 609
+        y: 779
+        width: 36
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e786b711d939f260800000000000000
+      internalID: 7131795055126677475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_18
+      rect:
+        serializedVersion: 2
+        x: 623
+        y: 828
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4b2bb5883ed51300800000000000000
+      internalID: 222328090967878476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_19
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 726
+        width: 67
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e4765fa92be78400800000000000000
+      internalID: 326488062275515619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_20
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 793
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8b4a3debe694b170800000000000000
+      internalID: 8193339562135276430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_21
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 781
+        width: 53
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d3eebfd1ce8cba90800000000000000
+      internalID: -7296800332913384493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_22
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 776
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5555946115bd89f0800000000000000
+      internalID: -464516100242713249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_23
+      rect:
+        serializedVersion: 2
+        x: 581
+        y: 609
+        width: 160
+        height: 186
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d24590fb2c5f733a0800000000000000
+      internalID: -6685604905030691795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_24
+      rect:
+        serializedVersion: 2
+        x: 589
+        y: 777
+        width: 21
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a915b634747b542b0800000000000000
+      internalID: -5600869044863676006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsCastleFortified00_25
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 822
+        height: 792
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57b769b272174e9f0800000000000000
+      internalID: -440102450526520459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      hexPlainsCastleFortified00_0: 3308938894071750654
+      hexPlainsCastleFortified00_1: 2315008268320188024
+      hexPlainsCastleFortified00_10: 7759648699862544091
+      hexPlainsCastleFortified00_11: 5958716905339711178
+      hexPlainsCastleFortified00_12: -1741086466157707723
+      hexPlainsCastleFortified00_13: -6084306923060032038
+      hexPlainsCastleFortified00_14: 3200638597277620556
+      hexPlainsCastleFortified00_15: 9128105270490472537
+      hexPlainsCastleFortified00_16: 8644939894429038639
+      hexPlainsCastleFortified00_17: 7131795055126677475
+      hexPlainsCastleFortified00_18: 222328090967878476
+      hexPlainsCastleFortified00_19: 326488062275515619
+      hexPlainsCastleFortified00_2: 9083313277891245216
+      hexPlainsCastleFortified00_20: 8193339562135276430
+      hexPlainsCastleFortified00_21: -7296800332913384493
+      hexPlainsCastleFortified00_22: -464516100242713249
+      hexPlainsCastleFortified00_23: -6685604905030691795
+      hexPlainsCastleFortified00_24: -5600869044863676006
+      hexPlainsCastleFortified00_25: -440102450526520459
+      hexPlainsCastleFortified00_3: -1644629520632818058
+      hexPlainsCastleFortified00_4: -5802567518571919121
+      hexPlainsCastleFortified00_5: 4817534149369136751
+      hexPlainsCastleFortified00_6: 8362904031048613492
+      hexPlainsCastleFortified00_7: 2876511181383300065
+      hexPlainsCastleFortified00_8: -8329117987118046269
+      hexPlainsCastleFortified00_9: 1421876459165069124
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

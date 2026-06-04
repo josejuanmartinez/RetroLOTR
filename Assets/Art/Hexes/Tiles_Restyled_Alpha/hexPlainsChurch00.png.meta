@@ -1,0 +1,780 @@
+fileFormatVersion: 2
+guid: ef8a39c8baa3cdc469015acd25566660
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8271276305964724730
+    second: hexPlainsChurch00_0
+  - first:
+      213: -5717019758712642857
+    second: hexPlainsChurch00_1
+  - first:
+      213: 7711522464742234273
+    second: hexPlainsChurch00_2
+  - first:
+      213: -6501406847811271900
+    second: hexPlainsChurch00_3
+  - first:
+      213: -7973111160852159445
+    second: hexPlainsChurch00_4
+  - first:
+      213: 7063203126999443083
+    second: hexPlainsChurch00_5
+  - first:
+      213: 7952418826861883926
+    second: hexPlainsChurch00_6
+  - first:
+      213: -1550700965870034269
+    second: hexPlainsChurch00_7
+  - first:
+      213: 3844900074370245358
+    second: hexPlainsChurch00_8
+  - first:
+      213: -3308928961302940107
+    second: hexPlainsChurch00_9
+  - first:
+      213: -6250783716169580189
+    second: hexPlainsChurch00_10
+  - first:
+      213: -246164123304624661
+    second: hexPlainsChurch00_11
+  - first:
+      213: 3810304962126729771
+    second: hexPlainsChurch00_12
+  - first:
+      213: -8692016924894209586
+    second: hexPlainsChurch00_13
+  - first:
+      213: -7844310182620819088
+    second: hexPlainsChurch00_14
+  - first:
+      213: 5894093088950308254
+    second: hexPlainsChurch00_15
+  - first:
+      213: 5989976286502043363
+    second: hexPlainsChurch00_16
+  - first:
+      213: -7699457835071133767
+    second: hexPlainsChurch00_17
+  - first:
+      213: 2550475826515688610
+    second: hexPlainsChurch00_18
+  - first:
+      213: 1770783702936772119
+    second: hexPlainsChurch00_19
+  - first:
+      213: 9169881110586352804
+    second: hexPlainsChurch00_20
+  - first:
+      213: -8195517099389453281
+    second: hexPlainsChurch00_21
+  - first:
+      213: 8006570336323111522
+    second: hexPlainsChurch00_22
+  - first:
+      213: -3051816598974005210
+    second: hexPlainsChurch00_23
+  - first:
+      213: -1952336311604381326
+    second: hexPlainsChurch00_24
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 400
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: hexPlainsChurch00_0
+      rect:
+        serializedVersion: 2
+        x: 645
+        y: 916
+        width: 28
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af1f1282af979c270800000000000000
+      internalID: 8271276305964724730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_1
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 935
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d22b0cc1d019a0b0800000000000000
+      internalID: -5717019758712642857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_2
+      rect:
+        serializedVersion: 2
+        x: 557
+        y: 720
+        width: 204
+        height: 186
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a8d76403d4d40b60800000000000000
+      internalID: 7711522464742234273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_3
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 901
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 423cae7faec56c5a0800000000000000
+      internalID: -6501406847811271900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_4
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 624
+        width: 237
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2464be74a1d95190800000000000000
+      internalID: -7973111160852159445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_5
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 601
+        width: 82
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b86ea3152d9850260800000000000000
+      internalID: 7063203126999443083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_6
+      rect:
+        serializedVersion: 2
+        x: 752
+        y: 781
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6123b301acaac5e60800000000000000
+      internalID: 7952418826861883926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_7
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 687
+        width: 30
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a2267000bdca7ae0800000000000000
+      internalID: -1550700965870034269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_8
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 698
+        width: 28
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee226b91f34db5530800000000000000
+      internalID: 3844900074370245358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_9
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 739
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 536398224a25412d0800000000000000
+      internalID: -3308928961302940107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_10
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 597
+        width: 110
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3618ae50451c049a0800000000000000
+      internalID: -6250783716169580189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_11
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 722
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bed7bf9b803759cf0800000000000000
+      internalID: -246164123304624661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_12
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 729
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b22d879dc2ce0e430800000000000000
+      internalID: 3810304962126729771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_13
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 720
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec95ff9b8a0cf5780800000000000000
+      internalID: -8692016924894209586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_14
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 662
+        width: 59
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07118e82379632390800000000000000
+      internalID: -7844310182620819088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_15
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 708
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9dc7f7af660cc150800000000000000
+      internalID: 5894093088950308254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_16
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 517
+        width: 192
+        height: 188
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3eeb7f142bba02350800000000000000
+      internalID: 5989976286502043363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_17
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 43
+        width: 554
+        height: 637
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b7ac7974e7062590800000000000000
+      internalID: -7699457835071133767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_18
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 512
+        width: 80
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ac30bf404c156320800000000000000
+      internalID: 2550475826515688610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_19
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 674
+        width: 24
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71ed8935566139810800000000000000
+      internalID: 1770783702936772119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_20
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 609
+        width: 213
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a460153946f14f70800000000000000
+      internalID: 9169881110586352804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_21
+      rect:
+        serializedVersion: 2
+        x: 749
+        y: 642
+        width: 37
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1c704cae9ca34e80800000000000000
+      internalID: -8195517099389453281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_22
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 885
+        height: 624
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26a08bddc4d0d1f60800000000000000
+      internalID: 8006570336323111522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_23
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 442
+        width: 257
+        height: 227
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6208382f8f4c5a5d0800000000000000
+      internalID: -3051816598974005210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hexPlainsChurch00_24
+      rect:
+        serializedVersion: 2
+        x: 772
+        y: 623
+        width: 33
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27979b0f778e7e4e0800000000000000
+      internalID: -1952336311604381326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      hexPlainsChurch00_0: 8271276305964724730
+      hexPlainsChurch00_1: -5717019758712642857
+      hexPlainsChurch00_10: -6250783716169580189
+      hexPlainsChurch00_11: -246164123304624661
+      hexPlainsChurch00_12: 3810304962126729771
+      hexPlainsChurch00_13: -8692016924894209586
+      hexPlainsChurch00_14: -7844310182620819088
+      hexPlainsChurch00_15: 5894093088950308254
+      hexPlainsChurch00_16: 5989976286502043363
+      hexPlainsChurch00_17: -7699457835071133767
+      hexPlainsChurch00_18: 2550475826515688610
+      hexPlainsChurch00_19: 1770783702936772119
+      hexPlainsChurch00_2: 7711522464742234273
+      hexPlainsChurch00_20: 9169881110586352804
+      hexPlainsChurch00_21: -8195517099389453281
+      hexPlainsChurch00_22: 8006570336323111522
+      hexPlainsChurch00_23: -3051816598974005210
+      hexPlainsChurch00_24: -1952336311604381326
+      hexPlainsChurch00_3: -6501406847811271900
+      hexPlainsChurch00_4: -7973111160852159445
+      hexPlainsChurch00_5: 7063203126999443083
+      hexPlainsChurch00_6: 7952418826861883926
+      hexPlainsChurch00_7: -1550700965870034269
+      hexPlainsChurch00_8: 3844900074370245358
+      hexPlainsChurch00_9: -3308928961302940107
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
