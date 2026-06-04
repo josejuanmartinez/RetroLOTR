@@ -8,7 +8,17 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 public class HexTextureMapping : SearcherByName
 {
     private const string AddressablesLabel = "default";
-    private const string HexTileAddressRoot = "Assets/Art/Hexes/Tiles/";
+    public static string HexTileAddressRoot = "Assets/Art/Hexes/Tiles/";
+    [SerializeField] private string hexTileAddressRoot = "Assets/Art/Hexes/Tiles/";
+
+    private void Awake()
+    {
+        HexTileAddressRoot = hexTileAddressRoot;
+        tileLocationsByKey.Clear();
+        byPcNameLookup.Clear();
+        isTileLookupLoaded = false;
+        tileLookupLoadFailed = false;
+    }
 
     public Sprite defaultTerrainSprite;
     public List<Sprite> deepWaterVariations;
@@ -159,11 +169,12 @@ public class HexTextureMapping : SearcherByName
             } 
             else
             {
+                int seed = Mathf.Abs(hex.GetHashCode());
                 switch(pc.owner.GetAlignment())
                 {
-                    case AlignmentEnum.darkServants: return defaultDarkServantsPC[Random.Range(0, defaultDarkServantsPC.Count)];
-                    case AlignmentEnum.freePeople: return defaultFreePeoplePC[Random.Range(0, defaultFreePeoplePC.Count)];
-                    case AlignmentEnum.neutral: return defaultNeutralPC[Random.Range(0, defaultNeutralPC.Count)];
+                    case AlignmentEnum.darkServants: return defaultDarkServantsPC[seed % defaultDarkServantsPC.Count];
+                    case AlignmentEnum.freePeople: return defaultFreePeoplePC[seed % defaultFreePeoplePC.Count];
+                    case AlignmentEnum.neutral: return defaultNeutralPC[seed % defaultNeutralPC.Count];
                 }
             }
         }
