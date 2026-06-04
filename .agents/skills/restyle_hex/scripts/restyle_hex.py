@@ -35,11 +35,80 @@ DEFAULT_PROMPT = (
     "d&d, Bakshi, Conan, LOTR, MERPG, MECCG. "
     "The art style must be isometric 2D — flat illustrated elements viewed from a fixed isometric angle, "
     "like classic tabletop hex map tiles. "
+    "MANDATORY: preserve the exact hexagon shape of the tile with the point at the BOTTOM (pointy-top orientation) — never rotate, distort, or change the hex to flat-bottom. "
     "Keep the hex shape and overall composition, but you are free to redesign the interior elements "
     "— terrain, structures, iconography, colors — to better evoke a Middle-earth feeling. "
+    "CRITICAL — 2.5D HEIGHT RULE: mountains, peaks, towers, spires, castles, and tall buildings MUST visibly rise upward "
+    "and their tops MUST clearly protrude above the top edge of the hex — not just touching it, but genuinely extending beyond it. "
+    "Think of classic MECCG/MERPG hex art where mountain peaks tower well above the hex frame. "
+    "NEVER draw these elements flat or compressed inside the hex boundary — they must have real, imposing vertical presence. "
+    "Only flat terrain (rivers, fields, roads, low forests) stays clipped within the hex boundary. "
     "Do not add any text, labels, or lettering anywhere in the image. "
+    "Do not draw blood anywhere — if the scene calls for it, substitute water, mud, dark stone, or another thematically fitting element instead. "
+    "CRITICAL: the area outside the hex shape must be SOLID BLACK and nothing else — no gradients, no textures, no scenery, no sky, no ground. Solid black only. "
     "Leave visible background space below the hex shape — the hex must not touch or bleed into the bottom edge."
 )
+
+
+# Content-based thematic overrides keyed by regex -> theme instruction
+_CONTENT_THEMES: list[tuple[re.Pattern, str]] = [
+    (
+        re.compile(r'lava', re.IGNORECASE),
+        "This is a lava tile — render it in a Mordor style: molten rock, dark ashen terrain, "
+        "rivers of glowing lava, smoke and fire, oppressive red-orange light, "
+        "volcanic crags and dark obsidian formations typical of the land of shadow.",
+    ),
+    (
+        re.compile(r'pyramid', re.IGNORECASE),
+        "This tile features pyramids — render them as Khand/Easterling pyramids: "
+        "stepped or tiered desert stone structures with Eastern/Middle-earth Khand architectural motifs, "
+        "warm sandstone tones, ornate carved surfaces, scorched desert surroundings.",
+    ),
+    (
+        re.compile(r'desert|karagmir', re.IGNORECASE),
+        "This is a desert or Khand/Easterling region tile — render it with Khand and Easterling thematic elements: "
+        "arid sandy terrain, Eastern-style banners or totems, caravanserai ruins, "
+        "scorched earth, sparse dry vegetation, warm ochre and terracotta palette.",
+    ),
+    (
+        re.compile(r'snow|ice|arctic|tundra', re.IGNORECASE),
+        "This is a snow or ice tile — render it with igloo camps or snowmen camps: "
+        "small rounded igloo domes, bundled figures or snowmen, frost-covered ground, "
+        "pale blue-white palette, cold wintry Middle-earth atmosphere.",
+    ),
+    (
+        re.compile(r"eagle.?s?.?eyrie|eyrie", re.IGNORECASE),
+        "This tile is the Eagle's Eyrie — a dramatic mountain peak hosting the realm of the Great Eagles of Middle-earth. "
+        "Render it as a high rocky mountain summit with massive eagle nests built from thick branches and bones on the crags, "
+        "one or more giant eagles perched or soaring with enormous wingspans, sharp cliff faces, strong winds suggested by "
+        "swirling clouds or mist at the peak. Convey a sense of wild, ancient, unreachable height.",
+    ),
+    (
+        re.compile(r'angmar|carn.?dum|gundabad|mt.?gram|gram', re.IGNORECASE),
+        "This tile belongs to Angmar, realm of the Witch-king — render it in the dark, dread aesthetic of Angmar/Carn Dûm: "
+        "jagged black iron towers and battlements, frozen tundra and glacial rock, perpetual grey overcast sky within the hex, "
+        "sickly pale light, crow-black banners, bone and iron iconography, blighted landscape with dead trees and frost. "
+        "Evoke the cold malice and ancient evil of the Witch-king's stronghold and the nearby peaks of Gundabad and Gram.",
+    ),
+    (
+        re.compile(r'mountain|mt\.?|peak|summit|hill|tower|spire|castle|fortress|citadel|keep|city|town|stronghold', re.IGNORECASE),
+        "This tile contains tall structures or elevated terrain — mountains, towers, spires, or similar. "
+        "The mountain or tall structure MUST dramatically protrude above the top edge of the hex — its peak or top "
+        "should sit well above the hex boundary, not just graze it. "
+        "Imagine the hex as a frame the mountain bursts out of from the top. "
+        "The base of the mountain sits inside the hex; the bulk and peak extend clearly beyond the top edge. "
+        "Do NOT compress the mountain to fit inside the hex. Do NOT draw it as flat terrain.",
+    ),
+]
+
+
+def content_theme_hint(stem: str) -> str | None:
+    """Return a thematic instruction if the stem matches a known content keyword, else None."""
+    key = stem.replace("_", " ").replace("-", " ")
+    for pattern, hint in _CONTENT_THEMES:
+        if pattern.search(key):
+            return hint
+    return None
 
 
 def extract_place_name(stem: str) -> str | None:
@@ -58,20 +127,31 @@ def extract_place_name(stem: str) -> str | None:
 
 
 def build_prompt(base_prompt: str, stem: str) -> str:
-    """Return a tile-specific prompt, injecting place name when the filename is meaningful."""
+    """Return a tile-specific prompt, injecting content themes and/or place name."""
+    prompt = base_prompt
+
+    theme = content_theme_hint(stem)
+    if theme:
+        prompt += " " + theme
+
     place = extract_place_name(stem)
-    if not place:
-        return base_prompt
-    return base_prompt + (
-        f" This tile represents '{place}' from Middle-earth (Tolkien lore or fan lore). "
-        "You have full creative freedom to reimagine the interior elements of the hex — "
-        "replace or redesign the terrain, structures, symbols, and colors to authentically evoke the character, "
-        "history, and atmosphere of this specific location. "
-        "Draw from its lore: its peoples, architecture, landscape, and iconic imagery. "
-        "All elements must remain isometric 2D — flat illustrated, fixed isometric viewpoint, no perspective distortion. "
-        "The hex outline/silhouette must remain, and nothing may be added outside it. "
-        "The background outside the hex must remain solid black."
-    )
+    if place:
+        prompt += (
+            f" This tile represents '{place}' from Middle-earth (Tolkien lore or fan lore). "
+            "You have full creative freedom to reimagine the interior elements of the hex — "
+            "replace or redesign the terrain, structures, symbols, and colors to authentically evoke the character, "
+            "history, and atmosphere of this specific location. "
+            "Draw from its lore: its peoples, architecture, landscape, and iconic imagery. "
+        )
+
+    if theme or place:
+        prompt += (
+            "All elements must remain isometric 2D — flat illustrated, fixed isometric viewpoint, no perspective distortion. "
+            "The hex outline/silhouette must remain, and nothing may be added outside it. "
+            "The background outside the hex must remain solid black."
+        )
+
+    return prompt
 
 
 def die(message: str, code: int = 1) -> None:

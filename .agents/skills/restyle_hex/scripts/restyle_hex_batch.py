@@ -15,7 +15,7 @@ def parse_args() -> argparse.Namespace:
         description="Batch restyle all hex tiles — Ctrl+C to stop at any time"
     )
     parser.add_argument(
-        "--source", default="Assets/Art/Hexes/Tiles",
+        "--source", default="Assets/Art/Hexes/Tiles/original",
         help="Folder containing source PNG tiles",
     )
     parser.add_argument(
