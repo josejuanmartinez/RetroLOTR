@@ -946,6 +946,28 @@
                        "characterSprite":  "Maia",
                        "nationInitials":  "M",
                        "tutorialDummy":  true
+                   },
+                   {
+                       "characterName":  "Hobbiton",
+                       "banner":  "banner_hobbit_hobbiton",
+                       "artifacts":  [
+
+                                     ],
+                       "terrain":  3,
+                       "startingArmySize":  0,
+                       "preferedTroopType":  0,
+                       "startingCityIsHidden":  false,
+                       "startsWithPort":  false,
+                       "startingWarships":  0,
+                       "spawnPcWithoutOwner":  true,
+                       "sex":  0,
+                       "startingCityName":  "Hobbiton",
+                       "startingCitySize":  2,
+                       "startingCityRegion":  "TheShire",
+                       "nationName":  "The Shire",
+                       "characterSprite":  "Maia",
+                       "nationInitials":  "TS",
+                       "tutorialDummy":  true
                    }
                ]
 }

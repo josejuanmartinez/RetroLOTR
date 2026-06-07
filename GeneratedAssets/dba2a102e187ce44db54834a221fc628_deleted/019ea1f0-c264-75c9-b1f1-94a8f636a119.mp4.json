@@ -1,0 +1,38 @@
+{
+    "asset": "dba2a102e187ce44db54834a221fc628",
+    "fileName": "019ea1f0-c264-75c9-b1f1-94a8f636a119.mp4",
+    "prompt": "Animate this character as follows: first perform a gentle idle movement with subtle breathing and weight shift, then return to the original position; then execute a combat action movement such as an attack or spell cast, then return to the original position; then walk forward toward the viewer, then return to the original position; then walk sideways to the left, then return to the original position; then walk sideways to the right, then return to the original position; then turn around and walk away into the distance. No camera zoom out. Keep the character centered and visible throughout. Smooth transitions between each movement phase.",
+    "negativePrompt": "",
+    "model": "video-kling-v3-i2v-pro",
+    "modelName": "Kling V3 I2V Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Spritesheet",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 9,
+                "doodle": [],
+                "label": "First",
+                "strength": 1.0,
+                "invertStrength": false,
+                "assetReferenceGuid": "6e1aae9f53aee8f40a0ecb3ec829d5db",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 0,
+        "height": 0
+    },
+    "spriteSheet": true,
+    "duration": 10.0
+}
