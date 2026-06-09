@@ -14,8 +14,9 @@ public class SpritesheetAnimatorWindow : EditorWindow
     private List<int> _seq = new();      // selected frame indices in animation order
 
     // ── Settings ──────────────────────────────────────────────────────
-    private int  _fps  = 12;
-    private bool _loop = true;
+    private int  _fps     = 12;
+    private bool _loop    = true;
+    private bool _mirrorH = false;
 
     // ── Preview ───────────────────────────────────────────────────────
     private bool   _playing;
@@ -101,7 +102,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
             if (GUILayout.Button("Select All"))
             {
                 _seq = Enumerable.Range(0, _sprites.Length).ToList();
-                StopPreview();
+                OnSequenceChanged();
             }
             if (GUILayout.Button("Clear All"))
             {
@@ -112,6 +113,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
             GUILayout.Label($"{_seq.Count} frame(s) selected", EditorStyles.miniLabel);
         }
 
+        _mirrorH = EditorGUILayout.Toggle("Mirror (swap left/right)", _mirrorH);
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
     }
 
@@ -144,7 +146,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
             {
                 if (sel) _seq.Remove(i);
                 else     _seq.Add(i);
-                StopPreview();
+                OnSequenceChanged();
                 Event.current.Use();
                 Repaint();
             }
@@ -153,7 +155,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
             EditorGUI.DrawRect(cell, sel ? ColSelected : ColUnselected);
 
             // sprite thumbnail
-            DrawSprite(_sprites[i], Shrink(cell, 3));
+            DrawSprite(_sprites[i], Shrink(cell, 3), _mirrorH);
 
             // frame index
             DrawLabel(new Rect(cell.x, cell.yMax - 16, THUMB, 16), i.ToString(), TextAnchor.MiddleCenter, Color.white);
@@ -186,7 +188,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
             if (_seq.Count > 0)
             {
                 int pi = Mathf.Clamp(_previewPos, 0, _seq.Count - 1);
-                DrawSprite(_sprites[_seq[pi]], Shrink(previewRect, 6));
+                DrawSprite(_sprites[_seq[pi]], Shrink(previewRect, 6), _mirrorH);
             }
 
             // Controls column
@@ -283,6 +285,13 @@ public class SpritesheetAnimatorWindow : EditorWindow
 
     void StopPreview() { _playing = false; _previewPos = 0; }
 
+    void OnSequenceChanged()
+    {
+        if (_seq.Count == 0) { StopPreview(); return; }
+        if (_playing) _previewPos = _previewPos % _seq.Count;
+        else          _previewPos = 0;
+    }
+
     void Step(int dir)
     {
         if (_seq.Count == 0) return;
@@ -290,7 +299,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
         Repaint();
     }
 
-    static void DrawSprite(Sprite sprite, Rect rect)
+    static void DrawSprite(Sprite sprite, Rect rect, bool mirrorH = false)
     {
         if (sprite == null || sprite.texture == null) return;
 
@@ -298,6 +307,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
         float tw  = sprite.texture.width;
         float th  = sprite.texture.height;
         Rect  uv  = new(tr.x / tw, tr.y / th, tr.width / tw, tr.height / th);
+        if (mirrorH) uv = new Rect(uv.x + uv.width, uv.y, -uv.width, uv.height);
 
         float sprAspect = tr.width / tr.height;
         float boxAspect = rect.width / rect.height;
@@ -333,8 +343,10 @@ public class SpritesheetAnimatorWindow : EditorWindow
     {
         if (_sprites == null || _seq.Count == 0) return;
 
-        // Validate sprites before saving
-        int nullCount = _seq.Count(i => _sprites[i] == null);
+        Sprite[] effectiveSprites = _mirrorH ? CreateMirroredSprites() : _sprites;
+        if (effectiveSprites == null) return;
+
+        int nullCount = _seq.Count(i => effectiveSprites[i] == null);
         if (nullCount > 0)
         {
             Debug.LogError($"[SpritesheetAnimator] {nullCount} sprite(s) are null — make sure the texture is imported as Sprite Mode: Multiple and has been sliced.");
@@ -353,14 +365,14 @@ public class SpritesheetAnimatorWindow : EditorWindow
         var binding = new EditorCurveBinding
         {
             type         = typeof(SpriteRenderer),
-            path         = "",          // root-level SpriteRenderer on the Animator's GameObject
+            path         = "",
             propertyName = "m_Sprite"
         };
 
         float dt = 1f / _fps;
         var   kf = new ObjectReferenceKeyframe[_seq.Count];
         for (int i = 0; i < _seq.Count; i++)
-            kf[i] = new ObjectReferenceKeyframe { time = i * dt, value = _sprites[_seq[i]] };
+            kf[i] = new ObjectReferenceKeyframe { time = i * dt, value = effectiveSprites[_seq[i]] };
 
         AnimationUtility.SetObjectReferenceCurve(clip, binding, kf);
 
@@ -373,14 +385,83 @@ public class SpritesheetAnimatorWindow : EditorWindow
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        // Verify what was actually saved
         var saved = AssetDatabase.LoadAssetAtPath<AnimationClip>(dest);
         var bindings = AnimationUtility.GetObjectReferenceCurveBindings(saved);
         int keyCount = bindings.Length > 0 ? AnimationUtility.GetObjectReferenceCurve(saved, bindings[0]).Length : 0;
-        Debug.Log($"[SpritesheetAnimator] Saved: {dest} — {keyCount} sprite keyframes @ {_fps} fps, duration {(float)_seq.Count / _fps:F2}s");
+        Debug.Log($"[SpritesheetAnimator] Saved: {dest} — {keyCount} sprite keyframes @ {_fps} fps, duration {(float)_seq.Count / _fps:F2}s{(_mirrorH ? " [mirrored]" : "")}");
 
         EditorUtility.FocusProjectWindow();
         Selection.activeObject = saved;
         EditorGUIUtility.PingObject(saved);
+    }
+
+    Sprite[] CreateMirroredSprites()
+    {
+        int W = _sheet.width, H = _sheet.height;
+
+        // Read pixels via RenderTexture — works even if the source texture is not Read/Write enabled
+        var rt = RenderTexture.GetTemporary(W, H, 0, RenderTextureFormat.ARGB32);
+        Graphics.Blit(_sheet, rt);
+        RenderTexture.active = rt;
+        var readable = new Texture2D(W, H, TextureFormat.ARGB32, false);
+        readable.ReadPixels(new Rect(0, 0, W, H), 0, 0);
+        readable.Apply();
+        RenderTexture.active = null;
+        RenderTexture.ReleaseTemporary(rt);
+
+        // Flip horizontally
+        Color[] pixels = readable.GetPixels();
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W / 2; x++)
+            {
+                int l = y * W + x, r = y * W + (W - 1 - x);
+                (pixels[l], pixels[r]) = (pixels[r], pixels[l]);
+            }
+        readable.SetPixels(pixels);
+        readable.Apply();
+
+        // Save PNG next to the clip output
+        if (!Directory.Exists(_outFolder)) Directory.CreateDirectory(_outFolder);
+        string safe       = string.Concat(_clipName.Split(Path.GetInvalidFileNameChars()));
+        string mirrorPath = $"{_outFolder}/{safe}_mirrored.png";
+        File.WriteAllBytes(mirrorPath, readable.EncodeToPNG());
+        Object.DestroyImmediate(readable);
+        AssetDatabase.ImportAsset(mirrorPath, ImportAssetOptions.ForceSynchronousImport);
+
+        // Slice the mirrored texture to match the original sprite layout (rects flipped on X)
+        var importer = (TextureImporter)AssetImporter.GetAtPath(mirrorPath);
+        importer.textureType      = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Multiple;
+        importer.filterMode       = _sheet.filterMode;
+        importer.maxTextureSize   = Mathf.Max(W, H);
+
+        var metas = new SpriteMetaData[_sprites.Length];
+        for (int i = 0; i < _sprites.Length; i++)
+        {
+            var s = _sprites[i];
+            var r = s.textureRect;
+            Vector2 pivotNorm = s.pivot / new Vector2(r.width, r.height);
+            metas[i] = new SpriteMetaData
+            {
+                name      = s.name + "_mir",
+                rect      = new Rect(W - r.x - r.width, r.y, r.width, r.height),
+                pivot     = new Vector2(1f - pivotNorm.x, pivotNorm.y),
+                alignment = (int)SpriteAlignment.Custom,
+                border    = new Vector4(s.border.z, s.border.y, s.border.x, s.border.w),
+            };
+        }
+        importer.spritesheet = metas;
+        importer.SaveAndReimport();
+
+        // Build parallel array indexed the same way as _sprites
+        var nameToSprite = AssetDatabase.LoadAllAssetsAtPath(mirrorPath)
+            .OfType<Sprite>()
+            .ToDictionary(s => s.name);
+
+        var result = new Sprite[_sprites.Length];
+        for (int i = 0; i < _sprites.Length; i++)
+            nameToSprite.TryGetValue(_sprites[i].name + "_mir", out result[i]);
+
+        return result;
     }
 }

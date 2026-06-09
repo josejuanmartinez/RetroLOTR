@@ -13,26 +13,23 @@ from pathlib import Path
 
 API_BASE = "https://api.cloud.scenario.com/v1"
 MODEL_ID = "model_xai-grok-imagine-video-1-5"
-DEFAULT_DURATION = 15
+DEFAULT_DURATION = 12
 DEFAULT_RESOLUTION = "480p"
 DEFAULT_NUM_OUTPUTS = 1
 DEFAULT_UPLOAD_MAX_DIM = 1024  # resize before encoding to keep payload small
 
 DEFAULT_PROMPT = (
-    "Animate this character performing the following 6 distinct movement phases in order. "
-    "The video is 15 seconds — allocate roughly 2-3 seconds per phase. "
-    "CRITICAL: keep the entire character body fully within the camera frame at all times — "
-    "no limbs, head, or body parts should ever leave the screen edges. Add internal padding so the character never touches the frame border. "
-    "Do NOT zoom the camera in or out at any point. "
-    "Phase 1 — IDLE (2s): the character stands in place with subtle breathing, weight shift, and gentle swaying. Return to neutral standing pose. "
-    "Phase 2 — ACTION (2s): the character performs a clear combat attack or spell cast with full arm and body motion. Return to neutral standing pose. "
-    "Phase 3 — WALK FORWARD (2-3s): the character walks directly toward the viewer in a full repeating walk cycle — legs and arms must swing continuously. "
-    "The character must visibly travel forward for the ENTIRE duration of this phase, completing at least 3-4 full stride cycles. NOT a single step — sustained walking. Return to neutral standing pose. "
-    "Phase 4 — WALK LEFT (2-3s): the character walks to the left in a full repeating walk cycle — legs and arms must swing continuously. "
-    "The character must visibly travel leftward across the screen for the ENTIRE duration of this phase, completing at least 3-4 full stride cycles. NOT a single step or sway — sustained walking. Return to neutral standing pose. "
-    "Phase 5 — WALK RIGHT (2-3s): the character walks to the right in a full repeating walk cycle — legs and arms must swing continuously. "
-    "The character must visibly travel rightward across the screen for the ENTIRE duration of this phase, completing at least 3-4 full stride cycles. NOT a single step or sway — sustained walking. Return to neutral standing pose. "
-    "Phase 6 — TURN AND EXIT (2s): the character turns around to face away from the viewer, then walks away in a continuous walk cycle until they are small in the distance. No camera zoom."
+    "Animate this character performing 6 completely isolated movement phases. "
+    "Each phase is self-contained: it starts from idle stance, executes its movement, comes to a FULL STOP, then returns to idle stance before the next phase begins. "
+    "CRITICAL: phases must NOT bleed into each other — no drifting, turning, or transitioning while a phase is still running. "
+    "Keep the entire character body fully within the camera frame at all times. The camera is completely static — no zoom, no pan. "
+    "The idle stance (used as start and end of every phase) is: upright, facing directly toward the viewer, feet shoulder-width apart, arms relaxed at sides. "
+    "Phase 1 — IDLE (2s): the character holds the idle stance and breathes with subtle chest rise, a gentle weight shift, and a small natural sway. This defines the idle stance. "
+    "Phase 2 — ACTION (2s): from idle stance, the character performs a single decisive combat attack or spell cast with full arm and body motion, then comes to a complete stop and returns to idle stance. No movement before or after the action. "
+    "Phase 3 — WALK FORWARD (2s): from idle stance, the character walks directly and straight toward the viewer — legs and arms in a full repeating walk cycle, at least 3 full stride cycles, advancing forward the entire time. Then comes to a complete stop and returns to idle stance. The character must NOT begin turning or drifting sideways at any point during this phase. "
+    "Phase 4 — WALK LEFT SIDE VIEW (2s): from idle stance, the character turns exactly 90 degrees to the left so their LEFT side faces the camera (pure side profile). Then walks to the left in a clean side-view walk cycle — legs and arms swinging in profile, at least 3 full stride cycles. Then comes to a complete stop, turns exactly 90 degrees back to face the camera, and returns to idle stance. "
+    "Phase 5 — TURN BACK (2s): from idle stance, the character smoothly rotates exactly 180 degrees to face completely away from the viewer, ending in a neutral back-facing idle stance — upright, still, back fully toward the camera. "
+    "Phase 6 — EXIT TURNED BACK (2s): from the back-facing idle stance, the character walks straight away from the viewer in a continuous walk cycle, growing smaller in the distance. No camera movement."
 )
 
 
