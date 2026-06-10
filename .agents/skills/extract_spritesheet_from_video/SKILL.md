@@ -52,7 +52,9 @@ python .agents/skills/extract_spritesheet_from_video/scripts/extract_spritesheet
 
 ## Default Layout
 
-64 frames → 8 columns × 8 rows. Each cell is the native video frame size.
+256 frames → 16 columns × 16 rows. Each cell is the native video frame size.
+
+For RetroLOTR character animations (6 phases × 2s @ 12s total) use `--frames 48 --cols 8` to get an 8×6 grid (8 frames per phase).
 
 ## Dependencies
 

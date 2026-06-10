@@ -15,7 +15,7 @@ public enum RacesEnum
     Dunedain = 12,
     Beorning = 13,
     Eagle = 14,
-    Wose = 15,
+    Wildman = 15,
     Goblin = 16,
     Ent = 17,
     Southron = 18,

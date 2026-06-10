@@ -93,15 +93,16 @@ The script encodes them as `Basic base64(KEY:SECRET)` per the Scenario API spec.
 
 ## Step 2: Extract Spritesheet
 
-After the video is downloaded, run the extract spritesheet script:
+After the video is downloaded, run the extract spritesheet script. The target layout is **8 columns × 6 rows = 48 frames** (one row per animation phase):
 
 ```powershell
 python .agents/skills/extract_spritesheet_from_video/scripts/extract_spritesheet.py `
   --video "Assets/Art/Characters/AnimationVideos/<character-name>.mp4" `
-  --out "Assets/Art/Characters/Animations/<character-name>_spritesheet.png"
+  --out "Assets/Art/Characters/Animations/<character-name>_spritesheet.png" `
+  --frames 48 --cols 8
 ```
 
-This samples 256 frames evenly across the full video and tiles them into a 16×16 grid PNG saved to `Assets/Art/Characters/Animations/`.
+This samples 48 frames evenly across the full video (8 frames per phase × 6 phases) and tiles them into an 8×6 grid PNG saved to `Assets/Art/Characters/Animations/`.
 
 ## Output Location
 

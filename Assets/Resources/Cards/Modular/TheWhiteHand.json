@@ -13,7 +13,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "UnderTheWhiteHand",
                       "action":  "UnderTheWhiteHand",
                       "spriteName":  "Under the White Hand",
@@ -96,7 +95,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "WormtonguesWhisper",
                       "action":  "WormtonguesWhisper",
                       "spriteName":  "WormtonguesWhisper",
@@ -179,7 +177,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "FurnacesofIsengard",
                       "action":  "FurnacesofIsengard",
                       "spriteName":  "FurnacesOfIsengard",
@@ -262,7 +259,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "UrukVanguard",
                       "action":  "UrukVanguard",
                       "spriteName":  "UrukVanguard",
@@ -345,7 +341,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "DunlendingArchers",
@@ -428,7 +423,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Hillmen",
@@ -511,7 +505,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Mines",
@@ -594,7 +587,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "MountedHillmen",
@@ -677,7 +669,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "TorchBearers",
@@ -760,7 +751,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "ChoppingTheTrees",
                       "action":  "ChoppingTheTrees",
                       "spriteName":  "Chopping the Trees",
@@ -843,7 +833,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "WhatDoesMordorCommand",
                       "action":  "WhatDoesMordorCommand",
                       "spriteName":  "WhatDoesMordorCommand",
@@ -926,7 +915,6 @@
                                    "environmental"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "Caradhras",
                       "action":  "Caradhras",
                       "spriteName":  "",
@@ -1009,7 +997,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "RaidFromTheMountains",
                       "action":  "RaidFromTheMountains",
                       "spriteName":  "RaidFromTheMountains",
@@ -1092,7 +1079,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "BillFerny",
@@ -1175,7 +1161,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Ugluk",
@@ -1258,7 +1243,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "TheUndeadKing",
@@ -1341,7 +1325,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Broccach",
@@ -1370,7 +1353,7 @@
                       "agent":  0,
                       "emmissary":  0,
                       "mage":  0,
-                      "race":  0,
+                      "race":  15,
                       "artifacts":  [
 
                                     ],
@@ -1424,7 +1407,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Mauhur",
@@ -1507,7 +1489,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Crebain",
@@ -1591,7 +1572,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "BogSwarm",
@@ -1677,7 +1657,6 @@
                                    "army"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "EnginesFromIsengardAction",
                       "action":  "EnginesFromIsengardAction",
                       "spriteName":  "EnginesFromIsengard",
@@ -1760,7 +1739,6 @@
                                    "MistyMountains"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "StormfromOrthanc",
                       "action":  "StormfromOrthanc",
                       "spriteName":  "StormFromOrthanc",
@@ -1846,7 +1824,6 @@
                                    "hobbit"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "UncautiousSupperAction",
                       "action":  "UncautiousSupperAction",
                       "spriteName":  "SecondBreakfastDiversion",
@@ -1929,7 +1906,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "OrcDraughts",
                       "action":  "OrcDraughts",
                       "spriteName":  "Orc Draught",
@@ -2012,7 +1988,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "OrcRebellion",
                       "action":  "OrcRebellion",
                       "spriteName":  "OrcRebellion",
@@ -2095,7 +2070,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "ElvesGoingWest",
                       "action":  "ElvesGoingWest",
                       "spriteName":  "",
@@ -2178,7 +2152,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "TheLureOfTheSenses",
                       "action":  "TheLureOfTheSenses",
                       "spriteName":  "TheLureOfTheSenses",
@@ -2261,7 +2234,6 @@
                                    "environmental"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "Twilight",
                       "action":  "Twilight",
                       "spriteName":  "Twilight",
@@ -2344,7 +2316,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "ANewBreedOfWar",
                       "action":  "ANewBreedOfWar",
                       "spriteName":  "",
@@ -2427,7 +2398,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Lurtz",
@@ -2510,7 +2480,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Shagrat",
@@ -2593,7 +2562,6 @@
                                    "Nindalf"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "AmonLhaw",
@@ -2676,7 +2644,6 @@
                                    "MistyMountains"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Caradhras",
@@ -2759,7 +2726,6 @@
                                    "GapOfRohan"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "FangornSCamp",
@@ -2842,7 +2808,6 @@
                                    "Nindalf"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "AmonHen",
@@ -2925,7 +2890,6 @@
                                    "Dunland"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Angren",
@@ -3008,7 +2972,6 @@
                                    "Dunland"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Arailt",
@@ -3091,7 +3054,6 @@
                                    "Dunland"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Enedhir",
@@ -3174,7 +3136,6 @@
                                    "Dunland"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Treforn",
@@ -3257,7 +3218,6 @@
                                    "MistyMountains"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "KhazadDum",
@@ -3340,7 +3300,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "MaterialRetrieval",
                       "spriteName":  "TheShire",
@@ -3423,7 +3382,6 @@
                                    "Arthedain"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Bree",
@@ -3506,7 +3464,6 @@
                                    "Cardolan"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "AmonSul",
@@ -3589,7 +3546,6 @@
                                    "Cardolan"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "SarnFord",
@@ -3672,7 +3628,6 @@
                                    "TheShire"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Hobbiton",
@@ -3755,7 +3710,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "MaterialRetrieval",
                       "spriteName":  "Nindalf",
@@ -3838,7 +3792,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "UrukHai",
@@ -3921,7 +3874,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Wolves",
@@ -4004,7 +3956,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Aonghas",
@@ -4033,7 +3984,7 @@
                       "agent":  1,
                       "emmissary":  0,
                       "mage":  0,
-                      "race":  0,
+                      "race":  15,
                       "artifacts":  [
 
                                     ],
@@ -4087,7 +4038,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Enion",
@@ -4116,7 +4066,7 @@
                       "agent":  0,
                       "emmissary":  2,
                       "mage":  0,
-                      "race":  0,
+                      "race":  15,
                       "artifacts":  [
 
                                     ],
@@ -4170,7 +4120,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "MaterialRetrieval",
                       "spriteName":  "",
@@ -4253,7 +4202,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Saruman-TheWhiteHand",
@@ -4336,7 +4284,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "FalseParley",
                       "action":  "FalseParley",
                       "spriteName":  "FalseParley",
@@ -4419,7 +4366,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "LoveToHalflingsLeaf",
                       "action":  "LoveToHalflingsLeaf",
                       "spriteName":  "Lured by Halflings\u0027 Leaf",
@@ -4502,7 +4448,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "NewOrder",
                       "action":  "NewOrder",
                       "spriteName":  "NewOrder",
@@ -4585,7 +4530,6 @@
                                    "environmental"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "WildFire",
                       "action":  "WildFire",
                       "spriteName":  "WildFire",
@@ -4668,7 +4612,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "DunlendingShortBow",
                       "action":  "DunlendingShortBow",
                       "spriteName":  "Sniped!",
@@ -4751,7 +4694,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "Wargs",
@@ -4834,7 +4776,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "MaterialRetrieval",
                       "spriteName":  "Arthedain",
@@ -4917,7 +4858,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "HalfOrcs",
@@ -5000,7 +4940,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "MountedHalfOrcs",
@@ -5083,7 +5022,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "RingOfOrthanc",
                       "action":  "RingOfOrthanc",
                       "spriteName":  "Ring of Orthanc",
@@ -5166,7 +5104,6 @@
                                    "Rohan"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Edoras",
@@ -5249,7 +5186,6 @@
                                    "GapOfRohan"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Orthanc",
@@ -5332,7 +5268,6 @@
                                    "SouthernGondor"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "PathsOfTheDead",
@@ -5415,7 +5350,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "Curse",
                       "action":  "Curse",
                       "spriteName":  "Curse",
@@ -5498,7 +5432,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "Corruption",
                       "action":  "Corruption",
                       "spriteName":  "Corruption",
@@ -5581,7 +5514,6 @@
                                    "environmental"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "CruelWinter",
                       "action":  "CruelWinter",
                       "spriteName":  "",
@@ -5664,7 +5596,6 @@
                                    "environmental"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "Fog",
                       "action":  "Fog",
                       "spriteName":  "Fog",
@@ -5747,7 +5678,6 @@
                                    "environmental"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "Clouds",
                       "action":  "Clouds",
                       "spriteName":  "Clouds",
@@ -5830,7 +5760,6 @@
                                    "environmental"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "Snow",
                       "action":  "Snow",
                       "spriteName":  "",
@@ -5913,7 +5842,6 @@
                                    "environmental"
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  2,
                       "actionClassName":  "FrozenPasses",
                       "action":  "FrozenPasses",
                       "spriteName":  "FrozenPasses",
@@ -5996,7 +5924,6 @@
 
                                ],
                       "deckId":  "the_white_hand",
-                      "alignment":  0,
                       "actionClassName":  "",
                       "action":  "",
                       "spriteName":  "",

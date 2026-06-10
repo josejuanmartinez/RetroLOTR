@@ -1,0 +1,1380 @@
+fileFormatVersion: 2
+guid: f12f3d4988db52b42bf36236f0f17a2b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5245460134607597380
+    second: SauronCharacter_spritesheet_bg_0
+  - first:
+      213: -3911841875520604255
+    second: SauronCharacter_spritesheet_bg_1
+  - first:
+      213: 5461121636874300166
+    second: SauronCharacter_spritesheet_bg_2
+  - first:
+      213: -3989265047942056242
+    second: SauronCharacter_spritesheet_bg_3
+  - first:
+      213: -8357101176383182374
+    second: SauronCharacter_spritesheet_bg_4
+  - first:
+      213: 4947064550612811416
+    second: SauronCharacter_spritesheet_bg_5
+  - first:
+      213: 6043905924951415558
+    second: SauronCharacter_spritesheet_bg_6
+  - first:
+      213: 5533561013234708471
+    second: SauronCharacter_spritesheet_bg_7
+  - first:
+      213: -3444667402494975048
+    second: SauronCharacter_spritesheet_bg_8
+  - first:
+      213: -8262800954825398651
+    second: SauronCharacter_spritesheet_bg_9
+  - first:
+      213: 1375741012374979710
+    second: SauronCharacter_spritesheet_bg_10
+  - first:
+      213: -7271360874635529772
+    second: SauronCharacter_spritesheet_bg_11
+  - first:
+      213: -8563436004909343970
+    second: SauronCharacter_spritesheet_bg_12
+  - first:
+      213: 6642781031806683696
+    second: SauronCharacter_spritesheet_bg_13
+  - first:
+      213: 7475976385405678084
+    second: SauronCharacter_spritesheet_bg_14
+  - first:
+      213: 999357744768729968
+    second: SauronCharacter_spritesheet_bg_15
+  - first:
+      213: 4054095199761136049
+    second: SauronCharacter_spritesheet_bg_16
+  - first:
+      213: 3928714540698912670
+    second: SauronCharacter_spritesheet_bg_17
+  - first:
+      213: 7283341897418323678
+    second: SauronCharacter_spritesheet_bg_18
+  - first:
+      213: 5373879693258399038
+    second: SauronCharacter_spritesheet_bg_19
+  - first:
+      213: -1320569245541090617
+    second: SauronCharacter_spritesheet_bg_20
+  - first:
+      213: 8549906602325536982
+    second: SauronCharacter_spritesheet_bg_21
+  - first:
+      213: -7597813079508425771
+    second: SauronCharacter_spritesheet_bg_22
+  - first:
+      213: -5867474977467247232
+    second: SauronCharacter_spritesheet_bg_23
+  - first:
+      213: 7988648216861671226
+    second: SauronCharacter_spritesheet_bg_24
+  - first:
+      213: 8632991504216002377
+    second: SauronCharacter_spritesheet_bg_25
+  - first:
+      213: 1987200476318793952
+    second: SauronCharacter_spritesheet_bg_26
+  - first:
+      213: 4785223193173942963
+    second: SauronCharacter_spritesheet_bg_27
+  - first:
+      213: -8114472635658056741
+    second: SauronCharacter_spritesheet_bg_28
+  - first:
+      213: 7809320759825209126
+    second: SauronCharacter_spritesheet_bg_29
+  - first:
+      213: -4391500574050237346
+    second: SauronCharacter_spritesheet_bg_30
+  - first:
+      213: 2658082527223561480
+    second: SauronCharacter_spritesheet_bg_31
+  - first:
+      213: 991759627651055020
+    second: SauronCharacter_spritesheet_bg_32
+  - first:
+      213: 6199602153402825338
+    second: SauronCharacter_spritesheet_bg_33
+  - first:
+      213: -922579511032025563
+    second: SauronCharacter_spritesheet_bg_34
+  - first:
+      213: 2955740150487660116
+    second: SauronCharacter_spritesheet_bg_35
+  - first:
+      213: 1352242545657404357
+    second: SauronCharacter_spritesheet_bg_36
+  - first:
+      213: 6867883061244119344
+    second: SauronCharacter_spritesheet_bg_37
+  - first:
+      213: 4590053896496276441
+    second: SauronCharacter_spritesheet_bg_38
+  - first:
+      213: 1020813265796152064
+    second: SauronCharacter_spritesheet_bg_39
+  - first:
+      213: 4296733434244520531
+    second: SauronCharacter_spritesheet_bg_40
+  - first:
+      213: 4400495655980704478
+    second: SauronCharacter_spritesheet_bg_41
+  - first:
+      213: -9035222295925313560
+    second: SauronCharacter_spritesheet_bg_42
+  - first:
+      213: -2113322215473251690
+    second: SauronCharacter_spritesheet_bg_43
+  - first:
+      213: 5218306721826317053
+    second: SauronCharacter_spritesheet_bg_44
+  - first:
+      213: -6957476948685406288
+    second: SauronCharacter_spritesheet_bg_45
+  - first:
+      213: -749204087669818162
+    second: SauronCharacter_spritesheet_bg_46
+  - first:
+      213: 914887519801534620
+    second: SauronCharacter_spritesheet_bg_47
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb0dd399cc16437b0800000000000000
+      internalID: -5245460134607597380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_1
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a7b8104a8856b9c0800000000000000
+      internalID: -3911841875520604255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_2
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60ba719c13dc9cb40800000000000000
+      internalID: 5461121636874300166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_3
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec6388e239843a8c0800000000000000
+      internalID: -3989265047942056242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_4
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad96ea502cc950c80800000000000000
+      internalID: -8357101176383182374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_5
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89e34348ff087a440800000000000000
+      internalID: 4947064550612811416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_6
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60b9b90ba6440e350800000000000000
+      internalID: 6043905924951415558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_7
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ff2ec86c682bcc40800000000000000
+      internalID: 5533561013234708471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b36be08f351230d0800000000000000
+      internalID: -3444667402494975048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_9
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 586afdd4f42a45d80800000000000000
+      internalID: -8262800954825398651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_10
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e740c89692d971310800000000000000
+      internalID: 1375741012374979710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_11
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d1fca15fcfe61b90800000000000000
+      internalID: -7271360874635529772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_12
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1b96961350982980800000000000000
+      internalID: -8563436004909343970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_13
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03a4a894726ef2c50800000000000000
+      internalID: 6642781031806683696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_14
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4027051c9e000c760800000000000000
+      internalID: 7475976385405678084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_15
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 073c974f29e6edd00800000000000000
+      internalID: 999357744768729968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b9f06bca1a034830800000000000000
+      internalID: 4054095199761136049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_17
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e97454e3f09958630800000000000000
+      internalID: 3928714540698912670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_18
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed6b65dedd0a31560800000000000000
+      internalID: 7283341897418323678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_19
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3d1a56eb1bd39a40800000000000000
+      internalID: 5373879693258399038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_20
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cab73294456cade0800000000000000
+      internalID: -1320569245541090617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_21
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d0716661ce57a670800000000000000
+      internalID: 8549906602325536982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_22
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d3651652452f8690800000000000000
+      internalID: -7597813079508425771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_23
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 085529f589a829ea0800000000000000
+      internalID: -5867474977467247232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3ff8914a316dde60800000000000000
+      internalID: 7988648216861671226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_25
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94f82c5980c8ec770800000000000000
+      internalID: 8632991504216002377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_26
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e00878fd44f39b10800000000000000
+      internalID: 1987200476318793952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_27
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b2e7181427886240800000000000000
+      internalID: 4785223193173942963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_28
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdb49f3512a936f80800000000000000
+      internalID: -8114472635658056741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_29
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62717720bd7406c60800000000000000
+      internalID: 7809320759825209126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_30
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e54cfccbe714e03c0800000000000000
+      internalID: -4391500574050237346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_31
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80d35d2b9f763e420800000000000000
+      internalID: 2658082527223561480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_32
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cadf6b4702073cd00800000000000000
+      internalID: 991759627651055020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_33
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7a7256cf49690650800000000000000
+      internalID: 6199602153402825338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_34
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52ee1ef92d65233f0800000000000000
+      internalID: -922579511032025563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_35
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4563d26b106e40920800000000000000
+      internalID: 2955740150487660116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_36
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cb54184e6124c210800000000000000
+      internalID: 1352242545657404357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_37
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 039c060b14f9f4f50800000000000000
+      internalID: 6867883061244119344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_38
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d3ee8023b523bf30800000000000000
+      internalID: 4590053896496276441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_39
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00b39c9b148aa2e00800000000000000
+      internalID: 1020813265796152064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_40
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35a50ba1b4011ab30800000000000000
+      internalID: 4296733434244520531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_41
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed2216afb73b11d30800000000000000
+      internalID: 4400495655980704478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_42
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8efaea841317c9280800000000000000
+      internalID: -9035222295925313560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_43
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69a76c254a8fba2e0800000000000000
+      internalID: -2113322215473251690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_44
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df2ad73d0562b6840800000000000000
+      internalID: 5218306721826317053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_45
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bf33a4d393127f90800000000000000
+      internalID: -6957476948685406288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_46
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecc7b2a0ada4a95f0800000000000000
+      internalID: -749204087669818162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SauronCharacter_spritesheet_bg_47
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c98653b1a5552bc00800000000000000
+      internalID: 914887519801534620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 4004cd95a5c7e7b4083653b1b7e7da9a
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":8.0,"y":6.0},"gridSpriteSize":{"x":640.0,"y":480.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      SauronCharacter_spritesheet_bg_0: -5245460134607597380
+      SauronCharacter_spritesheet_bg_1: -3911841875520604255
+      SauronCharacter_spritesheet_bg_10: 1375741012374979710
+      SauronCharacter_spritesheet_bg_11: -7271360874635529772
+      SauronCharacter_spritesheet_bg_12: -8563436004909343970
+      SauronCharacter_spritesheet_bg_13: 6642781031806683696
+      SauronCharacter_spritesheet_bg_14: 7475976385405678084
+      SauronCharacter_spritesheet_bg_15: 999357744768729968
+      SauronCharacter_spritesheet_bg_16: 4054095199761136049
+      SauronCharacter_spritesheet_bg_17: 3928714540698912670
+      SauronCharacter_spritesheet_bg_18: 7283341897418323678
+      SauronCharacter_spritesheet_bg_19: 5373879693258399038
+      SauronCharacter_spritesheet_bg_2: 5461121636874300166
+      SauronCharacter_spritesheet_bg_20: -1320569245541090617
+      SauronCharacter_spritesheet_bg_21: 8549906602325536982
+      SauronCharacter_spritesheet_bg_22: -7597813079508425771
+      SauronCharacter_spritesheet_bg_23: -5867474977467247232
+      SauronCharacter_spritesheet_bg_24: 7988648216861671226
+      SauronCharacter_spritesheet_bg_25: 8632991504216002377
+      SauronCharacter_spritesheet_bg_26: 1987200476318793952
+      SauronCharacter_spritesheet_bg_27: 4785223193173942963
+      SauronCharacter_spritesheet_bg_28: -8114472635658056741
+      SauronCharacter_spritesheet_bg_29: 7809320759825209126
+      SauronCharacter_spritesheet_bg_3: -3989265047942056242
+      SauronCharacter_spritesheet_bg_30: -4391500574050237346
+      SauronCharacter_spritesheet_bg_31: 2658082527223561480
+      SauronCharacter_spritesheet_bg_32: 991759627651055020
+      SauronCharacter_spritesheet_bg_33: 6199602153402825338
+      SauronCharacter_spritesheet_bg_34: -922579511032025563
+      SauronCharacter_spritesheet_bg_35: 2955740150487660116
+      SauronCharacter_spritesheet_bg_36: 1352242545657404357
+      SauronCharacter_spritesheet_bg_37: 6867883061244119344
+      SauronCharacter_spritesheet_bg_38: 4590053896496276441
+      SauronCharacter_spritesheet_bg_39: 1020813265796152064
+      SauronCharacter_spritesheet_bg_4: -8357101176383182374
+      SauronCharacter_spritesheet_bg_40: 4296733434244520531
+      SauronCharacter_spritesheet_bg_41: 4400495655980704478
+      SauronCharacter_spritesheet_bg_42: -9035222295925313560
+      SauronCharacter_spritesheet_bg_43: -2113322215473251690
+      SauronCharacter_spritesheet_bg_44: 5218306721826317053
+      SauronCharacter_spritesheet_bg_45: -6957476948685406288
+      SauronCharacter_spritesheet_bg_46: -749204087669818162
+      SauronCharacter_spritesheet_bg_47: 914887519801534620
+      SauronCharacter_spritesheet_bg_5: 4947064550612811416
+      SauronCharacter_spritesheet_bg_6: 6043905924951415558
+      SauronCharacter_spritesheet_bg_7: 5533561013234708471
+      SauronCharacter_spritesheet_bg_8: -3444667402494975048
+      SauronCharacter_spritesheet_bg_9: -8262800954825398651
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

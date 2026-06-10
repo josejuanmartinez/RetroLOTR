@@ -2219,7 +2219,7 @@ public class Army
             RacesEnum.Dunedain => plural ? "dunedain companies" : "dunedain companies",
             RacesEnum.Beorning => plural ? "beorning fighters" : "beorning fighters",
             RacesEnum.Eagle => plural ? "eagle talons" : "eagle talons",
-            RacesEnum.Wose => plural ? "wose hunters" : "wose hunters",
+            RacesEnum.Wildman => plural ? "wildman hunters" : "wildman hunters",
             RacesEnum.Goblin => plural ? "goblin mobs" : "goblin mobs",
             RacesEnum.Ent => plural ? "entish strength" : "entish strength",
             RacesEnum.Southron => plural ? "southron ranks" : "southron ranks",

@@ -1,0 +1,1570 @@
+fileFormatVersion: 2
+guid: a554cb5db0481674b9c51bef67174f33
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1381694915798547198
+    second: hobbit_left_mirrored_0
+  - first:
+      213: 3866574197077247568
+    second: hobbit_left_mirrored_1
+  - first:
+      213: -4648249317537124367
+    second: hobbit_left_mirrored_2
+  - first:
+      213: -1787151676292413500
+    second: hobbit_left_mirrored_3
+  - first:
+      213: -6423926103844739240
+    second: hobbit_left_mirrored_4
+  - first:
+      213: 7270830523489662443
+    second: hobbit_left_mirrored_5
+  - first:
+      213: -4795121095110955411
+    second: hobbit_left_mirrored_6
+  - first:
+      213: 524612142970670571
+    second: hobbit_left_mirrored_7
+  - first:
+      213: 6456411467026922884
+    second: hobbit_left_mirrored_8
+  - first:
+      213: 2235125741513873169
+    second: hobbit_left_mirrored_9
+  - first:
+      213: -110330065591065668
+    second: hobbit_left_mirrored_10
+  - first:
+      213: 1022193559150844006
+    second: hobbit_left_mirrored_11
+  - first:
+      213: 653781659881117321
+    second: hobbit_left_mirrored_12
+  - first:
+      213: -4726900941133575624
+    second: hobbit_left_mirrored_13
+  - first:
+      213: 1065999805955550591
+    second: hobbit_left_mirrored_14
+  - first:
+      213: 7670732465563340857
+    second: hobbit_left_mirrored_15
+  - first:
+      213: 2605028026532864767
+    second: hobbit_left_mirrored_16
+  - first:
+      213: 822538516309723959
+    second: hobbit_left_mirrored_17
+  - first:
+      213: 7295963256707203128
+    second: hobbit_left_mirrored_18
+  - first:
+      213: 3519751645308456756
+    second: hobbit_left_mirrored_19
+  - first:
+      213: -4191319915565215688
+    second: hobbit_left_mirrored_20
+  - first:
+      213: -4174452163010441732
+    second: hobbit_left_mirrored_21
+  - first:
+      213: -165437406400013756
+    second: hobbit_left_mirrored_22
+  - first:
+      213: 4275603646993971138
+    second: hobbit_left_mirrored_23
+  - first:
+      213: 4953361376840492576
+    second: hobbit_left_mirrored_24
+  - first:
+      213: 1605274370967333337
+    second: hobbit_left_mirrored_25
+  - first:
+      213: -3848986093195014166
+    second: hobbit_left_mirrored_26
+  - first:
+      213: 7486507746945158051
+    second: hobbit_left_mirrored_27
+  - first:
+      213: 5411135215398635742
+    second: hobbit_left_mirrored_28
+  - first:
+      213: 1126642350251135795
+    second: hobbit_left_mirrored_29
+  - first:
+      213: -7676577579393951662
+    second: hobbit_left_mirrored_30
+  - first:
+      213: -5332006853943100757
+    second: hobbit_left_mirrored_31
+  - first:
+      213: 634421641484689667
+    second: hobbit_left_mirrored_32
+  - first:
+      213: 2300185344582202595
+    second: hobbit_left_mirrored_33
+  - first:
+      213: -9064071280191038953
+    second: hobbit_left_mirrored_34
+  - first:
+      213: 7911514999941158943
+    second: hobbit_left_mirrored_35
+  - first:
+      213: -7179784052203764211
+    second: hobbit_left_mirrored_36
+  - first:
+      213: 1593260141155391651
+    second: hobbit_left_mirrored_37
+  - first:
+      213: 2123097177511718361
+    second: hobbit_left_mirrored_38
+  - first:
+      213: -8461940135221819766
+    second: hobbit_left_mirrored_39
+  - first:
+      213: -2443185342704172136
+    second: hobbit_left_mirrored_40
+  - first:
+      213: -1852806985295690356
+    second: hobbit_left_mirrored_41
+  - first:
+      213: -7828451961135511003
+    second: hobbit_left_mirrored_42
+  - first:
+      213: -6433523118391729422
+    second: hobbit_left_mirrored_43
+  - first:
+      213: 8128597060983354054
+    second: hobbit_left_mirrored_44
+  - first:
+      213: 1355061497299143487
+    second: hobbit_left_mirrored_45
+  - first:
+      213: -751208295008407883
+    second: hobbit_left_mirrored_46
+  - first:
+      213: 2570153742155808097
+    second: hobbit_left_mirrored_47
+  - first:
+      213: 5078724851037076270
+    second: Hobbit_spritesheet_bg_0_mir
+  - first:
+      213: -4652539672151046892
+    second: Hobbit_spritesheet_bg_1_mir
+  - first:
+      213: 1112767724110728416
+    second: Hobbit_spritesheet_bg_2_mir
+  - first:
+      213: -6066969621384687669
+    second: Hobbit_spritesheet_bg_3_mir
+  - first:
+      213: -3141750573312009036
+    second: Hobbit_spritesheet_bg_4_mir
+  - first:
+      213: -4427579032650228315
+    second: Hobbit_spritesheet_bg_5_mir
+  - first:
+      213: -6184245000827188595
+    second: Hobbit_spritesheet_bg_6_mir
+  - first:
+      213: 6535661988293503039
+    second: Hobbit_spritesheet_bg_7_mir
+  - first:
+      213: -6627279986883752068
+    second: Hobbit_spritesheet_bg_8_mir
+  - first:
+      213: 3468444741583463366
+    second: Hobbit_spritesheet_bg_9_mir
+  - first:
+      213: 6140156842888951679
+    second: Hobbit_spritesheet_bg_10_mir
+  - first:
+      213: -7931461887661652222
+    second: Hobbit_spritesheet_bg_11_mir
+  - first:
+      213: 8344124481233555933
+    second: Hobbit_spritesheet_bg_12_mir
+  - first:
+      213: -4074440199253239991
+    second: Hobbit_spritesheet_bg_13_mir
+  - first:
+      213: -3295227952751340033
+    second: Hobbit_spritesheet_bg_14_mir
+  - first:
+      213: -6046366012867023044
+    second: Hobbit_spritesheet_bg_15_mir
+  - first:
+      213: -241110280110939627
+    second: Hobbit_spritesheet_bg_22_mir
+  - first:
+      213: -1197501922558859412
+    second: Hobbit_spritesheet_bg_16_mir
+  - first:
+      213: 6196412483841526030
+    second: Hobbit_spritesheet_bg_20_mir
+  - first:
+      213: 4089682056646590017
+    second: Hobbit_spritesheet_bg_21_mir
+  - first:
+      213: -4353997995141451573
+    second: Hobbit_spritesheet_bg_23_mir
+  - first:
+      213: -2697394317084390523
+    second: Hobbit_spritesheet_bg_17_mir
+  - first:
+      213: 4952054727657315455
+    second: Hobbit_spritesheet_bg_18_mir
+  - first:
+      213: 391139138335338925
+    second: Hobbit_spritesheet_bg_19_mir
+  - first:
+      213: -5033673071422550941
+    second: Hobbit_spritesheet_bg_28_mir
+  - first:
+      213: 4453185058368270604
+    second: Hobbit_spritesheet_bg_29_mir
+  - first:
+      213: 5500324190345985825
+    second: Hobbit_spritesheet_bg_24_mir
+  - first:
+      213: -5827716919500717998
+    second: Hobbit_spritesheet_bg_26_mir
+  - first:
+      213: 4589069556164673336
+    second: Hobbit_spritesheet_bg_27_mir
+  - first:
+      213: 274985024388516594
+    second: Hobbit_spritesheet_bg_25_mir
+  - first:
+      213: 1896796349325848546
+    second: Hobbit_spritesheet_bg_30_mir
+  - first:
+      213: -4611036624576112348
+    second: Hobbit_spritesheet_bg_31_mir
+  - first:
+      213: -3826433360704201914
+    second: Hobbit_spritesheet_bg_37_mir
+  - first:
+      213: 264101731217700457
+    second: Hobbit_spritesheet_bg_38_mir
+  - first:
+      213: 1856529316904999425
+    second: Hobbit_spritesheet_bg_39_mir
+  - first:
+      213: 7121787219443501969
+    second: Hobbit_spritesheet_bg_35_mir
+  - first:
+      213: -1065838357111691659
+    second: Hobbit_spritesheet_bg_32_mir
+  - first:
+      213: -7046875790449418223
+    second: Hobbit_spritesheet_bg_33_mir
+  - first:
+      213: 3878693925195126290
+    second: Hobbit_spritesheet_bg_34_mir
+  - first:
+      213: -4442863167799886117
+    second: Hobbit_spritesheet_bg_36_mir
+  - first:
+      213: -3371851496382689596
+    second: Hobbit_spritesheet_bg_47_mir
+  - first:
+      213: 2739796639046087244
+    second: Hobbit_spritesheet_bg_46_mir
+  - first:
+      213: -8226163110065149713
+    second: Hobbit_spritesheet_bg_45_mir
+  - first:
+      213: -938348089896886375
+    second: Hobbit_spritesheet_bg_44_mir
+  - first:
+      213: 6578861819805428483
+    second: Hobbit_spritesheet_bg_43_mir
+  - first:
+      213: 8208553524142644322
+    second: Hobbit_spritesheet_bg_42_mir
+  - first:
+      213: 7018997263224069646
+    second: Hobbit_spritesheet_bg_41_mir
+  - first:
+      213: -4346524408915899595
+    second: Hobbit_spritesheet_bg_40_mir
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_0_mir
+      rect:
+        serializedVersion: 2
+        x: 1879
+        y: 988
+        width: 73
+        height: 123
+      alignment: 9
+      pivot: {x: 0.50136983, y: 0.49756098}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2b730208514b7640800000000000000
+      internalID: 5078724851037076270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_1_mir
+      rect:
+        serializedVersion: 2
+        x: 1622.6
+        y: 988
+        width: 69
+        height: 123
+      alignment: 9
+      pivot: {x: 0.5043478, y: 0.499187}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 415460281dbde6fb0800000000000000
+      internalID: -4652539672151046892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_2_mir
+      rect:
+        serializedVersion: 2
+        x: 1366.2
+        y: 988
+        width: 69
+        height: 123
+      alignment: 9
+      pivot: {x: 0.5072464, y: 0.499187}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ecc3217958517f00800000000000000
+      internalID: 1112767724110728416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_3_mir
+      rect:
+        serializedVersion: 2
+        x: 1110.2
+        y: 988
+        width: 69
+        height: 123
+      alignment: 9
+      pivot: {x: 0.5072464, y: 0.499187}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcf8746064bcdcba0800000000000000
+      internalID: -6066969621384687669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_4_mir
+      rect:
+        serializedVersion: 2
+        x: 854.19995
+        y: 988
+        width: 69
+        height: 123
+      alignment: 9
+      pivot: {x: 0.5072464, y: 0.499187}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bc9bd0df724664d0800000000000000
+      internalID: -3141750573312009036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_5_mir
+      rect:
+        serializedVersion: 2
+        x: 598.7999
+        y: 988
+        width: 68
+        height: 123
+      alignment: 9
+      pivot: {x: 0.5029412, y: 0.49756098}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ad5aeff3541e82c0800000000000000
+      internalID: -4427579032650228315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_6_mir
+      rect:
+        serializedVersion: 2
+        x: 342.79993
+        y: 988
+        width: 68
+        height: 123
+      alignment: 9
+      pivot: {x: 0.5029412, y: 0.49756098}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8ac5b1ffe52d2aa0800000000000000
+      internalID: -6184245000827188595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_7_mir
+      rect:
+        serializedVersion: 2
+        x: 84.400024
+        y: 988
+        width: 72
+        height: 120
+      alignment: 9
+      pivot: {x: 0.5055555, y: 0.49833333}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f38e14073f553ba50800000000000000
+      internalID: 6535661988293503039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_8_mir
+      rect:
+        serializedVersion: 2
+        x: 1869.2
+        y: 796
+        width: 78
+        height: 115
+      alignment: 9
+      pivot: {x: 0.5102564, y: 0.4973913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7f0dbaf6fb2704a0800000000000000
+      internalID: -6627279986883752068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_9_mir
+      rect:
+        serializedVersion: 2
+        x: 1614
+        y: 796
+        width: 70
+        height: 142
+      alignment: 9
+      pivot: {x: 0.50285715, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c36729ad14622030800000000000000
+      internalID: 3468444741583463366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_10_mir
+      rect:
+        serializedVersion: 2
+        x: 1339.6
+        y: 796
+        width: 140
+        height: 150
+      alignment: 9
+      pivot: {x: 0.50285715, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f77749ddd18363550800000000000000
+      internalID: 6140156842888951679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_11_mir
+      rect:
+        serializedVersion: 2
+        x: 1090
+        y: 796
+        width: 118
+        height: 164
+      alignment: 9
+      pivot: {x: 0.5016949, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 207c0649f69cde190800000000000000
+      internalID: -7931461887661652222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_12_mir
+      rect:
+        serializedVersion: 2
+        x: 839.19995
+        y: 796
+        width: 108
+        height: 142
+      alignment: 9
+      pivot: {x: 0.5037037, y: 0.49859157}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd11191b1094cc370800000000000000
+      internalID: 8344124481233555933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_13_mir
+      rect:
+        serializedVersion: 2
+        x: 589.19995
+        y: 796
+        width: 102
+        height: 142
+      alignment: 9
+      pivot: {x: 0.5058824, y: 0.49859157}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94750f0e93ea477c0800000000000000
+      internalID: -4074440199253239991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_14_mir
+      rect:
+        serializedVersion: 2
+        x: 350.19995
+        y: 796
+        width: 85
+        height: 142
+      alignment: 9
+      pivot: {x: 0.5058824, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff59156c2aff442d0800000000000000
+      internalID: -3295227952751340033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_15_mir
+      rect:
+        serializedVersion: 2
+        x: 92.79993
+        y: 790.4
+        width: 80
+        height: 154
+      alignment: 9
+      pivot: {x: 0.505, y: 0.49740258}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3fe015752ef61ca0800000000000000
+      internalID: -6046366012867023044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_22_mir
+      rect:
+        serializedVersion: 2
+        x: 351.40002
+        y: 598
+        width: 103
+        height: 143
+      alignment: 9
+      pivot: {x: 0.5067961, y: 0.49930072}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 512ea4a4a7767acf0800000000000000
+      internalID: -241110280110939627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_16_mir
+      rect:
+        serializedVersion: 2
+        x: 1883.8
+        y: 597.60004
+        width: 79
+        height: 159
+      alignment: 9
+      pivot: {x: 0.5063291, y: 0.4955975}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c672808985e916fe0800000000000000
+      internalID: -1197501922558859412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_20_mir
+      rect:
+        serializedVersion: 2
+        x: 863.6
+        y: 597.60004
+        width: 76
+        height: 151
+      alignment: 9
+      pivot: {x: 0.5052631, y: 0.49536425}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e098b25f2541ef550800000000000000
+      internalID: 6196412483841526030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_21_mir
+      rect:
+        serializedVersion: 2
+        x: 607.6
+        y: 597.60004
+        width: 76
+        height: 151
+      alignment: 9
+      pivot: {x: 0.50789475, y: 0.49668875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14e75b6992871c830800000000000000
+      internalID: 4089682056646590017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_23_mir
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 597.60004
+        width: 147
+        height: 131
+      alignment: 9
+      pivot: {x: 0.50068027, y: 0.4946565}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc0b4d254ed7393c0800000000000000
+      internalID: -4353997995141451573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_17_mir
+      rect:
+        serializedVersion: 2
+        x: 1621.6
+        y: 596
+        width: 90
+        height: 154
+      alignment: 9
+      pivot: {x: 0.50222224, y: 0.4987013}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58b0707f82ee09ad0800000000000000
+      internalID: -2697394317084390523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_18_mir
+      rect:
+        serializedVersion: 2
+        x: 1365.8
+        y: 594
+        width: 91
+        height: 154
+      alignment: 9
+      pivot: {x: 0.5054945, y: 0.4987013}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7cde46a98b39b440800000000000000
+      internalID: 4952054727657315455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_19_mir
+      rect:
+        serializedVersion: 2
+        x: 1117.2
+        y: 594
+        width: 82
+        height: 154
+      alignment: 9
+      pivot: {x: 0.50731707, y: 0.4987013}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da1fa3659fa9d6500800000000000000
+      internalID: 391139138335338925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_28_mir
+      rect:
+        serializedVersion: 2
+        x: 808.7999
+        y: 410
+        width: 150
+        height: 123
+      alignment: 9
+      pivot: {x: 0.5026667, y: 0.49756098}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36cc866d20dc42ab0800000000000000
+      internalID: -5033673071422550941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_29_mir
+      rect:
+        serializedVersion: 2
+        x: 554.4
+        y: 409.2
+        width: 134
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5029851, y: 0.4984375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c013e137734eccd30800000000000000
+      internalID: 4453185058368270604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_24_mir
+      rect:
+        serializedVersion: 2
+        x: 1907.6
+        y: 408.4
+        width: 126
+        height: 123
+      alignment: 9
+      pivot: {x: 0.50317454, y: 0.49593496}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12f7f0b85b3155c40800000000000000
+      internalID: 5500324190345985825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_26_mir
+      rect:
+        serializedVersion: 2
+        x: 1352.3999
+        y: 408.4
+        width: 142
+        height: 133
+      alignment: 9
+      pivot: {x: 0.5056338, y: 0.49624062}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25040a9965acf1fa0800000000000000
+      internalID: -5827716919500717998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_27_mir
+      rect:
+        serializedVersion: 2
+        x: 1079.6
+        y: 407.2
+        width: 142
+        height: 129
+      alignment: 9
+      pivot: {x: 0.5028169, y: 0.4992248}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83f31c88276afaf30800000000000000
+      internalID: 4589069556164673336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_25_mir
+      rect:
+        serializedVersion: 2
+        x: 1601.4
+        y: 406.4
+        width: 153
+        height: 131
+      alignment: 9
+      pivot: {x: 0.503268, y: 0.49618322}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2faca393c61f0d300800000000000000
+      internalID: 274985024388516594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_30_mir
+      rect:
+        serializedVersion: 2
+        x: 317.19995
+        y: 406.4
+        width: 138
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5043478, y: 0.4984375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ef23d4ea36c25a10800000000000000
+      internalID: 1896796349325848546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_31_mir
+      rect:
+        serializedVersion: 2
+        x: 93.19995
+        y: 406.4
+        width: 80
+        height: 150
+      alignment: 9
+      pivot: {x: 0.5075, y: 0.49600002}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42913d9ce9e4200c0800000000000000
+      internalID: -4611036624576112348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_37_mir
+      rect:
+        serializedVersion: 2
+        x: 603.19995
+        y: 215.6
+        width: 76
+        height: 145
+      alignment: 9
+      pivot: {x: 0.5052631, y: 0.49517244}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64b958ab127c5eac0800000000000000
+      internalID: -3826433360704201914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_38_mir
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 215.6
+        width: 68
+        height: 145
+      alignment: 9
+      pivot: {x: 0.5, y: 0.49517244}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 966fbc110274aa300800000000000000
+      internalID: 264101731217700457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_39_mir
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 215.6
+        width: 64
+        height: 145
+      alignment: 9
+      pivot: {x: 0.5, y: 0.49517244}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10a9831d397b3c910800000000000000
+      internalID: 1856529316904999425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_35_mir
+      rect:
+        serializedVersion: 2
+        x: 1120.6
+        y: 214.8
+        width: 65
+        height: 146
+      alignment: 9
+      pivot: {x: 0.50461537, y: 0.49726027}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19bc8d44ebba5d260800000000000000
+      internalID: 7121787219443501969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_32_mir
+      rect:
+        serializedVersion: 2
+        x: 1882.4
+        y: 214
+        width: 82
+        height: 150
+      alignment: 9
+      pivot: {x: 0.50731707, y: 0.49733332}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5762f5849a16531f0800000000000000
+      internalID: -1065838357111691659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_33_mir
+      rect:
+        serializedVersion: 2
+        x: 1632.4
+        y: 214
+        width: 76
+        height: 150
+      alignment: 9
+      pivot: {x: 0.50789475, y: 0.49733332}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11066f5fdc7743e90800000000000000
+      internalID: -7046875790449418223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_34_mir
+      rect:
+        serializedVersion: 2
+        x: 1378.3999
+        y: 214
+        width: 76
+        height: 150
+      alignment: 9
+      pivot: {x: 0.5052631, y: 0.49733332}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21698b32393e3d530800000000000000
+      internalID: 3878693925195126290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_36_mir
+      rect:
+        serializedVersion: 2
+        x: 852
+        y: 214
+        width: 78
+        height: 148
+      alignment: 9
+      pivot: {x: 0.5025641, y: 0.49864867}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdefe99fc77c752c0800000000000000
+      internalID: -4442863167799886117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_47_mir
+      rect:
+        serializedVersion: 2
+        x: 98.599976
+        y: 58.4
+        width: 53
+        height: 71
+      alignment: 9
+      pivot: {x: 0.50566036, y: 0.49577466}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ce8dbacde6c431d0800000000000000
+      internalID: -3371851496382689596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_46_mir
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 55.2
+        width: 47
+        height: 80
+      alignment: 9
+      pivot: {x: 0.50638294, y: 0.4975}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c42b623f686b50620800000000000000
+      internalID: 2739796639046087244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_45_mir
+      rect:
+        serializedVersion: 2
+        x: 609.19995
+        y: 50.4
+        width: 54
+        height: 87
+      alignment: 9
+      pivot: {x: 0.51111114, y: 0.49425286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe8e4284c3cc6dd80800000000000000
+      internalID: -8226163110065149713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_44_mir
+      rect:
+        serializedVersion: 2
+        x: 870.7999
+        y: 46.4
+        width: 56
+        height: 98
+      alignment: 9
+      pivot: {x: 0.50714284, y: 0.49387756}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99f970242615af2f0800000000000000
+      internalID: -938348089896886375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_43_mir
+      rect:
+        serializedVersion: 2
+        x: 1109.6
+        y: 36.8
+        width: 74
+        height: 111
+      alignment: 9
+      pivot: {x: 0.50540537, y: 0.49369368}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30be1e308ffcc4b50800000000000000
+      internalID: 6578861819805428483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_42_mir
+      rect:
+        serializedVersion: 2
+        x: 1376.3999
+        y: 33.600002
+        width: 70
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5057143, y: 0.49687502}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26c9d4e70f3aae170800000000000000
+      internalID: 8208553524142644322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_41_mir
+      rect:
+        serializedVersion: 2
+        x: 1630
+        y: 25.6
+        width: 66
+        height: 136
+      alignment: 9
+      pivot: {x: 0.5030303, y: 0.49558824}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0ed8e992dc786160800000000000000
+      internalID: 7018997263224069646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hobbit_spritesheet_bg_40_mir
+      rect:
+        serializedVersion: 2
+        x: 1885
+        y: 23.6
+        width: 65
+        height: 144
+      alignment: 9
+      pivot: {x: 0.5015384, y: 0.4944445}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53bc007341b0ea3c0800000000000000
+      internalID: -4346524408915899595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Hobbit_spritesheet_bg_0_mir: 5078724851037076270
+      Hobbit_spritesheet_bg_10_mir: 6140156842888951679
+      Hobbit_spritesheet_bg_11_mir: -7931461887661652222
+      Hobbit_spritesheet_bg_12_mir: 8344124481233555933
+      Hobbit_spritesheet_bg_13_mir: -4074440199253239991
+      Hobbit_spritesheet_bg_14_mir: -3295227952751340033
+      Hobbit_spritesheet_bg_15_mir: -6046366012867023044
+      Hobbit_spritesheet_bg_16_mir: -1197501922558859412
+      Hobbit_spritesheet_bg_17_mir: -2697394317084390523
+      Hobbit_spritesheet_bg_18_mir: 4952054727657315455
+      Hobbit_spritesheet_bg_19_mir: 391139138335338925
+      Hobbit_spritesheet_bg_1_mir: -4652539672151046892
+      Hobbit_spritesheet_bg_20_mir: 6196412483841526030
+      Hobbit_spritesheet_bg_21_mir: 4089682056646590017
+      Hobbit_spritesheet_bg_22_mir: -241110280110939627
+      Hobbit_spritesheet_bg_23_mir: -4353997995141451573
+      Hobbit_spritesheet_bg_24_mir: 5500324190345985825
+      Hobbit_spritesheet_bg_25_mir: 274985024388516594
+      Hobbit_spritesheet_bg_26_mir: -5827716919500717998
+      Hobbit_spritesheet_bg_27_mir: 4589069556164673336
+      Hobbit_spritesheet_bg_28_mir: -5033673071422550941
+      Hobbit_spritesheet_bg_29_mir: 4453185058368270604
+      Hobbit_spritesheet_bg_2_mir: 1112767724110728416
+      Hobbit_spritesheet_bg_30_mir: 1896796349325848546
+      Hobbit_spritesheet_bg_31_mir: -4611036624576112348
+      Hobbit_spritesheet_bg_32_mir: -1065838357111691659
+      Hobbit_spritesheet_bg_33_mir: -7046875790449418223
+      Hobbit_spritesheet_bg_34_mir: 3878693925195126290
+      Hobbit_spritesheet_bg_35_mir: 7121787219443501969
+      Hobbit_spritesheet_bg_36_mir: -4442863167799886117
+      Hobbit_spritesheet_bg_37_mir: -3826433360704201914
+      Hobbit_spritesheet_bg_38_mir: 264101731217700457
+      Hobbit_spritesheet_bg_39_mir: 1856529316904999425
+      Hobbit_spritesheet_bg_3_mir: -6066969621384687669
+      Hobbit_spritesheet_bg_40_mir: -4346524408915899595
+      Hobbit_spritesheet_bg_41_mir: 7018997263224069646
+      Hobbit_spritesheet_bg_42_mir: 8208553524142644322
+      Hobbit_spritesheet_bg_43_mir: 6578861819805428483
+      Hobbit_spritesheet_bg_44_mir: -938348089896886375
+      Hobbit_spritesheet_bg_45_mir: -8226163110065149713
+      Hobbit_spritesheet_bg_46_mir: 2739796639046087244
+      Hobbit_spritesheet_bg_47_mir: -3371851496382689596
+      Hobbit_spritesheet_bg_4_mir: -3141750573312009036
+      Hobbit_spritesheet_bg_5_mir: -4427579032650228315
+      Hobbit_spritesheet_bg_6_mir: -6184245000827188595
+      Hobbit_spritesheet_bg_7_mir: 6535661988293503039
+      Hobbit_spritesheet_bg_8_mir: -6627279986883752068
+      Hobbit_spritesheet_bg_9_mir: 3468444741583463366
+      hobbit_left_mirrored_0: -1381694915798547198
+      hobbit_left_mirrored_1: 3866574197077247568
+      hobbit_left_mirrored_10: -110330065591065668
+      hobbit_left_mirrored_11: 1022193559150844006
+      hobbit_left_mirrored_12: 653781659881117321
+      hobbit_left_mirrored_13: -4726900941133575624
+      hobbit_left_mirrored_14: 1065999805955550591
+      hobbit_left_mirrored_15: 7670732465563340857
+      hobbit_left_mirrored_16: 2605028026532864767
+      hobbit_left_mirrored_17: 822538516309723959
+      hobbit_left_mirrored_18: 7295963256707203128
+      hobbit_left_mirrored_19: 3519751645308456756
+      hobbit_left_mirrored_2: -4648249317537124367
+      hobbit_left_mirrored_20: -4191319915565215688
+      hobbit_left_mirrored_21: -4174452163010441732
+      hobbit_left_mirrored_22: -165437406400013756
+      hobbit_left_mirrored_23: 4275603646993971138
+      hobbit_left_mirrored_24: 4953361376840492576
+      hobbit_left_mirrored_25: 1605274370967333337
+      hobbit_left_mirrored_26: -3848986093195014166
+      hobbit_left_mirrored_27: 7486507746945158051
+      hobbit_left_mirrored_28: 5411135215398635742
+      hobbit_left_mirrored_29: 1126642350251135795
+      hobbit_left_mirrored_3: -1787151676292413500
+      hobbit_left_mirrored_30: -7676577579393951662
+      hobbit_left_mirrored_31: -5332006853943100757
+      hobbit_left_mirrored_32: 634421641484689667
+      hobbit_left_mirrored_33: 2300185344582202595
+      hobbit_left_mirrored_34: -9064071280191038953
+      hobbit_left_mirrored_35: 7911514999941158943
+      hobbit_left_mirrored_36: -7179784052203764211
+      hobbit_left_mirrored_37: 1593260141155391651
+      hobbit_left_mirrored_38: 2123097177511718361
+      hobbit_left_mirrored_39: -8461940135221819766
+      hobbit_left_mirrored_4: -6423926103844739240
+      hobbit_left_mirrored_40: -2443185342704172136
+      hobbit_left_mirrored_41: -1852806985295690356
+      hobbit_left_mirrored_42: -7828451961135511003
+      hobbit_left_mirrored_43: -6433523118391729422
+      hobbit_left_mirrored_44: 8128597060983354054
+      hobbit_left_mirrored_45: 1355061497299143487
+      hobbit_left_mirrored_46: -751208295008407883
+      hobbit_left_mirrored_47: 2570153742155808097
+      hobbit_left_mirrored_5: 7270830523489662443
+      hobbit_left_mirrored_6: -4795121095110955411
+      hobbit_left_mirrored_7: 524612142970670571
+      hobbit_left_mirrored_8: 6456411467026922884
+      hobbit_left_mirrored_9: 2235125741513873169
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

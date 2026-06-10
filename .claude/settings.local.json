@@ -19,7 +19,14 @@
       "Bash(node _fix_effects2.js)",
       "Bash(node -e 'try { JSON.parse\\(require\\('\\\\''fs'\\\\''\\).readFileSync\\('\\\\''__TRACKED_VAR__'\\\\'','\\\\''utf8'\\\\''\\)\\); console.log\\('\\\\''OK: __TRACKED_VAR__'\\\\''\\); } catch\\(e\\) { console.log\\('\\\\''BAD: __TRACKED_VAR__ - '\\\\'' + e.message\\); }')",
       "Bash(git restore *)",
-      "Bash(node _fix_effects3.js)"
+      "Bash(node _fix_effects3.js)",
+      "PowerShell(python .agents/skills/spritesheet-generation/scripts/generate_spritesheet_video.py --image \"Assets/Art/Characters/Hobbit.png\" --out-dir \"Assets/Art/Characters/AnimationVideos\")",
+      "PowerShell(python .agents/skills/extract_spritesheet_from_video/scripts/extract_spritesheet.py --video \"Assets/Art/Characters/AnimationVideos/Hobbit.mp4\" --out \"Assets/Art/Characters/Animations/Hobbit_spritesheet.png\" --frames 48 --cols 8)",
+      "PowerShell(python .agents/skills/spritesheet-generation/scripts/generate_spritesheet_video.py --image \"Assets/Art/Characters/SauronCharacter.png\" --out-dir \"Assets/Art/Characters/AnimationVideos\")",
+      "Bash(python -c \"from PIL import Image; print\\('Pillow OK'\\)\")",
+      "Bash(python gen_maia_variants.py)",
+      "Bash(python *)",
+      "PowerShell(python .agents/skills/extract_spritesheet_from_video/scripts/extract_spritesheet.py --video \"Assets/Art/Characters/AnimationVideos/SauronCharacter.mp4\" --out \"Assets/Art/Characters/Animations/SauronCharacter_spritesheet.png\" --frames 48 --cols 8)"
     ]
   }
 }
