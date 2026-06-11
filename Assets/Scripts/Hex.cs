@@ -35,6 +35,7 @@ public class Hex : MonoBehaviour
     [Header("Character")]
     public SpriteRenderer characterSpriteRenderer;
     public SpriteRenderer bannerSpriteRenderer;
+    [SerializeField] private CharacterAnimationController characterAnimationController;
 
     [Header("PC Name")]
     public TextMeshPro pcName;
@@ -561,6 +562,7 @@ public class Hex : MonoBehaviour
         }
         else
         {
+            GetCharacterAnimationController()?.Clear();
             ClearOutlineColor();
             ClearClassIcons();
         }
@@ -1351,6 +1353,14 @@ public class Hex : MonoBehaviour
 
         if (TryGetKnownCharacterForIcon(out Character known))
         {
+            CharacterAnimationController animationController = GetCharacterAnimationController();
+            if (animationController != null && animationController.Show(known))
+            {
+                // The animator now drives the sprite renderer's sprite each frame.
+                UpdateOutlineColor(known);
+                return;
+            }
+
             Sprite sprite = null;
             if (illustrations != null)
             {
@@ -1367,9 +1377,28 @@ public class Hex : MonoBehaviour
         }
         else
         {
+            GetCharacterAnimationController()?.Clear();
             characterSpriteRenderer.sprite = defaultCharacterSprite;
             ClearOutlineColor();
         }
+    }
+
+    private CharacterAnimationController GetCharacterAnimationController()
+    {
+        if (characterAnimationController == null && characterSpriteRenderer != null)
+        {
+            characterAnimationController = characterSpriteRenderer.GetComponent<CharacterAnimationController>();
+            if (characterAnimationController == null)
+                characterAnimationController = characterSpriteRenderer.gameObject.AddComponent<CharacterAnimationController>();
+        }
+        return characterAnimationController;
+    }
+
+    public void PlayCharacterActionAnimation(Character character)
+    {
+        if (character == null) return;
+        if (characterSpriteRenderer == null || !characterSpriteRenderer.gameObject.activeInHierarchy) return;
+        GetCharacterAnimationController()?.PlayAction(character);
     }
 
     private void UpdateClassIcons()

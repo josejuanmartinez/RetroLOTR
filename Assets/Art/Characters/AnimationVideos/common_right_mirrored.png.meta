@@ -336,7 +336,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 40
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -398,1057 +398,1057 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Common_spritesheet_bg_0_mir
+      name: common_right_mirrored_0
       rect:
         serializedVersion: 2
-        x: 1880.0267
-        y: 983.05133
-        width: 72.89713
-        height: 136.92194
-      alignment: 9
-      pivot: {x: -0.75589895, y: 0.70112944}
+        x: 0
+        y: 960
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c71028a4e7447ca60800000000000000
-      internalID: 7694193797592383868
+      spriteID: cfdea0f7477539841b50c236d86d2cab
+      internalID: -3299211194026643086
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_1_mir
+      name: common_right_mirrored_1
       rect:
         serializedVersion: 2
-        x: 1620.0267
-        y: 982.02673
-        width: 71.89713
-        height: 141.9465
-      alignment: 9
-      pivot: {x: -0.78032136, y: 0.67631114}
+        x: 256
+        y: 960
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 181d9932539ec41d0800000000000000
-      internalID: -3365058407112781439
+      spriteID: e841974a8ef81d944bd02385f817f767
+      internalID: 78900482051579717
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_2_mir
+      name: common_right_mirrored_2
       rect:
         serializedVersion: 2
-        x: 1360.0762
-        y: 974.05133
-        width: 78.847755
-        height: 148.9124
-      alignment: 9
-      pivot: {x: -0.6233816, y: 0.6446743}
+        x: 512
+        y: 960
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8f5f9979025bd1ec0800000000000000
-      internalID: -3594517775984757256
+      spriteID: b7322ce1f9910454e94bb18d35021b2d
+      internalID: -3062304882439032143
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_3_mir
+      name: common_right_mirrored_3
       rect:
         serializedVersion: 2
-        x: 1109.0762
-        y: 974.03876
-        width: 86.88097
-        height: 151.9345
-      alignment: 9
-      pivot: {x: -0.47328007, y: 0.63185126}
+        x: 768
+        y: 960
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 68bc1366d39ce8ac0800000000000000
-      internalID: -3850919365810467962
+      spriteID: c036366faa2232847a9947dcfb81eb55
+      internalID: -4634635198446042708
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_4_mir
+      name: common_right_mirrored_4
       rect:
         serializedVersion: 2
-        x: 853.0762
-        y: 974.03876
-        width: 86.897125
-        height: 152.91833
-      alignment: 9
-      pivot: {x: -0.47300613, y: 0.62778604}
+        x: 1024
+        y: 960
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 6f0c3809bd9ecc980800000000000000
-      internalID: -8517175666032787210
+      spriteID: f20f2ded8be14ad46952356f883b01be
+      internalID: -2438021936670223230
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_5_mir
+      name: common_right_mirrored_5
       rect:
         serializedVersion: 2
-        x: 598.07605
-        y: 974.03876
-        width: 80.847755
-        height: 152.9345
-      alignment: 9
-      pivot: {x: -0.5832226, y: 0.62771976}
+        x: 1280
+        y: 960
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 18f9a8511c0a8f2b0800000000000000
-      internalID: -5550509789583597695
+      spriteID: e81c8b64753009f4ba3ec39201ddfd13
+      internalID: 1540953042726592459
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_6_mir
+      name: common_right_mirrored_6
       rect:
         serializedVersion: 2
-        x: 343.07608
-        y: 974.03876
-        width: 77.847755
-        height: 152.88512
-      alignment: 9
-      pivot: {x: -0.6442349, y: 0.6279225}
+        x: 1536
+        y: 960
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 137eb33c305d25ae0800000000000000
-      internalID: -1561951908607039695
+      spriteID: 791d42f58654a8646a79d69c1d07a393
+      internalID: 4855447685552994308
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_7_mir
+      name: common_right_mirrored_7
       rect:
         serializedVersion: 2
-        x: 87.07607
-        y: 974.03876
-        width: 77.847755
-        height: 151.9345
-      alignment: 9
-      pivot: {x: -0.6442349, y: 0.63185126}
+        x: 1792
+        y: 960
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9086a596bccf3b770800000000000000
-      internalID: 8625515661920725001
+      spriteID: 5d7d8174c3477df4fa81422a542f1cc0
+      internalID: -7340330003967653164
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_8_mir
+      name: common_right_mirrored_8
       rect:
         serializedVersion: 2
-        x: 1878.0267
-        y: 782.0429
-        width: 80.9465
-        height: 146.94597
-      alignment: 9
-      pivot: {x: -0.5812913, y: 0.65330136}
+        x: 0
+        y: 768
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ba94046d3f79a9790800000000000000
-      internalID: -7522533154041607765
+      spriteID: 9de8eea08cf408243bd3dd43c982c1f3
+      internalID: -6501430156369253533
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_12_mir
+      name: common_right_mirrored_9
       rect:
         serializedVersion: 2
-        x: 851.0564
-        y: 782.0429
-        width: 88.89232
-        height: 150.90073
-      alignment: 9
-      pivot: {x: -0.4399444, y: 0.63617986}
+        x: 256
+        y: 768
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 214686410d22599e0800000000000000
-      internalID: -1615346614251527150
+      spriteID: 688073dcc096e8442bd5f88baefeca9b
+      internalID: 2979105070096438744
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_14_mir
+      name: common_right_mirrored_10
       rect:
         serializedVersion: 2
-        x: 316.05127
-        y: 782.0429
-        width: 129.87256
-        height: 151.91418
-      alignment: 9
-      pivot: {x: 0.014418423, y: 0.6319357}
+        x: 512
+        y: 768
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9dbde851b0caec0c0800000000000000
-      internalID: -4553513009618691111
+      spriteID: 37022c2ad710729479a76912eb2418f8
+      internalID: 7183556299127458474
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_9_mir
+      name: common_right_mirrored_11
       rect:
         serializedVersion: 2
-        x: 1588.0762
-        y: 782.03876
-        width: 143.89713
-        height: 151.88512
-      alignment: 9
-      pivot: {x: 0.1104756, y: 0.63205665}
+        x: 768
+        y: 768
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 40a78504066f264a0800000000000000
-      internalID: -6601443210514892284
+      spriteID: da3bfb44d1bc52e45bb43852787133bd
+      internalID: 3794855655935807802
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_10_mir
+      name: common_right_mirrored_12
       rect:
         serializedVersion: 2
-        x: 1326.0267
-        y: 782.03876
-        width: 159.9465
-        height: 174.9345
-      alignment: 9
-      pivot: {x: 0.19973242, y: 0.54877687}
+        x: 1024
+        y: 768
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f653294d3eda55e00800000000000000
-      internalID: 1032922883586930031
+      spriteID: 62c4e83b897d9b7418651ae76554aaf4
+      internalID: 2097549093399032148
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_11_mir
+      name: common_right_mirrored_13
       rect:
         serializedVersion: 2
-        x: 1079.0762
-        y: 782.03876
-        width: 144.84775
-        height: 147.9345
-      alignment: 9
-      pivot: {x: 0.11631352, y: 0.64893585}
+        x: 1280
+        y: 768
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 6745648379dac1b60800000000000000
-      internalID: 7718234726401987702
+      spriteID: b8a7514a514ff6348921c06ada50aba0
+      internalID: 8998806572919035946
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_13_mir
+      name: common_right_mirrored_14
       rect:
         serializedVersion: 2
-        x: 584.0477
-        y: 782.03876
-        width: 104.92555
-        height: 158.94145
-      alignment: 9
-      pivot: {x: -0.21991253, y: 0.603996}
+        x: 1536
+        y: 768
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 073f025da1e81dc70800000000000000
-      internalID: 8994126176731591536
+      spriteID: 918fb58b5849d2242a6b1bd6c521cbc5
+      internalID: -3694428961127688357
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_15_mir
+      name: common_right_mirrored_15
       rect:
         serializedVersion: 2
-        x: 77.026794
-        y: 782.03876
-        width: 96.921936
-        height: 152.9345
-      alignment: 9
-      pivot: {x: -0.32065046, y: 0.62771976}
+        x: 1792
+        y: 768
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 44107e4ca5b521190800000000000000
-      internalID: -7993225943220551356
+      spriteID: 62bf923c928e67943adf9bf0d2ccacf1
+      internalID: 4035503825878213469
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_17_mir
+      name: common_right_mirrored_16
       rect:
         serializedVersion: 2
-        x: 1626.0762
-        y: 590.0429
-        width: 72.87894
-        height: 149.93034
-      alignment: 9
-      pivot: {x: -0.7563374, y: 0.64029735}
+        x: 0
+        y: 576
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 442456b91bbed0640800000000000000
-      internalID: 5047949905401037380
+      spriteID: 9ee36fa5f1b2fa54e8befc749e4f209b
+      internalID: 2508743111049292301
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_16_mir
+      name: common_right_mirrored_17
       rect:
         serializedVersion: 2
-        x: 1878.0267
-        y: 590.03876
-        width: 79.9465
-        height: 152.88512
-      alignment: 9
-      pivot: {x: -0.60107064, y: 0.6279225}
+        x: 256
+        y: 576
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bb83c787baec1cb60800000000000000
-      internalID: 7764714468419582139
+      spriteID: 453c1209da400bf4eb5e93f322031acf
+      internalID: 50842330774198993
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_18_mir
+      name: common_right_mirrored_18
       rect:
         serializedVersion: 2
-        x: 1367.0267
-        y: 589.0335
-        width: 80.91688
-        height: 149.93976
-      alignment: 9
-      pivot: {x: -0.5818702, y: 0.6402571}
+        x: 512
+        y: 576
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ad7df67cfa66a2d50800000000000000
-      internalID: 6713291099700451290
+      spriteID: 0b5a47abcc1161347a860e62b5c2b35d
+      internalID: -3889745097207134223
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_20_mir
+      name: common_right_mirrored_19
       rect:
         serializedVersion: 2
-        x: 840.07605
-        y: 584.0761
-        width: 101.88097
-        height: 158.89713
-      alignment: 9
-      pivot: {x: -0.25636816, y: 0.6041645}
+        x: 768
+        y: 576
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: dc7f463e078418ee0800000000000000
-      internalID: -1260646770998446131
+      spriteID: 149d5e3d50ac5024c8779a67989a8bf5
+      internalID: -1638797434608169896
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_19_mir
+      name: common_right_mirrored_20
       rect:
         serializedVersion: 2
-        x: 1105.0762
-        y: 584.02673
-        width: 89.897125
-        height: 158.9465
-      alignment: 9
-      pivot: {x: -0.4238497, y: 0.6039768}
+        x: 1024
+        y: 576
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 24ea181f73fe3d0d0800000000000000
-      internalID: -3399110270180544958
+      spriteID: 3d0e1d5aafcd60645b7a96632f51fac6
+      internalID: -3782524903417281258
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_23_mir
+      name: common_right_mirrored_21
       rect:
         serializedVersion: 2
-        x: 70.026695
-        y: 582.02673
-        width: 112.89713
-        height: 163.9465
-      alignment: 9
-      pivot: {x: -0.13377547, y: 0.58555686}
+        x: 1280
+        y: 576
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 69ead743ee9bb9cd0800000000000000
-      internalID: -2550240331241247082
+      spriteID: 4c96da96381ea5348922cb82912ea771
+      internalID: -4935493742061074514
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_22_mir
+      name: common_right_mirrored_22
       rect:
         serializedVersion: 2
-        x: 325.07614
-        y: 580.0761
-        width: 122.897125
-        height: 164.89713
-      alignment: 9
-      pivot: {x: -0.04152155, y: 0.58218116}
+        x: 1536
+        y: 576
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 0345cd54102f937c0800000000000000
-      internalID: -4090972699208428496
+      spriteID: 473bd312df3ff4f4899196290e4c22c3
+      internalID: -2093921207958029213
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_21_mir
+      name: common_right_mirrored_23
       rect:
         serializedVersion: 2
-        x: 578.0267
-        y: 580.03625
-        width: 118.93034
-        height: 166.91602
-      alignment: 9
-      pivot: {x: -0.07626021, y: 0.5751395}
+        x: 1792
+        y: 576
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bb365de75762a0e20800000000000000
-      internalID: 3317506361592734651
+      spriteID: 022aa4f8fe1ebef4dbfb3a783d87a973
+      internalID: -2988538123393413614
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_29_mir
+      name: common_right_mirrored_24
       rect:
         serializedVersion: 2
-        x: 584.0267
-        y: 400.05133
-        width: 99.89713
-        height: 149.87256
-      alignment: 9
-      pivot: {x: -0.28131807, y: 0.64054424}
+        x: 0
+        y: 384
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 517863c906d0dd360800000000000000
-      internalID: 7195922488196761365
+      spriteID: f84715fb856898444a061ff3616afe3b
+      internalID: 6478518260993068791
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_28_mir
+      name: common_right_mirrored_25
       rect:
         serializedVersion: 2
-        x: 841.0514
-        y: 399.0761
-        width: 108.89737
-        height: 148.89713
-      alignment: 9
-      pivot: {x: -0.17541862, y: 0.64474046}
+        x: 256
+        y: 384
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 042487e8537e1b2e0800000000000000
-      internalID: -2111652533050523072
+      spriteID: 49dd697d622309943be589d69dbc020b
+      internalID: -4679664510343324879
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_25_mir
+      name: common_right_mirrored_26
       rect:
         serializedVersion: 2
-        x: 1604.0144
-        y: 398.0429
-        width: 94.92927
-        height: 152.93034
-      alignment: 9
-      pivot: {x: -0.34837234, y: 0.62773675}
+        x: 512
+        y: 384
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c536d0973c5f77f90800000000000000
-      internalID: -6955820879552093348
+      spriteID: 6ca1ac99f6dd8d54098db7e0f4d15876
+      internalID: 4287857496339144521
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_26_mir
+      name: common_right_mirrored_27
       rect:
         serializedVersion: 2
-        x: 1342.043
-        y: 398.02676
-        width: 127.880974
-        height: 147.9465
-      alignment: 9
-      pivot: {x: -0.00093078613, y: 0.6488832}
+        x: 768
+        y: 384
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d1eac4462a4ce7ef0800000000000000
-      internalID: -108433139263820259
+      spriteID: eeae5af602a5fa9459d166a2d1ee4dd4
+      internalID: -593565880898586932
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_31_mir
+      name: common_right_mirrored_28
       rect:
         serializedVersion: 2
-        x: 71.042885
-        y: 397.05414
-        width: 108.90072
-        height: 151.86975
-      alignment: 9
-      pivot: {x: -0.1753825, y: 0.6321206}
+        x: 1024
+        y: 384
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 949fb9232976be180800000000000000
-      internalID: -9085053945677874871
+      spriteID: 6a05de5369028444ba4b624f152168ed
+      internalID: -5891946810775189492
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_24_mir
+      name: common_right_mirrored_29
       rect:
         serializedVersion: 2
-        x: 1856.0267
-        y: 396.0429
-        width: 115.93034
-        height: 152.93034
-      alignment: 9
-      pivot: {x: -0.104111314, y: 0.62773675}
+        x: 1280
+        y: 384
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f50d7c3ce6132dde0800000000000000
-      internalID: -1309930189810577313
+      spriteID: 764bceec775870c41b3e7f5268bc580a
+      internalID: -2649348628251370488
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_27_mir
+      name: common_right_mirrored_30
       rect:
         serializedVersion: 2
-        x: 1087.0762
-        y: 396.0363
-        width: 99.847755
-        height: 154.88759
-      alignment: 9
-      pivot: {x: -0.28195167, y: 0.6198043}
+        x: 1536
+        y: 384
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b1919cafd80189f60800000000000000
-      internalID: 8041195336653936923
+      spriteID: c9521275c46b3ff4bba28f537633bb08
+      internalID: -2626879812139551794
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_30_mir
+      name: common_right_mirrored_31
       rect:
         serializedVersion: 2
-        x: 312.0268
-        y: 396.0129
-        width: 130.92194
-        height: 152.91096
-      alignment: 9
-      pivot: {x: 0.022318184, y: 0.6278163}
+        x: 1792
+        y: 384
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7c0852ab2c787b840800000000000000
-      internalID: 5239805961885286599
+      spriteID: 8a9a884a68969d845ad6d671686489cc
+      internalID: -7043676957105425472
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_32_mir
+      name: common_right_mirrored_32
       rect:
         serializedVersion: 2
-        x: 1864.013
-        y: 208.05637
-        width: 108.98457
-        height: 149.91689
-      alignment: 9
-      pivot: {x: -0.17447817, y: 0.6403548}
+        x: 0
+        y: 192
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 12bd4bdca2eda9310800000000000000
-      internalID: 1412685708555246369
+      spriteID: 35e64bb53d22eac49ba3a4c36aadf491
+      internalID: -4892433840853799122
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_33_mir
+      name: common_right_mirrored_33
       rect:
         serializedVersion: 2
-        x: 1602.0111
-        y: 207.07613
-        width: 103.91276
-        height: 149.84775
-      alignment: 9
-      pivot: {x: -0.23180258, y: 0.6406503}
+        x: 256
+        y: 192
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 749c8b9ce708eb810800000000000000
-      internalID: 1783003784523860295
+      spriteID: 4c434c02dd7f5954ca5ff9337883f21a
+      internalID: -4907261676119362873
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_34_mir
+      name: common_right_mirrored_34
       rect:
         serializedVersion: 2
-        x: 1356.0267
-        y: 205.05412
-        width: 97.89713
-        height: 153.86975
-      alignment: 9
-      pivot: {x: -0.30749488, y: 0.6239043}
+        x: 512
+        y: 192
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c5b236f7cd4f13e50800000000000000
-      internalID: 6787475341291236188
+      spriteID: 5136edfbfd2487d40b2d242d94df3858
+      internalID: -1841368130709869162
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_36_mir
+      name: common_right_mirrored_35
       rect:
         serializedVersion: 2
-        x: 854.0631
-        y: 205.04291
-        width: 82.91019
-        height: 152.93034
-      alignment: 9
-      pivot: {x: -0.5438392, y: 0.62773675}
+        x: 768
+        y: 192
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 62edf22da2ba306b0800000000000000
-      internalID: -5331229333473206746
+      spriteID: a7467006f8ba28d4ba602f015280bd8e
+      internalID: -4399020441961052343
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_39_mir
+      name: common_right_mirrored_36
       rect:
         serializedVersion: 2
-        x: 65.04966
-        y: 205.04291
-        width: 108.87417
-        height: 152.88097
-      alignment: 9
-      pivot: {x: -0.1756692, y: 0.6279395}
+        x: 1024
+        y: 192
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 458844b0544d7b2e0800000000000000
-      internalID: -2109984507392915372
+      spriteID: 965b3aaa3bc7c334089308f4b83ae8b2
+      internalID: -6043921997762854668
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_35_mir
+      name: common_right_mirrored_37
       rect:
         serializedVersion: 2
-        x: 1102.0267
-        y: 205.02675
-        width: 94.921936
-        height: 152.9465
-      alignment: 9
-      pivot: {x: -0.34847653, y: 0.62767047}
+        x: 1280
+        y: 192
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 2111ab3fc4d7c6b90800000000000000
-      internalID: -7247279930885926638
+      spriteID: 5c63111c200de5846844de4adc7b107f
+      internalID: -4618078562568226859
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_37_mir
+      name: common_right_mirrored_38
       rect:
         serializedVersion: 2
-        x: 595.0268
-        y: 205.02675
-        width: 82.95673
-        height: 150.9465
-      alignment: 9
-      pivot: {x: -0.54297304, y: 0.6359869}
+        x: 1536
+        y: 192
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 39e804988e9ae9cd0800000000000000
-      internalID: -2549413522844905837
+      spriteID: 386f2e2c59d082441807d761285bc74e
+      internalID: -6667777320241205887
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_38_mir
+      name: common_right_mirrored_39
       rect:
         serializedVersion: 2
-        x: 335.0267
-        y: 204.04291
-        width: 86.89713
-        height: 152.93034
-      alignment: 9
-      pivot: {x: -0.473006, y: 0.62773675}
+        x: 1792
+        y: 192
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9c5617d95a09df2e0800000000000000
-      internalID: -2090355611044583991
+      spriteID: 0fec18490b667de45b5039602585c79f
+      internalID: 9002547563273356331
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_47_mir
+      name: common_right_mirrored_40
       rect:
         serializedVersion: 2
-        x: 94.0267
-        y: 41.076122
-        width: 63.94156
-        height: 104.88097
-      alignment: 9
-      pivot: {x: -1.001828, y: 0.9153234}
+        x: 0
+        y: 0
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bcc3a7d21d68fd960800000000000000
-      internalID: 7628964526758182091
+      spriteID: 2a31df9d7da147f48b2959c55bbb747a
+      internalID: -6327444881574065820
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_46_mir
+      name: common_right_mirrored_41
       rect:
         serializedVersion: 2
-        x: 350.07614
-        y: 35.026752
-        width: 66.897125
-        height: 112.9465
-      alignment: 9
-      pivot: {x: -0.9133856, y: 0.8499599}
+        x: 256
+        y: 0
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7b7632c6af9047170800000000000000
-      internalID: 8175170194745026487
+      spriteID: 56834256f4629c84d9c3f2d09ffd83b3
+      internalID: 7850294725088468580
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_45_mir
+      name: common_right_mirrored_42
       rect:
         serializedVersion: 2
-        x: 608.0762
-        y: 32.051315
-        width: 71.897125
-        height: 120.935776
-      alignment: 9
-      pivot: {x: -0.7803215, y: 0.7938098}
+        x: 512
+        y: 0
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b497444cf47417950800000000000000
-      internalID: 6445010949664700747
+      spriteID: 90d61f39713880a418c4c2c5cd49f939
+      internalID: -5727605786059566042
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_44_mir
+      name: common_right_mirrored_43
       rect:
         serializedVersion: 2
-        x: 861.07605
-        y: 25.042908
-        width: 75.847755
-        height: 129.93034
-      alignment: 9
-      pivot: {x: -0.6875912, y: 0.73885745}
+        x: 768
+        y: 0
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8220b345411882fa0800000000000000
-      internalID: -5825264193691254232
+      spriteID: c43fc0ec5624b1142816e782b96dcdc8
+      internalID: -154570799722582827
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_43_mir
+      name: common_right_mirrored_44
       rect:
         serializedVersion: 2
-        x: 1116.0762
-        y: 20.07612
-        width: 71.847755
-        height: 139.89713
-      alignment: 9
-      pivot: {x: -0.7815449, y: 0.68621856}
+        x: 1024
+        y: 0
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 32106d3a663134770800000000000000
-      internalID: 8593733845509341475
+      spriteID: 4797235ffe0fba944981ecf31cfeabf6
+      internalID: -6965514463655820927
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_41_mir
+      name: common_right_mirrored_45
       rect:
         serializedVersion: 2
-        x: 1625.0762
-        y: 14.07612
-        width: 82.897125
-        height: 151.87256
-      alignment: 9
-      pivot: {x: -0.5440825, y: 0.6321089}
+        x: 1280
+        y: 0
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9ab251695faa5b620800000000000000
-      internalID: 2789323515987569577
+      spriteID: f860b7211e1c8c040a5ca6a4f100d5a5
+      internalID: 8638108663935476561
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_42_mir
+      name: common_right_mirrored_46
       rect:
         serializedVersion: 2
-        x: 1370.0762
-        y: 14.07612
-        width: 73.88097
-        height: 148.88759
-      alignment: 9
-      pivot: {x: -0.73251665, y: 0.64478177}
+        x: 1536
+        y: 0
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4f5ccf5f73dbde8d0800000000000000
-      internalID: -2815386143988857356
+      spriteID: 92cea40c556cbf04dbb8d2858f41e5dc
+      internalID: -8861173915871936431
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Common_spritesheet_bg_40_mir
+      name: common_right_mirrored_47
       rect:
         serializedVersion: 2
-        x: 1868.0198
-        y: 14.026751
-        width: 111.923836
-        height: 151.9465
-      alignment: 9
-      pivot: {x: -0.14363492, y: 0.6318013}
+        x: 1792
+        y: 0
+        width: 256
+        height: 192
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 17e147c7ca2a8ab80800000000000000
-      internalID: -8383271844644118927
+      spriteID: cbe801610389fb14693d199ba8a941fa
+      internalID: 6289179323983457956
       vertices: []
       indices: 
       edges: []
@@ -1457,7 +1457,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: de803ab16cd74de409f4451dda7741e7
     internalID: 0
     vertices: []
     indices: 
@@ -1465,56 +1465,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":8.0,"y":6.0},"gridSpriteSize":{"x":256.0,"y":192.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Common_spritesheet_bg_0_mir: 7694193797592383868
-      Common_spritesheet_bg_10_mir: 1032922883586930031
-      Common_spritesheet_bg_11_mir: 7718234726401987702
-      Common_spritesheet_bg_12_mir: -1615346614251527150
-      Common_spritesheet_bg_13_mir: 8994126176731591536
-      Common_spritesheet_bg_14_mir: -4553513009618691111
-      Common_spritesheet_bg_15_mir: -7993225943220551356
-      Common_spritesheet_bg_16_mir: 7764714468419582139
-      Common_spritesheet_bg_17_mir: 5047949905401037380
-      Common_spritesheet_bg_18_mir: 6713291099700451290
-      Common_spritesheet_bg_19_mir: -3399110270180544958
-      Common_spritesheet_bg_1_mir: -3365058407112781439
-      Common_spritesheet_bg_20_mir: -1260646770998446131
-      Common_spritesheet_bg_21_mir: 3317506361592734651
-      Common_spritesheet_bg_22_mir: -4090972699208428496
-      Common_spritesheet_bg_23_mir: -2550240331241247082
-      Common_spritesheet_bg_24_mir: -1309930189810577313
-      Common_spritesheet_bg_25_mir: -6955820879552093348
-      Common_spritesheet_bg_26_mir: -108433139263820259
-      Common_spritesheet_bg_27_mir: 8041195336653936923
-      Common_spritesheet_bg_28_mir: -2111652533050523072
-      Common_spritesheet_bg_29_mir: 7195922488196761365
-      Common_spritesheet_bg_2_mir: -3594517775984757256
-      Common_spritesheet_bg_30_mir: 5239805961885286599
-      Common_spritesheet_bg_31_mir: -9085053945677874871
-      Common_spritesheet_bg_32_mir: 1412685708555246369
-      Common_spritesheet_bg_33_mir: 1783003784523860295
-      Common_spritesheet_bg_34_mir: 6787475341291236188
-      Common_spritesheet_bg_35_mir: -7247279930885926638
-      Common_spritesheet_bg_36_mir: -5331229333473206746
-      Common_spritesheet_bg_37_mir: -2549413522844905837
-      Common_spritesheet_bg_38_mir: -2090355611044583991
-      Common_spritesheet_bg_39_mir: -2109984507392915372
-      Common_spritesheet_bg_3_mir: -3850919365810467962
-      Common_spritesheet_bg_40_mir: -8383271844644118927
-      Common_spritesheet_bg_41_mir: 2789323515987569577
-      Common_spritesheet_bg_42_mir: -2815386143988857356
-      Common_spritesheet_bg_43_mir: 8593733845509341475
-      Common_spritesheet_bg_44_mir: -5825264193691254232
-      Common_spritesheet_bg_45_mir: 6445010949664700747
-      Common_spritesheet_bg_46_mir: 8175170194745026487
-      Common_spritesheet_bg_47_mir: 7628964526758182091
-      Common_spritesheet_bg_4_mir: -8517175666032787210
-      Common_spritesheet_bg_5_mir: -5550509789583597695
-      Common_spritesheet_bg_6_mir: -1561951908607039695
-      Common_spritesheet_bg_7_mir: 8625515661920725001
-      Common_spritesheet_bg_8_mir: -7522533154041607765
-      Common_spritesheet_bg_9_mir: -6601443210514892284
       common_right_mirrored_0: -3299211194026643086
       common_right_mirrored_1: 78900482051579717
       common_right_mirrored_10: 7183556299127458474

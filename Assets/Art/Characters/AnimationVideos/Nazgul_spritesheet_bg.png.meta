@@ -1,0 +1,1380 @@
+fileFormatVersion: 2
+guid: 4a887f557b5fdad42a7efd98a4ae7ab9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7150634713565621386
+    second: Nazgul_spritesheet_bg_0
+  - first:
+      213: -1386799392047172447
+    second: Nazgul_spritesheet_bg_1
+  - first:
+      213: 4521749177524587626
+    second: Nazgul_spritesheet_bg_2
+  - first:
+      213: 7665909894613064013
+    second: Nazgul_spritesheet_bg_3
+  - first:
+      213: -3086757804773787845
+    second: Nazgul_spritesheet_bg_4
+  - first:
+      213: 7234924992088528064
+    second: Nazgul_spritesheet_bg_5
+  - first:
+      213: 2462267224462208028
+    second: Nazgul_spritesheet_bg_6
+  - first:
+      213: -5841697851384306157
+    second: Nazgul_spritesheet_bg_7
+  - first:
+      213: -6801538762686203344
+    second: Nazgul_spritesheet_bg_8
+  - first:
+      213: -93822144847591114
+    second: Nazgul_spritesheet_bg_9
+  - first:
+      213: 6393730565156180178
+    second: Nazgul_spritesheet_bg_10
+  - first:
+      213: -2151480212163984956
+    second: Nazgul_spritesheet_bg_11
+  - first:
+      213: -8329777560950847820
+    second: Nazgul_spritesheet_bg_12
+  - first:
+      213: -4224171351306522038
+    second: Nazgul_spritesheet_bg_13
+  - first:
+      213: -2276777020214314783
+    second: Nazgul_spritesheet_bg_14
+  - first:
+      213: -7376378294172833272
+    second: Nazgul_spritesheet_bg_15
+  - first:
+      213: -5120884030264693252
+    second: Nazgul_spritesheet_bg_16
+  - first:
+      213: -8244718009514139719
+    second: Nazgul_spritesheet_bg_17
+  - first:
+      213: 1817044866614602684
+    second: Nazgul_spritesheet_bg_18
+  - first:
+      213: 8269184336930292246
+    second: Nazgul_spritesheet_bg_19
+  - first:
+      213: -7999899885521466285
+    second: Nazgul_spritesheet_bg_20
+  - first:
+      213: 557700858846471964
+    second: Nazgul_spritesheet_bg_21
+  - first:
+      213: -5194212051314158603
+    second: Nazgul_spritesheet_bg_22
+  - first:
+      213: 7834726684762948141
+    second: Nazgul_spritesheet_bg_23
+  - first:
+      213: -208592565346019089
+    second: Nazgul_spritesheet_bg_24
+  - first:
+      213: 8835563886161254748
+    second: Nazgul_spritesheet_bg_25
+  - first:
+      213: -8760174215967473349
+    second: Nazgul_spritesheet_bg_26
+  - first:
+      213: -8224678436768614452
+    second: Nazgul_spritesheet_bg_27
+  - first:
+      213: -4112753108851981403
+    second: Nazgul_spritesheet_bg_28
+  - first:
+      213: 5299976483473403678
+    second: Nazgul_spritesheet_bg_29
+  - first:
+      213: 7654072493203961389
+    second: Nazgul_spritesheet_bg_30
+  - first:
+      213: -7320041202309229017
+    second: Nazgul_spritesheet_bg_31
+  - first:
+      213: 5869406418645261576
+    second: Nazgul_spritesheet_bg_32
+  - first:
+      213: 2464393342965258299
+    second: Nazgul_spritesheet_bg_33
+  - first:
+      213: 8449085083975401374
+    second: Nazgul_spritesheet_bg_34
+  - first:
+      213: -4243985416693865080
+    second: Nazgul_spritesheet_bg_35
+  - first:
+      213: 6477933433207516395
+    second: Nazgul_spritesheet_bg_36
+  - first:
+      213: 3083799645933332565
+    second: Nazgul_spritesheet_bg_37
+  - first:
+      213: -4492716780945406805
+    second: Nazgul_spritesheet_bg_38
+  - first:
+      213: -2346885112535747036
+    second: Nazgul_spritesheet_bg_39
+  - first:
+      213: 2012090728606563778
+    second: Nazgul_spritesheet_bg_40
+  - first:
+      213: 7698512974891486710
+    second: Nazgul_spritesheet_bg_41
+  - first:
+      213: 9015860099542888895
+    second: Nazgul_spritesheet_bg_42
+  - first:
+      213: -6799043792431904746
+    second: Nazgul_spritesheet_bg_43
+  - first:
+      213: 2784623583390108532
+    second: Nazgul_spritesheet_bg_44
+  - first:
+      213: 8507073753925436493
+    second: Nazgul_spritesheet_bg_45
+  - first:
+      213: -371687322263216476
+    second: Nazgul_spritesheet_bg_46
+  - first:
+      213: 2235044707085290367
+    second: Nazgul_spritesheet_bg_47
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 673185b1d97d3cc90800000000000000
+      internalID: -7150634713565621386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_1
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a4fc4eec4911cce0800000000000000
+      internalID: -1386799392047172447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_2
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6c84c17bea70ce30800000000000000
+      internalID: 4521749177524587626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_3
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d495094fe68c26a60800000000000000
+      internalID: 7665909894613064013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_4
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b373bc28122a925d0800000000000000
+      internalID: -3086757804773787845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_5
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c45802b2fd976460800000000000000
+      internalID: 7234924992088528064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_6
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1c2828befabb2220800000000000000
+      internalID: 2462267224462208028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_7
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 2400
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 316631b31ce1eeea0800000000000000
+      internalID: -5841697851384306157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03af90c08841c91a0800000000000000
+      internalID: -6801538762686203344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_9
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6394b40a14da2bef0800000000000000
+      internalID: -93822144847591114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_10
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d011b5d2181bb850800000000000000
+      internalID: 6393730565156180178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_11
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c10fa465286422e0800000000000000
+      internalID: -2151480212163984956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_12
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b6418df07fa66c80800000000000000
+      internalID: -8329777560950847820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_13
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a423efe598ab065c0800000000000000
+      internalID: -4224171351306522038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_14
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e87a5dec534760e0800000000000000
+      internalID: -2276777020214314783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_15
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 1920
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80a2deee507d1a990800000000000000
+      internalID: -7376378294172833272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfd2a182b17fee8b0800000000000000
+      internalID: -5120884030264693252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_17
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bfd4a917a0e49d80800000000000000
+      internalID: -8244718009514139719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_18
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbba287dda0773910800000000000000
+      internalID: 1817044866614602684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_19
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61244f8a75b02c270800000000000000
+      internalID: 8269184336930292246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_20
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35c0ecc7075aaf090800000000000000
+      internalID: -7999899885521466285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_21
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c17697ee9f95db700800000000000000
+      internalID: 557700858846471964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_22
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f3dd51d8a37ae7b0800000000000000
+      internalID: -5194212051314158603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_23
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 1440
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d22c19dd86a8abc60800000000000000
+      internalID: 7834726684762948141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe853cfba2eea1df0800000000000000
+      internalID: -208592565346019089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_25
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5959e8aa8a3e9a70800000000000000
+      internalID: 8835563886161254748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_26
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3109b6c6fb9d6680800000000000000
+      internalID: -8760174215967473349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_27
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc77798b9821cdd80800000000000000
+      internalID: -8224678436768614452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_28
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a38ef976d09ce6c0800000000000000
+      internalID: -4112753108851981403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_29
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1f2b5ff78c4d8940800000000000000
+      internalID: 5299976483473403678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_30
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d26b28a216ab83a60800000000000000
+      internalID: 7654072493203961389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_31
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 960
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 726922b4f4df96a90800000000000000
+      internalID: -7320041202309229017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_32
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80d9fb15a02547150800000000000000
+      internalID: 5869406418645261576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_33
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b38184240b8433220800000000000000
+      internalID: 2464393342965258299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_34
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9fb7636e1e214570800000000000000
+      internalID: 8449085083975401374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_35
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8852606cfb55a15c0800000000000000
+      internalID: -4243985416693865080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_36
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bece5fcc22e36e950800000000000000
+      internalID: 6477933433207516395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_37
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 558e456707bdbca20800000000000000
+      internalID: 3083799645933332565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_38
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba4005324e9a6a1c0800000000000000
+      internalID: -4492716780945406805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_39
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 480
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42677aaac603e6fd0800000000000000
+      internalID: -2346885112535747036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_40
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cd737e6bd16ceb10800000000000000
+      internalID: 2012090728606563778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_41
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fd842f13cc96da60800000000000000
+      internalID: 7698512974891486710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_42
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb13fd11ef4ce1d70800000000000000
+      internalID: 9015860099542888895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_43
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61885c391b1f4a1a0800000000000000
+      internalID: -6799043792431904746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_44
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47b84214568f4a620800000000000000
+      internalID: 2784623583390108532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_45
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4446ccb1823f0670800000000000000
+      internalID: 8507073753925436493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_46
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ae1cf4895087daf0800000000000000
+      internalID: -371687322263216476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nazgul_spritesheet_bg_47
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 0
+        width: 640
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7b8feeb159740f10800000000000000
+      internalID: 2235044707085290367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 973feee0a1ed8f643b19784bb10a7d06
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":8.0,"y":6.0},"gridSpriteSize":{"x":640.0,"y":480.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Nazgul_spritesheet_bg_0: -7150634713565621386
+      Nazgul_spritesheet_bg_1: -1386799392047172447
+      Nazgul_spritesheet_bg_10: 6393730565156180178
+      Nazgul_spritesheet_bg_11: -2151480212163984956
+      Nazgul_spritesheet_bg_12: -8329777560950847820
+      Nazgul_spritesheet_bg_13: -4224171351306522038
+      Nazgul_spritesheet_bg_14: -2276777020214314783
+      Nazgul_spritesheet_bg_15: -7376378294172833272
+      Nazgul_spritesheet_bg_16: -5120884030264693252
+      Nazgul_spritesheet_bg_17: -8244718009514139719
+      Nazgul_spritesheet_bg_18: 1817044866614602684
+      Nazgul_spritesheet_bg_19: 8269184336930292246
+      Nazgul_spritesheet_bg_2: 4521749177524587626
+      Nazgul_spritesheet_bg_20: -7999899885521466285
+      Nazgul_spritesheet_bg_21: 557700858846471964
+      Nazgul_spritesheet_bg_22: -5194212051314158603
+      Nazgul_spritesheet_bg_23: 7834726684762948141
+      Nazgul_spritesheet_bg_24: -208592565346019089
+      Nazgul_spritesheet_bg_25: 8835563886161254748
+      Nazgul_spritesheet_bg_26: -8760174215967473349
+      Nazgul_spritesheet_bg_27: -8224678436768614452
+      Nazgul_spritesheet_bg_28: -4112753108851981403
+      Nazgul_spritesheet_bg_29: 5299976483473403678
+      Nazgul_spritesheet_bg_3: 7665909894613064013
+      Nazgul_spritesheet_bg_30: 7654072493203961389
+      Nazgul_spritesheet_bg_31: -7320041202309229017
+      Nazgul_spritesheet_bg_32: 5869406418645261576
+      Nazgul_spritesheet_bg_33: 2464393342965258299
+      Nazgul_spritesheet_bg_34: 8449085083975401374
+      Nazgul_spritesheet_bg_35: -4243985416693865080
+      Nazgul_spritesheet_bg_36: 6477933433207516395
+      Nazgul_spritesheet_bg_37: 3083799645933332565
+      Nazgul_spritesheet_bg_38: -4492716780945406805
+      Nazgul_spritesheet_bg_39: -2346885112535747036
+      Nazgul_spritesheet_bg_4: -3086757804773787845
+      Nazgul_spritesheet_bg_40: 2012090728606563778
+      Nazgul_spritesheet_bg_41: 7698512974891486710
+      Nazgul_spritesheet_bg_42: 9015860099542888895
+      Nazgul_spritesheet_bg_43: -6799043792431904746
+      Nazgul_spritesheet_bg_44: 2784623583390108532
+      Nazgul_spritesheet_bg_45: 8507073753925436493
+      Nazgul_spritesheet_bg_46: -371687322263216476
+      Nazgul_spritesheet_bg_47: 2235044707085290367
+      Nazgul_spritesheet_bg_5: 7234924992088528064
+      Nazgul_spritesheet_bg_6: 2462267224462208028
+      Nazgul_spritesheet_bg_7: -5841697851384306157
+      Nazgul_spritesheet_bg_8: -6801538762686203344
+      Nazgul_spritesheet_bg_9: -93822144847591114
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1048,6 +1048,16 @@ public class Board : MonoBehaviour
         target.SetPropertyBlock(block);
     }
 
+    private void StartMoverWalkAnimation(Character character, SpriteRenderer moverSR, Vector3 worldDelta)
+    {
+        if (moverSR == null) return;
+        CharacterAnimationController animationController = moverSR.GetComponent<CharacterAnimationController>();
+        if (animationController == null) animationController = moverSR.gameObject.AddComponent<CharacterAnimationController>();
+        // Activate before setting params: Unity resets animator parameters on activation.
+        if (!moverSR.gameObject.activeSelf) moverSR.gameObject.SetActive(true);
+        animationController.PlayMovement(character, worldDelta);
+    }
+
     private static SpriteRenderer GetCharacterBackground(SpriteRenderer characterSprite)
     {
         if (characterSprite == null) return null;
@@ -1298,7 +1308,11 @@ public class Board : MonoBehaviour
                 canAnimate = false;
             }
 
-            if (canAnimate) yield return tween;
+            if (canAnimate)
+            {
+                if (fromSR != null) StartMoverWalkAnimation(character, characterMoverSR, endPos - startPos);
+                yield return tween;
+            }
 
             if (armyIconTween != null)
             {

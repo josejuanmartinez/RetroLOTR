@@ -92,6 +92,9 @@ public class Character : MonoBehaviour
 
     private BiomeConfig characterBiome;
 
+    [Header("Animation")]
+    public RuntimeAnimatorController animatorController;
+
     private Colors colors;
     private bool awaken = false;
 
@@ -217,6 +220,19 @@ public class Character : MonoBehaviour
         race = card.race;
         if (!string.IsNullOrWhiteSpace(card.spriteName))
             illustrationName = card.spriteName;
+        LoadAnimatorController();
+    }
+
+    public void LoadAnimatorController()
+    {
+        animatorController = CharacterAnimatorControllers.Resolve(characterBiome?.characterSprite, race);
+    }
+
+    public RuntimeAnimatorController GetAnimatorController()
+    {
+        // Controllers load asynchronously via Addressables; retry until the cache is ready.
+        if (animatorController == null) LoadAnimatorController();
+        return animatorController;
     }
 
     public void Initialize(
@@ -256,6 +272,7 @@ public class Character : MonoBehaviour
         this.sex = sex;
         this.startingCharacter = true;
         this.artifacts = artifacts;
+        LoadAnimatorController();
 
         owner.GetOwner().controlledCharacters.Add(this);
         this.owner = owner.GetOwner();
@@ -452,6 +469,8 @@ public class Character : MonoBehaviour
         lastPlayedCardSpriteNameThisTurn = !string.IsNullOrWhiteSpace(card.spriteName)
             ? card.spriteName
             : lastPlayedCardSpriteNameThisTurn;
+
+        if (hex != null) hex.PlayCharacterActionAnimation(this);
     }
 
     public void NewTurn()

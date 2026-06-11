@@ -26,7 +26,11 @@
       "Bash(python -c \"from PIL import Image; print\\('Pillow OK'\\)\")",
       "Bash(python gen_maia_variants.py)",
       "Bash(python *)",
-      "PowerShell(python .agents/skills/extract_spritesheet_from_video/scripts/extract_spritesheet.py --video \"Assets/Art/Characters/AnimationVideos/SauronCharacter.mp4\" --out \"Assets/Art/Characters/Animations/SauronCharacter_spritesheet.png\" --frames 48 --cols 8)"
+      "PowerShell(python .agents/skills/extract_spritesheet_from_video/scripts/extract_spritesheet.py --video \"Assets/Art/Characters/AnimationVideos/SauronCharacter.mp4\" --out \"Assets/Art/Characters/Animations/SauronCharacter_spritesheet.png\" --frames 48 --cols 8)",
+      "PowerShell(python -c \"import PIL; print\\(PIL.__version__\\)\")",
+      "PowerShell(python C:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\lotr_drawing.py)",
+      "PowerShell(python -c \"import numpy; print\\(numpy.__version__\\)\")",
+      "PowerShell(python C:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\lotr_painting.py)"
     ]
   }
 }
