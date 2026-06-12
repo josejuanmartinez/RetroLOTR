@@ -561,6 +561,13 @@ public class Hex : MonoBehaviour
             }
         }
 
+        // Pre-apply the outline colour before the renderer becomes visible so there
+        // is no one-frame flash of the previous (possibly white/cleared) colour.
+        if (seen && hasCharacter && TryGetKnownCharacterForIcon(out Character knownForOutline))
+            UpdateOutlineColor(knownForOutline);
+        else
+            ClearOutlineColor();
+
         SetActiveFast(characterSpriteRenderer.gameObject, seen && hasCharacter);
         if (seen && hasCharacter)
         {
@@ -570,7 +577,6 @@ public class Hex : MonoBehaviour
         else
         {
             GetCharacterAnimationController()?.Clear();
-            ClearOutlineColor();
             ClearClassIcons();
         }
         // UpdateBannerSpriteForKnownCharacter();
