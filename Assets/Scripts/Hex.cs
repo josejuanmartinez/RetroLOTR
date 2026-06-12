@@ -124,6 +124,8 @@ public class Hex : MonoBehaviour
     private readonly Dictionary<Leader, int> anchoredWarships = new();
     private int anchoredWarshipsTotal = 0;
     private Coroutine revealPulseCoroutine;
+    private Vector3 terrainBaseScale;
+    private bool terrainBaseScaleCaptured;
 
     public bool isSelected = false;
 
@@ -324,7 +326,12 @@ public class Hex : MonoBehaviour
         assignedLandRegion = null;
         if (hexRegion != null) hexRegion.enabled = false;
         if (game == null) game = FindFirstObjectByType<Game>();
-        terrainTexture.sortingOrder = int.MaxValue - row;
+        // SpriteRenderer.sortingOrder is effectively signed 16-bit, so keep
+        // terrain in (-9999, 0): above the hexRegionFrame underlay (-9999),
+        // below every fixed-order hex child. Row decides front-to-back; the
+        // col parity bit breaks same-row neighbor ties so their overlap is
+        // cut deterministically instead of z-fighting.
+        terrainTexture.sortingOrder = -1 - (row * 2) - (col & 1);
         if (terrainTexture != null) terrainTexture.gameObject.SetActive(true);
     }
 
@@ -1910,9 +1917,16 @@ public class Hex : MonoBehaviour
         }
 
         Transform terrainTransform = terrainTexture.transform;
-        Vector3 endScale = Vector3.one;
+        if (!terrainBaseScaleCaptured)
+        {
+            // capture the prefab-defined scale before the first pulse touches
+            // it, so interrupted pulses can't bake a mid-animation value
+            terrainBaseScale = terrainTransform.localScale;
+            terrainBaseScaleCaptured = true;
+        }
+        Vector3 endScale = terrainBaseScale;
         float scaleEffect = UnityEngine.Random.Range(0.3f, 0.9f);
-        Vector3 startScale = new(scaleEffect, scaleEffect, endScale.z);
+        Vector3 startScale = new(endScale.x * scaleEffect, endScale.y * scaleEffect, endScale.z);
 
         terrainTransform.localScale = startScale;
         yield return null;

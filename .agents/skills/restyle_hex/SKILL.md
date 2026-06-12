@@ -50,3 +50,27 @@ Always report:
 - Output image path
 - Model and quality used
 - Prompt used
+
+## Footprint Normalization (`scripts/normalize_hex_tiles.py`)
+
+Aligns all hex tiles to one canonical footprint: pointy-top hexagon, caps W/4,
+vertical sides W/2 (total height = W). Detects each tile's hexagon from the
+alpha silhouette (bottom-cap line fits → slope-prior fallback → inscribed-
+hexagon search), rescales uniformly to the target width, and composites onto a
+shared canvas with the footprint center at a fixed point, so Unity's
+center-pivot import settings keep working unchanged.
+
+```powershell
+# report only
+python .agents/skills/restyle_hex/scripts/normalize_hex_tiles.py --analyze --csv report.csv
+# normalize to a review folder, then copy over Assets/Art/Hexes/Tiles
+python .agents/skills/restyle_hex/scripts/normalize_hex_tiles.py --out-dir TileNormalization/output
+```
+
+Notes:
+- `hexUnderOcean00.png` / `hexUndercliff00.png` are special curtain tiles,
+  excluded and copied through unchanged.
+- New tiles dropped into `Tiles/` or `PCs/` later can be normalized the same
+  way; use `--target-width 773` to match the existing normalized set. Canvas
+  size may differ between batches — alignment only depends on the target
+  width and the baked-in center drop.
