@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 // Plays a character's animator controller on a character sprite renderer (hex icon or board mover).
@@ -10,9 +11,13 @@ public class CharacterAnimationController : MonoBehaviour
     private static readonly int LeftParam = Animator.StringToHash("left");
     private static readonly int RightParam = Animator.StringToHash("right");
     private static readonly int BackParam = Animator.StringToHash("back");
+    private static readonly int FidgetParam = Animator.StringToHash("fidget");
     private const float VerticalMovementEpsilon = 0.01f;
+    private const float FidgetMinDelay = 5f;
+    private const float FidgetMaxDelay = 10f;
 
     private Animator animator;
+    private Coroutine fidgetCoroutine;
 
     private void Awake()
     {
@@ -30,6 +35,7 @@ public class CharacterAnimationController : MonoBehaviour
         ClearParamWhenStateReached(LeftParam, "Left");
         ClearParamWhenStateReached(RightParam, "Right");
         ClearParamWhenStateReached(BackParam, "Back");
+        ClearParamWhenStateReached(FidgetParam, "Fidget");
     }
 
     private void ClearParamWhenStateReached(int param, string stateName)
@@ -63,7 +69,30 @@ public class CharacterAnimationController : MonoBehaviour
             animator.runtimeAnimatorController = controller;
         }
         animator.enabled = true;
+        StartFidgetLoop();
         return true;
+    }
+
+    private void StartFidgetLoop()
+    {
+        if (fidgetCoroutine != null) StopCoroutine(fidgetCoroutine);
+        fidgetCoroutine = StartCoroutine(FidgetLoop());
+    }
+
+    private IEnumerator FidgetLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(FidgetMinDelay, FidgetMaxDelay));
+            if (animator == null || !animator.enabled || animator.runtimeAnimatorController == null) continue;
+
+            bool anyActive = animator.GetBool(ActionParam) || animator.GetBool(ForwardParam)
+                || animator.GetBool(LeftParam) || animator.GetBool(RightParam) || animator.GetBool(BackParam);
+            bool inIdle = animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && !animator.IsInTransition(0);
+
+            if (inIdle && !anyActive)
+                animator.SetBool(FidgetParam, true);
+        }
     }
 
     // worldDelta is the move in world space: horizontal moves play the side walk,
@@ -100,10 +129,16 @@ public class CharacterAnimationController : MonoBehaviour
         animator.SetBool(LeftParam, false);
         animator.SetBool(RightParam, false);
         animator.SetBool(BackParam, false);
+        animator.SetBool(FidgetParam, false);
     }
 
     public void Clear()
     {
+        if (fidgetCoroutine != null)
+        {
+            StopCoroutine(fidgetCoroutine);
+            fidgetCoroutine = null;
+        }
         if (animator == null) return;
         if (animator.enabled && animator.runtimeAnimatorController != null) ResetParams();
         animator.enabled = false;
