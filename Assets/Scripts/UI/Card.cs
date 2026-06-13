@@ -59,6 +59,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private RectTransform rectTransform;
     private Graphic rootHitGraphic;
     public bool SuppressHoverEffects { get; set; }
+    private bool lockedToRealCard;
     private string baseDescription = string.Empty;
     private Image encounterArtOverlay;
     private TextMeshProUGUI encounterQuestionMark;
@@ -160,7 +161,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
     }
 
-    public void Initialize(CardData data)
+    public void Initialize(CardData data, bool startAsToken = true)
     {
         cardData = data;
         EnsureManagersLoaded();
@@ -194,7 +195,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (tokenImage != null) tokenImage.sprite = sprite;
         }
 
-        ShowToken();
+        lockedToRealCard = !startAsToken;
+        if (startAsToken) ShowToken();
+        else ShowRealCard();
 
         if (deckTypeImage != null && !string.IsNullOrWhiteSpace(data.deckSpriteName) && illustrations != null)
         {
@@ -1024,6 +1027,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void ShowToken()
     {
+        if (lockedToRealCard) return;
         if (tokenCanvasGroup != null)
         {
             tokenCanvasGroup.alpha = 1f;

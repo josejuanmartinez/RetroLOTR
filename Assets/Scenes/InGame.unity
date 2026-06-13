@@ -17596,6 +17596,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d0f8ca0a78da5a45aeba082a9f1f703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1789085346 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8482426780866661264, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
+  m_PrefabInstance: {fileID: 5483522842021147532}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c640db4d81978fa46935f00ba7c4cfed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RegionLabelManager
 --- !u!1 &1807159091
 GameObject:
   m_ObjectHideFlags: 0
@@ -19190,11 +19201,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.9110734
+      value: 0.9112383
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.9110734
+      value: 0.9112383
       objectReference: {fileID: 0}
     - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_Enabled
@@ -19874,6 +19885,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
+      propertyPath: regionLabelManager
+      value: 
+      objectReference: {fileID: 1789085346}
+    - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: characterMoverImage
       value: 
       objectReference: {fileID: 1661119119}
@@ -19881,6 +19896,10 @@ PrefabInstance:
       propertyPath: darkServantsMoverImage
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
+      propertyPath: situationCardsUIPrefab
+      value: 
+      objectReference: {fileID: 3120612800394336757, guid: 98695f709a1a8c24fa97365519739f4d, type: 3}
     - target: {fileID: 577319869002409797, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: mountainChainLengthMultiplier
       value: 1.5

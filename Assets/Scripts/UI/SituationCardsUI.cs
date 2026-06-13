@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,21 +8,91 @@ public class SituationCardsUI : MonoBehaviour
 {
     public static SituationCardsUI Instance { get; private set; }
 
-    private CanvasGroup overlayGroup;
-    private GameObject cardContainer;
+    [Header("Content")]
+    [SerializeField] private string titleMessage = "Act now!";
+
+    [Header("Timing & Layout")]
+    [SerializeField] private float fadeInDuration  = 0.35f;
+    [SerializeField] private float fadeOutDuration = 0.3f;
+    [SerializeField] private float cardSpacing     = 40f; // also drives the HorizontalLayoutGroup spacing
+    [SerializeField] private float maxCardScale    = 1.3f;
+
+    [Header("Confetti")]
+    [SerializeField] private int   confettiCount    = 56;
+    [SerializeField] private float confettiDuration = 1.5f;
+
+    [Header("Scene References (auto-built/bound when left empty)")]
+    [SerializeField] private CanvasGroup overlayGroup;
+    [SerializeField] private GameObject cardContainer;
+    [SerializeField] private RectTransform titleRect;
+    [SerializeField] private TextMeshProUGUI titleLabel;
+
     private Coroutine showCoroutine;
     private readonly List<GameObject> cardInstances = new();
-
-    private const float FadeInDuration  = 0.35f;
-    private const float FadeOutDuration = 0.3f;
-    private const float CardScale       = 1.5f;
 
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        BuildUI();
+
+        // A prefab instance already carries the UI hierarchy; only build it from
+        // scratch when this was created as a bare GameObject.
+        if (!BindExistingUI())
+            BuildUI();
+
+        ApplyConfiguration();
+    }
+
+    // Binds references from an already-present UI hierarchy (prefab instance),
+    // filling in anything not wired in the inspector. Returns false when no UI
+    // exists yet, signalling that it must be built procedurally.
+    private bool BindExistingUI()
+    {
+        if (overlayGroup == null)
+        {
+            Transform overlay = transform.Find("Overlay");
+            if (overlay != null) overlayGroup = overlay.GetComponent<CanvasGroup>();
+        }
+        if (cardContainer == null)
+        {
+            Transform tray = transform.Find("Overlay/CardTray");
+            if (tray != null) cardContainer = tray.gameObject;
+        }
+        if (titleLabel == null)
+        {
+            Transform title = transform.Find("Overlay/Title");
+            if (title != null) titleLabel = title.GetComponent<TextMeshProUGUI>();
+        }
+        if (titleRect == null && titleLabel != null) titleRect = titleLabel.rectTransform;
+
+        return overlayGroup != null && cardContainer != null;
+    }
+
+    // Applies inspector-configurable values and re-wires runtime-only hooks that
+    // don't survive prefab serialization (the dim-overlay dismiss listener).
+    private void ApplyConfiguration()
+    {
+        if (titleLabel != null && !string.IsNullOrEmpty(titleMessage))
+            titleLabel.text = titleMessage;
+
+        if (cardContainer != null)
+        {
+            var hLayout = cardContainer.GetComponent<HorizontalLayoutGroup>();
+            if (hLayout != null) hLayout.spacing = cardSpacing;
+        }
+
+        if (overlayGroup != null)
+        {
+            var overlayBtn = overlayGroup.GetComponent<Button>();
+            if (overlayBtn != null)
+            {
+                overlayBtn.onClick.RemoveListener(Dismiss);
+                overlayBtn.onClick.AddListener(Dismiss);
+            }
+            overlayGroup.alpha = 0f;
+            overlayGroup.gameObject.SetActive(false);
+        }
     }
 
     private void BuildUI()
@@ -59,7 +130,7 @@ public class SituationCardsUI : MonoBehaviour
         crt.pivot     = new Vector2(0.5f, 0.5f);
         crt.anchoredPosition = Vector2.zero;
         var hLayout = cardContainer.AddComponent<HorizontalLayoutGroup>();
-        hLayout.spacing = 40f;
+        hLayout.spacing = cardSpacing;
         hLayout.childAlignment = TextAnchor.MiddleCenter;
         hLayout.childForceExpandWidth  = false;
         hLayout.childForceExpandHeight = false;
@@ -68,6 +139,34 @@ public class SituationCardsUI : MonoBehaviour
         var fitter = cardContainer.AddComponent<ContentSizeFitter>();
         fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         fitter.verticalFit   = ContentSizeFitter.FitMode.PreferredSize;
+
+        // "Act now!" banner across the top.
+        var titleGo = new GameObject("Title", typeof(RectTransform));
+        titleGo.transform.SetParent(overlayGo.transform, false);
+        titleRect = titleGo.GetComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0.5f, 1f);
+        titleRect.anchorMax = new Vector2(0.5f, 1f);
+        titleRect.pivot     = new Vector2(0.5f, 1f);
+        titleRect.anchoredPosition = new Vector2(0f, -70f);
+        titleRect.sizeDelta = new Vector2(900f, 130f);
+
+        titleLabel = titleGo.AddComponent<TextMeshProUGUI>();
+        titleLabel.text = titleMessage;
+        titleLabel.fontSize = 84f;
+        titleLabel.fontStyle = FontStyles.Bold;
+        titleLabel.alignment = TextAlignmentOptions.Center;
+        titleLabel.color = new Color(1f, 0.92f, 0.55f);
+        titleLabel.raycastTarget = false;
+        titleLabel.enableVertexGradient = true;
+        titleLabel.colorGradient = new VertexGradient(
+            new Color(1f, 0.95f, 0.7f),
+            new Color(1f, 0.95f, 0.7f),
+            new Color(1f, 0.6f, 0.15f),
+            new Color(1f, 0.6f, 0.15f));
+        titleLabel.fontMaterial.EnableKeyword("UNDERLAY_ON");
+        titleLabel.fontMaterial.SetColor("_UnderlayColor", new Color(0f, 0f, 0f, 0.75f));
+        titleLabel.fontMaterial.SetFloat("_UnderlayDilate", 0.4f);
+        titleLabel.fontMaterial.SetFloat("_UnderlaySoftness", 0.25f);
     }
 
     public void Show(List<CardData> cards, Character character)
@@ -94,51 +193,132 @@ public class SituationCardsUI : MonoBehaviour
         overlayTransform.gameObject.SetActive(true);
         overlayGroup.alpha = 0f;
 
-        Vector2 cardSize = DeckManager.Instance != null ? DeckManager.Instance.GetCardSize() : new Vector2(120f, 170f);
         PlayableLeader leader = character?.GetOwner() as PlayableLeader;
 
+        // First pass: instantiate each card in its RealCard (expanded) representation.
+        var rects = new List<RectTransform>();
         foreach (CardData card in cards)
         {
             GameObject go = Instantiate(template, cardContainer.transform);
             go.SetActive(true);
 
-            var rt = go.GetComponent<RectTransform>();
-            if (rt != null)
-            {
-                rt.sizeDelta = cardSize;
-                rt.localScale = Vector3.one * CardScale;
-            }
-
-            var le = go.GetComponent<LayoutElement>();
-            if (le != null)
-            {
-                le.ignoreLayout = false;
-                le.preferredWidth  = cardSize.x;
-                le.preferredHeight = cardSize.y;
-            }
-
             var cardComp = go.GetComponent<Card>();
-            cardComp?.Initialize(card);
+            cardComp?.Initialize(card, startAsToken: false);
 
             // Disable card's own raycasts so drag/hover don't fire
             var cg = go.GetComponent<CanvasGroup>();
             if (cg != null) { cg.blocksRaycasts = false; cg.interactable = false; }
 
-            AddGoldenGlow(go);
             AddCardClickButton(go, card, leader);
+
             cardInstances.Add(go);
+            rects.Add(go.GetComponent<RectTransform>());
         }
+
+        // The RealCard art (its border frame) overflows the prefab's root rect, so we
+        // can't rely on the token-sized layout dimensions. Measure each card's actual
+        // rendered footprint and reserve that much space, then scale to fit the screen
+        // side by side (the HorizontalLayoutGroup reserves space from each child's
+        // sizeDelta and ignores localScale).
+        Canvas.ForceUpdateCanvases();
+
+        var footprints = new List<Vector2>();
+        float maxWidth = 1f;
+        foreach (RectTransform rt in rects)
+        {
+            Vector2 size = rt != null
+                ? (Vector2)RectTransformUtility.CalculateRelativeRectTransformBounds(rt).size
+                : Vector2.one;
+            footprints.Add(size);
+            maxWidth = Mathf.Max(maxWidth, size.x);
+        }
+
+        float available = Screen.width * 0.92f;
+        float perCard = (available - cardSpacing * (cards.Count - 1)) / cards.Count;
+        float scale = Mathf.Clamp(perCard / maxWidth, 0.4f, maxCardScale);
+
+        for (int i = 0; i < rects.Count; i++)
+        {
+            RectTransform rt = rects[i];
+            if (rt == null) continue;
+
+            Vector2 reserved = footprints[i] * scale;
+            rt.sizeDelta = reserved;
+
+            var le = rt.GetComponent<LayoutElement>();
+            if (le != null)
+            {
+                le.ignoreLayout = false;
+                le.preferredWidth  = reserved.x;
+                le.preferredHeight = reserved.y;
+            }
+
+            // One-time "boost" pop-in instead of a persistent glow.
+            rt.localScale = Vector3.zero;
+            StartCoroutine(PopIn(rt, scale, 0.12f + i * 0.08f));
+        }
+
+        // Title drops/pops in, then a single party-popper confetti burst.
+        if (titleRect != null)
+        {
+            titleRect.localScale = Vector3.zero;
+            StartCoroutine(PopIn(titleRect, 1f, 0f));
+        }
+        SpawnConfetti();
 
         // Fade in
         float t = 0f;
-        while (t < FadeInDuration)
+        while (t < fadeInDuration)
         {
-            overlayGroup.alpha = t / FadeInDuration;
+            overlayGroup.alpha = t / fadeInDuration;
             t += Time.deltaTime;
             yield return null;
         }
         overlayGroup.alpha = 1f;
         showCoroutine = null;
+    }
+
+    // Scale-up with an elastic overshoot (easeOutBack), after an optional delay.
+    private IEnumerator PopIn(RectTransform rt, float targetScale, float delay)
+    {
+        if (rt == null) yield break;
+        rt.localScale = Vector3.zero;
+
+        float t = -delay;
+        const float dur = 0.42f;
+        const float c1 = 1.70158f;
+        const float c3 = c1 + 1f;
+
+        while (t < dur)
+        {
+            if (rt == null) yield break;
+            t += Time.unscaledDeltaTime;
+            if (t < 0f) { yield return null; continue; }
+
+            float p = Mathf.Clamp01(t / dur);
+            float eased = 1f + c3 * Mathf.Pow(p - 1f, 3f) + c1 * Mathf.Pow(p - 1f, 2f);
+            rt.localScale = Vector3.one * (targetScale * eased);
+            yield return null;
+        }
+
+        if (rt != null) rt.localScale = Vector3.one * targetScale;
+    }
+
+    private void SpawnConfetti()
+    {
+        if (cardContainer == null) return;
+        Transform overlay = cardContainer.transform.parent;
+        if (overlay == null) return;
+
+        var go = new GameObject("Confetti", typeof(RectTransform));
+        go.transform.SetParent(overlay, false);
+        var rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = Vector2.zero;
+        rt.SetAsLastSibling();
+
+        go.AddComponent<SituationConfettiBurst>().Emit(confettiCount, Screen.width, confettiDuration);
+        cardInstances.Add(go); // ensure cleanup if dismissed mid-burst
     }
 
     private void AddCardClickButton(GameObject cardGo, CardData cardData, PlayableLeader leader)
@@ -175,9 +355,9 @@ public class SituationCardsUI : MonoBehaviour
     {
         float start = overlayGroup != null ? overlayGroup.alpha : 1f;
         float t = 0f;
-        while (t < FadeOutDuration)
+        while (t < fadeOutDuration)
         {
-            if (overlayGroup != null) overlayGroup.alpha = Mathf.Lerp(start, 0f, t / FadeOutDuration);
+            if (overlayGroup != null) overlayGroup.alpha = Mathf.Lerp(start, 0f, t / fadeOutDuration);
             t += Time.deltaTime;
             yield return null;
         }
@@ -197,36 +377,91 @@ public class SituationCardsUI : MonoBehaviour
         cardInstances.Clear();
     }
 
-    private void AddGoldenGlow(GameObject cardGo)
-    {
-        var glowGo = new GameObject("GoldenGlow");
-        glowGo.transform.SetParent(cardGo.transform, false);
-        glowGo.transform.SetAsFirstSibling();
-
-        var rt = glowGo.AddComponent<RectTransform>();
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.sizeDelta = new Vector2(20f, 20f);
-        rt.anchoredPosition = Vector2.zero;
-
-        var img = glowGo.AddComponent<Image>();
-        img.color = new Color(1f, 0.82f, 0.1f, 0.5f);
-        img.raycastTarget = false;
-
-        glowGo.AddComponent<SituationCardGoldenPulse>();
-    }
 }
 
-public class SituationCardGoldenPulse : MonoBehaviour
+// One-shot party-popper confetti: spawns colored pieces that fan upward and out,
+// fall under gravity, tumble and fade, then the whole burst destroys itself.
+public class SituationConfettiBurst : MonoBehaviour
 {
-    private Image img;
+    private struct Piece
+    {
+        public RectTransform rt;
+        public Image img;
+        public Vector2 velocity;
+        public float angularVelocity;
+    }
 
-    private void Awake() { img = GetComponent<Image>(); }
+    private static readonly Color[] Palette =
+    {
+        new Color(1f, 0.30f, 0.36f),
+        new Color(1f, 0.78f, 0.22f),
+        new Color(0.36f, 0.78f, 1f),
+        new Color(0.52f, 0.93f, 0.45f),
+        new Color(0.85f, 0.52f, 1f),
+        Color.white,
+    };
+
+    private const float Gravity = -2200f;
+
+    private readonly List<Piece> pieces = new();
+    private float duration = 1.5f;
+    private float life;
+
+    public void Emit(int count, float spread, float lifetime)
+    {
+        duration = Mathf.Max(0.1f, lifetime);
+
+        for (int i = 0; i < count; i++)
+        {
+            var go = new GameObject("Piece", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(transform, false);
+
+            var rt = go.GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(Random.Range(8f, 14f), Random.Range(12f, 22f));
+            rt.anchoredPosition = new Vector2(Random.Range(-0.08f, 0.08f) * spread, 0f);
+            rt.localEulerAngles = new Vector3(0f, 0f, Random.Range(0f, 360f));
+
+            var img = go.GetComponent<Image>();
+            img.color = Palette[Random.Range(0, Palette.Length)];
+            img.raycastTarget = false;
+
+            float angle = Random.Range(35f, 145f) * Mathf.Deg2Rad; // upward fan
+            float speed = Random.Range(900f, 1900f);
+            pieces.Add(new Piece
+            {
+                rt = rt,
+                img = img,
+                velocity = new Vector2(Mathf.Cos(angle) * speed, Mathf.Sin(angle) * speed),
+                angularVelocity = Random.Range(-540f, 540f),
+            });
+        }
+    }
 
     private void Update()
     {
-        if (img == null) return;
-        float a = 0.25f + 0.25f * Mathf.Sin(Time.time * 2.8f);
-        img.color = new Color(1f, 0.82f, 0.1f, a);
+        float dt = Time.unscaledDeltaTime;
+        life += dt;
+        float fade = Mathf.Clamp01(1f - life / duration);
+
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            Piece p = pieces[i];
+            if (p.rt == null) continue;
+
+            Vector2 v = p.velocity;
+            v.y += Gravity * dt;
+            pieces[i] = new Piece { rt = p.rt, img = p.img, velocity = v, angularVelocity = p.angularVelocity };
+
+            p.rt.anchoredPosition += v * dt;
+            p.rt.Rotate(0f, 0f, p.angularVelocity * dt);
+            if (p.img != null)
+            {
+                Color c = p.img.color;
+                c.a = fade;
+                p.img.color = c;
+            }
+        }
+
+        if (life >= duration) Destroy(gameObject);
     }
 }

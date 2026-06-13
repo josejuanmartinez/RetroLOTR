@@ -1426,7 +1426,7 @@ public class DeckManager : MonoBehaviour
         return list[UnityEngine.Random.Range(0, list.Count)];
     }
 
-    private static void NotifyEncounterPlaced(Hex targetHex)
+    public static void NotifyEncounterPlaced(Hex targetHex)
     {
         EventIconsManager iconsManager = EventIconsManager.FindManager();
         BoardNavigator navigator = BoardNavigator.Instance ?? FindFirstObjectByType<BoardNavigator>();

@@ -1639,6 +1639,9 @@ public class Board : MonoBehaviour
         }
     }
 
+    [Header("Situation Cards")]
+    [SerializeField] private SituationCardsUI situationCardsUIPrefab;
+
     private void CheckAndShowSituationCards(Character character, Hex hex)
     {
         if (character == null || hex == null) { Debug.Log("[SituationCards] null character or hex"); return; }
@@ -1660,8 +1663,15 @@ public class Board : MonoBehaviour
 
         if (SituationCardsUI.Instance == null)
         {
-            var go = new GameObject("SituationCardsUI");
-            go.AddComponent<SituationCardsUI>();
+            if (situationCardsUIPrefab != null)
+            {
+                Instantiate(situationCardsUIPrefab);
+            }
+            else
+            {
+                var go = new GameObject("SituationCardsUI");
+                go.AddComponent<SituationCardsUI>();
+            }
         }
         SituationCardsUI.Instance.Show(situationCards, character);
     }

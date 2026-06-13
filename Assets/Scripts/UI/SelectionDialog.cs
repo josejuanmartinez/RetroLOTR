@@ -23,6 +23,7 @@ public class SelectionDialog : MonoBehaviour
 
     [Header("Option Buttons — replaces dropdown when assigned")]
     [SerializeField] private Transform optionButtonsContainer;
+    [SerializeField] private GameObject optionButtonPrefab;
 
     [Header("Typewriter")]
     [SerializeField] private TypewriterEffect messageTypewriter;
@@ -254,11 +255,8 @@ public class SelectionDialog : MonoBehaviour
         bool hasCustomTitle = !string.IsNullOrWhiteSpace(request.title);
         if (messageLabel != null)
         {
-            EnsureMessageTypewriter();
-            if (messageTypewriter != null)
-                messageTypewriter.StartWriting(request.message);
-            else
-                messageLabel.text = request.message;
+            if (messageTypewriter != null) messageTypewriter.Clear();
+            messageLabel.text = request.message;
         }
         if (title != null)
         {
@@ -622,9 +620,12 @@ public class SelectionDialog : MonoBehaviour
 
     private void EnsureMessageTypewriter()
     {
-        if (messageTypewriter != null || messageLabel == null) return;
-        messageTypewriter = messageLabel.GetComponent<TypewriterEffect>()
-            ?? messageLabel.gameObject.AddComponent<TypewriterEffect>();
+        if (messageLabel == null) return;
+        if (messageTypewriter == null)
+        {
+            messageTypewriter = messageLabel.GetComponent<TypewriterEffect>()
+                ?? messageLabel.gameObject.AddComponent<TypewriterEffect>();
+        }
         messageTypewriter.textMeshPro = messageLabel;
         messageTypewriter.typingSpeed = 28f;
     }
@@ -675,69 +676,91 @@ public class SelectionDialog : MonoBehaviour
 
     private Button CreateOptionButton(string text, string description, Color textColor, int index)
     {
-        GameObject obj = new($"Option_{index}", typeof(RectTransform), typeof(Image), typeof(Button));
-        obj.transform.SetParent(optionButtonsContainer, false);
+        bool hasDesc = !string.IsNullOrWhiteSpace(description);
+        string colorHex = ColorUtility.ToHtmlStringRGB(textColor);
+        string labelText = hasDesc
+            ? $"<color=#{colorHex}>{text}</color>\n<color=#9C9C9C><size=11>{description}</size></color>"
+            : $"<color=#{colorHex}>{text}</color>";
 
-        Image bg = obj.GetComponent<Image>();
-        bg.color = new Color(0.08f, 0.06f, 0.04f, 0.88f);
+        GameObject obj;
+        if (optionButtonPrefab != null)
+        {
+            obj = Instantiate(optionButtonPrefab, optionButtonsContainer, false);
+            obj.name = $"Option_{index}";
+        }
+        else
+        {
+            obj = new($"Option_{index}", typeof(RectTransform), typeof(Image), typeof(Button));
+            obj.transform.SetParent(optionButtonsContainer, false);
 
-        CanvasGroup cg = obj.AddComponent<CanvasGroup>();
+            Image bg = obj.GetComponent<Image>();
+            bg.color = new Color(0.08f, 0.06f, 0.04f, 0.88f);
+
+            Button btn0 = obj.GetComponent<Button>();
+            btn0.targetGraphic = bg;
+            ColorBlock cb0 = btn0.colors;
+            cb0.normalColor      = new Color(0.08f, 0.06f, 0.04f, 0.88f);
+            cb0.highlightedColor = new Color(0.32f, 0.22f, 0.08f, 0.95f);
+            cb0.selectedColor    = new Color(0.42f, 0.30f, 0.10f, 1f);
+            cb0.pressedColor     = new Color(0.55f, 0.40f, 0.12f, 1f);
+            cb0.fadeDuration     = 0.08f;
+            btn0.colors = cb0;
+
+            GameObject arrowObj = new("Arrow", typeof(RectTransform), typeof(TextMeshProUGUI));
+            arrowObj.transform.SetParent(obj.transform, false);
+            RectTransform arrowRect = arrowObj.GetComponent<RectTransform>();
+            arrowRect.anchorMin = new Vector2(0f, 0f);
+            arrowRect.anchorMax = new Vector2(0f, 1f);
+            arrowRect.pivot     = new Vector2(0f, 0.5f);
+            arrowRect.offsetMin = new Vector2(8f,  0f);
+            arrowRect.offsetMax = new Vector2(24f, 0f);
+            TextMeshProUGUI arrowTmp0 = arrowObj.GetComponent<TextMeshProUGUI>();
+            arrowTmp0.text          = ">";
+            arrowTmp0.fontSize      = 13f;
+            arrowTmp0.alignment     = TextAlignmentOptions.Midline;
+            arrowTmp0.raycastTarget = false;
+            if (messageLabel != null) { arrowTmp0.font = messageLabel.font; arrowTmp0.fontSharedMaterial = messageLabel.fontSharedMaterial; }
+
+            GameObject labelObj = new("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+            labelObj.transform.SetParent(obj.transform, false);
+            RectTransform labelRect = labelObj.GetComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = new Vector2(26f, 4f);
+            labelRect.offsetMax = new Vector2(-8f, -4f);
+            TextMeshProUGUI labelTmp0 = labelObj.GetComponent<TextMeshProUGUI>();
+            labelTmp0.color           = Color.white;
+            labelTmp0.fontSize        = 14f;
+            labelTmp0.fontSizeMin     = 10f;
+            labelTmp0.fontSizeMax     = 14f;
+            labelTmp0.enableAutoSizing = true;
+            labelTmp0.alignment       = TextAlignmentOptions.MidlineLeft;
+            labelTmp0.raycastTarget   = false;
+            if (messageLabel != null) { labelTmp0.font = messageLabel.font; labelTmp0.fontSharedMaterial = messageLabel.fontSharedMaterial; }
+        }
+
+        CanvasGroup cg = obj.GetComponent<CanvasGroup>() ?? obj.AddComponent<CanvasGroup>();
         cg.alpha = 0f;
 
-        bool hasDesc = !string.IsNullOrWhiteSpace(description);
-        LayoutElement le = obj.AddComponent<LayoutElement>();
+        LayoutElement le = obj.GetComponent<LayoutElement>() ?? obj.AddComponent<LayoutElement>();
         le.preferredHeight = hasDesc ? 54f : 36f;
-        le.minHeight = hasDesc ? 44f : 28f;
+        le.minHeight       = hasDesc ? 44f : 28f;
+
+        Transform arrowChild = obj.transform.Find("Arrow");
+        if (arrowChild != null)
+        {
+            TextMeshProUGUI arrowTmp = arrowChild.GetComponent<TextMeshProUGUI>();
+            if (arrowTmp != null) arrowTmp.color = textColor;
+        }
+
+        Transform labelChild = obj.transform.Find("Label");
+        if (labelChild != null)
+        {
+            TextMeshProUGUI labelTmp = labelChild.GetComponent<TextMeshProUGUI>();
+            if (labelTmp != null) labelTmp.text = labelText;
+        }
 
         Button btn = obj.GetComponent<Button>();
-        btn.targetGraphic = bg;
-        ColorBlock cb = btn.colors;
-        cb.normalColor = new Color(0.08f, 0.06f, 0.04f, 0.88f);
-        cb.highlightedColor = new Color(0.32f, 0.22f, 0.08f, 0.95f);
-        cb.selectedColor = new Color(0.42f, 0.30f, 0.10f, 1f);
-        cb.pressedColor = new Color(0.55f, 0.40f, 0.12f, 1f);
-        cb.fadeDuration = 0.08f;
-        btn.colors = cb;
-
-        // ">" indicator
-        GameObject arrowObj = new("Arrow", typeof(RectTransform), typeof(TextMeshProUGUI));
-        arrowObj.transform.SetParent(obj.transform, false);
-        RectTransform arrowRect = arrowObj.GetComponent<RectTransform>();
-        arrowRect.anchorMin = new Vector2(0f, 0f);
-        arrowRect.anchorMax = new Vector2(0f, 1f);
-        arrowRect.pivot = new Vector2(0f, 0.5f);
-        arrowRect.offsetMin = new Vector2(8f, 0f);
-        arrowRect.offsetMax = new Vector2(24f, 0f);
-        TextMeshProUGUI arrowTmp = arrowObj.GetComponent<TextMeshProUGUI>();
-        arrowTmp.text = ">";
-        arrowTmp.color = textColor;
-        arrowTmp.fontSize = 13f;
-        arrowTmp.alignment = TextAlignmentOptions.Midline;
-        arrowTmp.raycastTarget = false;
-        if (messageLabel != null) { arrowTmp.font = messageLabel.font; arrowTmp.fontSharedMaterial = messageLabel.fontSharedMaterial; }
-
-        // Option label
-        GameObject labelObj = new("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
-        labelObj.transform.SetParent(obj.transform, false);
-        RectTransform labelRect = labelObj.GetComponent<RectTransform>();
-        labelRect.anchorMin = Vector2.zero;
-        labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = new Vector2(26f, 4f);
-        labelRect.offsetMax = new Vector2(-8f, -4f);
-        TextMeshProUGUI labelTmp = labelObj.GetComponent<TextMeshProUGUI>();
-        string colorHex = ColorUtility.ToHtmlStringRGB(textColor);
-        labelTmp.text = string.IsNullOrWhiteSpace(description)
-            ? $"<color=#{colorHex}>{text}</color>"
-            : $"<color=#{colorHex}>{text}</color>\n<color=#9C9C9C><size=11>{description}</size></color>";
-        labelTmp.color = Color.white;
-        labelTmp.fontSize = 14f;
-        labelTmp.fontSizeMin = 10f;
-        labelTmp.fontSizeMax = 14f;
-        labelTmp.enableAutoSizing = true;
-        labelTmp.alignment = TextAlignmentOptions.MidlineLeft;
-        labelTmp.raycastTarget = false;
-        if (messageLabel != null) { labelTmp.font = messageLabel.font; labelTmp.fontSharedMaterial = messageLabel.fontSharedMaterial; }
-
         int capturedIndex = index;
         btn.onClick.AddListener(() => SelectOptionButton(capturedIndex));
 

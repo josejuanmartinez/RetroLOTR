@@ -51,7 +51,7 @@ public static class EncounterResolver
         return options;
     }
 
-    private static async Task<string> AskEncounterSelectionAsync(
+    private static Task<string> AskEncounterSelectionAsync(
         string title,
         string prompt,
         List<string> optionLabels,
@@ -59,57 +59,16 @@ public static class EncounterResolver
         bool isAi,
         Sprite portrait)
     {
-        if (isAi)
-        {
-            return await SelectionDialog.AskImmediate(
-                prompt,
-                "Choose",
-                string.Empty,
-                optionLabels,
-                optionDescriptions,
-                true,
-                portrait,
-                EventIconType.Encounter,
-                title);
-        }
-
-        EventIconsManager iconsManager = EventIconsManager.FindManager();
-        if (iconsManager == null)
-        {
-            return await SelectionDialog.AskImmediate(
-                prompt,
-                "Choose",
-                string.Empty,
-                optionLabels,
-                optionDescriptions,
-                false,
-                portrait,
-                EventIconType.Encounter,
-                title);
-        }
-
-        TaskCompletionSource<string> tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        EventIcon icon = null;
-        icon = iconsManager.AddEventIcon(
+        return SelectionDialog.AskImmediate(
+            prompt,
+            "Choose",
+            string.Empty,
+            optionLabels,
+            optionDescriptions,
+            isAi,
+            portrait,
             EventIconType.Encounter,
-            false,
-            async () =>
-            {
-                string result = await SelectionDialog.AskImmediate(
-                    prompt,
-                    "Choose",
-                    string.Empty,
-                    optionLabels,
-                    optionDescriptions,
-                    false,
-                    portrait,
-                    EventIconType.Encounter,
-                    title);
-                tcs.TrySetResult(result);
-                icon?.ConsumeAndDestroy();
-            });
-
-        return await tcs.Task;
+            title);
     }
 
     private static string BuildPrompt(CardData encounterCard)

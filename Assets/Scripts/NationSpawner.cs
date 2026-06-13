@@ -39,6 +39,15 @@ public class NationSpawner : MonoBehaviour
     private readonly Dictionary<string, Vector2Int> ownerlessAnchorPositionByRegion = new(StringComparer.OrdinalIgnoreCase);
     private static readonly TerrainEnum[] StartFallbackTerrains =
         { TerrainEnum.plains, TerrainEnum.grasslands, TerrainEnum.hills, TerrainEnum.shore };
+    // Every land (non-water) terrain a leader may legitimately stand on. SelectClosestPosition
+    // searches all of these so a leader always lands next to its own anchor, even if the only
+    // hexes immediately around the anchor are an "off-list" terrain like mountains or desert.
+    private static readonly TerrainEnum[] LandTerrains =
+    {
+        TerrainEnum.plains, TerrainEnum.grasslands, TerrainEnum.shore, TerrainEnum.hills,
+        TerrainEnum.forest, TerrainEnum.swamp, TerrainEnum.desert, TerrainEnum.wastelands,
+        TerrainEnum.mountains
+    };
     private Dictionary<string, string> tutorialAnchorByNpl = new(StringComparer.OrdinalIgnoreCase);
     private bool landRegionsAssigned;
 
@@ -783,20 +792,60 @@ public class NationSpawner : MonoBehaviour
         return order;
     }
 
-    // Cluster a leader onto its starting city: nearest available hex to the anchor,
-    // preferring the configured terrain but falling back when that terrain is exhausted.
+    // Cluster a leader onto its starting city. PROXIMITY TO THE ANCHOR DOMINATES TERRAIN:
+    // a leader one hex from its own city on the "wrong" terrain is correct; the configured
+    // terrain across the map (next to a rival's city) is the "Sauron starts in Orthanc" bug.
+    // That bug happened because the old code returned the closest hex of the first preferred
+    // terrain that had any free hex — and rare terrains like wastelands spawn in scattered
+    // patches, so the only free wastelands hex could be beside another nation's anchor while
+    // grassland sat one step from Barad-dur. We now search every land terrain at once, pick
+    // the genuinely nearest available hex, and use the configured terrain order only to break
+    // ties between hexes the same distance from the anchor.
     private Vector2Int SelectClosestPosition(LeaderBiomeConfig config, Vector2Int target, out TerrainEnum chosenTerrain)
     {
-        foreach (TerrainEnum terrain in BuildTerrainPreferenceOrder(config.terrain))
+        const float epsilon = 0.0001f;
+        Vector3Int targetCube = GetCachedCubeCoordinate(target);
+        List<TerrainEnum> preference = BuildTerrainPreferenceOrder(config.terrain);
+
+        bool found = false;
+        Vector2Int best = default;
+        float bestDist = float.MaxValue;
+        int bestRank = int.MaxValue;
+        TerrainEnum bestTerrain = config.terrain;
+
+        foreach (TerrainEnum terrain in LandTerrains)
         {
             List<Vector2Int> available = GetAvailableHexes(terrain, config.feature);
             if (available.Count == 0) continue;
-            if (terrain != config.terrain)
-                Debug.LogWarning($"Falling back to terrain {terrain} for '{config.characterName}' because all {config.terrain} hexes are taken.");
-            chosenTerrain = terrain;
-            return FindClosestPosition(available, target);
+
+            int rank = preference.IndexOf(terrain);
+            if (rank < 0) rank = preference.Count; // non-preferred land terrain: ranked last, still eligible
+
+            foreach (Vector2Int candidate in available)
+            {
+                float d = CubeDistance(GetCachedCubeCoordinate(candidate), targetCube);
+                // Closer always wins; only at (near-)equal distance does terrain rank decide.
+                bool closer = d < bestDist - epsilon;
+                bool tieBetterTerrain = Mathf.Abs(d - bestDist) <= epsilon && rank < bestRank;
+                if (!found || closer || tieBetterTerrain)
+                {
+                    found = true;
+                    best = candidate;
+                    bestDist = d;
+                    bestRank = rank;
+                    bestTerrain = terrain;
+                }
+            }
         }
-        throw new Exception($"No suitable hexes found for '{config.characterName}' with terrain {config.terrain} (including fallbacks).");
+
+        if (!found)
+            throw new Exception($"No suitable hexes found for '{config.characterName}' near its starting city.");
+
+        if (bestTerrain != config.terrain)
+            Debug.LogWarning($"Placing '{config.characterName}' on {bestTerrain} (its {config.terrain} hexes near the anchor are taken/unavailable); staying next to its own city.");
+
+        chosenTerrain = bestTerrain;
+        return best;
     }
 
     // Pick a well-separated position. Separation wins over terrain: a starting city on the
@@ -991,25 +1040,6 @@ public class NationSpawner : MonoBehaviour
             if (minDistance > maxMinDistance)
             {
                 maxMinDistance = minDistance;
-                bestPosition = candidate;
-            }
-        }
-
-        return bestPosition;
-    }
-
-    private Vector2Int FindClosestPosition(List<Vector2Int> candidates, Vector2Int target)
-    {
-        Vector2Int bestPosition = candidates[0];
-        float minDistance = float.MaxValue;
-        Vector3Int targetCube = GetCachedCubeCoordinate(target);
-
-        foreach (var candidate in candidates)
-        {
-            float distance = CubeDistance(GetCachedCubeCoordinate(candidate), targetCube);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
                 bestPosition = candidate;
             }
         }

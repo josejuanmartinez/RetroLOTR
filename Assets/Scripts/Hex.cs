@@ -2347,10 +2347,13 @@ public class Hex : MonoBehaviour
 
     private void UpdateEncounterVisibility()
     {
+        bool wasShowing = encounter != null && encounter.activeSelf;
         bool shouldShow = _pendingEncounters.Count > 0 && IsHexSeen();
         SetActiveFast(encounter, shouldShow);
         if (encounterHover) SetActiveFast(encounterHover.gameObject, shouldShow);
         if (artifactBg) SetActiveFast(artifactBg, shouldShow);
+        if (shouldShow && !wasShowing)
+            DeckManager.NotifyEncounterPlaced(this);
     }
 
     public void EnsurePersistentScouting(Leader leader)
