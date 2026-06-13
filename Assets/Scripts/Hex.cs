@@ -102,7 +102,8 @@ public class Hex : MonoBehaviour
     [SerializeField] private bool isRevealed;
     [SerializeField] private bool mapOnlyRevealed;
     [SerializeField] private bool isCurrentlyUnseen;
-    public TerrainEnum terrainType;    
+    public TerrainEnum terrainType;
+    public HexFeatureEnum features;
     public List<Army> armies = new();
     public List<Character> characters = new();
     public List<Artifact> hiddenArtifacts = new();
@@ -465,6 +466,8 @@ public class Hex : MonoBehaviour
             if (hexTextureMapping == null) hexTextureMapping = GetComponent<HexTextureMapping>();
             baseTerrainSprite = hexTextureMapping != null ? hexTextureMapping.GetTerrainBaseSprite(terrainType) : null;
         }
+        // Landmark features are read off whichever variant sprite we just assigned (see HexFeatureData).
+        features = HexFeatureData.GetFeatures(baseTerrainSprite?.name);
         ApplyHexTextureSprite();
         // this.terrainTexture.color = terrainColor;
         // if(terrainType == TerrainEnum.mountains) this.terrainTexture.sortingOrder += 1000;
@@ -717,8 +720,29 @@ public class Hex : MonoBehaviour
         }
 
         // Trim trailing newlines and always push an explicit refresh, even when the hex is empty.
-        string hoverText = sbChars.ToString().TrimEnd('\n');
+        string charText = sbChars.ToString().TrimEnd('\n');
+
+        // Header line: terrain + landmark features (e.g. "Plains, River, Bridge"), shown for any
+        // discovered hex even when no characters are visible.
+        string hoverText = charText;
+        if (IsHexRevealed())
+        {
+            string header = BuildTerrainFeatureHeader();
+            hoverText = string.IsNullOrEmpty(charText) ? header : $"{header}\n{charText}";
+        }
+
         if (hexInfoText != null) hexInfoText.text = hoverText;
+    }
+
+    private string BuildTerrainFeatureHeader()
+    {
+        StringBuilder sb = new();
+        sb.Append(TerrainData.GetDisplayName(terrainType));
+        foreach (string feature in HexFeatureData.GetFeatureLabels(features))
+        {
+            sb.Append(", ").Append(feature);
+        }
+        return $"<color=#D8C9A3>{sb}</color>";
     }
 
 
@@ -730,7 +754,9 @@ public class Hex : MonoBehaviour
             return;
         }
 
-        if (!IsHexSeen())
+        // Any discovered hex can be hovered to read its terrain/features; character & army
+        // details inside the panel are still gated on the hex being currently seen/scouted.
+        if (!IsHexRevealed())
         {
             Unhover();
             return;
@@ -2107,11 +2133,19 @@ public class Hex : MonoBehaviour
 
     public bool IsHidden() => !IsHexRevealed();
 
+    public bool HasFeature(HexFeatureEnum flag) => (features & flag) != 0;
+
     public int GetTerrainCost(Character character)
     {
         if (character != null && character.GetIgnoreTerrainMovementPenalty())
             return 1;
-        return character.IsArmyCommander() ? TerrainData.terrainCosts[terrainType] : 1;
+        if (!character.IsArmyCommander()) return 1;
+
+        int cost = TerrainData.terrainCosts[terrainType];
+        // Roads carve a cheap corridor through the tile; a bridge eases the crossing.
+        if (HasFeature(HexFeatureEnum.Road)) cost -= 2;
+        if (HasFeature(HexFeatureEnum.Bridge)) cost -= 1;
+        return Mathf.Max(1, cost);
     }
 
     public bool IsWaterTerrain()

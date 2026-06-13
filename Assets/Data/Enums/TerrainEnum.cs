@@ -32,4 +32,23 @@ public static class TerrainData
         { TerrainEnum.desert, 3 },
         { TerrainEnum.wastelands, 2 }
     };
+
+    public static string GetDisplayName(TerrainEnum terrain)
+    {
+        return terrain switch
+        {
+            TerrainEnum.mountains => "Mountains",
+            TerrainEnum.hills => "Hills",
+            TerrainEnum.plains => "Plains",
+            TerrainEnum.grasslands => "Grasslands",
+            TerrainEnum.shore => "Shore",
+            TerrainEnum.forest => "Forest",
+            TerrainEnum.shallowWater => "Shallow Water",
+            TerrainEnum.deepWater => "Deep Water",
+            TerrainEnum.swamp => "Swamp",
+            TerrainEnum.desert => "Desert",
+            TerrainEnum.wastelands => "Wastelands",
+            _ => "Unknown"
+        };
+    }
 }

@@ -920,22 +920,41 @@ public class NationSpawner : MonoBehaviour
             }
         }
 
+        // Anchor positions for reference.
+        foreach (KeyValuePair<string, Vector2Int> a in ownerlessAnchorPositionByRegion)
+            Debug.Log($"[Placement] anchor region '{a.Key}' city at {a.Value}.");
+
+        // Snapshot every city on the board (name + position) once, for the per-leader report.
+        List<KeyValuePair<string, Vector2Int>> allCities = new();
+        foreach (Hex h in board.hexes.Values)
+        {
+            if (h == null) continue;
+            PC pc = h.GetPCData();
+            if (pc == null) continue;
+            allCities.Add(new KeyValuePair<string, Vector2Int>(string.IsNullOrWhiteSpace(pc.pcName) ? "(unnamed)" : pc.pcName, h.v2));
+        }
+
         foreach (PlayableLeader leader in FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None))
         {
             if (leader == null || leader.hex == null) continue;
             string region = leader.GetBiome()?.startingCityRegion;
-            if (string.IsNullOrWhiteSpace(region)) continue;
-            if (!ownerlessAnchorPositionByRegion.TryGetValue(region, out Vector2Int ownAnchor)) continue;
-
             Vector3Int leaderCube = GetCachedCubeCoordinate(leader.hex.v2);
-            float distToOwn = CubeDistance(leaderCube, GetCachedCubeCoordinate(ownAnchor));
-            foreach (KeyValuePair<string, Vector2Int> other in ownerlessAnchorPositionByRegion)
+
+            string ownInfo = "(no anchor registered)";
+            if (!string.IsNullOrWhiteSpace(region) && ownerlessAnchorPositionByRegion.TryGetValue(region, out Vector2Int ownAnchor))
             {
-                if (string.Equals(other.Key, region, StringComparison.OrdinalIgnoreCase)) continue;
-                float distToOther = CubeDistance(leaderCube, GetCachedCubeCoordinate(other.Value));
-                if (distToOther < distToOwn)
-                    Debug.LogError($"NationSpawner: playable leader '{leader.characterName}' spawned closer to {other.Key}'s city (dist {distToOther}) than its own {region} (dist {distToOwn}).");
+                float distToOwn = CubeDistance(leaderCube, GetCachedCubeCoordinate(ownAnchor));
+                ownInfo = $"own region '{region}' anchor at {ownAnchor} (dist {distToOwn})";
             }
+
+            // Three nearest cities to this leader, to expose any foreign city sitting on top of it.
+            string nearest = string.Join(", ", allCities
+                .Select(c => new { c.Key, Dist = CubeDistance(leaderCube, GetCachedCubeCoordinate(c.Value)) })
+                .OrderBy(c => c.Dist)
+                .Take(3)
+                .Select(c => $"{c.Key}@{c.Dist}"));
+
+            Debug.Log($"[Placement] PLAYABLE '{leader.characterName}' at {leader.hex.v2}; {ownInfo}; nearest cities: {nearest}.");
         }
     }
 

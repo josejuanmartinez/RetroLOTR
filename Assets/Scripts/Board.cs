@@ -1323,9 +1323,12 @@ public class Board : MonoBehaviour
 
             try
             {
-                // Commit logic AFTER the tween so Redraw snaps to the new hex cleanly
+                // Commit logic AFTER the tween so Redraw snaps to the new hex cleanly.
+                // Defer the whole-board visibility refresh off the per-step hot path so the
+                // character tween stays smooth; the local RevealArea inside still animates
+                // the newly discovered hexes. A single budgeted refresh runs after arrival.
                 bool lastHex = i == path.Count -1;
-                MoveCharacterOneHex(character, previousHex, newHex, lastHex, lastHex);
+                MoveCharacterOneHex(character, previousHex, newHex, lastHex, lastHex, deferVisibilityRefresh: true);
                 currentHex = newHex;
                 if (showPlayerUi) selected.RefreshMovementLeft(character);
             }
@@ -1338,6 +1341,14 @@ public class Board : MonoBehaviour
 
             // optional: tiny pacing pause
             // yield return new WaitForSeconds(0.02f);
+        }
+
+        // Now that the walk has finished, reconcile fog/visibility for the whole board once,
+        // spread across frames (batched yields) so it never spikes the frame.
+        Game moveGame = FindFirstObjectByType<Game>();
+        if (moveGame != null && moveGame.IsPlayerCurrentlyPlaying() && moveGame.player == character.GetOwner())
+        {
+            yield return StartCoroutine(moveGame.player.RevealVisibleHexesAsync());
         }
 
         try
@@ -1362,7 +1373,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true, bool rememberPreviousHex = true) {
+    public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true, bool rememberPreviousHex = true, bool deferVisibilityRefresh = false) {
         int movedBefore = character.moved;
         bool wasWater = previousHex != null && previousHex.IsWaterTerrain();
         bool isWater = newHex != null && newHex.IsWaterTerrain();
@@ -1443,7 +1454,10 @@ public class Board : MonoBehaviour
 
             if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
             character.GetOwner().visibleHexes.Add(newHex);
-            if (g != null && g.IsPlayerCurrentlyPlaying() && g.player == character.GetOwner())
+            // The whole-board visibility refresh is the per-step frame spike during a walk.
+            // When deferred (multi-hex path moves), skip it here; MoveCoroutine runs a single
+            // frame-budgeted RevealVisibleHexesAsync after arrival instead.
+            if (!deferVisibilityRefresh && g != null && g.IsPlayerCurrentlyPlaying() && g.player == character.GetOwner())
             {
                 character.GetOwner().RefreshVisibleHexesImmediate();
             }
@@ -1466,7 +1480,10 @@ public class Board : MonoBehaviour
             }
             else
             {
-                character.moved += newHex.GetTerrainCost(character);                 
+                character.moved += newHex.GetTerrainCost(character);
+                // A river without a bridge halts the unit: entering it ends movement for the turn.
+                if (newHex.HasFeature(HexFeatureEnum.River) && !newHex.HasFeature(HexFeatureEnum.Bridge))
+                    character.moved = character.GetMaxMovement();
             }
 
             if (g != null && g.player != null && character.GetOwner() != g.player)
