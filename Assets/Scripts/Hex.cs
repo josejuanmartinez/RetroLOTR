@@ -46,7 +46,10 @@ public class Hex : MonoBehaviour
 
     [Header("Hover")]
     public GameObject artifact;
+    public GameObject encounter;
+    public GameObject artifactBg;
     public HoverNoUI artifactHover;
+    public HoverNoUI encounterHover;
 
     [Header("Hex Info Panel")]
     public GameObject hexInfoArrow;
@@ -103,6 +106,7 @@ public class Hex : MonoBehaviour
     public List<Army> armies = new();
     public List<Character> characters = new();
     public List<Artifact> hiddenArtifacts = new();
+    private readonly List<CardData> _pendingEncounters = new();
 
 
     private Coroutine armyArrangeCoroutine;
@@ -1314,6 +1318,7 @@ public class Hex : MonoBehaviour
         {
             SetActiveFast(hoverHexFrame, false);
             UpdateArtifactVisibility();
+            UpdateEncounterVisibility();
             UpdateParticles();
             RefreshFrontierRowVisuals();
             UpdatePcWorldText(ShouldShowPcVisual());
@@ -1324,6 +1329,9 @@ public class Hex : MonoBehaviour
         SetActiveFast(characterSpriteRenderer.gameObject, false);
         SetActiveFast(artifact, false);
         if (artifactHover) SetActiveFast(artifactHover.gameObject, false);
+        SetActiveFast(encounter, false);
+        if (encounterHover) SetActiveFast(encounterHover.gameObject, false);
+        if (artifactBg) SetActiveFast(artifactBg, false);
 
         SetActiveFast(movement, false);
         SetActiveFast(hoverHexFrame, false);
@@ -2317,6 +2325,32 @@ public class Hex : MonoBehaviour
         bool shouldShow = artifactRevealed && hiddenArtifacts != null && hiddenArtifacts.Count > 0 && IsHexSeen();
         SetActiveFast(artifact, shouldShow);
         if (artifactHover) SetActiveFast(artifactHover.gameObject, shouldShow);
+    }
+
+    public bool HasPendingEncounters => _pendingEncounters.Count > 0;
+
+    public void AddPendingEncounter(CardData card)
+    {
+        if (card == null) return;
+        _pendingEncounters.Add(card);
+        UpdateEncounterVisibility();
+    }
+
+    public CardData TakeFirstPendingEncounter()
+    {
+        if (_pendingEncounters.Count == 0) return null;
+        CardData card = _pendingEncounters[0];
+        _pendingEncounters.RemoveAt(0);
+        UpdateEncounterVisibility();
+        return card;
+    }
+
+    private void UpdateEncounterVisibility()
+    {
+        bool shouldShow = _pendingEncounters.Count > 0 && IsHexSeen();
+        SetActiveFast(encounter, shouldShow);
+        if (encounterHover) SetActiveFast(encounterHover.gameObject, shouldShow);
+        if (artifactBg) SetActiveFast(artifactBg, shouldShow);
     }
 
     public void EnsurePersistentScouting(Leader leader)

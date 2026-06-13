@@ -33,6 +33,12 @@ public class NationSpawner : MonoBehaviour
     private bool isInitialized = false;
     private readonly Dictionary<string, Vector2Int> leaderPositions = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, List<Vector2Int>> startingCityPositionsByRegion = new(StringComparer.OrdinalIgnoreCase);
+    // Exact hex of each pre-spawned ownerless anchor city (Hobbiton / Orthanc / Barad-dur),
+    // keyed by region. Captured before pass-2 NPLs pollute startingCityPositionsByRegion, so
+    // it always points at the real anchor a playable leader is meant to start beside.
+    private readonly Dictionary<string, Vector2Int> ownerlessAnchorPositionByRegion = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly TerrainEnum[] StartFallbackTerrains =
+        { TerrainEnum.plains, TerrainEnum.grasslands, TerrainEnum.hills, TerrainEnum.shore };
     private Dictionary<string, string> tutorialAnchorByNpl = new(StringComparer.OrdinalIgnoreCase);
     private bool landRegionsAssigned;
 
@@ -156,6 +162,11 @@ public class NationSpawner : MonoBehaviour
         RecountExistingEntities();
         leaderPositions.Clear();
         startingCityPositionsByRegion.Clear();
+        ownerlessAnchorPositionByRegion.Clear();
+        // placedPositions is only allocated in Initialize(); clear it here so a board
+        // regeneration in the same session doesn't spread new nations against stale,
+        // last-board coordinates.
+        placedPositions.Clear();
 
         // Pre-spawn ownerless PCs first so their startingCityRegions are registered
         // before playable leaders look them up (e.g. Sauron needs "Gorgoroth" from Barad-dur)
@@ -163,6 +174,7 @@ public class NationSpawner : MonoBehaviour
 
         InstantiateLeadersAndCharacters(playableLeaders.playableLeaders.biomes, placedPositions);
         InstantiateLeadersAndCharacters(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
+        VerifyStartingPlacements();
         AssignLandRegions();
     }
 
@@ -449,12 +461,19 @@ public class NationSpawner : MonoBehaviour
 
     private void PreSpawnOwnerlessPcs(List<NonPlayableLeaderBiomeConfig> nonPlayableleaderBiomes, List<Vector2Int> placedPositions)
     {
+        // These are the starting-nation anchor cities (e.g. Barad-dur, Hobbiton, Orthanc).
+        // Force them apart so two nations can never spawn on top of each other — that is
+        // what made playable leaders appear to start in another nation's city.
+        float separation = GetMinStartSeparation();
         foreach (NonPlayableLeaderBiomeConfig config in nonPlayableleaderBiomes)
         {
             if (config == null || !config.spawnPcWithoutOwner) continue;
-            Vector2Int? position = InstantiateOwnerlessPc(config, placedPositions, null);
-            if (position.HasValue && !string.IsNullOrWhiteSpace(config.characterName))
+            Vector2Int? position = InstantiateOwnerlessPc(config, placedPositions, null, separation);
+            if (!position.HasValue) continue;
+            if (!string.IsNullOrWhiteSpace(config.characterName))
                 leaderPositions[config.characterName] = position.Value;
+            if (!string.IsNullOrWhiteSpace(config.startingCityRegion))
+                ownerlessAnchorPositionByRegion[config.startingCityRegion] = position.Value;
         }
     }
 
@@ -494,7 +513,7 @@ public class NationSpawner : MonoBehaviour
         }
     }
     
-    private Vector2Int? InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable, Vector2Int? preferredPosition)
+    private Vector2Int? InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable, Vector2Int? preferredPosition, float minSeparation = 0f)
     {
         /*if (FindObjectsByType<Leader>(FindObjectsSortMode.None).Length >= Game.MAX_LEADERS)
         {
@@ -507,34 +526,11 @@ public class NationSpawner : MonoBehaviour
             Debug.LogError($"Skipping non-playable leader instantiation for {leaderName} because max PCs reached.");
             return null;
         }
-        TerrainEnum chosenTerrain = leaderBiomeConfig.terrain;
-        List<Vector2Int> suitableHexes = GetAvailableHexes(chosenTerrain, leaderBiomeConfig.feature);
-
-        if (suitableHexes.Count == 0)
-        {
-            TerrainEnum[] fallbackTerrains = { TerrainEnum.plains, TerrainEnum.grasslands, TerrainEnum.hills, TerrainEnum.shore };
-            foreach (var fallbackTerrain in fallbackTerrains)
-            {
-                if (fallbackTerrain == leaderBiomeConfig.terrain) continue;
-                suitableHexes = GetAvailableHexes(fallbackTerrain, leaderBiomeConfig.feature);
-                if (suitableHexes.Count > 0)
-                {
-                    chosenTerrain = fallbackTerrain;
-                    Debug.LogWarning($"Falling back to terrain {fallbackTerrain} because all {leaderBiomeConfig.terrain} hexes already have PCs.");
-                    break;
-                }
-            }
-        }
-
-        if (suitableHexes.Count == 0)
-        {
-            throw new Exception($"No suitable hexes found for leader with terrain {leaderBiomeConfig.terrain} (including fallbacks).");
-        }
-
         preferredPosition ??= GetPreferredPositionForStartingCityRegion(leaderBiomeConfig);
+        TerrainEnum chosenTerrain;
         Vector2Int bestPosition = preferredPosition.HasValue
-            ? FindClosestPosition(suitableHexes, preferredPosition.Value)
-            : FindFarthestPosition(suitableHexes, placedPositions);
+            ? SelectClosestPosition(leaderBiomeConfig, preferredPosition.Value, out chosenTerrain)
+            : SelectSpreadPosition(leaderBiomeConfig, placedPositions, minSeparation, out chosenTerrain);
         placedPositions.Add(bestPosition);
 
         Vector2Int v2 = new(bestPosition.x, bestPosition.y);
@@ -693,7 +689,7 @@ public class NationSpawner : MonoBehaviour
         targetHex.RedrawArmies();
     }
 
-    private Vector2Int? InstantiateOwnerlessPc(NonPlayableLeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, Vector2Int? preferredPosition)
+    private Vector2Int? InstantiateOwnerlessPc(NonPlayableLeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, Vector2Int? preferredPosition, float minSeparation = 0f)
     {
         if (!EnsurePcCapacity())
         {
@@ -702,34 +698,11 @@ public class NationSpawner : MonoBehaviour
             return null;
         }
 
-        TerrainEnum chosenTerrain = leaderBiomeConfig.terrain;
-        List<Vector2Int> suitableHexes = GetAvailableHexes(chosenTerrain, leaderBiomeConfig.feature);
-
-        if (suitableHexes.Count == 0)
-        {
-            TerrainEnum[] fallbackTerrains = { TerrainEnum.plains, TerrainEnum.grasslands, TerrainEnum.hills, TerrainEnum.shore };
-            foreach (var fallbackTerrain in fallbackTerrains)
-            {
-                if (fallbackTerrain == leaderBiomeConfig.terrain) continue;
-                suitableHexes = GetAvailableHexes(fallbackTerrain, leaderBiomeConfig.feature);
-                if (suitableHexes.Count > 0)
-                {
-                    chosenTerrain = fallbackTerrain;
-                    Debug.LogWarning($"Falling back to terrain {fallbackTerrain} because all {leaderBiomeConfig.terrain} hexes already have PCs.");
-                    break;
-                }
-            }
-        }
-
-        if (suitableHexes.Count == 0)
-        {
-            throw new Exception($"No suitable hexes found for ownerless PC with terrain {leaderBiomeConfig.terrain} (including fallbacks).");
-        }
-
         preferredPosition ??= GetPreferredPositionForStartingCityRegion(leaderBiomeConfig);
+        TerrainEnum chosenTerrain;
         Vector2Int bestPosition = preferredPosition.HasValue
-            ? FindClosestPosition(suitableHexes, preferredPosition.Value)
-            : FindFarthestPosition(suitableHexes, placedPositions);
+            ? SelectClosestPosition(leaderBiomeConfig, preferredPosition.Value, out chosenTerrain)
+            : SelectSpreadPosition(leaderBiomeConfig, placedPositions, minSeparation, out chosenTerrain);
         placedPositions.Add(bestPosition);
 
         Vector2Int v2 = new(bestPosition.x, bestPosition.y);
@@ -788,6 +761,133 @@ public class NationSpawner : MonoBehaviour
         }
 
         positions.Add(position);
+    }
+
+    // Minimum hex distance enforced between starting-nation anchor cities. Scaled to the
+    // board so the three anchors land in different thirds of the map; never so large the
+    // map can't satisfy it (callers relax gracefully when it can't be met).
+    private float GetMinStartSeparation()
+    {
+        if (board == null) return 0f;
+        int minDim = Mathf.Min(board.GetWidth(), board.GetHeight());
+        return Mathf.Max(4f, minDim / 3f);
+    }
+
+    private List<TerrainEnum> BuildTerrainPreferenceOrder(TerrainEnum primary)
+    {
+        List<TerrainEnum> order = new(StartFallbackTerrains.Length + 1) { primary };
+        foreach (TerrainEnum terrain in StartFallbackTerrains)
+        {
+            if (terrain != primary) order.Add(terrain);
+        }
+        return order;
+    }
+
+    // Cluster a leader onto its starting city: nearest available hex to the anchor,
+    // preferring the configured terrain but falling back when that terrain is exhausted.
+    private Vector2Int SelectClosestPosition(LeaderBiomeConfig config, Vector2Int target, out TerrainEnum chosenTerrain)
+    {
+        foreach (TerrainEnum terrain in BuildTerrainPreferenceOrder(config.terrain))
+        {
+            List<Vector2Int> available = GetAvailableHexes(terrain, config.feature);
+            if (available.Count == 0) continue;
+            if (terrain != config.terrain)
+                Debug.LogWarning($"Falling back to terrain {terrain} for '{config.characterName}' because all {config.terrain} hexes are taken.");
+            chosenTerrain = terrain;
+            return FindClosestPosition(available, target);
+        }
+        throw new Exception($"No suitable hexes found for '{config.characterName}' with terrain {config.terrain} (including fallbacks).");
+    }
+
+    // Pick a well-separated position. Separation wins over terrain: a starting city on the
+    // "wrong" terrain far from its neighbours is better than the correct terrain stacked on
+    // top of another nation. Only relaxes separation when no terrain can satisfy it.
+    private Vector2Int SelectSpreadPosition(LeaderBiomeConfig config, List<Vector2Int> placedPositions, float minSeparation, out TerrainEnum chosenTerrain)
+    {
+        if (minSeparation > 0f)
+        {
+            foreach (TerrainEnum terrain in BuildTerrainPreferenceOrder(config.terrain))
+            {
+                List<Vector2Int> available = GetAvailableHexes(terrain, config.feature);
+                if (available.Count == 0) continue;
+                List<Vector2Int> separated = FilterBySeparation(available, placedPositions, minSeparation);
+                if (separated.Count == 0) continue;
+                if (terrain != config.terrain)
+                    Debug.LogWarning($"Relaxing terrain to {terrain} for '{config.characterName}' to keep starting nations apart.");
+                chosenTerrain = terrain;
+                return FindFarthestPosition(separated, placedPositions);
+            }
+            Debug.LogWarning($"Could not honor minimum start separation ({minSeparation}) for '{config.startingCityName ?? config.characterName}'; placing as far as the map allows.");
+        }
+
+        foreach (TerrainEnum terrain in BuildTerrainPreferenceOrder(config.terrain))
+        {
+            List<Vector2Int> available = GetAvailableHexes(terrain, config.feature);
+            if (available.Count == 0) continue;
+            chosenTerrain = terrain;
+            return FindFarthestPosition(available, placedPositions);
+        }
+        throw new Exception($"No suitable hexes found for '{config.characterName}' with terrain {config.terrain} (including fallbacks).");
+    }
+
+    private List<Vector2Int> FilterBySeparation(List<Vector2Int> candidates, List<Vector2Int> placedPositions, float minSeparation)
+    {
+        if (placedPositions == null || placedPositions.Count == 0) return candidates;
+
+        List<Vector2Int> result = new(candidates.Count);
+        foreach (Vector2Int candidate in candidates)
+        {
+            Vector3Int candidateCube = GetCachedCubeCoordinate(candidate);
+            bool farEnough = true;
+            foreach (Vector2Int placed in placedPositions)
+            {
+                if (CubeDistance(candidateCube, GetCachedCubeCoordinate(placed)) < minSeparation)
+                {
+                    farEnough = false;
+                    break;
+                }
+            }
+            if (farEnough) result.Add(candidate);
+        }
+        return result;
+    }
+
+    // Self-check: a playable leader must never end up closer to a rival nation's starting
+    // city than to its own. If it does, the separation pass failed for this map and we log
+    // loudly rather than letting "Sauron starts in Hobbiton" ship silently.
+    private void VerifyStartingPlacements()
+    {
+        if (ownerlessAnchorPositionByRegion.Count == 0) return;
+
+        float minSeparation = GetMinStartSeparation();
+        List<Vector2Int> anchors = ownerlessAnchorPositionByRegion.Values.ToList();
+        for (int i = 0; i < anchors.Count; i++)
+        {
+            for (int j = i + 1; j < anchors.Count; j++)
+            {
+                float d = CubeDistance(GetCachedCubeCoordinate(anchors[i]), GetCachedCubeCoordinate(anchors[j]));
+                if (d < minSeparation * 0.5f)
+                    Debug.LogWarning($"NationSpawner: two starting cities spawned only {d} hexes apart (target >= {minSeparation}). Map terrain is unusually constrained.");
+            }
+        }
+
+        foreach (PlayableLeader leader in FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None))
+        {
+            if (leader == null || leader.hex == null) continue;
+            string region = leader.GetBiome()?.startingCityRegion;
+            if (string.IsNullOrWhiteSpace(region)) continue;
+            if (!ownerlessAnchorPositionByRegion.TryGetValue(region, out Vector2Int ownAnchor)) continue;
+
+            Vector3Int leaderCube = GetCachedCubeCoordinate(leader.hex.v2);
+            float distToOwn = CubeDistance(leaderCube, GetCachedCubeCoordinate(ownAnchor));
+            foreach (KeyValuePair<string, Vector2Int> other in ownerlessAnchorPositionByRegion)
+            {
+                if (string.Equals(other.Key, region, StringComparison.OrdinalIgnoreCase)) continue;
+                float distToOther = CubeDistance(leaderCube, GetCachedCubeCoordinate(other.Value));
+                if (distToOther < distToOwn)
+                    Debug.LogError($"NationSpawner: playable leader '{leader.characterName}' spawned closer to {other.Key}'s city (dist {distToOther}) than its own {region} (dist {distToOwn}).");
+            }
+        }
     }
 
     private List<Vector2Int> GetAvailableHexes(TerrainEnum terrain, FeaturesEnum feature)

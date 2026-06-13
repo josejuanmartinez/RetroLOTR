@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -1454,6 +1455,9 @@ public class Board : MonoBehaviour
 
             CheckAndShowSituationCards(character, newHex);
 
+            if (newHex.HasPendingEncounters && character != null && !character.killed)
+                _ = TriggerHexEncountersAsync(character, newHex);
+
             if ((!wasWater && isWater) || (wasWater && !isWater) || finishMovement)
             {
                 character.moved = character.GetMaxMovement();
@@ -1623,6 +1627,16 @@ public class Board : MonoBehaviour
     {
         Card.RequestInteractionRefreshAll();
         FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
+    }
+
+    private static async Task TriggerHexEncountersAsync(Character character, Hex hex)
+    {
+        while (hex != null && hex.HasPendingEncounters)
+        {
+            CardData card = hex.TakeFirstPendingEncounter();
+            if (card == null) break;
+            await EncounterResolver.ResolveAsync(card, character);
+        }
     }
 
     private void CheckAndShowSituationCards(Character character, Hex hex)

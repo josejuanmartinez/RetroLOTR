@@ -726,7 +726,9 @@ public class Character : MonoBehaviour
         List<string> result = new() { };
         if (withColor) result.Add($"<color={colors.GetHexColorByName(alignment.ToString())}>");
         if (withHealth) result.Add(GetHealthHoverText());
-        if(withAlignment) result.Add($"<sprite name=\"{alignment}\">");
+        bool hasArmy = GetArmy() != null;
+        string characterSprite = alignment.ToString() + (hasArmy? "" : "Character");
+        if(withAlignment) result.Add($"<sprite name=\"{characterSprite}\">");
         result.Add($"{characterName}");
         if (withCharInfo)
         {
@@ -736,7 +738,7 @@ public class Character : MonoBehaviour
             if (mage > 0) result.Add($"<sprite name=\"mage\">{(withLevels ? GetMage().ToString() : "")}");
         }
 
-        if (withArmy && GetArmy() != null) result.Add(GetArmy().GetHoverText());
+        if (withArmy && hasArmy) result.Add(GetArmy().GetHoverText());
         if (withColor) result.Add("</color>");
         return string.Join("", result);
     }

@@ -921,12 +921,11 @@ public class DeckManager : MonoBehaviour
         card.hasShownHandAnimation = false;
         state.drawPile.RemoveAt(0);
 
-        if (card.GetCardType() == CardTypeEnum.Encounter &&
-            state.hand.Any(h => h != null && h.GetCardType() == CardTypeEnum.Encounter))
+        if (card.GetCardType() == CardTypeEnum.Encounter)
         {
-            state.discardPile.Add(card);
+            PlaceEncounterOnBoard(card, leader);
             card = null;
-            return false;
+            return false; // encounter never occupies a hand slot
         }
 
         state.hand.Add(card);
@@ -1214,7 +1213,7 @@ public class DeckManager : MonoBehaviour
             state.drawPile.AddRange(state.discardPile);
             state.discardPile.Clear();
             ApplyBalancedDrawOrdering(state.drawPile);
-            RefillHandToCount(state, targetHandSize);
+            RefillHandToCount(state, targetHandSize, leader);
             EnsureSharedBaseCardInHand(state);
 
             StartCoroutine(PlayReshuffleAnimation(oldCards));
@@ -1227,7 +1226,7 @@ public class DeckManager : MonoBehaviour
         state.discardPile.Clear();
 
         ApplyBalancedDrawOrdering(state.drawPile);
-        RefillHandToCount(state, targetHandSize);
+        RefillHandToCount(state, targetHandSize, leader);
         EnsureSharedBaseCardInHand(state);
         RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
@@ -1264,7 +1263,7 @@ public class DeckManager : MonoBehaviour
         if (rebuilt == null) return false;
 
         playerDecks[leader] = rebuilt;
-        RefillHandToCount(rebuilt, Mathf.Max(0, cardsToDraw < 0 ? handSize : cardsToDraw));
+        RefillHandToCount(rebuilt, Mathf.Max(0, cardsToDraw < 0 ? handSize : cardsToDraw), leader);
         EnsureRegionCardInHand(rebuilt);
         rebuilt.turnsWithoutRegionCard = HandHasRegionCard(rebuilt) ? 0 : 1;
         EnsureSharedBaseCardInHand(rebuilt);
@@ -1285,7 +1284,7 @@ public class DeckManager : MonoBehaviour
             return true;
         }
 
-        RefillHandToCount(state, handSize);
+        RefillHandToCount(state, handSize, leader);
         ApplyRegionCardGuarantee(state);
         EnsureSharedBaseCardInHand(state);
         RefreshHumanPlayerHandUIIfHuman(leader);
@@ -1360,7 +1359,7 @@ public class DeckManager : MonoBehaviour
         target.blocksRaycasts = visible;
     }
 
-    private void RefillHandToCount(PlayerDeckState state, int targetCount)
+    private void RefillHandToCount(PlayerDeckState state, int targetCount, PlayableLeader leader = null)
     {
         if (state == null) return;
 
@@ -1384,13 +1383,68 @@ public class DeckManager : MonoBehaviour
             EnsureSubdeckCardIfNeeded(state);
             CardData card = state.drawPile[0];
             state.drawPile.RemoveAt(0);
-            if (card.GetCardType() == CardTypeEnum.Encounter &&
-                state.hand.Any(h => h != null && h.GetCardType() == CardTypeEnum.Encounter))
+            if (card.GetCardType() == CardTypeEnum.Encounter)
             {
-                state.discardPile.Add(card);
-                continue;
+                PlaceEncounterOnBoard(card, leader);
+                continue; // encounter never occupies a hand slot
             }
             state.hand.Add(card);
+        }
+    }
+
+    private void PlaceEncounterOnBoard(CardData card, PlayableLeader leader)
+    {
+        Hex targetHex = AssignEncounterTargetHex(leader);
+        if (targetHex == null) return;
+        card.encounterTargetHex = targetHex;
+        card.hasShownHandAnimation = true;
+        targetHex.AddPendingEncounter(card);
+        // Notify the human player if the tile is already visible
+        Game g = FindFirstObjectByType<Game>();
+        if (g != null && leader == g.player && targetHex.IsHexSeen())
+            NotifyEncounterPlaced(targetHex);
+    }
+
+    private static Hex AssignEncounterTargetHex(PlayableLeader leader)
+    {
+        if (leader == null) return null;
+        var candidates = new HashSet<Hex>();
+        if (leader.hex != null && !leader.killed)
+        {
+            foreach (Hex h in leader.hex.GetHexesInRadius(5)) candidates.Add(h);
+        }
+        if (leader.controlledCharacters != null)
+        {
+            foreach (Character c in leader.controlledCharacters)
+            {
+                if (c == null || c.killed || c.hex == null) continue;
+                foreach (Hex h in c.hex.GetHexesInRadius(5)) candidates.Add(h);
+            }
+        }
+        if (candidates.Count == 0) return null;
+        var list = new List<Hex>(candidates);
+        return list[UnityEngine.Random.Range(0, list.Count)];
+    }
+
+    private static void NotifyEncounterPlaced(Hex targetHex)
+    {
+        EventIconsManager iconsManager = EventIconsManager.FindManager();
+        BoardNavigator navigator = BoardNavigator.Instance ?? FindFirstObjectByType<BoardNavigator>();
+        static void showMessage() => MessageDisplay.ShowMessage("An encounter can be investigated", Color.yellow, true);
+
+        if (iconsManager != null)
+        {
+            iconsManager.AddEventIcon(EventIconType.Encounter, true, () =>
+            {
+                if (navigator != null && targetHex != null)
+                    navigator.EnqueueFocus(targetHex, 0.5f, 0.18f, true, showMessage);
+                else
+                    showMessage();
+            });
+        }
+        else
+        {
+            showMessage();
         }
     }
 
@@ -1709,7 +1763,7 @@ public class DeckManager : MonoBehaviour
             referenceDeckId = original.deckId,
             referenceCardId = original.cardId
         });
-        Debug.Log($"DeckManager: Injected reference to '{original.name}' ({original.type}) from '{original.deckId}' into '{subdeck.deckId}'.");
+        // Debug.Log($"DeckManager: Injected reference to '{original.name}' ({original.type}) from '{original.deckId}' into '{subdeck.deckId}'.");
     }
 
     private void ResolveCardReferences()
@@ -2210,7 +2264,7 @@ public class DeckManager : MonoBehaviour
         }
 
         ApplyBalancedDrawOrdering(state.drawPile);
-        DrawUpToHandSize(state);
+        RefillHandToCount(state, handSize, leader);
 
         PopulateSituationPool(state, deckId);
 
@@ -2503,25 +2557,6 @@ public class DeckManager : MonoBehaviour
             && x.isBaseDeck
             && x.alignment == alignment);
         return byAlignment?.deckId;
-    }
-
-    private void DrawUpToHandSize(PlayerDeckState state)
-    {
-        if (state == null) return;
-        while (state.hand.Count < handSize && state.drawPile.Count > 0)
-        {
-            EnsureSubdeckCardIfNeeded(state);
-            CardData card = state.drawPile[0];
-            card.hasShownHandAnimation = false;
-            state.drawPile.RemoveAt(0);
-            if (card.GetCardType() == CardTypeEnum.Encounter &&
-                state.hand.Any(h => h != null && h.GetCardType() == CardTypeEnum.Encounter))
-            {
-                state.discardPile.Add(card);
-                continue;
-            }
-            state.hand.Add(card);
-        }
     }
 
     private static void Shuffle<T>(List<T> list)
