@@ -22,6 +22,7 @@ public class Layout : MonoBehaviour
         if (card == null) { environmentalCard.SetEnvironmentalPulse(false); environmentalCard.gameObject.SetActive(false); return; }
         environmentalCard.gameObject.SetActive(true);
         environmentalCard.Initialize(card);
+        environmentalCard.ShowEnvironmentalSprite();
         environmentalCard.SetEnvironmentalPulse(true);
     }
 

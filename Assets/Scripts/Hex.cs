@@ -722,28 +722,40 @@ public class Hex : MonoBehaviour
         // Trim trailing newlines and always push an explicit refresh, even when the hex is empty.
         string charText = sbChars.ToString().TrimEnd('\n');
 
-        // Header line: terrain + landmark features (e.g. "Plains, River, Bridge"), shown for any
-        // discovered hex even when no characters are visible.
-        string hoverText = charText;
-        if (IsHexRevealed())
-        {
-            string header = BuildTerrainFeatureHeader();
-            hoverText = string.IsNullOrEmpty(charText) ? header : $"{header}\n{charText}";
-        }
+        // Hex info block: Terrain + Features header (shown for any discovered hex) followed by the
+        // Presence list of visible characters/armies.
+        string header = IsHexRevealed() ? BuildTerrainFeatureHeader() : string.Empty;
+        string presence = string.IsNullOrEmpty(charText)
+            ? string.Empty
+            : $"<color=#D8C9A3><b>Presence</b>:</color>\n{charText}";
+
+        string hoverText = string.Join("\n", new[] { header, presence }.Where(s => !string.IsNullOrEmpty(s)));
 
         if (hexInfoText != null) hexInfoText.text = hoverText;
     }
 
     private string BuildTerrainFeatureHeader()
     {
+        string terrainName = TerrainData.GetDisplayName(terrainType);
         StringBuilder sb = new();
-        sb.Append(TerrainData.GetDisplayName(terrainType));
+        sb.Append("<color=#8FBF6F><b>Terrain</b></color>: ").Append(terrainName).Append(' ').Append(SpriteTag(terrainName));
+
+        // Features: space-separated "name <sprite>" entries (no commas), only when present.
+        StringBuilder feats = new();
         foreach (string feature in HexFeatureData.GetFeatureLabels(features))
         {
-            sb.Append(", ").Append(feature);
+            if (feats.Length > 0) feats.Append(' ');
+            feats.Append(feature).Append(' ').Append(SpriteTag(feature));
         }
-        return $"<color=#D8C9A3>{sb}</color>";
+        if (feats.Length > 0)
+            sb.Append('\n').Append("<color=#6FA8DC><b>Features</b></color>: ").Append(feats);
+
+        return sb.ToString();
     }
+
+    // Sprite from environment_terrain_features_spritesheet, looked up by the normalized name
+    // (matches CardNameUtility.Normalize, the scheme the sprite m_Name fields use).
+    private static string SpriteTag(string name) => $"<sprite name=\"{CardNameUtility.Normalize(name)}\">";
 
 
     public void Hover()

@@ -48,6 +48,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] private Image tokenBorder;
     [SerializeField] private CanvasGroup tokenCanvasGroup;
     [SerializeField] private CanvasGroup realCardCanvasGroup;
+    [SerializeField] private TextMeshProUGUI environmentalSprite;
 
     [Header("Tuning")]
     [SerializeField] private Color requirementsMessageColor = Color.red;
@@ -172,6 +173,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (hover != null) hover.Initialize(FormatCardTypeLabel(data.GetCardType()));
         ApplyCardTypeColor(data.GetCardType());
 
+        // Only the active environmental card (Layout's "Environmental > EnvironmentalCard")
+        // shows this icon; hidden by default so it never leaks onto hand cards.
+        if (environmentalSprite != null) environmentalSprite.gameObject.SetActive(false);
+
         if (descriptionText != null)
         {
             baseDescription = GetActionDescription(data);
@@ -233,6 +238,18 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine(baseDescription, data));
             }
         }
+    }
+
+    // Called for the active environmental card shown in Layout's "Environmental > EnvironmentalCard".
+    // Reveals the environmental sprite transform and renders the card's icon via the normalized name
+    // (same scheme as the sprite-asset m_Name fields, e.g. "wind", "sun", "redsun").
+    public void ShowEnvironmentalSprite()
+    {
+        if (environmentalSprite == null) return;
+        environmentalSprite.gameObject.SetActive(true);
+        environmentalSprite.text = cardData != null
+            ? $"<sprite name=\"{CardNameUtility.Normalize(cardData.name)}\">"
+            : string.Empty;
     }
 
     private IEnumerator HandDrawTypewriterCoroutine(string text, CardData data, bool append = false)
