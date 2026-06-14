@@ -56,6 +56,8 @@ public class Hex : MonoBehaviour
     public GameObject hexInfo;
     public TextMeshPro hexInfoText;
     [SerializeField] private float hexInfoHoverDelay = 2f;
+    [Tooltip("World-space tooltip shown at the cursor when hovering a terrain/feature name. Must contain a TextMeshPro.")]
+    [SerializeField] private GameObject terrainTooltipPrefab;
 
     [Header("Grid Sprite Rendereres")]
     public GameObject spriteRendererLayoutIcon;
@@ -117,7 +119,11 @@ public class Hex : MonoBehaviour
     private float _arrowOriginX;
     private readonly List<Character> _hexInfoCharacters = new();
     private readonly List<Army> _hexInfoArmies = new();   // null entry = character link, non-null = army link
+    private readonly List<string> _hexInfoTooltips = new();   // terrain/feature link descriptions, addressed by "t{idx}" link ids
     private int _lastHexInfoLinkIdx = -1;
+    private GameObject _terrainTooltipInstance;
+    private TextMeshPro _terrainTooltip;
+    private bool _terrainTooltipActive;
     private SelectedCharacterIcon _selectedIcon;
     private bool artifactRevealed = false;
     private static Hex s_hexInfoActiveHex;
@@ -165,10 +171,6 @@ public class Hex : MonoBehaviour
     private static Material sharedCharacterOutlineMaterial;
     // private static Material sharedBannerOutlineMaterial;
     private MaterialPropertyBlock characterOutlinePropertyBlock;
-    private Color? lastAppliedCharacterOutlineColor;
-    private float? lastAppliedCharacterOutlineSize;
-    // private Color? lastAppliedBannerOutlineColor;
-    // private float? lastAppliedBannerOutlineSize;
 
     private const string Unknown = "Unknown character(s)";
     private const int DarknessTurnsDefault = 2;
@@ -223,6 +225,16 @@ public class Hex : MonoBehaviour
                 if (Input.GetMouseButtonDown(0) && _lastHexInfoLinkIdx >= 0)
                     HandleHexInfoLinkClick(_lastHexInfoLinkIdx);
             }
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (_terrainTooltipInstance != null)
+        {
+            Destroy(_terrainTooltipInstance);
+            _terrainTooltipInstance = null;
+            _terrainTooltip = null;
         }
     }
 
@@ -477,6 +489,16 @@ public class Hex : MonoBehaviour
     {
         ClearArmyIcons();
 
+        // While a unit is animating across hexes, skip the allocation-heavy grid rebuild
+        // (it is repopulated once when the walk finishes). The grid stays hidden meanwhile.
+        if (Board.SuppressHexIconGrids)
+        {
+            SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, false);
+            UpdatePortIcon();
+            if (refreshHoverText) RefreshHoverText();
+            return;
+        }
+
         bool hasArmies = armies.Count > 0;
         bool seen = IsHexSeen();
         bool hasVisibleCharacters = false;
@@ -632,6 +654,7 @@ public class Hex : MonoBehaviour
         sbNeutral.Clear();
         _hexInfoCharacters.Clear();
         _hexInfoArmies.Clear();
+        _hexInfoTooltips.Clear();
 
         // Track whether we've already shown an Unknown for each bucket
         bool unkCharsShown = false;
@@ -738,19 +761,31 @@ public class Hex : MonoBehaviour
     {
         string terrainName = TerrainData.GetDisplayName(terrainType);
         StringBuilder sb = new();
-        sb.Append("<color=#8FBF6F><b>Terrain</b></color>: ").Append(terrainName).Append(' ').Append(SpriteTag(terrainName));
+        sb.Append("<color=#8FBF6F><b>Terrain</b></color>: ")
+          .Append(TooltipLink($"<b>{terrainName}</b>", TerrainData.GetDescription(terrainType)))
+          .Append(' ').Append(SpriteTag(terrainName));
 
         // Features: space-separated "name <sprite>" entries (no commas), only when present.
         StringBuilder feats = new();
-        foreach (string feature in HexFeatureData.GetFeatureLabels(features))
+        foreach (var (flag, label) in HexFeatureData.GetPresentFeatures(features))
         {
             if (feats.Length > 0) feats.Append(' ');
-            feats.Append(feature).Append(' ').Append(SpriteTag(feature));
+            feats.Append(TooltipLink($"<b>{label}</b>", HexFeatureData.GetFeatureDescription(flag)))
+                 .Append(' ').Append(SpriteTag(label));
         }
         if (feats.Length > 0)
             sb.Append('\n').Append("<color=#6FA8DC><b>Features</b></color>: ").Append(feats);
 
         return sb.ToString();
+    }
+
+    // Wraps display text in a hover link whose payload is a tooltip description, addressed by a
+    // "t{idx}" link id so it never collides with the numeric ids used for character/army links.
+    private string TooltipLink(string display, string description)
+    {
+        int idx = _hexInfoTooltips.Count;
+        _hexInfoTooltips.Add(description);
+        return $"<link=\"t{idx}\">{display}</link>";
     }
 
     // Sprite from environment_terrain_features_spritesheet, looked up by the normalized name
@@ -847,6 +882,7 @@ public class Hex : MonoBehaviour
         if (hexInfoShowCoroutine != null) { StopCoroutine(hexInfoShowCoroutine); hexInfoShowCoroutine = null; }
         if (_lastHexInfoLinkIdx >= 0) ApplyHexInfoLinkHighlight(-1);
         _lastHexInfoLinkIdx = -1;
+        HideTerrainTooltip();
         StopArrowBounce();
         SetActiveFast(hexInfoArrow, false);
         SetActiveFast(hexInfo, false);
@@ -860,23 +896,47 @@ public class Hex : MonoBehaviour
         if (cam == null) return;
 
         int linkIdx = GetHoveredHexInfoLinkIndex(cam);
-        if (linkIdx == _lastHexInfoLinkIdx) return;
-        _lastHexInfoLinkIdx = linkIdx;
-        ApplyHexInfoLinkHighlight(linkIdx);
+        if (linkIdx != _lastHexInfoLinkIdx)
+        {
+            _lastHexInfoLinkIdx = linkIdx;
+            ApplyHexInfoLinkHighlight(linkIdx);
+            RefreshHexInfoHoverTarget(linkIdx);
+        }
+
+        // The terrain/feature tooltip trails the cursor, so keep repositioning it every frame.
+        if (_terrainTooltipActive) PositionTerrainTooltip(cam);
+    }
+
+    private void RefreshHexInfoHoverTarget(int linkIdx)
+    {
+        string linkId = GetHexInfoLinkId(linkIdx);
+
+        // Terrain / feature links ("t{idx}") show a description tooltip at the cursor instead of a card.
+        if (linkId != null && linkId.Length > 1 && linkId[0] == 't'
+            && int.TryParse(linkId.Substring(1), out int tIdx)
+            && tIdx >= 0 && tIdx < _hexInfoTooltips.Count)
+        {
+            ShowTerrainTooltip(_hexInfoTooltips[tIdx]);
+            RestoreSelectedIcon();
+            return;
+        }
+
+        HideTerrainTooltip();
 
         if (_selectedIcon == null) _selectedIcon = FindFirstObjectByType<SelectedCharacterIcon>();
         if (_selectedIcon == null) return;
 
-        if (linkIdx >= 0 && linkIdx < _hexInfoCharacters.Count)
+        if (linkId != null && int.TryParse(linkId, out int charLink)
+            && charLink >= 0 && charLink < _hexInfoCharacters.Count)
         {
-            Army army = linkIdx < _hexInfoArmies.Count ? _hexInfoArmies[linkIdx] : null;
+            Army army = charLink < _hexInfoArmies.Count ? _hexInfoArmies[charLink] : null;
             if (army != null)
             {
                 _selectedIcon.RefreshForArmy(army);
             }
             else
             {
-                Character ch = _hexInfoCharacters[linkIdx];
+                Character ch = _hexInfoCharacters[charLink];
                 if (ch != null && !ch.killed)
                 {
                     TryGetPreviewTextForCharacter(ch, out string hoverText);
@@ -887,20 +947,83 @@ public class Hex : MonoBehaviour
         }
         else
         {
-            if (board != null && board.selectedCharacter != null)
-                _selectedIcon.Refresh(board.selectedCharacter);
-            else
-                _selectedIcon.Hide();
+            RestoreSelectedIcon();
         }
+    }
+
+    private void RestoreSelectedIcon()
+    {
+        if (_selectedIcon == null) _selectedIcon = FindFirstObjectByType<SelectedCharacterIcon>();
+        if (_selectedIcon == null) return;
+        if (board != null && board.selectedCharacter != null)
+            _selectedIcon.Refresh(board.selectedCharacter);
+        else
+            _selectedIcon.Hide();
+    }
+
+    private string GetHexInfoLinkId(int positionalIdx)
+    {
+        if (hexInfoText == null || positionalIdx < 0) return null;
+        TMP_TextInfo ti = hexInfoText.textInfo;
+        if (ti == null || positionalIdx >= ti.linkCount) return null;
+        return ti.linkInfo[positionalIdx].GetLinkID();
     }
 
     private void HandleHexInfoLinkClick(int linkIdx)
     {
-        if (linkIdx < 0 || linkIdx >= _hexInfoCharacters.Count) return;
-        Character ch = _hexInfoCharacters[linkIdx];
+        string linkId = GetHexInfoLinkId(linkIdx);
+        if (linkId == null) return;
+        if (linkId.Length > 0 && linkId[0] == 't') return;   // terrain/feature tooltip — not clickable
+        if (!int.TryParse(linkId, out int charLink)) return;
+        if (charLink < 0 || charLink >= _hexInfoCharacters.Count) return;
+        Character ch = _hexInfoCharacters[charLink];
         if (ch == null || ch.killed) return;
         if (board == null) board = FindFirstObjectByType<Board>();
         if (board != null) board.SelectCharacter(ch);
+    }
+
+    private void ShowTerrainTooltip(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description)) { HideTerrainTooltip(); return; }
+        TextMeshPro tip = GetOrCreateTerrainTooltip();
+        if (tip == null) return;
+        tip.text = description;
+        SetActiveFast(_terrainTooltipInstance, true);
+        _terrainTooltipActive = true;
+        Camera cam = Camera.main;
+        if (cam != null) PositionTerrainTooltip(cam);
+    }
+
+    private void HideTerrainTooltip()
+    {
+        _terrainTooltipActive = false;
+        if (_terrainTooltipInstance != null) SetActiveFast(_terrainTooltipInstance, false);
+    }
+
+    private TextMeshPro GetOrCreateTerrainTooltip()
+    {
+        if (_terrainTooltip != null) return _terrainTooltip;
+        if (terrainTooltipPrefab == null) return null;
+
+        _terrainTooltipInstance = Instantiate(terrainTooltipPrefab);
+        _terrainTooltip = _terrainTooltipInstance.GetComponentInChildren<TextMeshPro>(true);
+        if (_terrainTooltip == null)
+        {
+            Destroy(_terrainTooltipInstance);
+            _terrainTooltipInstance = null;
+            return null;
+        }
+        _terrainTooltipInstance.SetActive(false);
+        return _terrainTooltip;
+    }
+
+    private void PositionTerrainTooltip(Camera cam)
+    {
+        if (_terrainTooltipInstance == null || cam == null || hexInfoText == null) return;
+        Vector3 screen = Input.mousePosition;
+        screen.y += 40f;   // sit just above the cursor
+        screen.z = hexInfoText.transform.position.z - cam.transform.position.z;
+        _terrainTooltipInstance.transform.position = cam.ScreenToWorldPoint(screen);
     }
 
     private static readonly Color32 LinkColorDefault = new(0xFF, 0xFF, 0xFF, 0xFF);
@@ -1464,6 +1587,9 @@ public class Hex : MonoBehaviour
     {
         ClearClassIcons();
 
+        // Suppressed during movement; ClearClassIcons already hid the grid, so just bail.
+        if (Board.SuppressHexIconGrids) return;
+
         if (characterClassesIconGrid == null || spriteRendererLayoutIcon == null) return;
         if (!TryGetKnownCharacterForIcon(out Character known)) return;
 
@@ -1760,24 +1886,11 @@ public class Hex : MonoBehaviour
     {
         if (!spriteRenderer) return;
 
-        Color? lastColor = isBanner ? /*lastAppliedBannerOutlineColor*/ null : lastAppliedCharacterOutlineColor;
-        float? lastSize = isBanner ? /*lastAppliedBannerOutlineSize*/ null : lastAppliedCharacterOutlineSize;
-
-        bool colorChanged = !lastColor.HasValue || lastColor.Value != outlineColor;
-        bool sizeChanged = !lastSize.HasValue || !Mathf.Approximately(lastSize.Value, outlineSize);
-        if (!colorChanged && !sizeChanged) return;
-
-        // if (isBanner)
-        // {
-        //     lastAppliedBannerOutlineColor = outlineColor;
-        //     lastAppliedBannerOutlineSize = outlineSize;
-        // }
-        // else
-        {
-            lastAppliedCharacterOutlineColor = outlineColor;
-            lastAppliedCharacterOutlineSize = outlineSize;
-        }
-
+        // Always write the property block rather than short-circuiting on a cached "last
+        // applied" value: the cache was a parallel source of truth that could drift out of
+        // sync with the renderer's actual block (e.g. before the block was ever populated),
+        // leaving the icon — and any mover that copies its block — with the material's
+        // default white outline. A single property-block write per outline update is cheap.
         if (characterOutlinePropertyBlock == null)
         {
             characterOutlinePropertyBlock = new MaterialPropertyBlock();
@@ -2327,7 +2440,18 @@ public class Hex : MonoBehaviour
     public void ShowMovementLeft(int movementLeft, Character character)
     {
         SetActiveFast(movement, true);
-        movementCostManager.ShowMovementLeft(Math.Max(0, movementLeft), character);
+        movementCostManager.ShowMovementLeft(Math.Max(0, movementLeft), character, BuildTerrainFeatureSpriteTags());
+    }
+
+    // Inline TMP sprite tags for this hex's terrain and any landmark features, drawn alongside the
+    // movement cost. Reuses the environment_terrain_features spritesheet wired on the movement text.
+    private string BuildTerrainFeatureSpriteTags()
+    {
+        StringBuilder sb = new();
+        sb.Append(SpriteTag(TerrainData.GetDisplayName(terrainType)));
+        foreach (var (_, label) in HexFeatureData.GetPresentFeatures(features))
+            sb.Append(SpriteTag(label));
+        return sb.ToString();
     }
 
     public List<Character> GetEnemyCharacters(Leader leader)
@@ -2378,6 +2502,8 @@ public class Hex : MonoBehaviour
     public void AddPendingEncounter(CardData card)
     {
         if (card == null) return;
+        // A hex can hold at most one encounter at a time; reject any second one.
+        if (_pendingEncounters.Count > 0) return;
         _pendingEncounters.Add(card);
         UpdateEncounterVisibility();
     }

@@ -232,4 +232,32 @@ public static class HexFeatureData
         foreach (var (flag, label) in displayOrder)
             if ((features & flag) != 0) yield return label;
     }
+
+    /// <summary>The (flag, label) pairs present, in a stable display order.</summary>
+    public static IEnumerable<(HexFeatureEnum flag, string label)> GetPresentFeatures(HexFeatureEnum features)
+    {
+        foreach (var entry in displayOrder)
+            if ((features & entry.flag) != 0) yield return entry;
+    }
+
+    /// <summary>Short description of what a single feature gives, shown in the hex hover tooltip.</summary>
+    public static string GetFeatureDescription(HexFeatureEnum flag) => flag switch
+    {
+        HexFeatureEnum.Road => "Reduces this tile's movement cost by 2 (minimum 1).",
+        HexFeatureEnum.River => "Movement stops upon entering.",
+        HexFeatureEnum.Pond => "Minor health recovery when resting here.",
+        HexFeatureEnum.Bridge => "Lets you cross a river without movement stopping.",
+        HexFeatureEnum.Watchtower => "Scouts a radius of 1. An army resting here is fortified (1 turn).",
+        HexFeatureEnum.Lighthouse => "Scouts all water hexes within a radius of 3.",
+        HexFeatureEnum.Ruins => "Resting here: 5% chance to recover a hidden artifact.",
+        HexFeatureEnum.StandingStones => "A mage resting here gains arcane insight (1 turn).",
+        HexFeatureEnum.Monument => "An army ending its move here gains courage (1 turn).",
+        HexFeatureEnum.Village => "Resting here: 25% chance of a random resource.",
+        HexFeatureEnum.Fountain => "Major health recovery when resting here.",
+        HexFeatureEnum.Lava => "Hazard: attrition damage to non dark-servant units that stay.",
+        HexFeatureEnum.Chasm => "Resting here: 10% chance to be wounded and teleported to another chasm.",
+        HexFeatureEnum.Mine => "Resting here: 25% chance of a mineral resource.",
+        HexFeatureEnum.Blighted => "Resting here: 10% chance of poison, 5% chance of being cursed.",
+        _ => string.Empty
+    };
 }

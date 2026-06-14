@@ -51,4 +51,26 @@ public static class TerrainData
             _ => "Unknown"
         };
     }
+
+    /// <summary>Short description of what the terrain gives, shown in the hex hover tooltip.</summary>
+    public static string GetDescription(TerrainEnum terrain)
+    {
+        int cost = terrainCosts.TryGetValue(terrain, out int c) ? c : 1;
+        string note = terrain switch
+        {
+            TerrainEnum.mountains => "Rugged peaks, very slow to cross.",
+            TerrainEnum.hills => "Broken high ground.",
+            TerrainEnum.plains => "Open, easy ground.",
+            TerrainEnum.grasslands => "Open, easy ground.",
+            TerrainEnum.shore => "Coastline where land meets sea.",
+            TerrainEnum.forest => "Dense woodland that slows movement.",
+            TerrainEnum.shallowWater => "Coastal shallows, hard to wade.",
+            TerrainEnum.deepWater => "Open sea, only ships may cross.",
+            TerrainEnum.swamp => "Boggy ground that mires travellers.",
+            TerrainEnum.desert => "Arid wastes under a harsh sun.",
+            TerrainEnum.wastelands => "Barren, blasted land.",
+            _ => "Unknown terrain."
+        };
+        return $"{note}\nMovement cost: {cost}";
+    }
 }

@@ -48,6 +48,10 @@ public class NationSpawner : MonoBehaviour
         TerrainEnum.forest, TerrainEnum.swamp, TerrainEnum.desert, TerrainEnum.wastelands,
         TerrainEnum.mountains
     };
+    // How many hexes a tutorial-anchored NPL must keep from the playable leader it is bound to.
+    // Big enough that its city never reads as the leader's own start, small enough that they stay
+    // neighbours for the tutorial. Falls back gracefully on cramped maps (see SelectClosestPosition).
+    private const float TutorialAnchorBuffer = 4f;
     private Dictionary<string, string> tutorialAnchorByNpl = new(StringComparer.OrdinalIgnoreCase);
     private bool landRegionsAssigned;
 
@@ -503,18 +507,25 @@ public class NationSpawner : MonoBehaviour
             }
 
             Vector2Int? preferredPosition = null;
+            bool fromTutorialAnchor = false;
             if (!string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName) &&
                 tutorialAnchorByNpl.TryGetValue(nonPlayableleaderBiomeConfig.characterName, out string anchorName) &&
                 leaderPositions.TryGetValue(anchorName, out Vector2Int anchorPosition))
             {
                 preferredPosition = anchorPosition;
+                fromTutorialAnchor = true;
             }
+
+            // A tutorial-anchored NPL must stay near its leader (for the tutorial) but never spawn
+            // on top of it — otherwise its city looks like the leader's own start (the "Sauron/Saruman
+            // started in Edoras" bug, where Theoden's Edoras landed 1 hex from Saruman every game).
+            float anchorBuffer = fromTutorialAnchor ? TutorialAnchorBuffer : 0f;
 
             // Tutorial dummies: spawn only the city, no leader or characters.
             bool ownerlessSpawn = nonPlayableleaderBiomeConfig.tutorialDummy || nonPlayableleaderBiomeConfig.spawnPcWithoutOwner;
             Vector2Int? position = ownerlessSpawn
-                ? InstantiateOwnerlessPc(nonPlayableleaderBiomeConfig, placedPositions, preferredPosition)
-                : InstantiateLeaderAndCharacters(nonPlayableleaderBiomeConfig, placedPositions, false, preferredPosition);
+                ? InstantiateOwnerlessPc(nonPlayableleaderBiomeConfig, placedPositions, preferredPosition, 0f, anchorBuffer)
+                : InstantiateLeaderAndCharacters(nonPlayableleaderBiomeConfig, placedPositions, false, preferredPosition, 0f, anchorBuffer);
             if (position.HasValue && !string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName))
             {
                 leaderPositions[nonPlayableleaderBiomeConfig.characterName] = position.Value;
@@ -522,7 +533,7 @@ public class NationSpawner : MonoBehaviour
         }
     }
     
-    private Vector2Int? InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable, Vector2Int? preferredPosition, float minSeparation = 0f)
+    private Vector2Int? InstantiateLeaderAndCharacters(LeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, bool isPlayable, Vector2Int? preferredPosition, float minSeparation = 0f, float minDistanceFromPreferred = 0f)
     {
         /*if (FindObjectsByType<Leader>(FindObjectsSortMode.None).Length >= Game.MAX_LEADERS)
         {
@@ -538,7 +549,7 @@ public class NationSpawner : MonoBehaviour
         preferredPosition ??= GetPreferredPositionForStartingCityRegion(leaderBiomeConfig);
         TerrainEnum chosenTerrain;
         Vector2Int bestPosition = preferredPosition.HasValue
-            ? SelectClosestPosition(leaderBiomeConfig, preferredPosition.Value, out chosenTerrain)
+            ? SelectClosestPosition(leaderBiomeConfig, preferredPosition.Value, out chosenTerrain, minDistanceFromPreferred)
             : SelectSpreadPosition(leaderBiomeConfig, placedPositions, minSeparation, out chosenTerrain);
         placedPositions.Add(bestPosition);
 
@@ -698,7 +709,7 @@ public class NationSpawner : MonoBehaviour
         targetHex.RedrawArmies();
     }
 
-    private Vector2Int? InstantiateOwnerlessPc(NonPlayableLeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, Vector2Int? preferredPosition, float minSeparation = 0f)
+    private Vector2Int? InstantiateOwnerlessPc(NonPlayableLeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, Vector2Int? preferredPosition, float minSeparation = 0f, float minDistanceFromPreferred = 0f)
     {
         if (!EnsurePcCapacity())
         {
@@ -710,7 +721,7 @@ public class NationSpawner : MonoBehaviour
         preferredPosition ??= GetPreferredPositionForStartingCityRegion(leaderBiomeConfig);
         TerrainEnum chosenTerrain;
         Vector2Int bestPosition = preferredPosition.HasValue
-            ? SelectClosestPosition(leaderBiomeConfig, preferredPosition.Value, out chosenTerrain)
+            ? SelectClosestPosition(leaderBiomeConfig, preferredPosition.Value, out chosenTerrain, minDistanceFromPreferred)
             : SelectSpreadPosition(leaderBiomeConfig, placedPositions, minSeparation, out chosenTerrain);
         placedPositions.Add(bestPosition);
 
@@ -801,17 +812,21 @@ public class NationSpawner : MonoBehaviour
     // grassland sat one step from Barad-dur. We now search every land terrain at once, pick
     // the genuinely nearest available hex, and use the configured terrain order only to break
     // ties between hexes the same distance from the anchor.
-    private Vector2Int SelectClosestPosition(LeaderBiomeConfig config, Vector2Int target, out TerrainEnum chosenTerrain)
+    // minDistanceFromTarget > 0 places NEAR the target but never on top of it. Used for tutorial-
+    // anchored NPLs (e.g. Theoden/Edoras is bound to Saruman): the binding must keep them neighbours
+    // for the tutorial, but a foreign capital landing one hex from a starting nation reads in-game as
+    // "the leader started in Edoras". We keep a buffer; if the map can't honour it we fall back to the
+    // unconstrained nearest hex rather than throwing.
+    private Vector2Int SelectClosestPosition(LeaderBiomeConfig config, Vector2Int target, out TerrainEnum chosenTerrain, float minDistanceFromTarget = 0f)
     {
         const float epsilon = 0.0001f;
         Vector3Int targetCube = GetCachedCubeCoordinate(target);
         List<TerrainEnum> preference = BuildTerrainPreferenceOrder(config.terrain);
 
-        bool found = false;
-        Vector2Int best = default;
-        float bestDist = float.MaxValue;
-        int bestRank = int.MaxValue;
-        TerrainEnum bestTerrain = config.terrain;
+        // Track the nearest hex overall, and (separately) the nearest hex at least
+        // minDistanceFromTarget away. Prefer the buffered one when it exists.
+        Candidate any = Candidate.Empty;
+        Candidate buffered = Candidate.Empty;
 
         foreach (TerrainEnum terrain in LandTerrains)
         {
@@ -824,28 +839,49 @@ public class NationSpawner : MonoBehaviour
             foreach (Vector2Int candidate in available)
             {
                 float d = CubeDistance(GetCachedCubeCoordinate(candidate), targetCube);
-                // Closer always wins; only at (near-)equal distance does terrain rank decide.
-                bool closer = d < bestDist - epsilon;
-                bool tieBetterTerrain = Mathf.Abs(d - bestDist) <= epsilon && rank < bestRank;
-                if (!found || closer || tieBetterTerrain)
-                {
-                    found = true;
-                    best = candidate;
-                    bestDist = d;
-                    bestRank = rank;
-                    bestTerrain = terrain;
-                }
+                any.ConsiderNearest(candidate, d, rank, terrain, epsilon);
+                if (d >= minDistanceFromTarget)
+                    buffered.ConsiderNearest(candidate, d, rank, terrain, epsilon);
             }
         }
 
-        if (!found)
+        Candidate chosen = (minDistanceFromTarget > 0f && buffered.found) ? buffered : any;
+        if (!chosen.found)
             throw new Exception($"No suitable hexes found for '{config.characterName}' near its starting city.");
 
-        if (bestTerrain != config.terrain)
-            Debug.LogWarning($"Placing '{config.characterName}' on {bestTerrain} (its {config.terrain} hexes near the anchor are taken/unavailable); staying next to its own city.");
+        // Only flag genuinely distant placements; a different terrain one hex from the anchor is fine
+        // and expected, so it would just be log spam. "Far" means the neighbourhood was crowded.
+        if (chosen.dist > minDistanceFromTarget + 6f)
+            Debug.LogWarning($"NationSpawner: '{config.characterName}' placed {chosen.dist} hexes from its target (neighbourhood crowded; terrain {chosen.terrain}).");
 
-        chosenTerrain = bestTerrain;
-        return best;
+        chosenTerrain = chosen.terrain;
+        return chosen.position;
+    }
+
+    // Running "nearest acceptable hex" pick: closest distance wins; ties broken by terrain rank.
+    private struct Candidate
+    {
+        public bool found;
+        public Vector2Int position;
+        public float dist;
+        public int rank;
+        public TerrainEnum terrain;
+
+        public static Candidate Empty => new() { found = false, dist = float.MaxValue, rank = int.MaxValue };
+
+        public void ConsiderNearest(Vector2Int pos, float d, int r, TerrainEnum t, float epsilon)
+        {
+            bool closer = d < dist - epsilon;
+            bool tieBetterTerrain = Mathf.Abs(d - dist) <= epsilon && r < rank;
+            if (!found || closer || tieBetterTerrain)
+            {
+                found = true;
+                position = pos;
+                dist = d;
+                rank = r;
+                terrain = t;
+            }
+        }
     }
 
     // Pick a well-separated position. Separation wins over terrain: a starting city on the

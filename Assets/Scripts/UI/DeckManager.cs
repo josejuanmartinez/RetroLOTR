@@ -1409,16 +1409,20 @@ public class DeckManager : MonoBehaviour
     {
         if (leader == null) return null;
         var candidates = new HashSet<Hex>();
+        // A hex may never hold more than one encounter, so anything that already has one
+        // is excluded from the candidate set up front.
         if (leader.hex != null && !leader.killed)
         {
-            foreach (Hex h in leader.hex.GetHexesInRadius(5)) candidates.Add(h);
+            foreach (Hex h in leader.hex.GetHexesInRadius(5))
+                if (!h.HasPendingEncounters) candidates.Add(h);
         }
         if (leader.controlledCharacters != null)
         {
             foreach (Character c in leader.controlledCharacters)
             {
                 if (c == null || c.killed || c.hex == null) continue;
-                foreach (Hex h in c.hex.GetHexesInRadius(5)) candidates.Add(h);
+                foreach (Hex h in c.hex.GetHexesInRadius(5))
+                    if (!h.HasPendingEncounters) candidates.Add(h);
             }
         }
         if (candidates.Count == 0) return null;

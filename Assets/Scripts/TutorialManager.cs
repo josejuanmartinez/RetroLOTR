@@ -1482,6 +1482,9 @@ public class TutorialManager : MonoBehaviour
         Hex capitalHex = ResolveCapitalHex(leader);
         if (capitalHex == null) return;
 
+        PC capitalPc = capitalHex.GetPCData();
+        Debug.Log($"[Placement] HUMAN '{leader.characterName}' moving to capital '{capitalPc?.pcName}' at {capitalHex.v2} (owner: {capitalPc?.owner?.characterName ?? "none"}).");
+
         List<Character> owned = leader.controlledCharacters;
         if (owned == null || owned.Count == 0) return;
 
@@ -1543,16 +1546,58 @@ public class TutorialManager : MonoBehaviour
         if (board?.hexes == null) return null;
 
         string capitalName = targetLeader.GetBiome()?.startingCityName;
+
+        // NPLs (and anyone with an explicit starting-city name) match by name.
+        if (!string.IsNullOrWhiteSpace(capitalName))
+        {
+            foreach (Hex hex in board.hexes.Values)
+            {
+                if (hex == null) continue;
+                PC pc = hex.GetPCData();
+                if (pc == null || !pc.isCapital) continue;
+                if (string.Equals(pc.pcName, capitalName, StringComparison.OrdinalIgnoreCase)) return hex;
+            }
+            return null;
+        }
+
+        // Playable leaders have NO startingCityName in their biome, so the old name-less fall-through
+        // returned the first isCapital PC in hash-map order — an arbitrary enemy capital. That is what
+        // teleported the human player into another nation's city ("Sauron the Iron Crown started in
+        // Edoras"). A playable leader's real capital is the ownerless anchor city it was spawned beside,
+        // so resolve it as the NEAREST capital to the leader, preferring an unowned one (the anchor).
+        Hex leaderHex = targetLeader.hex;
+        if (leaderHex == null) return null;
+
+        Hex nearestUnowned = null; int bestUnowned = int.MaxValue;
+        Hex nearestAny = null; int bestAny = int.MaxValue;
         foreach (Hex hex in board.hexes.Values)
         {
             if (hex == null) continue;
             PC pc = hex.GetPCData();
             if (pc == null || !pc.isCapital) continue;
-            if (!string.IsNullOrWhiteSpace(capitalName) && !string.Equals(pc.pcName, capitalName, StringComparison.OrdinalIgnoreCase)) continue;
-            return hex;
+
+            int d = OffsetHexDistance(leaderHex.v2, hex.v2);
+            if (d < bestAny) { bestAny = d; nearestAny = hex; }
+            if (pc.owner == null && d < bestUnowned) { bestUnowned = d; nearestUnowned = hex; }
         }
 
-        return null;
+        return nearestUnowned ?? nearestAny;
+    }
+
+    // Hex distance in the board's offset coordinates (matches NationSpawner.OffsetToCube).
+    private static int OffsetHexDistance(Vector2Int a, Vector2Int b)
+    {
+        Vector3Int ca = OffsetToCube(a);
+        Vector3Int cb = OffsetToCube(b);
+        return (Mathf.Abs(ca.x - cb.x) + Mathf.Abs(ca.y - cb.y) + Mathf.Abs(ca.z - cb.z)) / 2;
+    }
+
+    private static Vector3Int OffsetToCube(Vector2Int offset)
+    {
+        int x = offset.x;
+        int z = offset.y - (offset.x - (offset.x & 1)) / 2;
+        int y = -x - z;
+        return new Vector3Int(x, y, z);
     }
 
     private static void SyncCharacterControlFlags()

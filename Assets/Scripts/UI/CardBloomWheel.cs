@@ -21,6 +21,11 @@ public class CardBloomWheel : MonoBehaviour
     [Header("Card Hover")]
     [SerializeField] private float lineHitTolerance = 20f;
 
+    [Header("Center Preview")]
+    [Tooltip("Optional RectTransform the hovered card's real-card preview is parented under. If unassigned, the preview is centered on the parent canvas.")]
+    [SerializeField] private RectTransform centerPreviewAnchor;
+    [SerializeField] private float centerPreviewScale = 1.5f;
+
     [Header("Trigger")]
     [Tooltip("RectTransform that opens the bloom on mouse-enter (assign SelectedCharacterIcon's rect).")]
     [SerializeField] private RectTransform hoverTriggerRect;
@@ -43,6 +48,9 @@ public class CardBloomWheel : MonoBehaviour
     private float cachedStartAngle;
     private float cachedEndAngle;
     private float hoverTimer;
+
+    private GameObject centerPreviewInstance;
+    private int centerPreviewIndex = -1;
 
     public bool IsOpen => isOpen;
     public float LinesAlpha { get; private set; }
@@ -86,6 +94,17 @@ public class CardBloomWheel : MonoBehaviour
     {
         if (linesGraphicTransform != null)
             Destroy(linesGraphicTransform.gameObject);
+        ClearCenterPreview();
+    }
+
+    private void ClearCenterPreview()
+    {
+        if (centerPreviewInstance != null)
+        {
+            Destroy(centerPreviewInstance);
+            centerPreviewInstance = null;
+        }
+        centerPreviewIndex = -1;
     }
 
     private void Update()
@@ -139,6 +158,7 @@ public class CardBloomWheel : MonoBehaviour
     // Called by DeckManager after spawning / clearing cards.
     public void SetCards(List<GameObject> cards)
     {
+        ClearCenterPreview();
         cardRects.Clear();
         cardGroups.Clear();
         cardComponents.Clear();
@@ -207,7 +227,11 @@ public class CardBloomWheel : MonoBehaviour
     private void SetOpenState(bool open)
     {
         isOpen = open;
-        if (!open) hoveredCardIndex = -1;
+        if (!open)
+        {
+            hoveredCardIndex = -1;
+            ClearCenterPreview();
+        }
 
         for (int i = 0; i < cardGroups.Count; i++)
         {
@@ -265,41 +289,24 @@ public class CardBloomWheel : MonoBehaviour
     private void AnimateCards()
     {
         float speed = isOpen ? bloomSpeed : collapseSpeed;
-        bool anyHovered = hoveredCardIndex >= 0;
 
         for (int i = 0; i < cardRects.Count; i++)
         {
             if (cardRects[i] == null) continue;
 
-            // When closing, ensure all cards are active so they can animate back.
-            if (!isOpen && !cardRects[i].gameObject.activeSelf)
+            // Every card stays visible at all times — hovering no longer hides siblings.
+            if (!cardRects[i].gameObject.activeSelf)
                 cardRects[i].gameObject.SetActive(true);
-
-            // When a card is hovered, hide all other cards entirely.
-            if (isOpen && anyHovered)
-            {
-                bool shouldShow = i == hoveredCardIndex;
-                if (cardRects[i].gameObject.activeSelf != shouldShow)
-                    cardRects[i].gameObject.SetActive(shouldShow);
-            }
-            else if (isOpen && !cardRects[i].gameObject.activeSelf)
-            {
-                cardRects[i].gameObject.SetActive(true);
-            }
 
             // Position
             Vector2 posTarget = isOpen && i < bloomTargets.Count ? bloomTargets[i] : Vector2.zero;
             cardRects[i].anchoredPosition = Vector2.Lerp(
                 cardRects[i].anchoredPosition, posTarget, Time.deltaTime * speed);
 
-            // Scale + token/card flip
-            // Token / real-card flip — no scaling, just visibility swap.
+            // Cards in the wheel are always tokens; the hovered card is mirrored as a
+            // real card in the center preview instead of flipping in place.
             if (i < cardComponents.Count && cardComponents[i] != null)
-            {
-                bool isThisHovered = isOpen && i == hoveredCardIndex;
-                if (isThisHovered) cardComponents[i].ShowRealCard();
-                else cardComponents[i].ShowToken();
-            }
+                cardComponents[i].ShowToken();
 
             // Alpha — only fade in/out; no per-card dimming.
             if (i < cardGroups.Count && cardGroups[i] != null)
@@ -308,6 +315,59 @@ public class CardBloomWheel : MonoBehaviour
                 cardGroups[i].alpha = Mathf.Lerp(cardGroups[i].alpha, alphaTarget, Time.deltaTime * speed * 1.5f);
             }
         }
+
+        UpdateCenterPreview(isOpen ? hoveredCardIndex : -1);
+    }
+
+    // Shows the hovered card as a real card in the middle of the screen, leaving the
+    // wheel of tokens untouched. Rebuilt only when the hovered card changes.
+    private void UpdateCenterPreview(int index)
+    {
+        if (index == centerPreviewIndex && (index < 0 || centerPreviewInstance != null)) return;
+        centerPreviewIndex = index;
+
+        if (centerPreviewInstance != null)
+        {
+            Destroy(centerPreviewInstance);
+            centerPreviewInstance = null;
+        }
+
+        if (index < 0 || index >= cardRects.Count || cardRects[index] == null) return;
+
+        // Parent to the ROOT canvas (not the nearest sub-canvas, which only covers the
+        // wheel's corner) so "center" means the center of the screen, not the corner.
+        Transform parent = centerPreviewAnchor != null
+            ? (Transform)centerPreviewAnchor
+            : (parentCanvas != null ? parentCanvas.rootCanvas.transform : transform);
+
+        centerPreviewInstance = Instantiate(cardRects[index].gameObject, parent, false);
+        centerPreviewInstance.name = "CardCenterPreview";
+
+        RectTransform previewRect = centerPreviewInstance.GetComponent<RectTransform>();
+        if (previewRect != null)
+        {
+            Vector2 center = new(0.5f, 0.5f);
+            previewRect.anchorMin = center;
+            previewRect.anchorMax = center;
+            previewRect.pivot = center;
+            previewRect.anchoredPosition = Vector2.zero;
+            previewRect.localScale = Vector3.one * centerPreviewScale;
+            previewRect.SetAsLastSibling();
+        }
+
+        Card previewCard = centerPreviewInstance.GetComponent<Card>();
+        if (previewCard != null)
+        {
+            previewCard.SuppressHoverEffects = true;
+            previewCard.ShowRealCard();
+        }
+
+        // Preview is purely visual — never let it intercept the pointer.
+        CanvasGroup previewGroup = centerPreviewInstance.GetComponent<CanvasGroup>();
+        if (previewGroup == null) previewGroup = centerPreviewInstance.AddComponent<CanvasGroup>();
+        previewGroup.alpha = 1f;
+        previewGroup.blocksRaycasts = false;
+        previewGroup.interactable = false;
     }
 
     private int FindHoveredCardIndex(Camera cam)

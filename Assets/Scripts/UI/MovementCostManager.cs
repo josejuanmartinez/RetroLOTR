@@ -28,14 +28,17 @@ public class MovementCostManager : MonoBehaviour
         }
     }
 
-    public void ShowMovementLeft(int movementLeft, Character character)
+    public void ShowMovementLeft(int movementLeft, Character character, string terrainSpriteTags = "")
     {
         //string spr = "movement";
         // if(character.IsArmyCommander()) spr = character.GetAlignment().ToString();
         if (!gameObject.activeSelf) gameObject.SetActive(true);
         if (movementText != null && !movementText.gameObject.activeSelf) movementText.gameObject.SetActive(true);
         if (dot != null && !dot.gameObject.activeSelf) dot.gameObject.SetActive(true);
-        movementText.text = movementLeft.ToString();
+        // terrainSpriteTags are inline TMP <sprite> tags for the hex terrain + features, shown beside the cost.
+        movementText.text = string.IsNullOrEmpty(terrainSpriteTags)
+            ? movementLeft.ToString()
+            : $"{terrainSpriteTags}{movementLeft}";
         UpdateDotColor(movementLeft, character);
     }
 
@@ -54,7 +57,7 @@ public class MovementCostManager : MonoBehaviour
         Color low = new(0.95f, 0.35f, 0.28f, 1f);
         Color high = new(0.25f, 0.9f, 0.45f, 1f);
         Color color = Color.Lerp(low, high, ratio);
-        color.a = Mathf.Lerp(0.35f, 1f, ratio);
+        color.a = dot.color.a; // keep the dot's original alpha
         dot.color = color;
     }
 }

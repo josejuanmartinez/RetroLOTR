@@ -8,6 +8,10 @@ public class SituationCardsUI : MonoBehaviour
 {
     public static SituationCardsUI Instance { get; private set; }
 
+    // True from the moment the opportunity-card overlay is requested until it has fully
+    // faded out. Movement and other events block on this so they don't interrupt it.
+    public static bool IsShowing { get; private set; }
+
     [Header("Content")]
     [SerializeField] private string titleMessage = "Act now!";
 
@@ -42,6 +46,12 @@ public class SituationCardsUI : MonoBehaviour
             BuildUI();
 
         ApplyConfiguration();
+    }
+
+    private void OnDestroy()
+    {
+        // Never leave movement blocked behind an overlay that's gone.
+        if (Instance == this) { Instance = null; IsShowing = false; }
     }
 
     // Binds references from an already-present UI hierarchy (prefab instance),
@@ -172,6 +182,7 @@ public class SituationCardsUI : MonoBehaviour
     public void Show(List<CardData> cards, Character character)
     {
         if (cards == null || cards.Count == 0) return;
+        IsShowing = true;
         if (showCoroutine != null) StopCoroutine(showCoroutine);
         showCoroutine = StartCoroutine(ShowCoroutine(cards, character));
     }
@@ -187,7 +198,7 @@ public class SituationCardsUI : MonoBehaviour
         ClearCards();
 
         GameObject template = DeckManager.Instance?.GetCardPrefabTemplate();
-        if (template == null) yield break;
+        if (template == null) { IsShowing = false; yield break; }
 
         Transform overlayTransform = cardContainer.transform.parent.gameObject.transform;
         overlayTransform.gameObject.SetActive(true);
@@ -203,7 +214,13 @@ public class SituationCardsUI : MonoBehaviour
             go.SetActive(true);
 
             var cardComp = go.GetComponent<Card>();
-            cardComp?.Initialize(card, startAsToken: false);
+            if (cardComp != null)
+            {
+                cardComp.Initialize(card, startAsToken: false);
+                // Display-only: clicks go through the CardClickArea overlay, so the card
+                // itself must never react to hover (which would flip it back into a token).
+                cardComp.SuppressHoverEffects = true;
+            }
 
             // Disable card's own raycasts so drag/hover don't fire
             var cg = go.GetComponent<CanvasGroup>();
@@ -368,6 +385,7 @@ public class SituationCardsUI : MonoBehaviour
 
         ClearCards();
         showCoroutine = null;
+        IsShowing = false;
     }
 
     private void ClearCards()

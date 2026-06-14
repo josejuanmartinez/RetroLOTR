@@ -30,6 +30,9 @@ public class Board : MonoBehaviour
 
     [Header("Movement over board")]
     public bool moving = false;
+    // Tracks the in-flight hex encounter resolution so movement can block until the
+    // player has resolved it (encounters and opportunity cards are blocking events).
+    private Task hexEncounterTask;
     [SerializeField] private SpriteRenderer characterMoverImage;
     [SerializeField] private SpriteRenderer characterMoverBackground;
     // [SerializeField] private SpriteRenderer characterBannerMoverImage;
@@ -566,7 +569,8 @@ public class Board : MonoBehaviour
         AnimationCurve ease = null,
         SpriteRenderer appearanceFromSR = null,
         SpriteRenderer appearanceFromBgSR = null,
-        Sprite appearanceFromSprite = null
+        Sprite appearanceFromSprite = null,
+        Character movingCharacter = null
         )
     {
         SpriteRenderer sourceSR = appearanceFromSR != null ? appearanceFromSR : fromSR;
@@ -580,6 +584,7 @@ public class Board : MonoBehaviour
         moverSR.flipY = sourceSR.flipY;
         moverSR.sharedMaterial = sourceSR.sharedMaterial;
         CopyPropertyBlock(sourceSR, moverSR);
+        ApplyMoverOutline(moverSR, movingCharacter);
         if (moverBgSR != null && sourceBgSR != null)
         {
             moverBgSR.sprite = sourceBgSR.sprite;
@@ -712,7 +717,8 @@ public class Board : MonoBehaviour
         SpriteRenderer appearanceFromCharBgSR = null,
         SpriteRenderer appearanceFromBannerSR = null,
         Sprite appearanceFromCharSprite = null,
-        Vector3 appearanceFromBannerOffset = default
+        Vector3 appearanceFromBannerOffset = default,
+        Character movingCharacter = null
         )
     {
         bool useChar = moverCharSR != null && fromCharSR != null;
@@ -732,6 +738,7 @@ public class Board : MonoBehaviour
             moverCharSR.flipY = sourceCharSR.flipY;
             moverCharSR.sharedMaterial = sourceCharSR.sharedMaterial;
             CopyPropertyBlock(sourceCharSR, moverCharSR);
+            ApplyMoverOutline(moverCharSR, movingCharacter);
             if (moverCharBgSR != null && sourceCharBgSR != null)
             {
                 moverCharBgSR.sprite = sourceCharBgSR.sprite;
@@ -1049,6 +1056,28 @@ public class Board : MonoBehaviour
         target.SetPropertyBlock(block);
     }
 
+    // True only while the per-step movement tween is running, so hexes skip the
+    // allocation-heavy icon-grid rebuilds during transit. The grids are rebuilt once,
+    // frame-budgeted, when the walk finishes (RevealVisibleHexesAsync).
+    public static bool SuppressHexIconGrids = false;
+
+    private static readonly int MoverOutlineColorId = Shader.PropertyToID("_OutlineColor");
+    private static MaterialPropertyBlock moverOutlineBlock;
+
+    // The mover copies its look from the source hex icon, but that icon's property block
+    // does not always carry the _OutlineColor override, so the mover would fall back to the
+    // material default (white). Force the moving character's nation colour explicitly.
+    private static void ApplyMoverOutline(SpriteRenderer mover, Character movingCharacter)
+    {
+        if (mover == null || movingCharacter == null) return;
+        Leader owner = movingCharacter.GetOwner();
+        if (owner == null) return;
+        moverOutlineBlock ??= new MaterialPropertyBlock();
+        mover.GetPropertyBlock(moverOutlineBlock);
+        moverOutlineBlock.SetColor(MoverOutlineColorId, owner.nationColor);
+        mover.SetPropertyBlock(moverOutlineBlock);
+    }
+
     private void StartMoverWalkAnimation(Character character, SpriteRenderer moverSR, Vector3 worldDelta)
     {
         if (moverSR == null) return;
@@ -1196,6 +1225,10 @@ public class Board : MonoBehaviour
             // }
         }
 
+        // Skip the allocation-heavy per-hex icon-grid rebuilds while the unit is in transit;
+        // they are rebuilt once after arrival by the budgeted refresh below.
+        SuppressHexIconGrids = true;
+
         for (int i = 0; i < path.Count - 1; i++)
         {
             Hex previousHex = hexes[path[i]];
@@ -1284,7 +1317,8 @@ public class Board : MonoBehaviour
                             appearanceFromCharBgSR,
                             null,
                             appearanceFromCharSprite,
-                            appearanceBannerOffset);
+                            appearanceBannerOffset,
+                            movingCharacter: character);
                         canAnimate = true;
                         if (armyIconObj != null)
                         {
@@ -1298,7 +1332,7 @@ public class Board : MonoBehaviour
                     canAnimate = characterMoverSR != null && fromSR != null;
                     if (canAnimate)
                     {
-                        tween = AnimateSpriteBetween(fromSR, toSR, characterMoverSR, fromBg, toBg, moverBg, startPos, endPos, startBgPos, endBgPos, 0.35f, null, null, appearanceFromCharSR, appearanceFromCharBgSR, appearanceFromCharSprite);
+                        tween = AnimateSpriteBetween(fromSR, toSR, characterMoverSR, fromBg, toBg, moverBg, startPos, endPos, startBgPos, endBgPos, 0.35f, null, null, appearanceFromCharSR, appearanceFromCharBgSR, appearanceFromCharSprite, movingCharacter: character);
                     }
                 }
             }
@@ -1335,13 +1369,26 @@ public class Board : MonoBehaviour
             catch (Exception e)
             {
                 Debug.LogError($"Error during character movement at step {i}: {e.Message}\n{e.StackTrace}");
+                SuppressHexIconGrids = false;
                 HandleMovementFailure(character, currentHex, path, i);
                 yield break;
+            }
+
+            // Encounters and opportunity (situation) cards are blocking: if stepping onto
+            // this hex raised one, halt the walk here until the player resolves it. Only the
+            // player is held — AI resolves these without on-screen UI, so it never stalls.
+            if (showPlayerUi)
+            {
+                while (HasBlockingEventPending())
+                    yield return null;
             }
 
             // optional: tiny pacing pause
             // yield return new WaitForSeconds(0.02f);
         }
+
+        // Re-enable icon grids so the post-arrival refresh repopulates them.
+        SuppressHexIconGrids = false;
 
         // Now that the walk has finished, reconcile fog/visibility for the whole board once,
         // spread across frames (batched yields) so it never spikes the frame.
@@ -1470,7 +1517,13 @@ public class Board : MonoBehaviour
             CheckAndShowSituationCards(character, newHex);
 
             if (newHex.HasPendingEncounters && character != null && !character.killed)
-                _ = TriggerHexEncountersAsync(character, newHex);
+            {
+                Task encounterTask = TriggerHexEncountersAsync(character, newHex);
+                // Only the player's move waits on resolution; track the task so MoveCoroutine
+                // can block on it. AI resolves in the background and must never stall the
+                // player's later movement, so its task is left fire-and-forget.
+                if (ShouldShowPlayerUi(character)) hexEncounterTask = encounterTask;
+            }
 
             if ((!wasWater && isWater) || (wasWater && !isWater) || finishMovement)
             {
@@ -1646,10 +1699,27 @@ public class Board : MonoBehaviour
         FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
     }
 
+    // True while a blocking event (an encounter dialog, an opportunity/situation card, or
+    // an in-flight encounter resolution) is awaiting the player. Movement waits on this so
+    // it never advances over an unresolved event.
+    private bool HasBlockingEventPending()
+    {
+        if (SelectionDialog.IsShowing) return true;
+        if (SituationCardsUI.IsShowing) return true;
+        if (hexEncounterTask != null && !hexEncounterTask.IsCompleted) return true;
+        return false;
+    }
+
     private static async Task TriggerHexEncountersAsync(Character character, Hex hex)
     {
         while (hex != null && hex.HasPendingEncounters)
         {
+            // Don't stack an encounter on top of another blocking event. If an opportunity
+            // card or another dialog is already on screen, let it resolve first — the first
+            // event to appear blocks the rest.
+            while (SituationCardsUI.IsShowing || SelectionDialog.IsShowing)
+                await Task.Yield();
+
             CardData card = hex.TakeFirstPendingEncounter();
             if (card == null) break;
             await EncounterResolver.ResolveAsync(card, character);
