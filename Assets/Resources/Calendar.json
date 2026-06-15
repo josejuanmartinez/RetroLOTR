@@ -3,7 +3,7 @@
     {
       "date": "23 Halimath 3018",
       "description": "Frodo leaves Bag End. The Ring-bearer sets out from Hobbiton at last, Sam and Pippin at his side.",
-      "environment": "",
+      "environment": "twilight",
       "dateEvent": "FrodoSetsOut",
       "faction": "Gandalf",
       "spriteName": ""
@@ -11,7 +11,7 @@
     {
       "date": "24 Halimath 3018",
       "description": "A Black Rider on the road. The first of the Nazgul is seen sniffing along the lanes of the Shire.",
-      "environment": "",
+      "environment": "khamulunleashed",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -19,7 +19,7 @@
     {
       "date": "25 Halimath 3018",
       "description": "The Hunt for the Ring. Sauron looses all Nine Riders into Eriador to seize the Ring-bearer.",
-      "environment": "",
+      "environment": "fullmoon",
       "dateEvent": "TheHuntForTheRing",
       "faction": "Sauron",
       "spriteName": ""
@@ -27,7 +27,7 @@
     {
       "date": "26 Halimath 3018",
       "description": "Into the Old Forest. The hobbits are saved by Tom Bombadil.",
-      "environment": "",
+      "environment": "oldmanwillowsong",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -35,7 +35,7 @@
     {
       "date": "28 Halimath 3018",
       "description": "Captured on the Barrow-downs. A Barrow-wight takes the hobbits before Bombadil frees them.",
-      "environment": "",
+      "environment": "barrowchill",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -43,7 +43,7 @@
     {
       "date": "29 Halimath 3018",
       "description": "The Prancing Pony at Bree. The hobbits meet Strider, a Ranger of the North.",
-      "environment": "",
+      "environment": "newmoon",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -51,7 +51,7 @@
     {
       "date": "6 Winterfilth 3018",
       "description": "Camp under Weathertop. Frodo is stabbed by the Witch-king with a Morgul-knife.",
-      "environment": "",
+      "environment": "murazorunleashed",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -59,7 +59,7 @@
     {
       "date": "20 Winterfilth 3018",
       "description": "Flight to the Ford of Bruinen. The river rises against the Nine and Frodo passes into Rivendell.",
-      "environment": "",
+      "environment": "drown",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -67,7 +67,7 @@
     {
       "date": "25 Winterfilth 3018",
       "description": "The Council of Elrond. The Fellowship of the Ring is chosen and the Ring's doom is set.",
-      "environment": "",
+      "environment": "starlightdispatch",
       "dateEvent": "CouncilOfElrond",
       "faction": "Gandalf",
       "spriteName": ""
@@ -75,7 +75,7 @@
     {
       "date": "1 Blotmath 3018",
       "description": "The Eye searches northward. Word of the Halflings and the Shire reaches the depths of Barad-dur.",
-      "environment": "",
+      "environment": "moon",
       "dateEvent": "",
       "faction": "Sauron",
       "spriteName": ""
@@ -83,7 +83,7 @@
     {
       "date": "1 Foreyule 3018",
       "description": "Saruman's hand at work. Wormtongue's whispers weaken Theoden while Isengard arms openly for war.",
-      "environment": "",
+      "environment": "gloom",
       "dateEvent": "",
       "faction": "Saruman",
       "spriteName": ""
@@ -91,7 +91,7 @@
     {
       "date": "25 Foreyule 3018",
       "description": "The Fellowship leaves Rivendell. Nine walkers set out against the Nine Riders.",
-      "environment": "",
+      "environment": "stars",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -99,7 +99,7 @@
     {
       "date": "8 Afteryule 3019",
       "description": "The Fellowship reaches Hollin, the old land of Eregion.",
-      "environment": "",
+      "environment": "ravens",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -107,7 +107,7 @@
     {
       "date": "11 Afteryule 3019",
       "description": "Snow on Caradhras. The cruel mountain turns the company back from the high pass.",
-      "environment": "Caradhras",
+      "environment": "caradhras",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -115,7 +115,7 @@
     {
       "date": "13 Afteryule 3019",
       "description": "The West-gate of Moria. Wargs attack in the night; Gollum begins to trail the Ring-bearer.",
-      "environment": "",
+      "environment": "fog",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -123,23 +123,23 @@
     {
       "date": "15 Afteryule 3019",
       "description": "The Bridge of Khazad-dum. Gandalf falls with the Balrog into shadow.",
-      "environment": "",
+      "environment": "theshadowdeepens",
       "dateEvent": "GandalfFalls",
       "faction": "Gandalf",
       "spriteName": ""
     },
     {
-      "date": "17 Afteryule 3019",
-      "description": "Caras Galadhon. The company comes to the city of the Galadhrim and meets Galadriel.",
-      "environment": "",
+      "date": "16 Afteryule 3019",
+      "description": "Gandalf casts down the Balrog upon the peak of Zirakzigil, and his life departs.",
+      "environment": "lightningstorm",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
     },
     {
       "date": "25 Afteryule 3019",
-      "description": "Gandalf casts down the Balrog upon the peak of Zirakzigil, and his life departs.",
-      "environment": "",
+      "description": "Caras Galadhon. The company comes to the city of the Galadhrim and meets Galadriel.",
+      "environment": "flowers",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -147,7 +147,7 @@
     {
       "date": "16 Solmath 3019",
       "description": "Farewell to Lorien. The Fellowship departs by boat with Galadriel's gifts.",
-      "environment": "",
+      "environment": "farshorefadedstar",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -155,7 +155,7 @@
     {
       "date": "25 Solmath 3019",
       "description": "First Battle of the Fords of Isen. Theodred, son of Theoden, is slain by Saruman's Uruks.",
-      "environment": "",
+      "environment": "muddylane",
       "dateEvent": "",
       "faction": "Saruman",
       "spriteName": ""
@@ -163,7 +163,7 @@
     {
       "date": "26 Solmath 3019",
       "description": "The Breaking of the Fellowship. Boromir falls; Frodo and Sam strike east alone.",
-      "environment": "",
+      "environment": "longshadows",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -171,7 +171,7 @@
     {
       "date": "27 Solmath 3019",
       "description": "Saruman's raiders seize Merry and Pippin, hunting the Ring-bearer for the White Hand.",
-      "environment": "",
+      "environment": "cloudlessday",
       "dateEvent": "",
       "faction": "Saruman",
       "spriteName": ""
@@ -179,7 +179,7 @@
     {
       "date": "30 Solmath 3019",
       "description": "Gandalf returns, robed in white, and finds the Three Hunters in Fangorn.",
-      "environment": "",
+      "environment": "firstlightonthethirdday",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -187,7 +187,7 @@
     {
       "date": "2 Rethe 3019",
       "description": "Second Battle of the Fords of Isen. Rohan's defense is overrun and the road to Helm's Deep lies open.",
-      "environment": "",
+      "environment": "furyofulmo",
       "dateEvent": "",
       "faction": "Saruman",
       "spriteName": ""
@@ -195,7 +195,7 @@
     {
       "date": "3 Rethe 3019",
       "description": "Battle of the Hornburg at Helm's Deep. The host of Isengard breaks upon the Deeping Wall.",
-      "environment": "",
+      "environment": "rain",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -203,7 +203,7 @@
     {
       "date": "4 Rethe 3019",
       "description": "Isengard is drowned. The Ents tear down Saruman's walls and loose the Isen upon his pits.",
-      "environment": "",
+      "environment": "drown",
       "dateEvent": "IsengardIsDrowned",
       "faction": "Saruman",
       "spriteName": ""
@@ -211,7 +211,7 @@
     {
       "date": "5 Rethe 3019",
       "description": "The Voice of Saruman is broken. Gandalf casts him from the Order; Wormtongue hurls down the palantir.",
-      "environment": "",
+      "environment": "pollution",
       "dateEvent": "",
       "faction": "Saruman",
       "spriteName": ""
@@ -219,7 +219,7 @@
     {
       "date": "10 Rethe 3019",
       "description": "The Dawnless Day. A shadow flows out of Mordor; Aragorn takes the Paths of the Dead.",
-      "environment": "Long Shadows",
+      "environment": "unquietdead",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -227,7 +227,7 @@
     {
       "date": "11 Rethe 3019",
       "description": "The Witch-king leads the host of Minas Morgul forth, and night marches with it out of the east.",
-      "environment": "",
+      "environment": "doorsofnight",
       "dateEvent": "",
       "faction": "Sauron",
       "spriteName": ""
@@ -235,7 +235,7 @@
     {
       "date": "12 Rethe 3019",
       "description": "Dol Guldur assails Lothlorien. The first assault breaks upon the Golden Wood.",
-      "environment": "",
+      "environment": "smokeofdolguldur",
       "dateEvent": "",
       "faction": "Sauron",
       "spriteName": ""
@@ -243,7 +243,7 @@
     {
       "date": "13 Rethe 3019",
       "description": "Frodo is taken by Orcs at Cirith Ungol; Sam alone carries the Ring on into Mordor.",
-      "environment": "",
+      "environment": "alightindarkplaces",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -251,7 +251,7 @@
     {
       "date": "14 Rethe 3019",
       "description": "The siege of Gondor. Sauron's host crosses the Anduin and rings Minas Tirith with fire.",
-      "environment": "",
+      "environment": "renunleashed",
       "dateEvent": "",
       "faction": "Sauron",
       "spriteName": ""
@@ -259,7 +259,7 @@
     {
       "date": "15 Rethe 3019",
       "description": "The Battle of the Pelennor Fields. Theoden falls; the Witch-king is slain by Eowyn and Merry.",
-      "environment": "",
+      "environment": "dawn",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -267,7 +267,7 @@
     {
       "date": "16 Rethe 3019",
       "description": "War in the North. The hosts of Dol Guldur and Rhun fall upon Lorien, Thranduil's realm, and Dale.",
-      "environment": "",
+      "environment": "restlesseast",
       "dateEvent": "",
       "faction": "Sauron",
       "spriteName": ""
@@ -275,7 +275,7 @@
     {
       "date": "18 Rethe 3019",
       "description": "The Host of the West marches from Minas Tirith to the Black Gate as a desperate feint.",
-      "environment": "",
+      "environment": "lightthroughcloud",
       "dateEvent": "",
       "faction": "Gandalf",
       "spriteName": ""
@@ -283,7 +283,7 @@
     {
       "date": "19 Rethe 3019",
       "description": "Sauron takes the bait. The Eye fixes upon the gates of Mordor, blind to two hobbits in the ash.",
-      "environment": "",
+      "environment": "ashesofgorgoroth",
       "dateEvent": "",
       "faction": "Sauron",
       "spriteName": ""
@@ -291,7 +291,7 @@
     {
       "date": "25 Rethe 3019",
       "description": "The Ring goes into the Fire. Barad-dur falls and the Shadow passes from the world.",
-      "environment": "",
+      "environment": "firesofdoom",
       "dateEvent": "TheRingIsDestroyed",
       "faction": "Gandalf",
       "spriteName": ""
@@ -299,7 +299,7 @@
     {
       "date": "26 Rethe 3019",
       "description": "The fall of Barad-dur. With the Ring unmade, the Dark Tower crumbles and Sauron is no more.",
-      "environment": "",
+      "environment": "wind",
       "dateEvent": "BaradDurFalls",
       "faction": "Sauron",
       "spriteName": ""

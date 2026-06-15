@@ -162,7 +162,7 @@ public class DateEventManager : MonoBehaviour
         if (deckManager == null) return null;
         deckManager.InitializeFromResources();
         return deckManager.cards.FirstOrDefault(c =>
-            c != null && string.Equals(c.name, cardName, StringComparison.OrdinalIgnoreCase));
+            c != null && CardNameUtility.Equals(c.name, cardName));
     }
 
     // ---- Read access for the calendar widget ----

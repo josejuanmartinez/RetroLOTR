@@ -8,10 +8,12 @@ using UnityEngine.UI;
 /// <summary>
 /// A self-building month calendar overlay. Shows the 30 days of the current Shire month
 /// in a 6x5 grid, highlights today, and marks scripted days (from DateEventManager) with
-/// the environmental card's art. Hovering a marked day shows its description.
+/// a TMP &lt;sprite&gt; under the day number, drawn from the <see cref="eventSpriteSheet"/>
+/// TMP sprite asset. Hovering a marked day shows its description.
 ///
 /// Built entirely in code so it needs no prefab wiring: DateManager creates one and calls
-/// ShowMonth(...). It parents itself to the first Canvas it finds.
+/// ShowMonth(...). It parents itself to the first Canvas it finds. To use custom event
+/// icons, add this component to a GameObject in the scene and assign the sprite sheet.
 /// </summary>
 public class CalendarWidget : MonoBehaviour
 {
@@ -24,7 +26,7 @@ public class CalendarWidget : MonoBehaviour
     private static readonly Color EventCellColor = new(0.28f, 0.20f, 0.10f, 1f);
     private static readonly Color TextColor = new(0.92f, 0.87f, 0.72f, 1f);
 
-    // Faction marker colours (also used for the fallback dot when no art is found).
+    // Faction colours, used to tint the day number by storyline.
     private static readonly Color GandalfColor = new(0.75f, 0.85f, 0.98f, 1f);
     private static readonly Color SarumanColor = new(0.86f, 0.80f, 0.93f, 1f);
     private static readonly Color SauronColor = new(0.90f, 0.30f, 0.22f, 1f);
@@ -40,6 +42,14 @@ public class CalendarWidget : MonoBehaviour
         }
     }
 
+    [SerializeField]
+    [Tooltip("TMP sprite asset (spritesheet) used to render event icons via <sprite name=...> on each day. Assign in the inspector.")]
+    private TMP_SpriteAsset eventSpriteSheet;
+
+    [SerializeField]
+    [Tooltip("Render scale (percent of font size) for event sprites in the calendar. 200 = double size.")]
+    private int eventSpriteScalePercent = 200;
+
     private RectTransform panel;
     private TextMeshProUGUI headerText;
     private TextMeshProUGUI footerText;
@@ -47,7 +57,6 @@ public class CalendarWidget : MonoBehaviour
     private readonly List<DayCell> dayCells = new();
 
     private DateEventManager calendar;
-    private Illustrations illustrations;
     private TMP_FontAsset font;
     private Canvas hostCanvas;
 
@@ -69,8 +78,8 @@ public class CalendarWidget : MonoBehaviour
     private class DayCell
     {
         public Image background;
-        public Image marker;
         public TextMeshProUGUI dayLabel;
+        public TextMeshProUGUI iconLabel;
         public string description;
     }
 
@@ -159,7 +168,6 @@ public class CalendarWidget : MonoBehaviour
         {
             int day = i + 1;
             DayCell cell = dayCells[i];
-            cell.dayLabel.text = day.ToString();
 
             bool isToday = day == today.Day;
             bool hasEvent = byDay.TryGetValue(day, out List<CalendarEntry> entries) && entries.Count > 0;
@@ -168,27 +176,9 @@ public class CalendarWidget : MonoBehaviour
             cell.description = hasEvent ? BuildDescription(entries) : null;
             cell.dayLabel.color = hasEvent ? DayMarkerColor(entries) : TextColor;
 
-            if (hasEvent)
-            {
-                cell.marker.gameObject.SetActive(true);
-                Sprite sprite = ResolveMarkerSprite(entries);
-                if (sprite != null)
-                {
-                    cell.marker.sprite = sprite;
-                    cell.marker.color = Color.white;
-                }
-                else
-                {
-                    // No art available: fall back to a dot coloured by faction
-                    // (gold when several factions share the day).
-                    cell.marker.sprite = null;
-                    cell.marker.color = DayMarkerColor(entries);
-                }
-            }
-            else
-            {
-                cell.marker.gameObject.SetActive(false);
-            }
+            // Day number stays top-left; the event icon(s) render centered in their own label.
+            cell.dayLabel.text = day.ToString();
+            cell.iconLabel.text = hasEvent ? BuildSpriteMarkup(entries) : string.Empty;
         }
     }
 
@@ -205,41 +195,29 @@ public class CalendarWidget : MonoBehaviour
         return mixed ? MixedColor : FactionColor(first);
     }
 
-    private Sprite ResolveMarkerSprite(List<CalendarEntry> entries)
+    /// <summary>
+    /// Builds the TMP "&lt;sprite name=...&gt;" markup for a day's events. Uses each entry's
+    /// explicit spriteName when set, otherwise the normalized environmental card name
+    /// (matching how environmental cards render their sprite). Names resolve against
+    /// <see cref="eventSpriteSheet"/>.
+    /// </summary>
+    private string BuildSpriteMarkup(List<CalendarEntry> entries)
     {
-        foreach (CalendarEntry entry in entries)
+        List<string> names = new();
+        foreach (CalendarEntry e in entries)
         {
-            Sprite sprite = ResolveMarkerSprite(entry);
-            if (sprite != null) return sprite;
+            string name = !string.IsNullOrWhiteSpace(e.spriteName)
+                ? e.spriteName.Trim()
+                : (!string.IsNullOrWhiteSpace(e.environment) ? CardNameUtility.Normalize(e.environment) : null);
+            if (!string.IsNullOrWhiteSpace(name) && !names.Contains(name)) names.Add(name);
         }
-        return null;
-    }
+        if (names.Count == 0) return string.Empty;
 
-    private Sprite ResolveMarkerSprite(CalendarEntry entry)
-    {
-        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        if (illustrations == null) return null;
-
-        foreach (string candidate in EnumerateSpriteCandidates(entry))
-        {
-            if (string.IsNullOrWhiteSpace(candidate)) continue;
-            if (illustrations.TryGetIllustrationByName(candidate, out Sprite sprite) && sprite != null)
-            {
-                return sprite;
-            }
-        }
-        return null;
-    }
-
-    private static IEnumerable<string> EnumerateSpriteCandidates(CalendarEntry entry)
-    {
-        if (!string.IsNullOrWhiteSpace(entry.spriteName)) yield return entry.spriteName;
-        if (!string.IsNullOrWhiteSpace(entry.environment))
-        {
-            yield return entry.environment;
-            yield return CardNameUtility.Normalize(entry.environment);
-        }
-        if (!string.IsNullOrWhiteSpace(entry.dateEvent)) yield return entry.dateEvent;
+        // <sprite> has no scale attribute, so wrap the icons in a <size> tag (percent of font size).
+        // The icon label is centered and clipped, so the scaled sprite stays inside the cell.
+        int scale = Mathf.Max(100, eventSpriteScalePercent);
+        string sprites = string.Join(" ", names.Select(n => $"<sprite name=\"{n}\">"));
+        return scale == 100 ? sprites : $"<size={scale}%>{sprites}</size>";
     }
 
     // ---------------- UI construction ----------------
@@ -324,6 +302,7 @@ public class CalendarWidget : MonoBehaviour
     {
         RectTransform cellRt = CreateRect($"Day{day}", parent);
         Image bg = AddImage(cellRt.gameObject, CellColor);
+        cellRt.gameObject.AddComponent<RectMask2D>(); // hard-clip cell contents (icons can't spill out)
 
         TextMeshProUGUI label = CreateText("Num", cellRt, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft);
         RectTransform labelRt = label.rectTransform;
@@ -332,17 +311,19 @@ public class CalendarWidget : MonoBehaviour
         labelRt.offsetMin = new Vector2(4f, 2f);
         labelRt.offsetMax = new Vector2(-4f, -2f);
 
-        RectTransform markerRt = CreateRect("Marker", cellRt);
-        markerRt.anchorMin = new Vector2(0.5f, 0f);
-        markerRt.anchorMax = new Vector2(0.5f, 0f);
-        markerRt.pivot = new Vector2(0.5f, 0f);
-        markerRt.anchoredPosition = new Vector2(0f, 4f);
-        markerRt.sizeDelta = new Vector2(28f, 28f);
-        Image marker = AddImage(markerRt.gameObject, Color.white);
-        marker.preserveAspect = true;
-        marker.gameObject.SetActive(false);
+        // Event icon(s) live in their own label that fills the cell, centered, and clips so a
+        // scaled-up <sprite> can never spill into neighbouring cells or the footer.
+        TextMeshProUGUI icon = CreateText("Icon", cellRt, 14f, FontStyles.Normal, TextAlignmentOptions.Center);
+        if (eventSpriteSheet != null) icon.spriteAsset = eventSpriteSheet; // resolves <sprite name=...>
+        icon.enableWordWrapping = false;
+        icon.overflowMode = TextOverflowModes.Truncate;
+        RectTransform iconRt = icon.rectTransform;
+        iconRt.anchorMin = Vector2.zero;
+        iconRt.anchorMax = Vector2.one;
+        iconRt.offsetMin = new Vector2(2f, 2f);
+        iconRt.offsetMax = new Vector2(-2f, -2f);
 
-        DayCell cell = new() { background = bg, marker = marker, dayLabel = label };
+        DayCell cell = new() { background = bg, dayLabel = label, iconLabel = icon };
 
         EventTrigger trigger = cellRt.gameObject.AddComponent<EventTrigger>();
         AddTrigger(trigger, EventTriggerType.PointerEnter, _ =>

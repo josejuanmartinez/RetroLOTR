@@ -159,6 +159,6 @@ public class PlayableLeaderIcon : MonoBehaviour
 
     public void ShowRumours()
     {
-        FindFirstObjectByType<RumoursManager>().Show();
+        FindFirstObjectByType<RumoursManager>().Show(); 
     }
 }
