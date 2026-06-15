@@ -289,7 +289,11 @@ public class Character : MonoBehaviour
 
     public AlignmentEnum GetAlignment()
     {
-        return owner != null? owner.GetAlignment() : alignment;
+        if (owner != null) return owner.GetAlignment();
+        // A leader has no owner above it; its alignment comes from its biome, not the
+        // base 'alignment' field (which defaults to freePeople and is left unset on leaders).
+        if (this is Leader self) return self.GetAlignment();
+        return alignment;
     }
 
     public async Task Pass()

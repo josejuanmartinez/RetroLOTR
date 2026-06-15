@@ -16,6 +16,8 @@ public class TurnBanner : MonoBehaviour
     private RectTransform lineLeftRect, lineRightRect;
     private TextMeshProUGUI turnText;
     private RectTransform textRect;
+    private TextMeshProUGUI dateText;
+    private RectTransform dateRect;
     private Image leftBannerImg, rightBannerImg;
     private RectTransform leftBannerRect, rightBannerRect;
 
@@ -151,6 +153,21 @@ public class TurnBanner : MonoBehaviour
         lineRightRect.pivot = new Vector2(0f, 0.5f);
         lineRightRect.sizeDelta = new Vector2(0f, LineThickness);
         lineRightRect.anchoredPosition = new Vector2(16f, -52f);
+
+        // Small date subtitle, below the gold lines
+        dateRect = MakeRect("DateText", centerRect);
+        dateRect.anchorMin = new Vector2(0.5f, 0.5f);
+        dateRect.anchorMax = new Vector2(0.5f, 0.5f);
+        dateRect.pivot = new Vector2(0.5f, 0.5f);
+        dateRect.sizeDelta = new Vector2(760f, 44f);
+        dateRect.anchoredPosition = new Vector2(0f, -84f);
+        dateRect.localScale = Vector3.zero;
+
+        dateText = dateRect.gameObject.AddComponent<TextMeshProUGUI>();
+        dateText.fontSize = 34;
+        dateText.fontStyle = FontStyles.Italic;
+        dateText.color = GoldColor;
+        dateText.alignment = TextAlignmentOptions.Center;
     }
 
     private static RectTransform MakeRect(string name, Transform parent)
@@ -182,8 +199,10 @@ public class TurnBanner : MonoBehaviour
 
         turnText.text = $"TURN {turnNumber}";
         turnText.color = GoldColor;
+        dateText.text = MiddleEarthCalendar.GetDateFromTurn(turnNumber).ToString();
         rootGroup.alpha = 1f;
         textRect.localScale = Vector3.zero;
+        dateRect.localScale = Vector3.zero;
         topBarRect.anchoredPosition = new Vector2(0, BarHeight);
         bottomBarRect.anchoredPosition = new Vector2(0, -BarHeight);
         lineLeftRect.sizeDelta = new Vector2(0, LineThickness);
@@ -216,6 +235,7 @@ public class TurnBanner : MonoBehaviour
             float lineP = EaseOutCubic(Mathf.Clamp01((p - 0.55f) / 0.45f));
             lineLeftRect.sizeDelta = new Vector2(lineP * LineMaxHalfWidth, LineThickness);
             lineRightRect.sizeDelta = new Vector2(lineP * LineMaxHalfWidth, LineThickness);
+            dateRect.localScale = Vector3.one * lineP;
 
             if (hasBanner)
             {
@@ -234,6 +254,7 @@ public class TurnBanner : MonoBehaviour
         topBarRect.anchoredPosition = Vector2.zero;
         bottomBarRect.anchoredPosition = Vector2.zero;
         textRect.localScale = Vector3.one;
+        dateRect.localScale = Vector3.one;
         lineLeftRect.sizeDelta = new Vector2(LineMaxHalfWidth, LineThickness);
         lineRightRect.sizeDelta = new Vector2(LineMaxHalfWidth, LineThickness);
         if (hasBanner)
