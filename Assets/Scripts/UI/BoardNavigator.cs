@@ -36,6 +36,21 @@ public class BoardNavigator : MonoBehaviour
     [SerializeField] private float enemyFocusPause = 0.006f;
     [SerializeField] private float lookAtGlobalSpeedMultiplier = 5f;
 
+    [Header("Discovered-area clamp")]
+    [Tooltip("Extra world-space slack allowed beyond the discovered hexes, as a fraction of the camera's half-height. " +
+             "1 = the discovered edge may reach the screen edge before the camera stops.")]
+    [SerializeField] private float discoveredEdgeSlack = 0.9f;
+    [Tooltip("Minimum world-space slack allowed beyond the discovered hexes.")]
+    [SerializeField] private float discoveredMinMargin = 1.5f;
+    [Tooltip("Seconds between recomputing the discovered-area bounds.")]
+    [SerializeField] private float discoveredBoundsRefreshInterval = 0.25f;
+
+    private Board boardForBounds;
+    private bool hasDiscoveredBounds;
+    private Vector2 discoveredMin;
+    private Vector2 discoveredMax;
+    private float nextDiscoveredBoundsRefresh;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -87,6 +102,68 @@ public class BoardNavigator : MonoBehaviour
             HandleMovement();
         else
             HandleZoom();
+    }
+
+    void LateUpdate()
+    {
+        // Keep the camera within (a margin of) the bounding box of the discovered hexes.
+        // This runs on BoardNavigator.Instance, which is the live camera that all panning
+        // moves, so it clamps reliably regardless of how the scene cameras are wired.
+        ClampToDiscoveredBounds();
+    }
+
+    private void ClampToDiscoveredBounds()
+    {
+        if (Time.unscaledTime >= nextDiscoveredBoundsRefresh)
+        {
+            RefreshDiscoveredBounds();
+            nextDiscoveredBoundsRefresh = Time.unscaledTime + Mathf.Max(0.05f, discoveredBoundsRefreshInterval);
+        }
+
+        if (!hasDiscoveredBounds) return;
+
+        float half = boardCamera != null && boardCamera.orthographic ? boardCamera.orthographicSize : discoveredMinMargin;
+        float marginY = Mathf.Max(discoveredMinMargin, half * discoveredEdgeSlack);
+        float marginX = Mathf.Max(discoveredMinMargin, half * discoveredEdgeSlack * (boardCamera != null ? boardCamera.aspect : 1f));
+
+        Vector3 pos = transform.position;
+        float x = Mathf.Clamp(pos.x, discoveredMin.x - marginX, discoveredMax.x + marginX);
+        float y = Mathf.Clamp(pos.y, discoveredMin.y - marginY, discoveredMax.y + marginY);
+
+        if (!Mathf.Approximately(x, pos.x) || !Mathf.Approximately(y, pos.y))
+        {
+            transform.position = new Vector3(x, y, pos.z);
+        }
+    }
+
+    private void RefreshDiscoveredBounds()
+    {
+        if (boardForBounds == null) boardForBounds = FindAnyObjectByType<Board>();
+        if (boardForBounds == null || boardForBounds.hexes == null)
+        {
+            hasDiscoveredBounds = false;
+            return;
+        }
+
+        float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
+        bool any = false;
+        foreach (Hex hex in boardForBounds.hexes.Values)
+        {
+            if (hex == null || !hex.IsHexRevealed()) continue;
+            Vector3 p = hex.transform.position;
+            if (p.x < minX) minX = p.x;
+            if (p.x > maxX) maxX = p.x;
+            if (p.y < minY) minY = p.y;
+            if (p.y > maxY) maxY = p.y;
+            any = true;
+        }
+
+        hasDiscoveredBounds = any;
+        if (any)
+        {
+            discoveredMin = new Vector2(minX, minY);
+            discoveredMax = new Vector2(maxX, maxY);
+        }
     }
 
     void HandleMovement()

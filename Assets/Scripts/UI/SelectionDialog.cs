@@ -108,10 +108,12 @@ public class SelectionDialog : MonoBehaviour
     {
         BindUiReferences();
         WireUiListeners();
-        if (options.Count < 1)
+        if (options == null || options.Count < 1)
         {
-            Debug.LogWarning("Unable to show Selection Dialog: options < 1");
-            return Task.FromResult(string.Empty);
+            // Called with nothing to choose (e.g. a Tutorial message-only dialog).
+            // Show a single dummy option that just dismisses the dialog.
+            options = new List<string> { "Close" };
+            optionDescriptions = null;
         }
 
         var request = new DialogRequest
@@ -297,7 +299,8 @@ public class SelectionDialog : MonoBehaviour
         SetUiObjectActive(content, true);
         SetRectScale(content, Vector3.one);
         SetUiObjectActive(messageLabel != null ? messageLabel.gameObject : null, true);
-        SetUiObjectActive(noButton != null ? noButton.gameObject : null, true);
+        // Close button removed: options confirm on click, so the dialog never shows it.
+        SetUiObjectActive(noButton != null ? noButton.gameObject : null, false);
         SetUiObjectActive(dropdown != null ? dropdown.gameObject : null, true);
         GameObject imageRoot = FindDialogChild("Image");
         SetUiObjectActive(imageRoot, true);
@@ -547,10 +550,16 @@ public class SelectionDialog : MonoBehaviour
         if (dropdown != null)
         {
             dropdown.onValueChanged.RemoveAllListeners();
-            dropdown.onValueChanged.AddListener(_ =>
+            dropdown.onValueChanged.AddListener(value =>
             {
-                UpdateCloseButtonState();
                 UpdateCaptionColor();
+                // Picking a real option (index 0 is the placeholder) confirms immediately,
+                // mirroring the option-button behaviour now that there is no close button.
+                int optionIndex = value - 1;
+                if (activeRequest?.options != null && optionIndex >= 0 && optionIndex < activeRequest.options.Count)
+                {
+                    Resolve(activeRequest.options[optionIndex]);
+                }
             });
         }
     }
@@ -769,9 +778,15 @@ public class SelectionDialog : MonoBehaviour
 
     private void SelectOptionButton(int index)
     {
+        if (activeRequest?.options == null || index < 0 || index >= activeRequest.options.Count)
+        {
+            return;
+        }
+
+        // Clicking an option both selects and confirms it: close the dialog and
+        // resolve with the chosen option in one step (no separate close button).
         selectedButtonIndex = index;
-        UpdateButtonSelectionVisuals();
-        UpdateCloseButtonState();
+        Resolve(activeRequest.options[index]);
     }
 
     private void UpdateButtonSelectionVisuals()

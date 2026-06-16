@@ -1,6 +1,9 @@
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+// Tracks which hex sits under the camera centre (exposed via CurrentHexCoords / HasRegisteredHit,
+// used by MessageDisplayNoUI). The actual camera clamping to the discovered area now lives on
+// BoardNavigator, which is guaranteed to be the live, moving camera.
 public class MapBorderDetector : MonoBehaviour
 {
     private static readonly Regex CoordRegex = new(@"(-?\d+)\s*,\s*(-?\d+)", RegexOptions.Compiled);
@@ -34,24 +37,11 @@ public class MapBorderDetector : MonoBehaviour
         var origin = transform.position;
         var dir = transform.forward;
 
-        // Debug.DrawRay(origin, dir * maxDistance, Color.green);
-
         if (Physics.Raycast(origin, dir, out var hit, maxDistance))
         {
             hasRegisteredHit = true;
             lastValidNavigatorPosition = trackedTransform.position;
             UpdateLastHitCoords(hit.collider.transform);
-
-            /*if (lastHitHexCoords.x >= 0 && lastHitHexCoords.y >= 0)
-                Debug.Log($"Hit hex {lastHitHexCoords.x},{lastHitHexCoords.y} at {hit.point}");
-            else
-                Debug.Log($"Hit {hit.collider.gameObject.name} at {hit.point}");
-            */
-        }
-        else if (hasRegisteredHit && boardNavigator != null)
-        {
-            boardNavigator.ClampToLastValidPosition(lastValidNavigatorPosition, lastHitHexCoords);
-            lastValidNavigatorPosition = trackedTransform.position;
         }
     }
 

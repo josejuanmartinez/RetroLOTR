@@ -1,22 +1,10 @@
 fileFormatVersion: 2
-guid: 09552e1a99a8a61428cf0bd4593a9594
+guid: e7364a8f299d5244b96c436c5e4a6cff
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3503220092317476060
-    second: Crickhollow_0
-  - first:
-      213: -4655434552632922719
-    second: Crickhollow_1
-  - first:
-      213: -1348603528920000769
-    second: Crickhollow_2
-  - first:
-      213: 485785832224136428
-    second: Crickhollow_3
-  - first:
-      213: -1553565664640464468
-    second: Crickhollow_4
+      213: -2558763418825775928
+    second: 006 2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -125,101 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Crickhollow_0
+      name: 006 2_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 1
-        width: 829
-        height: 817
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 42bd76b03ef026fc0800000000000000
-      internalID: -3503220092317476060
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Crickhollow_1
-      rect:
-        serializedVersion: 2
-        x: 536
-        y: 812
-        width: 11
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 1ad2c3f90f2946fb0800000000000000
-      internalID: -4655434552632922719
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Crickhollow_2
-      rect:
-        serializedVersion: 2
-        x: 551
-        y: 813
-        width: 50
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ff692e35c3cc84de0800000000000000
-      internalID: -1348603528920000769
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Crickhollow_3
-      rect:
-        serializedVersion: 2
-        x: 823
-        y: 175
-        width: 7
-        height: 443
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cec13aef3abddb600800000000000000
-      internalID: 485785832224136428
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Crickhollow_4
-      rect:
-        serializedVersion: 2
-        x: 414
         y: 0
-        width: 26
-        height: 6
+        width: 770
+        height: 833
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -228,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ca98cd75240a07ae0800000000000000
-      internalID: -1553565664640464468
+      spriteID: 8c420ac3a327d7cd0800000000000000
+      internalID: -2558763418825775928
       vertices: []
       indices: 
       edges: []
@@ -248,11 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Crickhollow_0: -3503220092317476060
-      Crickhollow_1: -4655434552632922719
-      Crickhollow_2: -1348603528920000769
-      Crickhollow_3: 485785832224136428
-      Crickhollow_4: -1553565664640464468
+      006 2_0: -2558763418825775928
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

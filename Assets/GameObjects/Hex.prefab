@@ -1333,7 +1333,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.18, y: 0.015}
+  m_AnchoredPosition: {x: -0.72, y: 0.015}
   m_SizeDelta: {x: 0.6638, y: 0.0956}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!23 &1045541801354618986
@@ -1405,7 +1405,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <sprite name="plains">Plains
+  m_text: <sprite name="plains">Plains <sprite name="forest">Plains <sprite name="moon">Plains
+    <sprite name="murazorunleashed">Plains
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
   m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
@@ -1507,7 +1508,7 @@ Transform:
   m_GameObject: {fileID: 2578288953211817442}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.72670245, y: -0.095, z: 0}
+  m_LocalPosition: {x: 1.2667024, y: -0.095, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1569,7 +1570,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 0.46, y: 0.19}
+  m_Size: {x: 1.5400001, y: 0.19}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -11672,7 +11673,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 0.46, y: 0.19}
+  m_Size: {x: 1.5400001, y: 0.19}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

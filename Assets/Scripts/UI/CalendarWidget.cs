@@ -184,8 +184,8 @@ public class CalendarWidget : MonoBehaviour
 
     private static string BuildDescription(List<CalendarEntry> entries)
     {
-        if (entries.Count == 1) return $"<b>[{entries[0].Faction}]</b>  {entries[0].description}";
-        return string.Join("\n", entries.Select(e => $"<b>[{e.Faction}]</b>  {e.description}"));
+        if (entries.Count == 1) return entries[0].description;
+        return string.Join("\n", entries.Select(e => e.description));
     }
 
     private static Color DayMarkerColor(List<CalendarEntry> entries)
@@ -320,8 +320,9 @@ public class CalendarWidget : MonoBehaviour
         RectTransform iconRt = icon.rectTransform;
         iconRt.anchorMin = Vector2.zero;
         iconRt.anchorMax = Vector2.one;
-        iconRt.offsetMin = new Vector2(2f, 2f);
-        iconRt.offsetMax = new Vector2(-2f, -2f);
+        // Shift the (vertically centered) icon ~10px lower by lowering both top and bottom edges.
+        iconRt.offsetMin = new Vector2(2f, -8f);
+        iconRt.offsetMax = new Vector2(-2f, -12f);
 
         DayCell cell = new() { background = bg, dayLabel = label, iconLabel = icon };
 

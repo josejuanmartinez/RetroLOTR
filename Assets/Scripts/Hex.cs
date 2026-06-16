@@ -2499,13 +2499,19 @@ public class Hex : MonoBehaviour
 
     public bool HasPendingEncounters => _pendingEncounters.Count > 0;
 
-    public void AddPendingEncounter(CardData card)
+    /// <summary>
+    /// Adds an encounter to this hex. A hex can hold at most one encounter at a time:
+    /// if one is already pending, the card is rejected. Returns true only when the card
+    /// was actually placed, so callers can skip raising an event icon for rejected cards.
+    /// </summary>
+    public bool AddPendingEncounter(CardData card)
     {
-        if (card == null) return;
+        if (card == null) return false;
         // A hex can hold at most one encounter at a time; reject any second one.
-        if (_pendingEncounters.Count > 0) return;
+        if (_pendingEncounters.Count > 0) return false;
         _pendingEncounters.Add(card);
         UpdateEncounterVisibility();
+        return true;
     }
 
     public CardData TakeFirstPendingEncounter()

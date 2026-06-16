@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using RetroLOTR.Scenarios;
 
 [RequireComponent(typeof(BoardGenerator), typeof(NationSpawner))]
 public class Board : MonoBehaviour
@@ -13,6 +14,14 @@ public class Board : MonoBehaviour
     [Header("Board Size")]
     [SerializeField] [Range(1, 200)] int width = 80;
     [SerializeField] [Range(1, 200)] int height = 80;
+
+    [Header("Scenario (optional)")]
+    [Tooltip("Resources-relative scenario name to load instead of generating a procedural map. " +
+             "Used for in-editor testing; at runtime GameConfig.ScenarioToLoad (set by the menu) takes priority.")]
+    [SerializeField] private string scenarioToLoadInEditor = "";
+    // The authored scenario the board is currently loading; null means procedural generation.
+    private ScenarioData activeScenario;
+    public ScenarioData ActiveScenario => activeScenario;
 
     [Header("Hex Configuration")]
     public GameObject hexPrefab;
@@ -142,7 +151,33 @@ public class Board : MonoBehaviour
         // Subscribe to generation progress events
         boardGenerator.OnGenerationProgress += UpdateGenerationProgress;
 
+        ResolveActiveScenario();
+
         StartCoroutine(DrawCoroutine());
+    }
+
+    // Picks the scenario to load (menu selection wins over the in-editor test field) and
+    // resizes the board to match before any generation runs.
+    private void ResolveActiveScenario()
+    {
+        string scenarioName = GameConfig.HasScenario ? GameConfig.ScenarioToLoad : scenarioToLoadInEditor;
+        if (string.IsNullOrWhiteSpace(scenarioName)) return;
+
+        activeScenario = ScenarioLoader.Load(scenarioName);
+        if (activeScenario == null)
+        {
+            Debug.LogError($"Board: failed to load scenario '{scenarioName}'; falling back to procedural generation.");
+            return;
+        }
+
+        ConfigureSize(activeScenario.width, activeScenario.height);
+    }
+
+    // Allows the scenario loader to size the board before generation. No effect once hexes exist.
+    public void ConfigureSize(int newWidth, int newHeight)
+    {
+        width = Mathf.Clamp(newWidth, 1, 200);
+        height = Mathf.Clamp(newHeight, 1, 200);
     }
 
     private void Update()
@@ -167,16 +202,27 @@ public class Board : MonoBehaviour
     {
         if (!initialized || forced)
         {
-            // Generate terrain first
-            bool gridSizeMismatch = terrainGrid != null &&
-                (terrainGrid.GetLength(0) != GetHeight() || terrainGrid.GetLength(1) != GetWidth());
-            if (terrainGrid == null || regenerate || gridSizeMismatch)
+            if (activeScenario != null)
             {
-                yield return StartCoroutine(boardGenerator.GenerateTerrainCoroutine(OnTerrainGenerated));
+                // Authored scenario: take terrain straight from the data instead of generating it,
+                // then instantiate hexes exactly as the procedural path does.
+                terrainGrid = ScenarioLoader.BuildTerrainGrid(activeScenario);
+                OnTerrainGenerated(terrainGrid);
+                yield return StartCoroutine(boardGenerator.InstantiateHexesCoroutine(OnHexesInstantiated));
             }
+            else
+            {
+                // Generate terrain first
+                bool gridSizeMismatch = terrainGrid != null &&
+                    (terrainGrid.GetLength(0) != GetHeight() || terrainGrid.GetLength(1) != GetWidth());
+                if (terrainGrid == null || regenerate || gridSizeMismatch)
+                {
+                    yield return StartCoroutine(boardGenerator.GenerateTerrainCoroutine(OnTerrainGenerated));
+                }
 
-            // Then instantiate hexes
-            yield return StartCoroutine(boardGenerator.InstantiateHexesCoroutine(OnHexesInstantiated));
+                // Then instantiate hexes
+                yield return StartCoroutine(boardGenerator.InstantiateHexesCoroutine(OnHexesInstantiated));
+            }
         }
         // In case the video has not finished yet and we have, we return the download priority to normal
         Application.backgroundLoadingPriority = ThreadPriority.Normal;
@@ -205,7 +251,10 @@ public class Board : MonoBehaviour
             return;
         }
 
-        nationSpawner.Spawn();
+        if (activeScenario != null)
+            nationSpawner.SpawnFromScenario(activeScenario);
+        else
+            nationSpawner.Spawn();
 
         if (regionLabelManager != null && hexes != null)
             regionLabelManager.Generate(hexes.Values);

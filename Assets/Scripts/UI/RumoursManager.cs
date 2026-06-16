@@ -235,7 +235,7 @@ public class RumoursManager : MonoBehaviour
             if (string.IsNullOrWhiteSpace(formatted)) continue;
 
             Character iconCharacter = rumour.character != null ? rumour.character : rumour.leader;
-            CharacterIconWithText icon = Instantiate(Instance.rumourIconPrefab, Instance.rumoursGridLayout.transform).GetComponent<CharacterIconWithText>();
+            CharacterIconWithTextAndRumour icon = Instantiate(Instance.rumourIconPrefab, Instance.rumoursGridLayout.transform).GetComponent<CharacterIconWithTextAndRumour>();
             icon.Initialize(iconCharacter, formatted);
         }
     }

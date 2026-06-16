@@ -1396,13 +1396,13 @@ public class DeckManager : MonoBehaviour
     {
         Hex targetHex = AssignEncounterTargetHex(leader);
         if (targetHex == null) return;
+        // A hex may hold at most one encounter. If the target already has one, don't place
+        // this card and don't raise an event icon for it. The icon for a successful
+        // placement is raised by Hex.UpdateEncounterVisibility once the encounter is visible
+        // (immediately if the hex is already seen, otherwise when it is revealed).
+        if (!targetHex.AddPendingEncounter(card)) return;
         card.encounterTargetHex = targetHex;
         card.hasShownHandAnimation = true;
-        targetHex.AddPendingEncounter(card);
-        // Notify the human player if the tile is already visible
-        Game g = FindFirstObjectByType<Game>();
-        if (g != null && leader == g.player && targetHex.IsHexSeen())
-            NotifyEncounterPlaced(targetHex);
     }
 
     private static Hex AssignEncounterTargetHex(PlayableLeader leader)

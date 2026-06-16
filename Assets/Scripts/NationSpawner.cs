@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using System;
+using RetroLOTR.Scenarios;
 
 [RequireComponent(typeof(Board))]
 public class NationSpawner : MonoBehaviour
@@ -189,6 +190,315 @@ public class NationSpawner : MonoBehaviour
         InstantiateLeadersAndCharacters(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
         VerifyStartingPlacements();
         AssignLandRegions();
+    }
+
+    // ----------------------------------------------------------------------------------------
+    // Scenario-driven spawning.
+    //
+    // Authored scenarios place everything at fixed coordinates instead of running the random
+    // spread/closest placement above. Shared leaders and cards are referenced by name, so the
+    // leader biomes and decks stay the single source of truth for stats/sprites/abilities.
+    // ----------------------------------------------------------------------------------------
+    public void SpawnFromScenario(ScenarioData scenario)
+    {
+        if (!isInitialized)
+        {
+            Debug.LogError("NationSpawner not initialized!");
+            return;
+        }
+        if (scenario == null)
+        {
+            Debug.LogError("SpawnFromScenario called with a null scenario.");
+            return;
+        }
+        if (board.terrainGrid == null)
+        {
+            Debug.LogError("terrainGrid is not initialized!");
+            return;
+        }
+
+        RecountExistingEntities();
+        leaderPositions.Clear();
+        placedPositions.Clear();
+
+        // Apply authored tile variations first so each hex's features are set before placement.
+        ApplyScenarioTerrainSprites(scenario);
+
+        DeckManager deckManager = ResolveDeckManager();
+
+        // 1. Leaders — establishes the Leader objects that PCs/characters reference as owners.
+        Dictionary<string, Leader> leadersByName = new(StringComparer.OrdinalIgnoreCase);
+        foreach (ScenarioLeaderStart start in scenario.leaderStarts ?? new List<ScenarioLeaderStart>())
+        {
+            if (start == null || string.IsNullOrWhiteSpace(start.leaderName)) continue;
+            if (!TryGetScenarioHex(scenario, start.row, start.col, out Hex hex)) continue;
+            if (!EnsureCharacterCapacity($"Skipping leader '{start.leaderName}'.")) continue;
+
+            Leader leader = start.isPlayable
+                ? SpawnPlayableLeaderAt(hex, start.leaderName)
+                : SpawnNonPlayableLeaderAt(hex, start.leaderName);
+            if (leader == null) continue;
+
+            currentCharacterCount++;
+            placedPositions.Add(hex.v2);
+            leadersByName[start.leaderName] = leader;
+            leaderPositions[start.leaderName] = hex.v2;
+        }
+
+        // 2. PCs (cities). Owner may be null (ownerless anchor city).
+        foreach (ScenarioPC spc in scenario.pcs ?? new List<ScenarioPC>())
+        {
+            if (spc == null || string.IsNullOrWhiteSpace(spc.pcName)) continue;
+            if (!TryGetScenarioHex(scenario, spc.row, spc.col, out Hex hex)) continue;
+            if (!EnsurePcCapacity()) continue;
+
+            Leader owner = EnsureLeaderSpawned(leadersByName, spc.ownerLeaderName, hex);
+            PCSizeEnum size = (PCSizeEnum)Mathf.Clamp(spc.citySize, (int)PCSizeEnum.camp, (int)PCSizeEnum.city);
+            FortSizeEnum fort = (FortSizeEnum)Mathf.Clamp(spc.fortSize, (int)FortSizeEnum.NONE, (int)FortSizeEnum.citadel);
+
+            PC pc = new(owner, spc.pcName, size, fort, spc.hasPort, spc.isHidden, hex, spc.isCapital, spc.loyalty);
+            hex.SetPC(pc, spc.pcFeature, spc.fortFeature, spc.isIsland);
+            currentPcCount++;
+        }
+
+        // 3. Characters and their armies.
+        foreach (ScenarioCharacter sc in scenario.characters ?? new List<ScenarioCharacter>())
+        {
+            if (sc == null || string.IsNullOrWhiteSpace(sc.characterName)) continue;
+            if (!TryGetScenarioHex(scenario, sc.row, sc.col, out Hex hex)) continue;
+            if (!EnsureCharacterCapacity($"Skipping character '{sc.characterName}'.")) continue;
+
+            Leader owner = EnsureLeaderSpawned(leadersByName, sc.ownerLeaderName, hex);
+            if (owner == null)
+            {
+                Debug.LogWarning($"Scenario character '{sc.characterName}' has no resolvable owner '{sc.ownerLeaderName}'; skipping.");
+                continue;
+            }
+
+            Character character = SpawnScenarioCharacter(owner, hex, sc.characterName, deckManager);
+            if (character == null) continue;
+            currentCharacterCount++;
+
+            if (sc.army != null && !sc.army.IsEmpty())
+                BuildScenarioArmy(character, sc.army, deckManager);
+        }
+
+        // 4. Regions — authored paint wins; gaps are flood-filled from the painted hexes.
+        ApplyScenarioRegions(scenario);
+        landRegionsAssigned = true;
+    }
+
+    // Applies authored per-hex tile variations. Re-running SetTerrain with the chosen sprite
+    // also refreshes that hex's landmark features (HexFeatureData reads the sprite name).
+    private void ApplyScenarioTerrainSprites(ScenarioData scenario)
+    {
+        if (scenario.terrainSprites == null || scenario.terrainSprites.Count == 0) return;
+
+        HexTextureMapping mapping = null;
+        foreach (ScenarioSpriteCell cell in scenario.terrainSprites)
+        {
+            if (cell == null || string.IsNullOrWhiteSpace(cell.spriteName)) continue;
+            if (!board.hexes.TryGetValue(new Vector2Int(cell.row, cell.col), out Hex hex) || hex == null) continue;
+            if (mapping == null) mapping = hex.GetComponent<HexTextureMapping>();
+            if (mapping == null) return;
+
+            Sprite sprite = mapping.GetTerrainSpriteByName(cell.spriteName);
+            if (sprite == null)
+            {
+                Debug.LogWarning($"Scenario tile '{cell.spriteName}' at ({cell.row},{cell.col}) could not be resolved.");
+                continue;
+            }
+            hex.SetTerrain(hex.terrainType, sprite, Color.white);
+        }
+    }
+
+    private DeckManager ResolveDeckManager()
+    {
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager != null && (deckManager.cards == null || deckManager.cards.Count == 0))
+        {
+            deckManager.InitializeFromResources();
+        }
+        return deckManager;
+    }
+
+    private bool TryGetScenarioHex(ScenarioData scenario, int row, int col, out Hex hex)
+    {
+        hex = null;
+        if (!scenario.InBounds(row, col)) return false;
+        return board.hexes != null && board.hexes.TryGetValue(new Vector2Int(row, col), out hex) && hex != null;
+    }
+
+    // Resolves the owning leader for a PC/character. The owner can be any shared leader (the
+    // editor lists them all), so if it has no explicit leader-start in the scenario we spawn it
+    // lazily at this placement's hex (its capital) the first time it is referenced.
+    private Leader EnsureLeaderSpawned(Dictionary<string, Leader> leadersByName, string ownerName, Hex hex)
+    {
+        if (string.IsNullOrWhiteSpace(ownerName)) return null;
+        if (leadersByName.TryGetValue(ownerName, out Leader existing)) return existing;
+        if (!EnsureCharacterCapacity($"Skipping owner leader '{ownerName}'.")) return null;
+
+        Leader leader = null;
+        LeaderBiomeConfig playable = playableLeaders.playableLeaders.biomes
+            .FirstOrDefault(b => b != null && string.Equals(b.characterName, ownerName, StringComparison.OrdinalIgnoreCase));
+        if (playable != null)
+        {
+            leader = characterInstantiator.InstantiatePlayableLeader(hex, playable);
+        }
+        else
+        {
+            NonPlayableLeaderBiomeConfig npl = nonPlayableLeaders.nonPlayableLeaders.biomes
+                .FirstOrDefault(b => b != null && string.Equals(b.characterName, ownerName, StringComparison.OrdinalIgnoreCase));
+            if (npl != null) leader = characterInstantiator.InstantiateNonPlayableLeader(hex, npl);
+        }
+
+        if (leader == null)
+        {
+            Debug.LogWarning($"Scenario references unknown owner leader '{ownerName}'.");
+            return null;
+        }
+
+        currentCharacterCount++;
+        placedPositions.Add(hex.v2);
+        leadersByName[ownerName] = leader;
+        leaderPositions[ownerName] = hex.v2;
+        return leader;
+    }
+
+    private Leader SpawnPlayableLeaderAt(Hex hex, string leaderName)
+    {
+        LeaderBiomeConfig biome = playableLeaders.playableLeaders.biomes
+            .FirstOrDefault(b => b != null && string.Equals(b.characterName, leaderName, StringComparison.OrdinalIgnoreCase));
+        if (biome == null)
+        {
+            Debug.LogWarning($"Scenario references unknown playable leader '{leaderName}'.");
+            return null;
+        }
+        return characterInstantiator.InstantiatePlayableLeader(hex, biome);
+    }
+
+    private Leader SpawnNonPlayableLeaderAt(Hex hex, string leaderName)
+    {
+        NonPlayableLeaderBiomeConfig biome = nonPlayableLeaders.nonPlayableLeaders.biomes
+            .FirstOrDefault(b => b != null && string.Equals(b.characterName, leaderName, StringComparison.OrdinalIgnoreCase));
+        if (biome == null)
+        {
+            Debug.LogWarning($"Scenario references unknown non-playable leader '{leaderName}'.");
+            return null;
+        }
+        return characterInstantiator.InstantiateNonPlayableLeader(hex, biome);
+    }
+
+    // Mirrors how a Character card is turned into a unit (see Card.HandleCharacterCardPlayed):
+    // a minimal biome carries identity, and InitializeFromBiome pulls levels/sprite from the card.
+    private Character SpawnScenarioCharacter(Leader owner, Hex hex, string characterName, DeckManager deckManager)
+    {
+        CardData card = deckManager?.cards?.FirstOrDefault(c =>
+            c != null && c.GetCardType() == CardTypeEnum.Character &&
+            string.Equals(c.name, characterName, StringComparison.OrdinalIgnoreCase));
+
+        BiomeConfig config = new()
+        {
+            characterName = characterName,
+            alignment = card != null ? (AlignmentEnum)card.alignment : owner.GetAlignment(),
+            race = card != null ? card.race : RacesEnum.Common,
+            sex = SexEnum.Male,
+            commander = card?.commander ?? 0,
+            agent = card?.agent ?? 0,
+            emmissary = card?.emmissary ?? 0,
+            mage = card?.mage ?? 0,
+            artifacts = card?.artifacts != null ? new List<string>(card.artifacts) : new List<string>()
+        };
+
+        Character character = characterInstantiator.InstantiateCharacter(owner, hex, config);
+        if (character == null) return null;
+        character.startingCharacter = true;
+        if (card != null) character.characterGroup = card.characterGroup;
+        return character;
+    }
+
+    private void BuildScenarioArmy(Character commander, ScenarioArmy army, DeckManager deckManager)
+    {
+        if (deckManager == null)
+        {
+            Debug.LogWarning($"Cannot build scenario army for '{commander.characterName}': no DeckManager.");
+            return;
+        }
+
+        bool created = false;
+        foreach (ScenarioArmyStack stack in army.stacks)
+        {
+            if (stack == null || stack.amount <= 0 || string.IsNullOrWhiteSpace(stack.armyCardName)) continue;
+
+            CardData card = deckManager.FindArmyCardByName(stack.armyCardName);
+            if (card == null)
+            {
+                Debug.LogWarning($"Scenario army references unknown army card '{stack.armyCardName}'.");
+                continue;
+            }
+
+            List<ArmySpecialAbilityEnum> abilities = card.specialAbilities != null
+                ? new List<ArmySpecialAbilityEnum>(card.specialAbilities)
+                : null;
+
+            if (!created)
+            {
+                commander.CreateArmy(card.troopType, stack.amount, false, 0, abilities);
+                created = true;
+            }
+            else
+            {
+                commander.GetArmy()?.Recruit(card.troopType, stack.amount, abilities);
+            }
+        }
+
+        if (created)
+        {
+            Army result = commander.GetArmy();
+            if (result != null) result.xp = Mathf.Clamp(army.xp, 0, 100);
+        }
+    }
+
+    // Applies painted region overrides, then flood-fills any unpainted land hex with the
+    // nearest painted region so region labels and region-gated cards behave as in a normal game.
+    private void ApplyScenarioRegions(ScenarioData scenario)
+    {
+        if (board?.hexes == null) return;
+
+        foreach (Hex hex in board.hexes.Values)
+            hex?.SetLandRegion(null);
+
+        Queue<Vector2Int> frontier = new();
+        foreach (ScenarioRegionCell cell in scenario.regions ?? new List<ScenarioRegionCell>())
+        {
+            if (cell == null || string.IsNullOrWhiteSpace(cell.region)) continue;
+            Vector2Int v2 = new(cell.row, cell.col);
+            if (!board.hexes.TryGetValue(v2, out Hex hex) || hex == null) continue;
+            hex.SetLandRegion(cell.region.Trim());
+            frontier.Enqueue(v2);
+        }
+
+        if (frontier.Count == 0) return;
+
+        // Multi-source BFS: spread each painted region outward over unassigned non-water hexes.
+        while (frontier.Count > 0)
+        {
+            Vector2Int current = frontier.Dequeue();
+            if (!board.hexes.TryGetValue(current, out Hex currentHex) || currentHex == null) continue;
+            string region = currentHex.GetLandRegion();
+            if (string.IsNullOrWhiteSpace(region)) continue;
+
+            Vector2Int[] neighbors = ((current.x & 1) == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+            for (int i = 0; i < neighbors.Length; i++)
+            {
+                Vector2Int next = new(current.x + neighbors[i].x, current.y + neighbors[i].y);
+                if (!board.hexes.TryGetValue(next, out Hex neighbor) || neighbor == null) continue;
+                if (neighbor.IsWaterTerrain()) continue;
+                if (!string.IsNullOrWhiteSpace(neighbor.GetLandRegion())) continue;
+                neighbor.SetLandRegion(region);
+                frontier.Enqueue(next);
+            }
+        }
     }
 
     public bool EnsureLandRegionsAssigned()

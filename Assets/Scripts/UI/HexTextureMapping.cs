@@ -190,6 +190,58 @@ public class HexTextureMapping : SearcherByName
         return GetTerrainBaseSprite(hex.terrainType);
     }
 
+    // All terrain variation lists, in TerrainEnum order, for name lookups.
+    private IEnumerable<List<Sprite>> AllTerrainVariationLists()
+    {
+        yield return mountainsVariations;
+        yield return hillsVariations;
+        yield return plainsVariations;
+        yield return grassVariations;
+        yield return shoreVariations;
+        yield return forestVariations;
+        yield return shallowWaterVariations;
+        yield return deepWaterVariations;
+        yield return swampVariations;
+        yield return desertVariations;
+        yield return wastelandsVariations;
+    }
+
+    public List<Sprite> GetTerrainVariations(TerrainEnum terrainType)
+    {
+        return terrainType switch
+        {
+            TerrainEnum.deepWater => deepWaterVariations,
+            TerrainEnum.desert => desertVariations,
+            TerrainEnum.forest => forestVariations,
+            TerrainEnum.grasslands => grassVariations,
+            TerrainEnum.hills => hillsVariations,
+            TerrainEnum.plains => plainsVariations,
+            TerrainEnum.shallowWater => shallowWaterVariations,
+            TerrainEnum.shore => shoreVariations,
+            TerrainEnum.swamp => swampVariations,
+            TerrainEnum.wastelands => wastelandsVariations,
+            TerrainEnum.mountains => mountainsVariations,
+            _ => null
+        };
+    }
+
+    // Resolves a specific terrain tile variation by sprite name (used to apply authored
+    // scenario tiles, which also determine the hex's landmark features via HexFeatureData).
+    public Sprite GetTerrainSpriteByName(string spriteName)
+    {
+        if (string.IsNullOrWhiteSpace(spriteName)) return null;
+        foreach (List<Sprite> list in AllTerrainVariationLists())
+        {
+            if (list == null) continue;
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i] != null && string.Equals(list[i].name, spriteName, System.StringComparison.OrdinalIgnoreCase))
+                    return list[i];
+            }
+        }
+        return null;
+    }
+
     public Sprite GetTerrainBaseSprite(TerrainEnum terrainType)
     {
         if (terrainType == TerrainEnum.MAX) return defaultTerrainSprite;

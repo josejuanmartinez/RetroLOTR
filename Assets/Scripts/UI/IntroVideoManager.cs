@@ -1,13 +1,21 @@
 using UnityEngine;
 using UnityEngine.Video;
+using RetroLOTR.Scenarios;
 
 public class IntroVideoManager : MonoBehaviour
-{    
+{
     private BoardGenerator boardGenerator;
     private VideoPlayer vp;
 
-    void Start()    
+    void Start()
     {
+        // Scenario selection reloads the scene; don't replay the intro on those rebuilds.
+        if (GameConfig.SkipIntro)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         boardGenerator = GameObject.Find("Board").GetComponent<BoardGenerator>();
         vp = GetComponent<VideoPlayer>();
         vp.clip = GameObject.Find("Videos").GetComponent<Videos>().GetVideoByName("intro");
