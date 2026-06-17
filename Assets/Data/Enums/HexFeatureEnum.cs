@@ -65,7 +65,8 @@ public static class HexFeatureData
         { "forest_26", HexFeatureEnum.Ruins },
         { "forest_27", HexFeatureEnum.Ruins },
         { "forest_28", HexFeatureEnum.Village },
-        { "forest_29", HexFeatureEnum.Village },
+        { "forest_29", HexFeatureEnum.Village },        
+        { "forest_30", HexFeatureEnum.None },
 
         // ---------- PLAINS ----------
         { "plains_01", HexFeatureEnum.Watchtower | HexFeatureEnum.Road | HexFeatureEnum.Pond },
@@ -84,6 +85,7 @@ public static class HexFeatureData
         { "plains_15", HexFeatureEnum.Village },
         { "plains_16", HexFeatureEnum.Village | HexFeatureEnum.Road },
         { "plains_18", HexFeatureEnum.Blighted },
+        { "plains_19", HexFeatureEnum.None },
 
         // ---------- HILLS ----------
         { "hills_01", HexFeatureEnum.Ruins | HexFeatureEnum.Road },
@@ -101,6 +103,8 @@ public static class HexFeatureData
         { "hills_15", HexFeatureEnum.StandingStones },
         { "hills_16", HexFeatureEnum.StandingStones },
         { "hills_17", HexFeatureEnum.Fountain },
+        { "hills_18", HexFeatureEnum.Bridge | HexFeatureEnum.Watchtower | HexFeatureEnum.River },
+        { "hills_19", HexFeatureEnum.None },
 
         // ---------- MOUNTAINS ----------
         { "mountains_01", HexFeatureEnum.Road | HexFeatureEnum.Ruins },
@@ -117,6 +121,7 @@ public static class HexFeatureData
         { "mountains_14", HexFeatureEnum.Road | HexFeatureEnum.River },
         { "mountains_16", HexFeatureEnum.Lava },
         { "mountains_17", HexFeatureEnum.Lava },
+        { "mountains_18", HexFeatureEnum.None },
 
         // ---------- GRASS (grasslands) ----------
         { "grass_01", HexFeatureEnum.Watchtower | HexFeatureEnum.StandingStones | HexFeatureEnum.Road },
@@ -135,6 +140,7 @@ public static class HexFeatureData
         { "grass_14", HexFeatureEnum.Village },
         { "grass_15", HexFeatureEnum.Road },
         { "grass_16", HexFeatureEnum.Village | HexFeatureEnum.Road },
+        { "grass_17", HexFeatureEnum.None },
 
         // ---------- DESERT ----------
         { "desert_01", HexFeatureEnum.Ruins | HexFeatureEnum.Road },
@@ -154,6 +160,7 @@ public static class HexFeatureData
         { "desert_15", HexFeatureEnum.Village },
         { "desert_16", HexFeatureEnum.Ruins },
         { "desert_17", HexFeatureEnum.Pond | HexFeatureEnum.Village },
+        { "desert_18", HexFeatureEnum.None },
 
         // ---------- WASTELANDS ----------
         { "wastelands_01", HexFeatureEnum.Lava },
@@ -172,6 +179,7 @@ public static class HexFeatureData
         { "wastelands_14", HexFeatureEnum.Blighted },
         { "wastelands_15", HexFeatureEnum.Chasm },
         { "wastelands_16", HexFeatureEnum.Blighted },
+        { "wastelands_17", HexFeatureEnum.None },
 
         // ---------- SWAMP ----------
         { "swamp_01", HexFeatureEnum.Ruins | HexFeatureEnum.River },
@@ -179,16 +187,39 @@ public static class HexFeatureData
         { "swamp_03", HexFeatureEnum.Ruins },
         { "swamp_04", HexFeatureEnum.Ruins },
         { "swamp_05", HexFeatureEnum.Ruins | HexFeatureEnum.Village },
-        { "swamp_06", HexFeatureEnum.Ruins },
+        { "swamp_06", HexFeatureEnum.River },
         { "swamp_07", HexFeatureEnum.Ruins },
+        { "swamp_08", HexFeatureEnum.Village },
+        { "swamp_09", HexFeatureEnum.None },
 
         // ---------- SHORE ----------
         { "shore_01", HexFeatureEnum.Lighthouse },
         { "shore_02", HexFeatureEnum.Watchtower | HexFeatureEnum.Bridge | HexFeatureEnum.Pond },
         { "shore_03", HexFeatureEnum.Lighthouse },
+        { "shore_04", HexFeatureEnum.None },
+
+        
+        // ---------- SNOW ----------
+        { "snow_01", HexFeatureEnum.River |HexFeatureEnum.Bridge },
+        { "snow_02", HexFeatureEnum.StandingStones },
+        { "snow_03", HexFeatureEnum.Monument },
+        { "snow_04", HexFeatureEnum.Fountain },
+        { "snow_05", HexFeatureEnum.Watchtower },
+        { "snow_06", HexFeatureEnum.Monument | HexFeatureEnum.Road | HexFeatureEnum.Village },
+        { "snow_07", HexFeatureEnum.Ruins },
+        { "snow_08", HexFeatureEnum.Pond | HexFeatureEnum.Watchtower },
+        { "snow_09", HexFeatureEnum.Chasm },
+        { "snow_10", HexFeatureEnum.Chasm | HexFeatureEnum.Pond },
+        { "snow_11", HexFeatureEnum.None },
+
 
         // ---------- DEEP WATER ----------
-        { "deepWater_02", HexFeatureEnum.Lighthouse }
+        { "deepWater_01", HexFeatureEnum.None },
+        { "deepWater_02", HexFeatureEnum.Lighthouse },
+
+        
+        // ---------- DEEP WATER ----------
+        { "shallowWater_01", HexFeatureEnum.None },
     };
 
     /// <summary>Returns the features depicted by the given tile sprite name, or None if untagged.</summary>

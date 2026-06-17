@@ -13,6 +13,7 @@ public enum TerrainEnum
     swamp = 8,
     desert = 9,
     wastelands = 10,
+    snow = 11,
     MAX
 }
 
@@ -30,7 +31,8 @@ public static class TerrainData
         { TerrainEnum.deepWater, 1 },
         { TerrainEnum.swamp, 4 },
         { TerrainEnum.desert, 3 },
-        { TerrainEnum.wastelands, 2 }
+        { TerrainEnum.wastelands, 2 },
+        { TerrainEnum.snow, 4 }
     };
 
     public static string GetDisplayName(TerrainEnum terrain)
@@ -48,6 +50,7 @@ public static class TerrainData
             TerrainEnum.swamp => "Swamp",
             TerrainEnum.desert => "Desert",
             TerrainEnum.wastelands => "Wastelands",
+            TerrainEnum.snow => "Snow",
             _ => "Unknown"
         };
     }
@@ -69,6 +72,7 @@ public static class TerrainData
             TerrainEnum.swamp => "Boggy ground that mires travellers.",
             TerrainEnum.desert => "Arid wastes under a harsh sun.",
             TerrainEnum.wastelands => "Barren, blasted land.",
+            TerrainEnum.snow => "Frozen, snow-covered ground that slows travel.",
             _ => "Unknown terrain."
         };
         return $"{note}\nMovement cost: {cost}";

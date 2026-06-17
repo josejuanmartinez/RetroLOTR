@@ -788,6 +788,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             TerrainEnum.swamp => new Color(0.3f, 0.4f, 0.3f),
             TerrainEnum.desert => new Color(0.85f, 0.75f, 0.45f),
             TerrainEnum.wastelands => new Color(0.45f, 0.3f, 0.25f),
+            TerrainEnum.snow => new Color(0.92f, 0.95f, 0.98f),
             _ => Color.magenta
         };
 

@@ -88,6 +88,10 @@ public class BoardGenerator : MonoBehaviour
     [Range(1, 2)] public int majorWastelandCount = 1;
     [Range(0, 3)] public int minorWastelandCount = 2;
 
+    [Header("Snow Parameters")]
+    [Tooltip("Fraction of the map covered by snow on randomly generated boards (0 = none).")]
+    [Range(0f, 0.07f)] public float snowPercentage = 0f;
+
     [Header("River and Lakes Parameters")]
     [Range(2, 5)] public int rivers = 2;
     [Range(2, 5)] public int lakes = 2;
@@ -114,7 +118,7 @@ public class BoardGenerator : MonoBehaviour
     public event GenerationProgressDelegate OnGenerationProgress;
 
     // For tracking progress
-    private float totalSteps = 10; // Total generation steps
+    private float totalSteps = 11; // Total generation steps
     private float currentStep = 0;
 
     private float GetStepProgress(float stepProgress)
@@ -257,6 +261,9 @@ public class BoardGenerator : MonoBehaviour
 
         // Generate wastelands
         yield return StartCoroutine(GenerateWastelandsCoroutine());
+
+        // Generate snow patches (random boards only; scaled by the snowPercentage slider)
+        yield return StartCoroutine(GenerateSnowCoroutine());
 
         // Apply shore terrain to areas adjacent to shallow water
         yield return StartCoroutine(ApplyShoresCoroutine());
@@ -1641,6 +1648,140 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
+    // Snow only appears on randomly generated boards (authored scenarios paint it directly).
+    // Grows roundish patches on cold inland terrain until snowPercentage of the map is covered.
+    private IEnumerator GenerateSnowCoroutine()
+    {
+        int totalCells = board.GetHeight() * board.GetWidth();
+        int targetSnow = Mathf.FloorToInt(totalCells * snowPercentage);
+
+        if (targetSnow <= 0)
+        {
+            OnGenerationProgress?.Invoke(currentStep / totalSteps, "Snow Created");
+            currentStep++;
+            yield break;
+        }
+
+        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+
+        int snowPlaced = 0;
+        int attempts = 0;
+        int maxAttempts = targetSnow * 6 + 50;
+        float noiseScale = 0.15f;
+        int noiseSeed = Random.Range(0, 10000);
+
+        while (snowPlaced < targetSnow && attempts < maxAttempts)
+        {
+            attempts++;
+
+            int startRow = Random.Range(0, board.GetHeight());
+            int startCol = Random.Range(0, board.GetWidth());
+
+            if (!CanPlaceSnow(startRow, startCol))
+                continue;
+
+            // Prefer cold seeds: snow gathers in the far north (row 0 = north) or around mountains.
+            if (terrainGrid[startRow, startCol] != TerrainEnum.mountains)
+            {
+                bool nearMountain = false;
+                foreach (Vector2Int n in GetNeighborsInRadius(startRow, startCol, 2))
+                {
+                    if (terrainGrid[n.x, n.y] == TerrainEnum.mountains)
+                    {
+                        nearMountain = true;
+                        break;
+                    }
+                }
+
+                // Northness: 1 at the northern edge (row 0), 0 at the southern edge.
+                float northness = 1f - (float)startRow / Mathf.Max(1, board.GetHeight() - 1);
+                // Always seed next to peaks; otherwise the further north, the more likely.
+                // A small floor lets the odd snow field appear in the milder south.
+                float acceptChance = nearMountain ? 1f : Mathf.Max(0.05f, northness);
+                if (Random.value > acceptChance)
+                    continue;
+            }
+
+            int patchSize = Random.Range(3, 8);
+
+            Queue<Vector2Int> expansionCells = new Queue<Vector2Int>();
+            expansionCells.Enqueue(new Vector2Int(startRow, startCol));
+            terrainGrid[startRow, startCol] = TerrainEnum.snow;
+            snowPlaced++;
+
+            int cellsInPatch = 1;
+            int iterations = 0;
+            int maxIterations = patchSize * 3;
+
+            while (expansionCells.Count > 0 && cellsInPatch < patchSize && snowPlaced < targetSnow && iterations < maxIterations)
+            {
+                Vector2Int current = expansionCells.Dequeue();
+
+                Vector2Int[] neighbors = (current.x % 2 == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
+
+                for (int n = 0; n < neighbors.Length; n++)
+                {
+                    int j = Random.Range(n, neighbors.Length);
+                    (neighbors[n], neighbors[j]) = (neighbors[j], neighbors[n]);
+                }
+
+                foreach (Vector2Int dir in neighbors)
+                {
+                    int newRow = current.x + dir.x;
+                    int newCol = current.y + dir.y;
+
+                    if (!IsInside(newRow, newCol) || !CanPlaceSnow(newRow, newCol))
+                        continue;
+
+                    float noise = Mathf.PerlinNoise((newCol + noiseSeed) * noiseScale, (newRow + noiseSeed) * noiseScale);
+                    float expandChance = (0.8f - (float)cellsInPatch / patchSize * 0.5f) * (0.5f + noise * 0.5f);
+
+                    if (Random.value < expandChance)
+                    {
+                        terrainGrid[newRow, newCol] = TerrainEnum.snow;
+                        expansionCells.Enqueue(new Vector2Int(newRow, newCol));
+                        cellsInPatch++;
+                        snowPlaced++;
+                        if (cellsInPatch >= patchSize || snowPlaced >= targetSnow)
+                            break;
+                    }
+                }
+
+                iterations++;
+
+                if ((iterations % 20 == 0) || budget.Spent())
+                {
+                    float stepProgress = GetStepProgress((float)snowPlaced / targetSnow);
+                    OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Snow");
+                    budget.Reset();
+                    yield return null;
+                }
+            }
+
+            if (budget.Spent())
+            {
+                budget.Reset();
+                yield return null;
+            }
+        }
+
+        OnGenerationProgress?.Invoke(currentStep / totalSteps, "Snow Created");
+        currentStep++;
+    }
+
+    // Snow can cover cold inland terrain, but not water, coast, desert or swamp.
+    private bool CanPlaceSnow(int row, int col)
+    {
+        if (!IsInside(row, col)) return false;
+
+        TerrainEnum t = terrainGrid[row, col];
+        return t == TerrainEnum.plains ||
+               t == TerrainEnum.grasslands ||
+               t == TerrainEnum.hills ||
+               t == TerrainEnum.mountains ||
+               t == TerrainEnum.forest;
+    }
+
     private IEnumerator ApplyShoresCoroutine()
     {
         TerrainEnum[,] terrainCopy = new TerrainEnum[board.GetHeight(), board.GetWidth()];
@@ -1684,10 +1825,11 @@ public class BoardGenerator : MonoBehaviour
                         }
                     }
 
-                    if (adjacentToWater && 
+                    if (adjacentToWater &&
                         terrainCopy[row, col] != TerrainEnum.mountains &&
                         terrainCopy[row, col] != TerrainEnum.hills &&
-                        terrainCopy[row, col] != TerrainEnum.swamp)
+                        terrainCopy[row, col] != TerrainEnum.swamp &&
+                        terrainCopy[row, col] != TerrainEnum.snow)
                     {
                         if (Random.value < shoreProbability)
                         {

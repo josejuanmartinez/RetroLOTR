@@ -16,6 +16,7 @@ public class Colors : SearcherByName
     public Color swamp;
     public Color desert;
     public Color wastelands;
+    public Color snow;
     public Color freePeople;
     public Color neutral;
     public Color darkServants;

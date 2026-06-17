@@ -32,6 +32,7 @@ public class HexTextureMapping : SearcherByName
     public List<Sprite> swampVariations;
     public List<Sprite> wastelandsVariations;
     public List<Sprite> mountainsVariations;
+    public List<Sprite> snowVariations;
 
     public List<Sprite> defaultFreePeoplePC;
     public List<Sprite> defaultDarkServantsPC;
@@ -204,6 +205,7 @@ public class HexTextureMapping : SearcherByName
         yield return swampVariations;
         yield return desertVariations;
         yield return wastelandsVariations;
+        yield return snowVariations;
     }
 
     public List<Sprite> GetTerrainVariations(TerrainEnum terrainType)
@@ -221,6 +223,7 @@ public class HexTextureMapping : SearcherByName
             TerrainEnum.swamp => swampVariations,
             TerrainEnum.wastelands => wastelandsVariations,
             TerrainEnum.mountains => mountainsVariations,
+            TerrainEnum.snow => snowVariations,
             _ => null
         };
     }
@@ -259,6 +262,7 @@ public class HexTextureMapping : SearcherByName
             TerrainEnum.swamp => swampVariations[Random.Range(0, swampVariations.Count)],
             TerrainEnum.wastelands => wastelandsVariations[Random.Range(0, wastelandsVariations.Count)],
             TerrainEnum.mountains => mountainsVariations[Random.Range(0, mountainsVariations.Count)],
+            TerrainEnum.snow => (snowVariations != null && snowVariations.Count > 0) ? snowVariations[Random.Range(0, snowVariations.Count)] : defaultTerrainSprite,
             _ => defaultTerrainSprite
         };
     }

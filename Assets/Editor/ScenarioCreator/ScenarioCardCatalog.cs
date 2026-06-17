@@ -196,6 +196,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             Add(TerrainEnum.swamp, mapping.swampVariations);
             Add(TerrainEnum.wastelands, mapping.wastelandsVariations);
             Add(TerrainEnum.mountains, mapping.mountainsVariations);
+            Add(TerrainEnum.snow, mapping.snowVariations);
             return result;
         }
 
