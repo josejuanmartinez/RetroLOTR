@@ -606,6 +606,10 @@ public class Character : MonoBehaviour
         {
             ProcessPoisoned();
         }
+        if (!killed)
+        {
+            ProcessSunburnt();
+        }
         if (killed) return;
 
         if (blockedTurns > 0)
@@ -797,6 +801,12 @@ public class Character : MonoBehaviour
         {
             int extraPenalty = EnvironmentalCardManager.Instance?.FrozenMovementExtraPenalty ?? 0;
             baseMovement -= 5 + extraPenalty;
+        }
+
+        if (HasStatusEffect(StatusEffectEnum.Sunburnt))
+        {
+            int extraPenalty = EnvironmentalCardManager.Instance?.SunburntMovementExtraPenalty ?? 0;
+            baseMovement -= 2 + extraPenalty;
         }
 
         baseMovement += statusMovementBonusThisTurn;
@@ -1412,7 +1422,8 @@ public class Character : MonoBehaviour
             || effect == StatusEffectEnum.Despair
             || effect == StatusEffectEnum.Fear
             || effect == StatusEffectEnum.Bleeding
-            || effect == StatusEffectEnum.MorgulTouch;
+            || effect == StatusEffectEnum.MorgulTouch
+            || effect == StatusEffectEnum.Sunburnt;
     }
 
     private static bool IsPositiveStatus(StatusEffectEnum effect)
@@ -1796,6 +1807,15 @@ public class Character : MonoBehaviour
     private void ProcessBleeding()
     {
         ApplyStatusDamage(15, "Bleeding");
+    }
+
+    private void ProcessSunburnt()
+    {
+        // The -2 movement is applied passively in GetMaxMovement (mirroring Frozen); here we only
+        // take the health toll so it isn't double-counted.
+        if (!HasStatusEffect(StatusEffectEnum.Sunburnt)) return;
+        int extraDamage = EnvironmentalCardManager.Instance?.SunburntDamageExtraPenalty ?? 0;
+        ApplyStatusDamage(10 + extraDamage, "Sunburn");
     }
 
     private void ProcessMorgulTouch()

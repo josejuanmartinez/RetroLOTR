@@ -18,7 +18,8 @@ public static class CardStatusEffectUtility
         StatusEffectEnum.Despair,
         StatusEffectEnum.Fear,
         StatusEffectEnum.MorgulTouch,
-        StatusEffectEnum.Bleeding
+        StatusEffectEnum.Bleeding,
+        StatusEffectEnum.Sunburnt
     };
 
     public static bool TryGetStatusEffect(CardData card, out StatusEffectEnum status)

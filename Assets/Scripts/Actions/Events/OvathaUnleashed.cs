@@ -10,28 +10,41 @@ public class OvathaUnleashed : EventAction
 
     public override void ApplyOngoingEffect()
     {
+        // Amplifier role (heat-side mirror of Hoarmurath Unleashed): while Ovatha walks, the desert
+        // sun is merciless — Sunburnt bites harder and strikes far more often.
+        EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
+        if (env != null)
+        {
+            env.SunburntMovementExtraPenalty = 1;   // -3 movement instead of -2
+            env.SunburntDamageExtraPenalty = 5;     // -15 health instead of -10
+            env.SunburntEntryChanceBonus = 0.15f;   // desert-entry sunburn 5% -> 20%
+        }
+
         Board board = FindFirstObjectByType<Board>();
         if (board == null) return;
 
-        int strengthened = 0;
+        int strengthened = 0, held = 0;
 
         foreach (Hex hex in board.GetHexes().Where(h => h != null && h.characters != null))
         {
-            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsEasterling(ch)).ToList())
+            foreach (Character ch in hex.characters.Where(ch => ch != null && !ch.killed).ToList())
             {
-                Army army = ch.GetArmy();
-                bool hasLightCavalry = army != null && army.lc > 0;
-                bool inDesert = hex.terrainType == TerrainEnum.desert;
-
-                if (!hasLightCavalry && !inDesert) continue;
-
-                ch.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1);
-                strengthened++;
+                if (ch.IsArmyCommander() && IsEasterling(ch))
+                {
+                    Army army = ch.GetArmy();
+                    bool hasLightCavalry = army != null && army.lc > 0;
+                    bool inDesert = hex.terrainType == TerrainEnum.desert;
+                    if (hasLightCavalry || inDesert) { ch.ApplyStatusEffect(StatusEffectEnum.Strengthened, 1); strengthened++; }
+                }
+                else if (!IsEasterling(ch) && ch.HasStatusEffect(StatusEffectEnum.Sunburnt))
+                {
+                    ch.ApplyStatusEffect(StatusEffectEnum.Sunburnt, 1); held++;   // the sun keeps blistering the unprepared
+                }
             }
         }
 
         MessageDisplayNoUI.ShowMessage(null, null,
-            $"Ovatha Unleashed (ongoing): {strengthened} Easterling commander(s) with light cavalry or in deserts gain Strengthened.",
+            $"Ovatha Unleashed (ongoing): {strengthened} Easterling commander(s) gain Strengthened; the sun holds {held} sunburnt enemy(ies) — Sunburnt now -3 move, -15 health.",
             Color.red);
     }
 

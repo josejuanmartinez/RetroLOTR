@@ -500,6 +500,11 @@ MonoBehaviour:
     m_GlyphIndex: 83
     m_Scale: 1
     m_Name: blighted
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 84
+    m_Scale: 1
+    m_Name: drought
   m_GlyphTable:
   - m_Index: 0
     m_Metrics:
@@ -1845,5 +1850,21 @@ MonoBehaviour:
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
     sprite: {fileID: -1306301409, guid: 194bed55b2ec3954fa7ce8b3cc94c9f1, type: 3}
+  - m_Index: 84
+    m_Metrics:
+      m_Width: 120
+      m_Height: 126
+      m_HorizontalBearingX: -60
+      m_HorizontalBearingY: 63
+      m_HorizontalAdvance: 120
+    m_GlyphRect:
+      m_X: 1242
+      m_Y: 257
+      m_Width: 120
+      m_Height: 126
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
+    sprite: {fileID: 1057929432, guid: 194bed55b2ec3954fa7ce8b3cc94c9f1, type: 3}
   spriteInfoList: []
   fallbackSpriteAssets: []

@@ -12,6 +12,9 @@ public class EnvironmentalCardManager : MonoBehaviour
     public int FrozenMovementExtraPenalty = 0;
     public float FrozenCombatAttackFactor = 1f;
     public float FrozenCombatDefenseExtraFactor = 1f;
+    public int SunburntMovementExtraPenalty = 0;
+    public int SunburntDamageExtraPenalty = 0;
+    public float SunburntEntryChanceBonus = 0f;
     public float GlobalArmyAttackFactor = 1f;
     public float FreePeopleArmyAttackFactor = 1f;
     public float DarkServantsArmyAttackFactor = 1f;
@@ -59,6 +62,9 @@ public class EnvironmentalCardManager : MonoBehaviour
         FrozenMovementExtraPenalty = 0;
         FrozenCombatAttackFactor = 1f;
         FrozenCombatDefenseExtraFactor = 1f;
+        SunburntMovementExtraPenalty = 0;
+        SunburntDamageExtraPenalty = 0;
+        SunburntEntryChanceBonus = 0f;
         GlobalArmyAttackFactor = 1f;
         FreePeopleArmyAttackFactor = 1f;
         DarkServantsArmyAttackFactor = 1f;

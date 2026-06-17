@@ -18,5 +18,6 @@ public enum StatusEffectEnum
     MorgulTouch = 15,
     DuelSupremacy = 16,
     Bleeding = 17,
-    Guarded = 18
+    Guarded = 18,
+    Sunburnt = 19
 }

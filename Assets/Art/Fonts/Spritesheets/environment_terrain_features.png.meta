@@ -2145,7 +2145,7 @@ TextureImporter:
         width: 127
         height: 126
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -2154,6 +2154,28 @@ TextureImporter:
       bones: []
       spriteID: d2d6cbfb84c22584eba754ad553b9cdb
       internalID: 1173741250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: environment_terrain_features_84
+      rect:
+        serializedVersion: 2
+        x: 1242
+        y: 257
+        width: 120
+        height: 126
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e62afba505ddb34da87a089e167c114
+      internalID: 1057929432
       vertices: []
       indices: 
       edges: []
@@ -2257,6 +2279,7 @@ TextureImporter:
       environment_terrain_features_81: 1982737546
       environment_terrain_features_82: -793431686
       environment_terrain_features_83: 1173741250
+      environment_terrain_features_84: 1057929432
       environment_terrain_features_9: 5252791815810619791
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

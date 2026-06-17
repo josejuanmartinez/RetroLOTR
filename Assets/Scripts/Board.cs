@@ -1588,6 +1588,9 @@ public class Board : MonoBehaviour
                     character.moved = character.GetMaxMovement();
             }
 
+            // Climate hazards of the tile just entered (snow frostbite / desert sunburn).
+            TerrainEntryEffects.ProcessEntry(character, newHex);
+
             if (g != null && g.player != null && character.GetOwner() != g.player)
             {
                 bool playerCanSee = g.player.visibleHexes.Contains(newHex) && newHex.IsHexSeen();
