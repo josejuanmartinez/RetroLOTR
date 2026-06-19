@@ -17,6 +17,25 @@ Restyle an existing hex tile image using `gpt-image-2 images.edit`. Preserves al
 Can you change the style of this image, keeping exactly as it is, but with another style: d&d random bakshi conan lotr merpg meccg style without changing at all the shape, elements, or anything else - just style
 ```
 
+## Style-Only Mode (`--style-only`)
+
+By default the prompt grants the model creative freedom to redesign/add interior
+elements (towers, fortresses, houses, standing stones, rivers, bridges, etc.) and
+injects content-theme + place-name instructions that add structures. Pass
+`--style-only` for a **faithful restyle**: it swaps in `STYLE_ONLY_PROMPT`, which
+forbids adding/removing/redesigning any element, and skips all theme/place
+injection. Only the art style changes.
+
+```powershell
+python .agents/skills/restyle_hex/scripts/restyle_hex.py `
+  --image "Assets/Art/Hexes/Tiles/001 1.png" `
+  --out "Assets/Art/Hexes/Tiles_Restyled/001 1.png" `
+  --style-only --force
+```
+
+The same flag exists on `scripts/restyle_hex_batch.py` to restyle a whole folder
+without adding features.
+
 ## CLI Contract
 
 Dry-run example:

@@ -7,7 +7,15 @@ import argparse
 import sys
 from pathlib import Path
 
-from restyle_hex import DEFAULT_PROMPT, DEFAULT_QUALITY, DEFAULT_SIZE, build_prompt, ensure_api_key, restyle_one
+from restyle_hex import (
+    DEFAULT_PROMPT,
+    DEFAULT_QUALITY,
+    DEFAULT_SIZE,
+    STYLE_ONLY_PROMPT,
+    build_prompt,
+    ensure_api_key,
+    restyle_one,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -22,7 +30,11 @@ def parse_args() -> argparse.Namespace:
         "--out", default="Assets/Art/Hexes/Tiles_Restyled",
         help="Folder to write restyled tiles",
     )
-    parser.add_argument("--prompt", default=DEFAULT_PROMPT)
+    parser.add_argument("--prompt", default=None,
+                        help="Override the base prompt (defaults to the standard or style-only prompt)")
+    parser.add_argument("--style-only", action="store_true",
+                        help="Faithful restyle: change only the art style, never add or redesign features "
+                             "(towers, rivers, bridges, etc.)")
     parser.add_argument("--quality", default=DEFAULT_QUALITY)
     parser.add_argument("--size", default=DEFAULT_SIZE)
     parser.add_argument("--force", action="store_true", help="Overwrite existing outputs")
@@ -35,6 +47,10 @@ def main() -> int:
 
     source_dir = Path(args.source)
     out_dir = Path(args.out)
+
+    base_prompt = args.prompt
+    if base_prompt is None:
+        base_prompt = STYLE_ONLY_PROMPT if args.style_only else DEFAULT_PROMPT
 
     all_tiles = sorted(source_dir.glob("*.png"))
     if not all_tiles:
@@ -64,7 +80,7 @@ def main() -> int:
     try:
         for i, tile in enumerate(tiles, 1):
             out_path = out_dir / tile.name
-            tile_prompt = build_prompt(args.prompt, tile.stem)
+            tile_prompt = build_prompt(base_prompt, tile.stem, style_only=args.style_only)
             code, cost = restyle_one(
                 tile, out_path,
                 prompt=tile_prompt,

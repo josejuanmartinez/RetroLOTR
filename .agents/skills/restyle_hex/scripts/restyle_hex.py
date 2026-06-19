@@ -50,6 +50,30 @@ DEFAULT_PROMPT = (
 )
 
 
+# Faithful restyle: change ONLY the art style, never add or redesign elements.
+STYLE_ONLY_PROMPT = (
+    "Aggressively restyle this hex tile into the aesthetic of classic hand-painted fantasy illustration: "
+    "d&d, Bakshi, Conan, LOTR, MERPG, MECCG. "
+    "The style change must be BOLD and clearly visible — strong inked outlines, hand-painted brush textures, "
+    "richer saturated colors, and the printed look of a classic tabletop hex map tile. "
+    "Do not produce a near-copy of the source; the source is only a reference for shapes and layout — the rendering must look distinctly re-illustrated. "
+    "The art style must be isometric 2D — flat illustrated elements viewed from a fixed isometric angle, "
+    "like classic tabletop hex map tiles. "
+    "MANDATORY — FAITHFUL RESTYLE ONLY: keep every element exactly where it already is. "
+    "Do NOT add any new features — no extra towers, fortresses, houses, standing stones, rivers, bridges, "
+    "structures, figures, vegetation, or iconography that are not already present in the source image. "
+    "Do NOT remove, relocate, or redesign any existing element. "
+    "Preserve the exact shapes, positions, count, and composition of everything in the tile — only the visual style changes. "
+    "MANDATORY: preserve the exact hexagon shape of the tile with the point at the BOTTOM (pointy-top orientation) — never rotate, distort, or change the hex to flat-bottom. "
+    "If a tall element (mountain, tower, spire, castle) is already present and already protrudes above the hex, keep it protruding; "
+    "do not change which elements rise above the hex edge. "
+    "Do not add any text, labels, or lettering anywhere in the image. "
+    "Do not draw blood anywhere — if the scene calls for it, substitute water, mud, dark stone, or another thematically fitting element instead. "
+    "CRITICAL: the area outside the hex shape must be SOLID BLACK and nothing else — no gradients, no textures, no scenery, no sky, no ground. Solid black only. "
+    "Leave visible background space below the hex shape — the hex must not touch or bleed into the bottom edge."
+)
+
+
 # Content-based thematic overrides keyed by regex -> theme instruction
 _CONTENT_THEMES: list[tuple[re.Pattern, str]] = [
     (
@@ -126,8 +150,45 @@ def extract_place_name(stem: str) -> str | None:
     return cleaned
 
 
-def build_prompt(base_prompt: str, stem: str) -> str:
-    """Return a tile-specific prompt, injecting content themes and/or place name."""
+def terrain_label(stem: str) -> str | None:
+    """Return a plain terrain/subject label from the filename, or None if generic.
+
+    Strips a trailing index ('grass_17' -> 'grass'), splits camelCase
+    ('deepWater' -> 'deep water'), and lowercases. Used in style-only mode to tell
+    the model WHAT the tile depicts without granting it license to add/redesign
+    elements. Returns None for purely numeric/hex names that carry no meaning.
+    """
+    # Drop trailing index like "_17", " 3", "01"
+    base = re.sub(r'[\s_-]*\d+$', '', stem)
+    # Split camelCase: deepWater -> deep Water
+    base = re.sub(r'(?<=[a-z])(?=[A-Z])', ' ', base)
+    base = base.replace("_", " ").replace("-", " ").strip().lower()
+    if not base or not re.search(r'[a-z]', base):
+        return None
+    if base.startswith("hex"):  # generic hexXXXX names carry no subject
+        return None
+    return base
+
+
+def build_prompt(base_prompt: str, stem: str, style_only: bool = False) -> str:
+    """Return a tile-specific prompt, injecting content themes and/or place name.
+
+    When ``style_only`` is True, no content-theme or place-name text is injected
+    (those add or redesign features). Instead we inject only a neutral terrain
+    label so the model knows WHAT it is restyling — without permission to change
+    the elements.
+    """
+    if style_only:
+        label = terrain_label(stem)
+        if label:
+            return (
+                base_prompt
+                + f" For context, this tile depicts '{label}' terrain — render that subject "
+                f"convincingly and recognizably in the new art style, but you still must NOT add, "
+                f"remove, move, or redesign any element; only the visual style changes."
+            )
+        return base_prompt
+
     prompt = base_prompt
 
     theme = content_theme_hint(stem)
@@ -322,7 +383,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Restyle a hex tile with gpt-image-2")
     parser.add_argument("--image", required=True)
     parser.add_argument("--out", required=True)
-    parser.add_argument("--prompt", default=DEFAULT_PROMPT)
+    parser.add_argument("--prompt", default=None,
+                        help="Override the base prompt (defaults to the standard or style-only prompt)")
+    parser.add_argument("--style-only", action="store_true",
+                        help="Faithful restyle: change only the art style, never add or redesign features "
+                             "(towers, rivers, bridges, etc.)")
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--size", default=DEFAULT_SIZE)
     parser.add_argument("--quality", default=DEFAULT_QUALITY)
@@ -342,7 +407,10 @@ def main() -> int:
     image_path = Path(args.image)
     out_path = Path(args.out)
 
-    effective_prompt = build_prompt(args.prompt, image_path.stem)
+    base_prompt = args.prompt
+    if base_prompt is None:
+        base_prompt = STYLE_ONLY_PROMPT if args.style_only else DEFAULT_PROMPT
+    effective_prompt = build_prompt(base_prompt, image_path.stem, style_only=args.style_only)
 
     if args.dry_run:
         upload_path, upload_is_temp = prepare_upload_image(image_path, args.upload_max_dim, args.bottom_padding_fraction)

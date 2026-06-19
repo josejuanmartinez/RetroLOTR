@@ -374,9 +374,18 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             Event e = Event.current;
             if (e.type != EventType.MouseDown && e.type != EventType.MouseDrag) return;
-            if (e.button != 0 || !content.Contains(e.mousePosition)) return;
+            if ((e.button != 0 && e.button != 1) || !content.Contains(e.mousePosition)) return;
 
             if (!PickHex(content, e.mousePosition, cellW, cellH, out int row, out int col)) return;
+
+            // Right-click erases a hex back to the empty default, regardless of the active tool.
+            if (e.button == 1)
+            {
+                EraseHex(row, col);
+                e.Use();
+                Repaint();
+                return;
+            }
 
             if (tool == Tool.Paint || tool == Tool.Region)
             {
@@ -389,6 +398,31 @@ namespace RetroLOTR.Scenarios.EditorTools
                 selectedIndex = Index(row, col);
                 e.Use();
                 Repaint();
+            }
+        }
+
+        // Resets a hex to the empty default: deep water terrain, no region, no tile variation,
+        // and clears any leader start, PC or characters placed on it.
+        private void EraseHex(int row, int col)
+        {
+            int idx = Index(row, col);
+            int radius = brushSize - 1;
+            Vector3Int center = OffsetToCube(row, col);
+
+            for (int r = 0; r < height; r++)
+            {
+                for (int c = 0; c < width; c++)
+                {
+                    if (CubeDistance(OffsetToCube(r, c), center) > radius) continue;
+                    int i = Index(r, c);
+                    terrain[i] = TerrainEnum.deepWater;
+                    regions[i] = "";
+                    spriteNames[i] = "";
+                    leaderStarts.Remove(i);
+                    pcs.Remove(i);
+                    characters.Remove(i);
+                    if (selectedIndex == i) selectedIndex = -1;
+                }
             }
         }
 
