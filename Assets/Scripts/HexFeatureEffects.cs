@@ -32,6 +32,7 @@ public static class HexFeatureEffects
     // Rewards
     private const int VillageResourceChance = 25; // %
     private const int MineResourceChance = 25;    // %
+    private const int LumbermillResourceChance = 25; // %
     private const int RuinsArtifactChance = 5;    // %
 
     /// <summary>Process the features of the hex the character is resting on, at the start of its turn.</summary>
@@ -80,6 +81,12 @@ public static class HexFeatureEffects
 
         if (hex.HasFeature(HexFeatureEnum.Mine) && owner != null && Roll(MineResourceChance))
             GrantRandomResource(owner, hex, character, mineralsOnly: true);
+
+        if (hex.HasFeature(HexFeatureEnum.Lumbermill) && owner != null && Roll(LumbermillResourceChance))
+        {
+            owner.AddTimber(1, false);
+            MessageDisplayNoUI.ShowMessage(hex, character, "+1 <sprite name=\"timber\">timber", Color.yellow);
+        }
 
         // ---- Discovery ----
         if (hex.HasFeature(HexFeatureEnum.Ruins) && Roll(RuinsArtifactChance))
