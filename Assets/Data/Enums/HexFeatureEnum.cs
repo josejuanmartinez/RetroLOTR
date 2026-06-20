@@ -102,6 +102,7 @@ public static class HexFeatureData
         { "plains_18", HexFeatureEnum.Blighted },
         { "plains_19", HexFeatureEnum.None },
         { "plains_20", HexFeatureEnum.None },
+        { "plains_21", HexFeatureEnum.None },
 
         // ---------- HILLS ----------
         { "hills_01", HexFeatureEnum.Ruins | HexFeatureEnum.Road },
@@ -112,7 +113,7 @@ public static class HexFeatureData
         { "hills_06", HexFeatureEnum.Monument },
         { "hills_07", HexFeatureEnum.Road | HexFeatureEnum.Ruins },
         { "hills_08", HexFeatureEnum.Road | HexFeatureEnum.River | HexFeatureEnum.Watchtower},
-        { "hills_09", HexFeatureEnum.Road | HexFeatureEnum.Pond },
+        { "hills_09", HexFeatureEnum.None},
         { "hills_10", HexFeatureEnum.Chasm },
         { "hills_12", HexFeatureEnum.Monument | HexFeatureEnum.Village | HexFeatureEnum.Road },
         { "hills_13", HexFeatureEnum.Road },
@@ -153,7 +154,7 @@ public static class HexFeatureData
 
         // ---------- DESERT ----------
         { "desert_01", HexFeatureEnum.Monument | HexFeatureEnum.Road },
-        { "desert_06", HexFeatureEnum.Watchtower},
+        { "desert_02", HexFeatureEnum.Watchtower},
         { "desert_03", HexFeatureEnum.Road | HexFeatureEnum.Watchtower},
         { "desert_04", HexFeatureEnum.Road | HexFeatureEnum.Watchtower},
         { "desert_05", HexFeatureEnum.Road | HexFeatureEnum.Ruins},
