@@ -222,7 +222,7 @@
         2,
         10,
         10,
-        11,
+        0,
         0,
         0,
         0,
@@ -294,9 +294,9 @@
         0,
         0,
         0,
+        10,
         0,
-        0,
-        0,
+        1,
         1,
         1,
         0,
@@ -799,7 +799,7 @@
         2,
         1,
         2,
-        1,
+        3,
         1,
         6,
         2,
@@ -856,7 +856,7 @@
         3,
         3,
         4,
-        6,
+        3,
         4,
         3,
         2,
@@ -996,7 +996,7 @@
         3,
         3,
         3,
-        6,
+        4,
         2,
         2,
         2,
@@ -1130,7 +1130,7 @@
         5,
         5,
         1,
-        2,
+        1,
         2,
         2,
         2,
@@ -1192,7 +1192,7 @@
         3,
         3,
         6,
-        5,
+        3,
         5,
         1,
         2,
@@ -1254,8 +1254,8 @@
         3,
         3,
         3,
-        6,
-        6,
+        3,
+        3,
         6,
         3,
         3,
@@ -1319,9 +1319,9 @@
         3,
         3,
         3,
+        3,
+        3,
         6,
-        3,
-        3,
         3,
         3,
         3,
@@ -1383,10 +1383,10 @@
         0,
         3,
         3,
+        3,
+        3,
+        3,
         6,
-        3,
-        3,
-        3,
         3,
         3,
         3,
@@ -1449,8 +1449,8 @@
         3,
         3,
         6,
-        3,
-        3,
+        6,
+        6,
         3,
         3,
         3,
@@ -1530,7 +1530,7 @@
         1,
         6,
         1,
-        1,
+        3,
         0,
         1,
         1,
@@ -1585,7 +1585,7 @@
         3,
         3,
         6,
-        6,
+        4,
         3,
         3,
         1,
@@ -2113,8 +2113,8 @@
         1,
         0,
         0,
-        0,
-        0,
+        3,
+        5,
         5,
         5,
         5,
@@ -2241,7 +2241,7 @@
         2,
         1,
         0,
-        6,
+        3,
         1,
         0,
         3,
@@ -2297,15 +2297,15 @@
         3,
         3,
         3,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
         3,
         3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        6,
-        6,
         3,
         3,
         3,
@@ -2360,19 +2360,19 @@
         7,
         7,
         7,
+        4,
+        4,
+        4,
+        6,
+        6,
+        6,
+        4,
+        6,
+        6,
         3,
         3,
         3,
-        6,
-        6,
-        6,
-        6,
-        6,
-        6,
-        6,
-        3,
-        3,
-        3,
+        0,
         3,
         3,
         2,
@@ -5505,7 +5505,7 @@
         {
             "row": 3,
             "col": 23,
-            "spriteName": "snow_11"
+            "spriteName": "mountains_1"
         },
         {
             "row": 3,
@@ -5845,7 +5845,7 @@
         {
             "row": 4,
             "col": 30,
-            "spriteName": "mountains_1"
+            "spriteName": "wastelands_08"
         },
         {
             "row": 4,
@@ -5855,7 +5855,7 @@
         {
             "row": 4,
             "col": 32,
-            "spriteName": "mountains_1"
+            "spriteName": "hills_19"
         },
         {
             "row": 4,
@@ -6126,11 +6126,6 @@
             "row": 5,
             "col": 23,
             "spriteName": "plains_21"
-        },
-        {
-            "row": 5,
-            "col": 24,
-            "spriteName": "snow_11"
         },
         {
             "row": 5,
@@ -8120,7 +8115,7 @@
         {
             "row": 12,
             "col": 15,
-            "spriteName": "hills_19"
+            "spriteName": "grass_18"
         },
         {
             "row": 12,
@@ -8361,6 +8356,11 @@
             "row": 13,
             "col": 6,
             "spriteName": "shore_01"
+        },
+        {
+            "row": 13,
+            "col": 7,
+            "spriteName": "grass_17"
         },
         {
             "row": 13,
@@ -8905,7 +8905,7 @@
         {
             "row": 15,
             "col": 13,
-            "spriteName": "grass_17"
+            "spriteName": "grass_08"
         },
         {
             "row": 15,
@@ -8921,6 +8921,11 @@
             "row": 15,
             "col": 16,
             "spriteName": "grass_17"
+        },
+        {
+            "row": 15,
+            "col": 17,
+            "spriteName": "shore_04"
         },
         {
             "row": 15,
@@ -9205,7 +9210,7 @@
         {
             "row": 16,
             "col": 15,
-            "spriteName": "grass_17"
+            "spriteName": "grass_18"
         },
         {
             "row": 16,
@@ -9389,6 +9394,16 @@
         },
         {
             "row": 16,
+            "col": 57,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 16,
+            "col": 59,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 16,
             "col": 60,
             "spriteName": "plains_19"
         },
@@ -9485,7 +9500,7 @@
         {
             "row": 17,
             "col": 19,
-            "spriteName": "forest_01"
+            "spriteName": "forest_28"
         },
         {
             "row": 17,
@@ -9495,7 +9510,7 @@
         {
             "row": 17,
             "col": 21,
-            "spriteName": "plains_20"
+            "spriteName": "hills_15"
         },
         {
             "row": 17,
@@ -9649,6 +9664,21 @@
         },
         {
             "row": 17,
+            "col": 57,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 17,
+            "col": 59,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 17,
+            "col": 60,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 17,
             "col": 61,
             "spriteName": "forest_30"
         },
@@ -9725,7 +9755,7 @@
         {
             "row": 18,
             "col": 14,
-            "spriteName": "grass_17"
+            "spriteName": "grass_09"
         },
         {
             "row": 18,
@@ -9735,6 +9765,11 @@
         {
             "row": 18,
             "col": 16,
+            "spriteName": "grass_17"
+        },
+        {
+            "row": 18,
+            "col": 18,
             "spriteName": "grass_17"
         },
         {
@@ -9924,6 +9959,11 @@
         },
         {
             "row": 18,
+            "col": 58,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 18,
             "col": 64,
             "spriteName": "forest_30"
         },
@@ -9995,6 +10035,16 @@
         {
             "row": 19,
             "col": 14,
+            "spriteName": "grass_17"
+        },
+        {
+            "row": 19,
+            "col": 15,
+            "spriteName": "grass_17"
+        },
+        {
+            "row": 19,
+            "col": 16,
             "spriteName": "grass_17"
         },
         {
@@ -10184,6 +10234,11 @@
         },
         {
             "row": 19,
+            "col": 57,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 19,
             "col": 63,
             "spriteName": "forest_30"
         },
@@ -10259,12 +10314,12 @@
         },
         {
             "row": 20,
-            "col": 16,
+            "col": 15,
             "spriteName": "grass_17"
         },
         {
             "row": 20,
-            "col": 17,
+            "col": 16,
             "spriteName": "grass_17"
         },
         {
@@ -10453,6 +10508,21 @@
             "spriteName": "plains_19"
         },
         {
+            "row": 20,
+            "col": 57,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 20,
+            "col": 58,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 20,
+            "col": 64,
+            "spriteName": "shore_01"
+        },
+        {
             "row": 21,
             "col": 3,
             "spriteName": "grass_17"
@@ -10509,17 +10579,17 @@
         },
         {
             "row": 21,
+            "col": 14,
+            "spriteName": "grass_17"
+        },
+        {
+            "row": 21,
             "col": 15,
             "spriteName": "grass_17"
         },
         {
             "row": 21,
             "col": 16,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 21,
-            "col": 17,
             "spriteName": "grass_17"
         },
         {
@@ -10709,8 +10779,18 @@
         },
         {
             "row": 21,
+            "col": 56,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 21,
             "col": 61,
             "spriteName": "shore_02"
+        },
+        {
+            "row": 21,
+            "col": 64,
+            "spriteName": "shore_01"
         },
         {
             "row": 22,
@@ -10764,18 +10844,8 @@
         },
         {
             "row": 22,
-            "col": 15,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 22,
-            "col": 16,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 22,
             "col": 17,
-            "spriteName": "grass_17"
+            "spriteName": "grass_13"
         },
         {
             "row": 22,
@@ -10953,6 +11023,11 @@
             "spriteName": "plains_19"
         },
         {
+            "row": 22,
+            "col": 64,
+            "spriteName": "shore_01"
+        },
+        {
             "row": 23,
             "col": 4,
             "spriteName": "grass_17"
@@ -11070,12 +11145,12 @@
         {
             "row": 23,
             "col": 30,
-            "spriteName": "hills_19"
+            "spriteName": "hills_08"
         },
         {
             "row": 23,
             "col": 31,
-            "spriteName": "hills_19"
+            "spriteName": "grass_12"
         },
         {
             "row": 23,
@@ -11199,6 +11274,11 @@
         },
         {
             "row": 23,
+            "col": 63,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 23,
             "col": 64,
             "spriteName": "plains_19"
         },
@@ -11269,6 +11349,11 @@
         },
         {
             "row": 24,
+            "col": 21,
+            "spriteName": "shore_04"
+        },
+        {
+            "row": 24,
             "col": 22,
             "spriteName": "grass_17"
         },
@@ -11441,6 +11526,21 @@
             "row": 24,
             "col": 57,
             "spriteName": "mountains_2"
+        },
+        {
+            "row": 24,
+            "col": 60,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 24,
+            "col": 61,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 24,
+            "col": 64,
+            "spriteName": "shore_01"
         },
         {
             "row": 25,
@@ -11679,6 +11779,16 @@
         },
         {
             "row": 25,
+            "col": 60,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 25,
+            "col": 63,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 25,
             "col": 64,
             "spriteName": "plains_19"
         },
@@ -11906,6 +12016,21 @@
             "row": 26,
             "col": 57,
             "spriteName": "mountains_2"
+        },
+        {
+            "row": 26,
+            "col": 60,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 26,
+            "col": 61,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 26,
+            "col": 64,
+            "spriteName": "shore_01"
         },
         {
             "row": 27,
@@ -12134,6 +12259,36 @@
         },
         {
             "row": 27,
+            "col": 58,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 27,
+            "col": 59,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 27,
+            "col": 60,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 27,
+            "col": 61,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 27,
+            "col": 62,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 27,
+            "col": 63,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 27,
             "col": 64,
             "spriteName": "plains_19"
         },
@@ -12240,17 +12395,17 @@
         {
             "row": 28,
             "col": 33,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 28,
             "col": 34,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 28,
             "col": 35,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 28,
@@ -12490,22 +12645,22 @@
         {
             "row": 29,
             "col": 32,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 29,
             "col": 33,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 29,
             "col": 34,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 29,
             "col": 35,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 29,
@@ -12745,22 +12900,22 @@
         {
             "row": 30,
             "col": 32,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 30,
             "col": 33,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 30,
             "col": 34,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 30,
             "col": 35,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 30,
@@ -12980,27 +13135,27 @@
         {
             "row": 31,
             "col": 31,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 31,
             "col": 32,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 31,
             "col": 33,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 31,
             "col": 34,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 31,
             "col": 35,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 31,
@@ -13215,37 +13370,37 @@
         {
             "row": 32,
             "col": 29,
-            "spriteName": "mountains_2"
+            "spriteName": "grass_18"
         },
         {
             "row": 32,
             "col": 30,
-            "spriteName": "mountains_2"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
             "col": 31,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
             "col": 32,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
             "col": 33,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
             "col": 34,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
             "col": 35,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
@@ -13465,12 +13620,12 @@
         {
             "row": 33,
             "col": 30,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 33,
             "col": 31,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 33,
@@ -13480,12 +13635,12 @@
         {
             "row": 33,
             "col": 33,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 33,
             "col": 34,
-            "spriteName": "forest_01"
+            "spriteName": "forest_24"
         },
         {
             "row": 33,
@@ -13686,6 +13841,11 @@
             "row": 34,
             "col": 26,
             "spriteName": "mountains_2"
+        },
+        {
+            "row": 34,
+            "col": 27,
+            "spriteName": "grass_17"
         },
         {
             "row": 34,
@@ -13885,36 +14045,46 @@
         {
             "row": 35,
             "col": 18,
-            "spriteName": "grass_17"
+            "spriteName": "shore_01"
         },
         {
             "row": 35,
             "col": 19,
-            "spriteName": "grass_17"
+            "spriteName": "shore_01"
         },
         {
             "row": 35,
             "col": 20,
-            "spriteName": "grass_17"
+            "spriteName": "shore_01"
         },
         {
             "row": 35,
             "col": 21,
-            "spriteName": "grass_17"
+            "spriteName": "shore_01"
         },
         {
             "row": 35,
             "col": 22,
-            "spriteName": "grass_17"
+            "spriteName": "shore_01"
         },
         {
             "row": 35,
             "col": 23,
-            "spriteName": "grass_17"
+            "spriteName": "shore_01"
         },
         {
             "row": 35,
             "col": 24,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 35,
+            "col": 25,
+            "spriteName": "grass_17"
+        },
+        {
+            "row": 35,
+            "col": 26,
             "spriteName": "grass_17"
         },
         {
@@ -14105,16 +14275,26 @@
         {
             "row": 36,
             "col": 16,
-            "spriteName": "grass_17"
+            "spriteName": "shore_01"
         },
         {
             "row": 36,
             "col": 17,
-            "spriteName": "grass_17"
+            "spriteName": "shore_01"
         },
         {
             "row": 36,
             "col": 18,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 36,
+            "col": 22,
+            "spriteName": "shore_01"
+        },
+        {
+            "row": 36,
+            "col": 25,
             "spriteName": "grass_17"
         },
         {
@@ -14130,7 +14310,7 @@
         {
             "row": 36,
             "col": 28,
-            "spriteName": "grass_17"
+            "spriteName": "mountains_2"
         },
         {
             "row": 36,
@@ -20803,7 +20983,954 @@
             "spriteName": "desert_18"
         }
     ],
-    "leaderStarts": [],
-    "pcs": [],
-    "characters": []
+    "leaderStarts": [
+        {
+            "row": 16,
+            "col": 14,
+            "leaderName": "Gandalf",
+            "isPlayable": true
+        },
+        {
+            "row": 14,
+            "col": 8,
+            "leaderName": "Cirdan",
+            "isPlayable": false
+        },
+        {
+            "row": 15,
+            "col": 19,
+            "leaderName": "Aragorn",
+            "isPlayable": false
+        },
+        {
+            "row": 15,
+            "col": 31,
+            "leaderName": "Elrond",
+            "isPlayable": false
+        },
+        {
+            "row": 23,
+            "col": 32,
+            "leaderName": "Balrog",
+            "isPlayable": false
+        },
+        {
+            "row": 17,
+            "col": 19,
+            "leaderName": "Tom Bombadil",
+            "isPlayable": false
+        },
+        {
+            "row": 33,
+            "col": 28,
+            "leaderName": "Saruman",
+            "isPlayable": true
+        }
+    ],
+    "pcs": [
+        {
+            "row": 13,
+            "col": 7,
+            "pcName": "The Grey Havens",
+            "ownerLeaderName": "Cirdan",
+            "citySize": 3,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 13,
+            "col": 1,
+            "pcName": "Forlond",
+            "ownerLeaderName": "Cirdan",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 16,
+            "col": 5,
+            "pcName": "Harlond",
+            "ownerLeaderName": "Cirdan",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 15,
+            "col": 19,
+            "pcName": "Bree",
+            "ownerLeaderName": "Aragorn",
+            "citySize": 4,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 18,
+            "col": 18,
+            "pcName": "Buckland",
+            "ownerLeaderName": "Merry",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 15,
+            "col": 31,
+            "pcName": "Imladris",
+            "ownerLeaderName": "Elrond",
+            "citySize": 4,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": true,
+            "isCapital": true,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 14,
+            "col": 23,
+            "pcName": "AmonSul",
+            "ownerLeaderName": "Aragorn",
+            "citySize": 1,
+            "fortSize": 1,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 25,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 12,
+            "col": 14,
+            "pcName": "Annuminas",
+            "ownerLeaderName": "Aragorn",
+            "citySize": 1,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 11,
+            "col": 32,
+            "pcName": "Goblin Gate",
+            "ownerLeaderName": "Khamul",
+            "citySize": 4,
+            "fortSize": 3,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 16,
+            "col": 14,
+            "pcName": "Hobbiton",
+            "ownerLeaderName": "Gandalf",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 3,
+            "col": 23,
+            "pcName": "CarnDum",
+            "ownerLeaderName": "Murazor",
+            "citySize": 4,
+            "fortSize": 4,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 8,
+            "col": 26,
+            "pcName": "MtGram",
+            "ownerLeaderName": "Murazor",
+            "citySize": 3,
+            "fortSize": 3,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 4,
+            "col": 31,
+            "pcName": "Gundabad",
+            "ownerLeaderName": "Murazor",
+            "citySize": 4,
+            "fortSize": 4,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 23,
+            "col": 32,
+            "pcName": "Khazad-Dum",
+            "ownerLeaderName": "Balrog",
+            "citySize": 4,
+            "fortSize": 5,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 17,
+            "col": 19,
+            "pcName": "Old Forest",
+            "ownerLeaderName": "Tom Bombadil",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 19,
+            "col": 7,
+            "pcName": "Noegrod",
+            "ownerLeaderName": "Gloin",
+            "citySize": 3,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 5,
+            "col": 6,
+            "pcName": "ThorinHall",
+            "ownerLeaderName": "Gloin",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 33,
+            "col": 28,
+            "pcName": "Orthanc",
+            "ownerLeaderName": "Saruman",
+            "citySize": 1,
+            "fortSize": 1,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 31,
+            "col": 27,
+            "pcName": "Treforn",
+            "ownerLeaderName": "Waulfa",
+            "citySize": 2,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 28,
+            "col": 28,
+            "pcName": "Arailt",
+            "ownerLeaderName": "Waulfa",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 29,
+            "col": 23,
+            "pcName": "",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 33,
+            "col": 32,
+            "pcName": "FangornSCamp",
+            "ownerLeaderName": "Saruman",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 37,
+            "col": 28,
+            "pcName": "HelmDeep",
+            "ownerLeaderName": "Theoden",
+            "citySize": 3,
+            "fortSize": 3,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 37,
+            "col": 31,
+            "pcName": "Edoras",
+            "ownerLeaderName": "Theoden",
+            "citySize": 4,
+            "fortSize": 3,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 35,
+            "col": 36,
+            "pcName": "Eastfold",
+            "ownerLeaderName": "Theoden",
+            "citySize": 2,
+            "fortSize": 1,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 22,
+            "col": 17,
+            "pcName": "Sarn Ford",
+            "ownerLeaderName": "Aragorn",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 30,
+            "col": 33,
+            "pcName": "Derndingle",
+            "ownerLeaderName": "Treebeard",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": true,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 23,
+            "col": 34,
+            "pcName": "CerinAmroth",
+            "ownerLeaderName": "Galadriel",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": true,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 25,
+            "col": 36,
+            "pcName": "Caras Galadhon",
+            "ownerLeaderName": "",
+            "citySize": 4,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": true,
+            "isCapital": true,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 17,
+            "col": 21,
+            "pcName": "Barrow-downs",
+            "ownerLeaderName": "Barrow-wight",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 37,
+            "col": 25,
+            "pcName": "WestFold",
+            "ownerLeaderName": "Theoden",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 33,
+            "col": 20,
+            "pcName": "Enedhir",
+            "ownerLeaderName": "Waulfa",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 16,
+            "col": 10,
+            "pcName": "Elostirion",
+            "ownerLeaderName": "Cirdan",
+            "citySize": 1,
+            "fortSize": 1,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 43,
+            "col": 41,
+            "pcName": "Minas Tirith",
+            "ownerLeaderName": "Denethor",
+            "citySize": 5,
+            "fortSize": 5,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 43,
+            "col": 43,
+            "pcName": "Osgiliath",
+            "ownerLeaderName": "Denethor",
+            "citySize": 3,
+            "fortSize": 2,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 43,
+            "col": 45,
+            "pcName": "Minas Morgul",
+            "ownerLeaderName": "Murazor",
+            "citySize": 4,
+            "fortSize": 4,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 21,
+            "col": 61,
+            "pcName": "Tol Buruth",
+            "ownerLeaderName": "Ovatha",
+            "citySize": 1,
+            "fortSize": 1,
+            "hasPort": true,
+            "isHidden": true,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 53,
+            "col": 46,
+            "pcName": "Olbamarl",
+            "ownerLeaderName": "Ovatha",
+            "citySize": 4,
+            "fortSize": 4,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        }
+    ],
+    "characters": [
+        {
+            "row": 13,
+            "col": 7,
+            "characterName": "Cirdan",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Swan Fleet",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 15,
+            "col": 19,
+            "characterName": "Aragorn",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Mounted Rangers Of The North",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 18,
+            "col": 18,
+            "characterName": "Merry",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Bounders",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 15,
+            "col": 31,
+            "characterName": "Elrond",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Elven Scouts",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Elven Archers",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 23,
+            "col": 32,
+            "characterName": "Balrog",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Goblins Of Moria",
+                        "amount": 2
+                    }
+                ]
+            }
+        },
+        {
+            "row": 17,
+            "col": 19,
+            "characterName": "Tom Bombadil",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 19,
+            "col": 7,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 5,
+            "col": 6,
+            "characterName": "Gloin",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Dwarven Axemen",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 33,
+            "col": 28,
+            "characterName": "Saruman Multicoloured",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 33,
+            "col": 28,
+            "characterName": "Grima",
+            "ownerLeaderName": "Saruman",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 33,
+            "col": 28,
+            "characterName": "Ugluk",
+            "ownerLeaderName": "Saruman",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Dunlending Warriors",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 31,
+            "col": 27,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 28,
+            "col": 28,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 33,
+            "col": 32,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 37,
+            "col": 28,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 37,
+            "col": 31,
+            "characterName": "Theoden",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Riders Of Rohan",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 35,
+            "col": 36,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 30,
+            "col": 33,
+            "characterName": "Treebeard",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 25,
+            "col": 36,
+            "characterName": "Galadriel",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 25,
+            "col": 36,
+            "characterName": "Celeborn",
+            "ownerLeaderName": "Galadriel",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 23,
+            "col": 34,
+            "characterName": "Haldir",
+            "ownerLeaderName": "Galadriel",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Elven Archers",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 17,
+            "col": 21,
+            "characterName": "Barrow-wight",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 37,
+            "col": 25,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 43,
+            "col": 45,
+            "characterName": "Murazor",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Orcs",
+                        "amount": 1
+                    }
+                ]
+            }
+        }
+    ]
 }

@@ -192,7 +192,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             List<Sprite> variations = ScenarioCardCatalog.GetTerrainVariations(paintTerrain);
 
             // Selected-tile preview.
-            Rect preview = GUILayoutUtility.GetRect(128, 128, GUILayout.Width(128), GUILayout.Height(128));
+            Rect preview = GUILayoutUtility.GetRect(256, 256, GUILayout.Width(256), GUILayout.Height(256));
             Sprite selected = string.IsNullOrEmpty(paintSpriteName)
                 ? ScenarioCardCatalog.GetTerrainSprite(paintTerrain)
                 : ScenarioCardCatalog.GetTerrainSpriteByName(paintSpriteName);
@@ -331,6 +331,13 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             if (sprite != null && sprite.texture != null) DrawSprite(draw, sprite);
             else EditorGUI.DrawRect(draw, TerrainFallbackColor(t));
+
+            // Overlay the PC's hex artwork (Assets/Art/Hexes/PCs) when a named PC sits on this hex.
+            if (pcs.TryGetValue(idx, out ScenarioPC pc) && !string.IsNullOrEmpty(pc.pcName))
+            {
+                Sprite pcSprite = ScenarioCardCatalog.GetPcHexSprite(pc.pcName);
+                if (pcSprite != null && pcSprite.texture != null) DrawSprite(draw, pcSprite);
+            }
         }
 
         private void DrawCellOverlay(Rect r, int row, int col)
@@ -352,11 +359,38 @@ namespace RetroLOTR.Scenarios.EditorTools
             if (hasPc) DrawCorner(r, "⌂", Color.white, TextAnchor.UpperRight);
             if (charCount > 0) DrawCorner(r, charCount.ToString(), Color.cyan, TextAnchor.LowerRight);
 
+            // PC name label, centred near the bottom of the hex.
+            if (hasPc && pcs.TryGetValue(idx, out ScenarioPC pc) && !string.IsNullOrEmpty(pc.pcName))
+                DrawHexCaption(r, pc.pcName);
+
             if (idx == selectedIndex)
             {
                 Handles.color = Color.red;
                 Handles.DrawSolidRectangleWithOutline(r, new Color(0, 0, 0, 0), Color.red);
             }
+        }
+
+        // Centred caption (PC name) drawn near the bottom of a hex, with a dark backing strip
+        // and a 1px text shadow so it stays legible over any tile artwork.
+        private static void DrawHexCaption(Rect r, string text)
+        {
+            var style = new GUIStyle(EditorStyles.miniBoldLabel)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 9,
+                wordWrap = false,
+                clipping = TextClipping.Clip
+            };
+
+            float h = 13f;
+            var band = new Rect(r.x + 1, r.yMax - h - 2, r.width - 2, h);
+            EditorGUI.DrawRect(band, new Color(0f, 0f, 0f, 0.55f));
+
+            var shadow = new Rect(band.x + 1, band.y + 1, band.width, band.height);
+            style.normal.textColor = new Color(0f, 0f, 0f, 0.9f);
+            GUI.Label(shadow, text, style);
+            style.normal.textColor = Color.white;
+            GUI.Label(band, text, style);
         }
 
         private static void DrawCorner(Rect r, string text, Color color, TextAnchor anchor)

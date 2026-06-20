@@ -89,7 +89,7 @@ public class HexTextureMapping : SearcherByName
         }
     }
 
-    private static string NormalizeKey(string name)
+    public static string NormalizeKey(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return string.Empty;
 

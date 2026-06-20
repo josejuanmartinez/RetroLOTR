@@ -24,6 +24,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private string search = string.Empty;
         private Vector2 scroll;
         private string hovered;
+        private string pendingHovered;
         private bool focusRequested;
 
         private const float RowHeight = 18f;
@@ -55,6 +56,12 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             Event e = Event.current;
 
+            // Apply the deferred hover only at the start of a Layout pass so that the
+            // Layout event and its following Repaint emit an identical number of layout
+            // controls (DrawPreview's control count depends on the hovered item). Mutating
+            // it mid-pass causes "Getting control N's position in a group" exceptions.
+            if (e.type == EventType.Layout) hovered = pendingHovered;
+
             // Search field (focused on open).
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
             GUI.SetNextControlName("ScenarioSearchField");
@@ -79,13 +86,11 @@ namespace RetroLOTR.Scenarios.EditorTools
             {
                 Rect row = GUILayoutUtility.GetRect(new GUIContent(item), EditorStyles.label, GUILayout.Height(RowHeight), GUILayout.ExpandWidth(true));
 
-                if (row.Contains(e.mousePosition))
+                // Row rects are only valid outside the Layout event. Record the hovered item
+                // as pending; it is promoted to 'hovered' at the next Layout pass (above).
+                if (e.type != EventType.Layout && row.Contains(e.mousePosition))
                 {
-                    if (!string.Equals(hovered, item, StringComparison.Ordinal))
-                    {
-                        hovered = item;
-                        if (editorWindow != null) editorWindow.Repaint();
-                    }
+                    pendingHovered = item;
                     EditorGUI.DrawRect(row, new Color(0.3f, 0.4f, 0.6f, 0.35f));
                 }
 
@@ -111,7 +116,11 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             GUILayout.EndHorizontal();
 
-            if (e.type == EventType.MouseMove && editorWindow != null) editorWindow.Repaint();
+            // Repaint when the hover target changed (promotes pendingHovered on the next
+            // Layout) or on mouse move so highlighting tracks the cursor.
+            if (editorWindow != null &&
+                (e.type == EventType.MouseMove || !string.Equals(hovered, pendingHovered, StringComparison.Ordinal)))
+                editorWindow.Repaint();
         }
 
         private void DrawPreview(string name)

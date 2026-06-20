@@ -23,6 +23,8 @@ namespace RetroLOTR.Scenarios.EditorTools
         private static List<CardData> _allCards;
         private static Dictionary<string, CardData> _cardsByName;
         private static readonly Dictionary<string, Sprite> _artCache = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Sprite> _pcHexCache = new(StringComparer.Ordinal);
+        private static bool _pcHexLoaded;
         private static HexTextureMapping _mapping;
 
         public static IReadOnlyList<string> PlayableLeaders => _playableLeaders ??= LoadLeaderNames("PlayableLeaderBiomes");
@@ -67,6 +69,45 @@ namespace RetroLOTR.Scenarios.EditorTools
             return null;
         }
 
+        /// <summary>
+        /// The hex-map artwork for a placed PC (city), loaded from Assets/Art/Hexes/PCs.
+        /// The card name (e.g. "HelmDeep", "FangornSCamp") and the art filename
+        /// (e.g. "Helm Deep.png", "Fangorns Camp.png") often differ only in spacing/casing,
+        /// so we match on the same normalized key the runtime uses (HexTextureMapping.NormalizeKey),
+        /// not an exact string compare. May be null when no art exists.
+        /// </summary>
+        public static Sprite GetPcHexSprite(string pcName)
+        {
+            if (string.IsNullOrWhiteSpace(pcName)) return null;
+            string key = HexTextureMapping.NormalizeKey(pcName);
+            if (string.IsNullOrEmpty(key)) return null;
+
+            EnsurePcHexLoaded();
+            return _pcHexCache.TryGetValue(key, out Sprite sprite) ? sprite : null;
+        }
+
+        // Indexes every sprite under Assets/Art/Hexes/PCs by its normalized name, mirroring the
+        // runtime lookup so the same card name resolves to the same art in editor and game.
+        private static void EnsurePcHexLoaded()
+        {
+            if (_pcHexLoaded) return;
+            _pcHexLoaded = true;
+            _pcHexCache.Clear();
+
+            foreach (string guid in AssetDatabase.FindAssets("t:Sprite", new[] { "Assets/Art/Hexes/PCs" }))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (string.IsNullOrWhiteSpace(path)) continue;
+                foreach (UnityEngine.Object asset in AssetDatabase.LoadAllAssetsAtPath(path))
+                {
+                    if (asset is not Sprite sprite) continue;
+                    string spriteKey = HexTextureMapping.NormalizeKey(sprite.name);
+                    if (!string.IsNullOrEmpty(spriteKey) && !_pcHexCache.ContainsKey(spriteKey))
+                        _pcHexCache[spriteKey] = sprite;
+                }
+            }
+        }
+
         /// <summary>All leader names (playable first), used for owner dropdowns.</summary>
         public static List<string> AllLeaders()
         {
@@ -83,6 +124,8 @@ namespace RetroLOTR.Scenarios.EditorTools
             _allCards = null;
             _cardsByName = null;
             _artCache.Clear();
+            _pcHexCache.Clear();
+            _pcHexLoaded = false;
             _mapping = null;
         }
 
