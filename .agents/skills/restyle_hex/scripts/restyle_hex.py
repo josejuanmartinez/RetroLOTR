@@ -20,6 +20,12 @@ DEFAULT_UPLOAD_MAX_DIM = 512
 DEFAULT_BOTTOM_PADDING_FRACTION = 0.20  # add 20% transparent height at bottom before upload
 MAX_IMAGE_BYTES = 50 * 1024 * 1024
 
+# Bundled style-anchor tiles shipped with the skill. Sent to images.edit after the
+# source tile so the model copies their muted, hand-painted look instead of drifting
+# bright/cartoonish. Override with --style-ref / --no-style-ref.
+DEFAULT_STYLE_REFS_DIR = Path(__file__).resolve().parent.parent / "style_refs"
+MAX_STYLE_REFS = 3  # cap to keep upload size and cost down
+
 # Generic tile names: pure digits/spaces (001, "002 3") or any hex-prefixed name (hexDirtCastle00)
 _GENERIC_NAME_RE = re.compile(r'^hex|^[\d\s]+$', re.IGNORECASE)
 
@@ -43,6 +49,9 @@ DEFAULT_PROMPT = (
     "Think of classic MECCG/MERPG hex art where mountain peaks tower well above the hex frame. "
     "NEVER draw these elements flat or compressed inside the hex boundary — they must have real, imposing vertical presence. "
     "Only flat terrain (rivers, fields, roads, low forests) stays clipped within the hex boundary. "
+    "PALETTE — CRITICAL: use a muted, desaturated, earth-toned palette (mossy greens, ochres, browns, slate greys, faded blues). "
+    "The look must be a matte, hand-painted printed tabletop tile — NOT bright, NOT neon, NOT glossy, NOT cartoonish, NOT a video-game render. "
+    "Avoid vivid primary colors and high-saturation lighting; keep tones subdued and slightly aged. "
     "Do not add any text, labels, or lettering anywhere in the image. "
     "Do not draw blood anywhere — if the scene calls for it, substitute water, mud, dark stone, or another thematically fitting element instead. "
     "CRITICAL: the area outside the hex shape must be SOLID BLACK and nothing else — no gradients, no textures, no scenery, no sky, no ground. Solid black only. "
@@ -55,7 +64,7 @@ STYLE_ONLY_PROMPT = (
     "Aggressively restyle this hex tile into the aesthetic of classic hand-painted fantasy illustration: "
     "d&d, Bakshi, Conan, LOTR, MERPG, MECCG. "
     "The style change must be BOLD and clearly visible — strong inked outlines, hand-painted brush textures, "
-    "richer saturated colors, and the printed look of a classic tabletop hex map tile. "
+    "richer earthy hand-mixed tones, and the printed look of a classic tabletop hex map tile. "
     "Do not produce a near-copy of the source; the source is only a reference for shapes and layout — the rendering must look distinctly re-illustrated. "
     "The art style must be isometric 2D — flat illustrated elements viewed from a fixed isometric angle, "
     "like classic tabletop hex map tiles. "
@@ -67,10 +76,24 @@ STYLE_ONLY_PROMPT = (
     "MANDATORY: preserve the exact hexagon shape of the tile with the point at the BOTTOM (pointy-top orientation) — never rotate, distort, or change the hex to flat-bottom. "
     "If a tall element (mountain, tower, spire, castle) is already present and already protrudes above the hex, keep it protruding; "
     "do not change which elements rise above the hex edge. "
+    "PALETTE — CRITICAL: use a muted, desaturated, earth-toned palette (mossy greens, ochres, browns, slate greys, faded blues). "
+    "The look must be a matte, hand-painted printed tabletop tile — NOT bright, NOT neon, NOT glossy, NOT cartoonish, NOT a video-game render. "
+    "Avoid vivid primary colors and high-saturation lighting; keep tones subdued and slightly aged. "
     "Do not add any text, labels, or lettering anywhere in the image. "
     "Do not draw blood anywhere — if the scene calls for it, substitute water, mud, dark stone, or another thematically fitting element instead. "
     "CRITICAL: the area outside the hex shape must be SOLID BLACK and nothing else — no gradients, no textures, no scenery, no sky, no ground. Solid black only. "
     "Leave visible background space below the hex shape — the hex must not touch or bleed into the bottom edge."
+)
+
+
+# Prepended when one or more style-reference images are supplied. The reference
+# images are appended after the source tile in the images.edit array.
+STYLE_REF_PROMPT_PREFIX = (
+    "The FIRST image is the tile to restyle. The IMAGE(S) AFTER IT are STYLE REFERENCES only: "
+    "match their art style exactly — the same muted desaturated palette, inked outlines, matte hand-painted "
+    "brushwork, and printed-tile rendering. "
+    "Do NOT copy the shapes, terrain, structures, or layout of the reference images; copy ONLY their look and color treatment. "
+    "Apply that reference style to the content of the first image. "
 )
 
 
@@ -289,6 +312,37 @@ def restore_alpha(source_path: Path, out_path: Path) -> None:
         rgba.save(out_path, format="PNG")
 
 
+def resolve_style_refs(
+    refs: list[str] | None,
+    use_default: bool,
+    *,
+    exclude: Path | None = None,
+) -> list[Path]:
+    """Return the style-reference image paths to send to images.edit.
+
+    Explicit ``refs`` win. Otherwise, when ``use_default`` is True, fall back to
+    every PNG in DEFAULT_STYLE_REFS_DIR. ``exclude`` drops a path whose resolved
+    location matches the source tile (avoids feeding a tile its own output as a
+    reference). Capped at MAX_STYLE_REFS.
+    """
+    paths: list[Path] = []
+    if refs:
+        paths = [Path(r) for r in refs]
+    elif use_default and DEFAULT_STYLE_REFS_DIR.is_dir():
+        paths = sorted(DEFAULT_STYLE_REFS_DIR.glob("*.png"))
+
+    resolved: list[Path] = []
+    exclude_r = exclude.resolve() if exclude else None
+    for p in paths:
+        if not p.exists():
+            print(f"  Warning: style ref not found, skipping: {p}", file=sys.stderr)
+            continue
+        if exclude_r and p.resolve() == exclude_r:
+            continue
+        resolved.append(p)
+    return resolved[:MAX_STYLE_REFS]
+
+
 def create_client():
     try:
         from openai import OpenAI
@@ -308,9 +362,15 @@ def restyle_one(
     output_format: str = DEFAULT_OUTPUT_FORMAT,
     upload_max_dim: int = DEFAULT_UPLOAD_MAX_DIM,
     bottom_padding_fraction: float = DEFAULT_BOTTOM_PADDING_FRACTION,
+    style_refs: list[Path] | None = None,
     force: bool = False,
 ) -> tuple[int, float]:
-    """Restyle one tile. Returns (exit_code, cost_usd). exit_code 2 = moderation skip."""
+    """Restyle one tile. Returns (exit_code, cost_usd). exit_code 2 = moderation skip.
+
+    ``style_refs`` are extra images sent after the source tile in the images.edit
+    array; the model copies their art style (palette, brushwork) without copying
+    their content. The prompt should already include STYLE_REF_PROMPT_PREFIX.
+    """
     if not image_path.exists():
         print(f"Error: Image not found: {image_path}", file=sys.stderr)
         return 1, 0.0
@@ -324,23 +384,40 @@ def restyle_one(
         return 1, 0.0
 
     upload_path, upload_is_temp = prepare_upload_image(image_path, upload_max_dim, bottom_padding_fraction)
+
+    # Style refs: downscale for upload but no bottom padding (they are anchors, not the tile).
+    ref_temps: list[tuple[Path, bool]] = []
+    for ref in (style_refs or []):
+        ref_temps.append(prepare_upload_image(ref, upload_max_dim, bottom_padding_fraction=0.0))
+
+    def cleanup_temps() -> None:
+        if upload_is_temp and upload_path.exists():
+            upload_path.unlink()
+        for rp, is_tmp in ref_temps:
+            if is_tmp and rp.exists():
+                rp.unlink()
+
     client = create_client()
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     started = time.time()
     last_exc = None
     for attempt in range(1, 4):  # up to 3 attempts
+        handles = []
         try:
-            with upload_path.open("rb") as f:
-                result = client.images.edit(
-                    model=model,
-                    image=f,
-                    prompt=prompt,
-                    size=size,
-                    quality=quality,
-                    output_format=output_format,
-                    extra_body={"moderation": "low"},
-                )
+            handles.append(upload_path.open("rb"))
+            handles.extend(rp.open("rb") for rp, _ in ref_temps)
+            # Single image -> pass the file directly; multiple -> pass the list.
+            image_arg = handles[0] if len(handles) == 1 else handles
+            result = client.images.edit(
+                model=model,
+                image=image_arg,
+                prompt=prompt,
+                size=size,
+                quality=quality,
+                output_format=output_format,
+                extra_body={"moderation": "low"},
+            )
             last_exc = None
             break
         except Exception as exc:
@@ -350,17 +427,17 @@ def restyle_one(
                 print(f"  Moderation block (attempt {attempt}/3): {image_path.name}", file=sys.stderr)
                 time.sleep(2)
                 continue
-            if upload_is_temp and upload_path.exists():
-                upload_path.unlink()
+            cleanup_temps()
             raise
+        finally:
+            for h in handles:
+                h.close()
     else:
-        if upload_is_temp and upload_path.exists():
-            upload_path.unlink()
+        cleanup_temps()
         print(f"  SKIPPED after 3 moderation blocks: {image_path.name}", file=sys.stderr)
         return 2, 0.0
 
-    if upload_is_temp and upload_path.exists():
-        upload_path.unlink()
+    cleanup_temps()
 
     elapsed = time.time() - started
     cost = calc_cost(result.usage) if hasattr(result, "usage") and result.usage else 0.0
@@ -395,6 +472,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--upload-max-dim", type=int, default=DEFAULT_UPLOAD_MAX_DIM)
     parser.add_argument("--bottom-padding-fraction", type=float, default=DEFAULT_BOTTOM_PADDING_FRACTION,
                         help="Fraction of image height to add as transparent bottom padding (default 0.20)")
+    parser.add_argument("--style-ref", action="append", default=None, metavar="PATH",
+                        help="Style-reference image sent after the source tile so the model copies its look "
+                             "(repeatable). Overrides the bundled default refs.")
+    parser.add_argument("--no-style-ref", action="store_true",
+                        help="Disable the bundled default style references in style_refs/.")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
     return parser.parse_args()
@@ -412,6 +494,10 @@ def main() -> int:
         base_prompt = STYLE_ONLY_PROMPT if args.style_only else DEFAULT_PROMPT
     effective_prompt = build_prompt(base_prompt, image_path.stem, style_only=args.style_only)
 
+    style_refs = resolve_style_refs(args.style_ref, use_default=not args.no_style_ref, exclude=image_path)
+    if style_refs:
+        effective_prompt = STYLE_REF_PROMPT_PREFIX + effective_prompt
+
     if args.dry_run:
         upload_path, upload_is_temp = prepare_upload_image(image_path, args.upload_max_dim, args.bottom_padding_fraction)
         print("restyle_hex dry-run")
@@ -420,6 +506,7 @@ def main() -> int:
         print(f"out={out_path}")
         print(f"model={args.model}  quality={args.quality}  size={args.size}")
         print(f"bottom_padding_fraction={args.bottom_padding_fraction}")
+        print(f"style_refs={[str(p) for p in style_refs] or 'none'}")
         print(f"prompt={effective_prompt}")
         if upload_is_temp and upload_path.exists():
             upload_path.unlink()
@@ -434,6 +521,7 @@ def main() -> int:
         output_format=args.output_format,
         upload_max_dim=args.upload_max_dim,
         bottom_padding_fraction=args.bottom_padding_fraction,
+        style_refs=style_refs,
         force=args.force,
     )
     return code

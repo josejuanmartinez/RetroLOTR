@@ -7,6 +7,7 @@ using System;
 using System.Globalization;
 using System.Collections;
 using UnityEngine.UI;
+using RetroLOTR.Scenarios;
 
 public class LeaderSelector : SearcherByName
 {
@@ -327,18 +328,57 @@ public class LeaderSelector : SearcherByName
             .Find(x => x.characterName.ToLower() == playableLeader.characterName.ToLower());
         if (biome == null) return;
 
-        string baseDescription = NormalizeLeaderDescription(biome.description);
-        AddSelectionEntry(playableLeader, biome.alignment, BuildLeaderDisplayName(playableLeader, biome.alignment), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
+        // When the active scenario pins this leader to specific variant(s), the carousel offers
+        // only those — and drops the uncommitted base entry. Otherwise (procedural play or a
+        // pre-v2 scenario with no variantId) it offers the base leader plus every variant.
+        HashSet<string> allowedVariants = GetScenarioVariantRestriction(playableLeader.characterName);
+        bool restricted = allowedVariants != null && allowedVariants.Count > 0;
 
+        string baseDescription = NormalizeLeaderDescription(biome.description);
+        if (!restricted)
+            AddSelectionEntry(playableLeader, biome.alignment, BuildLeaderDisplayName(playableLeader, biome.alignment), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
+
+        int added = 0;
         foreach (LeaderVariantConfig variant in biome.variants)
         {
+            if (restricted && !allowedVariants.Contains(variant.variantId ?? string.Empty)) continue;
+
             string variantName = GetVariantName(playableLeader.characterName, variant.displayName, variant.variantId);
             string displayName = BuildLeaderDisplayName(playableLeader, biome.alignment, variantName);
             string assetName = ResolveVariantAssetName(playableLeader.characterName, variant.displayName, variant.variantId);
             string variantDescription = NormalizeLeaderDescription(variant.description);
             string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? biome.subdeckId : variant.subdeckId;
             AddSelectionEntry(playableLeader, biome.alignment, displayName, baseDescription, variantDescription, variant.deckIdentity, subdeckId, variantName, assetName, variant.characterName);
+            added++;
         }
+
+        // Safety net: if the scenario's configured variant id(s) matched no known variant, fall
+        // back to the base entry so the leader is never left with no selectable card.
+        if (restricted && added == 0)
+            AddSelectionEntry(playableLeader, biome.alignment, BuildLeaderDisplayName(playableLeader, biome.alignment), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
+    }
+
+    // The set of variant ids the active scenario allows for a given playable leader, gathered from
+    // its leader-start(s). Returns null when there is no scenario or no restriction (offer all).
+    HashSet<string> GetScenarioVariantRestriction(string leaderName)
+    {
+        if (string.IsNullOrWhiteSpace(leaderName)) return null;
+
+        ScenarioData scenario = FindFirstObjectByType<Board>()?.ActiveScenario;
+        if (scenario?.leaderStarts == null) return null;
+
+        HashSet<string> allowed = null;
+        foreach (RetroLOTR.Scenarios.ScenarioLeaderStart start in scenario.leaderStarts)
+        {
+            if (start == null || !start.isPlayable) continue;
+            if (string.IsNullOrWhiteSpace(start.variantId)) continue;
+            if (!string.Equals(start.leaderName, leaderName, StringComparison.OrdinalIgnoreCase)) continue;
+
+            allowed ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            allowed.Add(start.variantId.Trim());
+        }
+
+        return allowed;
     }
 
     string BuildLeaderDisplayName(PlayableLeader playableLeader, AlignmentEnum alignment, string variantName = null)

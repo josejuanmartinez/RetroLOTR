@@ -36,6 +36,35 @@ python .agents/skills/restyle_hex/scripts/restyle_hex.py `
 The same flag exists on `scripts/restyle_hex_batch.py` to restyle a whole folder
 without adding features.
 
+## Style References (`--style-ref` / `--no-style-ref`)
+
+Text alone is a weak style anchor — `gpt-image-2` drifts bright/cartoonish. The
+scripts send **style-reference images** after the source tile in the
+`images.edit` array; the model copies their muted, hand-painted look without
+copying their content. The prompt is prefixed with `STYLE_REF_PROMPT_PREFIX` to
+make the first-image-is-the-tile / rest-are-style-only contract explicit, and
+both prompts now carry a muted-palette clause ("desaturated earth tones, matte
+print, no neon/cartoon").
+
+By default the bundled anchors in `style_refs/` are used automatically (capped at
+`MAX_STYLE_REFS`, currently 3). Override or disable:
+
+```powershell
+# use specific references instead of the bundled ones
+python .agents/skills/restyle_hex/scripts/restyle_hex.py `
+  --image "Assets/Art/Hexes/Tiles/001 1.png" `
+  --out "Assets/Art/Hexes/Tiles_Restyled/001 1.png" `
+  --style-only --force `
+  --style-ref "path/to/refA.png" --style-ref "path/to/refB.png"
+
+# no references at all (text-only, old behaviour)
+python .agents/skills/restyle_hex/scripts/restyle_hex.py ... --no-style-ref
+```
+
+Swap the bundled anchors by replacing the PNGs in `style_refs/`. They should be
+already-restyled tiles that hit the target muted MERP/MECCG look. The source
+tile is auto-excluded if it matches a reference path.
+
 ## CLI Contract
 
 Dry-run example:

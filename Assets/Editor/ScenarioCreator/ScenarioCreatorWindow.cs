@@ -560,7 +560,53 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             start.isPlayable = EditorGUILayout.Toggle("Playable leader", start.isPlayable);
             IReadOnlyList<string> pool = start.isPlayable ? ScenarioCardCatalog.PlayableLeaders : ScenarioCardCatalog.NonPlayableLeaders;
-            SearchableField("Leader", start.leaderName, pool, v => start.leaderName = v);
+            SearchableField("Leader", start.leaderName, pool, v =>
+            {
+                start.leaderName = v;
+                start.variantId = ""; // variants are leader-specific; reset when the leader changes
+            });
+
+            // Only playable leaders have variants; non-playable starts carry no variant restriction.
+            if (start.isPlayable && !string.IsNullOrWhiteSpace(start.leaderName))
+                DrawLeaderVariantPicker(start);
+            else
+                start.variantId = "";
+        }
+
+        // Lets the author pin a playable leader start to a single variant. The chosen variantId is
+        // stored on the leader start and later restricts the leader-selection carousel to that
+        // variant. "All variants" (empty id) keeps the pre-v2 behaviour of offering every variant.
+        private void DrawLeaderVariantPicker(ScenarioLeaderStart start)
+        {
+            IReadOnlyList<LeaderVariantConfig> variants = ScenarioCardCatalog.GetPlayableLeaderVariants(start.leaderName);
+            if (variants == null || variants.Count == 0)
+            {
+                start.variantId = "";
+                EditorGUILayout.HelpBox("This leader has no variants.", MessageType.None);
+                return;
+            }
+
+            string[] labels = new string[variants.Count + 1];
+            labels[0] = "All variants (any)";
+            int selected = 0;
+            for (int i = 0; i < variants.Count; i++)
+            {
+                LeaderVariantConfig v = variants[i];
+                string display = string.IsNullOrWhiteSpace(v.displayName) ? v.variantId : v.displayName;
+                labels[i + 1] = $"{display}  ({v.variantId})";
+                if (!string.IsNullOrEmpty(start.variantId) &&
+                    string.Equals(v.variantId, start.variantId, StringComparison.OrdinalIgnoreCase))
+                    selected = i + 1;
+            }
+
+            int chosen = EditorGUILayout.Popup("Variant", selected, labels);
+            start.variantId = chosen <= 0 ? "" : variants[chosen - 1].variantId;
+
+            EditorGUILayout.HelpBox(
+                chosen <= 0
+                    ? "All variants of this leader will be offered in the selection carousel."
+                    : $"Only the '{labels[chosen]}' variant will be offered for {start.leaderName}.",
+                MessageType.Info);
         }
 
         private void DrawPcSection(int idx, int row, int col)

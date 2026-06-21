@@ -19,7 +19,9 @@ namespace RetroLOTR.Scenarios
     [Serializable]
     public class ScenarioData
     {
-        public const int CurrentVersion = 1;
+        // v2 added ScenarioLeaderStart.variantId (playable-leader variant restriction).
+        // Older v1 scenarios deserialize with variantId == "" (no restriction), so they keep working.
+        public const int CurrentVersion = 2;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
@@ -82,6 +84,13 @@ namespace RetroLOTR.Scenarios
         public int col;
         public string leaderName;
         public bool isPlayable = true;
+
+        /// <summary>
+        /// For a playable leader, restricts the selection carousel to a single variant of that
+        /// leader (matched against <c>LeaderVariantConfig.variantId</c> in PlayableLeaderBiomes.json).
+        /// Empty = no restriction (all variants offered, the pre-v2 / non-playable behaviour).
+        /// </summary>
+        public string variantId = "";
     }
 
     [Serializable]

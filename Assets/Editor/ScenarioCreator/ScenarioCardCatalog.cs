@@ -15,6 +15,7 @@ namespace RetroLOTR.Scenarios.EditorTools
     {
         private static List<string> _playableLeaders;
         private static List<string> _nonPlayableLeaders;
+        private static Dictionary<string, List<LeaderVariantConfig>> _playableVariantsByName;
         private static List<string> _pcCards;
         private static List<string> _characterCards;
         private static List<string> _armyCards;
@@ -108,6 +109,37 @@ namespace RetroLOTR.Scenarios.EditorTools
             }
         }
 
+        /// <summary>
+        /// The variants of a playable leader (from PlayableLeaderBiomes.json), used by the
+        /// scenario creator to let an author pin a leader start to one variant. Empty when the
+        /// name is not a known playable leader or it has no variants.
+        /// </summary>
+        public static IReadOnlyList<LeaderVariantConfig> GetPlayableLeaderVariants(string leaderName)
+        {
+            if (string.IsNullOrWhiteSpace(leaderName)) return Array.Empty<LeaderVariantConfig>();
+            EnsurePlayableVariantsLoaded();
+            return _playableVariantsByName.TryGetValue(leaderName.Trim(), out List<LeaderVariantConfig> variants)
+                ? variants
+                : Array.Empty<LeaderVariantConfig>();
+        }
+
+        private static void EnsurePlayableVariantsLoaded()
+        {
+            if (_playableVariantsByName != null) return;
+            _playableVariantsByName = new Dictionary<string, List<LeaderVariantConfig>>(StringComparer.OrdinalIgnoreCase);
+
+            TextAsset asset = Resources.Load<TextAsset>("PlayableLeaderBiomes");
+            if (asset == null) return;
+            LeaderBiomeConfigCollection collection = JsonUtility.FromJson<LeaderBiomeConfigCollection>(asset.text);
+            if (collection?.biomes == null) return;
+
+            foreach (LeaderBiomeConfig biome in collection.biomes)
+            {
+                if (biome == null || string.IsNullOrWhiteSpace(biome.characterName)) continue;
+                _playableVariantsByName[biome.characterName.Trim()] = biome.variants ?? new List<LeaderVariantConfig>();
+            }
+        }
+
         /// <summary>All leader names (playable first), used for owner dropdowns.</summary>
         public static List<string> AllLeaders()
         {
@@ -120,6 +152,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         public static void Invalidate()
         {
             _playableLeaders = _nonPlayableLeaders = _pcCards = _characterCards = _armyCards = _regions = null;
+            _playableVariantsByName = null;
             _terrainSprites = null;
             _allCards = null;
             _cardsByName = null;

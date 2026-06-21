@@ -12,8 +12,10 @@ from restyle_hex import (
     DEFAULT_QUALITY,
     DEFAULT_SIZE,
     STYLE_ONLY_PROMPT,
+    STYLE_REF_PROMPT_PREFIX,
     build_prompt,
     ensure_api_key,
+    resolve_style_refs,
     restyle_one,
 )
 
@@ -37,6 +39,11 @@ def parse_args() -> argparse.Namespace:
                              "(towers, rivers, bridges, etc.)")
     parser.add_argument("--quality", default=DEFAULT_QUALITY)
     parser.add_argument("--size", default=DEFAULT_SIZE)
+    parser.add_argument("--style-ref", action="append", default=None, metavar="PATH",
+                        help="Style-reference image sent after each tile (repeatable). "
+                             "Overrides the bundled default refs.")
+    parser.add_argument("--no-style-ref", action="store_true",
+                        help="Disable the bundled default style references in style_refs/.")
     parser.add_argument("--force", action="store_true", help="Overwrite existing outputs")
     return parser.parse_args()
 
@@ -81,11 +88,15 @@ def main() -> int:
         for i, tile in enumerate(tiles, 1):
             out_path = out_dir / tile.name
             tile_prompt = build_prompt(base_prompt, tile.stem, style_only=args.style_only)
+            style_refs = resolve_style_refs(args.style_ref, use_default=not args.no_style_ref, exclude=tile)
+            if style_refs:
+                tile_prompt = STYLE_REF_PROMPT_PREFIX + tile_prompt
             code, cost = restyle_one(
                 tile, out_path,
                 prompt=tile_prompt,
                 quality=args.quality,
                 size=args.size,
+                style_refs=style_refs,
                 force=args.force,
             )
             if code == 0:

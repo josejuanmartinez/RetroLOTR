@@ -1,5 +1,5 @@
 {
-    "version": 1,
+    "version": 2,
     "scenarioName": "2950",
     "width": 65,
     "height": 70,
@@ -705,7 +705,7 @@
         5,
         5,
         6,
-        6,
+        4,
         2,
         2,
         2,
@@ -1385,7 +1385,7 @@
         3,
         3,
         3,
-        3,
+        2,
         6,
         3,
         3,
@@ -2504,7 +2504,7 @@
         0,
         0,
         0,
-        0,
+        1,
         0,
         3,
         3,
@@ -2841,7 +2841,7 @@
         1,
         0,
         3,
-        6,
+        3,
         3,
         3,
         0,
@@ -2898,69 +2898,6 @@
         3,
         3,
         3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        6,
-        3,
-        3,
-        0,
-        0,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        3,
-        3,
-        0,
-        0,
-        0,
-        1,
-        4,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        4,
-        3,
-        1,
-        0,
-        0,
-        1,
         3,
         3,
         3,
@@ -2972,45 +2909,43 @@
         3,
         6,
         3,
+        0,
+        0,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
         3,
         3,
         0,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        10,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        7,
-        3,
-        3,
         0,
         0,
-        0,
-        4,
-        4,
+        1,
         4,
         7,
         7,
@@ -3020,12 +2955,13 @@
         7,
         7,
         7,
-        7,
         4,
+        3,
         1,
         0,
         0,
         1,
+        3,
         3,
         3,
         3,
@@ -3037,6 +2973,70 @@
         3,
         6,
         3,
+        3,
+        0,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        3,
+        3,
+        0,
+        0,
+        0,
+        4,
+        4,
+        4,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        4,
+        1,
+        0,
+        0,
+        1,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        6,
         3,
         5,
         0,
@@ -3100,7 +3100,7 @@
         3,
         3,
         6,
-        3,
+        6,
         3,
         5,
         0,
@@ -3934,7 +3934,7 @@
         7,
         7,
         7,
-        6,
+        4,
         6,
         6,
         6,
@@ -3999,7 +3999,7 @@
         7,
         4,
         4,
-        2,
+        4,
         2,
         2,
         2,
@@ -10589,11 +10589,6 @@
         },
         {
             "row": 21,
-            "col": 16,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 21,
             "col": 18,
             "spriteName": "grass_17"
         },
@@ -14790,7 +14785,7 @@
         {
             "row": 38,
             "col": 30,
-            "spriteName": "mountains_2"
+            "spriteName": "hills_19"
         },
         {
             "row": 38,
@@ -16099,6 +16094,11 @@
         },
         {
             "row": 43,
+            "col": 42,
+            "spriteName": "grass_17"
+        },
+        {
+            "row": 43,
             "col": 43,
             "spriteName": "grass_17"
         },
@@ -16354,7 +16354,7 @@
         },
         {
             "row": 44,
-            "col": 43,
+            "col": 42,
             "spriteName": "grass_17"
         },
         {
@@ -16574,7 +16574,7 @@
         },
         {
             "row": 45,
-            "col": 42,
+            "col": 41,
             "spriteName": "grass_17"
         },
         {
@@ -16799,7 +16799,7 @@
         },
         {
             "row": 46,
-            "col": 42,
+            "col": 41,
             "spriteName": "grass_17"
         },
         {
@@ -17015,11 +17015,6 @@
         {
             "row": 47,
             "col": 39,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 47,
-            "col": 41,
             "spriteName": "grass_17"
         },
         {
@@ -19154,11 +19149,6 @@
         },
         {
             "row": 61,
-            "col": 30,
-            "spriteName": "plains_20"
-        },
-        {
-            "row": 61,
             "col": 31,
             "spriteName": "plains_20"
         },
@@ -20988,43 +20978,85 @@
             "row": 16,
             "col": 14,
             "leaderName": "Gandalf",
-            "isPlayable": true
+            "isPlayable": true,
+            "variantId": ""
         },
         {
             "row": 14,
             "col": 8,
             "leaderName": "Cirdan",
-            "isPlayable": false
+            "isPlayable": false,
+            "variantId": ""
         },
         {
             "row": 15,
             "col": 19,
             "leaderName": "Aragorn",
-            "isPlayable": false
+            "isPlayable": false,
+            "variantId": ""
         },
         {
             "row": 15,
             "col": 31,
             "leaderName": "Elrond",
-            "isPlayable": false
+            "isPlayable": false,
+            "variantId": ""
         },
         {
             "row": 23,
             "col": 32,
             "leaderName": "Balrog",
-            "isPlayable": false
+            "isPlayable": false,
+            "variantId": ""
         },
         {
             "row": 17,
             "col": 19,
             "leaderName": "Tom Bombadil",
-            "isPlayable": false
+            "isPlayable": false,
+            "variantId": ""
         },
         {
             "row": 33,
             "col": 28,
             "leaderName": "Saruman",
-            "isPlayable": true
+            "isPlayable": true,
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 26,
+            "col": 41,
+            "leaderName": "Khamul",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 10,
+            "col": 51,
+            "leaderName": "Bard",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 9,
+            "col": 48,
+            "leaderName": "Thranduil",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 53,
+            "col": 46,
+            "leaderName": "Ovatha",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 37,
+            "col": 45,
+            "leaderName": "Dendra Dwar",
+            "isPlayable": false,
+            "variantId": ""
         }
     ],
     "pcs": [
@@ -21635,6 +21667,166 @@
             "isIsland": false,
             "pcFeature": "",
             "fortFeature": ""
+        },
+        {
+            "row": 47,
+            "col": 39,
+            "pcName": "Pelargir",
+            "ownerLeaderName": "",
+            "citySize": 5,
+            "fortSize": 4,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 49,
+            "col": 25,
+            "pcName": "DolAmroth",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 39,
+            "col": 29,
+            "pcName": "Paths of the Dead",
+            "ownerLeaderName": "The Undead King",
+            "citySize": 3,
+            "fortSize": 3,
+            "hasPort": false,
+            "isHidden": true,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 26,
+            "col": 41,
+            "pcName": "Dol Guldur",
+            "ownerLeaderName": "Khamul",
+            "citySize": 4,
+            "fortSize": 4,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 49,
+            "col": 30,
+            "pcName": "Linhir",
+            "ownerLeaderName": "",
+            "citySize": 3,
+            "fortSize": 3,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 60,
+            "col": 30,
+            "pcName": "Kas Shadoul",
+            "ownerLeaderName": "Haruth Rammam",
+            "citySize": 4,
+            "fortSize": 4,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 68,
+            "col": 25,
+            "pcName": "Havens of Umbar",
+            "ownerLeaderName": "Sangarunya",
+            "citySize": 5,
+            "fortSize": 4,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 10,
+            "col": 51,
+            "pcName": "Esgaroth",
+            "ownerLeaderName": "Bard",
+            "citySize": 3,
+            "fortSize": 2,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 9,
+            "col": 48,
+            "pcName": "Thanduil's Halls",
+            "ownerLeaderName": "Thranduil",
+            "citySize": 4,
+            "fortSize": 3,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 37,
+            "col": 45,
+            "pcName": "Morannon",
+            "ownerLeaderName": "Dendra Dwar",
+            "citySize": 4,
+            "fortSize": 4,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
         }
     ],
     "characters": [
@@ -21712,7 +21904,11 @@
                 "stacks": [
                     {
                         "armyCardName": "Goblins Of Moria",
-                        "amount": 2
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Goblins Of Moria",
+                        "amount": 1
                     }
                 ]
             }
@@ -21755,7 +21951,7 @@
         {
             "row": 33,
             "col": 28,
-            "characterName": "Saruman Multicoloured",
+            "characterName": "The White Hand",
             "ownerLeaderName": "",
             "army": {
                 "xp": 25,
@@ -21782,6 +21978,10 @@
                 "stacks": [
                     {
                         "armyCardName": "Dunlending Warriors",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Uruk Hai",
                         "amount": 1
                     }
                 ]
@@ -21879,7 +22079,12 @@
             "ownerLeaderName": "Galadriel",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "The Golden Host",
+                        "amount": 100
+                    }
+                ]
             }
         },
         {
@@ -21927,6 +22132,185 @@
                 "stacks": [
                     {
                         "armyCardName": "Orcs",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Olog Hai",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 39,
+            "col": 29,
+            "characterName": "The Undead King",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Undead",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 26,
+            "col": 41,
+            "characterName": "Khamul",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Forest Orcs",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Forest Spiders",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 68,
+            "col": 25,
+            "characterName": "Sangarunya",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Corsairs Of Umbar",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 60,
+            "col": 30,
+            "characterName": "Haruth Rammam",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Mumakils",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 9,
+            "col": 48,
+            "characterName": "Thranduil",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Elvenking Guards",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 9,
+            "col": 48,
+            "characterName": "Legolas",
+            "ownerLeaderName": "Thranduil",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 53,
+            "col": 46,
+            "characterName": "Ovatha",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 21,
+            "col": 61,
+            "characterName": "Din Ohtar",
+            "ownerLeaderName": "Ovatha",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Rhun Corsairs",
+                        "amount": 100
+                    },
+                    {
+                        "armyCardName": "Rhun Easterlings",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 37,
+            "col": 45,
+            "characterName": "Dendra Dwar",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Warg Riders",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Morannon Garrison",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 43,
+            "col": 43,
+            "characterName": "Boromir",
+            "ownerLeaderName": "Denethor",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Archers",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Swordmen",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 43,
+            "col": 41,
+            "characterName": "Denethor",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "White Tower Wardens",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Trebuchets",
                         "amount": 1
                     }
                 ]
