@@ -110,7 +110,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             GUILayout.FlexibleSpace();
             GUILayout.Label($"{width} x {height}", EditorStyles.toolbarButton);
             GUILayout.Label("Zoom", GUILayout.Width(34));
-            zoom = GUILayout.HorizontalSlider(zoom, 0.4f, 2.5f, GUILayout.Width(90));
+            zoom = GUILayout.HorizontalSlider(zoom, 0.4f, 5f, GUILayout.Width(90));
             GUILayout.Label("Cell W", GUILayout.Width(40));
             cellW = GUILayout.HorizontalSlider(cellW, 8f, 48f, GUILayout.Width(80));
             GUILayout.Label("Cell H", GUILayout.Width(40));
