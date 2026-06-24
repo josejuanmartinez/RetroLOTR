@@ -520,6 +520,27 @@
                        "nationInitials":  "RI"
                    },
                    {
+                       "characterName":  "Imrahil",
+                       "banner":  "banner_swans",
+                       "artifacts":  [
+
+                                     ],
+                       "terrain":  4,
+                       "startingArmySize":  1,
+                       "startingArmyCard":  "Knights Of Dol Amroth",
+                       "preferedTroopType":  5,
+                       "startingCityIsHidden":  false,
+                       "startsWithPort":  true,
+                       "startingWarships":  1,
+                       "sex":  0,
+                       "startingCityName":  "Dol Amroth",
+                       "startingCitySize":  4,
+                       "startingCityRegion":  "SouthernGondor",
+                       "nationName":  "Dol Amroth",
+                       "characterSprite":  "dunedain",
+                       "nationInitials":  "SG"
+                   },
+                   {
                        "characterName":  "Theoden",
                        "banner":  "banner_green_horse",
                        "artifacts":  [

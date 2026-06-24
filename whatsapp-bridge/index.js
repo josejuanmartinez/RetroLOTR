@@ -74,6 +74,14 @@ client.on('authenticated', () => {
   console.log('WhatsApp authenticated successfully.');
 });
 
+client.on('loading_screen', (percent, message) => {
+  console.log(`Loading: ${percent}% - ${message}`);
+});
+
+client.on('change_state', (state) => {
+  console.log('Connection state changed:', state);
+});
+
 client.on('auth_failure', (msg) => {
   console.error('WhatsApp authentication failure:', msg);
 });

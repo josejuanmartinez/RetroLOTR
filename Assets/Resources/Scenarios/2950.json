@@ -829,8 +829,8 @@
         5,
         5,
         5,
-        5,
-        5,
+        0,
+        0,
         5,
         5,
         2,
@@ -893,9 +893,9 @@
         5,
         5,
         5,
+        0,
         5,
-        5,
-        5,
+        0,
         5,
         5,
         3,
@@ -1044,7 +1044,7 @@
         5,
         5,
         5,
-        7,
+        2,
         6,
         4,
         6,
@@ -1144,9 +1144,9 @@
         0,
         0,
         1,
-        3,
-        3,
-        3,
+        8,
+        8,
+        8,
         3,
         6,
         3,
@@ -1209,10 +1209,10 @@
         0,
         0,
         0,
-        1,
-        3,
-        3,
-        3,
+        6,
+        6,
+        6,
+        8,
         6,
         3,
         5,
@@ -1274,9 +1274,9 @@
         0,
         0,
         1,
-        3,
-        3,
-        3,
+        8,
+        8,
+        6,
         6,
         3,
         3,
@@ -2113,7 +2113,7 @@
         1,
         0,
         0,
-        3,
+        2,
         5,
         5,
         5,
@@ -3475,9 +3475,9 @@
         7,
         7,
         7,
-        7,
-        7,
-        7,
+        6,
+        4,
+        6,
         6,
         4,
         2,
@@ -3541,8 +3541,8 @@
         7,
         7,
         7,
-        7,
-        7,
+        6,
+        6,
         6,
         4,
         4,
@@ -8245,12 +8245,12 @@
         {
             "row": 12,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "mountains_1"
         },
         {
             "row": 12,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "mountains_1"
         },
         {
             "row": 12,
@@ -8510,7 +8510,7 @@
         {
             "row": 13,
             "col": 44,
-            "spriteName": "forest_30"
+            "spriteName": "mountains_1"
         },
         {
             "row": 13,
@@ -8520,7 +8520,7 @@
         {
             "row": 13,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "mountains_1"
         },
         {
             "row": 13,
@@ -9555,17 +9555,17 @@
         {
             "row": 17,
             "col": 35,
-            "spriteName": "grass_17"
+            "spriteName": "swamp_09"
         },
         {
             "row": 17,
             "col": 36,
-            "spriteName": "grass_17"
+            "spriteName": "swamp_09"
         },
         {
             "row": 17,
             "col": 37,
-            "spriteName": "grass_17"
+            "spriteName": "swamp_09"
         },
         {
             "row": 17,
@@ -9844,23 +9844,8 @@
         },
         {
             "row": 18,
-            "col": 35,
-            "spriteName": "hills_19"
-        },
-        {
-            "row": 18,
-            "col": 36,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 18,
-            "col": 37,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 18,
             "col": 38,
-            "spriteName": "grass_17"
+            "spriteName": "swamp_09"
         },
         {
             "row": 18,
@@ -10125,17 +10110,12 @@
         {
             "row": 19,
             "col": 35,
-            "spriteName": "grass_17"
+            "spriteName": "swamp_09"
         },
         {
             "row": 19,
             "col": 36,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 19,
-            "col": 37,
-            "spriteName": "grass_17"
+            "spriteName": "swamp_09"
         },
         {
             "row": 19,
@@ -13356,11 +13336,6 @@
             "row": 32,
             "col": 28,
             "spriteName": "mountains_2"
-        },
-        {
-            "row": 32,
-            "col": 29,
-            "spriteName": "grass_18"
         },
         {
             "row": 32,
@@ -21110,6 +21085,34 @@
             "leaderName": "Adunaphel",
             "isPlayable": false,
             "variantId": ""
+        },
+        {
+            "row": 28,
+            "col": 24,
+            "leaderName": "Waulfa",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 14,
+            "col": 35,
+            "leaderName": "Gwaihir",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 16,
+            "col": 42,
+            "leaderName": "Radagast",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 30,
+            "col": 33,
+            "leaderName": "Treebeard",
+            "isPlayable": false,
+            "variantId": ""
         }
     ],
     "pcs": [
@@ -21146,13 +21149,13 @@
             "fortFeature": ""
         },
         {
-            "row": 16,
-            "col": 5,
-            "pcName": "Harlond",
-            "ownerLeaderName": "Cirdan",
+            "row": 66,
+            "col": 20,
+            "pcName": "",
+            "ownerLeaderName": "",
             "citySize": 2,
             "fortSize": 0,
-            "hasPort": true,
+            "hasPort": false,
             "isHidden": false,
             "isCapital": false,
             "loyalty": 100,
@@ -21594,32 +21597,32 @@
             "fortFeature": ""
         },
         {
-            "row": 37,
-            "col": 25,
-            "pcName": "WestFold",
-            "ownerLeaderName": "Theoden",
+            "row": 52,
+            "col": 31,
+            "pcName": "Methir",
+            "ownerLeaderName": "Haruth Rammam",
             "citySize": 2,
-            "fortSize": 0,
-            "hasPort": false,
+            "fortSize": 2,
+            "hasPort": true,
             "isHidden": false,
             "isCapital": false,
-            "loyalty": 50,
+            "loyalty": 75,
             "region": "",
             "isIsland": false,
             "pcFeature": "",
             "fortFeature": ""
         },
         {
-            "row": 33,
-            "col": 20,
-            "pcName": "Enedhir",
-            "ownerLeaderName": "Waulfa",
-            "citySize": 2,
+            "row": 14,
+            "col": 35,
+            "pcName": "Eagle's Eyrie",
+            "ownerLeaderName": "Gwaihir",
+            "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
-            "isHidden": false,
-            "isCapital": false,
-            "loyalty": 50,
+            "isHidden": true,
+            "isCapital": true,
+            "loyalty": 100,
             "region": "",
             "isIsland": false,
             "pcFeature": "",
@@ -22042,16 +22045,16 @@
             "fortFeature": ""
         },
         {
-            "row": 26,
-            "col": 46,
-            "pcName": "CeberFanuin",
-            "ownerLeaderName": "Thranduil",
-            "citySize": 2,
-            "fortSize": 0,
-            "hasPort": false,
+            "row": 69,
+            "col": 18,
+            "pcName": "Pellardur",
+            "ownerLeaderName": "Sangarunya",
+            "citySize": 3,
+            "fortSize": 3,
+            "hasPort": true,
             "isHidden": false,
             "isCapital": false,
-            "loyalty": 75,
+            "loyalty": 50,
             "region": "",
             "isIsland": false,
             "pcFeature": "",
@@ -22132,6 +22135,198 @@
             "isHidden": false,
             "isCapital": true,
             "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 28,
+            "col": 24,
+            "pcName": "Larach Duhnnan",
+            "ownerLeaderName": "Waulfa",
+            "citySize": 3,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 19,
+            "col": 41,
+            "pcName": "Woodmen town",
+            "ownerLeaderName": "Beoraborn",
+            "citySize": 3,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 16,
+            "col": 42,
+            "pcName": "Rhosgobel",
+            "ownerLeaderName": "Radagast",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": true,
+            "isCapital": true,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 13,
+            "col": 40,
+            "pcName": "BeornHouse",
+            "ownerLeaderName": "Beoraborn",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 5,
+            "col": 34,
+            "pcName": "Framsburg",
+            "ownerLeaderName": "Beoraborn",
+            "citySize": 2,
+            "fortSize": 3,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 22,
+            "col": 40,
+            "pcName": "Sarn Lothduin",
+            "ownerLeaderName": "Celdacil",
+            "citySize": 2,
+            "fortSize": 2,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 13,
+            "col": 45,
+            "pcName": "SarnGoriwing",
+            "ownerLeaderName": "Khamul",
+            "citySize": 2,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 8,
+            "col": 40,
+            "pcName": "CarasAmarth",
+            "ownerLeaderName": "Thranduil",
+            "citySize": 3,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 53,
+            "col": 27,
+            "pcName": "CarasTolfalas",
+            "ownerLeaderName": "Sangarunya",
+            "citySize": 2,
+            "fortSize": 1,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 50,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 33,
+            "col": 46,
+            "pcName": "LarHuz",
+            "ownerLeaderName": "Huz",
+            "citySize": 2,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 54,
+            "col": 63,
+            "pcName": "Ovatharac",
+            "ownerLeaderName": "Uvatha",
+            "citySize": 2,
+            "fortSize": 1,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 75,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 61,
+            "col": 53,
+            "pcName": "KhandAmu",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "loyalty": 100,
             "region": "",
             "isIsland": false,
             "pcFeature": "",
@@ -22313,12 +22508,17 @@
         },
         {
             "row": 28,
-            "col": 28,
-            "characterName": "",
+            "col": 24,
+            "characterName": "Waulfa",
             "ownerLeaderName": "",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "Dunlending Warriors",
+                        "amount": 1
+                    }
+                ]
             }
         },
         {
@@ -22373,7 +22573,12 @@
             "ownerLeaderName": "",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "Ents",
+                        "amount": 1
+                    }
+                ]
             }
         },
         {
@@ -22383,7 +22588,12 @@
             "ownerLeaderName": "",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "The Golden Host",
+                        "amount": 1
+                    }
+                ]
             }
         },
         {
@@ -22395,8 +22605,8 @@
                 "xp": 25,
                 "stacks": [
                     {
-                        "armyCardName": "The Golden Host",
-                        "amount": 100
+                        "armyCardName": "Elven Archers",
+                        "amount": 1
                     }
                 ]
             }
@@ -22445,7 +22655,7 @@
                 "xp": 25,
                 "stacks": [
                     {
-                        "armyCardName": "Orcs",
+                        "armyCardName": "Morgul Orcs",
                         "amount": 1
                     },
                     {
@@ -22795,8 +23005,8 @@
         {
             "row": 20,
             "col": 58,
-            "characterName": "Huz",
-            "ownerLeaderName": "",
+            "characterName": "Tros Hesnef",
+            "ownerLeaderName": "Huz",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -22852,6 +23062,126 @@
                     {
                         "armyCardName": "Khand Easterlings",
                         "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 14,
+            "col": 35,
+            "characterName": "Gwaihir",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 13,
+            "col": 40,
+            "characterName": "Beorn",
+            "ownerLeaderName": "Beoraborn",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 19,
+            "col": 41,
+            "characterName": "Beoraborn",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Woodmen",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 16,
+            "col": 42,
+            "characterName": "Radagast",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Beast Of The Woods",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 22,
+            "col": 40,
+            "characterName": "Celdacil",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Rivermen",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 52,
+            "col": 31,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 33,
+            "col": 46,
+            "characterName": "Huz",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Rhun Easterlings",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 54,
+            "col": 63,
+            "characterName": "Kav Makow",
+            "ownerLeaderName": "Uvatha",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Khand Easterlings",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 64,
+            "col": 62,
+            "characterName": "Uvatha",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Camel Riders",
+                        "amount": 1
                     }
                 ]
             }

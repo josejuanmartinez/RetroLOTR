@@ -86,6 +86,88 @@
                       "situation":  ""
                   },
                   {
+                      "cardId":  9105,
+                      "name":  "Ents",
+                      "quote":  "The shepherds of the forest are roused to wrath.",
+                      "actionEffect":  "",
+                      "type":  "Army",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "gandalf_the_white",
+                      "actionClassName":  "",
+                      "action":  "",
+                      "spriteName":  "Ents",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  40,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "",
+                      "referenceCardId":  0,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  3,
+                      "specialAbilities":  [
+                                               10
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  4,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  0,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
                       "cardId":  615,
                       "name":  "Gondorian Infantry",
                       "quote":  "Steadfast and true, they stand like stone against the tide.",

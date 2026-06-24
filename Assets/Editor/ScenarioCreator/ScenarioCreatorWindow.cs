@@ -86,6 +86,11 @@ namespace RetroLOTR.Scenarios.EditorTools
             selectedIndex = -1;
         }
 
+        // Card data is cached statically in ScenarioCardCatalog and never auto-refreshes within a
+        // Unity session. Invalidate on focus so edits to deck JSON (new PCs, characters, etc.)
+        // show up when the author tabs back into the window, not only after a script recompile.
+        private void OnFocus() => ScenarioCardCatalog.Invalidate();
+
         // -------------------------------------------------------------------------------------
         // GUI
         // -------------------------------------------------------------------------------------
@@ -107,6 +112,11 @@ namespace RetroLOTR.Scenarios.EditorTools
             scenarioName = EditorGUILayout.TextField(scenarioName, EditorStyles.toolbarTextField, GUILayout.Width(220));
             if (GUILayout.Button("Save", EditorStyles.toolbarButton, GUILayout.Width(60))) Save();
             if (GUILayout.Button("Load", EditorStyles.toolbarButton, GUILayout.Width(60))) Load();
+            if (GUILayout.Button("Refresh Cards", EditorStyles.toolbarButton, GUILayout.Width(90)))
+            {
+                AssetDatabase.Refresh();
+                ScenarioCardCatalog.Invalidate();
+            }
             GUILayout.FlexibleSpace();
             GUILayout.Label($"{width} x {height}", EditorStyles.toolbarButton);
             GUILayout.Label("Zoom", GUILayout.Width(34));
