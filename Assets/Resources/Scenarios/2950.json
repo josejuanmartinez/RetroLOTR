@@ -459,7 +459,7 @@
         2,
         2,
         0,
-        7,
+        2,
         6,
         2,
         5,
@@ -2779,8 +2779,8 @@
         3,
         6,
         3,
-        1,
         0,
+        1,
         0,
         10,
         10,
@@ -2889,9 +2889,9 @@
         4,
         4,
         4,
+        5,
         4,
-        4,
-        3,
+        5,
         3,
         3,
         3,
@@ -15580,7 +15580,7 @@
         {
             "row": 41,
             "col": 48,
-            "spriteName": "wastelands_03"
+            "spriteName": "wastelands_04"
         },
         {
             "row": 41,
@@ -15815,12 +15815,12 @@
         {
             "row": 42,
             "col": 45,
-            "spriteName": "hills_04"
+            "spriteName": "mountains_5"
         },
         {
             "row": 42,
             "col": 46,
-            "spriteName": "mountains_5"
+            "spriteName": "hills_19"
         },
         {
             "row": 42,
@@ -16080,7 +16080,7 @@
         {
             "row": 43,
             "col": 46,
-            "spriteName": "hills_09"
+            "spriteName": "hills_19"
         },
         {
             "row": 43,
@@ -16235,7 +16235,7 @@
         {
             "row": 44,
             "col": 25,
-            "spriteName": "shore_01"
+            "spriteName": "forest_02"
         },
         {
             "row": 44,
@@ -16245,7 +16245,7 @@
         {
             "row": 44,
             "col": 27,
-            "spriteName": "grass_17"
+            "spriteName": "forest_02"
         },
         {
             "row": 44,
@@ -21113,6 +21113,27 @@
             "leaderName": "Treebeard",
             "isPlayable": false,
             "variantId": ""
+        },
+        {
+            "row": 16,
+            "col": 64,
+            "leaderName": "",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 7,
+            "col": 60,
+            "leaderName": "Dain",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 11,
+            "col": 29,
+            "leaderName": "",
+            "isPlayable": false,
+            "variantId": ""
         }
     ],
     "pcs": [
@@ -22016,7 +22037,7 @@
             "row": 16,
             "col": 58,
             "pcName": "Shrel-Kain",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Annatorion",
             "citySize": 4,
             "fortSize": 2,
             "hasPort": true,
@@ -22326,6 +22347,54 @@
             "hasPort": false,
             "isHidden": false,
             "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 44,
+            "col": 26,
+            "pcName": "Edhellond",
+            "ownerLeaderName": "Galadriel",
+            "citySize": 3,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": true,
+            "isCapital": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 7,
+            "col": 60,
+            "pcName": "Azanulimbar-Dum",
+            "ownerLeaderName": "Dain",
+            "citySize": 4,
+            "fortSize": 4,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 11,
+            "col": 29,
+            "pcName": "FennasDrunin",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
             "loyalty": 100,
             "region": "",
             "isIsland": false,
@@ -23181,6 +23250,21 @@
                 "stacks": [
                     {
                         "armyCardName": "Camel Riders",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 11,
+            "col": 29,
+            "characterName": "Arfanhil",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Hillmen",
                         "amount": 1
                     }
                 ]

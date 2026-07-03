@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class PCAction : MaterialRetrieval
 {
+    protected override bool GrantsResourcesImmediately => false;
+
     public override void Initialize(Character c, CardData card = null, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -43,24 +45,40 @@ public class PCAction : MaterialRetrieval
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (character == null) return true;
 
+            Leader actingOwner = character.GetOwner();
             PC existingPc = FindAssociatedPcInGame();
             if (existingPc != null)
             {
-                if (existingPc.hex != null)
+                if (existingPc.hex != null && actingOwner != null)
                 {
-                    Leader owner = character.GetOwner();
-                    if (owner != null)
-                    {
-                        existingPc.hex.Reveal(owner);
-                    }
+                    existingPc.hex.Reveal(actingOwner);
                 }
-                ShowCaravanNotification(character, existingPc);
+
+                bool heldByEnemy = existingPc.owner != null && actingOwner != null
+                    && existingPc.owner != actingOwner
+                    && existingPc.owner.GetAlignment() != actingOwner.GetAlignment();
+
+                if (heldByEnemy)
+                {
+                    ShowResourcesBlockedByEnemyNotification(character, existingPc);
+
+                    int loyaltyLoss = UnityEngine.Random.Range(5, 11);
+                    existingPc.loyalty = Mathf.Max(0, existingPc.loyalty - loyaltyLoss);
+                    existingPc.hex.RedrawPC();
+                    ShowLoyaltyReducedNotification(character, existingPc, loyaltyLoss);
+                }
+                else
+                {
+                    ApplyResources(character);
+                    ShowCaravanNotification(character, existingPc);
+                }
             }
             else
             {
                 bool founded = TryFoundAssociatedPc(character);
                 if (founded)
                 {
+                    ApplyResources(character);
                     ShowCaravanNotification(character, null);
                 }
                 else
@@ -100,6 +118,7 @@ public class PCAction : MaterialRetrieval
         if (character == null || card == null) return false;
         Leader owner = character.GetOwner();
         if (owner == null) return false;
+        owner.RecordPlayedLandThisTurn();
         if (card.leatherGranted > 0) owner.AddLeather(card.leatherGranted, false);
         if (card.mountsGranted > 0) owner.AddMounts(card.mountsGranted, false);
         if (card.timberGranted > 0) owner.AddTimber(card.timberGranted, false);
@@ -107,8 +126,6 @@ public class PCAction : MaterialRetrieval
         if (card.steelGranted > 0) owner.AddSteel(card.steelGranted, false);
         if (card.mithrilGranted > 0) owner.AddMithril(card.mithrilGranted, false);
         if (card.goldGranted > 0) owner.AddGold(card.goldGranted, false);
-
-        MessageDisplayNoUI.ShowMessage(character.hex, character, $"{ResolveAssociatedPcName()}: {GetResourceSummary()}", Color.yellow);
         return true;
     }
 
@@ -225,26 +242,21 @@ public class PCAction : MaterialRetrieval
     {
         string pcName = ResolveAssociatedPcName();
         string message = $"A caravan from {pcName} arrives with {GetResourceSummary()}";
-        Hex pcHex = existingPc?.hex;
-        bool isRevealed = pcHex != null && pcHex.IsHexRevealed();
+        EventIconsManager.ShowHexAnchoredMessage(EventIconType.CaravanArrival, existingPc?.hex, character?.hex, message, Color.yellow);
+    }
 
-        EventIconsManager iconsManager = EventIconsManager.FindManager();
-        if (iconsManager == null) return;
+    private void ShowResourcesBlockedByEnemyNotification(Character character, PC existingPc)
+    {
+        string pcName = ResolveAssociatedPcName();
+        string message = $"Resources from {pcName} not available as it's controlled by the enemy";
+        EventIconsManager.ShowHexAnchoredMessage(EventIconType.HexMessage, existingPc?.hex, character?.hex, message, Color.red);
+    }
 
-        EventIcon icon = null;
-        icon = iconsManager.AddEventIcon(EventIconType.CaravanArrival, true, () =>
-        {
-            if (isRevealed && BoardNavigator.Instance != null)
-            {
-                BoardNavigator.Instance.EnqueueMessageFocus(pcHex, () =>
-                    MessageDisplayNoUI.ShowAnchoredMessage(pcHex, message, Color.yellow, true));
-            }
-            else
-            {
-                MessageDisplayNoUI.ShowAnchoredMessage(character.hex, message, Color.yellow, true);
-            }
-            icon?.ConsumeAndDestroy();
-        });
+    private void ShowLoyaltyReducedNotification(Character character, PC existingPc, int amount)
+    {
+        string pcName = ResolveAssociatedPcName();
+        string message = $"Loyalty is reduced at {pcName} by {amount}";
+        EventIconsManager.ShowHexAnchoredMessage(EventIconType.HexMessage, existingPc?.hex, character?.hex, message, Color.red);
     }
 
     private string ResolveAssociatedPcName()

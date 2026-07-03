@@ -24,6 +24,29 @@ public class EventIconsManager : MonoBehaviour
         return FindFirstObjectByType<EventIconsManager>();
     }
 
+    public static void ShowHexAnchoredMessage(EventIconType type, Hex targetHex, Hex fallbackHex, string message, Color color)
+    {
+        EventIconsManager iconsManager = FindManager();
+        if (iconsManager == null) return;
+
+        bool isRevealed = targetHex != null && targetHex.IsHexRevealed();
+
+        EventIcon icon = null;
+        icon = iconsManager.AddEventIcon(type, true, () =>
+        {
+            if (isRevealed && BoardNavigator.Instance != null)
+            {
+                BoardNavigator.Instance.EnqueueMessageFocus(targetHex, () =>
+                    MessageDisplayNoUI.ShowAnchoredMessage(targetHex, message, color, true));
+            }
+            else if (fallbackHex != null)
+            {
+                MessageDisplayNoUI.ShowAnchoredMessage(fallbackHex, message, color, true);
+            }
+            icon?.ConsumeAndDestroy();
+        });
+    }
+
     public EventIcon AddEventIcon(EventIconType type, bool discardable, Action onOpen)
         => AddEventIcon(type, discardable, onOpen, null, null);
 

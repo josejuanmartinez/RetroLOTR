@@ -989,6 +989,27 @@
                        "characterSprite":  "common",
                        "nationInitials":  "TS",
                        "tutorialDummy":  true
+                   },
+                   {
+                       "characterName":  "Arfanhil",
+                       "banner":  "banner_broken_star_tower",
+                       "artifacts":  [
+
+                                     ],
+                       "terrain":  1,
+                       "startingArmySize":  1,
+                       "startingArmyCard":  "Hillmen",
+                       "preferedTroopType":  2,
+                       "startingCityIsHidden":  false,
+                       "startsWithPort":  false,
+                       "startingWarships":  0,
+                       "sex":  0,
+                       "startingCityName":  "FennasDrunin",
+                       "startingCitySize":  3,
+                       "startingCityRegion":  "Rhudaur",
+                       "nationName":  "Rhudaur",
+                       "characterSprite":  "common",
+                       "nationInitials":  "RH"
                    }
                ]
 }

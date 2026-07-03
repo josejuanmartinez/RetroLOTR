@@ -1,4 +1,4 @@
-{
+﻿{
     "deckId": "saruman_base",
     "nation": "Saruman",
     "alignment": 2,
@@ -10,14 +10,14 @@
             "actionEffect": "",
             "type": "PC",
             "tags": [
-                "SouthernGondor"
+                "TheWhiteMountains"
             ],
             "deckId": "saruman_base",
             "alignment": 0,
             "actionClassName": "",
             "action": "PCAction",
             "spriteName": "PathsOfTheDead",
-            "region": "SouthernGondor",
+            "region": "TheWhiteMountains",
             "description": "",
             "requirementsText": "",
             "historyText": "",

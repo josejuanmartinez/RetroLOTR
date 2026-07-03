@@ -1448,6 +1448,24 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
         else
         {
+            Leader existingOwner = existing.GetOwner();
+            bool heldByEnemy = existingOwner != null && existingOwner != playerLeader
+                && existingOwner.GetAlignment() != playerLeader.GetAlignment();
+
+            if (heldByEnemy)
+            {
+                string blockedMessage = $"Inspiration from {characterName} not available: they serve the enemy";
+                EventIconsManager.ShowHexAnchoredMessage(EventIconType.HexMessage, existing.hex, hex, blockedMessage, Color.red);
+
+                int doubleAgentTurns = UnityEngine.Random.value < 0.5f ? 1 : 3;
+                existing.BecomeDoubleAgent(playerLeader, doubleAgentTurns);
+
+                string doubledMessage = $"{characterName} is doubled for {doubleAgentTurns} turns";
+                EventIconsManager.ShowHexAnchoredMessage(EventIconType.HexMessage, existing.hex, hex, doubledMessage, Color.yellow);
+
+                return Task.FromResult(true);
+            }
+
             InspireEffect effect = InspireEffectFactory.CreateFromCardData(cardData);
             if (effect != null)
             {

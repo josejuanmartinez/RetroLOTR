@@ -30,7 +30,23 @@
       "PowerShell(python -c \"import PIL; print\\(PIL.__version__\\)\")",
       "PowerShell(python C:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\lotr_drawing.py)",
       "PowerShell(python -c \"import numpy; print\\(numpy.__version__\\)\")",
-      "PowerShell(python C:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\lotr_painting.py)"
+      "PowerShell(python C:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\lotr_painting.py)",
+      "Bash(chafa *)",
+      "PowerShell(Get-Command *)",
+      "PowerShell(scoop install *)",
+      "PowerShell(chafa *)",
+      "PowerShell(claude *)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(python --version; python -c \"import PIL; print\\('PIL', PIL.__version__\\)\")",
+      "PowerShell(python .agents/skills/show-images-inline/scripts/show_images_grid.py \"Assets/Art/Cards/Lands/Lithlad.png\" \"Assets/Art/Cards/Actions/Events/BarrowLilies.png\" --cols 2 --cell 600)",
+      "PowerShell(python \"$env:TEMP\\\\emoji_image.py\" \"Assets\\\\Art\\\\Cards\\\\Actions\\\\Events\\\\BarrowLilies.png\" 26)",
+      "PowerShell(python \"$env:TEMP\\\\emoji_image.py\" \"Assets\\\\Art\\\\Cards\\\\Actions\\\\Events\\\\BarrowLilies.png\" 30)",
+      "PowerShell(\\(Get-Command code -ErrorAction SilentlyContinue\\).Source)",
+      "PowerShell(code *)",
+      "PowerShell(python .agents/skills/show-images-inline/scripts/show_images_grid.py \"Assets/Art/Cards/Lands/Lithlad.png\" \"Assets/Art/Cards/Actions/Events/BarrowLilies.png\" \"Assets/Art/Cards/Lands/TheWhiteMountains.png\" \"Assets/Art/Cards/Actions/Events/ShadeOfTheBarrowKing.png\" --cols 4 --cell 480)",
+      "PowerShell(python .agents/skills/show-images-inline/scripts/show_images_grid.py \"Assets/Art/Hexes/PCs/Hobbiton.png\" \"Assets/Art/Cards/PC/Hobbiton.jpg\" \"Assets/Art/Hexes/Tiles/Unused/original/Hobbiton.png\" \"Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/Hobbiton.png\" --cols 2 --cell 600)",
+      "PowerShell(python .agents/skills/provide-feedback-over-image-options/scripts/annotate_image.py \"Assets/Art/Cards/PC/Hobbiton.jpg\" --editor python --timeout 15; \"exit=$LASTEXITCODE\")",
+      "PowerShell(python .agents/skills/provide-feedback-over-image-options/scripts/annotate_image.py \"Assets/Art/Cards/PC/Hobbiton.jpg\")"
     ]
   }
 }

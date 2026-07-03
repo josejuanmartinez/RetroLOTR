@@ -1070,6 +1070,170 @@
                       "situation":  ""
                   },
                   {
+                      "cardId":  9221,
+                      "name":  "Fanuilond",
+                      "quote":  "The bells of Fanuilond ring for the tide as faithfully as for the King.",
+                      "actionEffect":  "",
+                      "type":  "PC",
+                      "tags":  [
+                                   "SouthernGondor"
+                               ],
+                      "deckId":  "gandalf_the_white",
+                      "actionClassName":  "",
+                      "action":  "PCAction",
+                      "spriteName":  "Fanuilond",
+                      "region":  "SouthernGondor",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "",
+                      "referenceCardId":  0,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  6,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  1,
+                      "mountsGranted":  0,
+                      "timberGranted":  1,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  1,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  1,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
+                      "cardId":  9223,
+                      "name":  "Rendul",
+                      "quote":  "Rendul's shepherds watch the long grass-hills of Anfalas, where news of the wide world arrives a season late.",
+                      "actionEffect":  "",
+                      "type":  "PC",
+                      "tags":  [
+                                   "Anfalas"
+                               ],
+                      "deckId":  "gandalf_the_white",
+                      "actionClassName":  "",
+                      "action":  "PCAction",
+                      "spriteName":  "Rendul",
+                      "region":  "Anfalas",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "stormcrow",
+                      "referenceCardId":  9222,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  6,
+                      "specialAbilities":  [
+                                               0
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  2,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  1,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  1,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
                       "cardId":  29,
                       "name":  "Henneth Annun",
                       "quote":  "Henneth Annun hides the stream in shadow, as though the land itself guarded the hidden door.",
@@ -1568,13 +1732,13 @@
                       "actionEffect":  "",
                       "type":  "PC",
                       "tags":  [
-                                   "SouthernGondor"
+                                   "TheWhiteMountains"
                                ],
                       "deckId":  "gandalf_the_white",
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "Erech",
-                      "region":  "SouthernGondor",
+                      "region":  "TheWhiteMountains",
                       "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
@@ -4989,13 +5153,13 @@
                       "actionEffect":  "",
                       "type":  "PC",
                       "tags":  [
-                                   "SouthernGondor"
+                                   "TheWhiteMountains"
                                ],
                       "deckId":  "gandalf_the_white",
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "PathsOfTheDead",
-                      "region":  "SouthernGondor",
+                      "region":  "TheWhiteMountains",
                       "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
@@ -6540,6 +6704,88 @@
                                                 "nearest":  true
                                             },
                       "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
+                      "cardId":  9111,
+                      "name":  "TheWhiteMountains",
+                      "quote":  "White and sheer beyond count, the wall of Ered Nimrais watches Rohan and Gondor alike, its beacons waiting for a call to war.",
+                      "actionEffect":  "",
+                      "type":  "Land",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "gandalf_the_white",
+                      "actionClassName":  "",
+                      "action":  "MaterialRetrieval",
+                      "spriteName":  "",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "of_many_colours",
+                      "referenceCardId":  9109,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  2,
+                      "steelGranted":  1,
+                      "mithrilGranted":  0,
+                      "goldGranted":  2,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
                       "deckSpriteName":  "",
                       "situation":  ""
                   }

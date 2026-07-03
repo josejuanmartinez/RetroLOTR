@@ -65,6 +65,10 @@ public class Character : MonoBehaviour
     public Character kidnappedBy;
     public Leader kidnappedOriginalOwner;
 
+    [Header("Double Agent")]
+    public Leader doubleAgentOriginalOwner;
+    public int doubleAgentTurnsRemaining;
+
     [Header("Artifacts")]
     public List<Artifact> artifacts = new();
 
@@ -483,6 +487,7 @@ public class Character : MonoBehaviour
         Leader player = game != null ? game.player : null;
 
         ProcessKidnappedCharacters();
+        ProcessDoubleAgent();
         if (killed) return;
 
         statusMovementBonusThisTurn = 0;
@@ -1058,6 +1063,55 @@ public class Character : MonoBehaviour
             MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} escaped captivity!", Color.yellow);
         }
 
+        RefreshSelectedCharacterIconIfSelected();
+        RefreshActionsIfSelected();
+    }
+
+    public void BecomeDoubleAgent(Leader newOwner, int turns)
+    {
+        if (newOwner == null || turns <= 0 || killed) return;
+        Leader currentOwner = GetOwner();
+        if (currentOwner == null || currentOwner == newOwner) return;
+
+        if (doubleAgentOriginalOwner == null)
+        {
+            doubleAgentOriginalOwner = currentOwner;
+        }
+
+        currentOwner.controlledCharacters.Remove(this);
+        owner = newOwner;
+        if (!newOwner.controlledCharacters.Contains(this))
+        {
+            newOwner.controlledCharacters.Add(this);
+        }
+
+        doubleAgentTurnsRemaining = Mathf.Max(doubleAgentTurnsRemaining, turns);
+
+        hex?.RedrawCharacters();
+        RefreshSelectedCharacterIconIfSelected();
+        RefreshActionsIfSelected();
+    }
+
+    private void ProcessDoubleAgent()
+    {
+        if (doubleAgentTurnsRemaining <= 0) return;
+
+        doubleAgentTurnsRemaining--;
+        if (doubleAgentTurnsRemaining > 0) return;
+
+        Leader originalOwner = doubleAgentOriginalOwner;
+        doubleAgentOriginalOwner = null;
+        if (originalOwner == null || originalOwner.killed) return;
+
+        owner?.controlledCharacters.Remove(this);
+        owner = originalOwner;
+        if (!originalOwner.controlledCharacters.Contains(this))
+        {
+            originalOwner.controlledCharacters.Add(this);
+        }
+
+        MessageDisplayNoUI.ShowMessage(hex, this, $"{characterName} returns to serving {originalOwner.characterName}.", Color.yellow);
+        hex?.RedrawCharacters();
         RefreshSelectedCharacterIconIfSelected();
         RefreshActionsIfSelected();
     }
