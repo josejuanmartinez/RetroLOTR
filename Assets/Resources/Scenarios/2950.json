@@ -768,7 +768,7 @@
         5,
         5,
         5,
-        2,
+        6,
         2,
         6,
         2,
@@ -1400,9 +1400,9 @@
         3,
         3,
         0,
-        0,
-        0,
-        0,
+        11,
+        11,
+        11,
         1,
         3,
         3,
@@ -1639,11 +1639,11 @@
         3,
         3,
         3,
-        3,
-        3,
+        5,
+        5,
         6,
-        3,
-        3,
+        5,
+        5,
         3,
         3,
         3,
@@ -1704,12 +1704,12 @@
         6,
         6,
         6,
-        3,
-        3,
+        5,
+        5,
         6,
-        3,
-        3,
-        3,
+        5,
+        5,
+        5,
         3,
         3,
         6,
@@ -1768,12 +1768,12 @@
         7,
         7,
         6,
-        4,
-        4,
+        5,
+        5,
         6,
-        3,
-        3,
-        3,
+        5,
+        5,
+        5,
         3,
         6,
         6,
@@ -1836,9 +1836,9 @@
         6,
         6,
         6,
-        3,
-        3,
-        3,
+        5,
+        5,
+        5,
         3,
         6,
         3,
@@ -1900,8 +1900,8 @@
         7,
         7,
         6,
-        4,
-        3,
+        5,
+        5,
         3,
         6,
         6,
@@ -1966,7 +1966,7 @@
         7,
         7,
         6,
-        4,
+        5,
         4,
         4,
         6,
@@ -2033,7 +2033,7 @@
         6,
         6,
         6,
-        6,
+        3,
         3,
         3,
         3,
@@ -2659,7 +2659,7 @@
         10,
         10,
         10,
-        10,
+        11,
         11,
         0,
         0,
@@ -3755,8 +3755,8 @@
         2,
         2,
         2,
-        2,
-        2,
+        1,
+        0,
         1,
         1,
         1,
@@ -3822,7 +3822,7 @@
         2,
         2,
         1,
-        2,
+        1,
         2,
         1,
         1,
@@ -4423,7 +4423,7 @@
         9,
         9,
         9,
-        9,
+        0,
         7,
         7,
         7,
@@ -4488,7 +4488,7 @@
         9,
         9,
         9,
-        9,
+        0,
         7,
         7,
         7,
@@ -4553,7 +4553,7 @@
         9,
         9,
         9,
-        9
+        0
     ],
     "regions": [],
     "terrainSprites": [
@@ -7979,11 +7979,6 @@
         },
         {
             "row": 11,
-            "col": 49,
-            "spriteName": "plains_20"
-        },
-        {
-            "row": 11,
             "col": 50,
             "spriteName": "plains_20"
         },
@@ -10640,17 +10635,17 @@
         {
             "row": 21,
             "col": 31,
-            "spriteName": "mountains_2"
+            "spriteName": "snow_11"
         },
         {
             "row": 21,
             "col": 32,
-            "spriteName": "mountains_2"
+            "spriteName": "snow_11"
         },
         {
             "row": 21,
             "col": 33,
-            "spriteName": "mountains_2"
+            "spriteName": "snow_11"
         },
         {
             "row": 21,
@@ -11539,26 +11534,6 @@
         },
         {
             "row": 25,
-            "col": 10,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 25,
-            "col": 11,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 25,
-            "col": 13,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 25,
-            "col": 14,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 25,
             "col": 15,
             "spriteName": "grass_17"
         },
@@ -11774,31 +11749,6 @@
         },
         {
             "row": 26,
-            "col": 10,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 26,
-            "col": 11,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 26,
-            "col": 13,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 26,
-            "col": 14,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 26,
-            "col": 15,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 26,
             "col": 16,
             "spriteName": "grass_17"
         },
@@ -12011,31 +11961,6 @@
             "row": 26,
             "col": 64,
             "spriteName": "shore_01"
-        },
-        {
-            "row": 27,
-            "col": 9,
-            "spriteName": "shore_01"
-        },
-        {
-            "row": 27,
-            "col": 10,
-            "spriteName": "shore_01"
-        },
-        {
-            "row": 27,
-            "col": 12,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 27,
-            "col": 13,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 27,
-            "col": 14,
-            "spriteName": "grass_17"
         },
         {
             "row": 27,
@@ -12271,21 +12196,6 @@
             "row": 27,
             "col": 64,
             "spriteName": "plains_19"
-        },
-        {
-            "row": 28,
-            "col": 12,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 28,
-            "col": 13,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 28,
-            "col": 14,
-            "spriteName": "grass_17"
         },
         {
             "row": 28,
@@ -12529,16 +12439,6 @@
         },
         {
             "row": 29,
-            "col": 11,
-            "spriteName": "shore_01"
-        },
-        {
-            "row": 29,
-            "col": 12,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 29,
             "col": 13,
             "spriteName": "grass_17"
         },
@@ -12781,11 +12681,6 @@
             "row": 29,
             "col": 64,
             "spriteName": "plains_19"
-        },
-        {
-            "row": 30,
-            "col": 12,
-            "spriteName": "shore_01"
         },
         {
             "row": 30,
@@ -13031,6 +12926,11 @@
             "row": 30,
             "col": 64,
             "spriteName": "plains_19"
+        },
+        {
+            "row": 31,
+            "col": 14,
+            "spriteName": "grass_17"
         },
         {
             "row": 31,
@@ -15390,7 +15290,7 @@
         {
             "row": 40,
             "col": 55,
-            "spriteName": "wastelands_17"
+            "spriteName": "snow_11"
         },
         {
             "row": 40,
@@ -18555,12 +18455,12 @@
         {
             "row": 57,
             "col": 46,
-            "spriteName": "plains_19"
+            "spriteName": "hills_09"
         },
         {
             "row": 57,
             "col": 47,
-            "spriteName": "plains_19"
+            "spriteName": "mountains_5"
         },
         {
             "row": 57,
@@ -18740,7 +18640,7 @@
         {
             "row": 58,
             "col": 48,
-            "spriteName": "plains_19"
+            "spriteName": "hills_09"
         },
         {
             "row": 58,
@@ -19619,11 +19519,6 @@
         },
         {
             "row": 64,
-            "col": 24,
-            "spriteName": "shore_01"
-        },
-        {
-            "row": 64,
             "col": 25,
             "spriteName": "shore_01"
         },
@@ -20490,7 +20385,7 @@
         {
             "row": 67,
             "col": 64,
-            "spriteName": "desert_20"
+            "spriteName": "mountains_6"
         },
         {
             "row": 68,
@@ -20690,7 +20585,7 @@
         {
             "row": 68,
             "col": 64,
-            "spriteName": "desert_19"
+            "spriteName": "mountains_6"
         },
         {
             "row": 69,
@@ -20925,7 +20820,7 @@
         {
             "row": 69,
             "col": 64,
-            "spriteName": "desert_18"
+            "spriteName": "mountains_6"
         }
     ],
     "leaderStarts": [
@@ -21309,12 +21204,12 @@
             "row": 11,
             "col": 32,
             "pcName": "Goblin Gate",
-            "ownerLeaderName": "Khamul",
-            "citySize": 4,
+            "ownerLeaderName": "Azog",
+            "citySize": 3,
             "fortSize": 3,
             "hasPort": false,
             "isHidden": false,
-            "isCapital": false,
+            "isCapital": true,
             "isUnderground": true,
             "loyalty": 75,
             "region": "",
@@ -21377,7 +21272,7 @@
             "row": 4,
             "col": 31,
             "pcName": "Gundabad",
-            "ownerLeaderName": "Murazor",
+            "ownerLeaderName": "Azog",
             "citySize": 4,
             "fortSize": 4,
             "hasPort": false,
@@ -21429,7 +21324,7 @@
             "col": 7,
             "pcName": "Noegrod",
             "ownerLeaderName": "Gloin",
-            "citySize": 3,
+            "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
             "isHidden": false,
@@ -21446,8 +21341,8 @@
             "col": 6,
             "pcName": "ThorinHall",
             "ownerLeaderName": "Gloin",
-            "citySize": 2,
-            "fortSize": 0,
+            "citySize": 4,
+            "fortSize": 3,
             "hasPort": false,
             "isHidden": false,
             "isCapital": true,
@@ -21684,7 +21579,7 @@
             "col": 31,
             "pcName": "Methir",
             "ownerLeaderName": "Haruth Rammam",
-            "citySize": 2,
+            "citySize": 3,
             "fortSize": 2,
             "hasPort": true,
             "isHidden": false,
@@ -21890,7 +21785,7 @@
             "ownerLeaderName": "",
             "citySize": 3,
             "fortSize": 3,
-            "hasPort": false,
+            "hasPort": true,
             "isHidden": false,
             "isCapital": false,
             "isUnderground": false,
@@ -21958,9 +21853,9 @@
             "ownerLeaderName": "Thranduil",
             "citySize": 4,
             "fortSize": 3,
-            "hasPort": true,
+            "hasPort": false,
             "isHidden": false,
-            "isCapital": false,
+            "isCapital": true,
             "isUnderground": true,
             "loyalty": 75,
             "region": "",
@@ -22007,7 +21902,7 @@
             "col": 48,
             "pcName": "Barad Ungol",
             "ownerLeaderName": "Ren the Unclean",
-            "citySize": 4,
+            "citySize": 3,
             "fortSize": 4,
             "hasPort": false,
             "isHidden": false,
@@ -22363,13 +22258,13 @@
             "row": 13,
             "col": 45,
             "pcName": "SarnGoriwing",
-            "ownerLeaderName": "Khamul",
+            "ownerLeaderName": "Azog",
             "citySize": 2,
-            "fortSize": 2,
+            "fortSize": 1,
             "hasPort": false,
-            "isHidden": false,
+            "isHidden": true,
             "isCapital": false,
-            "isUnderground": true,
+            "isUnderground": false,
             "loyalty": 75,
             "region": "",
             "isIsland": false,
@@ -22551,8 +22446,8 @@
             "col": 55,
             "pcName": "Minas Durlith",
             "ownerLeaderName": "Sauron",
-            "citySize": 2,
-            "fortSize": 0,
+            "citySize": 3,
+            "fortSize": 1,
             "hasPort": false,
             "isHidden": false,
             "isCapital": false,
@@ -22618,7 +22513,7 @@
             "row": 17,
             "col": 26,
             "pcName": "The Angle",
-            "ownerLeaderName": "Aragorn",
+            "ownerLeaderName": "Elrond",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22772,7 +22667,7 @@
             "col": 28,
             "pcName": "Erech",
             "ownerLeaderName": "Imrahil",
-            "citySize": 2,
+            "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
             "isHidden": false,
@@ -22789,7 +22684,7 @@
             "col": 29,
             "pcName": "Morthondost",
             "ownerLeaderName": "Imrahil",
-            "citySize": 3,
+            "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
             "isHidden": false,
@@ -22896,7 +22791,7 @@
             "hasPort": false,
             "isHidden": false,
             "isCapital": false,
-            "isUnderground": false,
+            "isUnderground": true,
             "loyalty": 100,
             "region": "",
             "isIsland": false,
@@ -23110,7 +23005,7 @@
         {
             "row": 39,
             "col": 46,
-            "pcName": "Lag-lithlad",
+            "pcName": "Carach Angren",
             "ownerLeaderName": "Dendra Dwar",
             "citySize": 1,
             "fortSize": 1,
@@ -23301,7 +23196,7 @@
             "ownerLeaderName": "Imrahil",
             "citySize": 2,
             "fortSize": 2,
-            "hasPort": false,
+            "hasPort": true,
             "isHidden": false,
             "isCapital": false,
             "isUnderground": false,
@@ -23331,9 +23226,9 @@
         {
             "row": 44,
             "col": 64,
-            "pcName": "LagariOrath",
+            "pcName": "Neburcha",
             "ownerLeaderName": "Ovatha",
-            "citySize": 2,
+            "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
             "isHidden": false,
@@ -23486,12 +23381,12 @@
             "col": 51,
             "pcName": "Celebost",
             "ownerLeaderName": "Dain",
-            "citySize": 2,
-            "fortSize": 1,
+            "citySize": 1,
+            "fortSize": 2,
             "hasPort": false,
             "isHidden": false,
             "isCapital": false,
-            "isUnderground": true,
+            "isUnderground": false,
             "loyalty": 100,
             "region": "",
             "isIsland": false,
@@ -23587,13 +23482,642 @@
             "row": 38,
             "col": 28,
             "pcName": "Aglarond",
-            "ownerLeaderName": "Dain",
+            "ownerLeaderName": "Gloin",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": false,
             "isHidden": false,
             "isCapital": false,
             "isUnderground": true,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 19,
+            "col": 18,
+            "pcName": "Crickhollow",
+            "ownerLeaderName": "Frodo",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": true,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 44,
+            "col": 19,
+            "pcName": "Rendul",
+            "ownerLeaderName": "Imrahil",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 39,
+            "col": 61,
+            "pcName": "",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 48,
+            "col": 58,
+            "pcName": "Nurumurl",
+            "ownerLeaderName": "Akhorahil",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 48,
+            "col": 61,
+            "pcName": "",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 4,
+            "col": 50,
+            "pcName": "Norr-dum",
+            "ownerLeaderName": "Dain",
+            "citySize": 1,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 38,
+            "col": 15,
+            "pcName": "",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 27,
+            "col": 13,
+            "pcName": "ErynVorn",
+            "ownerLeaderName": "GhanBuriGhan",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": true,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 40,
+            "col": 38,
+            "pcName": "Druadan Forest",
+            "ownerLeaderName": "GhanBuriGhan",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": true,
+            "isCapital": true,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 1,
+            "col": 13,
+            "pcName": "Forochel",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 11,
+            "col": 48,
+            "pcName": "Celebannon",
+            "ownerLeaderName": "Thranduil",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 18,
+            "col": 38,
+            "pcName": "GladdenFields",
+            "ownerLeaderName": "Azog",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 39,
+            "col": 34,
+            "pcName": "Aldburg",
+            "ownerLeaderName": "Theoden",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 31,
+            "col": 37,
+            "pcName": "Stowburg",
+            "ownerLeaderName": "Theoden",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 38,
+            "col": 30,
+            "pcName": "Dunharrow",
+            "ownerLeaderName": "Theoden",
+            "citySize": 1,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 32,
+            "col": 23,
+            "pcName": "Angren",
+            "ownerLeaderName": "Waulfa",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 21,
+            "col": 32,
+            "pcName": "Caradhras",
+            "ownerLeaderName": "Saruman",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 8,
+            "col": 51,
+            "pcName": "Dale",
+            "ownerLeaderName": "Bard",
+            "citySize": 2,
+            "fortSize": 1,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 6,
+            "col": 58,
+            "pcName": "BarakShathur",
+            "ownerLeaderName": "Dain",
+            "citySize": 1,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 16,
+            "col": 7,
+            "pcName": "Telenaug",
+            "ownerLeaderName": "Gloin",
+            "citySize": 1,
+            "fortSize": 1,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 3,
+            "col": 28,
+            "pcName": "Zarak-dum",
+            "ownerLeaderName": "Gloin",
+            "citySize": 1,
+            "fortSize": 1,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 35,
+            "col": 41,
+            "pcName": "DeadMarshes",
+            "ownerLeaderName": "Khamul",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 43,
+            "col": 51,
+            "pcName": "BaradWath",
+            "ownerLeaderName": "Ren the Unclean",
+            "citySize": 1,
+            "fortSize": 1,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 40,
+            "col": 55,
+            "pcName": "Lag-lithlad",
+            "ownerLeaderName": "Hoarmurath",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 37,
+            "col": 56,
+            "pcName": "Ostigurth",
+            "ownerLeaderName": "Dendra Dwar",
+            "citySize": 2,
+            "fortSize": 2,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 68,
+            "col": 64,
+            "pcName": "Laorki",
+            "ownerLeaderName": "Uvatha",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 68,
+            "col": 51,
+            "pcName": "AnKaragmir",
+            "ownerLeaderName": "Uvatha",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 67,
+            "col": 20,
+            "pcName": "Ardumir",
+            "ownerLeaderName": "Sangarunya",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 36,
+            "col": 54,
+            "pcName": "Carvarad",
+            "ownerLeaderName": "Dendra Dwar",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 64,
+            "col": 24,
+            "pcName": "Isigir",
+            "ownerLeaderName": "Haruth Rammam",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 27,
+            "col": 62,
+            "pcName": "Mistrand",
+            "ownerLeaderName": "Annatorion",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": true,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 46,
+            "col": 64,
+            "pcName": "LagariOrath",
+            "ownerLeaderName": "Uvatha",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 48,
+            "col": 62,
+            "pcName": "",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 46,
+            "col": 61,
+            "pcName": "",
+            "ownerLeaderName": "",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 54,
+            "col": 51,
+            "pcName": "OrdugaAivaisa",
+            "ownerLeaderName": "Ji Indur",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 58,
+            "col": 47,
+            "pcName": "Wathduin",
+            "ownerLeaderName": "Adunaphel",
+            "citySize": 2,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
+            "loyalty": 100,
+            "region": "",
+            "isIsland": false,
+            "pcFeature": "",
+            "fortFeature": ""
+        },
+        {
+            "row": 18,
+            "col": 34,
+            "pcName": "Lag-orod",
+            "ownerLeaderName": "Azog",
+            "citySize": 1,
+            "fortSize": 0,
+            "hasPort": false,
+            "isHidden": false,
+            "isCapital": false,
+            "isUnderground": false,
             "loyalty": 100,
             "region": "",
             "isIsland": false,
@@ -23962,6 +24486,10 @@
                     },
                     {
                         "armyCardName": "Forest Spiders",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Forest Wargs",
                         "amount": 1
                     }
                 ]
@@ -24522,6 +25050,54 @@
                         "amount": 1
                     }
                 ]
+            }
+        },
+        {
+            "row": 11,
+            "col": 32,
+            "characterName": "Goblin King",
+            "ownerLeaderName": "Azog",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Cave Goblins",
+                        "amount": 100
+                    },
+                    {
+                        "armyCardName": "Goblin Sappers",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 18,
+            "col": 34,
+            "characterName": "Azog",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Mounted Half-Orcs",
+                        "amount": 100
+                    },
+                    {
+                        "armyCardName": "Mounted Half-Orcs",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 6,
+            "col": 51,
+            "characterName": "Smaug",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
             }
         }
     ]

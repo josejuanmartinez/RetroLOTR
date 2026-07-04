@@ -594,7 +594,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6396470305716476934
 Transform:
   m_ObjectHideFlags: 0
@@ -705,7 +705,7 @@ MonoBehaviour:
   armyCharactersIconGrid: {fileID: 8562272294012321577}
   terrainTexture: {fileID: 1202935138384858293}
   pcTexture: {fileID: 1246686261725466849}
-  undergroundTexture: {fileID: 0}
+  underground: {fileID: 0}
   cliffGameObject: {fileID: 8505419408469819643}
   hexTextureWater: {fileID: 8846054597242357347}
   movement: {fileID: 6692920881900465037}
@@ -1845,7 +1845,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1037285435177879252
 Transform:
   m_ObjectHideFlags: 0
@@ -17390,7 +17390,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7857165771249564929
 Transform:
   m_ObjectHideFlags: 0

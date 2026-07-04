@@ -1,10 +1,7 @@
 fileFormatVersion: 2
-guid: 8aaf4442be33829408c21247bed351d3
+guid: 5b25b47f33cf295458960f76025ff216
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 7886178696917424459
-    second: EndlessStairs_0
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: EndlessStairs_0
+      name: LagOrod_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +125,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b491409fdb5517d60800000000000000
-      internalID: 7886178696917424459
+      spriteID: a5145efb2eafed5a0800000000000000
+      internalID: -6494477760832650918
       vertices: []
       indices: 
       edges: []
@@ -148,7 +145,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      EndlessStairs_0: 7886178696917424459
+      LagOrod_0: -6494477760832650918
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
