@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: 20baf8e5e1757074399c96209face1f0
+guid: 99f8cdd3ba8b4bd479fee603c10b7249
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -600510775176804873
-    second: 053 2_0
-  - first:
-      213: -7807623804363042422
-    second: 053 2_1
-  - first:
-      213: -7738822784659224989
-    second: 053 2_2
+      213: -984905535246926472
+    second: Aglarond_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -119,35 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 053 2_0
+      name: Aglarond_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 308
-        width: 9
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7f5cac1b1ae8aa7f0800000000000000
-      internalID: -600510775176804873
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 053 2_1
-      rect:
-        serializedVersion: 2
-        x: 2
         y: 0
-        width: 799
-        height: 909
+        width: 741
+        height: 857
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,30 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a819e09348fb5a390800000000000000
-      internalID: -7807623804363042422
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 053 2_2
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 0
-        width: 15
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 36600bcedad2a9490800000000000000
-      internalID: -7738822784659224989
+      spriteID: 87d7a4a42a9e452f0800000000000000
+      internalID: -984905535246926472
       vertices: []
       indices: 
       edges: []
@@ -198,9 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      053 2_0: -600510775176804873
-      053 2_1: -7807623804363042422
-      053 2_2: -7738822784659224989
+      Aglarond_0: -984905535246926472
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

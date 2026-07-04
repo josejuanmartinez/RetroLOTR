@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 695b87b5f94044e4e8dcf9fa2cd31380
+guid: 93621354e39aac443b4d1070fc0ca2bf
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -292963502115046230
-    second: Edhellond_0
+      213: -6227868442534817385
+    second: hexPlainsElvenLodge00_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Edhellond_0
+      name: hexPlainsElvenLodge00_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 884
-        height: 883
+        width: 827
+        height: 951
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: aac374c3f3f2febf0800000000000000
-      internalID: -292963502115046230
+      spriteID: 791d8dee5aa2299a0800000000000000
+      internalID: -6227868442534817385
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Edhellond_0: -292963502115046230
+      hexPlainsElvenLodge00_0: -6227868442534817385
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -257,6 +257,7 @@ public class NationSpawner : MonoBehaviour
             FortSizeEnum fort = (FortSizeEnum)Mathf.Clamp(spc.fortSize, (int)FortSizeEnum.NONE, (int)FortSizeEnum.citadel);
 
             PC pc = new(owner, spc.pcName, size, fort, spc.hasPort, spc.isHidden, hex, spc.isCapital, spc.loyalty);
+            pc.isUnderground = spc.isUnderground;
             hex.SetPC(pc, spc.pcFeature, spc.fortFeature, spc.isIsland);
             currentPcCount++;
         }

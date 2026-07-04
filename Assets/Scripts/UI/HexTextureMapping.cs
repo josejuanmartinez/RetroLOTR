@@ -8,16 +8,16 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 public class HexTextureMapping : SearcherByName
 {
     private const string AddressablesLabel = "default";
-    public static string HexTileAddressRoot = "Assets/Art/Hexes/Tiles/";
-    [SerializeField] private string hexTileAddressRoot = "Assets/Art/Hexes/Tiles/";
+    public static string PcArtAddressRoot = "Assets/Art/Hexes/PCs";
+    [SerializeField] private string pcArtAddressRoot = "Assets/Art/Hexes/PCs";
 
     private void Awake()
     {
-        HexTileAddressRoot = hexTileAddressRoot;
-        tileLocationsByKey.Clear();
+        PcArtAddressRoot = pcArtAddressRoot;
+        pcArtLocationsByKey.Clear();
         byPcNameLookup.Clear();
-        isTileLookupLoaded = false;
-        tileLookupLoadFailed = false;
+        isPcArtLookupLoaded = false;
+        pcArtLookupLoadFailed = false;
     }
 
     public Sprite defaultTerrainSprite;
@@ -34,47 +34,44 @@ public class HexTextureMapping : SearcherByName
     public List<Sprite> mountainsVariations;
     public List<Sprite> snowVariations;
 
-    public List<Sprite> defaultFreePeoplePC;
-    public List<Sprite> defaultDarkServantsPC;
-    public List<Sprite> defaultNeutralPC;
     public Sprite islandSprite;
 
     private static readonly Dictionary<string, Sprite> byPcNameLookup = new();
-    private static readonly Dictionary<string, IResourceLocation> tileLocationsByKey = new();
-    private static bool isTileLookupLoaded;
-    private static bool tileLookupLoadFailed;
+    private static readonly Dictionary<string, IResourceLocation> pcArtLocationsByKey = new();
+    private static bool isPcArtLookupLoaded;
+    private static bool pcArtLookupLoadFailed;
     private bool loggedNotReadyWarning;
 
-    private static void EnsureTileLocationsLoaded()
+    private static void EnsurePcArtLocationsLoaded()
     {
-        if (isTileLookupLoaded || tileLookupLoadFailed) return;
+        if (isPcArtLookupLoaded || pcArtLookupLoadFailed) return;
 
         AsyncOperationHandle<IList<IResourceLocation>> handle = Addressables.LoadResourceLocationsAsync(AddressablesLabel, typeof(Sprite));
         IList<IResourceLocation> locations = handle.WaitForCompletion();
         if (handle.Status != AsyncOperationStatus.Succeeded || handle.Result == null)
         {
-            tileLookupLoadFailed = true;
+            pcArtLookupLoadFailed = true;
             Debug.LogError($"HexTextureMapping: failed to load Addressables label '{AddressablesLabel}'.");
             return;
         }
 
-        tileLocationsByKey.Clear();
+        pcArtLocationsByKey.Clear();
         foreach (IResourceLocation location in locations)
         {
             if (location == null || string.IsNullOrWhiteSpace(location.PrimaryKey)) continue;
-            if (!location.PrimaryKey.StartsWith(HexTileAddressRoot)) continue;
+            if (!location.PrimaryKey.StartsWith(PcArtAddressRoot)) continue;
 
             RegisterLocationLookupKey(Path.GetFileNameWithoutExtension(location.PrimaryKey), location);
         }
 
-        isTileLookupLoaded = true;
+        isPcArtLookupLoaded = true;
     }
 
     private static void RegisterLocationLookupKey(string rawKey, IResourceLocation location)
     {
         string key = NormalizeKey(rawKey);
-        if (string.IsNullOrWhiteSpace(key) || tileLocationsByKey.ContainsKey(key)) return;
-        tileLocationsByKey[key] = location;
+        if (string.IsNullOrWhiteSpace(key) || pcArtLocationsByKey.ContainsKey(key)) return;
+        pcArtLocationsByKey[key] = location;
     }
 
     private static void RegisterSpriteLookupKeys(Sprite sprite)
@@ -126,18 +123,18 @@ public class HexTextureMapping : SearcherByName
             return cachedSprite;
         }
 
-        EnsureTileLocationsLoaded();
-        if (!isTileLookupLoaded)
+        EnsurePcArtLocationsLoaded();
+        if (!isPcArtLookupLoaded)
         {
             if (!loggedNotReadyWarning)
             {
-                Debug.LogWarning("HexTextureMapping tile lookup is unavailable.");
+                Debug.LogWarning("HexTextureMapping PC art lookup is unavailable.");
                 loggedNotReadyWarning = true;
             }
             return null;
         }
 
-        if (!tileLocationsByKey.TryGetValue(normalizedPcName, out IResourceLocation location))
+        if (!pcArtLocationsByKey.TryGetValue(normalizedPcName, out IResourceLocation location))
         {
             return null;
         }
@@ -154,41 +151,33 @@ public class HexTextureMapping : SearcherByName
     }
 
 
-    public Sprite GetSprite(Hex hex)
+    // Terrain art for the hex's base texture layer. Always returned regardless of whether
+    // the hex also has a PC — the PC art is drawn separately on its own sprite renderer.
+    public Sprite GetTerrainSprite(Hex hex)
     {
         if (hex == null) return defaultTerrainSprite;
 
-        if (hex.HasAnyPC() && hex.ShouldShowPcVisual())
-        {
-            PC pc = hex.GetPCData();
-            if (pc == null) return GetTerrainSprite(hex);
-
-            Sprite result = GetPcSpriteByName(pc.pcName);
-            if(result)
-            {
-              return result;  
-            } 
-            else
-            {
-                int seed = Mathf.Abs(hex.GetHashCode());
-                switch(pc.owner.GetAlignment())
-                {
-                    case AlignmentEnum.darkServants: return defaultDarkServantsPC[seed % defaultDarkServantsPC.Count];
-                    case AlignmentEnum.freePeople: return defaultFreePeoplePC[seed % defaultFreePeoplePC.Count];
-                    case AlignmentEnum.neutral: return defaultNeutralPC[seed % defaultNeutralPC.Count];
-                }
-            }
-        }
-        
-        return GetTerrainSprite(hex);
-    }
-
-    private Sprite GetTerrainSprite(Hex hex)
-    {
         Sprite baseTerrainSprite = hex.GetBaseTerrainSprite();
         if (baseTerrainSprite != null) return baseTerrainSprite;
 
         return GetTerrainBaseSprite(hex.terrainType);
+    }
+
+    // PC/settlement art for the hex's PC texture layer, or null when the hex has no PC to show
+    // (callers should hide that layer in that case).
+    public Sprite GetPcSprite(Hex hex)
+    {
+        if (hex == null || !hex.HasAnyPC() || !hex.ShouldShowPcVisual()) return null;
+
+        PC pc = hex.GetPCData();
+        if (pc == null) return null;
+
+        Sprite result = GetPcSpriteByName(pc.pcName);
+        if (result == null)
+        {
+            Debug.LogWarning($"HexTextureMapping: no PC illustration resolvable by name for '{pc.pcName}'.");
+        }
+        return result;
     }
 
     // All terrain variation lists, in TerrainEnum order, for name lookups.

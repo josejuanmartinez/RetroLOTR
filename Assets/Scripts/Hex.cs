@@ -65,6 +65,9 @@ public class Hex : MonoBehaviour
     public SpriteRendererGridLayout armyCharactersIconGrid;
 
     public SpriteRenderer terrainTexture;
+    public SpriteRenderer pcTexture;
+    [Tooltip("Marker shown when this hex is an entrance to the Underground (chasm tiles or underground PCs).")]
+    public GameObject underground;
     public GameObject cliffGameObject;
     public GameObject hexTextureWater;
 
@@ -349,6 +352,7 @@ public class Hex : MonoBehaviour
         // col parity bit breaks same-row neighbor ties so their overlap is
         // cut deterministically instead of z-fighting.
         terrainTexture.sortingOrder = -1 - (row * 2) - (col & 1);
+        if (pcTexture != null) pcTexture.sortingOrder = terrainTexture.sortingOrder + 1;
         if (terrainTexture != null) terrainTexture.gameObject.SetActive(true);
     }
 
@@ -481,6 +485,7 @@ public class Hex : MonoBehaviour
         // Landmark features are read off whichever variant sprite we just assigned (see HexFeatureData).
         features = HexFeatureData.GetFeatures(baseTerrainSprite?.name);
         ApplyHexTextureSprite();
+        UpdateUndergroundMarker();
         // this.terrainTexture.color = terrainColor;
         // if(terrainType == TerrainEnum.mountains) this.terrainTexture.sortingOrder += 1000;
     }
@@ -1404,6 +1409,7 @@ public class Hex : MonoBehaviour
     private void SetHexSpriteAlpha(float alpha)
     {
         SetSpriteAlpha(terrainTexture, alpha);
+        SetSpriteAlpha(pcTexture, alpha);
     }
 
     private static void SetSpriteAlpha(SpriteRenderer sr, float alpha)
@@ -1475,6 +1481,7 @@ public class Hex : MonoBehaviour
         ApplyRegionColor();
         if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, revealed);
         UpdateTerrainVisualAlpha();
+        UpdateUndergroundMarker();
         if (revealed)
         {
             SetActiveFast(hoverHexFrame, false);
@@ -2260,6 +2267,26 @@ public class Hex : MonoBehaviour
 
     public bool HasFeature(HexFeatureEnum flag) => (features & flag) != 0;
 
+    /// <summary>
+    /// True when this hex is an entrance to the Underground: either its tile art shows a
+    /// chasm, or it holds a PC flagged as underground. Underground hexes are linked to each
+    /// other through the Endless Stairs opportunity.
+    /// </summary>
+    public bool IsUnderground()
+    {
+        if (IsWaterTerrain()) return false;
+        if (HasFeature(HexFeatureEnum.Chasm)) return true;
+        PC pcData = GetPCData();
+        return pcData != null && pcData.isUnderground;
+    }
+
+    /// <summary>Shows/hides the underground marker sprite for this hex's current state.</summary>
+    public void UpdateUndergroundMarker()
+    {
+        if (underground == null) return;
+        SetActiveFast(underground, IsUnderground() && IsHexRevealed());
+    }
+
     public int GetTerrainCost(Character character)
     {
         if (character != null && character.GetIgnoreTerrainMovementPenalty())
@@ -2435,6 +2462,7 @@ public class Hex : MonoBehaviour
             EnsurePersistentScouting(pc.owner);
         }
         ApplyHexTextureSprite();
+        UpdateUndergroundMarker();
     }
 
     public void ShowMovementLeft(int movementLeft, Character character)
@@ -2875,8 +2903,15 @@ public class Hex : MonoBehaviour
         if (hexTextureMapping == null) hexTextureMapping = GetComponent<HexTextureMapping>();
 
         terrainTexture.gameObject.SetActive(true);
-        Sprite sprite = hexTextureMapping != null ? hexTextureMapping.GetSprite(this) : baseTerrainSprite;
-        terrainTexture.sprite = sprite;
+        terrainTexture.sprite = hexTextureMapping != null ? hexTextureMapping.GetTerrainSprite(this) : baseTerrainSprite;
+
+        if (pcTexture != null)
+        {
+            Sprite pcSprite = hexTextureMapping != null ? hexTextureMapping.GetPcSprite(this) : null;
+            pcTexture.sprite = pcSprite;
+            pcTexture.gameObject.SetActive(pcSprite != null);
+        }
+
         UpdateTerrainVisualAlpha();
         UpdateMinimapTerrain(IsHexRevealed());
     }

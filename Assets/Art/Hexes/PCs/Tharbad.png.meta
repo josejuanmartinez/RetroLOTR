@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 7dec671f572e86044bfbe9201eabad17
+guid: 9ee3e216935ea5f4eb204621d484535b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5620355365188860911
-    second: 1001_0
-  - first:
-      213: 4124522424025257620
-    second: 1001_1
+      213: -4040263264928763914
+    second: Buth Ovaisa_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -116,35 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 1001_0
+      name: Buth Ovaisa_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 3
-        width: 731
-        height: 833
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: febfa8d3d638ffd40800000000000000
-      internalID: 5620355365188860911
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1001_1
-      rect:
-        serializedVersion: 2
-        x: 352
         y: 0
-        width: 20
-        height: 8
+        width: 750
+        height: 870
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4969820ca4f3d3930800000000000000
-      internalID: 4124522424025257620
+      spriteID: 6ff6cde77f91ee7c0800000000000000
+      internalID: -4040263264928763914
       vertices: []
       indices: 
       edges: []
@@ -173,8 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      1001_0: 5620355365188860911
-      1001_1: 4124522424025257620
+      Buth Ovaisa_0: -4040263264928763914
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

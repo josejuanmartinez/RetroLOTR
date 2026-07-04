@@ -6,6 +6,8 @@ public static class SituationEvaluator
     // Priority order — first two wins when more than 2 situations are active.
     private static readonly CardSituationEnum[] Priority =
     {
+        // Underground travel is always offered when standing on an underground hex.
+        CardSituationEnum.CharacterAtUndergroundHex,
         CardSituationEnum.ArmyAtEnemyPC,
         CardSituationEnum.AgentAtEnemyPC,
         CardSituationEnum.EmmissaryAtEnemyPC,
@@ -59,6 +61,7 @@ public static class SituationEvaluator
         {
             bool matches = situation switch
             {
+                CardSituationEnum.CharacterAtUndergroundHex          => !hasArmy     && hex.IsUnderground(),
                 CardSituationEnum.ArmyAtEnemyPC                      => hasArmy      && atEnemyPC,
                 CardSituationEnum.AgentAtEnemyPC                     => hasAgent     && atEnemyPC,
                 CardSituationEnum.EmmissaryAtEnemyPC                 => hasEmmissary && atEnemyPC,

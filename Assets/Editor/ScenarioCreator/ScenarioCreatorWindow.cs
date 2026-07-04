@@ -638,13 +638,20 @@ namespace RetroLOTR.Scenarios.EditorTools
             }
             if (!has) return;
 
-            SearchableField("Name", pc.pcName, ScenarioCardCatalog.PcCards, v => pc.pcName = v, ScenarioCardCatalog.GetCard);
+            SearchableField("Name", pc.pcName, ScenarioCardCatalog.PcCards, v =>
+            {
+                pc.pcName = v;
+                // Default the underground flag from the PC card so authored placements match the card.
+                CardData pcCard = ScenarioCardCatalog.GetCard(v);
+                if (pcCard != null) pc.isUnderground = pcCard.isUnderground;
+            }, ScenarioCardCatalog.GetCard);
             SearchableField("Owner", pc.ownerLeaderName, ScenarioCardCatalog.AllLeaders(), v => pc.ownerLeaderName = v);
             pc.citySize = (int)(PCSizeEnum)EditorGUILayout.EnumPopup("Size", (PCSizeEnum)pc.citySize);
             pc.fortSize = (int)(FortSizeEnum)EditorGUILayout.EnumPopup("Fort", (FortSizeEnum)pc.fortSize);
             pc.hasPort = EditorGUILayout.Toggle("Has port", pc.hasPort);
             pc.isHidden = EditorGUILayout.Toggle("Hidden", pc.isHidden);
             pc.isCapital = EditorGUILayout.Toggle("Capital", pc.isCapital);
+            pc.isUnderground = EditorGUILayout.Toggle("Underground", pc.isUnderground);
             pc.isIsland = EditorGUILayout.Toggle("Island", pc.isIsland);
             pc.loyalty = EditorGUILayout.IntSlider("Loyalty", pc.loyalty, 0, 100);
         }

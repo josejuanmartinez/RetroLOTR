@@ -72,6 +72,7 @@ public class DeckExplorerWindow : EditorWindow
     private int editedSteelGranted;
     private int editedMithrilGranted;
     private int editedGoldGranted;
+    private bool editedIsUnderground;
     private ArmySpecialAbilityEnum editedArmyAbilityToAdd;
     private TroopsTypeEnum editedTroopType;
     private int editedProcChance;
@@ -524,6 +525,14 @@ public class DeckExplorerWindow : EditorWindow
         editedMithrilGranted = EditorGUILayout.IntField("Mithril", editedMithrilGranted);
         editedGoldGranted = EditorGUILayout.IntField("Gold", editedGoldGranted);
 
+        if (card.GetCardType() == CardTypeEnum.PC)
+        {
+            GUILayout.Space(4);
+            editedIsUnderground = EditorGUILayout.Toggle(
+                new GUIContent("Underground", "The founded PC marks its hex as an entrance to the Underground."),
+                editedIsUnderground);
+        }
+
         GUILayout.Space(6);
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
@@ -700,6 +709,7 @@ public class DeckExplorerWindow : EditorWindow
         editedCardType = card.GetCardType();
         editedSituation = card.GetSituation();
         editedActionEffect = card.actionEffect ?? string.Empty;
+        editedIsUnderground = card.isUnderground;
     }
 
     private static string GetEditableRequirementsKey(CardData card)
@@ -777,6 +787,7 @@ public class DeckExplorerWindow : EditorWindow
         target.steelGranted = Mathf.Max(0, editedSteelGranted);
         target.mithrilGranted = Mathf.Max(0, editedMithrilGranted);
         target.goldGranted = Mathf.Max(0, editedGoldGranted);
+        if (target.GetCardType() == CardTypeEnum.PC) target.isUnderground = editedIsUnderground;
 
         string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
         if (string.IsNullOrWhiteSpace(assetPath))

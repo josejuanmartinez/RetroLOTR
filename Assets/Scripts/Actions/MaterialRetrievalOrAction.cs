@@ -138,6 +138,8 @@ public class PCAction : MaterialRetrieval
 
         string pcName = ResolveAssociatedPcName();
         PC foundedPc = new(owner, pcName, PCSizeEnum.camp, FortSizeEnum.NONE, false, false, character.hex, false, 75);
+        foundedPc.isUnderground = card != null && card.isUnderground;
+        character.hex.UpdateUndergroundMarker();
         character.hex.RedrawPC();
         MessageDisplayNoUI.ShowMessage(character.hex, character, $"{pcName} is founded.", Color.green);
         return foundedPc != null;

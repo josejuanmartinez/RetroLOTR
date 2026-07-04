@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 7dec671f572e86044bfbe9201eabad17
+guid: 8aaf4442be33829408c21247bed351d3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5620355365188860911
-    second: 1001_0
-  - first:
-      213: 4124522424025257620
-    second: 1001_1
+      213: 7886178696917424459
+    second: EndlessStairs_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 750
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -116,35 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 1001_0
+      name: EndlessStairs_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 3
-        width: 731
-        height: 833
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: febfa8d3d638ffd40800000000000000
-      internalID: 5620355365188860911
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1001_1
-      rect:
-        serializedVersion: 2
-        x: 352
         y: 0
-        width: 20
-        height: 8
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4969820ca4f3d3930800000000000000
-      internalID: 4124522424025257620
+      spriteID: b491409fdb5517d60800000000000000
+      internalID: 7886178696917424459
       vertices: []
       indices: 
       edges: []
@@ -163,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -173,8 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      1001_0: 5620355365188860911
-      1001_1: 4124522424025257620
+      EndlessStairs_0: 7886178696917424459
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

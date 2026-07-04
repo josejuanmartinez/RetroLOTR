@@ -27,7 +27,7 @@ public enum HexFeatureEnum
     Village        = 1 << 9,  // if a character ends here, 25% of chance of getting a random resource if resting here
     Fountain       = 1 << 10, // major health recover if the character rests here
     Lava           = 1 << 11, // hazard — attrition damage to an army and/or character that stays there if it's not dark servants
-    Chasm          = 1 << 12, // 10% of probability of army/character being wounded and automatically transported to another chasm if rested here
+    Chasm          = 1 << 12, // marks the hex as an entrance to the Underground (Endless Stairs travel between underground hexes)
     Mine           = 1 << 13, // 25% of probability of getting a mineral resource if rested here
     Blighted       = 1 << 14, // 10% of probability of getting poison, 5% of getting cursed, if rested here
     Lumbermill     = 1 << 15  // 25% of probability of getting wood resource if rested here
@@ -80,6 +80,7 @@ public static class HexFeatureData
         { "forest_31", HexFeatureEnum.Watchtower | HexFeatureEnum.Pond | HexFeatureEnum.Road | HexFeatureEnum.Blighted },      
         { "forest_32", HexFeatureEnum.Blighted | HexFeatureEnum.Ruins | HexFeatureEnum.Ruins },      
         { "forest_33", HexFeatureEnum.Blighted },
+        { "forest_34", HexFeatureEnum.Chasm },
 
         // ---------- PLAINS ----------
         { "plains_01", HexFeatureEnum.Watchtower | HexFeatureEnum.Road | HexFeatureEnum.Pond },
@@ -103,6 +104,7 @@ public static class HexFeatureData
         { "plains_19", HexFeatureEnum.None },
         { "plains_20", HexFeatureEnum.None },
         { "plains_21", HexFeatureEnum.None },
+        { "plains_22", HexFeatureEnum.Chasm },
 
         // ---------- HILLS ----------
         { "hills_01", HexFeatureEnum.Ruins | HexFeatureEnum.Road },
@@ -127,12 +129,15 @@ public static class HexFeatureData
         { "hills_21", HexFeatureEnum.Road | HexFeatureEnum.Village },
 
         // ---------- MOUNTAINS ----------
-        { "mountains_01", HexFeatureEnum.River },
-        { "mountains_02", HexFeatureEnum.None },
-        { "mountains_03", HexFeatureEnum.Lava },
-        { "mountains_04", HexFeatureEnum.Lava },
-        { "mountains_05", HexFeatureEnum.None },
-        { "mountains_06", HexFeatureEnum.Ruins },
+        // NOTE: the mountains tile assets are NOT zero-padded (mountains_1.png … mountains_7.png),
+        // unlike every other terrain — the keys here must match the sprite names exactly.
+        { "mountains_1", HexFeatureEnum.River },
+        { "mountains_2", HexFeatureEnum.None },
+        { "mountains_3", HexFeatureEnum.Lava },
+        { "mountains_4", HexFeatureEnum.Lava },
+        { "mountains_5", HexFeatureEnum.None },
+        { "mountains_6", HexFeatureEnum.Ruins },
+        { "mountains_7", HexFeatureEnum.Chasm },
 
         // ---------- GRASS (grasslands) ----------
         { "grass_01", HexFeatureEnum.StandingStones | HexFeatureEnum.StandingStones | HexFeatureEnum.Road },
@@ -151,6 +156,8 @@ public static class HexFeatureData
         { "grass_15", HexFeatureEnum.Road | HexFeatureEnum.River | HexFeatureEnum.Watchtower},
         { "grass_16", HexFeatureEnum.Village | HexFeatureEnum.Road },
         { "grass_17", HexFeatureEnum.None },
+        { "grass_18", HexFeatureEnum.Pond },
+        { "grass_19", HexFeatureEnum.Chasm },
 
         // ---------- DESERT ----------
         { "desert_01", HexFeatureEnum.Monument | HexFeatureEnum.Road },
@@ -186,7 +193,7 @@ public static class HexFeatureData
         { "wastelands_09", HexFeatureEnum.Lava },
         { "wastelands_10", HexFeatureEnum.Lava },
         { "wastelands_11", HexFeatureEnum.Lava },
-        { "wastelands_12", HexFeatureEnum.Watchtower | HexFeatureEnum.Pond | HexFeatureEnum.Road | HexFeatureEnum.Blighted},
+        { "wastelands_12", HexFeatureEnum.Chasm},
         { "wastelands_13", HexFeatureEnum.None },        
         { "wastelands_15", HexFeatureEnum.Chasm | HexFeatureEnum.StandingStones},
         { "wastelands_17", HexFeatureEnum.None },
@@ -239,7 +246,18 @@ public static class HexFeatureData
 
         // Fallback: tolerate trailing suffixes (e.g. "forest_05 (Clone)") by matching on the leading token.
         int space = spriteName.IndexOf(' ');
-        if (space > 0 && featuresByTile.TryGetValue(spriteName.Substring(0, space), out f)) return f;
+        string token = space > 0 ? spriteName.Substring(0, space) : spriteName;
+        if (space > 0 && featuresByTile.TryGetValue(token, out f)) return f;
+
+        // Fallback: tolerate zero-padding mismatches between asset names and map keys
+        // (e.g. asset "mountains_7" vs key "mountains_07" or vice versa).
+        int underscore = token.LastIndexOf('_');
+        if (underscore > 0 && int.TryParse(token.Substring(underscore + 1), out int n))
+        {
+            string prefix = token.Substring(0, underscore + 1);
+            if (featuresByTile.TryGetValue($"{prefix}{n:00}", out f)) return f;
+            if (featuresByTile.TryGetValue($"{prefix}{n}", out f)) return f;
+        }
 
         return HexFeatureEnum.None;
     }
@@ -296,7 +314,7 @@ public static class HexFeatureData
         HexFeatureEnum.Village => "Resting here: 25% chance of a random resource.",
         HexFeatureEnum.Fountain => "Major health recovery when resting here.",
         HexFeatureEnum.Lava => "Hazard: attrition damage to non dark-servant units that stay.",
-        HexFeatureEnum.Chasm => "Resting here: 10% chance to be wounded and teleported to another chasm.",
+        HexFeatureEnum.Chasm => "An entrance to the Underground: characters without an army may take the Endless Stairs to another underground location.",
         HexFeatureEnum.Mine => "Resting here: 25% chance of a mineral resource.",
         HexFeatureEnum.Lumbermill => "Resting here: 25% chance of a wood resource.",
         HexFeatureEnum.Blighted => "Resting here: 10% chance of poison, 5% chance of being cursed.",

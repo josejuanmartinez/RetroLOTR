@@ -22,8 +22,6 @@ public static class HexFeatureEffects
 
     // Hazards
     private const int LavaDamage = 10;
-    private const int ChasmDamage = 15;
-    private const int ChasmChance = 10;     // %
     private const int BlightPoisonChance = 10; // %
     private const int BlightCurseChance = 5;   // %
     private const int PoisonTurns = 2;
@@ -114,13 +112,8 @@ public static class HexFeatureEffects
             }
         }
 
-        if (hex.HasFeature(HexFeatureEnum.Chasm) && Roll(ChasmChance))
-        {
-            MessageDisplayNoUI.ShowMessage(hex, character, "The ground gives way!", Color.red);
-            character.Wounded(null, ChasmDamage);
-            if (character.killed) return;
-            TeleportToAnotherChasm(character, hex);
-        }
+        // Chasms are no longer a hazard: they mark the hex as an entrance to the Underground
+        // (see Hex.IsUnderground / the Endless Stairs opportunity card).
     }
 
     private static void Heal(Character character, int amount)
@@ -190,25 +183,6 @@ public static class HexFeatureEffects
         MessageDisplayNoUI.ShowMessage(character.hex, character,
             $"The ruins yield a hidden <sprite name=\"artifact\">artifact: {artifact.GetHoverText()}!", Color.green);
         Sounds.Instance?.PlayArtifactFound();
-    }
-
-    private static void TeleportToAnotherChasm(Character character, Hex from)
-    {
-        Board board = Object.FindFirstObjectByType<Board>();
-        if (board == null) return;
-
-        List<Hex> chasms = new();
-        List<Hex> all = board.GetHexes();
-        for (int i = 0; i < all.Count; i++)
-        {
-            Hex h = all[i];
-            if (h != null && h != from && h.HasFeature(HexFeatureEnum.Chasm) && !h.IsWaterTerrain()) chasms.Add(h);
-        }
-        if (chasms.Count == 0) return;
-
-        Hex destination = chasms[Random.Range(0, chasms.Count)];
-        board.MoveCharacterOneHex(character, from, destination, true, false);
-        MessageDisplayNoUI.ShowMessage(destination, character, "Swallowed by the earth and cast out elsewhere!", Color.red);
     }
 
     private static bool Roll(int percentChance) => Random.Range(0, 100) < percentChance;

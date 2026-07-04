@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 93621354e39aac443b4d1070fc0ca2bf
+guid: daee14dac797ecb4ea3ec3039bc32224
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6227868442534817385
-    second: hexPlainsElvenLodge00_0
+      213: 5335575470403395395
+    second: Rhosgobel_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: hexPlainsElvenLodge00_0
+      name: Rhosgobel_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 827
-        height: 951
+        width: 811
+        height: 856
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 791d8dee5aa2299a0800000000000000
-      internalID: -6227868442534817385
+      spriteID: 34f9ea90f95cb0a40800000000000000
+      internalID: 5335575470403395395
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      hexPlainsElvenLodge00_0: -6227868442534817385
+      Rhosgobel_0: 5335575470403395395
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

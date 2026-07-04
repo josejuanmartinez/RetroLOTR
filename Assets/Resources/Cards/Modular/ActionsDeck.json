@@ -4102,6 +4102,88 @@
                       "amount":  1,
                       "deckSpriteName":  "",
                       "situation":  "FriendlyCharacterAtHex"
+                  },
+                  {
+                      "cardId":  9201,
+                      "name":  "Endless Stairs",
+                      "quote":  "From the lowest dungeon to the highest peak, the stair climbed, hewn in the living rock by hands long forgotten.",
+                      "actionEffect":  "Take the Endless Stairs: choose one of the 3 closest underground locations and travel there instantly. Cannot be used while commanding an army.",
+                      "type":  "Action",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "actions_deck",
+                      "actionClassName":  "EndlessStairs",
+                      "action":  "EndlessStairs",
+                      "spriteName":  "EndlessStairs",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "",
+                      "referenceCardId":  0,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  0,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  "CharacterAtUndergroundHex"
                   }
               ]
 }

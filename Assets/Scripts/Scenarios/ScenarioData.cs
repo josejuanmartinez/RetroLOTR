@@ -20,8 +20,9 @@ namespace RetroLOTR.Scenarios
     public class ScenarioData
     {
         // v2 added ScenarioLeaderStart.variantId (playable-leader variant restriction).
-        // Older v1 scenarios deserialize with variantId == "" (no restriction), so they keep working.
-        public const int CurrentVersion = 2;
+        // v3 added ScenarioPC.isUnderground (PC marks its hex as an Underground entrance).
+        // Older scenarios deserialize with the new fields at their defaults, so they keep working.
+        public const int CurrentVersion = 3;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
@@ -105,6 +106,8 @@ namespace RetroLOTR.Scenarios
         public bool hasPort;
         public bool isHidden;
         public bool isCapital;
+        /// <summary>The PC marks its hex as an entrance to the Underground (see Hex.IsUnderground).</summary>
+        public bool isUnderground;
         public int loyalty = 100;
         public string region = "";
         public bool isIsland;

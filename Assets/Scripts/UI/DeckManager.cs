@@ -166,6 +166,8 @@ public class CardData
     public int amount = 1;
     public string deckSpriteName;
     public string situation = string.Empty;
+    // PC cards only: the founded PC marks its hex as an entrance to the Underground.
+    public bool isUnderground;
 
     public CardSituationEnum GetSituation()
         => Enum.TryParse(situation, true, out CardSituationEnum s) ? s : CardSituationEnum.None;

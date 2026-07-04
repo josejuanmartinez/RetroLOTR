@@ -46,7 +46,8 @@
       "PowerShell(python .agents/skills/show-images-inline/scripts/show_images_grid.py \"Assets/Art/Cards/Lands/Lithlad.png\" \"Assets/Art/Cards/Actions/Events/BarrowLilies.png\" \"Assets/Art/Cards/Lands/TheWhiteMountains.png\" \"Assets/Art/Cards/Actions/Events/ShadeOfTheBarrowKing.png\" --cols 4 --cell 480)",
       "PowerShell(python .agents/skills/show-images-inline/scripts/show_images_grid.py \"Assets/Art/Hexes/PCs/Hobbiton.png\" \"Assets/Art/Cards/PC/Hobbiton.jpg\" \"Assets/Art/Hexes/Tiles/Unused/original/Hobbiton.png\" \"Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/Hobbiton.png\" --cols 2 --cell 600)",
       "PowerShell(python .agents/skills/provide-feedback-over-image-options/scripts/annotate_image.py \"Assets/Art/Cards/PC/Hobbiton.jpg\" --editor python --timeout 15; \"exit=$LASTEXITCODE\")",
-      "PowerShell(python .agents/skills/provide-feedback-over-image-options/scripts/annotate_image.py \"Assets/Art/Cards/PC/Hobbiton.jpg\")"
+      "PowerShell(python .agents/skills/provide-feedback-over-image-options/scripts/annotate_image.py \"Assets/Art/Cards/PC/Hobbiton.jpg\")",
+      "PowerShell(python -c \"import json; json.load\\(open\\(r'Assets/Resources/Cards/Modular/ActionsDeck.json', encoding='utf-8-sig'\\)\\); json.load\\(open\\(r'Assets/Resources/Cards/Modular/SharedBase.json', encoding='utf-8-sig'\\)\\); json.load\\(open\\(r'Assets/Resources/Cards.json', encoding='utf-8-sig'\\)\\); print\\('all valid'\\)\")"
     ]
   }
 }

@@ -60,6 +60,25 @@
                        "nationInitials":  "WE"
                    },
                    {
+                       "characterName":  "King of Taur Romen",
+                       "banner":  "banner_elven_leaf",
+                       "artifacts":  [
+
+                                     ],
+                       "terrain":  5,
+                       "startingArmySize":  1,
+                       "startingArmyCard":  "Woodelf Archers",
+                       "preferedTroopType":  1,
+                       "startingCityIsHidden":  true,
+                       "startsWithPort":  true,
+                       "startingWarships":  0,
+                       "sex":  0,
+                       "startingCityRegion":  "SeaOfRhun",
+                       "nationName":  "Taur Romen",
+                       "characterSprite":  "common",
+                       "nationInitials":  "RU"
+                   },
+                   {
                        "characterName":  "Murazor",
                        "banner":  "banner_nazgul_helmet",
                        "artifacts":  [
@@ -275,6 +294,25 @@
                        "nationName":  "Dunedain",
                        "characterSprite":  "dunedain",
                        "nationInitials":  "D"
+                   },
+                   {
+                       "characterName":  "Lotho Sackville-Baggins",
+                       "alignment":  2,
+                       "banner":  "banner_sharkey",
+                       "artifacts":  [
+
+                                     ],
+                       "terrain":  3,
+                       "startingArmySize":  0,
+                       "preferedTroopType":  0,
+                       "startingCityIsHidden":  false,
+                       "startsWithPort":  false,
+                       "startingWarships":  0,
+                       "sex":  0,
+                       "startingCityRegion":  "TheShire",
+                       "nationName":  "The Lockholes",
+                       "characterSprite":  "common",
+                       "nationInitials":  "LK"
                    },
                    {
                        "characterName":  "Waulfa",

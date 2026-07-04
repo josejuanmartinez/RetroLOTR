@@ -15,6 +15,8 @@ public class PC
     [SerializeField] public int loyalty = 100;
 
     [SerializeField] public bool isHidden;
+    // Marks the hex this PC sits on as an entrance to the Underground (see Hex.IsUnderground).
+    [SerializeField] public bool isUnderground;
     [SerializeField] public PCSizeEnum citySize = PCSizeEnum.NONE;
     [SerializeField] public FortSizeEnum fortSize = FortSizeEnum.NONE;
     [SerializeField] public bool hasPort;
