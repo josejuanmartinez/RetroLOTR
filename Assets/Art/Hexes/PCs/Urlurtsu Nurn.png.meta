@@ -1,13 +1,13 @@
 fileFormatVersion: 2
-guid: d9bc62b8410b17845ae81acc269cbdb3
+guid: bc6cd4b3bb575be458dee18fced79715
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8449449725261603829
-    second: 071 1_0
+      213: -6996452720182810223
+    second: 1047_0
   - first:
-      213: 5540294692271657675
-    second: 071 1_1
+      213: -1170541259522373964
+    second: 1047_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -116,13 +116,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 071 1_0
+      name: 1047_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 745
-        height: 756
+        width: 896
+        height: 696
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,20 +131,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b0c9242fd368dba80800000000000000
-      internalID: -8449449725261603829
+      spriteID: 19920bdd15b97ee90800000000000000
+      internalID: -6996452720182810223
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 071 1_1
+      name: 1047_1
       rect:
         serializedVersion: 2
-        x: 0
-        y: 332
-        width: 7
-        height: 243
+        x: 9
+        y: 6
+        width: 878
+        height: 1002
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +153,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bc295db3ba413ec40800000000000000
-      internalID: 5540294692271657675
+      spriteID: 4b60b3f1de661cfe0800000000000000
+      internalID: -1170541259522373964
       vertices: []
       indices: 
       edges: []
@@ -173,8 +173,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      071 1_0: -8449449725261603829
-      071 1_1: 5540294692271657675
+      1047_0: -6996452720182810223
+      1047_1: -1170541259522373964
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

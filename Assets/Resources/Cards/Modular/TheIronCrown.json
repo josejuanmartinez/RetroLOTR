@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId": "the_iron_crown",
     "nation": "Sauron",
     "alignment": 1,
@@ -74,7 +74,8 @@
             },
             "amount": 5,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 2,
@@ -147,7 +148,8 @@
             },
             "amount": 5,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 3,
@@ -220,7 +222,8 @@
             },
             "amount": 5,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 4,
@@ -293,7 +296,8 @@
             },
             "amount": 5,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 5,
@@ -366,7 +370,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 6,
@@ -439,7 +444,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 7,
@@ -512,7 +518,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 8,
@@ -585,7 +592,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 9,
@@ -665,7 +673,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 11,
@@ -740,7 +749,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 9213,
@@ -752,7 +762,7 @@
                 "Cardolan"
             ],
             "deckId": "the_iron_crown",
-            "alignment": 0,
+            "alignment": 1,
             "actionClassName": "",
             "action": "PCAction",
             "spriteName": "Tharbad",
@@ -815,7 +825,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 9228,
@@ -890,7 +901,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 9229,
@@ -965,7 +977,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 9231,
@@ -1040,7 +1053,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 12,
@@ -1115,7 +1129,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 13,
@@ -1190,7 +1205,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 14,
@@ -1265,7 +1281,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 15,
@@ -1340,7 +1357,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 16,
@@ -1415,7 +1433,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 17,
@@ -1490,7 +1509,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 18,
@@ -1565,7 +1585,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 19,
@@ -1640,7 +1661,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 20,
@@ -1715,7 +1737,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 21,
@@ -1790,7 +1813,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 22,
@@ -1865,7 +1889,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 23,
@@ -1940,7 +1965,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 9108,
@@ -2015,7 +2041,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 24,
@@ -2090,7 +2117,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 25,
@@ -2165,7 +2193,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 26,
@@ -2240,7 +2269,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 27,
@@ -2315,7 +2345,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 28,
@@ -2390,7 +2421,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 29,
@@ -2465,7 +2497,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 30,
@@ -2538,7 +2571,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 981,
@@ -2597,7 +2631,7 @@
             "steelGranted": 0,
             "mithrilGranted": 0,
             "goldGranted": 0,
-            "startingPC": "CamethBrin",
+            "startingPC": "CarnDum",
             "inspireEffectData": {
                 "type": "RecruitTroops",
                 "statusEffect": "",
@@ -2611,7 +2645,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 982,
@@ -2684,7 +2719,156 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
+        },
+        {
+            "cardId": 9242,
+            "name": "Belceborg",
+            "quote": "The moors taught me what stone is for: breaking.",
+            "actionEffect": "Downgrade fort <sprite name=\"fort\"> on the nearest visible enemy settlement.",
+            "type": "Character",
+            "tags": [],
+            "deckId": "the_iron_crown",
+            "alignment": 0,
+            "actionClassName": "",
+            "action": "",
+            "spriteName": "Belceborg",
+            "region": "",
+            "description": "",
+            "requirementsText": "",
+            "historyText": "",
+            "statusEffect": "",
+            "procChance": 0,
+            "portraitName": "",
+            "characterGroup": "",
+            "referenceDeckId": "",
+            "referenceCardId": 0,
+            "encounterOptions": [],
+            "fleeOption": {
+                "optionId": "",
+                "label": "",
+                "description": "",
+                "outcomes": []
+            },
+            "commander": 1,
+            "agent": 0,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 6,
+            "artifacts": [],
+            "troopType": 0,
+            "specialAbilities": [],
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "jokerRequired": 0,
+            "leatherGranted": 0,
+            "mountsGranted": 0,
+            "timberGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0,
+            "goldGranted": 0,
+            "startingPC": "The Ettenmoors",
+            "inspireEffectData": {
+                "type": "DecreaseFortEnemy",
+                "statusEffect": "",
+                "turns": 0,
+                "amount": 0,
+                "troopType": "",
+                "resourceType": "",
+                "skillType": "",
+                "allCharacters": true,
+                "nearest": true
+            },
+            "amount": 1,
+            "deckSpriteName": "",
+            "situation": "",
+            "isUnderground": false
+        },
+        {
+            "cardId": 9244,
+            "name": "Golfimbul",
+            "quote": "When the wargs howl at dusk, the villages of the West bar doors that will not hold.",
+            "actionEffect": "Decrease loyalty <sprite name=\"loyalty\"> by 10 on a visible enemy settlement.",
+            "type": "Character",
+            "tags": [],
+            "deckId": "the_iron_crown",
+            "alignment": 0,
+            "actionClassName": "",
+            "action": "",
+            "spriteName": "Golfimbul",
+            "region": "",
+            "description": "",
+            "requirementsText": "",
+            "historyText": "",
+            "statusEffect": "",
+            "procChance": 0,
+            "portraitName": "",
+            "characterGroup": "",
+            "referenceDeckId": "",
+            "referenceCardId": 0,
+            "encounterOptions": [],
+            "fleeOption": {
+                "optionId": "",
+                "label": "",
+                "description": "",
+                "outcomes": []
+            },
+            "commander": 1,
+            "agent": 1,
+            "emmissary": 0,
+            "mage": 0,
+            "race": 5,
+            "artifacts": [],
+            "troopType": 0,
+            "specialAbilities": [],
+            "commanderSkillRequired": 0,
+            "agentSkillRequired": 0,
+            "emissarySkillRequired": 0,
+            "mageSkillRequired": 0,
+            "difficulty": 0,
+            "leatherRequired": 0,
+            "mountsRequired": 0,
+            "timberRequired": 0,
+            "ironRequired": 0,
+            "steelRequired": 0,
+            "mithrilRequired": 0,
+            "goldRequired": 0,
+            "jokerRequired": 0,
+            "leatherGranted": 0,
+            "mountsGranted": 0,
+            "timberGranted": 0,
+            "ironGranted": 0,
+            "steelGranted": 0,
+            "mithrilGranted": 0,
+            "goldGranted": 0,
+            "startingPC": "MtGram",
+            "inspireEffectData": {
+                "type": "DecreaseLoyalty",
+                "statusEffect": "",
+                "turns": 0,
+                "amount": 10,
+                "troopType": "",
+                "resourceType": "",
+                "skillType": "",
+                "allCharacters": true,
+                "nearest": true
+            },
+            "amount": 1,
+            "deckSpriteName": "",
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 983,
@@ -2757,7 +2941,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 984,
@@ -2830,7 +3015,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 985,
@@ -2906,7 +3092,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 986,
@@ -2979,7 +3166,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1014,
@@ -3052,7 +3240,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1015,
@@ -3127,7 +3316,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1016,
@@ -3200,7 +3390,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 9107,
@@ -3273,7 +3464,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1018,
@@ -3346,7 +3538,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1019,
@@ -3419,7 +3612,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1020,
@@ -3494,7 +3688,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1021,
@@ -3572,7 +3767,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1022,
@@ -3650,7 +3846,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1023,
@@ -3728,7 +3925,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1024,
@@ -3806,7 +4004,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1025,
@@ -3884,7 +4083,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1026,
@@ -3962,7 +4162,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1027,
@@ -4040,7 +4241,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1028,
@@ -4062,7 +4264,7 @@
             "procChance": 40,
             "portraitName": "",
             "characterGroup": "",
-            "referenceDeckId": "the_white_hand",
+            "referenceDeckId": "of_many_colours",
             "referenceCardId": 625,
             "encounterOptions": [],
             "fleeOption": {
@@ -4115,7 +4317,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1029,
@@ -4137,7 +4340,7 @@
             "procChance": 40,
             "portraitName": "",
             "characterGroup": "",
-            "referenceDeckId": "the_white_hand",
+            "referenceDeckId": "of_many_colours",
             "referenceCardId": 647,
             "encounterOptions": [],
             "fleeOption": {
@@ -4190,7 +4393,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1030,
@@ -4268,7 +4472,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1031,
@@ -4341,7 +4546,8 @@
             },
             "amount": 5,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1032,
@@ -4414,7 +4620,8 @@
             },
             "amount": 5,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1033,
@@ -4492,7 +4699,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1034,
@@ -4565,7 +4773,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1082,
@@ -4638,7 +4847,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1083,
@@ -4711,7 +4921,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1084,
@@ -4786,7 +4997,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1085,
@@ -4861,7 +5073,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1086,
@@ -4934,7 +5147,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1087,
@@ -5009,7 +5223,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1088,
@@ -5084,7 +5299,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1089,
@@ -5157,7 +5373,8 @@
             },
             "amount": 5,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1090,
@@ -5232,7 +5449,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1091,
@@ -5307,7 +5525,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1092,
@@ -5385,7 +5604,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         },
         {
             "cardId": 1093,
@@ -5458,7 +5678,8 @@
             },
             "amount": 1,
             "deckSpriteName": "",
-            "situation": ""
+            "situation": "",
+            "isUnderground": false
         }
     ]
 }

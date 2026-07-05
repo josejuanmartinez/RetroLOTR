@@ -462,7 +462,7 @@
         2,
         6,
         2,
-        5,
+        2,
         0,
         0,
         2,
@@ -506,8 +506,8 @@
         5,
         5,
         5,
-        2,
-        2,
+        5,
+        5,
         2,
         6,
         2,
@@ -572,8 +572,8 @@
         5,
         5,
         5,
-        2,
-        2,
+        5,
+        5,
         6,
         2,
         2,
@@ -819,7 +819,7 @@
         11,
         1,
         11,
-        1,
+        0,
         3,
         3,
         3,
@@ -884,7 +884,7 @@
         0,
         0,
         0,
-        1,
+        0,
         3,
         3,
         3,
@@ -1013,7 +1013,7 @@
         1,
         0,
         0,
-        1,
+        0,
         3,
         3,
         3,
@@ -1533,7 +1533,7 @@
         3,
         0,
         1,
-        1,
+        5,
         5,
         5,
         6,
@@ -2632,7 +2632,7 @@
         0,
         0,
         1,
-        3,
+        1,
         1,
         1,
         0,
@@ -2646,7 +2646,7 @@
         5,
         3,
         3,
-        3,
+        6,
         3,
         0,
         0,
@@ -3313,8 +3313,8 @@
         6,
         6,
         6,
-        4,
-        2,
+        3,
+        3,
         2,
         0,
         2,
@@ -3434,7 +3434,7 @@
         10,
         10,
         2,
-        2,
+        3,
         4,
         6,
         6,
@@ -3568,11 +3568,11 @@
         5,
         5,
         5,
-        2,
-        2,
-        2,
+        3,
+        3,
+        3,
         4,
-        1,
+        2,
         0,
         0,
         0,
@@ -3698,7 +3698,7 @@
         0,
         0,
         0,
-        1,
+        2,
         0,
         0,
         0,
@@ -3958,9 +3958,9 @@
         6,
         6,
         1,
+        2,
         1,
         1,
-        1,
         9,
         9,
         9,
@@ -4023,7 +4023,7 @@
         2,
         2,
         2,
-        9,
+        2,
         9,
         9,
         9,
@@ -4087,7 +4087,7 @@
         2,
         2,
         2,
-        9,
+        2,
         9,
         9,
         9,
@@ -4160,7 +4160,7 @@
         9,
         9,
         9,
-        9,
+        2,
         9,
         9,
         9,
@@ -4225,7 +4225,7 @@
         9,
         9,
         9,
-        9,
+        2,
         9,
         9,
         9,
@@ -4379,7 +4379,7 @@
         7,
         7,
         6,
-        8,
+        4,
         8,
         6,
         4,
@@ -4488,7 +4488,7 @@
         9,
         9,
         9,
-        0,
+        9,
         7,
         7,
         7,
@@ -6624,11 +6624,6 @@
         },
         {
             "row": 7,
-            "col": 3,
-            "spriteName": "forest_30"
-        },
-        {
-            "row": 7,
             "col": 4,
             "spriteName": "mountains_2"
         },
@@ -6795,52 +6790,52 @@
         {
             "row": 7,
             "col": 39,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
             "col": 40,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
             "col": 41,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
             "col": 44,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
             "col": 47,
-            "spriteName": "plains_20"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
             "col": 48,
-            "spriteName": "plains_20"
+            "spriteName": "forest_02"
         },
         {
             "row": 7,
@@ -7090,47 +7085,47 @@
         {
             "row": 8,
             "col": 41,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 8,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 8,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 8,
             "col": 44,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 8,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 8,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 8,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 8,
             "col": 48,
-            "spriteName": "plains_20"
+            "spriteName": "forest_02"
         },
         {
             "row": 8,
             "col": 49,
-            "spriteName": "plains_20"
+            "spriteName": "forest_02"
         },
         {
             "row": 8,
@@ -7370,52 +7365,52 @@
         {
             "row": 9,
             "col": 39,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
             "col": 40,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
             "col": 41,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
             "col": 44,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
             "col": 48,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 9,
@@ -7665,47 +7660,47 @@
         {
             "row": 10,
             "col": 41,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 10,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 10,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 10,
             "col": 44,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 10,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 10,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 10,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 10,
             "col": 48,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 10,
             "col": 49,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 10,
@@ -7940,42 +7935,37 @@
         {
             "row": 11,
             "col": 41,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 11,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 11,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 11,
             "col": 44,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 11,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 11,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 11,
             "col": 47,
-            "spriteName": "forest_30"
-        },
-        {
-            "row": 11,
-            "col": 48,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 11,
@@ -8195,7 +8185,7 @@
         {
             "row": 12,
             "col": 35,
-            "spriteName": "hills_19"
+            "spriteName": "mountains_1"
         },
         {
             "row": 12,
@@ -8225,17 +8215,17 @@
         {
             "row": 12,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 12,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 12,
             "col": 44,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 12,
@@ -8250,12 +8240,12 @@
         {
             "row": 12,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 12,
             "col": 48,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 12,
@@ -8450,22 +8440,22 @@
         {
             "row": 13,
             "col": 32,
-            "spriteName": "mountains_2"
+            "spriteName": "mountains_1"
         },
         {
             "row": 13,
             "col": 33,
-            "spriteName": "mountains_2"
+            "spriteName": "mountains_1"
         },
         {
             "row": 13,
             "col": 34,
-            "spriteName": "mountains_2"
+            "spriteName": "mountains_1"
         },
         {
             "row": 13,
             "col": 35,
-            "spriteName": "hills_19"
+            "spriteName": "mountains_1"
         },
         {
             "row": 13,
@@ -8695,7 +8685,7 @@
         {
             "row": 14,
             "col": 29,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 14,
@@ -8710,17 +8700,17 @@
         {
             "row": 14,
             "col": 32,
-            "spriteName": "mountains_2"
+            "spriteName": "mountains_1"
         },
         {
             "row": 14,
             "col": 33,
-            "spriteName": "mountains_2"
+            "spriteName": "mountains_1"
         },
         {
             "row": 14,
             "col": 34,
-            "spriteName": "mountains_2"
+            "spriteName": "mountains_1"
         },
         {
             "row": 14,
@@ -8960,17 +8950,17 @@
         {
             "row": 15,
             "col": 27,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 15,
             "col": 28,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 15,
             "col": 29,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 15,
@@ -8984,18 +8974,13 @@
         },
         {
             "row": 15,
-            "col": 32,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 15,
             "col": 33,
-            "spriteName": "mountains_2"
+            "spriteName": "mountains_1"
         },
         {
             "row": 15,
             "col": 34,
-            "spriteName": "hills_19"
+            "spriteName": "mountains_1"
         },
         {
             "row": 15,
@@ -9130,12 +9115,12 @@
         {
             "row": 15,
             "col": 63,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 15,
             "col": 64,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 16,
@@ -9245,17 +9230,17 @@
         {
             "row": 16,
             "col": 27,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 16,
             "col": 28,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 16,
             "col": 29,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 16,
@@ -9266,21 +9251,6 @@
             "row": 16,
             "col": 31,
             "spriteName": "hills_13"
-        },
-        {
-            "row": 16,
-            "col": 32,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 16,
-            "col": 33,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 16,
-            "col": 34,
-            "spriteName": "mountains_2"
         },
         {
             "row": 16,
@@ -9525,7 +9495,7 @@
         {
             "row": 17,
             "col": 26,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 17,
@@ -9536,16 +9506,6 @@
             "row": 17,
             "col": 31,
             "spriteName": "hills_19"
-        },
-        {
-            "row": 17,
-            "col": 32,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 17,
-            "col": 33,
-            "spriteName": "mountains_2"
         },
         {
             "row": 17,
@@ -9810,7 +9770,7 @@
         {
             "row": 18,
             "col": 28,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 18,
@@ -9826,21 +9786,6 @@
             "row": 18,
             "col": 31,
             "spriteName": "hills_19"
-        },
-        {
-            "row": 18,
-            "col": 32,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 18,
-            "col": 33,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 18,
-            "col": 34,
-            "spriteName": "mountains_2"
         },
         {
             "row": 18,
@@ -10086,21 +10031,6 @@
             "row": 19,
             "col": 30,
             "spriteName": "hills_19"
-        },
-        {
-            "row": 19,
-            "col": 31,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 19,
-            "col": 32,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 19,
-            "col": 33,
-            "spriteName": "mountains_2"
         },
         {
             "row": 19,
@@ -10359,26 +10289,6 @@
         },
         {
             "row": 20,
-            "col": 31,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 20,
-            "col": 32,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 20,
-            "col": 33,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 20,
-            "col": 34,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 20,
             "col": 35,
             "spriteName": "hills_19"
         },
@@ -10626,11 +10536,6 @@
             "row": 21,
             "col": 29,
             "spriteName": "grass_17"
-        },
-        {
-            "row": 21,
-            "col": 30,
-            "spriteName": "mountains_2"
         },
         {
             "row": 21,
@@ -10884,16 +10789,6 @@
         },
         {
             "row": 22,
-            "col": 32,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 22,
-            "col": 33,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 22,
             "col": 34,
             "spriteName": "hills_19"
         },
@@ -11129,28 +11024,23 @@
         },
         {
             "row": 23,
-            "col": 32,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 23,
             "col": 33,
             "spriteName": "hills_19"
         },
         {
             "row": 23,
             "col": 34,
-            "spriteName": "hills_21"
+            "spriteName": "forest_24"
         },
         {
             "row": 23,
             "col": 35,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 23,
             "col": 36,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 23,
@@ -11395,17 +11285,17 @@
         {
             "row": 24,
             "col": 35,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 24,
             "col": 36,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 24,
             "col": 37,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 24,
@@ -11620,17 +11510,17 @@
         {
             "row": 25,
             "col": 34,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 25,
             "col": 35,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 25,
             "col": 36,
-            "spriteName": "forest_30"
+            "spriteName": "forest_02"
         },
         {
             "row": 25,
@@ -11670,17 +11560,17 @@
         {
             "row": 25,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 25,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 25,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 25,
@@ -11885,17 +11775,17 @@
         {
             "row": 26,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 26,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 26,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 26,
@@ -12095,12 +11985,12 @@
         {
             "row": 27,
             "col": 44,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 27,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 27,
@@ -12285,7 +12175,7 @@
         {
             "row": 28,
             "col": 33,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 28,
@@ -12295,7 +12185,7 @@
         {
             "row": 28,
             "col": 35,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 28,
@@ -12525,7 +12415,7 @@
         {
             "row": 29,
             "col": 32,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 29,
@@ -12540,7 +12430,7 @@
         {
             "row": 29,
             "col": 35,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 29,
@@ -12785,12 +12675,12 @@
         {
             "row": 30,
             "col": 34,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 30,
             "col": 35,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 30,
@@ -13015,17 +12905,17 @@
         {
             "row": 31,
             "col": 31,
-            "spriteName": "forest_30"
-        },
-        {
-            "row": 31,
-            "col": 32,
             "spriteName": "forest_24"
         },
         {
             "row": 31,
+            "col": 32,
+            "spriteName": "forest_26"
+        },
+        {
+            "row": 31,
             "col": 33,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 31,
@@ -13035,7 +12925,7 @@
         {
             "row": 31,
             "col": 35,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 31,
@@ -13249,18 +13139,8 @@
         },
         {
             "row": 32,
-            "col": 29,
-            "spriteName": "forest_30"
-        },
-        {
-            "row": 32,
-            "col": 30,
-            "spriteName": "forest_30"
-        },
-        {
-            "row": 32,
             "col": 31,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
@@ -13270,7 +13150,7 @@
         {
             "row": 32,
             "col": 33,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
@@ -13499,13 +13379,8 @@
         },
         {
             "row": 33,
-            "col": 30,
-            "spriteName": "forest_30"
-        },
-        {
-            "row": 33,
             "col": 31,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 33,
@@ -13515,7 +13390,7 @@
         {
             "row": 33,
             "col": 33,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 33,
@@ -14665,12 +14540,12 @@
         {
             "row": 38,
             "col": 28,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_1"
         },
         {
             "row": 38,
             "col": 29,
-            "spriteName": "mountains_1"
+            "spriteName": "mountains_2"
         },
         {
             "row": 38,
@@ -15155,7 +15030,7 @@
         {
             "row": 40,
             "col": 28,
-            "spriteName": "grass_17"
+            "spriteName": "hills_19"
         },
         {
             "row": 40,
@@ -15225,7 +15100,7 @@
         {
             "row": 40,
             "col": 42,
-            "spriteName": "grass_17"
+            "spriteName": "shallowWater_01"
         },
         {
             "row": 40,
@@ -16980,22 +16855,22 @@
         {
             "row": 47,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 47,
             "col": 57,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 47,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 47,
             "col": 59,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 47,
@@ -17175,17 +17050,17 @@
         {
             "row": 48,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 48,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 48,
             "col": 60,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 48,
@@ -17305,32 +17180,32 @@
         {
             "row": 49,
             "col": 50,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 49,
             "col": 51,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 49,
             "col": 52,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 49,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 49,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 49,
             "col": 60,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 49,
@@ -17460,17 +17335,22 @@
         {
             "row": 50,
             "col": 50,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
+        },
+        {
+            "row": 50,
+            "col": 59,
+            "spriteName": "grass_17"
         },
         {
             "row": 50,
             "col": 60,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 50,
             "col": 61,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 50,
@@ -17580,7 +17460,12 @@
         {
             "row": 51,
             "col": 49,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
+        },
+        {
+            "row": 51,
+            "col": 50,
+            "spriteName": "shore_01"
         },
         {
             "row": 51,
@@ -17695,12 +17580,12 @@
         {
             "row": 52,
             "col": 49,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 52,
             "col": 50,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 52,
@@ -17825,7 +17710,7 @@
         {
             "row": 53,
             "col": 49,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 53,
@@ -17960,7 +17845,7 @@
         {
             "row": 54,
             "col": 50,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 54,
@@ -17980,22 +17865,22 @@
         {
             "row": 54,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 54,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 54,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 54,
             "col": 58,
-            "spriteName": "hills_09"
+            "spriteName": "plains_20"
         },
         {
             "row": 54,
@@ -18325,7 +18210,7 @@
         {
             "row": 56,
             "col": 54,
-            "spriteName": "hills_09"
+            "spriteName": "plains_20"
         },
         {
             "row": 56,
@@ -18940,7 +18825,7 @@
         {
             "row": 60,
             "col": 54,
-            "spriteName": "hills_12"
+            "spriteName": "plains_19"
         },
         {
             "row": 60,
@@ -19075,7 +18960,7 @@
         {
             "row": 61,
             "col": 54,
-            "spriteName": "desert_19"
+            "spriteName": "plains_19"
         },
         {
             "row": 61,
@@ -19255,12 +19140,12 @@
         {
             "row": 62,
             "col": 53,
-            "spriteName": "desert_19"
+            "spriteName": "plains_19"
         },
         {
             "row": 62,
             "col": 54,
-            "spriteName": "desert_19"
+            "spriteName": "desert_20"
         },
         {
             "row": 62,
@@ -19485,7 +19370,7 @@
         {
             "row": 63,
             "col": 61,
-            "spriteName": "desert_20"
+            "spriteName": "plains_19"
         },
         {
             "row": 63,
@@ -19700,7 +19585,7 @@
         {
             "row": 64,
             "col": 61,
-            "spriteName": "desert_20"
+            "spriteName": "plains_19"
         },
         {
             "row": 64,
@@ -19710,7 +19595,7 @@
         {
             "row": 64,
             "col": 63,
-            "spriteName": "desert_18"
+            "spriteName": "desert_20"
         },
         {
             "row": 64,
@@ -20169,11 +20054,6 @@
         },
         {
             "row": 67,
-            "col": 20,
-            "spriteName": "swamp_06"
-        },
-        {
-            "row": 67,
             "col": 21,
             "spriteName": "swamp_06"
         },
@@ -20520,7 +20400,7 @@
         {
             "row": 68,
             "col": 51,
-            "spriteName": "desert_20"
+            "spriteName": "desert_19"
         },
         {
             "row": 68,
@@ -20585,7 +20465,7 @@
         {
             "row": 68,
             "col": 64,
-            "spriteName": "mountains_6"
+            "spriteName": "desert_19"
         },
         {
             "row": 69,
@@ -20888,8 +20768,8 @@
             "variantId": ""
         },
         {
-            "row": 9,
-            "col": 48,
+            "row": 8,
+            "col": 47,
             "leaderName": "Thranduil",
             "isPlayable": false,
             "variantId": ""
@@ -21059,6 +20939,13 @@
             "row": 17,
             "col": 12,
             "leaderName": "Pippin",
+            "isPlayable": false,
+            "variantId": ""
+        },
+        {
+            "row": 4,
+            "col": 31,
+            "leaderName": "Azog",
             "isPlayable": false,
             "variantId": ""
         }
@@ -21239,7 +21126,7 @@
             "col": 23,
             "pcName": "CarnDum",
             "ownerLeaderName": "Murazor",
-            "citySize": 4,
+            "citySize": 3,
             "fortSize": 4,
             "hasPort": false,
             "isHidden": false,
@@ -21256,7 +21143,7 @@
             "col": 26,
             "pcName": "MtGram",
             "ownerLeaderName": "Murazor",
-            "citySize": 3,
+            "citySize": 1,
             "fortSize": 3,
             "hasPort": false,
             "isHidden": false,
@@ -21847,17 +21734,17 @@
             "fortFeature": ""
         },
         {
-            "row": 9,
-            "col": 48,
-            "pcName": "Thanduil's Halls",
+            "row": 8,
+            "col": 47,
+            "pcName": "Thranduil's Halls",
             "ownerLeaderName": "Thranduil",
             "citySize": 4,
             "fortSize": 3,
             "hasPort": false,
             "isHidden": false,
             "isCapital": true,
-            "isUnderground": true,
-            "loyalty": 75,
+            "isUnderground": false,
+            "loyalty": 100,
             "region": "",
             "isIsland": false,
             "pcFeature": "",
@@ -23666,16 +23553,16 @@
             "fortFeature": ""
         },
         {
-            "row": 11,
+            "row": 9,
             "col": 48,
             "pcName": "Celebannon",
-            "ownerLeaderName": "Thranduil",
+            "ownerLeaderName": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
-            "isHidden": false,
+            "isHidden": true,
             "isCapital": false,
-            "isUnderground": false,
+            "isUnderground": true,
             "loyalty": 100,
             "region": "",
             "isIsland": false,
@@ -24265,25 +24152,6 @@
             }
         },
         {
-            "row": 33,
-            "col": 28,
-            "characterName": "Ugluk",
-            "ownerLeaderName": "Saruman",
-            "army": {
-                "xp": 25,
-                "stacks": [
-                    {
-                        "armyCardName": "Dunlending Warriors",
-                        "amount": 1
-                    },
-                    {
-                        "armyCardName": "Uruk Hai",
-                        "amount": 1
-                    }
-                ]
-            }
-        },
-        {
             "row": 31,
             "col": 27,
             "characterName": "Enion",
@@ -24321,6 +24189,21 @@
             "army": {
                 "xp": 25,
                 "stacks": []
+            }
+        },
+        {
+            "row": 33,
+            "col": 32,
+            "characterName": "Ugluk",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Torch Bearers",
+                        "amount": 100
+                    }
+                ]
             }
         },
         {
@@ -24528,26 +24411,16 @@
         {
             "row": 9,
             "col": 48,
-            "characterName": "Thranduil",
-            "ownerLeaderName": "",
-            "army": {
-                "xp": 25,
-                "stacks": [
-                    {
-                        "armyCardName": "Elvenking Guards",
-                        "amount": 100
-                    }
-                ]
-            }
-        },
-        {
-            "row": 9,
-            "col": 48,
             "characterName": "Legolas",
             "ownerLeaderName": "Thranduil",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "Woodelf Archers",
+                        "amount": 100
+                    }
+                ]
             }
         },
         {
@@ -25074,15 +24947,11 @@
         {
             "row": 18,
             "col": 34,
-            "characterName": "Azog",
+            "characterName": "Bolg",
             "ownerLeaderName": "",
             "army": {
                 "xp": 25,
                 "stacks": [
-                    {
-                        "armyCardName": "Mounted Half-Orcs",
-                        "amount": 100
-                    },
                     {
                         "armyCardName": "Mounted Half-Orcs",
                         "amount": 100
@@ -25098,6 +24967,103 @@
             "army": {
                 "xp": 25,
                 "stacks": []
+            }
+        },
+        {
+            "row": 8,
+            "col": 47,
+            "characterName": "Thranduil",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Elvenking Guards",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Woodelf Warriors",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 10,
+            "col": 27,
+            "characterName": "Belceborg",
+            "ownerLeaderName": "Murazor",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Stone Trolls",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 4,
+            "col": 31,
+            "characterName": "Azog",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Wargs",
+                        "amount": 100
+                    },
+                    {
+                        "armyCardName": "Warg Riders",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 4,
+            "col": 31,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 3,
+            "col": 23,
+            "characterName": "Broggha",
+            "ownerLeaderName": "Murazor",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Angmarin",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Angmarin",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 8,
+            "col": 26,
+            "characterName": "Golfimbul",
+            "ownerLeaderName": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Wargs",
+                        "amount": 100
+                    }
+                ]
             }
         }
     ]

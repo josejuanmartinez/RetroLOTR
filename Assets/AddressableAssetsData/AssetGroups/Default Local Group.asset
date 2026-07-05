@@ -1827,12 +1827,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 15ca21aa10954df4fb241ac5b5432704
-    m_Address: Assets/Art/Hexes/Tiles/Unused/wastelands_09.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 16126dac5196a834fa04dd4a8b477df8
     m_Address: Assets/Art/Hexes/Tiles/Unused/025.png
     m_ReadOnly: 0
@@ -7951,6 +7945,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5b25b47f33cf295458960f76025ff216
+    m_Address: Assets/Art/Cards/PC/LagOrod.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5b40d03c7ceb82e4c8b626f414fe0fbc
     m_Address: Assets/Art/Hexes/Tiles/Unused/hexPlainsVillageRuin02.png
     m_ReadOnly: 0
@@ -11199,6 +11199,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7e68cc09fae66e74f99c0ecf6dbad44a
     m_Address: Assets/Art/Hexes/Tiles/plains_05.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e766d5662544d66ae112a5222702059
+    m_Address: Assets/Art/Cards/Characters/Belceborg.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -14484,12 +14490,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a29e334bb0753f948885ab3aa22bdde8
-    m_Address: Assets/Art/Hexes/PCs/Lag Scara.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a2aaa35559367f740ae16c246b4c17e0
     m_Address: Assets/Art/Cards/Armies/Southrons.jpg
     m_ReadOnly: 0
@@ -15287,10 +15287,9 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: aaaa7be80b28da74085a0fb6cd6d4ad0
-    m_Address: Assets/Art/Hexes/Tiles/Unused/088.png
+    m_Address: Assets/Art/Hexes/PCs/Lag-Scara.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: aabbccddeeff00112233445566778891
     m_Address: Assets/Art/Characters/Animations/alatar_idle.anim
@@ -16835,10 +16834,9 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bc6cd4b3bb575be458dee18fced79715
-    m_Address: Assets/Art/Hexes/Tiles/Unused/1047.png
+    m_Address: Assets/Art/Hexes/PCs/Urlurtsu Nurn.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bc713b0a68f179f4c99beaffd9e9e2ce
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_48.png
@@ -18736,10 +18734,9 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d303d4deb01912d46883589aa9b7db16
-    m_Address: Assets/Art/Hexes/Tiles/Unused/1035.png
+    m_Address: Assets/Art/Hexes/PCs/Thranduil's Halls.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d30cc0f4157ae9040b868307a83b8004
     m_Address: Assets/Art/Hexes/Tiles/hills_08.png
@@ -19271,12 +19268,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d9b1a974e1facaf4799ba3616bc32103
     m_Address: Assets/Art/Cards/PC/NinInEilph.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d9bc62b8410b17845ae81acc269cbdb3
-    m_Address: Assets/Art/Hexes/PCs/Urlurtsu Nurn.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -20585,12 +20576,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e705147c60ec39c46bfcfa47de011cbe
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexPlainsVillageRuin03.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e7094caed44287644b241bab5dba6df6
-    m_Address: Assets/Art/Hexes/Tiles/Unused/hexDirtClayPit00.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

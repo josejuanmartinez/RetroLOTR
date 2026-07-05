@@ -85,6 +85,25 @@ public class DeckExplorerWindow : EditorWindow
     private int editedAmount;
     private CardTypeEnum editedCardType;
     private CardSituationEnum editedSituation;
+    private string editedName = string.Empty;
+    private string editedQuote = string.Empty;
+    private string editedDescription = string.Empty;
+    private string editedRequirementsText = string.Empty;
+    private string editedHistoryText = string.Empty;
+    private string editedRegion = string.Empty;
+    private string editedTags = string.Empty;
+    private string editedArtifacts = string.Empty;
+    private string editedActionRef = string.Empty;
+    private string editedSpriteName = string.Empty;
+    private string editedPortraitName = string.Empty;
+    private string editedDeckSpriteName = string.Empty;
+    private string editedCharacterGroup = string.Empty;
+    private string editedStatusEffect = string.Empty;
+    private int editedDifficulty;
+    private int editedAlignment;
+    private RacesEnum editedRace;
+    private string editedRawJson = string.Empty;
+    private bool showRawJsonEditor;
 
     private const float PreviewCardW = 275f;
     private const float PreviewCardH = 325f;
@@ -316,6 +335,13 @@ public class DeckExplorerWindow : EditorWindow
         EditorGUILayout.LabelField("Raw Fields", EditorStyles.boldLabel);
         EditorGUILayout.SelectableLabel(BuildRawSummary(card), EditorStyles.textArea, GUILayout.MinHeight(110));
 
+        GUILayout.Space(10);
+        showRawJsonEditor = EditorGUILayout.Foldout(showRawJsonEditor, "Raw JSON Editor (all fields)", true);
+        if (showRawJsonEditor)
+        {
+            DrawRawJsonEditor(card);
+        }
+
         EditorGUILayout.EndScrollView();
         GUILayout.EndVertical();
     }
@@ -338,8 +364,9 @@ public class DeckExplorerWindow : EditorWindow
 
     private void DrawCardDetails(CardData card)
     {
+        SyncEditableCardFields(card);
+
         EditorGUILayout.LabelField("Name", FormatCardTitle(card.name));
-        EditorGUILayout.LabelField("Amount", card.amount.ToString());
         EditorGUILayout.LabelField("Type", FormatCardTypeLabel(card.GetCardType()), CreateRichTextStyle(EditorStyles.label));
         EditorGUILayout.LabelField("Deck", card.deckId ?? string.Empty);
         if (IsReferenceCard(card))
@@ -354,29 +381,9 @@ public class DeckExplorerWindow : EditorWindow
         {
             RemoveCard(card);
         }
-        EditorGUILayout.LabelField("Region", card.region ?? string.Empty);
-        EditorGUILayout.LabelField("Tags", card.tags != null ? string.Join(", ", card.tags) : string.Empty);
-        if (!string.IsNullOrWhiteSpace(card.quote))
-        {
-            EditorGUILayout.LabelField("Quote", card.quote);
-        }
-        if (!string.IsNullOrWhiteSpace(card.actionEffect))
-        {
-            SyncEditableCardFields(card);
-            GUILayout.Space(4);
-            EditorGUILayout.LabelField("Action Effect", EditorStyles.boldLabel);
-            GUIStyle textAreaStyle = new GUIStyle(EditorStyles.textArea) { wordWrap = true };
-            editedActionEffect = EditorGUILayout.TextArea(editedActionEffect, textAreaStyle, GUILayout.MinHeight(60));
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Save effect", GUILayout.Width(100)))
-                SaveActionEffect(card);
-            EditorGUILayout.EndHorizontal();
-        }
         EditorGUILayout.LabelField("Gold Cost", card.GetTotalGoldCost().ToString());
         EditorGUILayout.LabelField("Costs", BuildCostSummary(card));
         EditorGUILayout.LabelField("Grants", BuildGrantSummary(card));
-        EditorGUILayout.LabelField("Requirements text", card.requirementsText ?? string.Empty);
 
         if (card.GetCardType() == CardTypeEnum.Land && !string.IsNullOrWhiteSpace(card.name))
         {
@@ -388,6 +395,47 @@ public class DeckExplorerWindow : EditorWindow
         {
             EditorGUILayout.LabelField($"Allows recruiting characters born in {card.name}.", EditorStyles.wordWrappedLabel);
         }
+
+        GUILayout.Space(8);
+        EditorGUILayout.LabelField("Editable Fields", EditorStyles.boldLabel);
+        EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
+        GUIStyle textAreaStyle = new(EditorStyles.textArea) { wordWrap = true };
+
+        editedName = EditorGUILayout.TextField("Name", editedName);
+        editedRegion = EditorGUILayout.TextField("Region", editedRegion);
+        editedTags = EditorGUILayout.TextField(new GUIContent("Tags", "Comma-separated list"), editedTags);
+        editedArtifacts = EditorGUILayout.TextField(new GUIContent("Artifacts", "Comma-separated list"), editedArtifacts);
+        editedActionRef = EditorGUILayout.TextField(new GUIContent("Action Ref", "Action class name resolved for this card"), editedActionRef);
+        editedSpriteName = EditorGUILayout.TextField("Sprite Name", editedSpriteName);
+        editedPortraitName = EditorGUILayout.TextField("Portrait Name", editedPortraitName);
+        editedDeckSpriteName = EditorGUILayout.TextField("Deck Sprite Name", editedDeckSpriteName);
+        editedCharacterGroup = EditorGUILayout.TextField("Character Group", editedCharacterGroup);
+        editedStatusEffect = EditorGUILayout.TextField("Status Effect", editedStatusEffect);
+        editedRace = (RacesEnum)EditorGUILayout.EnumPopup("Race", editedRace);
+        editedAlignment = EditorGUILayout.IntField("Alignment", editedAlignment);
+        editedDifficulty = EditorGUILayout.IntField("Difficulty", editedDifficulty);
+
+        GUILayout.Space(4);
+        EditorGUILayout.LabelField("Quote");
+        editedQuote = EditorGUILayout.TextArea(editedQuote, textAreaStyle, GUILayout.MinHeight(40));
+        EditorGUILayout.LabelField("Action Effect");
+        editedActionEffect = EditorGUILayout.TextArea(editedActionEffect, textAreaStyle, GUILayout.MinHeight(60));
+        EditorGUILayout.LabelField("Description");
+        editedDescription = EditorGUILayout.TextArea(editedDescription, textAreaStyle, GUILayout.MinHeight(60));
+        EditorGUILayout.LabelField("Requirements Text");
+        editedRequirementsText = EditorGUILayout.TextArea(editedRequirementsText, textAreaStyle, GUILayout.MinHeight(40));
+        EditorGUILayout.LabelField("History Text");
+        editedHistoryText = EditorGUILayout.TextArea(editedHistoryText, textAreaStyle, GUILayout.MinHeight(40));
+
+        GUILayout.Space(6);
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("Save card fields", GUILayout.Width(140)))
+        {
+            SaveCardFields(card);
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUI.EndDisabledGroup();
     }
 
     private void DrawCopyToDeckControls(CardData card)
@@ -491,12 +539,9 @@ public class DeckExplorerWindow : EditorWindow
             DrawEditableCharacterStats(card);
         }
 
-        if (card.GetCardType() == CardTypeEnum.PC || card.GetCardType() == CardTypeEnum.Land)
-        {
-            GUILayout.Space(10);
-            EditorGUILayout.LabelField("Editable Grants", EditorStyles.boldLabel);
-            DrawEditableGrants(card);
-        }
+        GUILayout.Space(10);
+        EditorGUILayout.LabelField("Editable Grants", EditorStyles.boldLabel);
+        DrawEditableGrants(card);
 
 
         GUILayout.Space(6);
@@ -642,6 +687,42 @@ public class DeckExplorerWindow : EditorWindow
         EditorGUI.EndDisabledGroup();
     }
 
+    private void DrawRawJsonEditor(CardData card)
+    {
+        if (card == null) return;
+
+        EditorGUILayout.HelpBox(
+            "Edits every serialized field of the card, including nested data (encounter options, flee option, inspire effect). Load the card JSON, edit it, then apply.",
+            MessageType.Info);
+
+        EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
+        if (GUILayout.Button("Load card JSON", GUILayout.Width(130)))
+        {
+            editedRawJson = JsonUtility.ToJson(card, true);
+            GUI.FocusControl(null);
+        }
+
+        if (!string.IsNullOrWhiteSpace(editedRawJson))
+        {
+            GUIStyle jsonStyle = new(EditorStyles.textArea) { wordWrap = false };
+            editedRawJson = EditorGUILayout.TextArea(editedRawJson, jsonStyle, GUILayout.MinHeight(220));
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Discard", GUILayout.Width(80)))
+            {
+                editedRawJson = string.Empty;
+                GUI.FocusControl(null);
+            }
+            if (GUILayout.Button("Apply && save JSON", GUILayout.Width(150)))
+            {
+                SaveRawJson(card);
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+        EditorGUI.EndDisabledGroup();
+    }
+
     private List<string> GetAvailablePcNamesForCurrentDeck()
     {
         var names = new List<string> { string.Empty };
@@ -710,6 +791,24 @@ public class DeckExplorerWindow : EditorWindow
         editedSituation = card.GetSituation();
         editedActionEffect = card.actionEffect ?? string.Empty;
         editedIsUnderground = card.isUnderground;
+        editedName = card.name ?? string.Empty;
+        editedQuote = card.quote ?? string.Empty;
+        editedDescription = card.description ?? string.Empty;
+        editedRequirementsText = card.requirementsText ?? string.Empty;
+        editedHistoryText = card.historyText ?? string.Empty;
+        editedRegion = card.region ?? string.Empty;
+        editedTags = card.tags != null ? string.Join(", ", card.tags) : string.Empty;
+        editedArtifacts = card.artifacts != null ? string.Join(", ", card.artifacts) : string.Empty;
+        editedActionRef = card.GetActionRef() ?? string.Empty;
+        editedSpriteName = card.spriteName ?? string.Empty;
+        editedPortraitName = card.portraitName ?? string.Empty;
+        editedDeckSpriteName = card.deckSpriteName ?? string.Empty;
+        editedCharacterGroup = card.characterGroup ?? string.Empty;
+        editedStatusEffect = card.statusEffect ?? string.Empty;
+        editedDifficulty = card.difficulty;
+        editedAlignment = card.alignment;
+        editedRace = card.race;
+        editedRawJson = string.Empty;
     }
 
     private static string GetEditableRequirementsKey(CardData card)
@@ -845,19 +944,43 @@ public class DeckExplorerWindow : EditorWindow
         Debug.Log($"DeckExplorerWindow: saved army ability/proc chance for '{card.name}'.");
     }
 
-    private void SaveActionEffect(CardData card)
+    private void SaveCardFields(CardData card)
     {
         DeckEntryView deckView = GetSelectedDeckView();
         if (card == null || deckView?.deckData?.cards == null) return;
 
         CardData target = deckView.deckData.cards.FirstOrDefault(c => c != null && c.cardId == card.cardId) ?? card;
-        target.actionEffect = editedActionEffect;
-        card.actionEffect = editedActionEffect;
+
+        target.name = editedName?.Trim() ?? string.Empty;
+        target.quote = editedQuote ?? string.Empty;
+        target.actionEffect = editedActionEffect ?? string.Empty;
+        target.description = editedDescription ?? string.Empty;
+        target.requirementsText = editedRequirementsText ?? string.Empty;
+        target.historyText = editedHistoryText ?? string.Empty;
+        target.region = editedRegion?.Trim() ?? string.Empty;
+        target.tags = SplitCommaList(editedTags);
+        target.artifacts = SplitCommaList(editedArtifacts);
+        target.spriteName = editedSpriteName?.Trim() ?? string.Empty;
+        target.portraitName = editedPortraitName?.Trim() ?? string.Empty;
+        target.deckSpriteName = editedDeckSpriteName?.Trim() ?? string.Empty;
+        target.characterGroup = editedCharacterGroup?.Trim() ?? string.Empty;
+        target.statusEffect = editedStatusEffect?.Trim() ?? string.Empty;
+        target.race = editedRace;
+        target.alignment = editedAlignment;
+        target.difficulty = Mathf.Max(0, editedDifficulty);
+
+        // Write the new action ref back to whichever field GetActionRef() reads from.
+        string newActionRef = editedActionRef?.Trim() ?? string.Empty;
+        if (!string.Equals(newActionRef, target.GetActionRef() ?? string.Empty, StringComparison.Ordinal))
+        {
+            if (!string.IsNullOrWhiteSpace(target.action)) target.action = newActionRef;
+            else target.actionClassName = newActionRef;
+        }
 
         string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
         if (string.IsNullOrWhiteSpace(assetPath))
         {
-            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving action effect.");
+            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving card fields.");
             return;
         }
 
@@ -866,9 +989,70 @@ public class DeckExplorerWindow : EditorWindow
         AssetDatabase.ImportAsset(ToAssetPath(assetPath), ImportAssetOptions.ForceUpdate);
         AssetDatabase.Refresh();
 
+        editedCardKey = null;
+        spriteCache.Clear();
         ReloadSelectedCard();
         EditorUtility.SetDirty(this);
-        Debug.Log($"DeckExplorerWindow: saved action effect for '{card.name}'.");
+        Debug.Log($"DeckExplorerWindow: saved card fields for '{target.name}'.");
+    }
+
+    private void SaveRawJson(CardData card)
+    {
+        DeckEntryView deckView = GetSelectedDeckView();
+        if (card == null || deckView?.deckData?.cards == null || string.IsNullOrWhiteSpace(editedRawJson)) return;
+
+        CardData parsed;
+        try
+        {
+            parsed = JsonUtility.FromJson<CardData>(editedRawJson);
+        }
+        catch (Exception ex)
+        {
+            EditorUtility.DisplayDialog("Invalid JSON", $"Could not parse card JSON:\n{ex.Message}", "OK");
+            return;
+        }
+
+        if (parsed == null)
+        {
+            EditorUtility.DisplayDialog("Invalid JSON", "Could not parse card JSON.", "OK");
+            return;
+        }
+
+        if (parsed.cardId <= 0) parsed.cardId = card.cardId;
+        if (string.IsNullOrWhiteSpace(parsed.deckId)) parsed.deckId = card.deckId;
+
+        int index = deckView.deckData.cards.FindIndex(c => c != null && c.cardId == card.cardId);
+        if (index < 0)
+        {
+            Debug.LogWarning($"DeckExplorerWindow: could not find card '{card.name}' in deck to apply raw JSON.");
+            return;
+        }
+        deckView.deckData.cards[index] = parsed;
+
+        string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving raw JSON.");
+            return;
+        }
+
+        File.WriteAllText(assetPath, JsonUtility.ToJson(deckView.deckData, true));
+        AssetDatabase.ImportAsset(ToAssetPath(assetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
+
+        editedCardKey = null;
+        editedRawJson = string.Empty;
+        spriteCache.Clear();
+        ReloadSelectedCard();
+        EditorUtility.SetDirty(this);
+        Debug.Log($"DeckExplorerWindow: applied raw JSON for '{parsed.name}'.");
+    }
+
+    private static List<string> SplitCommaList(string value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? new List<string>()
+            : value.Split(',').Select(t => t.Trim()).Where(t => t.Length > 0).ToList();
     }
 
     private void SaveCharacterStats(CardData card)

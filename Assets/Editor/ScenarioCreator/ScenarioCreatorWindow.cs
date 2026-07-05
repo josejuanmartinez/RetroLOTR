@@ -32,7 +32,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private readonly Dictionary<int, List<ScenarioCharacter>> characters = new();
 
         // ---- Tool state ----------------------------------------------------------------------
-        private Tool tool = Tool.Paint;
+        private Tool tool = Tool.Magnifier;
         private TerrainEnum paintTerrain = TerrainEnum.plains;
         private int brushSize = 1;
         private string paintRegion = "";      // empty = leave region unchanged while terrain-painting
@@ -86,10 +86,23 @@ namespace RetroLOTR.Scenarios.EditorTools
             selectedIndex = -1;
         }
 
+        // Renders full card previews (PC / character / army) in the magnifier inspector.
+        private ScenarioCardPreviewRenderer cardRenderer;
+
         // Card data is cached statically in ScenarioCardCatalog and never auto-refreshes within a
         // Unity session. Invalidate on focus so edits to deck JSON (new PCs, characters, etc.)
         // show up when the author tabs back into the window, not only after a script recompile.
-        private void OnFocus() => ScenarioCardCatalog.Invalidate();
+        private void OnFocus()
+        {
+            ScenarioCardCatalog.Invalidate();
+            cardRenderer?.ClearCache();
+        }
+
+        private void OnDisable()
+        {
+            cardRenderer?.Dispose();
+            cardRenderer = null;
+        }
 
         // -------------------------------------------------------------------------------------
         // GUI
@@ -116,6 +129,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             {
                 AssetDatabase.Refresh();
                 ScenarioCardCatalog.Invalidate();
+                cardRenderer?.ClearCache();
             }
             GUILayout.FlexibleSpace();
             GUILayout.Label($"{width} x {height}", EditorStyles.toolbarButton);
@@ -654,6 +668,45 @@ namespace RetroLOTR.Scenarios.EditorTools
             pc.isUnderground = EditorGUILayout.Toggle("Underground", pc.isUnderground);
             pc.isIsland = EditorGUILayout.Toggle("Island", pc.isIsland);
             pc.loyalty = EditorGUILayout.IntSlider("Loyalty", pc.loyalty, 0, 100);
+
+            DrawCardWithDecks(pc.pcName);
+        }
+
+        // Full card render (real Card prefab, offscreen camera) plus the list of decks that
+        // contain the card, shown under the magnifier's PC / character / army pickers.
+        private void DrawCardWithDecks(string cardName)
+        {
+            if (string.IsNullOrWhiteSpace(cardName)) return;
+
+            CardData card = ScenarioCardCatalog.GetCard(cardName);
+            if (card == null)
+            {
+                EditorGUILayout.HelpBox($"No card found for '{cardName}'.", MessageType.None);
+                return;
+            }
+
+            EditorGUILayout.Space(4);
+            cardRenderer ??= new ScenarioCardPreviewRenderer();
+            Texture2D tex = cardRenderer.Render(card);
+
+            const float previewW = 290f;
+            float previewH = previewW * ScenarioCardPreviewRenderer.CanvasH / ScenarioCardPreviewRenderer.CanvasW;
+            Rect r = GUILayoutUtility.GetRect(previewW, previewH, GUILayout.Width(previewW), GUILayout.Height(previewH));
+            if (tex != null)
+            {
+                GUI.DrawTexture(r, tex, ScaleMode.ScaleToFit, false);
+            }
+            else
+            {
+                EditorGUI.DrawRect(r, new Color(0.15f, 0.15f, 0.15f));
+                GUI.Label(r, "(card preview unavailable)", EditorStyles.centeredGreyMiniLabel);
+            }
+
+            IReadOnlyList<string> decks = ScenarioCardCatalog.GetDecksContaining(cardName);
+            EditorGUILayout.LabelField(
+                decks.Count == 0 ? "Decks: (none)" : "Decks: " + string.Join(", ", decks),
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.Space(4);
         }
 
         private void DrawCharactersSection(int idx, int row, int col)
@@ -677,6 +730,7 @@ namespace RetroLOTR.Scenarios.EditorTools
 
                 SearchableField("Name", c.characterName, ScenarioCardCatalog.CharacterCards, v => c.characterName = v, ScenarioCardCatalog.GetCard);
                 SearchableField("Owner", c.ownerLeaderName, ScenarioCardCatalog.AllLeaders(), v => c.ownerLeaderName = v);
+                DrawCardWithDecks(c.characterName);
 
                 DrawArmyEditor(c);
 
@@ -729,6 +783,15 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             if (GUILayout.Button("Add Army Card"))
                 c.army.stacks.Add(new ScenarioArmyStack { amount = 100 });
+
+            // One rendered card per distinct army card in the stacks.
+            foreach (string armyCardName in c.army.stacks
+                         .Select(s => s.armyCardName)
+                         .Where(n => !string.IsNullOrWhiteSpace(n))
+                         .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                DrawCardWithDecks(armyCardName);
+            }
         }
 
         private void SyncCharacterList(int idx, List<ScenarioCharacter> list)

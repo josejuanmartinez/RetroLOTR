@@ -49,7 +49,7 @@ public static class HexFeatureData
     {
         // ---------- FOREST ----------
         { "forest_01", HexFeatureEnum.River },
-        { "forest_02", HexFeatureEnum.Road },
+        { "forest_02", HexFeatureEnum.None },
         { "forest_03", HexFeatureEnum.StandingStones | HexFeatureEnum.Ruins },        
         { "forest_04", HexFeatureEnum.Road | HexFeatureEnum.Watchtower},
         { "forest_05", HexFeatureEnum.River | HexFeatureEnum.Road | HexFeatureEnum.Bridge },       

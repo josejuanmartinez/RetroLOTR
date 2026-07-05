@@ -23,6 +23,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private static Dictionary<TerrainEnum, Sprite> _terrainSprites;
         private static List<CardData> _allCards;
         private static Dictionary<string, CardData> _cardsByName;
+        private static Dictionary<string, List<string>> _deckLabelsByCardName;
         private static readonly Dictionary<string, Sprite> _artCache = new(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, Sprite> _pcHexCache = new(StringComparer.Ordinal);
         private static bool _pcHexLoaded;
@@ -41,6 +42,19 @@ namespace RetroLOTR.Scenarios.EditorTools
             if (string.IsNullOrWhiteSpace(name)) return null;
             EnsureCardsLoaded();
             return _cardsByName.TryGetValue(name.Trim(), out CardData card) ? card : null;
+        }
+
+        /// <summary>
+        /// Deck ids of every deck that contains this card, either directly (a named card) or
+        /// via a reference copy (referenceDeckId/referenceCardId resolved to the original name).
+        /// </summary>
+        public static IReadOnlyList<string> GetDecksContaining(string cardName)
+        {
+            if (string.IsNullOrWhiteSpace(cardName)) return Array.Empty<string>();
+            EnsureCardsLoaded();
+            return _deckLabelsByCardName.TryGetValue(cardName.Trim(), out List<string> labels)
+                ? labels
+                : Array.Empty<string>();
         }
 
         public static List<Sprite> GetTerrainVariations(TerrainEnum terrain)
@@ -156,6 +170,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             _terrainSprites = null;
             _allCards = null;
             _cardsByName = null;
+            _deckLabelsByCardName = null;
             _artCache.Clear();
             _pcHexCache.Clear();
             _pcHexLoaded = false;
@@ -178,11 +193,16 @@ namespace RetroLOTR.Scenarios.EditorTools
             if (_allCards != null) return;
             _allCards = new List<CardData>();
             _cardsByName = new Dictionary<string, CardData>(StringComparer.OrdinalIgnoreCase);
+            _deckLabelsByCardName = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
             TextAsset manifestAsset = Resources.Load<TextAsset>("Cards");
             if (manifestAsset == null) return;
             CardsManifest manifest = JsonUtility.FromJson<CardsManifest>(manifestAsset.text);
             if (manifest?.decks == null) return;
+
+            var loadedDecks = new List<(string deckId, DeckData deck)>();
+            var cardsByKey = new Dictionary<string, CardData>(StringComparer.OrdinalIgnoreCase);
+            var parentByDeckId = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (DeckManifestEntry entry in manifest.decks)
             {
@@ -192,14 +212,72 @@ namespace RetroLOTR.Scenarios.EditorTools
                 DeckData deck = JsonUtility.FromJson<DeckData>(deckAsset.text);
                 if (deck?.cards == null) continue;
 
+                string deckId = !string.IsNullOrWhiteSpace(entry.deckId) ? entry.deckId.Trim()
+                              : deck.deckId?.Trim() ?? string.Empty;
+                loadedDecks.Add((deckId, deck));
+                if (!string.IsNullOrEmpty(deckId))
+                    parentByDeckId[deckId] = entry.parentDeckId?.Trim() ?? string.Empty;
+
                 foreach (CardData card in deck.cards)
                 {
-                    if (card == null || string.IsNullOrWhiteSpace(card.name)) continue;
+                    if (card == null) continue;
+                    if (!string.IsNullOrEmpty(deckId)) cardsByKey[$"{deckId}::{card.cardId}"] = card;
+                    if (string.IsNullOrWhiteSpace(card.name)) continue;
                     _allCards.Add(card);
                     string key = card.name.Trim();
                     if (!_cardsByName.ContainsKey(key)) _cardsByName[key] = card;
                 }
             }
+
+            // Deck membership: a named card counts for its own deck; a reference copy counts
+            // for the deck that holds the reference, under the original card's resolved name.
+            foreach ((string deckId, DeckData deck) in loadedDecks)
+            {
+                string label = string.IsNullOrEmpty(deckId) ? "(no id)" : deckId;
+                foreach (CardData card in deck.cards)
+                {
+                    if (card == null) continue;
+                    string name = !string.IsNullOrWhiteSpace(card.name)
+                        ? card.name.Trim()
+                        : ResolveReferencedCardName(card.referenceDeckId, card.referenceCardId, cardsByKey, parentByDeckId);
+                    if (string.IsNullOrEmpty(name)) continue;
+
+                    if (!_deckLabelsByCardName.TryGetValue(name, out List<string> labels))
+                        _deckLabelsByCardName[name] = labels = new List<string>();
+                    if (!labels.Contains(label)) labels.Add(label);
+                }
+            }
+        }
+
+        // Follows a reference (deckId + cardId) to the original card's name. Missing cards fall
+        // back to the parent-deck chain (references may point at a subdeck that inherits the
+        // card), and chained references are followed with cycle protection.
+        private static string ResolveReferencedCardName(
+            string deckId, int cardId,
+            Dictionary<string, CardData> cardsByKey,
+            Dictionary<string, string> parentByDeckId)
+        {
+            var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            while (!string.IsNullOrWhiteSpace(deckId) && cardId > 0)
+            {
+                CardData found = null;
+                string currentDeckId = deckId.Trim();
+                var seenDecks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                while (!string.IsNullOrEmpty(currentDeckId) && seenDecks.Add(currentDeckId))
+                {
+                    if (cardsByKey.TryGetValue($"{currentDeckId}::{cardId}", out found) && found != null) break;
+                    found = null;
+                    if (!parentByDeckId.TryGetValue(currentDeckId, out string parent)) break;
+                    currentDeckId = parent?.Trim();
+                }
+
+                if (found == null) return null;
+                if (!string.IsNullOrWhiteSpace(found.name)) return found.name.Trim();
+                if (!visited.Add($"{found.referenceDeckId}::{found.referenceCardId}")) return null;
+                deckId = found.referenceDeckId;
+                cardId = found.referenceCardId;
+            }
+            return null;
         }
 
         private static void EnsureMapping()
