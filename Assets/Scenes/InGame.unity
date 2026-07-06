@@ -16435,14 +16435,6 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
-      propertyPath: cellsPerBatch
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
-      propertyPath: hexesPerBatch
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: waterPercentage
       value: 0.2
       objectReference: {fileID: 0}
@@ -16455,16 +16447,12 @@ PrefabInstance:
       value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
-      propertyPath: asyncIntegrationMs
-      value: 60
+      propertyPath: loadBudgetWhileVideoMs
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
-      propertyPath: maximumGenerationBuget
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
-      propertyPath: placementBudgetSeconds
-      value: 0.12
+      propertyPath: loadBudgetAfterVideoMs
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: maxGenerationSlicesPerStep
@@ -16473,10 +16461,6 @@ PrefabInstance:
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: terrainDefinitionsPerBatch
       value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
-      propertyPath: generationFrameBudgetSeconds
-      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: videoPlaybackFrameBudgetSeconds

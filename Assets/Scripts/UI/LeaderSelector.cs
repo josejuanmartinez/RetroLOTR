@@ -43,7 +43,6 @@ public class LeaderSelector : SearcherByName
 
     List<string> loadedLeaders = new();
     bool loadedFirst = false;
-    bool introFinished = false;
     bool selectionScreenShown = false;
     bool selectionScreenQueued = false;
     Coroutine deferredRefreshRoutine;
@@ -77,32 +76,39 @@ public class LeaderSelector : SearcherByName
 
     void Update()
     {
-        List<PlayableLeader> playableLeaders = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList();
-        if (loadedLeaders.Count < playableLeaders.Count)
+        // FindObjectsByType scales with total scene object count, not just matching-type
+        // count — with thousands of hexes now in the scene this isn't free (measured ~13ms/
+        // call in profiling). Its only job is populating the initial carousel, so once the
+        // selection screen is up there are no more leaders left to discover — stop scanning.
+        if (!selectionScreenShown)
         {
-            for(int i=0; i<playableLeaders.Count; i++)
+            List<PlayableLeader> playableLeaders = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList();
+            if (loadedLeaders.Count < playableLeaders.Count)
             {
-                PlayableLeader playableLeader = playableLeaders[i];
-                string leaderName = playableLeader.characterName;
-                if (loadedLeaders.Contains(leaderName)) continue;
-
-                AddLeaderOptions(playableLeader);
-                loadedLeaders.Add(leaderName);
-
-                if (!loadedFirst)
+                for(int i=0; i<playableLeaders.Count; i++)
                 {
-                    loadedFirst = true;
-                    if (leaderCarousel != null)
+                    PlayableLeader playableLeader = playableLeaders[i];
+                    string leaderName = playableLeader.characterName;
+                    if (loadedLeaders.Contains(leaderName)) continue;
+
+                    AddLeaderOptions(playableLeader);
+                    loadedLeaders.Add(leaderName);
+
+                    if (!loadedFirst)
                     {
-                        leaderCarousel.SetIndex(0);
+                        loadedFirst = true;
+                        if (leaderCarousel != null)
+                        {
+                            leaderCarousel.SetIndex(0);
+                        }
+                        SelectLeader(0);
+                        ShowLeaderSelectionIfReady();
                     }
-                    SelectLeader(0);
-                    ShowLeaderSelectionIfReady();
-                }
 
-                if (selectionScreenShown || selectionScreenQueued)
-                {
-                    RequestLeaderSelectionRefresh();
+                    if (selectionScreenShown || selectionScreenQueued)
+                    {
+                        RequestLeaderSelectionRefresh();
+                    }
                 }
             }
         }
@@ -123,21 +129,18 @@ public class LeaderSelector : SearcherByName
 
     void OnIntroVideoFinished(VideoPlayer player)
     {
-        introFinished = true;
         ShowLeaderSelectionIfReady();
     }
 
+    // Leader selection no longer waits on the intro video: the video used to take about
+    // as long as board loading, so gating on it cost nothing. Now that loading is fast,
+    // waiting for the full video would just add dead time on top of an already-ready
+    // board — so this fires purely off loadedFirst. ShowLeaderSelectionDeferred() below
+    // deactivates the video's GameObject when the screen appears, cutting it short
+    // instead of waiting for it to finish naturally.
     void ShowLeaderSelectionIfReady()
     {
         if (!loadedFirst)
-        {
-            return;
-        }
-
-        bool introIsBlocking = introVideo != null
-            && introVideo.gameObject.activeInHierarchy
-            && !introFinished;
-        if (introIsBlocking)
         {
             return;
         }

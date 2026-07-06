@@ -9,6 +9,7 @@ public class OnHoverTile : MonoBehaviour
     private Board board;
     private Hex hex;
     private Vector2Int hexCoordinates; // Store this hex's coordinates
+    private static Board sharedBoard;
     private static HexPathRenderer pathRenderer;
     private static bool isRightMouseDown = false;
     private static Vector2Int currentHoverCoordinates = Vector2Int.one * -1;
@@ -16,27 +17,20 @@ public class OnHoverTile : MonoBehaviour
 
     void Start()
     {
-        board = FindFirstObjectByType<Board>();
-        if (board != null)
-        {
-            var hexes = board.hexes;
-            // Find our own hex coordinates
-            foreach (var hexPair in hexes)
-            {
-                if (hexPair.Value.gameObject == gameObject)
-                {
-                    hexCoordinates = hexPair.Key;
-                    break;
-                }
-            }
-        }
-        else
+        // Cached statically and read straight off the Hex component: this used to scan
+        // board.hexes (4550 entries) per hex to find "our own" coordinates by gameObject
+        // identity — an O(n) search x n hexes, all triggered in the same instant when the
+        // board enables every hex's OnHoverTile at once. hex.v2 is the exact same value.
+        if (sharedBoard == null) sharedBoard = FindFirstObjectByType<Board>();
+        board = sharedBoard;
+        if (board == null)
         {
             Debug.LogError("Board component not found!");
         }
 
         // Get the Hex component
         hex = GetComponent<Hex>();
+        if (hex != null) hexCoordinates = hex.v2;
 
         // Find or create the path renderer (only once)
         if (pathRenderer == null)
