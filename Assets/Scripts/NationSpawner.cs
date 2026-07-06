@@ -56,6 +56,12 @@ public class NationSpawner : MonoBehaviour
     private Dictionary<string, string> tutorialAnchorByNpl = new(StringComparer.OrdinalIgnoreCase);
     private bool landRegionsAssigned;
 
+    // Scenario PCs/characters authored with an ownerVariantId, recorded at spawn time and
+    // resolved once every playable leader's variant choice is final. See
+    // ReconcileScenarioVariantOwnership, called from Game.StartGame().
+    private readonly List<(PC pc, string requiredVariantId)> pcVariantOwnership = new();
+    private readonly List<(Character character, string requiredVariantId, bool isNplIdentity)> characterVariantOwnership = new();
+
     public void Initialize(Board board)
     {
         if (board == null)
@@ -220,6 +226,8 @@ public class NationSpawner : MonoBehaviour
         RecountExistingEntities();
         leaderPositions.Clear();
         placedPositions.Clear();
+        pcVariantOwnership.Clear();
+        characterVariantOwnership.Clear();
 
         var phaseTimer = System.Diagnostics.Stopwatch.StartNew();
         long Lap() { long ms = phaseTimer.ElapsedMilliseconds; phaseTimer.Restart(); return ms; }
@@ -266,6 +274,9 @@ public class NationSpawner : MonoBehaviour
             pc.isUnderground = spc.isUnderground;
             hex.SetPC(pc, spc.pcFeature, spc.fortFeature, spc.isIsland);
             currentPcCount++;
+
+            if (!string.IsNullOrWhiteSpace(spc.ownerVariantId) && owner is PlayableLeader)
+                pcVariantOwnership.Add((pc, spc.ownerVariantId));
         }
         long pcsMs = Lap();
 
@@ -283,12 +294,35 @@ public class NationSpawner : MonoBehaviour
                 continue;
             }
 
-            Character character = SpawnScenarioCharacter(owner, hex, sc.characterName, deckManager);
+            // A character entry whose name matches a Non-Playable Leader's identity is spawned
+            // as a full NonPlayableLeader (not a generic Character) so that, if its owner-variant
+            // later mismatches, it can safely fall back to self-owned/independent — only a Leader
+            // can self-own (see Character.GetOwner()). A generic Character can't be made ownerless
+            // safely, so those are removed entirely on mismatch instead (see
+            // ReconcileScenarioVariantOwnership).
+            bool isNplIdentity = false;
+            Character character;
+            NonPlayableLeaderBiomeConfig nplBiome = FindNplBiomeByCharacterName(sc.characterName);
+            if (nplBiome != null)
+            {
+                NonPlayableLeader npl = characterInstantiator.InstantiateNonPlayableLeader(hex, nplBiome);
+                npl.owner = owner;
+                owner.controlledCharacters.Add(npl);
+                character = npl;
+                isNplIdentity = true;
+            }
+            else
+            {
+                character = SpawnScenarioCharacter(owner, hex, sc.characterName, deckManager);
+            }
             if (character == null) continue;
             currentCharacterCount++;
 
             if (sc.army != null && !sc.army.IsEmpty())
                 BuildScenarioArmy(character, sc.army, deckManager);
+
+            if (!string.IsNullOrWhiteSpace(sc.ownerVariantId) && owner is PlayableLeader)
+                characterVariantOwnership.Add((character, sc.ownerVariantId, isNplIdentity));
         }
         long charactersMs = Lap();
 
@@ -298,6 +332,69 @@ public class NationSpawner : MonoBehaviour
 
         Debug.Log($"[ScenarioLoad] spawn phases — sprites {spritesMs} ms, decks {deckMs} ms, leaders {leadersMs} ms, PCs {pcsMs} ms, characters {charactersMs} ms, regions {regionsMs} ms");
         landRegionsAssigned = true;
+    }
+
+    // Resolves every scenario PC/character authored with an ownerVariantId, once each playable
+    // leader's variant choice is final (the human's pick plus Game.RandomizeCompetitorVariants
+    // for AI-controlled leaders). Called from Game.StartGame(). No-op in procedural/campaign play,
+    // since nothing gets added to these lists outside SpawnFromScenario.
+    public void ReconcileScenarioVariantOwnership()
+    {
+        foreach ((PC pc, string requiredVariantId) in pcVariantOwnership)
+        {
+            if (pc == null || pc.owner is not PlayableLeader playableOwner) continue;
+            if (string.Equals(playableOwner.GetSelectedSubdeckId(), requiredVariantId, StringComparison.OrdinalIgnoreCase)) continue;
+            RemoveUnresolvedScenarioPc(pc);
+        }
+        pcVariantOwnership.Clear();
+
+        foreach ((Character character, string requiredVariantId, bool isNplIdentity) in characterVariantOwnership)
+        {
+            if (character == null || character.owner is not PlayableLeader playableOwner) continue;
+            if (string.Equals(playableOwner.GetSelectedSubdeckId(), requiredVariantId, StringComparison.OrdinalIgnoreCase)) continue;
+
+            if (isNplIdentity)
+            {
+                // A genuine NonPlayableLeader can safely self-own (Character.GetOwner()'s
+                // fallback), so it simply reverts to being its own independent faction.
+                playableOwner.controlledCharacters.Remove(character);
+                character.owner = null;
+            }
+            else
+            {
+                RemoveUnresolvedScenarioCharacter(character);
+            }
+        }
+        characterVariantOwnership.Clear();
+    }
+
+    // Removes a scenario character that turned out to belong to a leader-variant that wasn't
+    // chosen this game — as if it had never been spawned, mirroring the existing "no resolvable
+    // owner" skip in SpawnFromScenario. Bookkeeping mirrors Character.Killed() minus the death
+    // messaging/effects, since the game hasn't visibly started yet.
+    private void RemoveUnresolvedScenarioCharacter(Character character)
+    {
+        if (character.IsArmyCommander() && character.GetArmy() != null && !character.GetArmy().killed)
+            character.GetArmy().Killed(null, false);
+
+        character.GetOwner()?.controlledCharacters.Remove(character);
+        if (character.hex != null && character.hex.characters.Contains(character))
+            character.hex.characters.Remove(character);
+
+        currentCharacterCount = Mathf.Max(0, currentCharacterCount - 1);
+        Destroy(character.gameObject);
+    }
+
+    // Removes a scenario PC that turned out to belong to a leader-variant that wasn't chosen this
+    // game. There's no supported "ownerless PC" state outside the pre-spawned starting anchor
+    // cities, so — unlike an NPL-identity character, which can safely self-own — a mismatched PC
+    // is removed entirely rather than left ownerless.
+    private void RemoveUnresolvedScenarioPc(PC pc)
+    {
+        pc.owner.controlledPcs.Remove(pc);
+        pc.owner.visibleHexes.Remove(pc.hex);
+        pc.hex?.ClearPC();
+        currentPcCount = Mathf.Max(0, currentPcCount - 1);
     }
 
     // Applies authored per-hex tile variations. Re-running SetTerrain with the chosen sprite
@@ -390,10 +487,16 @@ public class NationSpawner : MonoBehaviour
         return characterInstantiator.InstantiatePlayableLeader(hex, biome);
     }
 
+    private NonPlayableLeaderBiomeConfig FindNplBiomeByCharacterName(string characterName)
+    {
+        if (string.IsNullOrWhiteSpace(characterName)) return null;
+        return nonPlayableLeaders.nonPlayableLeaders.biomes
+            .FirstOrDefault(b => b != null && string.Equals(b.characterName, characterName, StringComparison.OrdinalIgnoreCase));
+    }
+
     private Leader SpawnNonPlayableLeaderAt(Hex hex, string leaderName)
     {
-        NonPlayableLeaderBiomeConfig biome = nonPlayableLeaders.nonPlayableLeaders.biomes
-            .FirstOrDefault(b => b != null && string.Equals(b.characterName, leaderName, StringComparison.OrdinalIgnoreCase));
+        NonPlayableLeaderBiomeConfig biome = FindNplBiomeByCharacterName(leaderName);
         if (biome == null)
         {
             Debug.LogWarning($"Scenario references unknown non-playable leader '{leaderName}'.");

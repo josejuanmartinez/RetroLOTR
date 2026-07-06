@@ -16447,12 +16447,12 @@ PrefabInstance:
       value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
-      propertyPath: loadBudgetWhileVideoMs
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: loadBudgetAfterVideoMs
       value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
+      propertyPath: loadBudgetWhileVideoMs
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: maxGenerationSlicesPerStep

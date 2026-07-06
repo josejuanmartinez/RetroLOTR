@@ -2590,6 +2590,20 @@ public class Hex : MonoBehaviour
         return assignedLandRegion;
     }
 
+    // Removes this hex's PC entirely (as opposed to it changing hands) — used when a scenario PC
+    // turns out to have no valid owner once the game actually starts (see
+    // NationSpawner.ReconcileScenarioVariantOwnership). There is no supported "ownerless PC" state
+    // outside the pre-spawned starting anchor cities, so a mismatched PC is removed rather than
+    // left ownerless.
+    public void ClearPC()
+    {
+        if (pc == null) return;
+        pc = null;
+        ApplyHexTextureSprite();
+        UpdatePortIcon(false);
+        UpdatePcWorldText(false);
+    }
+
     public void SetPC(PC pc, string pcFeature = "", string fortFeature = "", bool isIsland = false)
     {
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return;

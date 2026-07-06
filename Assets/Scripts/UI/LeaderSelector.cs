@@ -37,6 +37,7 @@ public class LeaderSelector : SearcherByName
     public GameObject progressText;
     public GameObject leaderSelectionFullScreen;
     public Image bannerImage;
+    public GameObject startTutorialButton;
 
     readonly List<LeaderSelectionEntry> selectionEntries = new();
     readonly List<GameObject> carouselItems = new();
@@ -58,6 +59,18 @@ public class LeaderSelector : SearcherByName
         if (leaderCarousel != null)
         {
             leaderCarousel.RegisterOnSelectionChanged(SelectLeader);
+        }
+
+        UpdateStartTutorialButtonVisibility();
+    }
+
+    // Start Tutorial only makes sense for the default random campaign — an authored scenario
+    // has its own hand-placed starting situation, so the guided tutorial doesn't apply.
+    void UpdateStartTutorialButtonVisibility()
+    {
+        if (startTutorialButton != null)
+        {
+            startTutorialButton.SetActive(!GameConfig.HasScenario);
         }
     }
 
@@ -90,9 +103,11 @@ public class LeaderSelector : SearcherByName
                     PlayableLeader playableLeader = playableLeaders[i];
                     string leaderName = playableLeader.characterName;
                     if (loadedLeaders.Contains(leaderName)) continue;
+                    loadedLeaders.Add(leaderName);
+
+                    if (!IsLeaderAllowedForActiveSelection(leaderName)) continue;
 
                     AddLeaderOptions(playableLeader);
-                    loadedLeaders.Add(leaderName);
 
                     if (!loadedFirst)
                     {
@@ -176,6 +191,8 @@ public class LeaderSelector : SearcherByName
             rootCanvas.enabled = false;
             rootCanvas.enabled = true;
         }
+
+        UpdateStartTutorialButtonVisibility();
 
         if (leaderSelectionFullScreen != null)
         {
@@ -359,6 +376,26 @@ public class LeaderSelector : SearcherByName
         // back to the base entry so the leader is never left with no selectable card.
         if (restricted && added == 0)
             AddSelectionEntry(playableLeader, biome.alignment, BuildLeaderDisplayName(playableLeader, biome.alignment), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
+    }
+
+    // Campaign play (no scenario chosen) offers every playable leader found in the scene. An
+    // authored scenario restricts the carousel to leaders it explicitly placed via a playable
+    // leader-start hex — NationSpawner already only spawns those, but this guards the carousel
+    // directly against that invariant instead of relying solely on what happened to get instantiated.
+    bool IsLeaderAllowedForActiveSelection(string leaderName)
+    {
+        if (!GameConfig.HasScenario) return true;
+
+        ScenarioData scenario = FindFirstObjectByType<Board>()?.ActiveScenario;
+        if (scenario?.leaderStarts == null) return true;
+
+        foreach (RetroLOTR.Scenarios.ScenarioLeaderStart start in scenario.leaderStarts)
+        {
+            if (start == null || !start.isPlayable) continue;
+            if (string.Equals(start.leaderName, leaderName, StringComparison.OrdinalIgnoreCase)) return true;
+        }
+
+        return false;
     }
 
     // The set of variant ids the active scenario allows for a given playable leader, gathered from

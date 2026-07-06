@@ -1,5 +1,5 @@
 {
-    "version": 3,
+    "version": 4,
     "scenarioName": "2950",
     "width": 65,
     "height": 70,
@@ -3122,8 +3122,8 @@
         2,
         2,
         2,
-        2,
-        2,
+        9,
+        9,
         7,
         7,
         7,
@@ -3252,7 +3252,7 @@
         2,
         2,
         2,
-        2,
+        9,
         2,
         7,
         7,
@@ -3383,7 +3383,7 @@
         0,
         0,
         1,
-        2,
+        9,
         7,
         7,
         7,
@@ -3512,7 +3512,7 @@
         0,
         1,
         1,
-        2,
+        9,
         9,
         7,
         7,
@@ -3642,7 +3642,7 @@
         1,
         1,
         9,
-        1,
+        9,
         9,
         7,
         7,
@@ -4488,7 +4488,7 @@
         9,
         9,
         9,
-        9,
+        0,
         7,
         7,
         7,
@@ -8830,7 +8830,7 @@
         {
             "row": 14,
             "col": 64,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 15,
@@ -9100,22 +9100,22 @@
         {
             "row": 15,
             "col": 61,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 15,
             "col": 62,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 15,
             "col": 63,
-            "spriteName": "forest_02"
+            "spriteName": "forest_24"
         },
         {
             "row": 15,
             "col": 64,
-            "spriteName": "forest_02"
+            "spriteName": "forest_24"
         },
         {
             "row": 16,
@@ -9375,7 +9375,7 @@
         {
             "row": 16,
             "col": 62,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 16,
@@ -9630,17 +9630,17 @@
         {
             "row": 17,
             "col": 61,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 17,
             "col": 63,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 17,
             "col": 64,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 18,
@@ -9885,7 +9885,7 @@
         {
             "row": 18,
             "col": 64,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 19,
@@ -10145,12 +10145,12 @@
         {
             "row": 19,
             "col": 63,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 19,
             "col": 64,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 20,
@@ -16825,12 +16825,12 @@
         {
             "row": 47,
             "col": 63,
-            "spriteName": "plains_19"
+            "spriteName": "desert_19"
         },
         {
             "row": 47,
             "col": 64,
-            "spriteName": "plains_19"
+            "spriteName": "desert_19"
         },
         {
             "row": 48,
@@ -17100,7 +17100,7 @@
         {
             "row": 49,
             "col": 63,
-            "spriteName": "plains_19"
+            "spriteName": "desert_19"
         },
         {
             "row": 49,
@@ -17350,7 +17350,7 @@
         {
             "row": 51,
             "col": 64,
-            "spriteName": "plains_19"
+            "spriteName": "desert_19"
         },
         {
             "row": 52,
@@ -17595,7 +17595,7 @@
         {
             "row": 53,
             "col": 63,
-            "spriteName": "plains_19"
+            "spriteName": "desert_20"
         },
         {
             "row": 53,
@@ -17940,7 +17940,7 @@
         {
             "row": 55,
             "col": 63,
-            "spriteName": "hills_01"
+            "spriteName": "desert_20"
         },
         {
             "row": 55,
@@ -18280,7 +18280,7 @@
         {
             "row": 57,
             "col": 62,
-            "spriteName": "desert_18"
+            "spriteName": "desert_20"
         },
         {
             "row": 57,
@@ -20320,12 +20320,12 @@
         {
             "row": 68,
             "col": 63,
-            "spriteName": "desert_20"
+            "spriteName": "desert_19"
         },
         {
             "row": 68,
             "col": 64,
-            "spriteName": "desert_19"
+            "spriteName": "mountains_6"
         },
         {
             "row": 69,
@@ -20555,7 +20555,7 @@
         {
             "row": 69,
             "col": 63,
-            "spriteName": "desert_20"
+            "spriteName": "desert_19"
         },
         {
             "row": 69,
@@ -20569,7 +20569,7 @@
             "col": 14,
             "leaderName": "Gandalf",
             "isPlayable": true,
-            "variantId": ""
+            "variantId": "disturber_of_the_peace"
         },
         {
             "row": 14,
@@ -20808,6 +20808,48 @@
             "leaderName": "Azog",
             "isPlayable": false,
             "variantId": ""
+        },
+        {
+            "row": 16,
+            "col": 10,
+            "leaderName": "Gandalf",
+            "isPlayable": true,
+            "variantId": "gandalf"
+        },
+        {
+            "row": 21,
+            "col": 61,
+            "leaderName": "Sauron",
+            "isPlayable": true,
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 34,
+            "col": 44,
+            "leaderName": "Sauron",
+            "isPlayable": true,
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 64,
+            "col": 21,
+            "leaderName": "Sauron",
+            "isPlayable": true,
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 3,
+            "col": 23,
+            "leaderName": "Sauron",
+            "isPlayable": true,
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 25,
+            "col": 30,
+            "leaderName": "Saruman",
+            "isPlayable": true,
+            "variantId": "of_many_colours"
         }
     ],
     "pcs": [
@@ -20816,6 +20858,7 @@
             "col": 7,
             "pcName": "The Grey Havens",
             "ownerLeaderName": "Cirdan",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 0,
             "hasPort": true,
@@ -20833,6 +20876,7 @@
             "col": 1,
             "pcName": "Forlond",
             "ownerLeaderName": "Cirdan",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -20850,6 +20894,7 @@
             "col": 20,
             "pcName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -20867,6 +20912,7 @@
             "col": 19,
             "pcName": "Bree",
             "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": false,
@@ -20884,6 +20930,7 @@
             "col": 18,
             "pcName": "Buckland",
             "ownerLeaderName": "Merry",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -20901,6 +20948,7 @@
             "col": 31,
             "pcName": "Imladris",
             "ownerLeaderName": "Elrond",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 0,
             "hasPort": false,
@@ -20918,6 +20966,7 @@
             "col": 23,
             "pcName": "AmonSul",
             "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -20935,6 +20984,7 @@
             "col": 14,
             "pcName": "Annuminas",
             "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 3,
             "hasPort": false,
@@ -20952,6 +21002,7 @@
             "col": 32,
             "pcName": "Goblin Gate",
             "ownerLeaderName": "Azog",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 3,
             "hasPort": false,
@@ -20968,7 +21019,8 @@
             "row": 16,
             "col": 14,
             "pcName": "Hobbiton",
-            "ownerLeaderName": "Gandalf",
+            "ownerLeaderName": "Frodo",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -20986,6 +21038,7 @@
             "col": 23,
             "pcName": "CarnDum",
             "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 4,
             "hasPort": false,
@@ -21003,6 +21056,7 @@
             "col": 26,
             "pcName": "MtGram",
             "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 3,
             "hasPort": false,
@@ -21020,6 +21074,7 @@
             "col": 31,
             "pcName": "Gundabad",
             "ownerLeaderName": "Azog",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 4,
             "hasPort": false,
@@ -21037,6 +21092,7 @@
             "col": 32,
             "pcName": "Khazad-Dum",
             "ownerLeaderName": "Balrog",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 5,
             "hasPort": false,
@@ -21054,6 +21110,7 @@
             "col": 19,
             "pcName": "Old Forest",
             "ownerLeaderName": "Tom Bombadil",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21071,6 +21128,7 @@
             "col": 7,
             "pcName": "Noegrod",
             "ownerLeaderName": "Gloin",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
@@ -21088,6 +21146,7 @@
             "col": 6,
             "pcName": "ThorinHall",
             "ownerLeaderName": "Gloin",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 3,
             "hasPort": false,
@@ -21105,6 +21164,7 @@
             "col": 28,
             "pcName": "Orthanc",
             "ownerLeaderName": "Saruman",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -21122,6 +21182,7 @@
             "col": 27,
             "pcName": "Treforn",
             "ownerLeaderName": "Waulfa",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
@@ -21139,6 +21200,7 @@
             "col": 28,
             "pcName": "Arailt",
             "ownerLeaderName": "Waulfa",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -21156,6 +21218,7 @@
             "col": 23,
             "pcName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -21173,6 +21236,7 @@
             "col": 32,
             "pcName": "FangornSCamp",
             "ownerLeaderName": "Saruman",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21190,6 +21254,7 @@
             "col": 28,
             "pcName": "HelmDeep",
             "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 3,
             "hasPort": false,
@@ -21207,6 +21272,7 @@
             "col": 31,
             "pcName": "Edoras",
             "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 3,
             "hasPort": false,
@@ -21224,6 +21290,7 @@
             "col": 36,
             "pcName": "Eastfold",
             "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 1,
             "hasPort": false,
@@ -21241,6 +21308,7 @@
             "col": 17,
             "pcName": "Sarn Ford",
             "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21258,6 +21326,7 @@
             "col": 33,
             "pcName": "Derndingle",
             "ownerLeaderName": "Treebeard",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21275,6 +21344,7 @@
             "col": 34,
             "pcName": "CerinAmroth",
             "ownerLeaderName": "Galadriel",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21292,6 +21362,7 @@
             "col": 36,
             "pcName": "Caras Galadhon",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 0,
             "hasPort": true,
@@ -21309,6 +21380,7 @@
             "col": 21,
             "pcName": "Barrow-downs",
             "ownerLeaderName": "Barrow-wight",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21326,6 +21398,7 @@
             "col": 31,
             "pcName": "Methir",
             "ownerLeaderName": "Haruth Rammam",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": true,
@@ -21343,6 +21416,7 @@
             "col": 35,
             "pcName": "Eagle's Eyrie",
             "ownerLeaderName": "Gwaihir",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21360,6 +21434,7 @@
             "col": 10,
             "pcName": "Elostirion",
             "ownerLeaderName": "Elrond",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -21377,6 +21452,7 @@
             "col": 41,
             "pcName": "Minas Tirith",
             "ownerLeaderName": "Denethor",
+            "ownerVariantId": "",
             "citySize": 5,
             "fortSize": 5,
             "hasPort": true,
@@ -21394,6 +21470,7 @@
             "col": 43,
             "pcName": "Osgiliath",
             "ownerLeaderName": "Denethor",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": true,
@@ -21411,6 +21488,7 @@
             "col": 45,
             "pcName": "Minas Morgul",
             "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 4,
             "hasPort": false,
@@ -21428,6 +21506,7 @@
             "col": 61,
             "pcName": "Tol Buruth",
             "ownerLeaderName": "Ovatha",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": true,
@@ -21445,6 +21524,7 @@
             "col": 46,
             "pcName": "Olbamarl",
             "ownerLeaderName": "Ovatha",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 1,
             "hasPort": false,
@@ -21462,6 +21542,7 @@
             "col": 39,
             "pcName": "Pelargir",
             "ownerLeaderName": "Denethor",
+            "ownerVariantId": "",
             "citySize": 5,
             "fortSize": 4,
             "hasPort": true,
@@ -21479,6 +21560,7 @@
             "col": 25,
             "pcName": "DolAmroth",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -21496,6 +21578,7 @@
             "col": 29,
             "pcName": "Paths of the Dead",
             "ownerLeaderName": "The Undead King",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 3,
             "hasPort": false,
@@ -21513,6 +21596,7 @@
             "col": 41,
             "pcName": "Dol Guldur",
             "ownerLeaderName": "Khamul",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 4,
             "hasPort": false,
@@ -21530,6 +21614,7 @@
             "col": 30,
             "pcName": "Linhir",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 3,
             "hasPort": true,
@@ -21547,6 +21632,7 @@
             "col": 30,
             "pcName": "Kas Shadoul",
             "ownerLeaderName": "Haruth Rammam",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 4,
             "hasPort": true,
@@ -21564,6 +21650,7 @@
             "col": 25,
             "pcName": "Havens of Umbar",
             "ownerLeaderName": "Sangarunya",
+            "ownerVariantId": "",
             "citySize": 5,
             "fortSize": 4,
             "hasPort": true,
@@ -21581,6 +21668,7 @@
             "col": 51,
             "pcName": "Esgaroth",
             "ownerLeaderName": "Bard",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": true,
@@ -21598,6 +21686,7 @@
             "col": 47,
             "pcName": "Thranduil's Halls",
             "ownerLeaderName": "Thranduil",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 3,
             "hasPort": false,
@@ -21615,6 +21704,7 @@
             "col": 45,
             "pcName": "Morannon",
             "ownerLeaderName": "Dendra Dwar",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 4,
             "hasPort": false,
@@ -21632,6 +21722,7 @@
             "col": 51,
             "pcName": "Barad-dur",
             "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -21649,6 +21740,7 @@
             "col": 48,
             "pcName": "Barad Ungol",
             "ownerLeaderName": "Ren the Unclean",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 4,
             "hasPort": false,
@@ -21666,6 +21758,7 @@
             "col": 44,
             "pcName": "Durthang",
             "ownerLeaderName": "Hoarmurath",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 4,
             "hasPort": false,
@@ -21683,6 +21776,7 @@
             "col": 43,
             "pcName": "Henneth Annun",
             "ownerLeaderName": "Faramir",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21700,6 +21794,7 @@
             "col": 54,
             "pcName": "Kal Nargil",
             "ownerLeaderName": "Ji Indur",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 3,
             "hasPort": false,
@@ -21717,6 +21812,7 @@
             "col": 58,
             "pcName": "Luglurak",
             "ownerLeaderName": "Akhorahil",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 2,
             "hasPort": true,
@@ -21734,6 +21830,7 @@
             "col": 46,
             "pcName": "Shelob's Lair",
             "ownerLeaderName": "Shelob",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21751,6 +21848,7 @@
             "col": 51,
             "pcName": "Erebor (Lost)",
             "ownerLeaderName": "Smaug",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 4,
             "hasPort": false,
@@ -21768,6 +21866,7 @@
             "col": 58,
             "pcName": "Shrel-Kain",
             "ownerLeaderName": "Annatorion",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 2,
             "hasPort": true,
@@ -21785,6 +21884,7 @@
             "col": 39,
             "pcName": "Ongushar",
             "ownerLeaderName": "Khamul",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21802,6 +21902,7 @@
             "col": 18,
             "pcName": "Pellardur",
             "ownerLeaderName": "Sangarunya",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 3,
             "hasPort": true,
@@ -21819,6 +21920,7 @@
             "col": 47,
             "pcName": "ButhOvaisa",
             "ownerLeaderName": "Ovatha",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21836,6 +21938,7 @@
             "col": 58,
             "pcName": "Riavod",
             "ownerLeaderName": "Huz",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": true,
@@ -21853,6 +21956,7 @@
             "col": 60,
             "pcName": "Raider Hold",
             "ownerLeaderName": "Huz",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": true,
@@ -21870,6 +21974,7 @@
             "col": 62,
             "pcName": "Sturlurtsa Khand",
             "ownerLeaderName": "Uvatha",
+            "ownerVariantId": "",
             "citySize": 5,
             "fortSize": 3,
             "hasPort": false,
@@ -21887,6 +21992,7 @@
             "col": 41,
             "pcName": "Lugarlur",
             "ownerLeaderName": "Adunaphel",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 2,
             "hasPort": false,
@@ -21904,6 +22010,7 @@
             "col": 24,
             "pcName": "Larach Duhnnan",
             "ownerLeaderName": "Waulfa",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": false,
@@ -21921,6 +22028,7 @@
             "col": 41,
             "pcName": "Woodmen town",
             "ownerLeaderName": "Beoraborn",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": false,
@@ -21938,6 +22046,7 @@
             "col": 42,
             "pcName": "Rhosgobel",
             "ownerLeaderName": "Radagast",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21955,6 +22064,7 @@
             "col": 40,
             "pcName": "BeornHouse",
             "ownerLeaderName": "Beoraborn",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21972,6 +22082,7 @@
             "col": 34,
             "pcName": "Framsburg",
             "ownerLeaderName": "Beoraborn",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 3,
             "hasPort": true,
@@ -21989,6 +22100,7 @@
             "col": 40,
             "pcName": "Sarn Lothduin",
             "ownerLeaderName": "Celdacil",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": true,
@@ -22006,6 +22118,7 @@
             "col": 45,
             "pcName": "SarnGoriwing",
             "ownerLeaderName": "Azog",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 1,
             "hasPort": false,
@@ -22023,6 +22136,7 @@
             "col": 40,
             "pcName": "CarasAmarth",
             "ownerLeaderName": "Thranduil",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": false,
@@ -22040,6 +22154,7 @@
             "col": 27,
             "pcName": "CarasTolfalas",
             "ownerLeaderName": "Sangarunya",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": true,
@@ -22057,6 +22172,7 @@
             "col": 46,
             "pcName": "Ashkiri",
             "ownerLeaderName": "Huz",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
@@ -22074,6 +22190,7 @@
             "col": 63,
             "pcName": "KhandAmu",
             "ownerLeaderName": "Uvatha",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 1,
             "hasPort": false,
@@ -22091,6 +22208,7 @@
             "col": 53,
             "pcName": "Ovatharac",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -22108,6 +22226,7 @@
             "col": 26,
             "pcName": "Edhellond",
             "ownerLeaderName": "Galadriel",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 0,
             "hasPort": false,
@@ -22125,6 +22244,7 @@
             "col": 60,
             "pcName": "Azanulimbar-Dum",
             "ownerLeaderName": "Dain",
+            "ownerVariantId": "",
             "citySize": 4,
             "fortSize": 4,
             "hasPort": false,
@@ -22142,6 +22262,7 @@
             "col": 29,
             "pcName": "FennasDrunin",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
@@ -22159,6 +22280,7 @@
             "col": 48,
             "pcName": "MountDoom",
             "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -22176,6 +22298,7 @@
             "col": 56,
             "pcName": "Seregost",
             "ownerLeaderName": "Khamul",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": false,
@@ -22193,6 +22316,7 @@
             "col": 55,
             "pcName": "Minas Durlith",
             "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 1,
             "hasPort": false,
@@ -22210,6 +22334,7 @@
             "col": 34,
             "pcName": "Nanduhirion",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -22227,6 +22352,7 @@
             "col": 21,
             "pcName": "Tharbad",
             "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": true,
@@ -22244,6 +22370,7 @@
             "col": 24,
             "pcName": "Nin-in-eilph",
             "ownerLeaderName": "Saruman",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22261,6 +22388,7 @@
             "col": 26,
             "pcName": "The Angle",
             "ownerLeaderName": "Elrond",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22278,6 +22406,7 @@
             "col": 27,
             "pcName": "The Trollshaws",
             "ownerLeaderName": "Arfanhil",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22295,6 +22424,7 @@
             "col": 28,
             "pcName": "CamethBrin",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -22312,6 +22442,7 @@
             "col": 27,
             "pcName": "The Ettenmoors",
             "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22329,6 +22460,7 @@
             "col": 25,
             "pcName": "WestFold",
             "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -22346,6 +22478,7 @@
             "col": 24,
             "pcName": "Freawul",
             "ownerLeaderName": "Waulfa",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 3,
             "hasPort": false,
@@ -22363,6 +22496,7 @@
             "col": 38,
             "pcName": "The Carrock",
             "ownerLeaderName": "Beoraborn",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22380,6 +22514,7 @@
             "col": 39,
             "pcName": "Maethelburg",
             "ownerLeaderName": "Celdacil",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": true,
@@ -22397,6 +22532,7 @@
             "col": 36,
             "pcName": "Imdorad",
             "ownerLeaderName": "Denethor",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": false,
@@ -22414,6 +22550,7 @@
             "col": 28,
             "pcName": "Erech",
             "ownerLeaderName": "Imrahil",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22431,6 +22568,7 @@
             "col": 29,
             "pcName": "Morthondost",
             "ownerLeaderName": "Imrahil",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
@@ -22448,6 +22586,7 @@
             "col": 21,
             "pcName": "Vamag",
             "ownerLeaderName": "Adunaphel",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -22465,6 +22604,7 @@
             "col": 23,
             "pcName": "Caldur",
             "ownerLeaderName": "Sangarunya",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 1,
             "hasPort": true,
@@ -22482,6 +22622,7 @@
             "col": 41,
             "pcName": "MinasArthor",
             "ownerLeaderName": "Denethor",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": false,
@@ -22499,6 +22640,7 @@
             "col": 46,
             "pcName": "CeberFanuin",
             "ownerLeaderName": "Thranduil",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22516,6 +22658,7 @@
             "col": 43,
             "pcName": "Galabrynd",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -22533,6 +22676,7 @@
             "col": 56,
             "pcName": "Kheled-nala",
             "ownerLeaderName": "Dain",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 3,
             "hasPort": false,
@@ -22550,6 +22694,7 @@
             "col": 64,
             "pcName": "Rhubar",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -22567,6 +22712,7 @@
             "col": 63,
             "pcName": "Elgaer",
             "ownerLeaderName": "Annatorion",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": true,
@@ -22584,6 +22730,7 @@
             "col": 47,
             "pcName": "BuhrWidu",
             "ownerLeaderName": "Beoraborn",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
@@ -22601,6 +22748,7 @@
             "col": 38,
             "pcName": "AmonHen",
             "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22618,6 +22766,7 @@
             "col": 40,
             "pcName": "AmonLhaw",
             "ownerLeaderName": "Huz",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22635,6 +22784,7 @@
             "col": 2,
             "pcName": "Harlond",
             "ownerLeaderName": "Cirdan",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -22652,6 +22802,7 @@
             "col": 14,
             "pcName": "Malborn High",
             "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -22669,6 +22820,7 @@
             "col": 18,
             "pcName": "FornostErain",
             "ownerLeaderName": "Barrow-wight",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 3,
             "hasPort": false,
@@ -22686,6 +22838,7 @@
             "col": 20,
             "pcName": "Enedhir",
             "ownerLeaderName": "Waulfa",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -22703,6 +22856,7 @@
             "col": 14,
             "pcName": "LondDaerEnedh",
             "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": true,
@@ -22720,6 +22874,7 @@
             "col": 30,
             "pcName": "Ost-in-Edhil",
             "ownerLeaderName": "Saruman",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": false,
@@ -22737,6 +22892,7 @@
             "col": 30,
             "pcName": "AmonLind",
             "ownerLeaderName": "Elrond",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22754,6 +22910,7 @@
             "col": 46,
             "pcName": "Carach Angren",
             "ownerLeaderName": "Dendra Dwar",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -22771,6 +22928,7 @@
             "col": 47,
             "pcName": "CirithUngol",
             "ownerLeaderName": "Ren the Unclean",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -22788,6 +22946,7 @@
             "col": 42,
             "pcName": "CairAndros",
             "ownerLeaderName": "Faramir",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": false,
@@ -22805,6 +22964,7 @@
             "col": 48,
             "pcName": "Gondmaeglon",
             "ownerLeaderName": "Smaug",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 3,
             "hasPort": false,
@@ -22822,6 +22982,7 @@
             "col": 6,
             "pcName": "Belegost",
             "ownerLeaderName": "Gloin",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
@@ -22839,6 +23000,7 @@
             "col": 9,
             "pcName": "Tarmabar",
             "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -22856,6 +23018,7 @@
             "col": 50,
             "pcName": "JugRijeisha",
             "ownerLeaderName": "Adunaphel",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -22873,6 +23036,7 @@
             "col": 51,
             "pcName": "Rul",
             "ownerLeaderName": "Ji Indur",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 0,
             "hasPort": true,
@@ -22890,6 +23054,7 @@
             "col": 59,
             "pcName": "UrlurtsuNurn",
             "ownerLeaderName": "Akhorahil",
+            "ownerVariantId": "",
             "citySize": 3,
             "fortSize": 0,
             "hasPort": true,
@@ -22907,6 +23072,7 @@
             "col": 44,
             "pcName": "Thuringwathost",
             "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -22924,6 +23090,7 @@
             "col": 44,
             "pcName": "LagScara",
             "ownerLeaderName": "Hoarmurath",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22941,6 +23108,7 @@
             "col": 34,
             "pcName": "Fanuilond",
             "ownerLeaderName": "Imrahil",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": true,
@@ -22958,6 +23126,7 @@
             "col": 50,
             "pcName": "LagVrasfotak",
             "ownerLeaderName": "Ren the Unclean",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22975,6 +23144,7 @@
             "col": 64,
             "pcName": "Neburcha",
             "ownerLeaderName": "Ovatha",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -22992,6 +23162,7 @@
             "col": 56,
             "pcName": "Ilanin",
             "ownerLeaderName": "Huz",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 1,
             "hasPort": false,
@@ -23009,6 +23180,7 @@
             "col": 49,
             "pcName": "Ursh Lanna",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23026,6 +23198,7 @@
             "col": 56,
             "pcName": "LarHuz",
             "ownerLeaderName": "Huz",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -23043,6 +23216,7 @@
             "col": 31,
             "pcName": "KasShafra",
             "ownerLeaderName": "Haruth Rammam",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": true,
@@ -23060,6 +23234,7 @@
             "col": 28,
             "pcName": "BaradHarn",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -23077,6 +23252,7 @@
             "col": 22,
             "pcName": "CarasMirilond",
             "ownerLeaderName": "Sangarunya",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -23094,6 +23270,7 @@
             "col": 12,
             "pcName": "CarasCelairnen",
             "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23111,6 +23288,7 @@
             "col": 12,
             "pcName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23128,6 +23306,7 @@
             "col": 51,
             "pcName": "Celebost",
             "ownerLeaderName": "Dain",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": false,
@@ -23145,6 +23324,7 @@
             "col": 12,
             "pcName": "Michel Delving",
             "ownerLeaderName": "Pippin",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23162,6 +23342,7 @@
             "col": 15,
             "pcName": "Bywater",
             "ownerLeaderName": "Lotho Sackville-Baggins",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23179,6 +23360,7 @@
             "col": 16,
             "pcName": "Stock",
             "ownerLeaderName": "Merry",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23196,6 +23378,7 @@
             "col": 14,
             "pcName": "The Lockholes",
             "ownerLeaderName": "Lotho Sackville-Baggins",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": false,
@@ -23213,6 +23396,7 @@
             "col": 14,
             "pcName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23230,6 +23414,7 @@
             "col": 28,
             "pcName": "Aglarond",
             "ownerLeaderName": "Gloin",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": false,
@@ -23247,6 +23432,7 @@
             "col": 18,
             "pcName": "Crickhollow",
             "ownerLeaderName": "Frodo",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -23264,6 +23450,7 @@
             "col": 19,
             "pcName": "Rendul",
             "ownerLeaderName": "Imrahil",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -23281,6 +23468,7 @@
             "col": 61,
             "pcName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23298,6 +23486,7 @@
             "col": 58,
             "pcName": "Nurumurl",
             "ownerLeaderName": "Akhorahil",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -23315,6 +23504,7 @@
             "col": 61,
             "pcName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23332,6 +23522,7 @@
             "col": 50,
             "pcName": "Norr-dum",
             "ownerLeaderName": "Dain",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": false,
@@ -23349,6 +23540,7 @@
             "col": 15,
             "pcName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23366,6 +23558,7 @@
             "col": 13,
             "pcName": "ErynVorn",
             "ownerLeaderName": "GhanBuriGhan",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23383,6 +23576,7 @@
             "col": 38,
             "pcName": "Druadan Forest",
             "ownerLeaderName": "GhanBuriGhan",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23400,6 +23594,7 @@
             "col": 13,
             "pcName": "Forochel",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23417,6 +23612,7 @@
             "col": 48,
             "pcName": "Celebannon",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -23434,6 +23630,7 @@
             "col": 38,
             "pcName": "GladdenFields",
             "ownerLeaderName": "Azog",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23451,6 +23648,7 @@
             "col": 34,
             "pcName": "Aldburg",
             "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23468,6 +23666,7 @@
             "col": 37,
             "pcName": "Stowburg",
             "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -23485,6 +23684,7 @@
             "col": 30,
             "pcName": "Dunharrow",
             "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": false,
@@ -23502,6 +23702,7 @@
             "col": 23,
             "pcName": "Angren",
             "ownerLeaderName": "Waulfa",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23519,6 +23720,7 @@
             "col": 32,
             "pcName": "Caradhras",
             "ownerLeaderName": "Saruman",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -23536,6 +23738,7 @@
             "col": 51,
             "pcName": "Dale",
             "ownerLeaderName": "Bard",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 1,
             "hasPort": false,
@@ -23553,6 +23756,7 @@
             "col": 58,
             "pcName": "BarakShathur",
             "ownerLeaderName": "Dain",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 2,
             "hasPort": false,
@@ -23570,6 +23774,7 @@
             "col": 7,
             "pcName": "Telenaug",
             "ownerLeaderName": "Gloin",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -23587,6 +23792,7 @@
             "col": 28,
             "pcName": "Zarak-dum",
             "ownerLeaderName": "Gloin",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -23604,6 +23810,7 @@
             "col": 41,
             "pcName": "DeadMarshes",
             "ownerLeaderName": "Khamul",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -23621,6 +23828,7 @@
             "col": 51,
             "pcName": "BaradWath",
             "ownerLeaderName": "Ren the Unclean",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -23638,6 +23846,7 @@
             "col": 55,
             "pcName": "Lag-lithlad",
             "ownerLeaderName": "Hoarmurath",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23655,6 +23864,7 @@
             "col": 56,
             "pcName": "Ostigurth",
             "ownerLeaderName": "Dendra Dwar",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
@@ -23672,6 +23882,7 @@
             "col": 64,
             "pcName": "Laorki",
             "ownerLeaderName": "Uvatha",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23689,6 +23900,7 @@
             "col": 51,
             "pcName": "AnKaragmir",
             "ownerLeaderName": "Uvatha",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -23706,6 +23918,7 @@
             "col": 20,
             "pcName": "Ardumir",
             "ownerLeaderName": "Sangarunya",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23723,6 +23936,7 @@
             "col": 54,
             "pcName": "Carvarad",
             "ownerLeaderName": "Dendra Dwar",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -23740,6 +23954,7 @@
             "col": 24,
             "pcName": "Isigir",
             "ownerLeaderName": "Haruth Rammam",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -23757,6 +23972,7 @@
             "col": 62,
             "pcName": "Mistrand",
             "ownerLeaderName": "Annatorion",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": true,
@@ -23774,6 +23990,7 @@
             "col": 64,
             "pcName": "LagariOrath",
             "ownerLeaderName": "Uvatha",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -23791,6 +24008,7 @@
             "col": 62,
             "pcName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23808,6 +24026,7 @@
             "col": 61,
             "pcName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23825,6 +24044,7 @@
             "col": 51,
             "pcName": "OrdugaAivaisa",
             "ownerLeaderName": "Ji Indur",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23842,6 +24062,7 @@
             "col": 47,
             "pcName": "Wathduin",
             "ownerLeaderName": "Adunaphel",
+            "ownerVariantId": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
@@ -23859,6 +24080,7 @@
             "col": 34,
             "pcName": "Lag-orod",
             "ownerLeaderName": "Azog",
+            "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -23877,7 +24099,8 @@
             "row": 13,
             "col": 7,
             "characterName": "Cirdan",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Cirdan",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -23893,6 +24116,7 @@
             "col": 19,
             "characterName": "Aragorn",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -23907,7 +24131,8 @@
             "row": 18,
             "col": 18,
             "characterName": "Merry",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Merry",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -23922,7 +24147,8 @@
             "row": 15,
             "col": 31,
             "characterName": "Elrond",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Elrond",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -23942,6 +24168,7 @@
             "col": 32,
             "characterName": "Balrog",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -23960,7 +24187,8 @@
             "row": 17,
             "col": 19,
             "characterName": "Tom Bombadil",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Tom Bombadil",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -23971,6 +24199,7 @@
             "col": 7,
             "characterName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -23981,6 +24210,7 @@
             "col": 6,
             "characterName": "Gloin",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -23996,6 +24226,7 @@
             "col": 28,
             "characterName": "The White Hand",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24006,6 +24237,7 @@
             "col": 28,
             "characterName": "Grima",
             "ownerLeaderName": "Saruman",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24016,6 +24248,7 @@
             "col": 27,
             "characterName": "Enion",
             "ownerLeaderName": "Waulfa",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24031,6 +24264,7 @@
             "col": 24,
             "characterName": "Waulfa",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24046,6 +24280,7 @@
             "col": 32,
             "characterName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24056,6 +24291,7 @@
             "col": 32,
             "characterName": "Ugluk",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24071,6 +24307,7 @@
             "col": 28,
             "characterName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24081,6 +24318,7 @@
             "col": 31,
             "characterName": "Theoden",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24096,6 +24334,7 @@
             "col": 36,
             "characterName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24106,6 +24345,7 @@
             "col": 33,
             "characterName": "Treebeard",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24121,6 +24361,7 @@
             "col": 36,
             "characterName": "Galadriel",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24136,6 +24377,7 @@
             "col": 36,
             "characterName": "Celeborn",
             "ownerLeaderName": "Galadriel",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24151,6 +24393,7 @@
             "col": 34,
             "characterName": "Haldir",
             "ownerLeaderName": "Galadriel",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24166,6 +24409,7 @@
             "col": 21,
             "characterName": "Barrow-wight",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24176,6 +24420,7 @@
             "col": 25,
             "characterName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24186,6 +24431,7 @@
             "col": 45,
             "characterName": "Murazor",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24205,6 +24451,7 @@
             "col": 29,
             "characterName": "The Undead King",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24220,6 +24467,7 @@
             "col": 41,
             "characterName": "Khamul",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24243,6 +24491,7 @@
             "col": 25,
             "characterName": "Sangarunya",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24258,6 +24507,7 @@
             "col": 30,
             "characterName": "Haruth Rammam",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24273,6 +24523,7 @@
             "col": 48,
             "characterName": "Legolas",
             "ownerLeaderName": "Thranduil",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24288,6 +24539,7 @@
             "col": 46,
             "characterName": "Ovatha",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24298,6 +24550,7 @@
             "col": 61,
             "characterName": "Din Ohtar",
             "ownerLeaderName": "Ovatha",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24317,6 +24570,7 @@
             "col": 45,
             "characterName": "Dendra Dwar",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24336,6 +24590,7 @@
             "col": 43,
             "characterName": "Boromir",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24355,6 +24610,7 @@
             "col": 41,
             "characterName": "Denethor",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24374,6 +24630,7 @@
             "col": 51,
             "characterName": "The Dark Eye",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24384,6 +24641,7 @@
             "col": 51,
             "characterName": "Mouth of Sauron",
             "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24394,6 +24652,7 @@
             "col": 51,
             "characterName": "Urzahil",
             "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24413,6 +24672,7 @@
             "col": 48,
             "characterName": "Ren the Unclean",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 92,
                 "stacks": [
@@ -24432,6 +24692,7 @@
             "col": 44,
             "characterName": "Hoarmurath",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24451,6 +24712,7 @@
             "col": 43,
             "characterName": "Faramir",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24466,6 +24728,7 @@
             "col": 25,
             "characterName": "Imrahil",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24481,6 +24744,7 @@
             "col": 54,
             "characterName": "Ji Indur",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24496,6 +24760,7 @@
             "col": 58,
             "characterName": "Akhorahil",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24511,6 +24776,7 @@
             "col": 46,
             "characterName": "Shelob",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24521,6 +24787,7 @@
             "col": 58,
             "characterName": "Annatorion",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24536,6 +24803,7 @@
             "col": 58,
             "characterName": "Tros Hesnef",
             "ownerLeaderName": "Huz",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24551,6 +24819,7 @@
             "col": 60,
             "characterName": "Avas of Igath",
             "ownerLeaderName": "Huz",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24566,6 +24835,7 @@
             "col": 51,
             "characterName": "Bard",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24581,6 +24851,7 @@
             "col": 41,
             "characterName": "Adunaphel",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24600,6 +24871,7 @@
             "col": 35,
             "characterName": "Gwaihir",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24610,6 +24882,7 @@
             "col": 40,
             "characterName": "Beorn",
             "ownerLeaderName": "Beoraborn",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24620,6 +24893,7 @@
             "col": 41,
             "characterName": "Beoraborn",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24635,6 +24909,7 @@
             "col": 42,
             "characterName": "Radagast",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24650,6 +24925,7 @@
             "col": 40,
             "characterName": "Celdacil",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24665,6 +24941,7 @@
             "col": 31,
             "characterName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24675,6 +24952,7 @@
             "col": 46,
             "characterName": "Huz",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24690,6 +24968,7 @@
             "col": 63,
             "characterName": "Kav Makow",
             "ownerLeaderName": "Uvatha",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24705,6 +24984,7 @@
             "col": 62,
             "characterName": "Uvatha",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24720,6 +25000,7 @@
             "col": 29,
             "characterName": "Arfanhil",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24735,6 +25016,7 @@
             "col": 36,
             "characterName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24745,6 +25027,7 @@
             "col": 64,
             "characterName": "King of Taur Romen",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24759,7 +25042,8 @@
             "row": 18,
             "col": 14,
             "characterName": "Lotho Sackville-Baggins",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Lotho Sackville-Baggins",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24773,8 +25057,20 @@
         {
             "row": 16,
             "col": 14,
-            "characterName": "Gandalf",
-            "ownerLeaderName": "",
+            "characterName": "Disturber of the Peace",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "disturber_of_the_peace",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 16,
+            "col": 14,
+            "characterName": "Frodo",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "disturber_of_the_peace",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24790,6 +25086,7 @@
             "col": 32,
             "characterName": "Goblin King",
             "ownerLeaderName": "Azog",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24809,6 +25106,7 @@
             "col": 34,
             "characterName": "Bolg",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24824,6 +25122,7 @@
             "col": 51,
             "characterName": "Smaug",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24834,6 +25133,7 @@
             "col": 47,
             "characterName": "Thranduil",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24853,6 +25153,7 @@
             "col": 27,
             "characterName": "Belceborg",
             "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24868,6 +25169,7 @@
             "col": 31,
             "characterName": "Azog",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24887,6 +25189,7 @@
             "col": 31,
             "characterName": "",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24897,6 +25200,7 @@
             "col": 23,
             "characterName": "Broggha",
             "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24916,12 +25220,29 @@
             "col": 26,
             "characterName": "Golfimbul",
             "ownerLeaderName": "",
+            "ownerVariantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
                     {
                         "armyCardName": "Wargs",
                         "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 17,
+            "col": 12,
+            "characterName": "Pippin",
+            "ownerLeaderName": "Pippin",
+            "ownerVariantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Hobbit Slingers",
+                        "amount": 1
                     }
                 ]
             }
