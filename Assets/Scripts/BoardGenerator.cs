@@ -55,8 +55,8 @@ public class BoardGenerator : MonoBehaviour
     public int hexesPerBatch = 20;
 
     [Header("Time-slicing (seconds)")]
-    [Tooltip("Max main-thread time per frame that generation may use. Tighten this while video plays (e.g., 0.0015–0.003).")]
-    [SerializeField] private float generationFrameBudgetSeconds = 0.002f;
+    [Tooltip("Max main-thread time per frame terrain generation may use WHILE THE INTRO VIDEO PLAYS. This is a trade-off dial, not a correctness setting: raise it to make more loading progress during video at the cost of choppier playback (e.g. 0.002 ≈ near-frozen load/smooth video, 0.05 ≈ visible progress/some stutter, 0.1+ ≈ fast load/choppy video).")]
+    [SerializeField] private float generationFrameBudgetSeconds = 0.02f;
     [SerializeField] private float maximumGenerationBuget = 2000;
 
     public Board board;
@@ -167,19 +167,26 @@ public class BoardGenerator : MonoBehaviour
     // Async cloning parameters: batches keep the main thread's integration debt
     // bounded (one giant 4550-clone op made the editor unresponsive for its whole
     // integration), and the slice caps how much frame time integration may take.
-    // Tune in the Inspector: bigger = faster load, choppier frames.
+    // asyncIntegrationMs/placementBudgetSeconds hold the WHILE-VIDEO-PLAYS values —
+    // same released-on-SetVideoPlaying(false) pattern as generationFrameBudgetSeconds
+    // below, since these two used to run at full speed for the whole load regardless
+    // of video state and were the actual cause of choppy playback.
     [Header("Hex cloning (async batches)")]
     [Tooltip("Hexes per async clone batch (clamped 256-2048). Bigger = fewer scheduling stalls between batches = faster.")]
     [SerializeField] private int hexCloneBatchSize = 1024;
-    [Tooltip("Main-thread ms PER FRAME spent integrating async clones (clamped 10-200). 100 ≈ 10 fps during load, 200 ≈ 5 fps. Beyond that input and video die — do not use 1000.")]
-    [SerializeField] private float asyncIntegrationMs = 150f;
-    [Tooltip("Max seconds of hex placement work per frame once the pool is full (clamped 0.05-0.25).")]
-    [SerializeField] private float placementBudgetSeconds = 0.2f;
+    [Tooltip("Main-thread ms PER FRAME integrating async clones WHILE THE INTRO VIDEO PLAYS (clamped 10-200). Trade-off dial: 15-30 keeps video smooth but load barely advances; 50-90 makes real progress during video at the cost of stutter; 100+ approaches full speed (choppy video).")]
+    [SerializeField] private float asyncIntegrationMs = 60f;
+    [Tooltip("Main-thread ms PER FRAME integrating async clones once nothing needs to stay smooth (video finished/skipped/absent). 100 ≈ 10 fps, 200 ≈ 5 fps — do not use 1000.")]
+    [SerializeField] private float maximumAsyncIntegrationMs = 150f;
+    [Tooltip("Max seconds PER FRAME for the 'Configuring Board' hex-placement loop (terrain + position per hex) WHILE THE INTRO VIDEO PLAYS (clamped 0.008-0.25). Per-hex cost here is tiny, so even 0.05-0.15 finishes almost instantly; raise for faster progress at the cost of video smoothness.")]
+    [SerializeField] private float placementBudgetSeconds = 0.12f;
+    [Tooltip("Max seconds of hex placement work per frame once nothing needs to stay smooth (clamped 0.008-0.25).")]
+    [SerializeField] private float maximumPlacementBudgetSeconds = 0.2f;
 
     // Clamped accessors so no Inspector combination can freeze input or starve the load.
     private int CloneBatchSize => Mathf.Clamp(hexCloneBatchSize, 256, 2048);
     private float IntegrationMs => Mathf.Clamp(asyncIntegrationMs, 10f, 200f);
-    private float PlacementBudget => Mathf.Clamp(placementBudgetSeconds, 0.05f, 0.25f);
+    private float PlacementBudget => Mathf.Clamp(placementBudgetSeconds, 0.008f, 0.25f);
 
     // Freshly cloned hexes are parked far off-camera until the placement loop
     // positions them; keeps pending clones from being rendered. They stay ACTIVE in
@@ -198,7 +205,14 @@ public class BoardGenerator : MonoBehaviour
         if(!playing)
         {
             generationFrameBudgetSeconds = maximumGenerationBuget;
+            asyncIntegrationMs = maximumAsyncIntegrationMs;
+            placementBudgetSeconds = maximumPlacementBudgetSeconds;
             Application.backgroundLoadingPriority = ThreadPriority.Normal;
+
+            // Push the released budget immediately in case a clone batch is already
+            // mid-flight — the video can finish or be skipped while cloning is still
+            // running, and AsyncInstantiateOperation reads this per integration slice.
+            AsyncInstantiateOperation.SetIntegrationTimeMS(IntegrationMs);
         }
     }
 
@@ -326,13 +340,12 @@ public class BoardGenerator : MonoBehaviour
         // Clear existing children safely and time-sliced
         yield return StartCoroutine(ClearChildrenCoroutine());
 
-        // Hex instantiation is what the player actually waits on, so give it a
-        // healthier floor than the video-smoothness budget (video decoding runs
-        // on worker threads and stays smooth at 8ms/frame of main-thread work),
-        // and cap it so the fully-released budget still yields for progress UI.
-        // Placement (activate + position + terrain) is cheap per hex once the pool is
-        // full, so a modest cap keeps the progress bar and frames smooth.
-        float instantiateBudget() => Mathf.Clamp(generationFrameBudgetSeconds, 0.008f, PlacementBudget);
+        // "Configuring Board" (this placement loop) used to borrow its per-frame
+        // budget from generationFrameBudgetSeconds (clamped against PlacementBudget
+        // as a mere ceiling) — that meant raising placementBudgetSeconds alone did
+        // nothing, since the smaller generationFrameBudgetSeconds value was what
+        // actually won the clamp. It now uses PlacementBudget directly: an
+        // independent dial for this phase's speed, decoupled from terrain generation.
 
         // Safety: make sure terrainGrid exists and matches board dims
         if (terrainGrid == null ||
@@ -378,7 +391,7 @@ public class BoardGenerator : MonoBehaviour
             Debug.Log($"[ScenarioLoad] async clone of {toCreate} hexes finished in {cloneTimer.ElapsedMilliseconds} ms (available {AvailableHexes}).");
         }
 
-        var budget = new FrameBudget(instantiateBudget);
+        var budget = new FrameBudget(() => PlacementBudget);
         int hexesProcessed = 0;
         int batchCount = 0;
 
@@ -386,7 +399,7 @@ public class BoardGenerator : MonoBehaviour
         var stepTimer = new System.Diagnostics.Stopwatch();
         long poolTicks = 0;
         long terrainTicks = 0;
-        Debug.Log($"[ScenarioLoad] placing {totalHexes} hexes (budget/frame: {instantiateBudget() * 1000f:0.#} ms)...");
+        Debug.Log($"[ScenarioLoad] placing {totalHexes} hexes (budget/frame: {PlacementBudget * 1000f:0.#} ms)...");
 
         for (int row = 0; row < height; row++)
         {

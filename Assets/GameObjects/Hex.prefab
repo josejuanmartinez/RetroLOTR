@@ -419,12 +419,15 @@ MonoBehaviour:
   hexInfoText: {fileID: 0}
   hexInfoHoverDelay: 0.5
   terrainTooltipPrefab: {fileID: 0}
+  sharedParticlesPrefab: {fileID: 6210844020258483811, guid: 99428609042c54b899bfdc9fbfe95760, type: 3}
+  hoverPanelPrefab: {fileID: 6901699456132456031, guid: 9af264c1c9f024051fcc53c9dbf0b944, type: 3}
+  unitLayerPrefab: {fileID: 3800855912925161697, guid: 112b38eac919614288b1ef39985b2ccc, type: 3}
   spriteRendererLayoutIcon: {fileID: 5707050488477407365, guid: 3684c0112ce62014a842462cbe19e367, type: 3}
   characterClassesIconGrid: {fileID: 0}
   armyCharactersIconGrid: {fileID: 8562272294012321577}
   terrainTexture: {fileID: 1202935138384858293}
   pcTexture: {fileID: 1246686261725466849}
-  underground: {fileID: 0}
+  underground: {fileID: 2595860277653055481}
   cliffGameObject: {fileID: 8505419408469819643}
   hexTextureWater: {fileID: 8846054597242357347}
   movement: {fileID: 0}

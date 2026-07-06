@@ -59,6 +59,14 @@ public class Hex : MonoBehaviour
     [Tooltip("World-space tooltip shown at the cursor when hovering a terrain/feature name. Must contain a TextMeshPro.")]
     [SerializeField] private GameObject terrainTooltipPrefab;
 
+    [Header("Lazily attached sub-prefabs (Resources/HexParts)")]
+    [Tooltip("Instantiated ONCE per scene as the shared particle-system pool templates (fire/ice/poison/courage/hope + selection).")]
+    [SerializeField] private GameObject sharedParticlesPrefab;
+    [Tooltip("Attached to a hex on first hover / first floating message: hover info panel, terrain tooltip link, floating message text.")]
+    [SerializeField] private GameObject hoverPanelPrefab;
+    [Tooltip("Attached to a hex when a character, PC label, or movement cost needs to show: character sprite/Animator, banner, class icons, PC name, movement cost.")]
+    [SerializeField] private GameObject unitLayerPrefab;
+
     [Header("Grid Sprite Rendereres")]
     public GameObject spriteRendererLayoutIcon;
     public SpriteRendererGridLayout characterClassesIconGrid;
@@ -219,7 +227,7 @@ public class Hex : MonoBehaviour
         navigator = sharedNavigator;
         illustrations = sharedIllustrations;
         hexTextureMapping = ResolveTextureMapping();
-        EnsureSharedParticleTemplates();
+        EnsureSharedParticleTemplates(sharedParticlesPrefab);
         /*if (characterIcon != null)
         {
             characterIconZoom = characterIcon.GetComponent<ZoomSpriteRenderer>();
@@ -266,27 +274,13 @@ public class Hex : MonoBehaviour
 
     // The hex prefab used to carry ~40 GameObjects (6 ParticleSystems, a 3-TMP hover
     // panel, character visuals with an Animator). Cloning that 4550 times froze
-    // scenario loads for minutes, so the heavy parts live in Resources/HexParts and
-    // are attached per hex only when something actually needs them:
-    //   HexSharedParticles — instantiated ONCE per scene as the shared pool templates
-    //   HexHoverPanel      — per hex, on first hover / first floating message
-    //   HexUnitLayer       — per hex, when a character, PC label or movement cost shows
-    private const string SharedParticlesPrefabPath = "HexParts/HexSharedParticles";
-    private const string HoverPanelPrefabPath = "HexParts/HexHoverPanel";
-    private const string UnitLayerPrefabPath = "HexParts/HexUnitLayer";
-    private static GameObject hoverPanelPrefab;
-    private static GameObject unitLayerPrefab;
-    private static bool lazyPartPrefabsLoaded;
-
-    private static void LoadLazyPartPrefabs()
-    {
-        if (lazyPartPrefabsLoaded) return;
-        lazyPartPrefabsLoaded = true;
-        hoverPanelPrefab = Resources.Load<GameObject>(HoverPanelPrefabPath);
-        unitLayerPrefab = Resources.Load<GameObject>(UnitLayerPrefabPath);
-        if (hoverPanelPrefab == null) Debug.LogError($"Hex: missing Resources/{HoverPanelPrefabPath}; hover info panels disabled.");
-        if (unitLayerPrefab == null) Debug.LogError($"Hex: missing Resources/{UnitLayerPrefabPath}; character/PC visuals disabled.");
-    }
+    // scenario loads for minutes, so the heavy parts live in separate prefabs
+    // (sharedParticlesPrefab/hoverPanelPrefab/unitLayerPrefab, assigned in the
+    // Inspector — see Resources/HexParts for the assets) and are attached per hex
+    // only when something actually needs them:
+    //   sharedParticlesPrefab — instantiated ONCE per scene as the shared pool templates
+    //   hoverPanelPrefab      — per hex, on first hover / first floating message
+    //   unitLayerPrefab       — per hex, when a character, PC label or movement cost shows
 
     private static GameObject FindPart(Transform root, string name)
     {
@@ -304,8 +298,11 @@ public class Hex : MonoBehaviour
     private bool EnsureHoverPanel()
     {
         if (hexInfo != null) return true;
-        LoadLazyPartPrefabs();
-        if (hoverPanelPrefab == null) return false;
+        if (hoverPanelPrefab == null)
+        {
+            Debug.LogError("Hex.hoverPanelPrefab is not assigned in the Inspector; hover info panel disabled.");
+            return false;
+        }
 
         Transform panelRoot = Instantiate(hoverPanelPrefab, transform, false).transform;
         panelRoot.name = "HoverPanel";
@@ -331,8 +328,11 @@ public class Hex : MonoBehaviour
     private bool EnsureUnitLayer()
     {
         if (characterSpriteRenderer != null) return true;
-        LoadLazyPartPrefabs();
-        if (unitLayerPrefab == null) return false;
+        if (unitLayerPrefab == null)
+        {
+            Debug.LogError("Hex.unitLayerPrefab is not assigned in the Inspector; character/PC visuals disabled.");
+            return false;
+        }
 
         Transform layerRoot = Instantiate(unitLayerPrefab, transform, false).transform;
         layerRoot.name = "UnitLayer";
@@ -2819,10 +2819,11 @@ public class Hex : MonoBehaviour
         SetFrontierRowAlpha(frontierAlpha);
     }
 
-    // Builds the scene-wide particle templates from the HexParts/HexSharedParticles
-    // prefab. Runs from every hex's Awake but only does work when the templates are
-    // missing (first hex of a scene, or after a scene change destroyed the old ones).
-    private static void EnsureSharedParticleTemplates()
+    // Builds the scene-wide particle templates from the assigned sharedParticlesPrefab.
+    // Runs from every hex's Awake (passing its own serialized reference) but only does
+    // work when the templates are missing (first hex of a scene, or after a scene
+    // change destroyed the old ones).
+    private static void EnsureSharedParticleTemplates(GameObject prefab)
     {
         bool poolsAlive = sharedParticlePools.Count > 0;
         foreach (SharedParticlePoolState state in sharedParticlePools.Values)
@@ -2835,10 +2836,9 @@ public class Hex : MonoBehaviour
         }
         if (sharedSelectedParticles != null && poolsAlive) return;
 
-        GameObject prefab = Resources.Load<GameObject>(SharedParticlesPrefabPath);
         if (prefab == null)
         {
-            Debug.LogError($"Hex: missing Resources/{SharedParticlesPrefabPath}; hex particles disabled.");
+            Debug.LogError("Hex.sharedParticlesPrefab is not assigned in the Inspector; hex particles disabled.");
             return;
         }
 
