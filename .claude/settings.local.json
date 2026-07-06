@@ -66,7 +66,14 @@
       "PowerShell(Select-String *)",
       "PowerShell(Select-String -Path \"Assets/GameObjects/Hex.prefab\" -Pattern \"^--- !u!\\(\\\\d+\\) \" | ForEach-Object { $_.Matches[0].Groups[1].Value } | Group-Object | Sort-Object Count -Descending | Format-Table Name, Count -AutoSize)",
       "PowerShell(Select-String -Path \"Assets/GameObjects/Hex.prefab\" -Pattern \"m_Name: \\(.+\\)$\" | ForEach-Object { $_.Matches[0].Groups[1].Value })",
-      "Bash(awk '/^--- !u!4 /{f=1;next} f&&/^---/{exit} f' Assets/Resources/HexParts/HexSharedParticles.prefab)"
+      "Bash(awk '/^--- !u!4 /{f=1;next} f&&/^---/{exit} f' Assets/Resources/HexParts/HexSharedParticles.prefab)",
+      "Bash(git rev-list *)",
+      "Bash(git ls-tree *)",
+      "Bash(git reset *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git cat-file *)",
+      "Bash(sort -k3 -n -r)"
     ]
   }
 }
