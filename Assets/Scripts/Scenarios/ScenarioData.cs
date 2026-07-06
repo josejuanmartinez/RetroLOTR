@@ -22,8 +22,15 @@ namespace RetroLOTR.Scenarios
         // v2 added ScenarioLeaderStart.variantId (playable-leader variant restriction).
         // v3 added ScenarioPC.isUnderground (PC marks its hex as an Underground entrance).
         // v4 added ScenarioPC/ScenarioCharacter.ownerVariantId (owner-variant-locked ownership).
+        // v5 removed ScenarioLeaderStart/leaderStarts: a leader's presence, hex and starting army
+        // are entirely determined by its self-owned ScenarioCharacter (ownerLeaderName ==
+        // characterName). Whether that name is playable or non-playable is looked up from
+        // PlayableLeaderBiomes.json/NonPlayableLeaderBiomes.json, never stored. ScenarioCharacter
+        // gained variantId (moved from ScenarioLeaderStart) for the playable-variant-carousel
+        // restriction. Pre-v5 scenarios must be migrated (see ScenarioMigration) since there is no
+        // in-place default for a removed list.
         // Older scenarios deserialize with the new fields at their defaults, so they keep working.
-        public const int CurrentVersion = 4;
+        public const int CurrentVersion = 5;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
@@ -42,7 +49,6 @@ namespace RetroLOTR.Scenarios
         /// without an override fall back to the terrain's default/random variation.</summary>
         public List<ScenarioSpriteCell> terrainSprites = new();
 
-        public List<ScenarioLeaderStart> leaderStarts = new();
         public List<ScenarioPC> pcs = new();
         public List<ScenarioCharacter> characters = new();
 
@@ -74,27 +80,6 @@ namespace RetroLOTR.Scenarios
         public string spriteName;
     }
 
-    /// <summary>
-    /// Marks a hex as the starting position of a shared leader (playable or non-playable),
-    /// referenced by its biome <c>characterName</c>. Only spawns the leader unit itself; its
-    /// capital and retinue are authored separately as <see cref="ScenarioPC"/>/<see cref="ScenarioCharacter"/>.
-    /// </summary>
-    [Serializable]
-    public class ScenarioLeaderStart
-    {
-        public int row;
-        public int col;
-        public string leaderName;
-        public bool isPlayable = true;
-
-        /// <summary>
-        /// For a playable leader, restricts the selection carousel to a single variant of that
-        /// leader (matched against <c>LeaderVariantConfig.variantId</c> in PlayableLeaderBiomes.json).
-        /// Empty = no restriction (all variants offered, the pre-v2 / non-playable behaviour).
-        /// </summary>
-        public string variantId = "";
-    }
-
     [Serializable]
     public class ScenarioPC
     {
@@ -122,16 +107,29 @@ namespace RetroLOTR.Scenarios
         public string fortFeature = "";
     }
 
+    /// <summary>
+    /// A companion character, OR — when <c>ownerLeaderName</c> equals <c>characterName</c> — a
+    /// self-owned card standing in for a shared leader (playable or non-playable) itself. This
+    /// self-owned form is the *only* record of that leader in the scenario: its mere presence at a
+    /// hex is the leader's starting position, and <see cref="army"/> is the leader's starting army.
+    /// Whether <c>characterName</c> is a playable or non-playable leader is looked up from
+    /// PlayableLeaderBiomes.json/NonPlayableLeaderBiomes.json (see NationSpawner.FindLeaderBiome) —
+    /// never stored here.
+    /// </summary>
     [Serializable]
     public class ScenarioCharacter
     {
         public int row;
         public int col;
-        public string characterName;     // from a Character card
-        public string ownerLeaderName;   // a leaderStart's leaderName
+        public string characterName;     // from a Character card, or (self-owned) a leader's name
+        public string ownerLeaderName;   // a leader's name; self-owned when equal to characterName
         /// <summary>Same variant-lock as ScenarioPC.ownerVariantId. On mismatch the fallback
         /// depends on what characterName represents — see NationSpawner.ReconcileScenarioVariantOwnership.</summary>
         public string ownerVariantId = "";
+        /// <summary>Self-owned playable-leader cards only: restricts the leader-selection carousel
+        /// to a single variant (matched against <c>LeaderVariantConfig.variantId</c> in
+        /// PlayableLeaderBiomes.json). Empty = no restriction (every variant offered).</summary>
+        public string variantId = "";
         public ScenarioArmy army;        // null when the character bears no army
     }
 

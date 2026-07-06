@@ -239,23 +239,55 @@ public class NationSpawner : MonoBehaviour
         DeckManager deckManager = ResolveDeckManager();
         long deckMs = Lap();
 
-        // 1. Leaders — establishes the Leader objects that PCs/characters reference as owners.
+        // 1. Leaders — a leader's entire presence in a scenario is its self-owned character card
+        // (ownerLeaderName == characterName): that hex is where it starts, and its army (if any) is
+        // the leader's starting army. Whether the name is playable or non-playable is looked up
+        // from the biome JSONs, never authored separately (see FindLeaderBiome).
+        //
+        // A scenario can author the same playable leader at several hexes, one per variant (e.g.
+        // five different Sauron starts) so each shows as its own carousel entry — every one spawns
+        // here, immediately locked to its authored variant, and unselected siblings are pruned down
+        // to a single survivor once selection is final (see Game.PruneUnselectedLeaderVariants).
         Dictionary<string, Leader> leadersByName = new(StringComparer.OrdinalIgnoreCase);
-        foreach (ScenarioLeaderStart start in scenario.leaderStarts ?? new List<ScenarioLeaderStart>())
+        foreach (ScenarioCharacter selfCard in scenario.characters ?? new List<ScenarioCharacter>())
         {
-            if (start == null || string.IsNullOrWhiteSpace(start.leaderName)) continue;
-            if (!TryGetScenarioHex(scenario, start.row, start.col, out Hex hex)) continue;
-            if (!EnsureCharacterCapacity($"Skipping leader '{start.leaderName}'.")) continue;
+            if (!IsSelfOwnedLeaderCard(selfCard, out LeaderBiomeConfig playableBiome, out NonPlayableLeaderBiomeConfig nplBiome)) continue;
+            if (!TryGetScenarioHex(scenario, selfCard.row, selfCard.col, out Hex hex)) continue;
+            if (!EnsureCharacterCapacity($"Skipping leader '{selfCard.characterName}'.")) continue;
 
-            Leader leader = start.isPlayable
-                ? SpawnPlayableLeaderAt(hex, start.leaderName)
-                : SpawnNonPlayableLeaderAt(hex, start.leaderName);
-            if (leader == null) continue;
+            Leader leader = playableBiome != null
+                ? characterInstantiator.InstantiatePlayableLeader(hex, playableBiome)
+                : characterInstantiator.InstantiateNonPlayableLeader(hex, nplBiome);
 
             currentCharacterCount++;
             placedPositions.Add(hex.v2);
-            leadersByName[start.leaderName] = leader;
-            leaderPositions[start.leaderName] = hex.v2;
+            // Multiple sibling instances can share this name pre-selection; PCs/characters that
+            // reference it as an owner just need *a* representative, so last-one-wins is fine.
+            leadersByName[selfCard.characterName] = leader;
+            leaderPositions[selfCard.characterName] = hex.v2;
+
+            if (playableBiome != null && leader is PlayableLeader playableInstance)
+            {
+                // Any self-owned card fixes this instance's identity/position for the scenario —
+                // never a free variant pick or a random re-roll in RandomizeCompetitorVariants —
+                // whether or not a specific variant was named (a blank variantId just means "the
+                // base flavor, at this hex" rather than "no scenario opinion at all").
+                playableInstance.scenarioVariantLocked = true;
+
+                if (!string.IsNullOrWhiteSpace(selfCard.variantId))
+                {
+                    LeaderVariantConfig variant = playableBiome.variants?.Find(v =>
+                        v != null && string.Equals(v.variantId, selfCard.variantId, StringComparison.OrdinalIgnoreCase));
+                    if (variant != null)
+                    {
+                        string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? playableBiome.subdeckId : variant.subdeckId;
+                        playableInstance.SetDeckSelection(subdeckId, variant.deckIdentity, playableBiome.description, variant.displayName, variant.characterName);
+                    }
+                }
+            }
+
+            if (selfCard.army != null && !selfCard.army.IsEmpty())
+                BuildScenarioArmy(leader, selfCard.army, deckManager);
         }
         long leadersMs = Lap();
 
@@ -284,6 +316,9 @@ public class NationSpawner : MonoBehaviour
         foreach (ScenarioCharacter sc in scenario.characters ?? new List<ScenarioCharacter>())
         {
             if (sc == null || string.IsNullOrWhiteSpace(sc.characterName)) continue;
+            // Self-owned leader identity cards were already folded into that leader's own spawn
+            // (hex + army) in step 1 above — skip so we don't spawn a duplicate leader instance.
+            if (IsSelfOwnedLeaderCard(sc, out _, out _)) continue;
             if (!TryGetScenarioHex(scenario, sc.row, sc.col, out Hex hex)) continue;
             if (!EnsureCharacterCapacity($"Skipping character '{sc.characterName}'.")) continue;
 
@@ -397,6 +432,30 @@ public class NationSpawner : MonoBehaviour
         currentPcCount = Mathf.Max(0, currentPcCount - 1);
     }
 
+    // Called by Game.PruneUnselectedLeaderVariants once every playable leader's variant is final:
+    // a scenario can author the same leader at several hexes (one per variant), each spawned as its
+    // own instance in step 1 above, but only one should remain in play. Removes this losing sibling
+    // and everything it owns, quietly — as if it had never spawned (no death messaging/effects,
+    // since the game hasn't visibly started).
+    public void RemoveUnselectedScenarioLeader(Leader leader)
+    {
+        if (leader == null) return;
+
+        foreach (PC pc in leader.controlledPcs.ToList())
+            RemoveUnresolvedScenarioPc(pc);
+
+        foreach (Character character in leader.controlledCharacters.ToList())
+        {
+            if (character == leader) continue;
+            RemoveUnresolvedScenarioCharacter(character);
+        }
+
+        if (leader.hex != null && leader.hex.characters.Contains(leader))
+            leader.hex.characters.Remove(leader);
+        currentCharacterCount = Mathf.Max(0, currentCharacterCount - 1);
+        Destroy(leader.gameObject);
+    }
+
     // Applies authored per-hex tile variations. Re-running SetTerrain with the chosen sprite
     // also refreshes that hex's landmark features (HexFeatureData reads the sprite name).
     private void ApplyScenarioTerrainSprites(ScenarioData scenario)
@@ -448,19 +507,10 @@ public class NationSpawner : MonoBehaviour
         if (leadersByName.TryGetValue(ownerName, out Leader existing)) return existing;
         if (!EnsureCharacterCapacity($"Skipping owner leader '{ownerName}'.")) return null;
 
-        Leader leader = null;
-        LeaderBiomeConfig playable = playableLeaders.playableLeaders.biomes
-            .FirstOrDefault(b => b != null && string.Equals(b.characterName, ownerName, StringComparison.OrdinalIgnoreCase));
-        if (playable != null)
-        {
-            leader = characterInstantiator.InstantiatePlayableLeader(hex, playable);
-        }
-        else
-        {
-            NonPlayableLeaderBiomeConfig npl = nonPlayableLeaders.nonPlayableLeaders.biomes
-                .FirstOrDefault(b => b != null && string.Equals(b.characterName, ownerName, StringComparison.OrdinalIgnoreCase));
-            if (npl != null) leader = characterInstantiator.InstantiateNonPlayableLeader(hex, npl);
-        }
+        (LeaderBiomeConfig playable, NonPlayableLeaderBiomeConfig nonPlayable) = FindLeaderBiome(ownerName);
+        Leader leader = playable != null
+            ? characterInstantiator.InstantiatePlayableLeader(hex, playable)
+            : nonPlayable != null ? characterInstantiator.InstantiateNonPlayableLeader(hex, nonPlayable) : null;
 
         if (leader == null)
         {
@@ -475,18 +525,6 @@ public class NationSpawner : MonoBehaviour
         return leader;
     }
 
-    private Leader SpawnPlayableLeaderAt(Hex hex, string leaderName)
-    {
-        LeaderBiomeConfig biome = playableLeaders.playableLeaders.biomes
-            .FirstOrDefault(b => b != null && string.Equals(b.characterName, leaderName, StringComparison.OrdinalIgnoreCase));
-        if (biome == null)
-        {
-            Debug.LogWarning($"Scenario references unknown playable leader '{leaderName}'.");
-            return null;
-        }
-        return characterInstantiator.InstantiatePlayableLeader(hex, biome);
-    }
-
     private NonPlayableLeaderBiomeConfig FindNplBiomeByCharacterName(string characterName)
     {
         if (string.IsNullOrWhiteSpace(characterName)) return null;
@@ -494,15 +532,31 @@ public class NationSpawner : MonoBehaviour
             .FirstOrDefault(b => b != null && string.Equals(b.characterName, characterName, StringComparison.OrdinalIgnoreCase));
     }
 
-    private Leader SpawnNonPlayableLeaderAt(Hex hex, string leaderName)
+    // Looks a name up in both leader-identity catalogs — the only place "is this leader playable?"
+    // gets decided, since it's never authored in the scenario itself. At most one of the two
+    // returned configs is non-null.
+    private (LeaderBiomeConfig playable, NonPlayableLeaderBiomeConfig nonPlayable) FindLeaderBiome(string characterName)
     {
-        NonPlayableLeaderBiomeConfig biome = FindNplBiomeByCharacterName(leaderName);
-        if (biome == null)
-        {
-            Debug.LogWarning($"Scenario references unknown non-playable leader '{leaderName}'.");
-            return null;
-        }
-        return characterInstantiator.InstantiateNonPlayableLeader(hex, biome);
+        if (string.IsNullOrWhiteSpace(characterName)) return (null, null);
+        LeaderBiomeConfig playable = playableLeaders.playableLeaders.biomes
+            .FirstOrDefault(b => b != null && string.Equals(b.characterName, characterName, StringComparison.OrdinalIgnoreCase));
+        if (playable != null) return (playable, null);
+        return (null, FindNplBiomeByCharacterName(characterName));
+    }
+
+    // A ScenarioCharacter whose characterName matches its own ownerLeaderName (self-owned) is a
+    // record of that leader (playable or non-playable) in the scenario: its hex is where this
+    // instance starts and its army is its starting army — see SpawnFromScenario step 1. A scenario
+    // may author several such cards for the same leader name (one per variant/hex); each is its own
+    // instance, disambiguated later by Game.PruneUnselectedLeaderVariants.
+    private bool IsSelfOwnedLeaderCard(ScenarioCharacter sc, out LeaderBiomeConfig playable, out NonPlayableLeaderBiomeConfig nonPlayable)
+    {
+        playable = null;
+        nonPlayable = null;
+        if (sc == null || string.IsNullOrWhiteSpace(sc.characterName)) return false;
+        if (!string.Equals(sc.characterName, sc.ownerLeaderName, StringComparison.OrdinalIgnoreCase)) return false;
+        (playable, nonPlayable) = FindLeaderBiome(sc.characterName);
+        return playable != null || nonPlayable != null;
     }
 
     // Mirrors how a Character card is turned into a unit (see Card.HandleCharacterCardPlayed):

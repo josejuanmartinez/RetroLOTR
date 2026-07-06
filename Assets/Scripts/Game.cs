@@ -95,7 +95,10 @@ public class Game : MonoBehaviour
 
         foreach (PlayableLeader competitor in competitors)
         {
-            if (competitor == null) continue;
+            // A leader spawned from a scenario's self-owned character card already has its
+            // authored variant applied (see NationSpawner step 1) — its hex *is* that variant's
+            // start point, so a random re-pick here would desync the deck from the position.
+            if (competitor == null || competitor.scenarioVariantLocked) continue;
 
             LeaderBiomeConfig biome = playableLeaders.playableLeaders.biomes
                 .Find(b => string.Equals(b.characterName, competitor.characterName, StringComparison.OrdinalIgnoreCase));
@@ -143,6 +146,36 @@ public class Game : MonoBehaviour
         }
     }
 
+    // A scenario can author the same playable leader at several hexes, one per variant (e.g. five
+    // different starting hexes for Sauron), so each shows as its own carousel entry — but only one
+    // of those sibling instances should remain in play once a variant is finally chosen: the
+    // human's pick if it belongs to this leader name, otherwise a random survivor among the
+    // AI-controlled siblings. Must run after SelectPlayer (player/competitors populated) and before
+    // RandomizeCompetitorVariants/AssignAIandHumans/VictoryPoints tally.
+    private void PruneUnselectedLeaderVariants()
+    {
+        if (player == null) return;
+
+        List<PlayableLeader> all = new() { player };
+        if (competitors != null) all.AddRange(competitors.Where(c => c != null));
+
+        foreach (var group in all.Where(l => !string.IsNullOrWhiteSpace(l.characterName))
+                                 .GroupBy(l => l.characterName, StringComparer.OrdinalIgnoreCase))
+        {
+            List<PlayableLeader> siblings = group.ToList();
+            if (siblings.Count <= 1) continue;
+
+            PlayableLeader survivor = siblings.Contains(player) ? player : siblings[UnityEngine.Random.Range(0, siblings.Count)];
+
+            foreach (PlayableLeader sibling in siblings)
+            {
+                if (sibling == survivor) continue;
+                competitors?.Remove(sibling);
+                board.nationSpawner?.RemoveUnselectedScenarioLeader(sibling);
+            }
+        }
+    }
+
     public void StartGame()
     {
         StartGame(this.skipTutorial);
@@ -151,6 +184,7 @@ public class Game : MonoBehaviour
     public void StartGame(bool skipTutorial)
     {
         FindFirstObjectByType<LeaderSelector>()?.ApplyCurrentSelection();
+        PruneUnselectedLeaderVariants();
         RandomizeCompetitorVariants();
         // Every playable leader's variant (human pick + AI randomization above) is final now, so
         // scenario PCs/characters authored with an owner-variant restriction can be resolved.

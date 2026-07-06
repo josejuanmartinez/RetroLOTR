@@ -1,5 +1,5 @@
 {
-    "version": 4,
+    "version": 5,
     "scenarioName": "2950",
     "width": 65,
     "height": 70,
@@ -20563,295 +20563,6 @@
             "spriteName": "mountains_6"
         }
     ],
-    "leaderStarts": [
-        {
-            "row": 16,
-            "col": 14,
-            "leaderName": "Gandalf",
-            "isPlayable": true,
-            "variantId": "disturber_of_the_peace"
-        },
-        {
-            "row": 14,
-            "col": 8,
-            "leaderName": "Cirdan",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 15,
-            "col": 19,
-            "leaderName": "Aragorn",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 15,
-            "col": 31,
-            "leaderName": "Elrond",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 23,
-            "col": 32,
-            "leaderName": "Balrog",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 17,
-            "col": 19,
-            "leaderName": "Tom Bombadil",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 33,
-            "col": 28,
-            "leaderName": "Saruman",
-            "isPlayable": true,
-            "variantId": "the_white_hand"
-        },
-        {
-            "row": 26,
-            "col": 41,
-            "leaderName": "Khamul",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 10,
-            "col": 51,
-            "leaderName": "Bard",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 8,
-            "col": 47,
-            "leaderName": "Thranduil",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 53,
-            "col": 46,
-            "leaderName": "Ovatha",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 37,
-            "col": 45,
-            "leaderName": "Dendra Dwar",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 40,
-            "col": 51,
-            "leaderName": "Sauron",
-            "isPlayable": true,
-            "variantId": "the_dark_eye"
-        },
-        {
-            "row": 60,
-            "col": 30,
-            "leaderName": "Haruth Rammam",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 56,
-            "col": 54,
-            "leaderName": "Ji Indur",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 54,
-            "col": 58,
-            "leaderName": "Akhorahil",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 44,
-            "col": 48,
-            "leaderName": "Ren the Unclean",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 43,
-            "col": 45,
-            "leaderName": "Murazor",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 39,
-            "col": 44,
-            "leaderName": "Hoarmurath",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 42,
-            "col": 46,
-            "leaderName": "Shelob",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 68,
-            "col": 25,
-            "leaderName": "Sangarunya",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 6,
-            "col": 51,
-            "leaderName": "Smaug",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 16,
-            "col": 58,
-            "leaderName": "Annatorion",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 20,
-            "col": 58,
-            "leaderName": "Huz",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 64,
-            "col": 62,
-            "leaderName": "Uvatha",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 61,
-            "col": 41,
-            "leaderName": "Adunaphel",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 28,
-            "col": 24,
-            "leaderName": "Waulfa",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 14,
-            "col": 35,
-            "leaderName": "Gwaihir",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 16,
-            "col": 42,
-            "leaderName": "Radagast",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 30,
-            "col": 33,
-            "leaderName": "Treebeard",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 16,
-            "col": 64,
-            "leaderName": "King of Taur Romen",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 7,
-            "col": 60,
-            "leaderName": "Dain",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 11,
-            "col": 29,
-            "leaderName": "",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 17,
-            "col": 12,
-            "leaderName": "Pippin",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 4,
-            "col": 31,
-            "leaderName": "Azog",
-            "isPlayable": false,
-            "variantId": ""
-        },
-        {
-            "row": 16,
-            "col": 10,
-            "leaderName": "Gandalf",
-            "isPlayable": true,
-            "variantId": "gandalf"
-        },
-        {
-            "row": 21,
-            "col": 61,
-            "leaderName": "Sauron",
-            "isPlayable": true,
-            "variantId": "shadow_of_the_east"
-        },
-        {
-            "row": 34,
-            "col": 44,
-            "leaderName": "Sauron",
-            "isPlayable": true,
-            "variantId": "the_necromancer"
-        },
-        {
-            "row": 64,
-            "col": 21,
-            "leaderName": "Sauron",
-            "isPlayable": true,
-            "variantId": "shadow_of_the_east"
-        },
-        {
-            "row": 3,
-            "col": 23,
-            "leaderName": "Sauron",
-            "isPlayable": true,
-            "variantId": "the_iron_crown"
-        },
-        {
-            "row": 25,
-            "col": 30,
-            "leaderName": "Saruman",
-            "isPlayable": true,
-            "variantId": "of_many_colours"
-        }
-    ],
     "pcs": [
         {
             "row": 13,
@@ -21236,7 +20947,7 @@
             "col": 32,
             "pcName": "FangornSCamp",
             "ownerLeaderName": "Saruman",
-            "ownerVariantId": "",
+            "ownerVariantId": "the_white_hand",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -21433,7 +21144,7 @@
             "row": 16,
             "col": 10,
             "pcName": "Elostirion",
-            "ownerLeaderName": "Elrond",
+            "ownerLeaderName": "Gandalf",
             "ownerVariantId": "",
             "citySize": 1,
             "fortSize": 1,
@@ -24101,6 +23812,7 @@
             "characterName": "Cirdan",
             "ownerLeaderName": "Cirdan",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24117,6 +23829,7 @@
             "characterName": "Aragorn",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24128,11 +23841,36 @@
             }
         },
         {
+            "row": 15,
+            "col": 19,
+            "characterName": "Aragorn",
+            "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 15,
+            "col": 19,
+            "characterName": "Bill Ferny",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "sharkey",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 18,
             "col": 18,
             "characterName": "Merry",
             "ownerLeaderName": "Merry",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24149,6 +23887,7 @@
             "characterName": "Elrond",
             "ownerLeaderName": "Elrond",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24169,6 +23908,7 @@
             "characterName": "Balrog",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24184,11 +23924,24 @@
             }
         },
         {
+            "row": 23,
+            "col": 32,
+            "characterName": "Balrog",
+            "ownerLeaderName": "Balrog",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 17,
             "col": 19,
             "characterName": "Tom Bombadil",
             "ownerLeaderName": "Tom Bombadil",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24200,6 +23953,7 @@
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24211,6 +23965,7 @@
             "characterName": "Gloin",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24225,8 +23980,9 @@
             "row": 33,
             "col": 28,
             "characterName": "The White Hand",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "the_white_hand",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24238,6 +23994,19 @@
             "characterName": "Grima",
             "ownerLeaderName": "Saruman",
             "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 33,
+            "col": 28,
+            "characterName": "Saruman the White",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "saruman_the_white",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24249,6 +24018,7 @@
             "characterName": "Enion",
             "ownerLeaderName": "Waulfa",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24265,6 +24035,7 @@
             "characterName": "Waulfa",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24276,11 +24047,24 @@
             }
         },
         {
+            "row": 28,
+            "col": 24,
+            "characterName": "Waulfa",
+            "ownerLeaderName": "Waulfa",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 33,
             "col": 32,
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24290,8 +24074,9 @@
             "row": 33,
             "col": 32,
             "characterName": "Ugluk",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "the_white_hand",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24308,6 +24093,7 @@
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24319,6 +24105,7 @@
             "characterName": "Theoden",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24335,6 +24122,7 @@
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24346,6 +24134,7 @@
             "characterName": "Treebeard",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24357,11 +24146,24 @@
             }
         },
         {
+            "row": 30,
+            "col": 33,
+            "characterName": "Treebeard",
+            "ownerLeaderName": "Treebeard",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 25,
             "col": 36,
             "characterName": "Galadriel",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24378,6 +24180,7 @@
             "characterName": "Celeborn",
             "ownerLeaderName": "Galadriel",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24394,6 +24197,7 @@
             "characterName": "Haldir",
             "ownerLeaderName": "Galadriel",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24410,6 +24214,7 @@
             "characterName": "Barrow-wight",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24421,6 +24226,7 @@
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24432,6 +24238,7 @@
             "characterName": "Murazor",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24447,11 +24254,24 @@
             }
         },
         {
+            "row": 43,
+            "col": 45,
+            "characterName": "Murazor",
+            "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 39,
             "col": 29,
             "characterName": "The Undead King",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24468,6 +24288,7 @@
             "characterName": "Khamul",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24487,11 +24308,24 @@
             }
         },
         {
+            "row": 26,
+            "col": 41,
+            "characterName": "Khamul",
+            "ownerLeaderName": "Khamul",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 68,
             "col": 25,
             "characterName": "Sangarunya",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24503,11 +24337,24 @@
             }
         },
         {
+            "row": 68,
+            "col": 25,
+            "characterName": "Sangarunya",
+            "ownerLeaderName": "Sangarunya",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 60,
             "col": 30,
             "characterName": "Haruth Rammam",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24519,11 +24366,24 @@
             }
         },
         {
+            "row": 60,
+            "col": 30,
+            "characterName": "Haruth Rammam",
+            "ownerLeaderName": "Haruth Rammam",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 9,
             "col": 48,
             "characterName": "Legolas",
             "ownerLeaderName": "Thranduil",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24540,6 +24400,19 @@
             "characterName": "Ovatha",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 53,
+            "col": 46,
+            "characterName": "Ovatha",
+            "ownerLeaderName": "Ovatha",
+            "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24551,6 +24424,7 @@
             "characterName": "Din Ohtar",
             "ownerLeaderName": "Ovatha",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24566,11 +24440,24 @@
             }
         },
         {
+            "row": 21,
+            "col": 61,
+            "characterName": "Sauron",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
+            "variantId": "shadow_of_the_east",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 37,
             "col": 45,
             "characterName": "Dendra Dwar",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24586,11 +24473,24 @@
             }
         },
         {
+            "row": 37,
+            "col": 45,
+            "characterName": "Dendra Dwar",
+            "ownerLeaderName": "Dendra Dwar",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 43,
             "col": 43,
             "characterName": "Boromir",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24611,6 +24511,7 @@
             "characterName": "Denethor",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24626,11 +24527,24 @@
             }
         },
         {
+            "row": 43,
+            "col": 41,
+            "characterName": "Gandalf the White",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "gandalf_the_white",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 40,
             "col": 51,
             "characterName": "The Dark Eye",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24642,6 +24556,7 @@
             "characterName": "Mouth of Sauron",
             "ownerLeaderName": "Sauron",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24653,6 +24568,7 @@
             "characterName": "Urzahil",
             "ownerLeaderName": "Sauron",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24668,11 +24584,24 @@
             }
         },
         {
+            "row": 40,
+            "col": 51,
+            "characterName": "Sauron",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
+            "variantId": "the_dark_eye",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 44,
             "col": 48,
             "characterName": "Ren the Unclean",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 92,
                 "stacks": [
@@ -24688,11 +24617,24 @@
             }
         },
         {
+            "row": 44,
+            "col": 48,
+            "characterName": "Ren the Unclean",
+            "ownerLeaderName": "Ren the Unclean",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 39,
             "col": 44,
             "characterName": "Hoarmurath",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24708,11 +24650,24 @@
             }
         },
         {
+            "row": 39,
+            "col": 44,
+            "characterName": "Hoarmurath",
+            "ownerLeaderName": "Hoarmurath",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 38,
             "col": 43,
             "characterName": "Faramir",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24729,6 +24684,7 @@
             "characterName": "Imrahil",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24745,6 +24701,7 @@
             "characterName": "Ji Indur",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24756,11 +24713,24 @@
             }
         },
         {
+            "row": 56,
+            "col": 54,
+            "characterName": "Ji Indur",
+            "ownerLeaderName": "Ji Indur",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 54,
             "col": 58,
             "characterName": "Akhorahil",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24772,11 +24742,36 @@
             }
         },
         {
+            "row": 54,
+            "col": 58,
+            "characterName": "Akhorahil",
+            "ownerLeaderName": "Akhorahil",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 42,
             "col": 46,
             "characterName": "Shelob",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 42,
+            "col": 46,
+            "characterName": "Shelob",
+            "ownerLeaderName": "Shelob",
+            "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24788,6 +24783,7 @@
             "characterName": "Annatorion",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24799,11 +24795,24 @@
             }
         },
         {
+            "row": 16,
+            "col": 58,
+            "characterName": "Annatorion",
+            "ownerLeaderName": "Annatorion",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 20,
             "col": 58,
             "characterName": "Tros Hesnef",
             "ownerLeaderName": "Huz",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24815,11 +24824,24 @@
             }
         },
         {
+            "row": 20,
+            "col": 58,
+            "characterName": "Huz",
+            "ownerLeaderName": "Huz",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 24,
             "col": 60,
             "characterName": "Avas of Igath",
             "ownerLeaderName": "Huz",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24836,6 +24858,7 @@
             "characterName": "Bard",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24847,11 +24870,24 @@
             }
         },
         {
+            "row": 10,
+            "col": 51,
+            "characterName": "Bard",
+            "ownerLeaderName": "Bard",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 61,
             "col": 41,
             "characterName": "Adunaphel",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24867,11 +24903,36 @@
             }
         },
         {
+            "row": 61,
+            "col": 41,
+            "characterName": "Adunaphel",
+            "ownerLeaderName": "Adunaphel",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 14,
             "col": 35,
             "characterName": "Gwaihir",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 14,
+            "col": 35,
+            "characterName": "Gwaihir",
+            "ownerLeaderName": "Gwaihir",
+            "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24883,6 +24944,7 @@
             "characterName": "Beorn",
             "ownerLeaderName": "Beoraborn",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24894,6 +24956,7 @@
             "characterName": "Beoraborn",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24910,6 +24973,7 @@
             "characterName": "Radagast",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24921,11 +24985,24 @@
             }
         },
         {
+            "row": 16,
+            "col": 42,
+            "characterName": "Radagast",
+            "ownerLeaderName": "Radagast",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 22,
             "col": 40,
             "characterName": "Celdacil",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24942,6 +25019,7 @@
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -24953,6 +25031,7 @@
             "characterName": "Huz",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24969,6 +25048,7 @@
             "characterName": "Kav Makow",
             "ownerLeaderName": "Uvatha",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24985,6 +25065,7 @@
             "characterName": "Uvatha",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -24996,11 +25077,24 @@
             }
         },
         {
+            "row": 64,
+            "col": 62,
+            "characterName": "Uvatha",
+            "ownerLeaderName": "Uvatha",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 11,
             "col": 29,
             "characterName": "Arfanhil",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25017,6 +25111,7 @@
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -25028,6 +25123,7 @@
             "characterName": "King of Taur Romen",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25039,11 +25135,24 @@
             }
         },
         {
+            "row": 16,
+            "col": 64,
+            "characterName": "King of Taur Romen",
+            "ownerLeaderName": "King of Taur Romen",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 18,
             "col": 14,
             "characterName": "Lotho Sackville-Baggins",
             "ownerLeaderName": "Lotho Sackville-Baggins",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25055,11 +25164,24 @@
             }
         },
         {
+            "row": 18,
+            "col": 14,
+            "characterName": "Sharkey",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "sharkey",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 16,
             "col": 14,
             "characterName": "Disturber of the Peace",
             "ownerLeaderName": "Gandalf",
             "ownerVariantId": "disturber_of_the_peace",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -25071,6 +25193,7 @@
             "characterName": "Frodo",
             "ownerLeaderName": "Gandalf",
             "ownerVariantId": "disturber_of_the_peace",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25082,11 +25205,24 @@
             }
         },
         {
+            "row": 16,
+            "col": 14,
+            "characterName": "Gandalf",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "",
+            "variantId": "disturber_of_the_peace",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 11,
             "col": 32,
             "characterName": "Goblin King",
             "ownerLeaderName": "Azog",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25107,6 +25243,7 @@
             "characterName": "Bolg",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25123,6 +25260,19 @@
             "characterName": "Smaug",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 6,
+            "col": 51,
+            "characterName": "Smaug",
+            "ownerLeaderName": "Smaug",
+            "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -25134,6 +25284,7 @@
             "characterName": "Thranduil",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25149,11 +25300,24 @@
             }
         },
         {
+            "row": 8,
+            "col": 47,
+            "characterName": "Thranduil",
+            "ownerLeaderName": "Thranduil",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 10,
             "col": 27,
             "characterName": "Belceborg",
             "ownerLeaderName": "Murazor",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25170,6 +25334,7 @@
             "characterName": "Azog",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25190,6 +25355,19 @@
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 4,
+            "col": 31,
+            "characterName": "Azog",
+            "ownerLeaderName": "Azog",
+            "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -25201,6 +25379,7 @@
             "characterName": "Broggha",
             "ownerLeaderName": "Murazor",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25216,11 +25395,24 @@
             }
         },
         {
+            "row": 3,
+            "col": 23,
+            "characterName": "Sauron",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
+            "variantId": "the_iron_crown",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 8,
             "col": 26,
             "characterName": "Golfimbul",
             "ownerLeaderName": "",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25237,6 +25429,7 @@
             "characterName": "Pippin",
             "ownerLeaderName": "Pippin",
             "ownerVariantId": "",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -25245,6 +25438,66 @@
                         "amount": 1
                     }
                 ]
+            }
+        },
+        {
+            "row": 16,
+            "col": 10,
+            "characterName": "Gandalf",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "",
+            "variantId": "gandalf",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 25,
+            "col": 30,
+            "characterName": "Saruman Multicoloured",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "of_many_colours",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 34,
+            "col": 44,
+            "characterName": "Sauron",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
+            "variantId": "the_necromancer",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 64,
+            "col": 21,
+            "characterName": "Sauron",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "",
+            "variantId": "the_deceiver",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 7,
+            "col": 60,
+            "characterName": "Dain",
+            "ownerLeaderName": "Dain",
+            "ownerVariantId": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
             }
         }
     ]
