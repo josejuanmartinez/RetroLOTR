@@ -633,6 +633,51 @@ namespace RetroLOTR.Scenarios.EditorTools
                 MessageType.Info);
         }
 
+        // Shown next to the Owner field for PCs/Characters owned by a playable leader: lets the
+        // author lock ownership to a single variant, or leave it at "Base" so the entity stays
+        // owned regardless of which variant (or the base leader) ends up chosen at the
+        // leader-selection screen. See NationSpawner.ReconcileScenarioVariantOwnership for the
+        // runtime rule this drives.
+        private void DrawOwnerVariantPicker(string ownerLeaderName, Func<string> getVariantId, Action<string> setVariantId)
+        {
+            if (string.IsNullOrWhiteSpace(ownerLeaderName) ||
+                !ScenarioCardCatalog.PlayableLeaders.Contains(ownerLeaderName, StringComparer.OrdinalIgnoreCase))
+            {
+                setVariantId("");
+                return;
+            }
+
+            IReadOnlyList<LeaderVariantConfig> variants = ScenarioCardCatalog.GetPlayableLeaderVariants(ownerLeaderName);
+            if (variants == null || variants.Count == 0)
+            {
+                setVariantId("");
+                return;
+            }
+
+            string currentVariantId = getVariantId();
+            string[] labels = new string[variants.Count + 1];
+            labels[0] = "Base (owner regardless of variant)";
+            int selected = 0;
+            for (int i = 0; i < variants.Count; i++)
+            {
+                LeaderVariantConfig v = variants[i];
+                string display = string.IsNullOrWhiteSpace(v.displayName) ? v.variantId : v.displayName;
+                labels[i + 1] = $"{display}  ({v.variantId})";
+                if (!string.IsNullOrEmpty(currentVariantId) &&
+                    string.Equals(v.variantId, currentVariantId, StringComparison.OrdinalIgnoreCase))
+                    selected = i + 1;
+            }
+
+            int chosen = EditorGUILayout.Popup("Owner Variant", selected, labels);
+            setVariantId(chosen <= 0 ? "" : variants[chosen - 1].variantId);
+
+            EditorGUILayout.HelpBox(
+                chosen <= 0
+                    ? $"Stays owned by {ownerLeaderName} whichever variant (or the base leader) is chosen."
+                    : $"Only owned by {ownerLeaderName} if '{labels[chosen]}' is the variant actually chosen — otherwise this placement is dropped when the game starts (a Non-Playable Leader character instead becomes independent).",
+                MessageType.Info);
+        }
+
         private void DrawPcSection(int idx, int row, int col)
         {
             EditorGUILayout.LabelField("PC (City)", EditorStyles.boldLabel);
@@ -660,6 +705,7 @@ namespace RetroLOTR.Scenarios.EditorTools
                 if (pcCard != null) pc.isUnderground = pcCard.isUnderground;
             }, ScenarioCardCatalog.GetCard);
             SearchableField("Owner", pc.ownerLeaderName, ScenarioCardCatalog.AllLeaders(), v => pc.ownerLeaderName = v);
+            DrawOwnerVariantPicker(pc.ownerLeaderName, () => pc.ownerVariantId, v => pc.ownerVariantId = v);
             pc.citySize = (int)(PCSizeEnum)EditorGUILayout.EnumPopup("Size", (PCSizeEnum)pc.citySize);
             pc.fortSize = (int)(FortSizeEnum)EditorGUILayout.EnumPopup("Fort", (FortSizeEnum)pc.fortSize);
             pc.hasPort = EditorGUILayout.Toggle("Has port", pc.hasPort);
@@ -730,6 +776,7 @@ namespace RetroLOTR.Scenarios.EditorTools
 
                 SearchableField("Name", c.characterName, ScenarioCardCatalog.CharacterCards, v => c.characterName = v, ScenarioCardCatalog.GetCard);
                 SearchableField("Owner", c.ownerLeaderName, ScenarioCardCatalog.AllLeaders(), v => c.ownerLeaderName = v);
+                DrawOwnerVariantPicker(c.ownerLeaderName, () => c.ownerVariantId, v => c.ownerVariantId = v);
                 DrawCardWithDecks(c.characterName);
 
                 DrawArmyEditor(c);

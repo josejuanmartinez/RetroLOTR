@@ -21,8 +21,9 @@ namespace RetroLOTR.Scenarios
     {
         // v2 added ScenarioLeaderStart.variantId (playable-leader variant restriction).
         // v3 added ScenarioPC.isUnderground (PC marks its hex as an Underground entrance).
+        // v4 added ScenarioPC/ScenarioCharacter.ownerVariantId (owner-variant-locked ownership).
         // Older scenarios deserialize with the new fields at their defaults, so they keep working.
-        public const int CurrentVersion = 3;
+        public const int CurrentVersion = 4;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
@@ -101,6 +102,12 @@ namespace RetroLOTR.Scenarios
         public int col;
         public string pcName;            // from a PC card
         public string ownerLeaderName;   // a leaderStart's leaderName, or empty for ownerless
+        /// <summary>When ownerLeaderName is a playable leader, restricts ownership to a single
+        /// variant of that leader (matched against LeaderVariantConfig.variantId). Empty ("Base")
+        /// means ownership holds regardless of which variant (or the base leader) was actually
+        /// chosen; otherwise the PC is removed entirely if a different variant (or the base) ends
+        /// up in play. See NationSpawner.ReconcileScenarioVariantOwnership.</summary>
+        public string ownerVariantId = "";
         public int citySize = (int)PCSizeEnum.village;
         public int fortSize = (int)FortSizeEnum.NONE;
         public bool hasPort;
@@ -122,6 +129,9 @@ namespace RetroLOTR.Scenarios
         public int col;
         public string characterName;     // from a Character card
         public string ownerLeaderName;   // a leaderStart's leaderName
+        /// <summary>Same variant-lock as ScenarioPC.ownerVariantId. On mismatch the fallback
+        /// depends on what characterName represents — see NationSpawner.ReconcileScenarioVariantOwnership.</summary>
+        public string ownerVariantId = "";
         public ScenarioArmy army;        // null when the character bears no army
     }
 
