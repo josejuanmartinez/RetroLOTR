@@ -170,7 +170,7 @@ public static class AITurnController
         List<CharacterAction> availableActions = GetAvailableActions(leader, character, actionsManager, actionCards);
         AIContext.AIContextPrecomputedData? precomputed = AIContextCacheManager.Instance != null ? AIContextCacheManager.Instance.GetCached(leader, character) : null;
         AIContext context = new AIContext(leader, character, availableActions, actionCards, precomputed);
-        IBehaviourNode behaviour = AIBehaviourTreeBuilder.BuildDefault();
+        IBehaviourNode behaviour = AIBehaviourTreeLibrary.GetTreeFor(leader);
 
         BehaviourTreeStatus status = await behaviour.Tick(context);
         if (status == BehaviourTreeStatus.Failure)

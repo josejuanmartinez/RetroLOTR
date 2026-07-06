@@ -82,15 +82,6 @@ public class Hex : MonoBehaviour
     public GameObject scoutedHexFrame;
     public GameObject darknessHexFrame;
 
-    [Header("Particles")]
-    public GameObject selectedParticles;
-    public GameObject fireParticles;
-    public GameObject iceParticles;
-    public GameObject poisonParticles;
-    public GameObject courageParticles;
-    public GameObject hopeParticles;
-
-
     [Header("Outline")]
     public float characterOutlineSize = 10f;
     // public float bannerOutlineSize = 70f;
@@ -124,6 +115,7 @@ public class Hex : MonoBehaviour
     private readonly List<Army> _hexInfoArmies = new();   // null entry = character link, non-null = army link
     private readonly List<string> _hexInfoTooltips = new();   // terrain/feature link descriptions, addressed by "t{idx}" link ids
     private int _lastHexInfoLinkIdx = -1;
+    private string _hoverTextCache;   // hover text lives here until the lazy panel exists
     private GameObject _terrainTooltipInstance;
     private TextMeshPro _terrainTooltip;
     private bool _terrainTooltipActive;
@@ -185,20 +177,49 @@ public class Hex : MonoBehaviour
     private const float NonSelectedCharacterAlpha = 0.9f;
     private bool isCharacterHovered = false;
 
+    // Scene singletons shared by every hex. Cached statically because Awake runs once
+    // per instantiated hex and FindFirstObjectByType scans the whole scene — per-hex
+    // lookups made board creation O(hexes²) and took minutes on large maps. Unity's
+    // overloaded null-check makes destroyed references re-resolve on the next scene.
+    private static Game sharedGame;
+    private static Colors sharedColors;
+    private static Board sharedBoard;
+    private static BoardNavigator sharedNavigator;
+    private static Illustrations sharedIllustrations;
+
+    // The terrain-sprite catalog is identical for every hex, so one shared instance
+    // serves them all. Resolved from this hex if the component is still on the prefab,
+    // otherwise from anywhere in the scene (e.g. the Board object) — which allows the
+    // heavy serialized component to be REMOVED from the hex prefab entirely.
+    private static HexTextureMapping sharedTextureMapping;
+
+    private HexTextureMapping ResolveTextureMapping()
+    {
+        if (sharedTextureMapping == null)
+        {
+            sharedTextureMapping = GetComponent<HexTextureMapping>();
+            if (sharedTextureMapping == null) sharedTextureMapping = FindFirstObjectByType<HexTextureMapping>();
+        }
+        return sharedTextureMapping;
+    }
+
     void Awake()
     {
         pc = null;
 
-        // Cache singletons once
-        game = FindFirstObjectByType<Game>();
-        colors = FindFirstObjectByType<Colors>();
-        board = FindFirstObjectByType<Board>();
-        navigator = FindFirstObjectByType<BoardNavigator>();
-        illustrations = FindFirstObjectByType<Illustrations>();
-        hexTextureMapping = GetComponent<HexTextureMapping>();
-        ApplyCharacterOutlineMaterial();
-        InitializeSharedSelectedParticles();
-        InitializeSharedOneShotParticles();
+        // Cache singletons once per scene, not once per hex
+        if (sharedGame == null) sharedGame = FindFirstObjectByType<Game>();
+        if (sharedColors == null) sharedColors = FindFirstObjectByType<Colors>();
+        if (sharedBoard == null) sharedBoard = FindFirstObjectByType<Board>();
+        if (sharedNavigator == null) sharedNavigator = FindFirstObjectByType<BoardNavigator>();
+        if (sharedIllustrations == null) sharedIllustrations = FindFirstObjectByType<Illustrations>();
+        game = sharedGame;
+        colors = sharedColors;
+        board = sharedBoard;
+        navigator = sharedNavigator;
+        illustrations = sharedIllustrations;
+        hexTextureMapping = ResolveTextureMapping();
+        EnsureSharedParticleTemplates();
         /*if (characterIcon != null)
         {
             characterIconZoom = characterIcon.GetComponent<ZoomSpriteRenderer>();
@@ -208,9 +229,9 @@ public class Hex : MonoBehaviour
                 characterIconOffsetDefault = characterIconZoom.verticalOffset;
             }
         }*/
-        UpdateMinimapTerrain(IsHexRevealed());
-        UpdateVisibilityForFog();
-        UpdateParticles();
+        // Fog/particle visuals are NOT refreshed here: Awake fires when a pooled hex is
+        // created (possibly thousands per board), before the hex is placed anywhere.
+        // Initialize(row, col) runs the fog pass once the hex actually joins the board.
         SetActiveFast(hexInfoArrow, false);
         SetActiveFast(hexInfo, false);
     }
@@ -240,6 +261,115 @@ public class Hex : MonoBehaviour
             _terrainTooltip = null;
         }
     }
+
+    #region Lazily attached sub-prefabs
+
+    // The hex prefab used to carry ~40 GameObjects (6 ParticleSystems, a 3-TMP hover
+    // panel, character visuals with an Animator). Cloning that 4550 times froze
+    // scenario loads for minutes, so the heavy parts live in Resources/HexParts and
+    // are attached per hex only when something actually needs them:
+    //   HexSharedParticles — instantiated ONCE per scene as the shared pool templates
+    //   HexHoverPanel      — per hex, on first hover / first floating message
+    //   HexUnitLayer       — per hex, when a character, PC label or movement cost shows
+    private const string SharedParticlesPrefabPath = "HexParts/HexSharedParticles";
+    private const string HoverPanelPrefabPath = "HexParts/HexHoverPanel";
+    private const string UnitLayerPrefabPath = "HexParts/HexUnitLayer";
+    private static GameObject hoverPanelPrefab;
+    private static GameObject unitLayerPrefab;
+    private static bool lazyPartPrefabsLoaded;
+
+    private static void LoadLazyPartPrefabs()
+    {
+        if (lazyPartPrefabsLoaded) return;
+        lazyPartPrefabsLoaded = true;
+        hoverPanelPrefab = Resources.Load<GameObject>(HoverPanelPrefabPath);
+        unitLayerPrefab = Resources.Load<GameObject>(UnitLayerPrefabPath);
+        if (hoverPanelPrefab == null) Debug.LogError($"Hex: missing Resources/{HoverPanelPrefabPath}; hover info panels disabled.");
+        if (unitLayerPrefab == null) Debug.LogError($"Hex: missing Resources/{UnitLayerPrefabPath}; character/PC visuals disabled.");
+    }
+
+    private static GameObject FindPart(Transform root, string name)
+    {
+        Transform t = root.Find(name);
+        if (t == null) Debug.LogError($"Hex sub-prefab '{root.name}' is missing child '{name}'.");
+        return t != null ? t.gameObject : null;
+    }
+
+    private static T FindPart<T>(Transform root, string name) where T : Component
+    {
+        GameObject go = FindPart(root, name);
+        return go != null ? go.GetComponent<T>() : null;
+    }
+
+    private bool EnsureHoverPanel()
+    {
+        if (hexInfo != null) return true;
+        LoadLazyPartPrefabs();
+        if (hoverPanelPrefab == null) return false;
+
+        Transform panelRoot = Instantiate(hoverPanelPrefab, transform, false).transform;
+        panelRoot.name = "HoverPanel";
+        hexInfoArrow = FindPart(panelRoot, "Arrow");
+        hexInfo = FindPart(panelRoot, "HexInfoBackground");
+        hexInfoText = hexInfo != null ? hexInfo.GetComponentInChildren<TextMeshPro>(true) : null;
+        if (terrainTooltipPrefab == null) terrainTooltipPrefab = FindPart(panelRoot, "InfoTooltip");
+        messageNoUI = FindPart<TextMeshPro>(panelRoot, "MessageNoUI");
+
+        SetActiveFast(hexInfoArrow, false);
+        SetActiveFast(hexInfo, false);
+        if (hexInfoText != null) hexInfoText.text = _hoverTextCache ?? string.Empty;
+        return hexInfo != null;
+    }
+
+    /// <summary>Used by MessageDisplayNoUI for per-hex floating text.</summary>
+    public TextMeshPro GetOrCreateMessageText()
+    {
+        if (messageNoUI == null) EnsureHoverPanel();
+        return messageNoUI;
+    }
+
+    private bool EnsureUnitLayer()
+    {
+        if (characterSpriteRenderer != null) return true;
+        LoadLazyPartPrefabs();
+        if (unitLayerPrefab == null) return false;
+
+        Transform layerRoot = Instantiate(unitLayerPrefab, transform, false).transform;
+        layerRoot.name = "UnitLayer";
+
+        Transform characterBg = layerRoot.Find("CharacterBg");
+        if (characterBg == null)
+        {
+            Debug.LogError("Hex sub-prefab 'HexUnitLayer' is missing child 'CharacterBg'.");
+        }
+        else
+        {
+            characterSpriteRenderer = FindPart<SpriteRenderer>(characterBg, "character");
+            bannerSpriteRenderer = FindPart<SpriteRenderer>(characterBg, "banner");
+            characterClassesIconGrid = FindPart<SpriteRendererGridLayout>(characterBg, "ClassesSpriteRendererLayout");
+            CharacterSpriteHover hover = characterBg.GetComponent<CharacterSpriteHover>();
+            if (hover != null) hover.hex = this;   // serialized ref could not cross the prefab split
+        }
+
+        pcName = FindPart<TextMeshPro>(layerRoot, "PCText");
+        movement = FindPart(layerRoot, "Movement Cost");
+        movementCostManager = movement != null ? movement.GetComponent<MovementCostManager>() : null;
+        characterAnimationController = characterSpriteRenderer != null
+            ? characterSpriteRenderer.GetComponent<CharacterAnimationController>()
+            : null;
+
+        // Everything starts hidden; each caller applies the state it needs right after.
+        if (characterSpriteRenderer != null) SetActiveFast(characterSpriteRenderer.gameObject, false);
+        if (bannerSpriteRenderer != null) SetActiveFast(bannerSpriteRenderer.gameObject, false);
+        if (characterClassesIconGrid != null) SetActiveFast(characterClassesIconGrid.gameObject, false);
+        if (pcName != null) SetActiveFast(pcName.gameObject, false);
+        SetActiveFast(movement, false);
+
+        ApplyCharacterOutlineMaterial();
+        return characterSpriteRenderer != null;
+    }
+
+    #endregion
 
     public bool IsHexRevealed() => isRevealed;
     public bool IsHexSeen() => IsHexRevealed() && !mapOnlyRevealed && !isCurrentlyUnseen;
@@ -354,10 +484,16 @@ public class Hex : MonoBehaviour
         terrainTexture.sortingOrder = -1 - (row * 2) - (col & 1);
         if (pcTexture != null) pcTexture.sortingOrder = terrainTexture.sortingOrder + 1;
         if (terrainTexture != null) terrainTexture.gameObject.SetActive(true);
+
+        // Placed on the board now — apply the fog/visibility visuals Awake skipped
+        // (also covers particles; the minimap variant is currently a no-op).
+        UpdateVisibilityForFog();
     }
 
     public SpriteRenderer GetCharacterSpriteRendererOnHex()
     {
+        // Callers use this to animate a character onto the hex, so the layer is needed now.
+        EnsureUnitLayer();
         return characterSpriteRenderer;
     }
 
@@ -479,7 +615,7 @@ public class Hex : MonoBehaviour
         }
         else
         {
-            if (hexTextureMapping == null) hexTextureMapping = GetComponent<HexTextureMapping>();
+            if (hexTextureMapping == null) hexTextureMapping = ResolveTextureMapping();
             baseTerrainSprite = hexTextureMapping != null ? hexTextureMapping.GetTerrainBaseSprite(terrainType) : null;
         }
         // Landmark features are read off whichever variant sprite we just assigned (see HexFeatureData).
@@ -595,6 +731,8 @@ public class Hex : MonoBehaviour
             }
         }
 
+        if (seen && hasCharacter) EnsureUnitLayer();
+
         // Pre-apply the outline colour before the renderer becomes visible so there
         // is no one-frame flash of the previous (possibly white/cleared) colour.
         if (seen && hasCharacter && TryGetKnownCharacterForIcon(out Character knownForOutline))
@@ -602,7 +740,7 @@ public class Hex : MonoBehaviour
         else
             ClearOutlineColor();
 
-        SetActiveFast(characterSpriteRenderer.gameObject, seen && hasCharacter);
+        SetActiveFast(characterSpriteRenderer != null ? characterSpriteRenderer.gameObject : null, seen && hasCharacter);
         if (seen && hasCharacter)
         {
             UpdateCharacterIconSprite();
@@ -759,6 +897,7 @@ public class Hex : MonoBehaviour
 
         string hoverText = string.Join("\n", new[] { header, presence }.Where(s => !string.IsNullOrEmpty(s)));
 
+        _hoverTextCache = hoverText;
         if (hexInfoText != null) hexInfoText.text = hoverText;
     }
 
@@ -818,7 +957,10 @@ public class Hex : MonoBehaviour
             return;
 
         if (hexInfoShowCoroutine == null && (hexInfo == null || !hexInfo.activeSelf))
+        {
+            EnsureHoverPanel();
             hexInfoShowCoroutine = StartCoroutine(ShowHexInfoAfterDelay());
+        }
 
         if (isSelected)
         {
@@ -1494,7 +1636,7 @@ public class Hex : MonoBehaviour
         }
 
         SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, false);
-        SetActiveFast(characterSpriteRenderer.gameObject, false);
+        SetActiveFast(characterSpriteRenderer != null ? characterSpriteRenderer.gameObject : null, false);
         SetActiveFast(artifact, false);
         if (artifactHover) SetActiveFast(artifactHover.gameObject, false);
         SetActiveFast(encounter, false);
@@ -2454,7 +2596,7 @@ public class Hex : MonoBehaviour
         this.pc = pc;
         if(isIsland)
         {
-            if (hexTextureMapping == null) hexTextureMapping = GetComponent<HexTextureMapping>();
+            if (hexTextureMapping == null) hexTextureMapping = ResolveTextureMapping();
             baseTerrainSprite = hexTextureMapping != null ? hexTextureMapping.GetIslandSprite() : baseTerrainSprite;
         }
         if (pc.owner is NonPlayableLeader)
@@ -2467,6 +2609,7 @@ public class Hex : MonoBehaviour
 
     public void ShowMovementLeft(int movementLeft, Character character)
     {
+        if (!EnsureUnitLayer() || movementCostManager == null) return;
         SetActiveFast(movement, true);
         movementCostManager.ShowMovementLeft(Math.Max(0, movementLeft), character, BuildTerrainFeatureSpriteTags());
     }
@@ -2676,25 +2819,49 @@ public class Hex : MonoBehaviour
         SetFrontierRowAlpha(frontierAlpha);
     }
 
-    private void InitializeSharedSelectedParticles()
+    // Builds the scene-wide particle templates from the HexParts/HexSharedParticles
+    // prefab. Runs from every hex's Awake but only does work when the templates are
+    // missing (first hex of a scene, or after a scene change destroyed the old ones).
+    private static void EnsureSharedParticleTemplates()
     {
-        if (selectedParticles == null)
+        bool poolsAlive = sharedParticlePools.Count > 0;
+        foreach (SharedParticlePoolState state in sharedParticlePools.Values)
         {
+            if (state == null || state.template == null)
+            {
+                poolsAlive = false;
+                break;
+            }
+        }
+        if (sharedSelectedParticles != null && poolsAlive) return;
+
+        GameObject prefab = Resources.Load<GameObject>(SharedParticlesPrefabPath);
+        if (prefab == null)
+        {
+            Debug.LogError($"Hex: missing Resources/{SharedParticlesPrefabPath}; hex particles disabled.");
             return;
         }
 
         if (sharedSelectedParticles == null)
         {
-            sharedSelectedParticlesLocalPosition = selectedParticles.transform.localPosition;
-            sharedSelectedParticlesLocalRotation = selectedParticles.transform.localRotation;
-            sharedSelectedParticlesLocalScale = selectedParticles.transform.localScale;
-            sharedSelectedParticles = Instantiate(selectedParticles, transform);
-            sharedSelectedParticles.name = "SharedSelectedParticles";
-            SetActiveFast(sharedSelectedParticles, false);
+            Transform source = prefab.transform.Find("Particles/selectedParticles");
+            if (source != null)
+            {
+                sharedSelectedParticlesLocalPosition = source.localPosition;
+                sharedSelectedParticlesLocalRotation = source.localRotation;
+                sharedSelectedParticlesLocalScale = source.localScale;
+                sharedSelectedParticles = Instantiate(source.gameObject, GetSharedParticlePoolRoot());
+                sharedSelectedParticles.name = "SharedSelectedParticles";
+                SetActiveFast(sharedSelectedParticles, false);
+                sharedSelectedParticlesOwner = null;
+            }
         }
 
-        Destroy(selectedParticles);
-        selectedParticles = null;
+        RegisterSharedParticleTemplate(SharedParticleType.Fire, prefab.transform.Find("Particles/fireParticles"));
+        RegisterSharedParticleTemplate(SharedParticleType.Ice, prefab.transform.Find("Particles/iceParticles"));
+        RegisterSharedParticleTemplate(SharedParticleType.Poison, prefab.transform.Find("Particles/poisonParticles"));
+        RegisterSharedParticleTemplate(SharedParticleType.Courage, prefab.transform.Find("Particles/courageParticles"));
+        RegisterSharedParticleTemplate(SharedParticleType.Hope, prefab.transform.Find("Particles/hopeParticles"));
     }
 
     private void SetSharedSelectedParticlesActive(bool active)
@@ -2726,44 +2893,31 @@ public class Hex : MonoBehaviour
         SetActiveFast(sharedSelectedParticles, true);
     }
 
-    private void InitializeSharedOneShotParticles()
+    private static void RegisterSharedParticleTemplate(SharedParticleType type, Transform source)
     {
-        RegisterSharedParticleTemplate(SharedParticleType.Fire, fireParticles);
-        fireParticles = null;
+        if (source == null)
+        {
+            Debug.LogError($"Hex: HexSharedParticles prefab is missing the '{type}' particles child.");
+            return;
+        }
 
-        RegisterSharedParticleTemplate(SharedParticleType.Ice, iceParticles);
-        iceParticles = null;
-
-        RegisterSharedParticleTemplate(SharedParticleType.Poison, poisonParticles);
-        poisonParticles = null;
-
-        RegisterSharedParticleTemplate(SharedParticleType.Courage, courageParticles);
-        courageParticles = null;
-
-        RegisterSharedParticleTemplate(SharedParticleType.Hope, hopeParticles);
-        hopeParticles = null;
-    }
-
-    private void RegisterSharedParticleTemplate(SharedParticleType type, GameObject particlesObject)
-    {
-        if (particlesObject == null)
+        if (sharedParticlePools.TryGetValue(type, out SharedParticlePoolState state) && state.template != null)
         {
             return;
         }
 
-        if (!sharedParticlePools.TryGetValue(type, out SharedParticlePoolState state))
+        if (state == null)
         {
             state = new SharedParticlePoolState();
-            state.localPosition = particlesObject.transform.localPosition;
-            state.localRotation = particlesObject.transform.localRotation;
-            state.localScale = particlesObject.transform.localScale;
-            state.template = Instantiate(particlesObject, GetSharedParticlePoolRoot());
-            state.template.name = $"{type}SharedParticleTemplate";
-            SetActiveFast(state.template, false);
             sharedParticlePools[type] = state;
         }
-
-        Destroy(particlesObject);
+        state.instances.Clear();   // instances from a previous scene are destroyed
+        state.localPosition = source.localPosition;
+        state.localRotation = source.localRotation;
+        state.localScale = source.localScale;
+        state.template = Instantiate(source.gameObject, GetSharedParticlePoolRoot());
+        state.template.name = $"{type}SharedParticleTemplate";
+        SetActiveFast(state.template, false);
     }
 
     private void PlaySharedOneShotParticles(SharedParticleType type)
@@ -2900,7 +3054,7 @@ public class Hex : MonoBehaviour
     private void ApplyHexTextureSprite()
     {
         if (terrainTexture == null) return;
-        if (hexTextureMapping == null) hexTextureMapping = GetComponent<HexTextureMapping>();
+        if (hexTextureMapping == null) hexTextureMapping = ResolveTextureMapping();
 
         terrainTexture.gameObject.SetActive(true);
         terrainTexture.sprite = hexTextureMapping != null ? hexTextureMapping.GetTerrainSprite(this) : baseTerrainSprite;
@@ -2944,6 +3098,7 @@ public class Hex : MonoBehaviour
     {
         bool showText = shouldShowPc && pc != null && (pc.citySize != PCSizeEnum.NONE || pc.hasPort);
 
+        if (showText) EnsureUnitLayer();
         if (pcName != null)
         {
             if (showText)

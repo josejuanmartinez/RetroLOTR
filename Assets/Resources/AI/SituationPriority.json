@@ -1,0 +1,26 @@
+{
+    "situations": [
+        "ArmyAtEnemyPC",
+        "ArmyAtEnemyPCorEnemyArmy",
+        "ArmyAtHexWithEnemyArmyAndNoPC",
+        "EnemyAgentWithMyHostageAtHex",
+        "AgentAtEnemyPC",
+        "AgentAtHexWithEnemyCharacter",
+        "EmmissaryAtEnemyPC",
+        "EmmissaryAtHexWithEnemyCharacter",
+        "MageAtHexWithEnemyCharacter",
+        "EnemyMageAtHex",
+        "MageAtArtifactHex",
+        "EnemyCharacterAtHexNoArmyCommander",
+        "EnemyCharacterAtHex",
+        "CharacterAtUndergroundHex",
+        "AgentAtOwnPC",
+        "EmmissaryAtOwnPC",
+        "EmmissaryAtFriendlyPC",
+        "CommanderAtOwnPC",
+        "ArmyAtFriendlyPC",
+        "FriendlyCharacterAtHex",
+        "AgentWithHostage",
+        "OwnDoubledCharacterByEnemyAtHex"
+    ]
+}

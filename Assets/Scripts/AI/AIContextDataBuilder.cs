@@ -16,7 +16,7 @@ public static class AIContextDataBuilder
         Board board = Object.FindFirstObjectByType<Board>();
         var data = new AIContext.AIContextPrecomputedData
         {
-            GoldPerTurn = 0,
+            GoldPerTurn = AIContext.CalculateGoldPerTurn(leader),
             GoldBuffer = leader != null ? leader.goldAmount : 0,
             NationPercentageArtifacts = CalculateNationArtifacts(leader),
             ClosestEnemy = new AIContext.EnemyTarget(null, float.MaxValue, false, 0f),

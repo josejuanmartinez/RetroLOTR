@@ -1,0 +1,29 @@
+{
+    "trees": [
+        {
+            "treeId": "default",
+            "nodes": [
+                { "depth": 0, "type": "Sequence", "condition": "", "invert": false, "action": "" },
+                { "depth": 1, "type": "Condition", "condition": "NeedsEconomicHelp", "invert": false, "action": "" },
+                { "depth": 1, "type": "Action", "condition": "", "invert": false, "action": "EconomicAdvisor" },
+                { "depth": 0, "type": "Sequence", "condition": "", "invert": false, "action": "" },
+                { "depth": 1, "type": "Condition", "condition": "HasEnemyTarget", "invert": false, "action": "" },
+                { "depth": 1, "type": "Selector", "condition": "", "invert": false, "action": "" },
+                { "depth": 2, "type": "Action", "condition": "", "invert": false, "action": "MilitaristicAdvisor" },
+                { "depth": 2, "type": "Action", "condition": "", "invert": false, "action": "IntelligenceAdvisor" },
+                { "depth": 2, "type": "Action", "condition": "", "invert": false, "action": "MagicAdvisor" },
+                { "depth": 2, "type": "Action", "condition": "", "invert": false, "action": "DiplomaticAdvisor" },
+                { "depth": 0, "type": "Sequence", "condition": "", "invert": false, "action": "" },
+                { "depth": 1, "type": "Condition", "condition": "ShouldPrioritizeMovement", "invert": false, "action": "" },
+                { "depth": 1, "type": "Action", "condition": "", "invert": false, "action": "MovementAdvisor" },
+                { "depth": 0, "type": "Action", "condition": "", "invert": false, "action": "BestAvailableAction" },
+                { "depth": 0, "type": "Action", "condition": "", "invert": false, "action": "Pass" }
+            ]
+        }
+    ],
+    "assignments": [
+        { "alignment": "freePeople", "treeId": "default" },
+        { "alignment": "darkServants", "treeId": "default" },
+        { "alignment": "neutral", "treeId": "default" }
+    ]
+}

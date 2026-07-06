@@ -356,15 +356,17 @@ namespace RetroLOTR.Scenarios.EditorTools
 
         private static HexTextureMapping FindHexTextureMapping()
         {
+            // The component may live on the Hex prefab, on another prefab (e.g. the
+            // Board), nested inside one, or only on a scene object.
             foreach (string guid in AssetDatabase.FindAssets("t:Prefab"))
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 if (prefab == null) continue;
-                HexTextureMapping mapping = prefab.GetComponent<HexTextureMapping>();
+                HexTextureMapping mapping = prefab.GetComponentInChildren<HexTextureMapping>(true);
                 if (mapping != null) return mapping;
             }
-            return null;
+            return UnityEngine.Object.FindFirstObjectByType<HexTextureMapping>(FindObjectsInactive.Include);
         }
     }
 }

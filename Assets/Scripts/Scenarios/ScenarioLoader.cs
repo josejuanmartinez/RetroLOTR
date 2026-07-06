@@ -68,13 +68,56 @@ namespace RetroLOTR.Scenarios
             return data;
         }
 
-        /// <summary>Names available to a menu, read from the editor-maintained index file.</summary>
+        /// <summary>Names available to a menu, read from the editor-maintained index file.
+        /// Entries whose scenario file no longer exists (renamed/deleted without the index
+        /// being pruned) are skipped so menus never offer an unloadable scenario.</summary>
         public static List<string> GetAvailableScenarios()
         {
             TextAsset asset = Resources.Load<TextAsset>(IndexResource);
             if (asset == null) return new List<string>();
             ScenarioIndex index = JsonUtility.FromJson<ScenarioIndex>(asset.text);
-            return index?.scenarioNames ?? new List<string>();
+            if (index?.scenarioNames == null) return new List<string>();
+
+            List<string> available = new();
+            foreach (string name in index.scenarioNames)
+            {
+                if (string.IsNullOrWhiteSpace(name)) continue;
+                if (Resources.Load<TextAsset>($"{ResourceFolder}/{name}") == null)
+                {
+                    Debug.LogWarning($"ScenarioLoader: index lists '{name}' but Resources/{ResourceFolder}/{name}.json does not exist — skipping (stale index entry).");
+                    continue;
+                }
+                available.Add(name);
+            }
+            return available;
+        }
+
+        [Serializable]
+        private class ScenarioSize
+        {
+            public int width;
+            public int height;
+        }
+
+        /// <summary>
+        /// Largest width/height across all indexed scenarios — used to size the hex-pool
+        /// prewarm before the player has picked what to play. (0,0) when none exist.
+        /// </summary>
+        public static Vector2Int GetLargestScenarioSize()
+        {
+            int width = 0, height = 0;
+            foreach (string name in GetAvailableScenarios())
+            {
+                TextAsset asset = Resources.Load<TextAsset>($"{ResourceFolder}/{name}");
+                if (asset == null) continue;
+                ScenarioSize size = null;
+                try { size = JsonUtility.FromJson<ScenarioSize>(asset.text); }
+                catch { /* malformed file — skip */ }
+                if (size == null) continue;
+                width = Mathf.Max(width, size.width);
+                height = Mathf.Max(height, size.height);
+            }
+            return new Vector2Int(width, height);
         }
 
         /// <summary>

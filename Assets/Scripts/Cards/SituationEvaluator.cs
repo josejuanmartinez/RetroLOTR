@@ -1,10 +1,23 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+
+[Serializable]
+public class SituationPriorityData
+{
+    public List<string> situations = new();
+}
 
 public static class SituationEvaluator
 {
-    // Priority order — first two wins when more than 2 situations are active.
-    private static readonly CardSituationEnum[] Priority =
+    // Resources path (no extension) of the user-authored priority order.
+    // Edited via Window > RetroLOTR > AI Widget > Situations.
+    public const string PriorityResourcePath = "AI/SituationPriority";
+
+    // Default priority order — used when no authored order exists, and to
+    // append situations missing from an older authored file.
+    private static readonly CardSituationEnum[] DefaultPriority =
     {
         // Underground travel is always offered when standing on an underground hex.
         CardSituationEnum.CharacterAtUndergroundHex,
@@ -30,6 +43,55 @@ public static class SituationEvaluator
         CardSituationEnum.OwnDoubledCharacterByEnemyAtHex,
         CardSituationEnum.FriendlyCharacterAtHex,
     };
+
+    private static CardSituationEnum[] loadedPriority;
+
+    public static IReadOnlyList<CardSituationEnum> GetDefaultPriority() => DefaultPriority;
+
+    // Priority order — first two wins when more than 2 situations are active.
+    public static IReadOnlyList<CardSituationEnum> GetPriority()
+    {
+        loadedPriority ??= LoadPriority();
+        return loadedPriority;
+    }
+
+    // Clears the cached order so the next query re-reads the authored file.
+    public static void ReloadPriority() => loadedPriority = null;
+
+    private static CardSituationEnum[] LoadPriority()
+    {
+        List<CardSituationEnum> order = new();
+        HashSet<CardSituationEnum> seen = new();
+
+        TextAsset asset = Resources.Load<TextAsset>(PriorityResourcePath);
+        if (asset != null && !string.IsNullOrWhiteSpace(asset.text))
+        {
+            SituationPriorityData data = null;
+            try { data = JsonUtility.FromJson<SituationPriorityData>(asset.text); }
+            catch (Exception e) { Debug.LogWarning($"SituationEvaluator: could not parse {PriorityResourcePath}.json — using default priority. {e.Message}"); }
+
+            if (data?.situations != null)
+            {
+                foreach (string name in data.situations)
+                {
+                    if (Enum.TryParse(name, true, out CardSituationEnum situation)
+                        && situation != CardSituationEnum.None
+                        && seen.Add(situation))
+                    {
+                        order.Add(situation);
+                    }
+                }
+            }
+        }
+
+        // Append situations the authored file does not know about yet.
+        foreach (CardSituationEnum situation in DefaultPriority)
+        {
+            if (seen.Add(situation)) order.Add(situation);
+        }
+
+        return order.ToArray();
+    }
 
     public static List<CardSituationEnum> GetActiveSituations(Character character, Hex hex)
     {
@@ -57,7 +119,7 @@ public static class SituationEvaluator
         bool enemyHoldsMyHostage            = HasEnemyWithMyHostage(hex, character);
         bool ownCharDoubledByEnemy          = HasOwnCharacterDoubledByEnemy(hex, character);
 
-        foreach (CardSituationEnum situation in Priority)
+        foreach (CardSituationEnum situation in GetPriority())
         {
             bool matches = situation switch
             {

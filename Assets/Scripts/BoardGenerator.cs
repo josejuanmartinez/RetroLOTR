@@ -140,7 +140,14 @@ public class BoardGenerator : MonoBehaviour
         if (board != null && board.hexPrefab != null)
         {
             hexPool = new ObjectPool<GameObject>(
-                createFunc: () => Instantiate(board.hexPrefab),
+                createFunc: () =>
+                {
+                    var sw = System.Diagnostics.Stopwatch.StartNew();
+                    GameObject go = Instantiate(board.hexPrefab);
+                    prefabInstantiateTicks += sw.ElapsedTicks;
+                    prefabInstantiateCount++;
+                    return go;
+                },
                 actionOnGet: (obj) => obj.SetActive(true),
                 actionOnRelease: (obj) => obj.SetActive(false),
                 actionOnDestroy: (obj) => Destroy(obj),
@@ -153,6 +160,35 @@ public class BoardGenerator : MonoBehaviour
             Debug.LogError("Board or hexPrefab is not assigned in BoardGenerator!");
         }
     }
+
+    private static long prefabInstantiateTicks;
+    private static int prefabInstantiateCount;
+
+    // Async cloning parameters: batches keep the main thread's integration debt
+    // bounded (one giant 4550-clone op made the editor unresponsive for its whole
+    // integration), and the slice caps how much frame time integration may take.
+    // Tune in the Inspector: bigger = faster load, choppier frames.
+    [Header("Hex cloning (async batches)")]
+    [Tooltip("Hexes per async clone batch (clamped 256-2048). Bigger = fewer scheduling stalls between batches = faster.")]
+    [SerializeField] private int hexCloneBatchSize = 1024;
+    [Tooltip("Main-thread ms PER FRAME spent integrating async clones (clamped 10-200). 100 ≈ 10 fps during load, 200 ≈ 5 fps. Beyond that input and video die — do not use 1000.")]
+    [SerializeField] private float asyncIntegrationMs = 150f;
+    [Tooltip("Max seconds of hex placement work per frame once the pool is full (clamped 0.05-0.25).")]
+    [SerializeField] private float placementBudgetSeconds = 0.2f;
+
+    // Clamped accessors so no Inspector combination can freeze input or starve the load.
+    private int CloneBatchSize => Mathf.Clamp(hexCloneBatchSize, 256, 2048);
+    private float IntegrationMs => Mathf.Clamp(asyncIntegrationMs, 10f, 200f);
+    private float PlacementBudget => Mathf.Clamp(placementBudgetSeconds, 0.05f, 0.25f);
+
+    // Freshly cloned hexes are parked far off-camera until the placement loop
+    // positions them; keeps pending clones from being rendered. They stay ACTIVE in
+    // the parked queue: deactivating/reactivating a full hex hierarchy per batch
+    // caused seconds-long freezes back when the prefab was heavy.
+    private static readonly Vector3 HexParkPosition = new(100000f, 100000f, 0f);
+    private readonly Queue<GameObject> parkedHexes = new();
+
+    private int AvailableHexes => hexPool.CountInactive + parkedHexes.Count;
 
     /// <summary>
     /// Call this when your video starts/stops to tighten/relax budgets and loader priority.
@@ -183,6 +219,13 @@ public class BoardGenerator : MonoBehaviour
         }
 
         CacheTerrainAssets();
+    }
+
+    // Lets the Board hand over an externally built grid (authored scenarios) so
+    // InstantiateHexesCoroutine can run without GenerateTerrainCoroutine.
+    public void SetTerrainGrid(TerrainEnum[,] grid)
+    {
+        terrainGrid = grid;
     }
 
     private void CacheTerrainAssets()
@@ -283,6 +326,14 @@ public class BoardGenerator : MonoBehaviour
         // Clear existing children safely and time-sliced
         yield return StartCoroutine(ClearChildrenCoroutine());
 
+        // Hex instantiation is what the player actually waits on, so give it a
+        // healthier floor than the video-smoothness budget (video decoding runs
+        // on worker threads and stays smooth at 8ms/frame of main-thread work),
+        // and cap it so the fully-released budget still yields for progress UI.
+        // Placement (activate + position + terrain) is cheap per hex once the pool is
+        // full, so a modest cap keeps the progress bar and frames smooth.
+        float instantiateBudget() => Mathf.Clamp(generationFrameBudgetSeconds, 0.008f, PlacementBudget);
+
         // Safety: make sure terrainGrid exists and matches board dims
         if (terrainGrid == null ||
             terrainGrid.GetLength(0) != height ||
@@ -297,15 +348,54 @@ public class BoardGenerator : MonoBehaviour
         var colors = terrainColors;
         var parentTransform = transform;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        // Clone everything the board needs on demand, in small async batches
+        // (worker-thread cloning, bounded main-thread integration). The hex prefab
+        // is slim enough since the HexParts split that no prewarming is needed.
+        Application.backgroundLoadingPriority = ThreadPriority.High;
+        AsyncInstantiateOperation.SetIntegrationTimeMS(IntegrationMs);
+
+        if (AvailableHexes < totalHexes)
+        {
+            var cloneTimer = System.Diagnostics.Stopwatch.StartNew();
+            int toCreate = totalHexes - AvailableHexes;
+            while (AvailableHexes < totalHexes)
+            {
+                int batch = Mathf.Min(CloneBatchSize, totalHexes - AvailableHexes);
+                var op = InstantiateAsync(board.hexPrefab, batch, HexParkPosition, Quaternion.identity);
+                while (!op.isDone)
+                {
+                    // Progress must move every frame or the load reads as frozen:
+                    // blend the in-flight batch's own progress into the pool count.
+                    float inFlight = AvailableHexes + op.progress * batch;
+                    OnGenerationProgress?.Invoke(0.6f * inFlight / totalHexes, "Conjuring tiles");
+                    yield return null;
+                }
+                foreach (GameObject hexGo in op.Result)
+                {
+                    if (hexGo != null) parkedHexes.Enqueue(hexGo);
+                }
+            }
+            Debug.Log($"[ScenarioLoad] async clone of {toCreate} hexes finished in {cloneTimer.ElapsedMilliseconds} ms (available {AvailableHexes}).");
+        }
+
+        var budget = new FrameBudget(instantiateBudget);
         int hexesProcessed = 0;
         int batchCount = 0;
+
+        var totalTimer = System.Diagnostics.Stopwatch.StartNew();
+        var stepTimer = new System.Diagnostics.Stopwatch();
+        long poolTicks = 0;
+        long terrainTicks = 0;
+        Debug.Log($"[ScenarioLoad] placing {totalHexes} hexes (budget/frame: {instantiateBudget() * 1000f:0.#} ms)...");
 
         for (int row = 0; row < height; row++)
         {
             for (int col = 0; col < width; col++)
             {
-                GameObject hexGo = hexPool.Get();
+                stepTimer.Restart();
+                // Parked clones are already active — using them skips the costly
+                // full-hierarchy SetActive(true) the pool would pay.
+                GameObject hexGo = parkedHexes.Count > 0 ? parkedHexes.Dequeue() : hexPool.Get();
                 var hex = hexGo.GetComponent<Hex>();
                 hex.Initialize(row, col);
 
@@ -313,28 +403,64 @@ public class BoardGenerator : MonoBehaviour
                 tr.SetParent(parentTransform, false);
                 tr.position = GetPosition(row, col);
                 hexGo.name = $"{row},{col}";
+                poolTicks += stepTimer.ElapsedTicks;
 
                 var terrainType = grid[row, col];
                 var color = colors[terrainType];
 
+                stepTimer.Restart();
                 hex.SetTerrain(terrainType, null, color);
+                terrainTicks += stepTimer.ElapsedTicks;
                 hexes[new Vector2Int(row, col)] = hex;
 
                 hexesProcessed++;
                 batchCount++;
 
-                if (batchCount >= hexesPerBatch || budget.Spent())
+                if (hexesProcessed % 1000 == 0)
+                {
+                    Debug.Log($"[ScenarioLoad] {hexesProcessed}/{totalHexes} hexes in {totalTimer.ElapsedMilliseconds} ms "
+                        + $"(pool+setup {poolTicks / System.TimeSpan.TicksPerMillisecond} ms, terrain {terrainTicks / System.TimeSpan.TicksPerMillisecond} ms, "
+                        + $"raw Instantiate lifetime {prefabInstantiateTicks / System.TimeSpan.TicksPerMillisecond} ms / {prefabInstantiateCount})");
+                }
+
+                // Progress updates every batch; frames end only when the time
+                // budget is spent. (Yielding every batch capped throughput at
+                // hexesPerBatch per frame no matter how much budget was left.)
+                if (batchCount >= hexesPerBatch)
                 {
                     OnGenerationProgress?.Invoke(Mathf.Min((float)hexesProcessed / totalHexes, 1.0f), "Configuring Board");
                     batchCount = 0;
+                }
+                if (budget.Spent())
+                {
+                    OnGenerationProgress?.Invoke(Mathf.Min((float)hexesProcessed / totalHexes, 1.0f), "Configuring Board");
                     budget.Reset();
                     yield return null;
                 }
             }
         }
 
+        Debug.Log($"[ScenarioLoad] all {hexesProcessed} hexes instantiated in {totalTimer.ElapsedMilliseconds} ms "
+            + $"(pool+setup {poolTicks / System.TimeSpan.TicksPerMillisecond} ms, terrain {terrainTicks / System.TimeSpan.TicksPerMillisecond} ms)");
         OnGenerationProgress?.Invoke(1.0f, "Game ready!");
         onComplete?.Invoke(hexes);
+
+        // Safety net: return any surplus parked clones to the pool a few per
+        // frame — never bulk-deactivate. (Normally empty now that hexes are
+        // cloned on demand for exactly the board size.)
+        if (parkedHexes.Count > 0)
+        {
+            var drainBudget = new FrameBudget(() => 0.02f);
+            while (parkedHexes.Count > 0)
+            {
+                hexPool.Release(parkedHexes.Dequeue());
+                if (drainBudget.Spent())
+                {
+                    drainBudget.Reset();
+                    yield return null;
+                }
+            }
+        }
     }
 
 

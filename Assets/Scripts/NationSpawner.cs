@@ -221,10 +221,15 @@ public class NationSpawner : MonoBehaviour
         leaderPositions.Clear();
         placedPositions.Clear();
 
+        var phaseTimer = System.Diagnostics.Stopwatch.StartNew();
+        long Lap() { long ms = phaseTimer.ElapsedMilliseconds; phaseTimer.Restart(); return ms; }
+
         // Apply authored tile variations first so each hex's features are set before placement.
         ApplyScenarioTerrainSprites(scenario);
+        long spritesMs = Lap();
 
         DeckManager deckManager = ResolveDeckManager();
+        long deckMs = Lap();
 
         // 1. Leaders — establishes the Leader objects that PCs/characters reference as owners.
         Dictionary<string, Leader> leadersByName = new(StringComparer.OrdinalIgnoreCase);
@@ -244,6 +249,7 @@ public class NationSpawner : MonoBehaviour
             leadersByName[start.leaderName] = leader;
             leaderPositions[start.leaderName] = hex.v2;
         }
+        long leadersMs = Lap();
 
         // 2. PCs (cities). Owner may be null (ownerless anchor city).
         foreach (ScenarioPC spc in scenario.pcs ?? new List<ScenarioPC>())
@@ -261,6 +267,7 @@ public class NationSpawner : MonoBehaviour
             hex.SetPC(pc, spc.pcFeature, spc.fortFeature, spc.isIsland);
             currentPcCount++;
         }
+        long pcsMs = Lap();
 
         // 3. Characters and their armies.
         foreach (ScenarioCharacter sc in scenario.characters ?? new List<ScenarioCharacter>())
@@ -283,9 +290,13 @@ public class NationSpawner : MonoBehaviour
             if (sc.army != null && !sc.army.IsEmpty())
                 BuildScenarioArmy(character, sc.army, deckManager);
         }
+        long charactersMs = Lap();
 
         // 4. Regions — authored paint wins; gaps are flood-filled from the painted hexes.
         ApplyScenarioRegions(scenario);
+        long regionsMs = Lap();
+
+        Debug.Log($"[ScenarioLoad] spawn phases — sprites {spritesMs} ms, decks {deckMs} ms, leaders {leadersMs} ms, PCs {pcsMs} ms, characters {charactersMs} ms, regions {regionsMs} ms");
         landRegionsAssigned = true;
     }
 
@@ -301,6 +312,7 @@ public class NationSpawner : MonoBehaviour
             if (cell == null || string.IsNullOrWhiteSpace(cell.spriteName)) continue;
             if (!board.hexes.TryGetValue(new Vector2Int(cell.row, cell.col), out Hex hex) || hex == null) continue;
             if (mapping == null) mapping = hex.GetComponent<HexTextureMapping>();
+            if (mapping == null) mapping = FindFirstObjectByType<HexTextureMapping>();
             if (mapping == null) return;
 
             Sprite sprite = mapping.GetTerrainSpriteByName(cell.spriteName);

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
 using RetroLOTR.Scenarios;
@@ -9,19 +10,54 @@ public class IntroVideoManager : MonoBehaviour
 
     void Start()
     {
+        boardGenerator = GameObject.Find("Board").GetComponent<BoardGenerator>();
+
         // Scenario selection reloads the scene; don't replay the intro on those rebuilds.
+        // The generation frame budget must still be released — it is only throttled to
+        // keep video playback smooth, and there is no video here.
         if (GameConfig.SkipIntro)
         {
+            boardGenerator.SetVideoPlaying(false);
             gameObject.SetActive(false);
             return;
         }
 
-        boardGenerator = GameObject.Find("Board").GetComponent<BoardGenerator>();
         vp = GetComponent<VideoPlayer>();
-        vp.clip = GameObject.Find("Videos").GetComponent<Videos>().GetVideoByName("intro");
+        vp.playOnAwake = false;
+        vp.Stop();
         vp.loopPointReached += OnVideoFinished;     // fires at end (and on each loop)
         vp.errorReceived += OnVideoError;
         vp.started += OnVideoStarted;
+
+        // The intro waits for the scenario-selection screen: nothing plays until
+        // the player has chosen what to play.
+        StartCoroutine(PlayAfterScenarioChoice());
+    }
+
+    private IEnumerator PlayAfterScenarioChoice()
+    {
+        yield return new WaitUntil(() => GameConfig.ScenarioChosen);
+        vp.clip = GameObject.Find("Videos").GetComponent<Videos>().GetVideoByName("intro");
+        if (vp.clip == null)
+        {
+            // No intro to protect — release the generation throttle immediately.
+            boardGenerator.SetVideoPlaying(false);
+            gameObject.SetActive(false);
+            yield break;
+        }
+        vp.Play();
+    }
+
+    void Update()
+    {
+        // Any key or click skips the intro — and releases the generation
+        // throttle so the board finishes loading at full speed.
+        if (vp != null && vp.isPlaying && Input.anyKeyDown)
+        {
+            vp.Stop();
+            boardGenerator.SetVideoPlaying(false);
+            gameObject.SetActive(false);
+        }
     }
 
     void OnVideoStarted(VideoPlayer p) { boardGenerator.SetVideoPlaying(true); }

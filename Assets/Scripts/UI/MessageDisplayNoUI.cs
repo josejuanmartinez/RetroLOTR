@@ -417,10 +417,13 @@ public class MessageDisplayNoUI : MonoBehaviour
 
     private TextMeshPro ResolveTextMesh(MessageData data)
     {
-        if (data?.Hex != null && data.Hex.messageNoUI != null)
+        // The hex creates its floating-text TMP lazily (the hex prefab no longer
+        // carries one), so ask for it rather than reading the field directly.
+        TextMeshPro hexText = data?.Hex != null ? data.Hex.GetOrCreateMessageText() : null;
+        if (hexText != null)
         {
-            PrepareHexTextMesh(data.Hex.messageNoUI);
-            return data.Hex.messageNoUI;
+            PrepareHexTextMesh(hexText);
+            return hexText;
         }
 
         if (textMesh != null)

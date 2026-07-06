@@ -928,6 +928,8 @@ namespace RetroLOTR.Scenarios.EditorTools
         }
 
         // Maintains Resources/Scenarios/ScenariosIndex.json so a menu can enumerate scenarios.
+        // Also prunes entries whose file no longer exists (renamed/deleted scenarios), so
+        // the in-game scenario selection never offers an unloadable map.
         private void UpdateIndex(string fileName)
         {
             string indexPath = $"{SaveFolder}/ScenariosIndex.json";
@@ -938,6 +940,7 @@ namespace RetroLOTR.Scenarios.EditorTools
                 if (existing?.scenarioNames != null) names = existing.scenarioNames;
             }
             if (!names.Contains(fileName)) names.Add(fileName);
+            names.RemoveAll(n => string.IsNullOrWhiteSpace(n) || !File.Exists($"{SaveFolder}/{n}.json"));
             File.WriteAllText(indexPath, JsonUtility.ToJson(new ScenarioIndexFile { scenarioNames = names }, true));
         }
 

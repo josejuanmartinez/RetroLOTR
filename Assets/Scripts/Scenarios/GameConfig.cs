@@ -19,6 +19,11 @@ namespace RetroLOTR.Scenarios
         /// skipped on those rebuilds (the player is already past the title screen).</summary>
         public static bool SkipIntro;
 
+        /// <summary>True once the player has picked what to play (an authored scenario or the
+        /// default random campaign). Board generation and the intro video wait for this.
+        /// Board.Awake resets it on fresh scene loads (SkipIntro reloads keep it).</summary>
+        public static bool ScenarioChosen;
+
         public static bool HasScenario => !string.IsNullOrWhiteSpace(ScenarioToLoad);
     }
 }

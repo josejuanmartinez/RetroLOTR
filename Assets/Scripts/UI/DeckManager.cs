@@ -2486,10 +2486,9 @@ public class DeckManager : MonoBehaviour
             return string.Equals(sourceDeckId, "encounter_shared", StringComparison.OrdinalIgnoreCase);
         }
 
-        // Action cards live in the situation pool, not the draw pile.
-        if (card.GetCardType() == CardTypeEnum.Action)
-            return false;
-
+        // Action cards are drawable like any other card; they are ALSO cloned into
+        // the situation pool (see ShouldIncludeCardInSituationPool), so they can
+        // surface both from the hand and as opportunity cards.
         return true;
     }
 

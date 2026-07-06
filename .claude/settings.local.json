@@ -56,7 +56,17 @@
       "PowerShell($guid = [Guid]::NewGuid\\(\\).ToString\\('N'\\); $spriteId = [Guid]::NewGuid\\(\\).ToString\\('N'\\); $content = Get-Content \"Assets\\\\Art\\\\Cards\\\\Characters\\\\Beregond.png.meta\" -Raw; $content = $content -replace 'c9ef16be1b714ab69ba6bfc6733f931c', $guid -replace '8eb9077d7cf34376a787ee94b89d73a7', $spriteId; [IO.File]::WriteAllText\\(\"$PWD\\\\Assets\\\\Art\\\\Cards\\\\Characters\\\\Golfimbul.png.meta\", $content\\); Write-Host \"guid: $guid\"; Select-String -Path \"Assets\\\\Art\\\\Cards\\\\Characters\\\\Golfimbul.png.meta\" -Pattern 'guid|spriteMode|internalIDToNameTable')",
       "PowerShell(Out-File *)",
       "PowerShell($check = Get-Content 'Assets/Resources/Scenarios/2950.json' -Raw | ConvertFrom-Json; \"name: '$\\($check.scenarioName\\)'\"; \"regions is array: $\\($check.regions -is [array]\\) count: $\\($check.regions.Count\\)\"; $check.characters[0] | ConvertTo-Json -Depth 5 | Select-Object -First 1; git diff --stat Assets/Resources/Scenarios/2950.json)",
-      "Bash(grep -i \"png$\")"
+      "Bash(grep -i \"png$\")",
+      "Bash(dotnet build *)",
+      "PowerShell(Set-Content *)",
+      "Bash(grep -o 'm_Script: {fileID: 11500000, guid: [a-f0-9]*' Assets/GameObjects/Hex.prefab)",
+      "PowerShell(\\(Select-String -Path \"Assets/GameObjects/Hex.prefab\" -Pattern \"^--- !u!1 \" -AllMatches\\).Count; \\(Get-Item \"Assets/GameObjects/Hex.prefab\"\\).Length; \\(Get-Content \"Assets/Resources/Scenarios/2950.json\" -TotalCount 5\\))",
+      "PowerShell($log = \"$env:LOCALAPPDATA\\\\Unity\\\\Editor\\\\Editor.log\"; if \\(Test-Path $log\\) { Select-String -Path $log -Pattern \"ScenarioLoad|hex pool prewarmed|async top-up|hexes in|hexes instantiated\" | Select-Object -Last 40 | ForEach-Object { $_.Line } } else { \"no editor log\" })",
+      "PowerShell($paths = @\\(\"$env:LOCALAPPDATA\\\\Unity\\\\Editor\\\\Editor.log\", \"$env:LOCALAPPDATA\\\\Unity\\\\Editor\\\\Editor-prev.log\", \"Logs\\\\AssetImportWorker0.log\"\\); foreach \\($p in $paths\\) { if \\(Test-Path $p\\) { $f = Get-Item $p; \"$\\($f.FullName\\) - $\\($f.Length\\) bytes - modified $\\($f.LastWriteTime\\)\" } })",
+      "PowerShell(Select-String *)",
+      "PowerShell(Select-String -Path \"Assets/GameObjects/Hex.prefab\" -Pattern \"^--- !u!\\(\\\\d+\\) \" | ForEach-Object { $_.Matches[0].Groups[1].Value } | Group-Object | Sort-Object Count -Descending | Format-Table Name, Count -AutoSize)",
+      "PowerShell(Select-String -Path \"Assets/GameObjects/Hex.prefab\" -Pattern \"m_Name: \\(.+\\)$\" | ForEach-Object { $_.Matches[0].Groups[1].Value })",
+      "Bash(awk '/^--- !u!4 /{f=1;next} f&&/^---/{exit} f' Assets/Resources/HexParts/HexSharedParticles.prefab)"
     ]
   }
 }

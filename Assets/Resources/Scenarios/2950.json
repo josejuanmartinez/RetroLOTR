@@ -769,10 +769,10 @@
         5,
         5,
         6,
-        2,
+        4,
         6,
-        2,
-        2,
+        3,
+        3,
         2,
         2,
         6,
@@ -833,16 +833,16 @@
         0,
         5,
         5,
-        2,
-        2,
-        2,
+        3,
+        4,
+        4,
         6,
         6,
+        3,
         2,
-        2,
-        2,
+        3,
         6,
-        2,
+        4,
         2,
         2,
         2,
@@ -900,14 +900,14 @@
         5,
         3,
         2,
-        2,
+        3,
+        3,
+        6,
+        3,
+        3,
         2,
         6,
-        2,
-        2,
-        2,
-        6,
-        2,
+        4,
         2,
         2,
         2,
@@ -967,12 +967,12 @@
         2,
         2,
         2,
-        2,
+        3,
         6,
         6,
         6,
         6,
-        2,
+        4,
         2,
         2,
         2,
@@ -1033,11 +1033,11 @@
         2,
         2,
         2,
-        2,
-        2,
-        2,
+        4,
+        4,
+        4,
         6,
-        2,
+        4,
         2,
         2,
         5,
@@ -1297,7 +1297,7 @@
         2,
         2,
         4,
-        6,
+        3,
         6,
         6,
         6,
@@ -1805,8 +1805,8 @@
         5,
         5,
         5,
-        3,
-        3,
+        5,
+        5,
         2,
         2,
         2,
@@ -2451,7 +2451,7 @@
         8,
         6,
         8,
-        2,
+        5,
         5,
         0,
         1,
@@ -2465,7 +2465,7 @@
         0,
         0,
         0,
-        0,
+        11,
         0,
         0,
         0,
@@ -2516,11 +2516,11 @@
         8,
         8,
         6,
-        2,
+        5,
         3,
         0,
         0,
-        1,
+        10,
         10,
         0,
         0,
@@ -2581,7 +2581,7 @@
         3,
         3,
         6,
-        3,
+        5,
         5,
         0,
         0,
@@ -2647,7 +2647,7 @@
         3,
         3,
         6,
-        3,
+        5,
         0,
         0,
         0,
@@ -2712,7 +2712,7 @@
         3,
         3,
         6,
-        3,
+        5,
         5,
         0,
         1,
@@ -2725,7 +2725,7 @@
         10,
         10,
         0,
-        0,
+        11,
         0,
         10,
         10,
@@ -2778,7 +2778,7 @@
         0,
         3,
         6,
-        3,
+        5,
         1,
         1,
         1,
@@ -2841,7 +2841,7 @@
         1,
         0,
         0,
-        3,
+        4,
         8,
         3,
         1,
@@ -2906,9 +2906,9 @@
         3,
         3,
         3,
-        3,
+        4,
         6,
-        3,
+        4,
         0,
         0,
         0,
@@ -2972,7 +2972,7 @@
         3,
         3,
         6,
-        3,
+        4,
         3,
         0,
         0,
@@ -3034,10 +3034,10 @@
         3,
         3,
         3,
-        3,
-        3,
+        4,
+        4,
         6,
-        3,
+        5,
         5,
         0,
         0,
@@ -3093,15 +3093,15 @@
         3,
         3,
         3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
+        4,
+        4,
+        4,
+        4,
+        4,
         6,
         6,
-        3,
+        6,
+        5,
         5,
         0,
         0,
@@ -3154,19 +3154,19 @@
         1,
         4,
         4,
-        3,
-        3,
-        3,
-        3,
+        4,
+        4,
+        4,
+        4,
         3,
         6,
         6,
         6,
         6,
         6,
-        6,
         3,
-        3,
+        4,
+        4,
         3,
         3,
         0,
@@ -3224,12 +3224,12 @@
         6,
         6,
         6,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
         3,
         2,
         3,
@@ -3286,10 +3286,10 @@
         6,
         6,
         6,
-        3,
-        3,
-        3,
-        3,
+        4,
+        4,
+        4,
+        4,
         3,
         3,
         3,
@@ -6044,11 +6044,6 @@
         },
         {
             "row": 5,
-            "col": 6,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 5,
             "col": 7,
             "spriteName": "snow_11"
         },
@@ -6280,7 +6275,7 @@
         {
             "row": 5,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 5,
@@ -6575,12 +6570,12 @@
         {
             "row": 6,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 6,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 6,
@@ -6590,7 +6585,7 @@
         {
             "row": 6,
             "col": 58,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_1"
         },
         {
             "row": 6,
@@ -6845,7 +6840,7 @@
         {
             "row": 7,
             "col": 51,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 7,
@@ -6865,7 +6860,7 @@
         {
             "row": 7,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 7,
@@ -6885,7 +6880,7 @@
         {
             "row": 7,
             "col": 60,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_1"
         },
         {
             "row": 7,
@@ -7130,7 +7125,7 @@
         {
             "row": 8,
             "col": 51,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 8,
@@ -7155,12 +7150,12 @@
         {
             "row": 8,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 8,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 8,
@@ -7215,11 +7210,6 @@
         {
             "row": 9,
             "col": 5,
-            "spriteName": "mountains_2"
-        },
-        {
-            "row": 9,
-            "col": 6,
             "spriteName": "mountains_2"
         },
         {
@@ -7415,7 +7405,7 @@
         {
             "row": 9,
             "col": 51,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 9,
@@ -7440,12 +7430,12 @@
         {
             "row": 9,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 9,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 9,
@@ -7705,17 +7695,17 @@
         {
             "row": 10,
             "col": 52,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 10,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 10,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 10,
@@ -7725,12 +7715,12 @@
         {
             "row": 10,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 10,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 10,
@@ -7950,52 +7940,57 @@
         {
             "row": 11,
             "col": 44,
-            "spriteName": "forest_02"
+            "spriteName": "forest_30"
         },
         {
             "row": 11,
             "col": 45,
-            "spriteName": "forest_02"
+            "spriteName": "forest_30"
         },
         {
             "row": 11,
             "col": 46,
-            "spriteName": "forest_02"
+            "spriteName": "forest_30"
         },
         {
             "row": 11,
             "col": 47,
-            "spriteName": "forest_02"
+            "spriteName": "forest_30"
+        },
+        {
+            "row": 11,
+            "col": 48,
+            "spriteName": "forest_30"
         },
         {
             "row": 11,
             "col": 50,
-            "spriteName": "plains_20"
+            "spriteName": "shore_01"
         },
         {
             "row": 11,
             "col": 52,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 11,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 11,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 11,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 11,
             "col": 57,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 11,
@@ -8225,7 +8220,7 @@
         {
             "row": 12,
             "col": 44,
-            "spriteName": "forest_02"
+            "spriteName": "forest_30"
         },
         {
             "row": 12,
@@ -8240,47 +8235,47 @@
         {
             "row": 12,
             "col": 47,
-            "spriteName": "forest_02"
+            "spriteName": "forest_30"
         },
         {
             "row": 12,
             "col": 48,
-            "spriteName": "forest_02"
+            "spriteName": "forest_30"
         },
         {
             "row": 12,
             "col": 49,
-            "spriteName": "plains_20"
+            "spriteName": "grass_17"
         },
         {
             "row": 12,
             "col": 50,
-            "spriteName": "plains_20"
+            "spriteName": "shore_01"
         },
         {
             "row": 12,
             "col": 51,
-            "spriteName": "plains_20"
+            "spriteName": "shore_01"
         },
         {
             "row": 12,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 12,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 12,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 12,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "shore_01"
         },
         {
             "row": 12,
@@ -8530,32 +8525,32 @@
         {
             "row": 13,
             "col": 51,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 13,
             "col": 52,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 13,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 13,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 13,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 13,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "shore_01"
         },
         {
             "row": 13,
@@ -8685,7 +8680,7 @@
         {
             "row": 14,
             "col": 29,
-            "spriteName": "forest_24"
+            "spriteName": "forest_30"
         },
         {
             "row": 14,
@@ -8795,17 +8790,17 @@
         {
             "row": 14,
             "col": 52,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 14,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "grass_17"
         },
         {
             "row": 14,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "shore_01"
         },
         {
             "row": 14,
@@ -8955,12 +8950,12 @@
         {
             "row": 15,
             "col": 28,
-            "spriteName": "forest_24"
+            "spriteName": "forest_30"
         },
         {
             "row": 15,
             "col": 29,
-            "spriteName": "forest_24"
+            "spriteName": "forest_01"
         },
         {
             "row": 15,
@@ -9010,12 +9005,12 @@
         {
             "row": 15,
             "col": 41,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 15,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 15,
@@ -9065,32 +9060,32 @@
         {
             "row": 15,
             "col": 52,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 15,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 15,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "shore_01"
         },
         {
             "row": 15,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "shore_01"
         },
         {
             "row": 15,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "shore_01"
         },
         {
             "row": 15,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "shore_01"
         },
         {
             "row": 15,
@@ -9230,17 +9225,17 @@
         {
             "row": 16,
             "col": 27,
-            "spriteName": "forest_24"
+            "spriteName": "forest_01"
         },
         {
             "row": 16,
             "col": 28,
-            "spriteName": "forest_24"
+            "spriteName": "forest_01"
         },
         {
             "row": 16,
             "col": 29,
-            "spriteName": "forest_24"
+            "spriteName": "forest_01"
         },
         {
             "row": 16,
@@ -9290,7 +9285,7 @@
         {
             "row": 16,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 16,
@@ -9540,17 +9535,17 @@
         {
             "row": 17,
             "col": 41,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 17,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 17,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 17,
@@ -9770,7 +9765,7 @@
         {
             "row": 18,
             "col": 28,
-            "spriteName": "forest_24"
+            "spriteName": "forest_01"
         },
         {
             "row": 18,
@@ -9800,17 +9795,17 @@
         {
             "row": 18,
             "col": 41,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 18,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 18,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 18,
@@ -10065,12 +10060,12 @@
         {
             "row": 19,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 19,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 19,
@@ -10085,17 +10080,17 @@
         {
             "row": 19,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 19,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 19,
             "col": 48,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 19,
@@ -10141,6 +10136,11 @@
             "row": 19,
             "col": 57,
             "spriteName": "shore_01"
+        },
+        {
+            "row": 19,
+            "col": 58,
+            "spriteName": "grass_17"
         },
         {
             "row": 19,
@@ -10315,22 +10315,22 @@
         {
             "row": 20,
             "col": 41,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 20,
             "col": 42,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 20,
             "col": 43,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 20,
             "col": 44,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 20,
@@ -10340,7 +10340,7 @@
         {
             "row": 20,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 20,
@@ -10605,7 +10605,7 @@
         {
             "row": 21,
             "col": 45,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 21,
@@ -10840,17 +10840,17 @@
         {
             "row": 22,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 22,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 22,
             "col": 48,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 22,
@@ -11085,17 +11085,17 @@
         {
             "row": 23,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 23,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 23,
             "col": 48,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 23,
@@ -11215,7 +11215,7 @@
         {
             "row": 24,
             "col": 21,
-            "spriteName": "shore_04"
+            "spriteName": "shore_01"
         },
         {
             "row": 24,
@@ -11335,17 +11335,17 @@
         {
             "row": 24,
             "col": 46,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 24,
             "col": 47,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 24,
             "col": 48,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 24,
@@ -11510,7 +11510,7 @@
         {
             "row": 25,
             "col": 34,
-            "spriteName": "forest_24"
+            "spriteName": "forest_02"
         },
         {
             "row": 25,
@@ -11780,7 +11780,7 @@
         {
             "row": 26,
             "col": 46,
-            "spriteName": "forest_24"
+            "spriteName": "forest_02"
         },
         {
             "row": 26,
@@ -11995,12 +11995,12 @@
         {
             "row": 27,
             "col": 46,
-            "spriteName": "grass_17"
+            "spriteName": "forest_24"
         },
         {
             "row": 27,
             "col": 47,
-            "spriteName": "grass_17"
+            "spriteName": "forest_26"
         },
         {
             "row": 27,
@@ -12180,7 +12180,7 @@
         {
             "row": 28,
             "col": 34,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 28,
@@ -12420,12 +12420,12 @@
         {
             "row": 29,
             "col": 33,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 29,
             "col": 34,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 29,
@@ -12665,7 +12665,7 @@
         {
             "row": 30,
             "col": 32,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 30,
@@ -12920,7 +12920,7 @@
         {
             "row": 31,
             "col": 34,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 31,
@@ -13145,7 +13145,7 @@
         {
             "row": 32,
             "col": 32,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
@@ -13155,12 +13155,12 @@
         {
             "row": 32,
             "col": 34,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
             "col": 35,
-            "spriteName": "forest_30"
+            "spriteName": "forest_24"
         },
         {
             "row": 32,
@@ -13380,7 +13380,7 @@
         {
             "row": 33,
             "col": 31,
-            "spriteName": "forest_24"
+            "spriteName": "forest_30"
         },
         {
             "row": 33,
@@ -13390,7 +13390,7 @@
         {
             "row": 33,
             "col": 33,
-            "spriteName": "forest_24"
+            "spriteName": "forest_30"
         },
         {
             "row": 33,
@@ -14360,7 +14360,7 @@
         {
             "row": 37,
             "col": 42,
-            "spriteName": "plains_20"
+            "spriteName": "forest_30"
         },
         {
             "row": 37,
@@ -14430,7 +14430,7 @@
         {
             "row": 37,
             "col": 56,
-            "spriteName": "mountains_5"
+            "spriteName": "snow_11"
         },
         {
             "row": 37,
@@ -14605,7 +14605,7 @@
         {
             "row": 38,
             "col": 42,
-            "spriteName": "plains_20"
+            "spriteName": "forest_01"
         },
         {
             "row": 38,
@@ -14625,12 +14625,12 @@
         {
             "row": 38,
             "col": 46,
-            "spriteName": "hills_09"
+            "spriteName": "wastelands_13"
         },
         {
             "row": 38,
             "col": 47,
-            "spriteName": "wastelands_13"
+            "spriteName": "wastelands_09"
         },
         {
             "row": 38,
@@ -14665,11 +14665,6 @@
         {
             "row": 38,
             "col": 54,
-            "spriteName": "mountains_5"
-        },
-        {
-            "row": 38,
-            "col": 55,
             "spriteName": "mountains_5"
         },
         {
@@ -14855,7 +14850,7 @@
         {
             "row": 39,
             "col": 42,
-            "spriteName": "grass_17"
+            "spriteName": "forest_01"
         },
         {
             "row": 39,
@@ -15105,7 +15100,7 @@
         {
             "row": 40,
             "col": 43,
-            "spriteName": "grass_17"
+            "spriteName": "forest_01"
         },
         {
             "row": 40,
@@ -15355,7 +15350,7 @@
         {
             "row": 41,
             "col": 43,
-            "spriteName": "grass_17"
+            "spriteName": "forest_01"
         },
         {
             "row": 41,
@@ -15420,7 +15415,7 @@
         {
             "row": 41,
             "col": 56,
-            "spriteName": "mountains_1"
+            "spriteName": "snow_11"
         },
         {
             "row": 41,
@@ -15610,7 +15605,7 @@
         {
             "row": 42,
             "col": 44,
-            "spriteName": "grass_17"
+            "spriteName": "forest_01"
         },
         {
             "row": 42,
@@ -15856,11 +15851,6 @@
             "row": 43,
             "col": 41,
             "spriteName": "mountains_2"
-        },
-        {
-            "row": 43,
-            "col": 42,
-            "spriteName": "grass_17"
         },
         {
             "row": 43,
@@ -16119,16 +16109,6 @@
         },
         {
             "row": 44,
-            "col": 42,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 44,
-            "col": 44,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 44,
             "col": 45,
             "spriteName": "mountains_5"
         },
@@ -16344,11 +16324,6 @@
         },
         {
             "row": 45,
-            "col": 43,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 45,
             "col": 44,
             "spriteName": "grass_17"
         },
@@ -16559,18 +16534,8 @@
         },
         {
             "row": 46,
-            "col": 40,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 46,
-            "col": 41,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 46,
             "col": 43,
-            "spriteName": "grass_17"
+            "spriteName": "forest_01"
         },
         {
             "row": 46,
@@ -16754,38 +16719,8 @@
         },
         {
             "row": 47,
-            "col": 34,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 47,
-            "col": 35,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 47,
-            "col": 36,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 47,
-            "col": 37,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 47,
-            "col": 38,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 47,
-            "col": 39,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 47,
             "col": 42,
-            "spriteName": "grass_17"
+            "spriteName": "forest_01"
         },
         {
             "row": 47,
@@ -16954,37 +16889,12 @@
         },
         {
             "row": 48,
-            "col": 30,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 48,
-            "col": 31,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 48,
-            "col": 32,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 48,
-            "col": 33,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 48,
             "col": 34,
             "spriteName": "grass_17"
         },
         {
             "row": 48,
-            "col": 41,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 48,
-            "col": 42,
+            "col": 40,
             "spriteName": "grass_17"
         },
         {
@@ -17104,36 +17014,6 @@
         },
         {
             "row": 49,
-            "col": 35,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 49,
-            "col": 36,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 49,
-            "col": 37,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 49,
-            "col": 38,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 49,
-            "col": 39,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 49,
-            "col": 40,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 49,
             "col": 41,
             "spriteName": "grass_17"
         },
@@ -17241,26 +17121,6 @@
             "row": 50,
             "col": 28,
             "spriteName": "shore_01"
-        },
-        {
-            "row": 50,
-            "col": 32,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 50,
-            "col": 33,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 50,
-            "col": 34,
-            "spriteName": "grass_17"
-        },
-        {
-            "row": 50,
-            "col": 35,
-            "spriteName": "grass_17"
         },
         {
             "row": 50,

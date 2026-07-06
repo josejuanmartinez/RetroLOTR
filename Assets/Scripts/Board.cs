@@ -151,9 +151,42 @@ public class Board : MonoBehaviour
         // Subscribe to generation progress events
         boardGenerator.OnGenerationProgress += UpdateGenerationProgress;
 
-        ResolveActiveScenario();
+        StartCoroutine(BeginAfterScenarioChoice());
+    }
 
-        StartCoroutine(DrawCoroutine());
+    private void Awake()
+    {
+        // Fresh scene load = fresh choice. SkipIntro reloads (scenario switch from
+        // the old dropdown flow) keep the already-made choice.
+        if (!GameConfig.SkipIntro) GameConfig.ScenarioChosen = false;
+    }
+
+    // Nothing happens — no intro video, no generation, no leader selector — until the
+    // player picks an authored scenario or the default random campaign.
+    private IEnumerator BeginAfterScenarioChoice()
+    {
+        if (!GameConfig.ScenarioChosen)
+        {
+            RetroLOTR.Scenarios.ScenarioSelectionScreen.Show();
+            yield return new WaitUntil(() => GameConfig.ScenarioChosen);
+        }
+
+        StartCoroutine(ReleaseThrottleIfNoVideo());
+        ResolveActiveScenario();
+        yield return StartCoroutine(DrawCoroutine());
+    }
+
+    // The generation frame budget is throttled only to keep the intro video smooth.
+    // If no intro video exists in this scene, release it so generation runs at full speed.
+    private IEnumerator ReleaseThrottleIfNoVideo()
+    {
+        yield return null;
+        yield return null;
+        IntroVideoManager intro = FindFirstObjectByType<IntroVideoManager>();
+        if (intro == null || !intro.isActiveAndEnabled)
+        {
+            boardGenerator.SetVideoPlaying(false);
+        }
     }
 
     // Picks the scenario to load (menu selection wins over the in-editor test field) and
@@ -206,9 +239,14 @@ public class Board : MonoBehaviour
             {
                 // Authored scenario: take terrain straight from the data instead of generating it,
                 // then instantiate hexes exactly as the procedural path does.
+                var loadTimer = System.Diagnostics.Stopwatch.StartNew();
                 terrainGrid = ScenarioLoader.BuildTerrainGrid(activeScenario);
                 OnTerrainGenerated(terrainGrid);
+                boardGenerator.SetTerrainGrid(terrainGrid);
+                Debug.Log($"[ScenarioLoad] terrain grid built in {loadTimer.ElapsedMilliseconds} ms");
+                loadTimer.Restart();
                 yield return StartCoroutine(boardGenerator.InstantiateHexesCoroutine(OnHexesInstantiated));
+                Debug.Log($"[ScenarioLoad] hex instantiation + nation spawn took {loadTimer.ElapsedMilliseconds} ms");
             }
             else
             {
