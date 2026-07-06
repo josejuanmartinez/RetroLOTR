@@ -48,17 +48,6 @@ public struct FrameBudget
 [RequireComponent(typeof(Board))]
 public class BoardGenerator : MonoBehaviour
 {
-    [Header("Terrain Grid Batch configuration")]
-    public int cellsPerBatch = 1000; // kept; we also time-slice by frame budget
-
-    [Header("Game Object Hex Batch configuration")]
-    public int hexesPerBatch = 20;
-
-    [Header("Time-slicing (seconds)")]
-    [Tooltip("Max main-thread time per frame terrain generation may use WHILE THE INTRO VIDEO PLAYS. This is a trade-off dial, not a correctness setting: raise it to make more loading progress during video at the cost of choppier playback (e.g. 0.002 ≈ near-frozen load/smooth video, 0.05 ≈ visible progress/some stutter, 0.1+ ≈ fast load/choppy video).")]
-    [SerializeField] private float generationFrameBudgetSeconds = 0.02f;
-    [SerializeField] private float maximumGenerationBuget = 2000;
-
     public Board board;
 
     // Chance parameters
@@ -164,29 +153,27 @@ public class BoardGenerator : MonoBehaviour
     private static long prefabInstantiateTicks;
     private static int prefabInstantiateCount;
 
-    // Async cloning parameters: batches keep the main thread's integration debt
-    // bounded (one giant 4550-clone op made the editor unresponsive for its whole
-    // integration), and the slice caps how much frame time integration may take.
-    // asyncIntegrationMs/placementBudgetSeconds hold the WHILE-VIDEO-PLAYS values —
-    // same released-on-SetVideoPlaying(false) pattern as generationFrameBudgetSeconds
-    // below, since these two used to run at full speed for the whole load regardless
-    // of video state and were the actual cause of choppy playback.
-    [Header("Hex cloning (async batches)")]
+    // One dial for every time-sliced part of loading — procedural terrain generation,
+    // hex-clone integration ("Conjuring Tiles"), and hex placement ("Configuring Board").
+    // All three are the same trade-off (main-thread time per frame vs. intro-video
+    // smoothness), so they used to be 3 separate pairs of fields (6 total) with no
+    // indication of which phase each one touched. Now it's one pair: tight while the
+    // video plays, released to the fast value once the video ends/is skipped/is absent
+    // (same pattern as before, see SetVideoPlaying below).
+    [Header("Loading speed vs. intro-video smoothness (ms of main-thread time per frame)")]
+    [Tooltip("Applies to ALL time-sliced loading: terrain generation, hex cloning, hex placement. Budget WHILE THE INTRO VIDEO PLAYS (clamped 10-200ms). Lower = smoother video, slower load. Higher = faster load, choppier video.")]
+    [SerializeField] private float loadBudgetWhileVideoMs = 30f;
+    [Tooltip("Same scope as above. Budget once nothing needs to stay smooth (video finished/skipped/absent). 100 ≈ 10 fps, 200 ≈ 5 fps — do not use 1000.")]
+    [SerializeField] private float loadBudgetAfterVideoMs = 200f;
+
+    [Header("Hex cloning batch size")]
     [Tooltip("Hexes per async clone batch (clamped 256-2048). Bigger = fewer scheduling stalls between batches = faster.")]
     [SerializeField] private int hexCloneBatchSize = 1024;
-    [Tooltip("Main-thread ms PER FRAME integrating async clones WHILE THE INTRO VIDEO PLAYS (clamped 10-200). Trade-off dial: 15-30 keeps video smooth but load barely advances; 50-90 makes real progress during video at the cost of stutter; 100+ approaches full speed (choppy video).")]
-    [SerializeField] private float asyncIntegrationMs = 60f;
-    [Tooltip("Main-thread ms PER FRAME integrating async clones once nothing needs to stay smooth (video finished/skipped/absent). 100 ≈ 10 fps, 200 ≈ 5 fps — do not use 1000.")]
-    [SerializeField] private float maximumAsyncIntegrationMs = 150f;
-    [Tooltip("Max seconds PER FRAME for the 'Configuring Board' hex-placement loop (terrain + position per hex) WHILE THE INTRO VIDEO PLAYS (clamped 0.008-0.25). Per-hex cost here is tiny, so even 0.05-0.15 finishes almost instantly; raise for faster progress at the cost of video smoothness.")]
-    [SerializeField] private float placementBudgetSeconds = 0.12f;
-    [Tooltip("Max seconds of hex placement work per frame once nothing needs to stay smooth (clamped 0.008-0.25).")]
-    [SerializeField] private float maximumPlacementBudgetSeconds = 0.2f;
 
     // Clamped accessors so no Inspector combination can freeze input or starve the load.
     private int CloneBatchSize => Mathf.Clamp(hexCloneBatchSize, 256, 2048);
-    private float IntegrationMs => Mathf.Clamp(asyncIntegrationMs, 10f, 200f);
-    private float PlacementBudget => Mathf.Clamp(placementBudgetSeconds, 0.008f, 0.25f);
+    private float LoadBudgetMs => Mathf.Clamp(loadBudgetWhileVideoMs, 10f, 200f);
+    private float LoadBudgetSeconds => LoadBudgetMs / 1000f;
 
     // Freshly cloned hexes are parked far off-camera until the placement loop
     // positions them; keeps pending clones from being rendered. They stay ACTIVE in
@@ -204,15 +191,13 @@ public class BoardGenerator : MonoBehaviour
     {
         if(!playing)
         {
-            generationFrameBudgetSeconds = maximumGenerationBuget;
-            asyncIntegrationMs = maximumAsyncIntegrationMs;
-            placementBudgetSeconds = maximumPlacementBudgetSeconds;
+            loadBudgetWhileVideoMs = loadBudgetAfterVideoMs;
             Application.backgroundLoadingPriority = ThreadPriority.Normal;
 
             // Push the released budget immediately in case a clone batch is already
             // mid-flight — the video can finish or be skipped while cloning is still
             // running, and AsyncInstantiateOperation reads this per integration slice.
-            AsyncInstantiateOperation.SetIntegrationTimeMS(IntegrationMs);
+            AsyncInstantiateOperation.SetIntegrationTimeMS(LoadBudgetMs);
         }
     }
 
@@ -340,13 +325,6 @@ public class BoardGenerator : MonoBehaviour
         // Clear existing children safely and time-sliced
         yield return StartCoroutine(ClearChildrenCoroutine());
 
-        // "Configuring Board" (this placement loop) used to borrow its per-frame
-        // budget from generationFrameBudgetSeconds (clamped against PlacementBudget
-        // as a mere ceiling) — that meant raising placementBudgetSeconds alone did
-        // nothing, since the smaller generationFrameBudgetSeconds value was what
-        // actually won the clamp. It now uses PlacementBudget directly: an
-        // independent dial for this phase's speed, decoupled from terrain generation.
-
         // Safety: make sure terrainGrid exists and matches board dims
         if (terrainGrid == null ||
             terrainGrid.GetLength(0) != height ||
@@ -365,7 +343,7 @@ public class BoardGenerator : MonoBehaviour
         // (worker-thread cloning, bounded main-thread integration). The hex prefab
         // is slim enough since the HexParts split that no prewarming is needed.
         Application.backgroundLoadingPriority = ThreadPriority.High;
-        AsyncInstantiateOperation.SetIntegrationTimeMS(IntegrationMs);
+        AsyncInstantiateOperation.SetIntegrationTimeMS(LoadBudgetMs);
 
         if (AvailableHexes < totalHexes)
         {
@@ -391,15 +369,21 @@ public class BoardGenerator : MonoBehaviour
             Debug.Log($"[ScenarioLoad] async clone of {toCreate} hexes finished in {cloneTimer.ElapsedMilliseconds} ms (available {AvailableHexes}).");
         }
 
-        var budget = new FrameBudget(() => PlacementBudget);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
         int hexesProcessed = 0;
-        int batchCount = 0;
 
         var totalTimer = System.Diagnostics.Stopwatch.StartNew();
         var stepTimer = new System.Diagnostics.Stopwatch();
         long poolTicks = 0;
         long terrainTicks = 0;
-        Debug.Log($"[ScenarioLoad] placing {totalHexes} hexes (budget/frame: {PlacementBudget * 1000f:0.#} ms)...");
+        // Diagnostic-only: the per-hex work above (poolTicks/terrainTicks) rarely accounts for
+        // the whole loop's wall-clock time — these isolate the other two things that run per
+        // iteration, so a slow run tells us whether it's Unity waiting on other work between
+        // frames (yieldTicks) or the progress-bar callback itself (progressTicks) that's slow.
+        long yieldTicks = 0;
+        int yieldCount = 0;
+        long progressTicks = 0;
+        Debug.Log($"[ScenarioLoad] placing {totalHexes} hexes (budget/frame: {LoadBudgetMs:0.#} ms)...");
 
         for (int row = 0; row < height; row++)
         {
@@ -427,7 +411,6 @@ public class BoardGenerator : MonoBehaviour
                 hexes[new Vector2Int(row, col)] = hex;
 
                 hexesProcessed++;
-                batchCount++;
 
                 if (hexesProcessed % 1000 == 0)
                 {
@@ -436,25 +419,33 @@ public class BoardGenerator : MonoBehaviour
                         + $"raw Instantiate lifetime {prefabInstantiateTicks / System.TimeSpan.TicksPerMillisecond} ms / {prefabInstantiateCount})");
                 }
 
-                // Progress updates every batch; frames end only when the time
-                // budget is spent. (Yielding every batch capped throughput at
-                // hexesPerBatch per frame no matter how much budget was left.)
-                if (batchCount >= hexesPerBatch)
-                {
-                    OnGenerationProgress?.Invoke(Mathf.Min((float)hexesProcessed / totalHexes, 1.0f), "Configuring Board");
-                    batchCount = 0;
-                }
+                // Progress updates once per actual yield, not per hex: Unity never renders
+                // mid-burst, so updating the progress bar more often than that just overwrites
+                // itself before a frame ever shows it — wasted Slider/TMP-text work for nothing.
                 if (budget.Spent())
                 {
+                    stepTimer.Restart();
                     OnGenerationProgress?.Invoke(Mathf.Min((float)hexesProcessed / totalHexes, 1.0f), "Configuring Board");
-                    budget.Reset();
+                    progressTicks += stepTimer.ElapsedTicks;
+
+                    // Reset AFTER the wait, not before: resetting first counted the frame-wait
+                    // itself against the next burst's budget, so a slow frame (video decode,
+                    // low fps, etc.) could exhaust the whole budget before a single new hex was
+                    // processed — starving throughput down to a handful of hexes per yield.
+                    stepTimer.Restart();
                     yield return null;
+                    yieldTicks += stepTimer.ElapsedTicks;
+                    yieldCount++;
+                    budget.Reset();
                 }
             }
         }
 
         Debug.Log($"[ScenarioLoad] all {hexesProcessed} hexes instantiated in {totalTimer.ElapsedMilliseconds} ms "
-            + $"(pool+setup {poolTicks / System.TimeSpan.TicksPerMillisecond} ms, terrain {terrainTicks / System.TimeSpan.TicksPerMillisecond} ms)");
+            + $"(pool+setup {poolTicks / System.TimeSpan.TicksPerMillisecond} ms, terrain {terrainTicks / System.TimeSpan.TicksPerMillisecond} ms, "
+            + $"progress-callback {progressTicks / System.TimeSpan.TicksPerMillisecond} ms, "
+            + $"yield-wait {yieldTicks / System.TimeSpan.TicksPerMillisecond} ms across {yieldCount} yields "
+            + $"[avg {(yieldCount > 0 ? yieldTicks / System.TimeSpan.TicksPerMillisecond / yieldCount : 0)} ms/yield])");
         OnGenerationProgress?.Invoke(1.0f, "Game ready!");
         onComplete?.Invoke(hexes);
 
@@ -481,7 +472,7 @@ public class BoardGenerator : MonoBehaviour
     {
         // Release pooled children if they belong to the pool, otherwise Destroy().
         // Time-sliced to avoid spikes.
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         // Snapshot because we're modifying the hierarchy
         int count = transform.childCount;
@@ -499,8 +490,8 @@ public class BoardGenerator : MonoBehaviour
 
             if (budget.Spent())
             {
-                budget.Reset();
                 yield return null;
+                budget.Reset();
             }
         }
     }
@@ -529,9 +520,10 @@ public class BoardGenerator : MonoBehaviour
     private IEnumerator InitializeGridCoroutine()
     {
         int totalCells = board.GetHeight() * board.GetWidth();
+        int cellsPerBatchLocal = 1000;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
@@ -542,13 +534,13 @@ public class BoardGenerator : MonoBehaviour
                 cellsProcessed++;
 
                 // Yield by batch OR when time budget is spent
-                if (cellsProcessed % cellsPerBatch == 0 || budget.Spent())
+                if (cellsProcessed % cellsPerBatchLocal == 0 || budget.Spent())
                 {
                     float progress = (float)cellsProcessed / totalCells;
                     float stepProgress = GetStepProgress(progress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Configuring Terrain");
-                    budget.Reset();
                     yield return null;
+                    budget.Reset();
                 }
             }
         }
@@ -563,7 +555,7 @@ public class BoardGenerator : MonoBehaviour
         int cellsPerBatchLocal = 500;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
@@ -581,8 +573,8 @@ public class BoardGenerator : MonoBehaviour
                     float progress = (float)cellsProcessed / totalCells;
                     float stepProgress = GetStepProgress(progress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Grasslands");
-                    budget.Reset();
                     yield return null;
+                    budget.Reset();
                 }
             }
         }
@@ -620,7 +612,7 @@ public class BoardGenerator : MonoBehaviour
         int cellsPerBatchLocal = 300;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         switch (seaBorder)
         {
@@ -650,8 +642,8 @@ public class BoardGenerator : MonoBehaviour
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
                 }
@@ -683,8 +675,8 @@ public class BoardGenerator : MonoBehaviour
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
                 }
@@ -716,8 +708,8 @@ public class BoardGenerator : MonoBehaviour
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
                 }
@@ -749,8 +741,8 @@ public class BoardGenerator : MonoBehaviour
                         {
                             float progress = (float)cellsProcessed / totalCells;
                             OnGenerationProgress?.Invoke(GetStepProgress(progress * 0.4f), "Creating Coastline");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
                 }
@@ -764,7 +756,7 @@ public class BoardGenerator : MonoBehaviour
         int totalFingers = numFingers;
         int fingersProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         switch (seaBorder)
         {
@@ -807,8 +799,8 @@ public class BoardGenerator : MonoBehaviour
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
                             OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
 
@@ -855,8 +847,8 @@ public class BoardGenerator : MonoBehaviour
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
                             OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
 
@@ -903,8 +895,8 @@ public class BoardGenerator : MonoBehaviour
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
                             OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
 
@@ -951,8 +943,8 @@ public class BoardGenerator : MonoBehaviour
                             float fingerProgress = (float)cellsProcessed / cellsPerFinger;
                             float overallProgress = (fingersProcessed + fingerProgress) / totalFingers;
                             OnGenerationProgress?.Invoke(GetStepProgress(0.4f + overallProgress * 0.3f), "Creating Water Features");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
 
@@ -968,7 +960,7 @@ public class BoardGenerator : MonoBehaviour
         int totalIslands = numIslands;
         int islandsProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         for (int i = 0; i < numIslands; i++)
         {
@@ -1040,8 +1032,8 @@ public class BoardGenerator : MonoBehaviour
 
                     if ((iterations % 5 == 0) || budget.Spent())
                     {
-                        budget.Reset();
                         yield return null;
+                        budget.Reset();
                     }
                 }
 
@@ -1062,8 +1054,8 @@ public class BoardGenerator : MonoBehaviour
             // Yield per island if budget spent
             if (budget.Spent())
             {
-                budget.Reset();
                 yield return null;
+                budget.Reset();
             }
         }
     }
@@ -1074,7 +1066,7 @@ public class BoardGenerator : MonoBehaviour
         int totalChains = mountainChainCount;
         int chainsProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         for (int i = 0; i < mountainChainCount; i++)
         {
@@ -1134,8 +1126,8 @@ public class BoardGenerator : MonoBehaviour
                     float overallProgress = (chainsProcessed + chainProgress) / totalChains;
                     float stepProgress = GetStepProgress(overallProgress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Mountains");
-                    budget.Reset();
                     yield return null;
+                    budget.Reset();
                 }
             }
 
@@ -1153,7 +1145,7 @@ public class BoardGenerator : MonoBehaviour
     {
         int lakesCreated = 0;
         int attempts = 0;
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         while (lakesCreated < lakes && attempts < lakes * 20)
         {
@@ -1205,15 +1197,15 @@ public class BoardGenerator : MonoBehaviour
             {
                 float stepProgress = GetStepProgress((float)lakesCreated / Mathf.Max(1, lakes));
                 OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Lakes");
-                budget.Reset();
                 yield return null;
+                budget.Reset();
             }
         }
     }
 
     private IEnumerator GenerateRiversCoroutine()
     {
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         // 1. Collect possible starting cells: land adjacent to mountains
         List<Vector2Int> potentialStarts = new List<Vector2Int>();
@@ -1332,8 +1324,8 @@ public class BoardGenerator : MonoBehaviour
                     float riverProgress = (float)riversCreated / Mathf.Max(1, rivers);
                     float stepProgress = GetStepProgress(riverProgress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Rivers");
-                    budget.Reset();
                     yield return null;
+                    budget.Reset();
                 }
             }
 
@@ -1349,7 +1341,7 @@ public class BoardGenerator : MonoBehaviour
         int height = board.GetHeight();
         int width = board.GetWidth();
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         for (int row = 0; row < height; row++)
         {
@@ -1391,8 +1383,8 @@ public class BoardGenerator : MonoBehaviour
 
                 if (budget.Spent())
                 {
-                    budget.Reset();
                     yield return null;
+                    budget.Reset();
                 }
             }
         }
@@ -1419,7 +1411,7 @@ public class BoardGenerator : MonoBehaviour
         int cellsPerBatchLocal = 300;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
@@ -1450,8 +1442,8 @@ public class BoardGenerator : MonoBehaviour
                     float progress = (float)cellsProcessed / totalCells;
                     float stepProgress = GetStepProgress(progress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Hills");
-                    budget.Reset();
                     yield return null;
+                    budget.Reset();
                 }
             }
         }
@@ -1481,7 +1473,7 @@ public class BoardGenerator : MonoBehaviour
         bool validStart = false;
         int attempts = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         do
         {
@@ -1548,8 +1540,8 @@ public class BoardGenerator : MonoBehaviour
                 float forestProgress = (float)tilesProcessed / forestSize;
                 float stepProgress = GetStepProgress(forestProgress);
                 OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), $"Creating {forestType}");
-                budget.Reset();
                 yield return null;
+                budget.Reset();
             }
         }
     }
@@ -1559,7 +1551,7 @@ public class BoardGenerator : MonoBehaviour
         int totalSwamps = swampCount;
         int swampsProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         for (int i = 0; i < swampCount; i++)
         {
@@ -1647,8 +1639,8 @@ public class BoardGenerator : MonoBehaviour
 
             if (budget.Spent())
             {
-                budget.Reset();
                 yield return null;
+                budget.Reset();
             }
         }
 
@@ -1680,7 +1672,7 @@ public class BoardGenerator : MonoBehaviour
         bool validStart = false;
         int attempts = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         if (isMajor)
         {
@@ -1781,8 +1773,8 @@ public class BoardGenerator : MonoBehaviour
                 float wastelandProgress = (float)cellsProcessed / wastelandSize;
                 float stepProgress = GetStepProgress(wastelandProgress);
                 OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), $"Creating {wastelandType}");
-                budget.Reset();
                 yield return null;
+                budget.Reset();
             }
         }
     }
@@ -1801,7 +1793,7 @@ public class BoardGenerator : MonoBehaviour
             yield break;
         }
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         int snowPlaced = 0;
         int attempts = 0;
@@ -1892,15 +1884,15 @@ public class BoardGenerator : MonoBehaviour
                 {
                     float stepProgress = GetStepProgress((float)snowPlaced / targetSnow);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Snow");
-                    budget.Reset();
                     yield return null;
+                    budget.Reset();
                 }
             }
 
             if (budget.Spent())
             {
-                budget.Reset();
                 yield return null;
+                budget.Reset();
             }
         }
 
@@ -1930,7 +1922,7 @@ public class BoardGenerator : MonoBehaviour
         int cellsPerBatchLocal = 300;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         for (int row = 0; row < board.GetHeight(); row++)
         {
@@ -1983,8 +1975,8 @@ public class BoardGenerator : MonoBehaviour
                     float progress = (float)cellsProcessed / totalCells;
                     float stepProgress = GetStepProgress(progress);
                     OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Shores");
-                    budget.Reset();
                     yield return null;
+                    budget.Reset();
                 }
             }
         }
@@ -2006,7 +1998,7 @@ public class BoardGenerator : MonoBehaviour
         int totalCells;
         int cellsProcessed = 0;
 
-        var budget = new FrameBudget(() => generationFrameBudgetSeconds);
+        var budget = new FrameBudget(() => LoadBudgetSeconds);
 
         switch (desertBorder)
         {
@@ -2037,8 +2029,8 @@ public class BoardGenerator : MonoBehaviour
                             float progress = (float)cellsProcessed / totalCells;
                             float stepProgress = GetStepProgress(progress);
                             OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
                 }
@@ -2071,8 +2063,8 @@ public class BoardGenerator : MonoBehaviour
                             float progress = (float)cellsProcessed / totalCells;
                             float stepProgress = GetStepProgress(progress);
                             OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
                 }
@@ -2105,8 +2097,8 @@ public class BoardGenerator : MonoBehaviour
                             float progress = (float)cellsProcessed / totalCells;
                             float stepProgress = GetStepProgress(progress);
                             OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
                 }
@@ -2139,8 +2131,8 @@ public class BoardGenerator : MonoBehaviour
                             float progress = (float)cellsProcessed / totalCells;
                             float stepProgress = GetStepProgress(progress);
                             OnGenerationProgress?.Invoke(Mathf.Min(stepProgress, (currentStep + 1) / totalSteps), "Creating Desert");
-                            budget.Reset();
                             yield return null;
+                            budget.Reset();
                         }
                     }
                 }

@@ -7,9 +7,14 @@ using UnityEngine.UI;
 public class OnClickTile : MonoBehaviour
 {
     private Board board;
+    private Hex hex;
+    private static Board sharedBoard;
+
     private void Start()
     {
-        board = FindFirstObjectByType<Board>();
+        if (sharedBoard == null) sharedBoard = FindFirstObjectByType<Board>();
+        board = sharedBoard;
+        hex = GetComponent<Hex>();
     }
 
     private void OnMouseDown()
@@ -21,21 +26,14 @@ public class OnClickTile : MonoBehaviour
     {
         if (BoardNavigator.IsNavigationInputLocked()) return;
         if (PopupManager.IsShowing) return;
-        if (board != null)
+        // hex.v2 is this hex's dictionary key directly — no need to scan board.hexes
+        // (4550 entries) by gameObject identity on every single click.
+        if (board != null && hex != null)
         {
             try
             {
-                // Find this hex's Vector2 position in the dictionary
-                foreach (var entry in board.hexes)
-                {
-                    if (entry.Value.gameObject == gameObject)
-                    {
-                        Sounds.Instance?.PlayUiClick();
-                        Vector2Int hexPosition = entry.Key;
-                        board.SelectHex(hexPosition);
-                        return;
-                    }
-                }
+                Sounds.Instance?.PlayUiClick();
+                board.SelectHex(hex.v2);
             }
             catch (Exception e)
             {
