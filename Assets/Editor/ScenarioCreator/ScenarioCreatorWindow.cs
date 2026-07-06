@@ -27,7 +27,6 @@ namespace RetroLOTR.Scenarios.EditorTools
         private TerrainEnum[] terrain;
         private string[] regions;
         private string[] spriteNames; // per-hex chosen tile variation ("" = terrain default)
-        private readonly Dictionary<int, ScenarioLeaderStart> leaderStarts = new();
         private readonly Dictionary<int, ScenarioPC> pcs = new();
         private readonly Dictionary<int, List<ScenarioCharacter>> characters = new();
 
@@ -80,7 +79,6 @@ namespace RetroLOTR.Scenarios.EditorTools
             regions = new string[width * height];
             spriteNames = new string[width * height];
             for (int i = 0; i < terrain.Length; i++) terrain[i] = TerrainEnum.deepWater;
-            leaderStarts.Clear();
             pcs.Clear();
             characters.Clear();
             selectedIndex = -1;
@@ -375,7 +373,7 @@ namespace RetroLOTR.Scenarios.EditorTools
                 EditorGUI.DrawRect(r, tint);
             }
 
-            bool hasLeader = leaderStarts.ContainsKey(idx);
+            bool hasLeader = characters.TryGetValue(idx, out var overlayList) && overlayList.Any(IsLeaderCard);
             bool hasPc = pcs.ContainsKey(idx);
             int charCount = characters.TryGetValue(idx, out var list) ? list.Count : 0;
 
@@ -476,7 +474,6 @@ namespace RetroLOTR.Scenarios.EditorTools
                     terrain[i] = TerrainEnum.deepWater;
                     regions[i] = "";
                     spriteNames[i] = "";
-                    leaderStarts.Remove(i);
                     pcs.Remove(i);
                     characters.Remove(i);
                     if (selectedIndex == i) selectedIndex = -1;
@@ -553,8 +550,6 @@ namespace RetroLOTR.Scenarios.EditorTools
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
 
-            DrawLeaderStartSection(selectedIndex, row, col);
-            EditorGUILayout.Space();
             DrawPcSection(selectedIndex, row, col);
             EditorGUILayout.Space();
             DrawCharactersSection(selectedIndex, row, col);
@@ -563,74 +558,90 @@ namespace RetroLOTR.Scenarios.EditorTools
             EditorGUILayout.EndVertical();
         }
 
-        private void DrawLeaderStartSection(int idx, int row, int col)
+        // A character entry is a leader's own card — not a companion — when it is self-owned
+        // (ownerLeaderName == characterName). Its mere presence at a hex is that leader's starting
+        // position; there is no separate "leader start" record. Blank/blank never counts, so a
+        // freshly-added character defaults to a normal companion.
+        private static bool IsLeaderCard(ScenarioCharacter c) =>
+            c != null && !string.IsNullOrWhiteSpace(c.characterName) &&
+            string.Equals(c.characterName, c.ownerLeaderName, StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsKnownLeaderName(string name) =>
+            !string.IsNullOrWhiteSpace(name) &&
+            (ScenarioCardCatalog.PlayableLeaders.Contains(name, StringComparer.OrdinalIgnoreCase) ||
+             ScenarioCardCatalog.NonPlayableLeaders.Contains(name, StringComparer.OrdinalIgnoreCase));
+
+        // The Name picker offers both ordinary Character cards and every leader name in one list,
+        // so picking "Thranduil" needs no separate mode — it's just a name that happens to match a
+        // known leader.
+        private static List<string> NameAndLeaderPool() =>
+            ScenarioCardCatalog.CharacterCards
+                .Concat(ScenarioCardCatalog.AllLeaders())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(n => n)
+                .ToList();
+
+        // Lets the author pick which variant this self-owned leader card represents. Each card is
+        // its own carousel entry (see NationSpawner/LeaderSelector) — "Base (no variant)" just
+        // means this hex shows as the plain, unflavored entry, not "every variant is offered here."
+        private void DrawLeaderVariantPicker(ScenarioCharacter c)
         {
-            EditorGUILayout.LabelField("Leader Start", EditorStyles.boldLabel);
-            bool has = leaderStarts.TryGetValue(idx, out ScenarioLeaderStart start);
-            bool newHas = EditorGUILayout.Toggle("Is a leader's start", has);
-
-            if (newHas && !has)
-            {
-                start = new ScenarioLeaderStart { row = row, col = col, isPlayable = true };
-                leaderStarts[idx] = start;
-                has = true;
-            }
-            else if (!newHas && has)
-            {
-                leaderStarts.Remove(idx);
-                return;
-            }
-            if (!has) return;
-
-            start.isPlayable = EditorGUILayout.Toggle("Playable leader", start.isPlayable);
-            IReadOnlyList<string> pool = start.isPlayable ? ScenarioCardCatalog.PlayableLeaders : ScenarioCardCatalog.NonPlayableLeaders;
-            SearchableField("Leader", start.leaderName, pool, v =>
-            {
-                start.leaderName = v;
-                start.variantId = ""; // variants are leader-specific; reset when the leader changes
-            });
-
-            // Only playable leaders have variants; non-playable starts carry no variant restriction.
-            if (start.isPlayable && !string.IsNullOrWhiteSpace(start.leaderName))
-                DrawLeaderVariantPicker(start);
-            else
-                start.variantId = "";
-        }
-
-        // Lets the author pin a playable leader start to a single variant. The chosen variantId is
-        // stored on the leader start and later restricts the leader-selection carousel to that
-        // variant. "All variants" (empty id) keeps the pre-v2 behaviour of offering every variant.
-        private void DrawLeaderVariantPicker(ScenarioLeaderStart start)
-        {
-            IReadOnlyList<LeaderVariantConfig> variants = ScenarioCardCatalog.GetPlayableLeaderVariants(start.leaderName);
+            IReadOnlyList<LeaderVariantConfig> variants = ScenarioCardCatalog.GetPlayableLeaderVariants(c.characterName);
             if (variants == null || variants.Count == 0)
             {
-                start.variantId = "";
+                c.variantId = "";
                 EditorGUILayout.HelpBox("This leader has no variants.", MessageType.None);
                 return;
             }
 
             string[] labels = new string[variants.Count + 1];
-            labels[0] = "All variants (any)";
+            labels[0] = "Base (no variant)";
             int selected = 0;
             for (int i = 0; i < variants.Count; i++)
             {
                 LeaderVariantConfig v = variants[i];
                 string display = string.IsNullOrWhiteSpace(v.displayName) ? v.variantId : v.displayName;
                 labels[i + 1] = $"{display}  ({v.variantId})";
-                if (!string.IsNullOrEmpty(start.variantId) &&
-                    string.Equals(v.variantId, start.variantId, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(c.variantId) &&
+                    string.Equals(v.variantId, c.variantId, StringComparison.OrdinalIgnoreCase))
                     selected = i + 1;
             }
 
             int chosen = EditorGUILayout.Popup("Variant", selected, labels);
-            start.variantId = chosen <= 0 ? "" : variants[chosen - 1].variantId;
+            c.variantId = chosen <= 0 ? "" : variants[chosen - 1].variantId;
 
             EditorGUILayout.HelpBox(
                 chosen <= 0
-                    ? "All variants of this leader will be offered in the selection carousel."
-                    : $"Only the '{labels[chosen]}' variant will be offered for {start.leaderName}.",
+                    ? $"This hex shows as the base (unflavored) {c.characterName} entry in the selection carousel."
+                    : $"This hex shows as the '{labels[chosen]}' entry for {c.characterName} in the selection carousel.",
                 MessageType.Info);
+
+            ScenarioCharacter duplicate = FindDuplicateLeaderVariant(c);
+            if (duplicate != null)
+            {
+                string variantLabel = string.IsNullOrEmpty(c.variantId) ? "Base (no variant)" : c.variantId;
+                EditorGUILayout.HelpBox(
+                    $"Another {c.characterName} card at ({duplicate.row},{duplicate.col}) already uses '{variantLabel}' — " +
+                    "the carousel can't tell these two hexes apart. Give one of them a different variant.",
+                    MessageType.Warning);
+            }
+        }
+
+        // Scans every hex's characters for another self-owned card of the same leader claiming the
+        // same variant (including two cards both left at Base) — a real authoring collision, since
+        // the carousel would show two indistinguishable entries pointing at different hexes.
+        private ScenarioCharacter FindDuplicateLeaderVariant(ScenarioCharacter c)
+        {
+            foreach (List<ScenarioCharacter> list in characters.Values)
+            {
+                foreach (ScenarioCharacter other in list)
+                {
+                    if (other == c || !IsLeaderCard(other)) continue;
+                    if (!string.Equals(other.characterName, c.characterName, StringComparison.OrdinalIgnoreCase)) continue;
+                    if (string.Equals(other.variantId ?? "", c.variantId ?? "", StringComparison.OrdinalIgnoreCase)) return other;
+                }
+            }
+            return null;
         }
 
         // Shown next to the Owner field for PCs/Characters owned by a playable leader: lets the
@@ -774,9 +785,37 @@ namespace RetroLOTR.Scenarios.EditorTools
                 if (GUILayout.Button("Remove", GUILayout.Width(70))) removeAt = i;
                 EditorGUILayout.EndHorizontal();
 
-                SearchableField("Name", c.characterName, ScenarioCardCatalog.CharacterCards, v => c.characterName = v, ScenarioCardCatalog.GetCard);
+                // Naming a card after a known leader (playable or non-playable) makes it that
+                // leader's own card by default — no separate flag to set. Change Owner below to a
+                // different leader afterward only if you specifically want a subordinate that
+                // happens to share the name.
+                SearchableField("Name", c.characterName, NameAndLeaderPool(), v =>
+                {
+                    c.characterName = v;
+                    if (IsKnownLeaderName(v)) c.ownerLeaderName = v;
+                    c.variantId = "";
+                }, ScenarioCardCatalog.GetCard);
                 SearchableField("Owner", c.ownerLeaderName, ScenarioCardCatalog.AllLeaders(), v => c.ownerLeaderName = v);
-                DrawOwnerVariantPicker(c.ownerLeaderName, () => c.ownerVariantId, v => c.ownerVariantId = v);
+
+                bool isLeaderCard = IsLeaderCard(c);
+                if (isLeaderCard)
+                {
+                    // Playable vs non-playable is never authored — it's just which JSON the name
+                    // came from — so show it as a read-only badge (gold/silver), not a toggle.
+                    bool isPlayable = ScenarioCardCatalog.PlayableLeaders.Contains(c.characterName, StringComparer.OrdinalIgnoreCase);
+                    Color prevColor = GUI.color;
+                    GUI.color = isPlayable ? new Color(0.85f, 0.7f, 0.2f) : new Color(0.75f, 0.78f, 0.82f);
+                    EditorGUILayout.LabelField(isPlayable ? "★ Playable Leader" : "★ Non-Playable Leader", EditorStyles.boldLabel);
+                    GUI.color = prevColor;
+
+                    // Only playable leaders have variants to restrict the selection carousel to.
+                    if (isPlayable) DrawLeaderVariantPicker(c);
+                    else c.variantId = "";
+                }
+                else
+                {
+                    DrawOwnerVariantPicker(c.ownerLeaderName, () => c.ownerVariantId, v => c.ownerVariantId = v);
+                }
                 DrawCardWithDecks(c.characterName);
 
                 DrawArmyEditor(c);
@@ -885,7 +924,6 @@ namespace RetroLOTR.Scenarios.EditorTools
                 width = width,
                 height = height,
                 terrain = terrain.Select(t => (int)t).ToArray(),
-                leaderStarts = leaderStarts.Values.ToList(),
                 pcs = pcs.Values.ToList(),
                 characters = characters.Values.SelectMany(list => list).ToList()
             };
@@ -915,7 +953,6 @@ namespace RetroLOTR.Scenarios.EditorTools
             for (int i = 0; i < terrain.Length; i++)
                 terrain[i] = (i < data.terrain.Length) ? (TerrainEnum)data.terrain[i] : TerrainEnum.deepWater;
 
-            leaderStarts.Clear();
             pcs.Clear();
             characters.Clear();
             selectedIndex = -1;
@@ -925,9 +962,6 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             foreach (ScenarioSpriteCell cell in data.terrainSprites ?? new List<ScenarioSpriteCell>())
                 if (InBounds(cell.row, cell.col)) spriteNames[Index(cell.row, cell.col)] = cell.spriteName;
-
-            foreach (ScenarioLeaderStart s in data.leaderStarts ?? new List<ScenarioLeaderStart>())
-                if (InBounds(s.row, s.col)) leaderStarts[Index(s.row, s.col)] = s;
 
             foreach (ScenarioPC p in data.pcs ?? new List<ScenarioPC>())
                 if (InBounds(p.row, p.col)) pcs[Index(p.row, p.col)] = p;

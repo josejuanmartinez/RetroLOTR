@@ -16,6 +16,12 @@ public class PlayableLeader : Leader
     private string selectedVariantName;
     private string selectedVariantCharacterName;
 
+    // Set by NationSpawner when this instance was spawned from a scenario's self-owned character
+    // card — its hex *is* an authored starting point (whether or not a specific variant was
+    // named), so Game.RandomizeCompetitorVariants must not override it with a random pick, and
+    // LeaderSelector must show exactly one carousel entry for it instead of the full variant menu.
+    public bool scenarioVariantLocked;
+
     private static string NormalizeCardName(string cardName)
     {
         if (string.IsNullOrWhiteSpace(cardName)) return string.Empty;

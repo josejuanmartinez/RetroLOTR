@@ -13,6 +13,11 @@ public class LeaderSelector : SearcherByName
 {
     private class LeaderSelectionEntry
     {
+        // The exact instance this entry was built from. A scenario can author the same playable
+        // leader at several hexes (one per variant), each its own GameObject/starting point, so
+        // selection must resolve back to *this* instance — never re-look-up by name, which would
+        // pick an arbitrary sibling instead of the one the player actually clicked.
+        public PlayableLeader leaderInstance;
         public string baseLeaderName;
         public string characterName;
         public AlignmentEnum alignment;
@@ -42,7 +47,9 @@ public class LeaderSelector : SearcherByName
     readonly List<LeaderSelectionEntry> selectionEntries = new();
     readonly List<GameObject> carouselItems = new();
 
-    List<string> loadedLeaders = new();
+    // Tracked per-instance (not by name): a scenario can spawn several sibling instances sharing
+    // the same leader name, one per authored variant/hex, and each must get its own carousel entry.
+    readonly HashSet<PlayableLeader> loadedLeaders = new();
     bool loadedFirst = false;
     bool selectionScreenShown = false;
     bool selectionScreenQueued = false;
@@ -101,11 +108,10 @@ public class LeaderSelector : SearcherByName
                 for(int i=0; i<playableLeaders.Count; i++)
                 {
                     PlayableLeader playableLeader = playableLeaders[i];
-                    string leaderName = playableLeader.characterName;
-                    if (loadedLeaders.Contains(leaderName)) continue;
-                    loadedLeaders.Add(leaderName);
+                    if (loadedLeaders.Contains(playableLeader)) continue;
+                    loadedLeaders.Add(playableLeader);
 
-                    if (!IsLeaderAllowedForActiveSelection(leaderName)) continue;
+                    if (!IsLeaderAllowedForActiveSelection(playableLeader.characterName)) continue;
 
                     AddLeaderOptions(playableLeader);
 
@@ -348,77 +354,55 @@ public class LeaderSelector : SearcherByName
             .Find(x => x.characterName.ToLower() == playableLeader.characterName.ToLower());
         if (biome == null) return;
 
-        // When the active scenario pins this leader to specific variant(s), the carousel offers
-        // only those — and drops the uncommitted base entry. Otherwise (procedural play or a
-        // pre-v2 scenario with no variantId) it offers the base leader plus every variant.
-        HashSet<string> allowedVariants = GetScenarioVariantRestriction(playableLeader.characterName);
-        bool restricted = allowedVariants != null && allowedVariants.Count > 0;
+        // A scenario leader's hex *is* one specific starting option — a self-owned character card
+        // with (if playable) a variant baked in at spawn (see NationSpawner). Siblings sharing its
+        // name each got their own instance/hex, so this offers exactly one entry per instance,
+        // never the full variant menu. Procedural/campaign leaders aren't hex-bound at all, so they
+        // keep the old behaviour: one base entry plus every variant as free choices.
+        if (playableLeader.scenarioVariantLocked)
+        {
+            string variantName = playableLeader.GetSelectedVariantName();
+            LeaderVariantConfig variant = biome.variants?.Find(v => v != null && string.Equals(v.displayName, variantName, StringComparison.OrdinalIgnoreCase));
+            string displayName = BuildLeaderDisplayName(playableLeader, biome.alignment, variantName);
+            string description = NormalizeLeaderDescription(playableLeader.GetSelectedLeaderDescription());
+            string assetName = variant != null ? ResolveVariantAssetName(playableLeader.characterName, variant.displayName, variant.variantId) : null;
+            AddSelectionEntry(playableLeader, biome.alignment, displayName, description, string.Empty,
+                playableLeader.GetSelectedDeckIdentity(), playableLeader.GetSelectedSubdeckId(), variantName, assetName, variant?.characterName);
+            return;
+        }
 
         string baseDescription = NormalizeLeaderDescription(biome.description);
-        if (!restricted)
-            AddSelectionEntry(playableLeader, biome.alignment, BuildLeaderDisplayName(playableLeader, biome.alignment), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
+        AddSelectionEntry(playableLeader, biome.alignment, BuildLeaderDisplayName(playableLeader, biome.alignment), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
 
-        int added = 0;
         foreach (LeaderVariantConfig variant in biome.variants)
         {
-            if (restricted && !allowedVariants.Contains(variant.variantId ?? string.Empty)) continue;
-
             string variantName = GetVariantName(playableLeader.characterName, variant.displayName, variant.variantId);
             string displayName = BuildLeaderDisplayName(playableLeader, biome.alignment, variantName);
             string assetName = ResolveVariantAssetName(playableLeader.characterName, variant.displayName, variant.variantId);
             string variantDescription = NormalizeLeaderDescription(variant.description);
             string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? biome.subdeckId : variant.subdeckId;
             AddSelectionEntry(playableLeader, biome.alignment, displayName, baseDescription, variantDescription, variant.deckIdentity, subdeckId, variantName, assetName, variant.characterName);
-            added++;
         }
-
-        // Safety net: if the scenario's configured variant id(s) matched no known variant, fall
-        // back to the base entry so the leader is never left with no selectable card.
-        if (restricted && added == 0)
-            AddSelectionEntry(playableLeader, biome.alignment, BuildLeaderDisplayName(playableLeader, biome.alignment), baseDescription, string.Empty, biome.deckIdentity, biome.subdeckId);
     }
 
     // Campaign play (no scenario chosen) offers every playable leader found in the scene. An
-    // authored scenario restricts the carousel to leaders it explicitly placed via a playable
-    // leader-start hex — NationSpawner already only spawns those, but this guards the carousel
-    // directly against that invariant instead of relying solely on what happened to get instantiated.
+    // authored scenario restricts the carousel to leaders it placed a self-owned character card
+    // for — NationSpawner already only spawns those, but this guards the carousel directly against
+    // that invariant instead of relying solely on what happened to get instantiated.
     bool IsLeaderAllowedForActiveSelection(string leaderName)
     {
         if (!GameConfig.HasScenario) return true;
 
         ScenarioData scenario = FindFirstObjectByType<Board>()?.ActiveScenario;
-        if (scenario?.leaderStarts == null) return true;
+        if (scenario?.characters == null) return true;
 
-        foreach (RetroLOTR.Scenarios.ScenarioLeaderStart start in scenario.leaderStarts)
+        foreach (ScenarioCharacter sc in scenario.characters)
         {
-            if (start == null || !start.isPlayable) continue;
-            if (string.Equals(start.leaderName, leaderName, StringComparison.OrdinalIgnoreCase)) return true;
+            if (sc == null || !string.Equals(sc.characterName, sc.ownerLeaderName, StringComparison.OrdinalIgnoreCase)) continue;
+            if (string.Equals(sc.characterName, leaderName, StringComparison.OrdinalIgnoreCase)) return true;
         }
 
         return false;
-    }
-
-    // The set of variant ids the active scenario allows for a given playable leader, gathered from
-    // its leader-start(s). Returns null when there is no scenario or no restriction (offer all).
-    HashSet<string> GetScenarioVariantRestriction(string leaderName)
-    {
-        if (string.IsNullOrWhiteSpace(leaderName)) return null;
-
-        ScenarioData scenario = FindFirstObjectByType<Board>()?.ActiveScenario;
-        if (scenario?.leaderStarts == null) return null;
-
-        HashSet<string> allowed = null;
-        foreach (RetroLOTR.Scenarios.ScenarioLeaderStart start in scenario.leaderStarts)
-        {
-            if (start == null || !start.isPlayable) continue;
-            if (string.IsNullOrWhiteSpace(start.variantId)) continue;
-            if (!string.Equals(start.leaderName, leaderName, StringComparison.OrdinalIgnoreCase)) continue;
-
-            allowed ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            allowed.Add(start.variantId.Trim());
-        }
-
-        return allowed;
     }
 
     string BuildLeaderDisplayName(PlayableLeader playableLeader, AlignmentEnum alignment, string variantName = null)
@@ -506,6 +490,7 @@ public class LeaderSelector : SearcherByName
 
         LeaderSelectionEntry selectionEntry = new()
         {
+            leaderInstance = playableLeader,
             baseLeaderName = playableLeader.characterName,
             characterName = string.IsNullOrWhiteSpace(variantCharacterName) ? playableLeader.characterName : variantCharacterName,
             alignment = alignment,
@@ -593,8 +578,10 @@ public class LeaderSelector : SearcherByName
             string leaderText = BuildLeaderText(selection);
             ApplyLeaderTexts(selection);
 
-            PlayableLeader player = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None).ToList()
-                .Find(x => x.characterName.ToLower() == selection.baseLeaderName.ToLower());
+            // Resolve to the exact instance this entry was built from — never re-look-up by name,
+            // which would pick an arbitrary sibling when a scenario spawns several instances of the
+            // same leader (one per variant/hex).
+            PlayableLeader player = selection.leaderInstance;
             if (player != null)
             {
                 player.SetDeckSelection(selection.subdeckId, selection.deckIdentity, leaderText, selection.variantName, selection.characterName);
