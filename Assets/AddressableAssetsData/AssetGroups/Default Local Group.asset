@@ -382,7 +382,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0379c2f7ded22b2428bf66b591774fb1
-    m_Address: Assets/Art/Hexes/PCs/Tol Buruth.png
+    m_Address: Assets/Art/Hexes/Tiles/Unused/Tol Buruth.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -952,10 +952,9 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0ad67aeec5829cd43b612d71d7dfa715
-    m_Address: Assets/Art/Hexes/Tiles/Unused/darkServants_11.png
+    m_Address: Assets/Art/Hexes/PCs/Barad-Ungol.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0b62a67145b9a0e4eaa74d2fcfea6e16
     m_Address: Assets/Art/Hexes/Roads/hexRoad-111111-02.png
@@ -1073,6 +1072,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0d02a9c6e87b1c946a4f9a898349af66
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/hexPlainsVillageThatched03.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d0f4edb1009e754a95f7146c8616270
+    m_Address: Assets/Art/Hexes/PCs/Bywater.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1350,7 +1355,8 @@ MonoBehaviour:
   - m_GUID: 0fc5cdcf10a3197449ab7f18b1bf1e47
     m_Address: Assets/Art/Hexes/PCs/The Trollshaws.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0fc6d59e6031f1442af2682e958c0c93
     m_Address: Assets/Art/Characters/AnimationVideos/Maia_spritesheet.png
@@ -1822,6 +1828,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 15c340c43518b6349800eed836599b24
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/Raider Hold.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15ca21aa10954df4fb241ac5b5432704
+    m_Address: Assets/Art/Hexes/Tiles/Unused/darkServants_22.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5043,10 +5055,9 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3a7d25626ccbf284db234d07fd4f443b
-    m_Address: Assets/Art/Hexes/PCs/Barad Ungol.png
+    m_Address: Assets/Art/Hexes/PCs/Lag-vrasfotak.png
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3a8668307a2df7c4ca4b3297b13d43d7
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexPlainsCastle00.png
@@ -6217,6 +6228,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47c8c507e414adb4f89de1e14152d4aa
+    m_Address: Assets/Art/Hexes/PCs/Sarn Ford.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 47d87ce6ab8189a438043aaf823ca844
     m_Address: Assets/Art/Fonts/Spritesheets/common_spritesheet.asset
     m_ReadOnly: 0
@@ -6435,6 +6452,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4a2f357587a2f414eb57f083b21755ab
     m_Address: Assets/Art/Cards/Actions/Events/BountyfulSeason.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a512be26d409a149a5ed3ae03a00b25
+    m_Address: Assets/Art/Hexes/PCs/The Lockholes.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8785,7 +8808,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 65968d480d8632244ac472e6af48ed1b
-    m_Address: Assets/Art/Hexes/PCs/TolBuruth.png
+    m_Address: Assets/Art/Hexes/PCs/Tol Buruth.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9817,7 +9840,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 70a3cb23f28cd4f42a653a61b4ca019c
-    m_Address: Assets/Art/Hexes/Tiles/grass_08.png
+    m_Address: Assets/Art/Hexes/Tiles/Unused/grass_08.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -14489,6 +14512,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a29e334bb0753f948885ab3aa22bdde8
+    m_Address: Assets/Art/Hexes/Tiles/Unused/darkServants_21.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a2aaa35559367f740ae16c246b4c17e0
     m_Address: Assets/Art/Cards/Armies/Southrons.jpg
     m_ReadOnly: 0
@@ -15288,7 +15317,8 @@ MonoBehaviour:
   - m_GUID: aaaa7be80b28da74085a0fb6cd6d4ad0
     m_Address: Assets/Art/Hexes/PCs/Lag-Scara.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: aabbccddeeff00112233445566778891
     m_Address: Assets/Art/Characters/Animations/alatar_idle.anim
@@ -15417,7 +15447,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ab93a01c6e799d9489d0f510b1ae83e6
-    m_Address: Assets/Art/Hexes/PCs/Lag Vrasfotak.png
+    m_Address: Assets/Art/Hexes/Tiles/Unused/Lag Vrasfotak.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -15860,12 +15890,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b0daf078e7c79594aa0bafbc32ca8117
-    m_Address: Assets/Art/Hexes/Tiles/Unused/006 2.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b0e7e0daade8a7346ac99ff7b767197e
     m_Address: Assets/Art/Cards/Lands/Angmar.jpg
     m_ReadOnly: 0
@@ -16076,12 +16100,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b337637d47262e44ab607b4fcfdd6942
-    m_Address: Assets/Art/Hexes/PCs/Sarn Ford.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b34a17465d3f40d4a88123969b6b34d5
     m_Address: Assets/Art/Hexes/Tiles/Unused/freePeople_16.png
     m_ReadOnly: 0
@@ -16167,7 +16185,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b44a5031a229b2b4c9b62496c05ca6f5
-    m_Address: Assets/Art/Hexes/PCs/Raider Hold.png
+    m_Address: Assets/Art/Hexes/Tiles/Unused/Raider Hold.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -16556,6 +16574,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b921c63d244c3f349bf089325ae86d22
+    m_Address: Assets/Art/Hexes/Tiles/grass_20.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b92eca60651363341bbfa297c85ba60b
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/033.png
     m_ReadOnly: 0
@@ -16617,7 +16641,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b98f32be34897e749b70de6c9330c54d
-    m_Address: Assets/Art/Hexes/Tiles/grass_09.png
+    m_Address: Assets/Art/Hexes/Tiles/Unused/grass_09.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -16835,7 +16859,8 @@ MonoBehaviour:
   - m_GUID: bc6cd4b3bb575be458dee18fced79715
     m_Address: Assets/Art/Hexes/PCs/Urlurtsu Nurn.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bc713b0a68f179f4c99beaffd9e9e2ce
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_48.png
@@ -18132,6 +18157,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cc6d2c2210814c96bcb511b5efb36b67
+    m_Address: Assets/Art/Cards/Characters/Golfimbul.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cc862c3572ec3c64db715bc346a93f28
     m_Address: Assets/Art/Cards/Actions/Events/ReclaimingErebor.png
     m_ReadOnly: 0
@@ -18733,9 +18764,10 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d303d4deb01912d46883589aa9b7db16
-    m_Address: Assets/Art/Hexes/PCs/Thranduil's Halls.png
+    m_Address: Assets/Art/Hexes/PCs/Thranduils Halls.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d30cc0f4157ae9040b868307a83b8004
     m_Address: Assets/Art/Hexes/Tiles/hills_08.png
@@ -19267,6 +19299,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d9b1a974e1facaf4799ba3616bc32103
     m_Address: Assets/Art/Cards/PC/NinInEilph.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d9bc62b8410b17845ae81acc269cbdb3
+    m_Address: Assets/Art/Hexes/Tiles/Unused/067 1.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -22597,6 +22635,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fbc7d18e77909f64485ae9e790f17d99
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/hexPlainsVillageWood01.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fbc8910009f4fe24aa7c631ee3f7d1cf
+    m_Address: Assets/Art/Hexes/Tiles/Unused/The Trollshaws.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

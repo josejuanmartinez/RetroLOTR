@@ -90,10 +90,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5d8ca7660d45849bce143756b60856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellsPerBatch: 200
-  hexesPerBatch: 200
-  generationFrameBudgetSeconds: 0.25
-  maximumGenerationBuget: 2000
   board: {fileID: 577319869002409797}
   minIslands: 1
   maxIslands: 5
@@ -114,6 +110,9 @@ MonoBehaviour:
   snowPercentage: 0
   rivers: 2
   lakes: 2
+  loadBudgetWhileVideoMs: 30
+  loadBudgetAfterVideoMs: 200
+  hexCloneBatchSize: 1024
 --- !u!114 &2391223479585344954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -445,6 +444,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 712cfc7d913a4914e8b906669cf88ccb, type: 3}
   - {fileID: 21300000, guid: cba626f98d0b8a841970f7bbcb6a19fd, type: 3}
   - {fileID: 21300000, guid: 984f3f26540e890468169a59d7aa232c, type: 3}
+  - {fileID: 21300000, guid: b921c63d244c3f349bf089325ae86d22, type: 3}
   hillsVariations:
   - {fileID: 21300000, guid: 623d0b40eaa091745907a8a5078c6d79, type: 3}
   - {fileID: 21300000, guid: a59a1db721229604d8e95b31f304843a, type: 3}
@@ -536,6 +536,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 862b3e31f314642478c605844842b552, type: 3}
   shallowWaterVariations:
   - {fileID: 21300000, guid: 7267d7d78888cb1479c13bbd1161ad38, type: 3}
+  - {fileID: 21300000, guid: 7267d7d78888cb1479c13bbd1161ad38, type: 3}
   shoreVariations:
   - {fileID: 21300000, guid: 2a0fc9247fdae3449b19396aa01ad58b, type: 3}
   - {fileID: 21300000, guid: 8f39f00b7eb3d5a4cb918b1761aec388, type: 3}
@@ -549,6 +550,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 2a0fc9247fdae3449b19396aa01ad58b, type: 3}
   - {fileID: 21300000, guid: 2a0fc9247fdae3449b19396aa01ad58b, type: 3}
   - {fileID: 21300000, guid: 47f2eec4cec80bb438c7339b6b034877, type: 3}
+  - {fileID: 21300000, guid: 0c99ea2c7f2a1524cbffb43289eae55b, type: 3}
   swampVariations:
   - {fileID: 21300000, guid: 928d9e8de532ee34f858f1377ae65c0b, type: 3}
   - {fileID: 21300000, guid: f6b3b2d5fb93a384382320a87de0da37, type: 3}
@@ -627,6 +629,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 86b99e468c7a8e6409d343f298109cc9, type: 3}
   - {fileID: 21300000, guid: b9e4f906000bab241905ef4ca78c1bf2, type: 3}
   - {fileID: 21300000, guid: 08ef4fb4b2995204da701ee9f8a8efb9, type: 3}
+  - {fileID: 21300000, guid: 6015daea784fb184688f2043e3028643, type: 3}
   snowVariations:
   - {fileID: 21300000, guid: 7315fd8237b64fd45a50f8ceea5ce858, type: 3}
   - {fileID: 21300000, guid: aee69db4bb9ae5945bd45140a295802d, type: 3}

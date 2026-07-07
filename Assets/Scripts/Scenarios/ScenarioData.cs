@@ -29,8 +29,13 @@ namespace RetroLOTR.Scenarios
         // gained variantId (moved from ScenarioLeaderStart) for the playable-variant-carousel
         // restriction. Pre-v5 scenarios must be migrated (see ScenarioMigration) since there is no
         // in-place default for a removed list.
+        // v6 added ScenarioPC/ScenarioCharacter.fallbackOwnerName: an explicit author choice for
+        // what happens to a variant-locked PC/character when its owner's variant isn't the one
+        // actually chosen — become independent under a named Non-Playable Leader, or (empty,
+        // the default) be destroyed. Replaces the old implicit "NPL-identity characters revert to
+        // independent, everything else is destroyed" rule.
         // Older scenarios deserialize with the new fields at their defaults, so they keep working.
-        public const int CurrentVersion = 5;
+        public const int CurrentVersion = 6;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
@@ -93,6 +98,11 @@ namespace RetroLOTR.Scenarios
         /// chosen; otherwise the PC is removed entirely if a different variant (or the base) ends
         /// up in play. See NationSpawner.ReconcileScenarioVariantOwnership.</summary>
         public string ownerVariantId = "";
+        /// <summary>Only consulted when ownerVariantId mismatches. Empty = destroy the PC
+        /// (the default). Otherwise the name of a Non-Playable Leader to reassign as owner instead
+        /// (spawned lazily at this PC's hex if not already present). See
+        /// NationSpawner.ReconcileScenarioVariantOwnership.</summary>
+        public string fallbackOwnerName = "";
         public int citySize = (int)PCSizeEnum.village;
         public int fortSize = (int)FortSizeEnum.NONE;
         public bool hasPort;
@@ -126,6 +136,11 @@ namespace RetroLOTR.Scenarios
         /// <summary>Same variant-lock as ScenarioPC.ownerVariantId. On mismatch the fallback
         /// depends on what characterName represents — see NationSpawner.ReconcileScenarioVariantOwnership.</summary>
         public string ownerVariantId = "";
+        /// <summary>Only consulted when ownerVariantId mismatches. Empty = destroy the character
+        /// (the default). Otherwise the name of a Non-Playable Leader to reassign as owner instead
+        /// (spawned lazily at this character's hex if not already present). See
+        /// NationSpawner.ReconcileScenarioVariantOwnership.</summary>
+        public string fallbackOwnerName = "";
         /// <summary>Self-owned playable-leader cards only: restricts the leader-selection carousel
         /// to a single variant (matched against <c>LeaderVariantConfig.variantId</c> in
         /// PlayableLeaderBiomes.json). Empty = no restriction (every variant offered).</summary>
