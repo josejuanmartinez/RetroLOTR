@@ -50,6 +50,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private float cellH = 34f;
         private Vector2 gridScroll;
         private Vector2 inspectorScroll;
+        private const float ZoomWheelSensitivity = 0.05f;
 
         // Spacing as a fraction of the drawn tile size, so the opaque hex art of pointy-top tiles
         // (odd rows offset in X) interlocks edge-to-edge. Footprint ~773px wide on a 974x1314 canvas
@@ -308,8 +309,6 @@ namespace RetroLOTR.Scenarios.EditorTools
         // -------------------------------------------------------------------------------------
         private void DrawGrid()
         {
-            gridScroll = EditorGUILayout.BeginScrollView(gridScroll, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-
             float drawW = cellW * zoom;
             float drawH = cellH * zoom;
             float stepX = drawW * PackX;   // spacing < tile size, so adjacent opaque hexes touch
@@ -317,7 +316,23 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             float contentW = width * stepX + stepX * 0.5f + (drawW - stepX) + 8;
             float contentH = height * stepY + (drawH - stepY) + 8;
-            Rect content = GUILayoutUtility.GetRect(contentW, contentH);
+
+            // Reserve the viewport explicitly (GUI.BeginScrollView instead of the EditorGUILayout
+            // wrapper) so its rect is known this same event — a Ctrl+wheel check needs it before
+            // the scroll view's own wheel handling treats the event as a plain scroll, and
+            // GUILayoutUtility.GetLastRect() right after BeginScrollView isn't legal (new group).
+            Rect viewport = GUILayoutUtility.GetRect(0, 0, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+
+            if (Event.current.type == EventType.ScrollWheel && Event.current.control &&
+                viewport.Contains(Event.current.mousePosition))
+            {
+                zoom = Mathf.Clamp(zoom - Event.current.delta.y * ZoomWheelSensitivity, 0.4f, 5f);
+                Event.current.Use();
+                Repaint();
+            }
+
+            Rect content = new Rect(0, 0, contentW, contentH);
+            gridScroll = GUI.BeginScrollView(viewport, gridScroll, content);
 
             HandleGridMouse(content, stepX, stepY);
 
@@ -334,7 +349,7 @@ namespace RetroLOTR.Scenarios.EditorTools
                         DrawCellOverlay(TileRect(content, row, col, drawW, drawH, stepX, stepY), row, col);
             }
 
-            EditorGUILayout.EndScrollView();
+            GUI.EndScrollView();
         }
 
         private Rect TileRect(Rect content, int row, int col, float drawW, float drawH, float stepX, float stepY)
@@ -429,19 +444,24 @@ namespace RetroLOTR.Scenarios.EditorTools
         private void HandleGridMouse(Rect content, float cellW, float cellH)
         {
             Event e = Event.current;
-            if (e.type != EventType.MouseDown && e.type != EventType.MouseDrag) return;
-            if ((e.button != 0 && e.button != 1) || !content.Contains(e.mousePosition)) return;
 
-            if (!PickHex(content, e.mousePosition, cellW, cellH, out int row, out int col)) return;
-
-            // Right-click erases a hex back to the empty default, regardless of the active tool.
-            if (e.button == 1)
+            // Right mouse button drags to pan the view — it never edits or erases hexes.
+            if (e.button == 1 && content.Contains(e.mousePosition) &&
+                (e.type == EventType.MouseDown || e.type == EventType.MouseDrag))
             {
-                EraseHex(row, col);
+                if (e.type == EventType.MouseDrag)
+                {
+                    gridScroll -= e.delta;
+                    Repaint();
+                }
                 e.Use();
-                Repaint();
                 return;
             }
+
+            if (e.type != EventType.MouseDown && e.type != EventType.MouseDrag) return;
+            if (e.button != 0 || !content.Contains(e.mousePosition)) return;
+
+            if (!PickHex(content, e.mousePosition, cellW, cellH, out int row, out int col)) return;
 
             if (tool == Tool.Paint || tool == Tool.Region)
             {
@@ -454,30 +474,6 @@ namespace RetroLOTR.Scenarios.EditorTools
                 selectedIndex = Index(row, col);
                 e.Use();
                 Repaint();
-            }
-        }
-
-        // Resets a hex to the empty default: deep water terrain, no region, no tile variation,
-        // and clears any leader start, PC or characters placed on it.
-        private void EraseHex(int row, int col)
-        {
-            int idx = Index(row, col);
-            int radius = brushSize - 1;
-            Vector3Int center = OffsetToCube(row, col);
-
-            for (int r = 0; r < height; r++)
-            {
-                for (int c = 0; c < width; c++)
-                {
-                    if (CubeDistance(OffsetToCube(r, c), center) > radius) continue;
-                    int i = Index(r, c);
-                    terrain[i] = TerrainEnum.deepWater;
-                    regions[i] = "";
-                    spriteNames[i] = "";
-                    pcs.Remove(i);
-                    characters.Remove(i);
-                    if (selectedIndex == i) selectedIndex = -1;
-                }
             }
         }
 
@@ -566,6 +562,23 @@ namespace RetroLOTR.Scenarios.EditorTools
             c != null && !string.IsNullOrWhiteSpace(c.characterName) &&
             string.Equals(c.characterName, c.ownerLeaderName, StringComparison.OrdinalIgnoreCase);
 
+        // Every characterName already placed on the map, anywhere, other than 'excluding' itself —
+        // used to star already-spawned names in the Name picker so the author can spot accidental
+        // duplicates (e.g. re-placing the same unique leader/companion at a second hex).
+        private HashSet<string> SpawnedCharacterNames(ScenarioCharacter excluding)
+        {
+            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (List<ScenarioCharacter> list in characters.Values)
+            {
+                foreach (ScenarioCharacter other in list)
+                {
+                    if (other == excluding || other == null || string.IsNullOrWhiteSpace(other.characterName)) continue;
+                    names.Add(other.characterName);
+                }
+            }
+            return names;
+        }
+
         private static bool IsKnownLeaderName(string name) =>
             !string.IsNullOrWhiteSpace(name) &&
             (ScenarioCardCatalog.PlayableLeaders.Contains(name, StringComparer.OrdinalIgnoreCase) ||
@@ -649,12 +662,14 @@ namespace RetroLOTR.Scenarios.EditorTools
         // owned regardless of which variant (or the base leader) ends up chosen at the
         // leader-selection screen. See NationSpawner.ReconcileScenarioVariantOwnership for the
         // runtime rule this drives.
-        private void DrawOwnerVariantPicker(string ownerLeaderName, Func<string> getVariantId, Action<string> setVariantId)
+        private void DrawOwnerVariantPicker(string ownerLeaderName, Func<string> getVariantId, Action<string> setVariantId,
+            Func<string> getFallbackOwnerName, Action<string> setFallbackOwnerName)
         {
             if (string.IsNullOrWhiteSpace(ownerLeaderName) ||
                 !ScenarioCardCatalog.PlayableLeaders.Contains(ownerLeaderName, StringComparer.OrdinalIgnoreCase))
             {
                 setVariantId("");
+                setFallbackOwnerName("");
                 return;
             }
 
@@ -662,6 +677,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             if (variants == null || variants.Count == 0)
             {
                 setVariantId("");
+                setFallbackOwnerName("");
                 return;
             }
 
@@ -682,10 +698,24 @@ namespace RetroLOTR.Scenarios.EditorTools
             int chosen = EditorGUILayout.Popup("Owner Variant", selected, labels);
             setVariantId(chosen <= 0 ? "" : variants[chosen - 1].variantId);
 
+            if (chosen <= 0)
+            {
+                setFallbackOwnerName("");
+                EditorGUILayout.HelpBox(
+                    $"Stays owned by {ownerLeaderName} whichever variant (or the base leader) is chosen.",
+                    MessageType.Info);
+                return;
+            }
+
+            // "(none)" (SearchableField/ScenarioSearchPopup's built-in clear option) means
+            // fallbackOwnerName stays empty, i.e. destroy on mismatch — no separate mode toggle
+            // needed, so there's nothing for a stray repaint to reset before a name is picked.
+            string currentFallback = getFallbackOwnerName();
+            SearchableField("If not selected", currentFallback, ScenarioCardCatalog.NonPlayableLeaders, setFallbackOwnerName);
             EditorGUILayout.HelpBox(
-                chosen <= 0
-                    ? $"Stays owned by {ownerLeaderName} whichever variant (or the base leader) is chosen."
-                    : $"Only owned by {ownerLeaderName} if '{labels[chosen]}' is the variant actually chosen — otherwise this placement is dropped when the game starts (a Non-Playable Leader character instead becomes independent).",
+                string.IsNullOrWhiteSpace(currentFallback)
+                    ? $"Only owned by {ownerLeaderName} if '{labels[chosen]}' is the variant actually chosen — otherwise this placement is destroyed when the game starts. Pick a Non-Playable Leader above to reassign it instead."
+                    : $"Only owned by {ownerLeaderName} if '{labels[chosen]}' is chosen — otherwise reassigned to {currentFallback} instead of being destroyed.",
                 MessageType.Info);
         }
 
@@ -716,7 +746,8 @@ namespace RetroLOTR.Scenarios.EditorTools
                 if (pcCard != null) pc.isUnderground = pcCard.isUnderground;
             }, ScenarioCardCatalog.GetCard);
             SearchableField("Owner", pc.ownerLeaderName, ScenarioCardCatalog.AllLeaders(), v => pc.ownerLeaderName = v);
-            DrawOwnerVariantPicker(pc.ownerLeaderName, () => pc.ownerVariantId, v => pc.ownerVariantId = v);
+            DrawOwnerVariantPicker(pc.ownerLeaderName, () => pc.ownerVariantId, v => pc.ownerVariantId = v,
+                () => pc.fallbackOwnerName, v => pc.fallbackOwnerName = v);
             pc.citySize = (int)(PCSizeEnum)EditorGUILayout.EnumPopup("Size", (PCSizeEnum)pc.citySize);
             pc.fortSize = (int)(FortSizeEnum)EditorGUILayout.EnumPopup("Fort", (FortSizeEnum)pc.fortSize);
             pc.hasPort = EditorGUILayout.Toggle("Has port", pc.hasPort);
@@ -794,7 +825,7 @@ namespace RetroLOTR.Scenarios.EditorTools
                     c.characterName = v;
                     if (IsKnownLeaderName(v)) c.ownerLeaderName = v;
                     c.variantId = "";
-                }, ScenarioCardCatalog.GetCard);
+                }, ScenarioCardCatalog.GetCard, SpawnedCharacterNames(c));
                 SearchableField("Owner", c.ownerLeaderName, ScenarioCardCatalog.AllLeaders(), v => c.ownerLeaderName = v);
 
                 bool isLeaderCard = IsLeaderCard(c);
@@ -814,7 +845,8 @@ namespace RetroLOTR.Scenarios.EditorTools
                 }
                 else
                 {
-                    DrawOwnerVariantPicker(c.ownerLeaderName, () => c.ownerVariantId, v => c.ownerVariantId = v);
+                    DrawOwnerVariantPicker(c.ownerLeaderName, () => c.ownerVariantId, v => c.ownerVariantId = v,
+                        () => c.fallbackOwnerName, v => c.fallbackOwnerName = v);
                 }
                 DrawCardWithDecks(c.characterName);
 
@@ -890,7 +922,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         // ScenarioSearchPopup (with a search field + card preview); the choice is applied via the
         // callback, because the popup resolves after the click rather than inline.
         private void SearchableField(string label, string current, IReadOnlyList<string> pool, Action<string> onSelected,
-            Func<string, CardData> cardResolver = null)
+            Func<string, CardData> cardResolver = null, IReadOnlyCollection<string> markedItems = null)
         {
             EditorGUILayout.BeginHorizontal();
             if (!string.IsNullOrEmpty(label)) EditorGUILayout.PrefixLabel(label);
@@ -906,7 +938,7 @@ namespace RetroLOTR.Scenarios.EditorTools
                 {
                     onSelected?.Invoke(chosen);
                     Repaint();
-                }, cardResolver);
+                }, cardResolver, markedItems);
                 PopupWindow.Show(r, popup);
             }
 

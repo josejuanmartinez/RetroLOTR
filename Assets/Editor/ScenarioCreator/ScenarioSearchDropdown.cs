@@ -20,6 +20,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private readonly Action<string> onSelected;
         private readonly Func<string, CardData> cardResolver;
         private readonly bool showPreview;
+        private readonly HashSet<string> markedItems;
 
         private string search = string.Empty;
         private Vector2 scroll;
@@ -31,13 +32,17 @@ namespace RetroLOTR.Scenarios.EditorTools
         private const float ListWidth = 240f;
         private const float PreviewWidth = 230f;
 
-        public ScenarioSearchPopup(IReadOnlyList<string> items, Action<string> onSelected, Func<string, CardData> cardResolver = null)
+        // markedItems: names to flag with a star (e.g. characters already placed elsewhere in the
+        // scenario) — purely informational, doesn't affect selection or filtering.
+        public ScenarioSearchPopup(IReadOnlyList<string> items, Action<string> onSelected, Func<string, CardData> cardResolver = null,
+            IReadOnlyCollection<string> markedItems = null)
         {
             this.items = new List<string> { NoneLabel };
             if (items != null) this.items.AddRange(items.Where(i => !string.IsNullOrWhiteSpace(i)));
             this.onSelected = onSelected;
             this.cardResolver = cardResolver;
             showPreview = cardResolver != null;
+            this.markedItems = new HashSet<string>(markedItems ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
         }
 
         public override Vector2 GetWindowSize()
@@ -84,7 +89,9 @@ namespace RetroLOTR.Scenarios.EditorTools
             scroll = GUILayout.BeginScrollView(scroll);
             foreach (string item in filtered)
             {
-                Rect row = GUILayoutUtility.GetRect(new GUIContent(item), EditorStyles.label, GUILayout.Height(RowHeight), GUILayout.ExpandWidth(true));
+                bool marked = item != NoneLabel && markedItems.Contains(item);
+                string label = marked ? "★ " + item : item;
+                Rect row = GUILayoutUtility.GetRect(new GUIContent(label), EditorStyles.label, GUILayout.Height(RowHeight), GUILayout.ExpandWidth(true));
 
                 // Row rects are only valid outside the Layout event. Record the hovered item
                 // as pending; it is promoted to 'hovered' at the next Layout pass (above).
@@ -94,7 +101,17 @@ namespace RetroLOTR.Scenarios.EditorTools
                     EditorGUI.DrawRect(row, new Color(0.3f, 0.4f, 0.6f, 0.35f));
                 }
 
-                GUI.Label(row, item);
+                if (marked)
+                {
+                    Color prevColor = GUI.color;
+                    GUI.color = new Color(1f, 0.85f, 0.1f);
+                    GUI.Label(row, label);
+                    GUI.color = prevColor;
+                }
+                else
+                {
+                    GUI.Label(row, label);
+                }
 
                 if (e.type == EventType.MouseDown && row.Contains(e.mousePosition))
                 {

@@ -8781,6 +8781,88 @@
                       "amount":  5,
                       "deckSpriteName":  "",
                       "situation":  ""
+                  },
+                  {
+                      "cardId":  9234,
+                      "name":  "Lore Seekers",
+                      "quote":  "They search the old places where knowledge still sleeps.",
+                      "actionEffect":  "",
+                      "type":  "Army",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "of_many_colours",
+                      "actionClassName":  "",
+                      "action":  "",
+                      "spriteName":  "LoreSeekers",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  100,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "saruman_the_white",
+                      "referenceCardId":  1032,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+                                           5
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  3,
+                      "mountsRequired":  0,
+                      "timberRequired":  2,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  3,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  0,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
                   }
               ]
 }
