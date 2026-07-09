@@ -151,7 +151,7 @@
         11,
         11,
         11,
-        1,
+        11,
         0,
         11,
         0,
@@ -740,7 +740,7 @@
         2,
         2,
         2,
-        1,
+        2,
         2,
         2,
         3,
@@ -806,8 +806,8 @@
         2,
         2,
         2,
-        2,
-        2,
+        1,
+        1,
         2,
         3,
         1,
@@ -871,8 +871,8 @@
         2,
         2,
         8,
-        1,
         2,
+        1,
         2,
         3,
         3,
@@ -1001,8 +1001,8 @@
         2,
         2,
         2,
-        2,
-        2,
+        1,
+        1,
         2,
         3,
         3,
@@ -5160,7 +5160,7 @@
         {
             "row": 2,
             "col": 17,
-            "spriteName": "hills_18"
+            "spriteName": "snow_11"
         },
         {
             "row": 2,
@@ -6121,6 +6121,11 @@
             "row": 5,
             "col": 23,
             "spriteName": "plains_21"
+        },
+        {
+            "row": 5,
+            "col": 24,
+            "spriteName": "snow_11"
         },
         {
             "row": 5,
@@ -7845,7 +7850,7 @@
         {
             "row": 11,
             "col": 21,
-            "spriteName": "hills_20"
+            "spriteName": "plains_20"
         },
         {
             "row": 11,
@@ -8135,12 +8140,12 @@
         {
             "row": 12,
             "col": 22,
-            "spriteName": "plains_19"
+            "spriteName": "hills_19"
         },
         {
             "row": 12,
             "col": 23,
-            "spriteName": "plains_19"
+            "spriteName": "hills_19"
         },
         {
             "row": 12,
@@ -8425,12 +8430,12 @@
         {
             "row": 13,
             "col": 22,
-            "spriteName": "hills_05"
+            "spriteName": "plains_20"
         },
         {
             "row": 13,
             "col": 23,
-            "spriteName": "plains_19"
+            "spriteName": "hills_19"
         },
         {
             "row": 13,
@@ -8450,7 +8455,7 @@
         {
             "row": 13,
             "col": 31,
-            "spriteName": "snow_01"
+            "spriteName": "snow_11"
         },
         {
             "row": 13,
@@ -8940,12 +8945,12 @@
         {
             "row": 15,
             "col": 22,
-            "spriteName": "plains_19"
+            "spriteName": "hills_19"
         },
         {
             "row": 15,
             "col": 23,
-            "spriteName": "plains_19"
+            "spriteName": "hills_19"
         },
         {
             "row": 15,
@@ -21397,8 +21402,8 @@
             "col": 10,
             "pcName": "Elostirion",
             "ownerLeaderName": "Gandalf",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
+            "ownerVariantId": "gandalf",
+            "fallbackOwnerName": "Elrond",
             "citySize": 1,
             "fortSize": 1,
             "hasPort": false,
@@ -22308,7 +22313,7 @@
             "row": 41,
             "col": 56,
             "pcName": "Seregost",
-            "ownerLeaderName": "Khamul",
+            "ownerLeaderName": "Hoarmurath",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 3,
@@ -22327,7 +22332,7 @@
             "row": 38,
             "col": 53,
             "pcName": "Minas Durlith",
-            "ownerLeaderName": "Sauron",
+            "ownerLeaderName": "Khamul",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 2,
@@ -23717,7 +23722,7 @@
             "ownerLeaderName": "Azog",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
-            "citySize": 2,
+            "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
             "isHidden": false,
@@ -23904,7 +23909,7 @@
             "row": 35,
             "col": 41,
             "pcName": "DeadMarshes",
-            "ownerLeaderName": "Khamul",
+            "ownerLeaderName": "Dendra Dwar",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 1,
@@ -24192,7 +24197,7 @@
             "ownerLeaderName": "Azog",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
-            "citySize": 1,
+            "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
             "isHidden": false,
@@ -24247,6 +24252,19 @@
             "col": 19,
             "characterName": "Bill Ferny",
             "ownerLeaderName": "Saruman",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 15,
+            "col": 19,
+            "characterName": "Mat Heathertoes",
+            "ownerLeaderName": "Aragorn",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -24385,9 +24403,9 @@
         {
             "row": 19,
             "col": 7,
-            "characterName": "Fili",
-            "ownerLeaderName": "Gloin",
-            "ownerVariantId": "",
+            "characterName": "Bombur",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "tharkun",
             "fallbackOwnerName": "",
             "variantId": "",
             "army": {
@@ -24417,8 +24435,34 @@
             "row": 5,
             "col": 6,
             "characterName": "Kili",
-            "ownerLeaderName": "Gloin",
-            "ownerVariantId": "",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "tharkun",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 5,
+            "col": 6,
+            "characterName": "Fili",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "tharkun",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 5,
+            "col": 6,
+            "characterName": "Tharkun",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "tharkun",
             "fallbackOwnerName": "",
             "variantId": "",
             "army": {
@@ -24468,10 +24512,23 @@
                         "amount": 1
                     },
                     {
-                        "armyCardName": "Dunlending Warriors",
+                        "armyCardName": "Gondorian Infantry",
                         "amount": 1
                     }
                 ]
+            }
+        },
+        {
+            "row": 33,
+            "col": 28,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
             }
         },
         {
@@ -24543,6 +24600,19 @@
                         "amount": 1
                     }
                 ]
+            }
+        },
+        {
+            "row": 33,
+            "col": 32,
+            "characterName": "Lurtz",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "the_white_hand",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
             }
         },
         {
@@ -24640,12 +24710,7 @@
             "variantId": "",
             "army": {
                 "xp": 25,
-                "stacks": [
-                    {
-                        "armyCardName": "The Golden Host",
-                        "amount": 1
-                    }
-                ]
+                "stacks": []
             }
         },
         {
@@ -24662,6 +24727,10 @@
                     {
                         "armyCardName": "Elven Archers",
                         "amount": 1
+                    },
+                    {
+                        "armyCardName": "The Golden Host",
+                        "amount": 100
                     }
                 ]
             }
@@ -24688,7 +24757,7 @@
             "row": 17,
             "col": 21,
             "characterName": "Barrow-wight",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Barrow-wight",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -24714,7 +24783,7 @@
             "row": 43,
             "col": 45,
             "characterName": "Murazor",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Murazor",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -24790,6 +24859,28 @@
             }
         },
         {
+            "row": 26,
+            "col": 41,
+            "characterName": "The Necromancer",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "the_necromancer",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Undead",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Undead",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
             "row": 68,
             "col": 25,
             "characterName": "Sangarunya",
@@ -24839,12 +24930,7 @@
             "variantId": "",
             "army": {
                 "xp": 25,
-                "stacks": [
-                    {
-                        "armyCardName": "Woodelf Archers",
-                        "amount": 100
-                    }
-                ]
+                "stacks": []
             }
         },
         {
@@ -24918,7 +25004,16 @@
             "variantId": "shadow_of_the_east",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "Easterling Cataphracts",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Rhun Corsairs",
+                        "amount": 100
+                    }
+                ]
             }
         },
         {
@@ -25030,13 +25125,22 @@
             "row": 40,
             "col": 51,
             "characterName": "The Dark Eye",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "the_dark_eye",
             "fallbackOwnerName": "",
             "variantId": "",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "War Trolls",
+                        "amount": 100
+                    },
+                    {
+                        "armyCardName": "Head Catapults",
+                        "amount": 100
+                    }
+                ]
             }
         },
         {
@@ -25132,6 +25236,19 @@
             }
         },
         {
+            "row": 39,
+            "col": 44,
+            "characterName": "Gúrthul",
+            "ownerLeaderName": "Hoarmurath",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
             "row": 38,
             "col": 43,
             "characterName": "Faramir",
@@ -25163,15 +25280,45 @@
                     {
                         "armyCardName": "Knights Of Dol Amroth",
                         "amount": 1
+                    },
+                    {
+                        "armyCardName": "Knights Of Dol Amroth",
+                        "amount": 100
                     }
                 ]
+            }
+        },
+        {
+            "row": 49,
+            "col": 25,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
             }
         },
         {
             "row": 56,
             "col": 54,
             "characterName": "Ji Indur",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Ji Indur",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 56,
+            "col": 54,
+            "characterName": "Skritx",
+            "ownerLeaderName": "Ji Indur",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25180,7 +25327,7 @@
                 "stacks": [
                     {
                         "armyCardName": "Southron Assassins",
-                        "amount": 1
+                        "amount": 100
                     }
                 ]
             }
@@ -25189,6 +25336,19 @@
             "row": 54,
             "col": 58,
             "characterName": "Akhorahil",
+            "ownerLeaderName": "Akhorahil",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 54,
+            "col": 58,
+            "characterName": "Vulmek",
             "ownerLeaderName": "",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
@@ -25198,7 +25358,7 @@
                 "stacks": [
                     {
                         "armyCardName": "Nurn Cavalry",
-                        "amount": 1
+                        "amount": 100
                     }
                 ]
             }
@@ -25233,7 +25393,7 @@
             "row": 16,
             "col": 58,
             "characterName": "Annatorion",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Annatorion",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25245,19 +25405,6 @@
                         "amount": 100
                     }
                 ]
-            }
-        },
-        {
-            "row": 16,
-            "col": 58,
-            "characterName": "Annatorion",
-            "ownerLeaderName": "Annatorion",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
             }
         },
         {
@@ -25276,19 +25423,6 @@
                         "amount": 100
                     }
                 ]
-            }
-        },
-        {
-            "row": 20,
-            "col": 58,
-            "characterName": "Huz",
-            "ownerLeaderName": "Huz",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
             }
         },
         {
@@ -25396,7 +25530,7 @@
         {
             "row": 19,
             "col": 41,
-            "characterName": "Beoraborn",
+            "characterName": "Grimbeorn",
             "ownerLeaderName": "",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
@@ -25481,7 +25615,7 @@
                 "xp": 25,
                 "stacks": [
                     {
-                        "armyCardName": "Rhun Easterlings",
+                        "armyCardName": "Balchoth",
                         "amount": 1
                     }
                 ]
@@ -25602,9 +25736,9 @@
             "row": 16,
             "col": 14,
             "characterName": "Frodo",
-            "ownerLeaderName": "Frodo",
+            "ownerLeaderName": "Gandalf",
             "ownerVariantId": "disturber_of_the_peace",
-            "fallbackOwnerName": "",
+            "fallbackOwnerName": "Frodo",
             "variantId": "",
             "army": {
                 "xp": 25,
@@ -25812,9 +25946,9 @@
         {
             "row": 3,
             "col": 23,
-            "characterName": "Broggha",
-            "ownerLeaderName": "Murazor",
-            "ownerVariantId": "",
+            "characterName": "The Iron Crown",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "the_iron_crown",
             "fallbackOwnerName": "",
             "variantId": "",
             "army": {
@@ -25825,23 +25959,10 @@
                         "amount": 1
                     },
                     {
-                        "armyCardName": "Angmarin",
+                        "armyCardName": "Catapults",
                         "amount": 1
                     }
                 ]
-            }
-        },
-        {
-            "row": 3,
-            "col": 23,
-            "characterName": "Sauron",
-            "ownerLeaderName": "Sauron",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "the_iron_crown",
-            "army": {
-                "xp": 25,
-                "stacks": []
             }
         },
         {
@@ -25916,7 +26037,16 @@
             "variantId": "gandalf",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "Elven Scouts",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Elven Scouts",
+                        "amount": 1
+                    }
+                ]
             }
         },
         {
@@ -25947,35 +26077,53 @@
             "variantId": "",
             "army": {
                 "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 8,
+            "col": 18,
+            "characterName": "Broggha",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "the_iron_crown",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
                 "stacks": [
                     {
-                        "armyCardName": "Lore Seekers",
+                        "armyCardName": "Undead",
                         "amount": 100
                     }
                 ]
             }
         },
         {
-            "row": 34,
-            "col": 44,
-            "characterName": "The Necromancer",
-            "ownerLeaderName": "Sauron",
-            "ownerVariantId": "the_necromancer",
+            "row": 64,
+            "col": 21,
+            "characterName": "Gorthog",
+            "ownerLeaderName": "Adunaphel",
+            "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "Orcs",
+                        "amount": 100
+                    }
+                ]
             }
         },
         {
             "row": 64,
             "col": 21,
-            "characterName": "Sauron",
+            "characterName": "The Deceiver",
             "ownerLeaderName": "Sauron",
-            "ownerVariantId": "",
+            "ownerVariantId": "the_deceiver",
             "fallbackOwnerName": "",
-            "variantId": "the_deceiver",
+            "variantId": "",
             "army": {
                 "xp": 25,
                 "stacks": []
@@ -26035,6 +26183,10 @@
                     {
                         "armyCardName": "Torch Bearers",
                         "amount": 1
+                    },
+                    {
+                        "armyCardName": "Grond",
+                        "amount": 100
                     }
                 ]
             }
@@ -26043,7 +26195,7 @@
             "row": 38,
             "col": 28,
             "characterName": "Gimli",
-            "ownerLeaderName": "Gloin",
+            "ownerLeaderName": "Dain",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -26129,10 +26281,10 @@
             }
         },
         {
-            "row": 5,
-            "col": 34,
-            "characterName": "Fram Wyrmslayer",
-            "ownerLeaderName": "Celdacil",
+            "row": 12,
+            "col": 39,
+            "characterName": "Braega",
+            "ownerLeaderName": "Arfanhil",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -26142,16 +26294,39 @@
             }
         },
         {
-            "row": 42,
-            "col": 47,
-            "characterName": "",
-            "ownerLeaderName": "",
+            "row": 5,
+            "col": 34,
+            "characterName": "Fram Wyrmslayer",
+            "ownerLeaderName": "Celdacil",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "Hillmen",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 42,
+            "col": 47,
+            "characterName": "Gothmog",
+            "ownerLeaderName": "Ren the Unclean",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Ungol Orcs",
+                        "amount": 1
+                    }
+                ]
             }
         },
         {
@@ -26224,7 +26399,7 @@
         {
             "row": 20,
             "col": 47,
-            "characterName": "Grimbeorn",
+            "characterName": "Beoraborn",
             "ownerLeaderName": "Beoraborn",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
@@ -26632,6 +26807,301 @@
             "army": {
                 "xp": 25,
                 "stacks": []
+            }
+        },
+        {
+            "row": 40,
+            "col": 38,
+            "characterName": "GhanBuriGhan",
+            "ownerLeaderName": "GhanBuriGhan",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Woses",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 12,
+            "col": 28,
+            "characterName": "Broccach",
+            "ownerLeaderName": "Arfanhil",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 12,
+            "col": 28,
+            "characterName": "Seammu",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "of_many_colours",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 41,
+            "col": 44,
+            "characterName": "Mauhur",
+            "ownerLeaderName": "Hoarmurath",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Forest Orcs",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 50,
+            "col": 51,
+            "characterName": "Shagrat",
+            "ownerLeaderName": "Ji Indur",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 54,
+            "col": 51,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 1,
+            "col": 13,
+            "characterName": "Voteli",
+            "ownerLeaderName": "",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 68,
+            "col": 51,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 61,
+            "col": 53,
+            "characterName": "Itana Ovan",
+            "ownerLeaderName": "Uvatha",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Khand Easterlings",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 15,
+            "col": 27,
+            "characterName": "Bork",
+            "ownerLeaderName": "Arfanhil",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 26,
+            "col": 46,
+            "characterName": "Galdor",
+            "ownerLeaderName": "Thranduil",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Elven Scouts",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 19,
+            "col": 18,
+            "characterName": "Fatty Bolger",
+            "ownerLeaderName": "Merry",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 38,
+            "col": 24,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 4,
+            "col": 50,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 21,
+            "col": 24,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 37,
+            "col": 56,
+            "characterName": "Bulrakur",
+            "ownerLeaderName": "Dendra Dwar",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Warg Riders",
+                        "amount": 100
+                    }
+                ]
+            }
+        },
+        {
+            "row": 34,
+            "col": 47,
+            "characterName": "",
+            "ownerLeaderName": "",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 17,
+            "col": 15,
+            "characterName": "Sharkey",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "sharkey",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Hobbit Archers",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Hobbit Slingers",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
+            "row": 49,
+            "col": 30,
+            "characterName": "Mauhir",
+            "ownerLeaderName": "Imrahil",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Swordmen",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Light Cavalry",
+                        "amount": 1
+                    }
+                ]
             }
         }
     ]

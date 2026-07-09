@@ -58,6 +58,52 @@ namespace RetroLOTR.Scenarios.EditorTools
         private const float PackX = 0.79f;
         private const float PackY = 0.51f;
 
+        // Tiles are drawn this much larger than their grid cell (expanded about the cell center),
+        // so opaque hex art overlaps the neighbors' anti-aliased edges and transparent canvas
+        // margins instead of letting the window background show through as thin seam lines.
+        private const float TileOverdraw = 1.10f;
+
+        // ---- Hex preview shaders ---------------------------------------------------------------
+        private enum HexPreviewStyle { None, SeamlessBlend }
+        private HexPreviewStyle previewStyle = HexPreviewStyle.SeamlessBlend;
+        private bool neonGrid = true;
+        private readonly Dictionary<HexPreviewStyle, Material> previewMaterials = new();
+
+        private const string PreviewShaderMaterialFolder = "Assets/Editor/ScenarioCreator/Shaders";
+
+        private Material GetPreviewMaterial(HexPreviewStyle style)
+        {
+            if (style == HexPreviewStyle.None) return null;
+            if (previewMaterials.TryGetValue(style, out Material cached) && cached != null) return cached;
+
+            Material mat = AssetDatabase.LoadAssetAtPath<Material>($"{PreviewShaderMaterialFolder}/HexSeamlessBlend.mat");
+            previewMaterials[style] = mat;
+            return mat;
+        }
+
+        // Odd-r offset hex neighbor lookup matching TileRect's packing (odd rows shifted +0.5*stepX).
+        // Direction order: 0=E, 1=NE, 2=NW, 3=W, 4=SW, 5=SE.
+        private bool TryGetNeighborIndex(int row, int col, int direction, out int neighborIndex)
+        {
+            bool oddRow = (row & 1) == 1;
+            int nRow = row;
+            int nCol = col;
+
+            switch (direction)
+            {
+                case 0: nRow = row;     nCol = col + 1; break; // E
+                case 1: nRow = row - 1; nCol = oddRow ? col + 1 : col; break; // NE
+                case 2: nRow = row - 1; nCol = oddRow ? col : col - 1; break; // NW
+                case 3: nRow = row;     nCol = col - 1; break; // W
+                case 4: nRow = row + 1; nCol = oddRow ? col : col - 1; break; // SW
+                case 5: nRow = row + 1; nCol = oddRow ? col + 1 : col; break; // SE
+            }
+
+            if (!InBounds(nRow, nCol)) { neighborIndex = -1; return false; }
+            neighborIndex = Index(nRow, nCol);
+            return true;
+        }
+
         [MenuItem("Window/RetroLOTR/Scenario Creator")]
         public static void Open()
         {
@@ -129,8 +175,18 @@ namespace RetroLOTR.Scenarios.EditorTools
                 AssetDatabase.Refresh();
                 ScenarioCardCatalog.Invalidate();
                 cardRenderer?.ClearCache();
+                ClearPreviewTextureCache(); // tile art may have been reimported
+            }
+            if (GUILayout.Button("Recalculate textures", EditorStyles.toolbarButton, GUILayout.Width(125)))
+            {
+                AssetDatabase.Refresh(); // pick up externally edited tile art
+                ClearPreviewTextureCache();
+                Repaint();
             }
             GUILayout.FlexibleSpace();
+            GUILayout.Label("Shader", GUILayout.Width(44));
+            previewStyle = (HexPreviewStyle)EditorGUILayout.EnumPopup(previewStyle, EditorStyles.toolbarPopup, GUILayout.Width(120));
+            neonGrid = GUILayout.Toggle(neonGrid, "Grid", EditorStyles.toolbarButton, GUILayout.Width(40));
             GUILayout.Label($"{width} x {height}", EditorStyles.toolbarButton);
             GUILayout.Label("Zoom", GUILayout.Width(34));
             zoom = GUILayout.HorizontalSlider(zoom, 0.4f, 5f, GUILayout.Width(90));
@@ -198,7 +254,7 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             SearchableField("Region", paintRegion, ScenarioCardCatalog.Regions, v => paintRegion = v, ScenarioCardCatalog.GetCard);
 
-            // Variation picker — the chosen tile drives the hex's landmark features at load.
+            // Variation picker — a chasm tile makes the hex an Underground entrance at load.
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Tile variation", EditorStyles.boldLabel);
             DrawVariationPicker();
@@ -268,8 +324,8 @@ namespace RetroLOTR.Scenarios.EditorTools
             return GUI.Button(r, GUIContent.none, GUIStyle.none);
         }
 
-        // Lists the landmark features a tile depicts (read from the sprite name via HexFeatureData),
-        // with each feature's gameplay description — so the author sees what a tile grants before painting.
+        // Shows whether the tile depicts a chasm (read from the sprite name via ChasmTiles) —
+        // a chasm hex becomes an Underground entrance at load, so the author sees it before painting.
         private static void DrawTileFeatures(string spriteName, bool isDefault)
         {
             EditorGUILayout.LabelField("Features", EditorStyles.boldLabel);
@@ -280,39 +336,157 @@ namespace RetroLOTR.Scenarios.EditorTools
                 return;
             }
 
-            HexFeatureEnum features = HexFeatureData.GetFeatures(spriteName);
-            if (features == HexFeatureEnum.None)
+            if (!ChasmTiles.Contains(spriteName))
             {
                 EditorGUILayout.LabelField("None", EditorStyles.miniLabel);
                 return;
             }
 
-            foreach ((HexFeatureEnum flag, string label) in HexFeatureData.GetPresentFeatures(features))
-            {
-                EditorGUILayout.LabelField($"• {label}", EditorStyles.boldLabel);
-                string desc = HexFeatureData.GetFeatureDescription(flag);
-                if (!string.IsNullOrEmpty(desc)) EditorGUILayout.LabelField(desc, EditorStyles.wordWrappedMiniLabel);
-            }
+            EditorGUILayout.LabelField("• Chasm", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(ChasmTiles.Description, EditorStyles.wordWrappedMiniLabel);
         }
 
-        private static void DrawSprite(Rect r, Sprite sprite)
+        // Downscaled, mipmapped copies of the tile textures for grid rendering. The source art is
+        // ~1000px per tile but drawn at ~30px, and sprite textures import without mipmaps — the
+        // GPU has to gather from huge textures at extreme minification for every screen pixel
+        // (times up to 31 taps in the blend shader), which is what froze the window. A 512px
+        // trilinear copy with mips makes those fetches cheap and kills the shimmer too.
+        private static readonly Dictionary<Texture, Texture2D> previewTextureCache = new();
+        private const int PreviewTextureMaxSize = 512;
+
+        private static Texture GetPreviewTexture(Texture tex)
+        {
+            if (tex == null) return null;
+            if (previewTextureCache.TryGetValue(tex, out Texture2D cached) && cached != null) return cached;
+
+            float scale = Mathf.Min(1f, (float)PreviewTextureMaxSize / Mathf.Max(tex.width, tex.height));
+            int pw = Mathf.Max(1, Mathf.RoundToInt(tex.width * scale));
+            int ph = Mathf.Max(1, Mathf.RoundToInt(tex.height * scale));
+
+            RenderTexture rt = RenderTexture.GetTemporary(pw, ph, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            RenderTexture prevActive = RenderTexture.active;
+            Graphics.Blit(tex, rt);
+            RenderTexture.active = rt;
+            Texture2D copy = new Texture2D(pw, ph, TextureFormat.RGBA32, true, false)
+            {
+                filterMode = FilterMode.Trilinear,
+                hideFlags = HideFlags.HideAndDontSave
+            };
+            copy.ReadPixels(new Rect(0, 0, pw, ph), 0, 0);
+            copy.Apply(true, true); // build the mip chain, then free the CPU-side copy
+            RenderTexture.active = prevActive;
+            RenderTexture.ReleaseTemporary(rt);
+
+            previewTextureCache[tex] = copy;
+            return copy;
+        }
+
+        private static void ClearPreviewTextureCache()
+        {
+            foreach (Texture2D copy in previewTextureCache.Values)
+                if (copy != null) DestroyImmediate(copy);
+            previewTextureCache.Clear();
+        }
+
+        // Normalized atlas rect of a sprite.
+        private static Rect SpriteTexCoords(Sprite sprite)
+        {
+            Texture tex = sprite.texture;
+            return new Rect(sprite.rect.x / tex.width, sprite.rect.y / tex.height,
+                            sprite.rect.width / tex.width, sprite.rect.height / tex.height);
+        }
+
+        private static void DrawSprite(Rect r, Sprite sprite, Material previewMaterial = null)
+            => DrawSpriteClipped(r, r, sprite, previewMaterial);
+
+        // Draws 'sprite' into 'r', cropped to 'clip'. This exists because Graphics.DrawTexture
+        // (the path used whenever a preview shader material is set) ignores Unity's GUIClip stack
+        // — unlike plain GUI.DrawTexture(WithTexCoords) calls, it is NOT cut off by the enclosing
+        // scroll view. An overdrawn grid tile (see TileOverdraw) that pokes outside the viewport
+        // therefore painted straight over whatever UI sits above/beside the grid — e.g. the
+        // toolbar's "Refresh Cards"/"Recalculate textures" buttons, whenever the top row was in
+        // view — instead of stopping at the viewport edge. Cropping the rect (and the atlas UV
+        // rect by the same fraction, so the crop shows the correct slice of art instead of
+        // squashing the whole sprite into the smaller rect) fixes this without relying on
+        // GUIClip at all. When clip == r this is a no-op and behaves exactly as before.
+        private static void DrawSpriteClipped(Rect r, Rect clip, Sprite sprite, Material previewMaterial)
         {
             if (sprite == null || sprite.texture == null) { EditorGUI.DrawRect(r, new Color(0.15f, 0.15f, 0.15f)); return; }
-            Texture tex = sprite.texture;
-            Rect tc = new(sprite.rect.x / tex.width, sprite.rect.y / tex.height,
-                          sprite.rect.width / tex.width, sprite.rect.height / tex.height);
-            GUI.DrawTextureWithTexCoords(r, tex, tc, true);
+
+            Rect visible = RectIntersect(r, clip);
+            if (visible.width <= 0f || visible.height <= 0f) return;
+
+            // Texcoords are normalized, so they address the downscaled preview copy identically.
+            Texture tex = GetPreviewTexture(sprite.texture);
+            Rect tc = SpriteTexCoords(sprite);
+
+            Rect drawTc = tc;
+            if (visible != r)
+            {
+                float uMin = (visible.xMin - r.xMin) / r.width;
+                float uMax = (visible.xMax - r.xMin) / r.width;
+                float vMin = (visible.yMin - r.yMin) / r.height;
+                float vMax = (visible.yMax - r.yMin) / r.height;
+                drawTc = new Rect(tc.x + uMin * tc.width, tc.y + vMin * tc.height,
+                                   (uMax - uMin) * tc.width, (vMax - vMin) * tc.height);
+            }
+
+            if (previewMaterial == null)
+            {
+                GUI.DrawTextureWithTexCoords(visible, tex, drawTc, true);
+                return;
+            }
+
+            // _SpriteUV must stay the FULL (uncropped) tile rect — the shader derives its
+            // tile-local frame (hex mask, feather, neighbor-blend geometry) from it, and cropping
+            // it along with the visible slice would shrink the hex geometry itself rather than
+            // just windowing which part of it is drawn.
+            previewMaterial.SetVector(SpriteUVId, new Vector4(tc.x, tc.y, tc.width, tc.height));
+
+            // In a Linear color-space project, custom-material Graphics.DrawTexture samples sRGB
+            // textures into linear values while the GUI target stores whatever we write, raw. The
+            // HexPreview shaders therefore convert back to gamma themselves (LinearToGammaSpace at
+            // the end of each), and we keep sRGB conversion on write explicitly off so the
+            // brightness is right regardless of what state the editor left GL in.
+            bool prevSRGB = GL.sRGBWrite;
+            GL.sRGBWrite = false;
+            Graphics.DrawTexture(visible, tex, drawTc, 0, 0, 0, 0, Color.white, previewMaterial);
+            GL.sRGBWrite = prevSRGB;
         }
+
+        private static Rect RectIntersect(Rect a, Rect b)
+        {
+            float xMin = Mathf.Max(a.xMin, b.xMin);
+            float yMin = Mathf.Max(a.yMin, b.yMin);
+            float xMax = Mathf.Min(a.xMax, b.xMax);
+            float yMax = Mathf.Min(a.yMax, b.yMax);
+            return new Rect(xMin, yMin, Mathf.Max(0f, xMax - xMin), Mathf.Max(0f, yMax - yMin));
+        }
+
+        private static readonly int SpriteUVId = Shader.PropertyToID("_SpriteUV");
+        private static readonly int AspectYId = Shader.PropertyToID("_AspectY");
+        private static readonly int GridOnId = Shader.PropertyToID("_GridOn");
+        private static readonly int CellCenterId = Shader.PropertyToID("_CellCenter");
+
+        // Cell spacing in the shader's tile-local units, cached by ApplySeamlessBlendGeometry so
+        // ApplyNeighborBlendProperties can hand each cell its map-space center (for the grid hue).
+        private float blendColX, blendRowY;
+        private static readonly int[] NeighborTexIds = Enumerable.Range(0, 6).Select(d => Shader.PropertyToID($"_NeighborTex{d}")).ToArray();
+        private static readonly int[] NeighborUVIds = Enumerable.Range(0, 6).Select(d => Shader.PropertyToID($"_NeighborUV{d}")).ToArray();
+        private static readonly int[] NeighborOffsetIds = Enumerable.Range(0, 6).Select(d => Shader.PropertyToID($"_NeighborOffset{d}")).ToArray();
+        private static readonly int[] NeighborValidIds = Enumerable.Range(0, 6).Select(d => Shader.PropertyToID($"_NeighborValid{d}")).ToArray();
 
         // -------------------------------------------------------------------------------------
         // Grid rendering + interaction
         // -------------------------------------------------------------------------------------
         private void DrawGrid()
         {
-            float drawW = cellW * zoom;
-            float drawH = cellH * zoom;
-            float stepX = drawW * PackX;   // spacing < tile size, so adjacent opaque hexes touch
-            float stepY = drawH * PackY;
+            float baseW = cellW * zoom;
+            float baseH = cellH * zoom;
+            float stepX = baseW * PackX;   // spacing < tile size, so adjacent opaque hexes touch
+            float stepY = baseH * PackY;
+            float drawW = baseW * TileOverdraw; // drawn size exceeds the cell, see TileOverdraw
+            float drawH = baseH * TileOverdraw;
 
             float contentW = width * stepX + stepX * 0.5f + (drawW - stepX) + 8;
             float contentH = height * stepY + (drawH - stepY) + 8;
@@ -338,14 +512,29 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             if (Event.current.type == EventType.Repaint)
             {
+                ApplySeamlessBlendGeometry(drawW, drawH, stepX, stepY);
+
+                // Only the cells inside the scroll viewport (plus a one-tile margin) are drawn —
+                // repainting the whole map every frame is what froze large maps, especially in
+                // shader mode where every cell is its own material draw.
+                int rowFirst = Mathf.Max(0, Mathf.FloorToInt((gridScroll.y - drawH) / stepY));
+                int rowLast = Mathf.Min(height - 1, Mathf.CeilToInt((gridScroll.y + viewport.height) / stepY));
+                int colFirst = Mathf.Max(0, Mathf.FloorToInt((gridScroll.x - drawW) / stepX) - 1);
+                int colLast = Mathf.Min(width - 1, Mathf.CeilToInt((gridScroll.x + viewport.width) / stepX));
+
+                // Content-space window actually visible through the scroll viewport, used to crop
+                // overdrawn tiles (see DrawSpriteClipped) so they can't bleed into the toolbar or
+                // other UI above/beside the grid.
+                Rect visibleClip = new Rect(gridScroll.x, gridScroll.y, viewport.width, viewport.height);
+
                 // Pass 1: terrain tiles (drawn larger than the spacing so they interlock with no gaps).
-                for (int row = 0; row < height; row++)
-                    for (int col = 0; col < width; col++)
-                        DrawCellSprite(TileRect(content, row, col, drawW, drawH, stepX, stepY), Index(row, col));
+                for (int row = rowFirst; row <= rowLast; row++)
+                    for (int col = colFirst; col <= colLast; col++)
+                        DrawCellSprite(TileRect(content, row, col, drawW, drawH, stepX, stepY), visibleClip, row, col);
 
                 // Pass 2: region tints, markers and selection on top.
-                for (int row = 0; row < height; row++)
-                    for (int col = 0; col < width; col++)
+                for (int row = rowFirst; row <= rowLast; row++)
+                    for (int col = colFirst; col <= colLast; col++)
                         DrawCellOverlay(TileRect(content, row, col, drawW, drawH, stepX, stepY), row, col);
             }
 
@@ -354,26 +543,85 @@ namespace RetroLOTR.Scenarios.EditorTools
 
         private Rect TileRect(Rect content, int row, int col, float drawW, float drawH, float stepX, float stepY)
         {
-            float x = content.x + col * stepX + ((row & 1) == 1 ? stepX * 0.5f : 0f);
-            float y = content.y + row * stepY;
+            // The overdraw expansion is centered on the cell, so the anchor shifts back by half of it.
+            float expandX = drawW * (1f - 1f / TileOverdraw) * 0.5f;
+            float expandY = drawH * (1f - 1f / TileOverdraw) * 0.5f;
+            float x = content.x + col * stepX + ((row & 1) == 1 ? stepX * 0.5f : 0f) - expandX;
+            float y = content.y + row * stepY - expandY;
             return new Rect(x, y, drawW, drawH);
         }
 
-        private void DrawCellSprite(Rect draw, int idx)
+        private Sprite GetCellTerrainSprite(int idx)
         {
-            TerrainEnum t = terrain[idx];
-            Sprite sprite = !string.IsNullOrEmpty(spriteNames[idx])
+            return !string.IsNullOrEmpty(spriteNames[idx])
                 ? ScenarioCardCatalog.GetTerrainSpriteByName(spriteNames[idx])
-                : ScenarioCardCatalog.GetTerrainSprite(t);
+                : ScenarioCardCatalog.GetTerrainSprite(terrain[idx]);
+        }
 
-            if (sprite != null && sprite.texture != null) DrawSprite(draw, sprite);
-            else EditorGUI.DrawRect(draw, TerrainFallbackColor(t));
+        private void DrawCellSprite(Rect draw, Rect clip, int row, int col)
+        {
+            int idx = Index(row, col);
+            TerrainEnum t = terrain[idx];
+            Sprite sprite = GetCellTerrainSprite(idx);
+
+            Material previewMaterial = GetPreviewMaterial(previewStyle);
+            if (previewMaterial != null && previewStyle == HexPreviewStyle.SeamlessBlend)
+                ApplyNeighborBlendProperties(previewMaterial, row, col);
+
+            if (sprite != null && sprite.texture != null) DrawSpriteClipped(draw, clip, sprite, previewMaterial);
+            else EditorGUI.DrawRect(RectIntersect(draw, clip), TerrainFallbackColor(t));
 
             // Overlay the PC's hex artwork (Assets/Art/Hexes/PCs) when a named PC sits on this hex.
             if (pcs.TryGetValue(idx, out ScenarioPC pc) && !string.IsNullOrEmpty(pc.pcName))
             {
                 Sprite pcSprite = ScenarioCardCatalog.GetPcHexSprite(pc.pcName);
-                if (pcSprite != null && pcSprite.texture != null) DrawSprite(draw, pcSprite);
+                if (pcSprite != null && pcSprite.texture != null) DrawSpriteClipped(draw, clip, pcSprite, null);
+            }
+        }
+
+        // HexSeamlessBlend.shader works in a tile-local frame: origin at the hex center, +y up on
+        // screen, 1 unit = drawn tile width. The neighbor-center offsets and the cell aspect only
+        // depend on the view, so they are pushed once per repaint instead of per hex.
+        private void ApplySeamlessBlendGeometry(float drawW, float drawH, float stepX, float stepY)
+        {
+            if (previewStyle != HexPreviewStyle.SeamlessBlend) return;
+            Material mat = GetPreviewMaterial(previewStyle);
+            if (mat == null) return;
+
+            mat.SetFloat(AspectYId, drawH / drawW);
+            mat.SetFloat(GridOnId, neonGrid ? 1f : 0f);
+
+            float colX = blendColX = stepX / drawW; // one column of horizontal spacing, in drawn-tile-width units
+            float rowY = blendRowY = stepY / drawW; // one row of vertical spacing, same units (y-up)
+            mat.SetVector(NeighborOffsetIds[0], new Vector4(colX, 0f));           // E
+            mat.SetVector(NeighborOffsetIds[1], new Vector4(colX * 0.5f, rowY));  // NE
+            mat.SetVector(NeighborOffsetIds[2], new Vector4(-colX * 0.5f, rowY)); // NW
+            mat.SetVector(NeighborOffsetIds[3], new Vector4(-colX, 0f));          // W
+            mat.SetVector(NeighborOffsetIds[4], new Vector4(-colX * 0.5f, -rowY)); // SW
+            mat.SetVector(NeighborOffsetIds[5], new Vector4(colX * 0.5f, -rowY));  // SE
+        }
+
+        // Feeds each of the up to 6 neighboring tiles' art into the shared blend material so
+        // HexSeamlessBlend.shader can fade this hex's rim toward them. Direction order (0..5 =
+        // E, NE, NW, W, SW, SE) must match the shader's _NeighborTexN/_NeighborUVN/_NeighborValidN.
+        private void ApplyNeighborBlendProperties(Material mat, int row, int col)
+        {
+            // This cell's center in map space (tile-local units, y-up), for the grid rainbow hue.
+            float centerX = (col + (((row & 1) == 1) ? 0.5f : 0f)) * blendColX;
+            mat.SetVector(CellCenterId, new Vector4(centerX, -row * blendRowY));
+
+            for (int direction = 0; direction < 6; direction++)
+            {
+                bool valid = TryGetNeighborIndex(row, col, direction, out int neighborIdx);
+                Sprite neighborSprite = valid ? GetCellTerrainSprite(neighborIdx) : null;
+                valid = valid && neighborSprite != null && neighborSprite.texture != null;
+
+                mat.SetFloat(NeighborValidIds[direction], valid ? 1f : 0f);
+                if (!valid) continue;
+
+                Rect uv = SpriteTexCoords(neighborSprite);
+                mat.SetTexture(NeighborTexIds[direction], GetPreviewTexture(neighborSprite.texture));
+                mat.SetVector(NeighborUVIds[direction], new Vector4(uv.x, uv.y, uv.width, uv.height));
             }
         }
 

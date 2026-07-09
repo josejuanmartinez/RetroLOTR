@@ -218,7 +218,7 @@ public class HexTextureMapping : SearcherByName
     }
 
     // Resolves a specific terrain tile variation by sprite name (used to apply authored
-    // scenario tiles, which also determine the hex's landmark features via HexFeatureData).
+    // scenario tiles, which also determine the hex's Underground-entrance state via ChasmTiles).
     public Sprite GetTerrainSpriteByName(string spriteName)
     {
         if (string.IsNullOrWhiteSpace(spriteName)) return null;

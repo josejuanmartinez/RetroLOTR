@@ -50,8 +50,9 @@ namespace RetroLOTR.Scenarios
         public List<ScenarioRegionCell> regions = new();
 
         /// <summary>Sparse per-hex terrain-sprite overrides. When set, the loader applies this exact
-        /// tile variation (by sprite name), which also drives that hex's landmark features. Hexes
-        /// without an override fall back to the terrain's default/random variation.</summary>
+        /// tile variation (by sprite name), which also drives whether that hex is an Underground
+        /// entrance (chasm tile). Hexes without an override fall back to the terrain's
+        /// default/random variation.</summary>
         public List<ScenarioSpriteCell> terrainSprites = new();
 
         public List<ScenarioPC> pcs = new();

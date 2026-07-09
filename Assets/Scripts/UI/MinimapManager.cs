@@ -33,6 +33,12 @@ public class MinimapManager : MonoBehaviour
     private float savedCameraSize;
     private int savedCullingMask;
 
+    // Board the camera was last fitted to (and its hex count, so a regenerated board of the
+    // same instance refits). Board sizes vary per scenario/settings, so the scene-authored
+    // camera transform can't be trusted to frame the map.
+    private Board fittedBoard;
+    private int fittedHexCount;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -65,10 +71,45 @@ public class MinimapManager : MonoBehaviour
     private IEnumerator UpdateCoroutine()
     {
         yield return new WaitForEndOfFrame();
+        FitCameraToBoard();
         minimapCamera.enabled = true;
         yield return new WaitForEndOfFrame();
         minimapCamera.enabled = false;
         instance.refreshing = false;
+    }
+
+    // Centers the minimap camera on the generated board and sizes it to frame every hex.
+    private void FitCameraToBoard()
+    {
+        if (minimapCamera == null) return;
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null || board.hexes == null || board.hexes.Count == 0) return;
+        if (board == fittedBoard && board.hexes.Count == fittedHexCount) return;
+
+        float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
+        foreach (Hex hex in board.hexes.Values)
+        {
+            if (hex == null) continue;
+            Vector3 p = hex.transform.position;
+            if (p.x < minX) minX = p.x;
+            if (p.x > maxX) maxX = p.x;
+            if (p.y < minY) minY = p.y;
+            if (p.y > maxY) maxY = p.y;
+        }
+        if (minX > maxX) return;
+
+        Vector3 pos = minimapCamera.transform.position;
+        minimapCamera.transform.position = new Vector3((minX + maxX) * 0.5f, (minY + maxY) * 0.5f, pos.z);
+        if (minimapCamera.orthographic)
+        {
+            // Half a hex of margin on each side so border tiles aren't clipped.
+            float halfHeight = (maxY - minY) * 0.5f + 1f;
+            float halfWidthAsHeight = ((maxX - minX) * 0.5f + 1f) / Mathf.Max(0.01f, minimapCamera.aspect);
+            minimapCamera.orthographicSize = Mathf.Max(halfHeight, halfWidthAsHeight);
+        }
+
+        fittedBoard = board;
+        fittedHexCount = board.hexes.Count;
     }
 
     public static void RefreshMinimap()
@@ -98,6 +139,7 @@ public class MinimapManager : MonoBehaviour
 
         RefreshLegend();
 
+        FitCameraToBoard();
         ApplyCameraZoom();
         AddLabelsLayerToCamera();
 

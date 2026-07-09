@@ -171,7 +171,7 @@ public class Game : MonoBehaviour
             {
                 if (sibling == survivor) continue;
                 competitors?.Remove(sibling);
-                board.nationSpawner?.RemoveUnselectedScenarioLeader(sibling);
+                board.nationSpawner?.RemoveUnselectedScenarioLeader(sibling, survivor);
             }
         }
     }

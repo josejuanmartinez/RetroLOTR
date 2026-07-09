@@ -504,9 +504,6 @@ public class Character : MonoBehaviour
         }
 
         ApplyArtifactPassiveEffects();
-
-        // Effects of the landmark the unit is resting on (river heal, ruins, lava, etc.).
-        HexFeatureEffects.ProcessRest(this);
         if (killed) return;
 
         ClearSuppressedStatusesIfEncouraged();
