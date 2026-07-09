@@ -79,23 +79,23 @@ public class Board : MonoBehaviour
     private Game cachedGame;
     private Layout cachedLayout;
 
-    // Direction vectors for hex neighbors (flat-top)
+    // Direction vectors for hex neighbors (v2 = (row, col); row 0 = north, rows grow southward).
     public readonly Vector2Int[] evenRowNeighbors = new[] {
-        new Vector2Int(1, 0),   // Northeast
+        new Vector2Int(1, 0),   // Southeast
         new Vector2Int(0, 1),   // East
-        new Vector2Int(-1, 0),   // Southeast
-        new Vector2Int(-1, -1),  // Southwest
+        new Vector2Int(-1, 0),   // Northeast
+        new Vector2Int(-1, -1),  // Northwest
         new Vector2Int(0, -1),  // West
-        new Vector2Int(1, -1)   // Northwest
+        new Vector2Int(1, -1)   // Southwest
     };
 
     public readonly Vector2Int[] oddRowNeighbors = new[] {
-        new Vector2Int(1,1),   // Northeast
+        new Vector2Int(1,1),   // Southeast
         new Vector2Int(0, 1),   // East
-        new Vector2Int(-1, 1),   // Southeast
-        new Vector2Int(-1, 0),  // Southwest
+        new Vector2Int(-1, 1),   // Northeast
+        new Vector2Int(-1, 0),  // Northwest
         new Vector2Int(0, -1),  // West
-        new Vector2Int(1, 0)   // Northwest
+        new Vector2Int(1, 0)   // Southwest
     };
 
     private bool initialized = false;
@@ -1621,9 +1621,6 @@ public class Board : MonoBehaviour
             else
             {
                 character.moved += newHex.GetTerrainCost(character);
-                // A river without a bridge halts the unit: entering it ends movement for the turn.
-                if (newHex.HasFeature(HexFeatureEnum.River) && !newHex.HasFeature(HexFeatureEnum.Bridge))
-                    character.moved = character.GetMaxMovement();
             }
 
             // Climate hazards of the tile just entered (snow frostbite / desert sunburn).

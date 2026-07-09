@@ -512,7 +512,10 @@ public class BoardGenerator : MonoBehaviour
 
         float xOffset = col * board.hexSize.x;
         if(row % 2 == 1) xOffset += board.hexSize.x * 0.5f; // Half of a hex board.GetWidth()
-        float yOffset = row * board.hexSize.y;
+        // Row 0 is the NORTH edge (the convention the terrain generator and the Scenario Creator
+        // both use), so rows grow downward in world space — otherwise authored maps render
+        // vertically mirrored versus the editor that authored them.
+        float yOffset = -row * board.hexSize.y;
 
         return new Vector3(xOffset, yOffset, 0);
     }

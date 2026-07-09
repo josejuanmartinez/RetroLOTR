@@ -35,7 +35,7 @@ public class MovementCostManager : MonoBehaviour
         if (!gameObject.activeSelf) gameObject.SetActive(true);
         if (movementText != null && !movementText.gameObject.activeSelf) movementText.gameObject.SetActive(true);
         if (dot != null && !dot.gameObject.activeSelf) dot.gameObject.SetActive(true);
-        // terrainSpriteTags are inline TMP <sprite> tags for the hex terrain + features, shown beside the cost.
+        // terrainSpriteTags are inline TMP <sprite> tags for the hex terrain (+ chasm marker), shown beside the cost.
         movementText.text = string.IsNullOrEmpty(terrainSpriteTags)
             ? movementLeft.ToString()
             : $"{terrainSpriteTags}{movementLeft}";

@@ -107,7 +107,8 @@ public class Hex : MonoBehaviour
     [SerializeField] private bool mapOnlyRevealed;
     [SerializeField] private bool isCurrentlyUnseen;
     public TerrainEnum terrainType;
-    public HexFeatureEnum features;
+    // True when this hex's tile art depicts a chasm (an Underground entrance, see ChasmTiles).
+    private bool isChasm;
     public List<Army> armies = new();
     public List<Character> characters = new();
     public List<Artifact> hiddenArtifacts = new();
@@ -140,6 +141,10 @@ public class Hex : MonoBehaviour
     private Coroutine revealPulseCoroutine;
     private Vector3 terrainBaseScale;
     private bool terrainBaseScaleCaptured;
+    private bool terrainOverdrawApplied;
+    // Last reveal state pushed to the seamless-blend rebuild queue; neighbors must re-blend
+    // whenever this flips (their rims either fade into fog toward us or blend our art).
+    private bool seamlessRevealedLast;
 
     public bool isSelected = false;
 
@@ -478,12 +483,16 @@ public class Hex : MonoBehaviour
         if (game == null) game = FindFirstObjectByType<Game>();
         // SpriteRenderer.sortingOrder is effectively signed 16-bit, so keep
         // terrain in (-9999, 0): above the hexRegionFrame underlay (-9999),
-        // below every fixed-order hex child. Row decides front-to-back; the
-        // col parity bit breaks same-row neighbor ties so their overlap is
-        // cut deterministically instead of z-fighting.
-        terrainTexture.sortingOrder = -1 - (row * 2) - (col & 1);
+        // below every fixed-order hex child. Row decides front-to-back —
+        // rows grow downward on screen (row 0 = north), and the visually
+        // lower hex must draw over the one behind it so tall art (mountains)
+        // occludes correctly; the col parity bit breaks same-row neighbor
+        // ties so their overlap is cut deterministically instead of z-fighting.
+        int rowsBelow = (board != null ? board.GetHeight() : 200) - 1 - row;
+        terrainTexture.sortingOrder = -1 - (rowsBelow * 2) - (col & 1);
         if (pcTexture != null) pcTexture.sortingOrder = terrainTexture.sortingOrder + 1;
         if (terrainTexture != null) terrainTexture.gameObject.SetActive(true);
+        ApplyTerrainOverdraw();
 
         // Placed on the board now — apply the fog/visibility visuals Awake skipped
         // (also covers particles; the minimap variant is currently a no-op).
@@ -618,8 +627,8 @@ public class Hex : MonoBehaviour
             if (hexTextureMapping == null) hexTextureMapping = ResolveTextureMapping();
             baseTerrainSprite = hexTextureMapping != null ? hexTextureMapping.GetTerrainBaseSprite(terrainType) : null;
         }
-        // Landmark features are read off whichever variant sprite we just assigned (see HexFeatureData).
-        features = HexFeatureData.GetFeatures(baseTerrainSprite?.name);
+        // The Underground-entrance state is read off whichever variant sprite we just assigned.
+        isChasm = ChasmTiles.Contains(baseTerrainSprite?.name);
         ApplyHexTextureSprite();
         UpdateUndergroundMarker();
         // this.terrainTexture.color = terrainColor;
@@ -909,16 +918,13 @@ public class Hex : MonoBehaviour
           .Append(TooltipLink($"<b>{terrainName}</b>", TerrainData.GetDescription(terrainType)))
           .Append(' ').Append(SpriteTag(terrainName));
 
-        // Features: space-separated "name <sprite>" entries (no commas), only when present.
-        StringBuilder feats = new();
-        foreach (var (flag, label) in HexFeatureData.GetPresentFeatures(features))
+        // Chasm is the only landmark feature: shown when this tile's art depicts one.
+        if (isChasm)
         {
-            if (feats.Length > 0) feats.Append(' ');
-            feats.Append(TooltipLink($"<b>{label}</b>", HexFeatureData.GetFeatureDescription(flag)))
-                 .Append(' ').Append(SpriteTag(label));
+            sb.Append('\n').Append("<color=#6FA8DC><b>Features</b></color>: ")
+              .Append(TooltipLink("<b>Chasm</b>", ChasmTiles.Description))
+              .Append(' ').Append(SpriteTag("Chasm"));
         }
-        if (feats.Length > 0)
-            sb.Append('\n').Append("<color=#6FA8DC><b>Features</b></color>: ").Append(feats);
 
         return sb.ToString();
     }
@@ -1621,7 +1627,15 @@ public class Hex : MonoBehaviour
         bool revealed = IsHexRevealed();
         bool seen = IsHexSeen();
         ApplyRegionColor();
-        if (terrainTexture != null) SetActiveFast(terrainTexture.gameObject, revealed);
+        if (terrainTexture != null)
+        {
+            SetActiveFast(terrainTexture.gameObject, revealed);
+            if (revealed != seamlessRevealedLast)
+            {
+                seamlessRevealedLast = revealed;
+                HexSeamlessTerrain.MarkDirty(this);
+            }
+        }
         UpdateTerrainVisualAlpha();
         UpdateUndergroundMarker();
         if (revealed)
@@ -2407,8 +2421,6 @@ public class Hex : MonoBehaviour
 
     public bool IsHidden() => !IsHexRevealed();
 
-    public bool HasFeature(HexFeatureEnum flag) => (features & flag) != 0;
-
     /// <summary>
     /// True when this hex is an entrance to the Underground: either its tile art shows a
     /// chasm, or it holds a PC flagged as underground. Underground hexes are linked to each
@@ -2417,7 +2429,7 @@ public class Hex : MonoBehaviour
     public bool IsUnderground()
     {
         if (IsWaterTerrain()) return false;
-        if (HasFeature(HexFeatureEnum.Chasm)) return true;
+        if (isChasm) return true;
         PC pcData = GetPCData();
         return pcData != null && pcData.isUnderground;
     }
@@ -2435,11 +2447,7 @@ public class Hex : MonoBehaviour
             return 1;
         if (!character.IsArmyCommander()) return 1;
 
-        int cost = TerrainData.terrainCosts[terrainType];
-        // Roads carve a cheap corridor through the tile; a bridge eases the crossing.
-        if (HasFeature(HexFeatureEnum.Road)) cost -= 2;
-        if (HasFeature(HexFeatureEnum.Bridge)) cost -= 1;
-        return Mathf.Max(1, cost);
+        return Mathf.Max(1, TerrainData.terrainCosts[terrainType]);
     }
 
     public bool IsWaterTerrain()
@@ -2628,14 +2636,13 @@ public class Hex : MonoBehaviour
         movementCostManager.ShowMovementLeft(Math.Max(0, movementLeft), character, BuildTerrainFeatureSpriteTags());
     }
 
-    // Inline TMP sprite tags for this hex's terrain and any landmark features, drawn alongside the
+    // Inline TMP sprite tags for this hex's terrain (plus the chasm marker), drawn alongside the
     // movement cost. Reuses the environment_terrain_features spritesheet wired on the movement text.
     private string BuildTerrainFeatureSpriteTags()
     {
         StringBuilder sb = new();
         sb.Append(SpriteTag(TerrainData.GetDisplayName(terrainType)));
-        foreach (var (_, label) in HexFeatureData.GetPresentFeatures(features))
-            sb.Append(SpriteTag(label));
+        if (isChasm) sb.Append(SpriteTag("Chasm"));
         return sb.ToString();
     }
 
@@ -3082,6 +3089,39 @@ public class Hex : MonoBehaviour
 
         UpdateTerrainVisualAlpha();
         UpdateMinimapTerrain(IsHexRevealed());
+
+        // The rim blend samples this hex's (possibly new) art — this hex and its neighbors
+        // need their seamless-blend property blocks rebuilt at the end of the frame.
+        HexSeamlessTerrain.MarkDirty(this);
+    }
+
+    // Terrain sprites draw slightly larger than their cell so the seamless-blend feather fades
+    // over opaque neighbor art instead of exposing baked tile borders. Applied once per hex
+    // (Initialize re-runs on pooled reuse); the captured base scale keeps the reveal pulse from
+    // baking a pre-overdraw value back in.
+    private void ApplyTerrainOverdraw()
+    {
+        if (terrainOverdrawApplied || terrainTexture == null) return;
+        terrainOverdrawApplied = true;
+        Transform terrainTransform = terrainTexture.transform;
+        Vector3 scale = terrainTransform.localScale;
+        scale.x *= HexSeamlessTerrain.TileOverdraw;
+        scale.y *= HexSeamlessTerrain.TileOverdraw;
+        terrainTransform.localScale = scale;
+        terrainBaseScale = scale;
+        terrainBaseScaleCaptured = true;
+    }
+
+    // Drawn terrain size in world units (overdraw included), measured from the captured base
+    // scale so a running reveal-pulse animation can't skew the seamless-blend geometry.
+    public Vector2 GetTerrainDrawnWorldSize()
+    {
+        if (terrainTexture == null || terrainTexture.sprite == null) return Vector2.zero;
+        Transform terrainTransform = terrainTexture.transform;
+        Vector3 scale = terrainBaseScaleCaptured ? terrainBaseScale : terrainTransform.localScale;
+        Vector3 parentScale = terrainTransform.parent != null ? terrainTransform.parent.lossyScale : Vector3.one;
+        Vector3 spriteSize = terrainTexture.sprite.bounds.size;
+        return new Vector2(spriteSize.x * scale.x * parentScale.x, spriteSize.y * scale.y * parentScale.y);
     }
 
     private void UpdateTerrainVisualAlpha()

@@ -246,18 +246,23 @@ public class NationSpawner : MonoBehaviour
         DeckManager deckManager = ResolveDeckManager();
         long deckMs = Lap();
 
-        // 1. Leaders — a leader's entire presence in a scenario is its self-owned character card
-        // (ownerLeaderName == characterName): that hex is where it starts, and its army (if any) is
-        // the leader's starting army. Whether the name is playable or non-playable is looked up
-        // from the biome JSONs, never authored separately (see FindLeaderBiome).
+        // 1. Leaders — a leader's presence in a scenario is a character card that is either
+        // self-owned (ownerLeaderName == characterName, optionally naming a variantId) or a
+        // playable leader's VARIANT character owned by its base leader (e.g. "The White Hand"
+        // owned by "Saruman"): that hex is where the instance starts, and its army (if any) is
+        // its starting army. Whether the name is playable or non-playable is looked up from the
+        // biome JSONs, never authored separately (see FindLeaderBiome / IsPlayableVariantCard).
         //
-        // A scenario can author the same playable leader at several hexes, one per variant (e.g.
-        // five different Sauron starts) so each shows as its own carousel entry — every one spawns
-        // here, immediately locked to its authored variant, and unselected siblings are pruned down
-        // to a single survivor once selection is final (see Game.PruneUnselectedLeaderVariants).
+        // A scenario can therefore author the same playable leader at several hexes, one per
+        // variant (e.g. five different Sauron starts) so each shows as its own carousel entry —
+        // every one spawns here, immediately locked to its authored variant, and unselected
+        // siblings are pruned down to a single survivor once selection is final
+        // (see Game.PruneUnselectedLeaderVariants).
         foreach (ScenarioCharacter selfCard in scenario.characters ?? new List<ScenarioCharacter>())
         {
-            if (!IsSelfOwnedLeaderCard(selfCard, out LeaderBiomeConfig playableBiome, out NonPlayableLeaderBiomeConfig nplBiome)) continue;
+            LeaderVariantConfig authoredVariant = null;
+            if (!IsSelfOwnedLeaderCard(selfCard, out LeaderBiomeConfig playableBiome, out NonPlayableLeaderBiomeConfig nplBiome)
+                && !IsPlayableVariantCard(selfCard, out playableBiome, out authoredVariant)) continue;
             if (!TryGetScenarioHex(scenario, selfCard.row, selfCard.col, out Hex hex)) continue;
             if (!EnsureCharacterCapacity($"Skipping leader '{selfCard.characterName}'.")) continue;
 
@@ -271,24 +276,34 @@ public class NationSpawner : MonoBehaviour
             // reference it as an owner just need *a* representative, so last-one-wins is fine.
             scenarioLeadersByName[selfCard.characterName] = leader;
             leaderPositions[selfCard.characterName] = hex.v2;
+            // A variant card is also keyed under its base leader name, so PCs/characters authored
+            // with the base owner name (the common case) resolve to this instance instead of
+            // lazily spawning a duplicate, unlocked leader in EnsureLeaderSpawned.
+            if (playableBiome != null && !string.Equals(playableBiome.characterName, selfCard.characterName, StringComparison.OrdinalIgnoreCase))
+            {
+                scenarioLeadersByName[playableBiome.characterName] = leader;
+                leaderPositions[playableBiome.characterName] = hex.v2;
+            }
 
             if (playableBiome != null && leader is PlayableLeader playableInstance)
             {
-                // Any self-owned card fixes this instance's identity/position for the scenario —
+                // Any authored card fixes this instance's identity/position for the scenario —
                 // never a free variant pick or a random re-roll in RandomizeCompetitorVariants —
-                // whether or not a specific variant was named (a blank variantId just means "the
-                // base flavor, at this hex" rather than "no scenario opinion at all").
+                // whether or not a specific variant was named (a self-owned card with a blank
+                // variantId just means "the base flavor, at this hex" rather than "no scenario
+                // opinion at all").
                 playableInstance.scenarioVariantLocked = true;
 
-                if (!string.IsNullOrWhiteSpace(selfCard.variantId))
+                LeaderVariantConfig variant = authoredVariant;
+                if (variant == null && !string.IsNullOrWhiteSpace(selfCard.variantId))
                 {
-                    LeaderVariantConfig variant = playableBiome.variants?.Find(v =>
+                    variant = playableBiome.variants?.Find(v =>
                         v != null && string.Equals(v.variantId, selfCard.variantId, StringComparison.OrdinalIgnoreCase));
-                    if (variant != null)
-                    {
-                        string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? playableBiome.subdeckId : variant.subdeckId;
-                        playableInstance.SetDeckSelection(subdeckId, variant.deckIdentity, playableBiome.description, variant.displayName, variant.characterName);
-                    }
+                }
+                if (variant != null)
+                {
+                    string subdeckId = string.IsNullOrWhiteSpace(variant.subdeckId) ? playableBiome.subdeckId : variant.subdeckId;
+                    playableInstance.SetDeckSelection(subdeckId, variant.deckIdentity, playableBiome.description, variant.displayName, variant.characterName);
                 }
             }
 
@@ -322,9 +337,10 @@ public class NationSpawner : MonoBehaviour
         foreach (ScenarioCharacter sc in scenario.characters ?? new List<ScenarioCharacter>())
         {
             if (sc == null || string.IsNullOrWhiteSpace(sc.characterName)) continue;
-            // Self-owned leader identity cards were already folded into that leader's own spawn
-            // (hex + army) in step 1 above — skip so we don't spawn a duplicate leader instance.
-            if (IsSelfOwnedLeaderCard(sc, out _, out _)) continue;
+            // Self-owned leader identity cards and playable variant cards were already folded
+            // into that leader's own spawn (hex + army) in step 1 above — skip so we don't spawn
+            // a duplicate leader/character instance.
+            if (IsSelfOwnedLeaderCard(sc, out _, out _) || IsPlayableVariantCard(sc, out _, out _)) continue;
             if (!TryGetScenarioHex(scenario, sc.row, sc.col, out Hex hex)) continue;
             if (!EnsureCharacterCapacity($"Skipping character '{sc.characterName}'.")) continue;
 
@@ -479,21 +495,51 @@ public class NationSpawner : MonoBehaviour
 
     // Called by Game.PruneUnselectedLeaderVariants once every playable leader's variant is final:
     // a scenario can author the same leader at several hexes (one per variant), each spawned as its
-    // own instance in step 1 above, but only one should remain in play. Removes this losing sibling
-    // and everything it owns, quietly — as if it had never spawned (no death messaging/effects,
-    // since the game hasn't visibly started).
-    public void RemoveUnselectedScenarioLeader(Leader leader)
+    // own instance in step 1 above, but only one should remain in play. The leader's shared nation
+    // (PCs/characters authored against the base owner name all attached to ONE arbitrary sibling
+    // representative at spawn) transfers to the surviving instance; only the losing sibling itself
+    // and its own authored starting army vanish, quietly — as if that start had never spawned (no
+    // death messaging/effects, since the game hasn't visibly started). Variant-restricted assets
+    // (ownerVariantId) are re-checked against the survivor afterwards in
+    // ReconcileScenarioVariantOwnership, which runs after pruning in Game.StartGame.
+    public void RemoveUnselectedScenarioLeader(Leader leader, Leader survivor)
     {
         if (leader == null) return;
 
         foreach (PC pc in leader.controlledPcs.ToList())
-            RemoveUnresolvedScenarioPc(pc);
+        {
+            if (survivor != null)
+            {
+                leader.controlledPcs.Remove(pc);
+                leader.visibleHexes.Remove(pc.hex);
+                pc.owner = survivor;
+                survivor.controlledPcs.Add(pc);
+                survivor.visibleHexes.Add(pc.hex);
+            }
+            else
+            {
+                RemoveUnresolvedScenarioPc(pc);
+            }
+        }
 
         foreach (Character character in leader.controlledCharacters.ToList())
         {
             if (character == leader) continue;
-            RemoveUnresolvedScenarioCharacter(character);
+            if (survivor != null)
+            {
+                leader.controlledCharacters.Remove(character);
+                character.owner = survivor;
+                survivor.controlledCharacters.Add(character);
+            }
+            else
+            {
+                RemoveUnresolvedScenarioCharacter(character);
+            }
         }
+
+        // The losing start's own army dies with it — it belongs to that hex/variant, not the nation.
+        if (leader.IsArmyCommander() && leader.GetArmy() != null && !leader.GetArmy().killed)
+            leader.GetArmy().Killed(null, false);
 
         if (leader.hex != null && leader.hex.characters.Contains(leader))
             leader.hex.characters.Remove(leader);
@@ -502,7 +548,7 @@ public class NationSpawner : MonoBehaviour
     }
 
     // Applies authored per-hex tile variations. Re-running SetTerrain with the chosen sprite
-    // also refreshes that hex's landmark features (HexFeatureData reads the sprite name).
+    // also refreshes that hex's Underground-entrance state (ChasmTiles reads the sprite name).
     private void ApplyScenarioTerrainSprites(ScenarioData scenario)
     {
         if (scenario.terrainSprites == null || scenario.terrainSprites.Count == 0) return;
@@ -602,6 +648,34 @@ public class NationSpawner : MonoBehaviour
         if (!string.Equals(sc.characterName, sc.ownerLeaderName, StringComparison.OrdinalIgnoreCase)) return false;
         (playable, nonPlayable) = FindLeaderBiome(sc.characterName);
         return playable != null || nonPlayable != null;
+    }
+
+    // A ScenarioCharacter whose characterName matches one of a playable leader's variant
+    // characterNames AND is owned by that leader (e.g. "The White Hand" owned by "Saruman") is
+    // that variant's starting point in the scenario. It spawns in step 1 as its own
+    // variant-locked PlayableLeader instance (= one carousel entry), never as a plain character.
+    private bool IsPlayableVariantCard(ScenarioCharacter sc, out LeaderBiomeConfig playable, out LeaderVariantConfig variant)
+    {
+        playable = null;
+        variant = null;
+        if (sc == null || string.IsNullOrWhiteSpace(sc.characterName) || string.IsNullOrWhiteSpace(sc.ownerLeaderName)) return false;
+
+        foreach (LeaderBiomeConfig biome in playableLeaders.playableLeaders.biomes)
+        {
+            if (biome == null || biome.variants == null) continue;
+            if (!string.Equals(biome.characterName, sc.ownerLeaderName, StringComparison.OrdinalIgnoreCase)) continue;
+
+            LeaderVariantConfig match = biome.variants.Find(v =>
+                v != null && !string.IsNullOrWhiteSpace(v.characterName)
+                && string.Equals(v.characterName, sc.characterName, StringComparison.OrdinalIgnoreCase));
+            if (match == null) continue;
+
+            playable = biome;
+            variant = match;
+            return true;
+        }
+
+        return false;
     }
 
     // Mirrors how a Character card is turned into a unit (see Card.HandleCharacterCardPlayed):

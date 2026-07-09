@@ -111,7 +111,7 @@ public class LeaderSelector : SearcherByName
                     if (loadedLeaders.Contains(playableLeader)) continue;
                     loadedLeaders.Add(playableLeader);
 
-                    if (!IsLeaderAllowedForActiveSelection(playableLeader.characterName)) continue;
+                    if (!IsLeaderAllowedForActiveSelection(playableLeader)) continue;
 
                     AddLeaderOptions(playableLeader);
 
@@ -386,23 +386,14 @@ public class LeaderSelector : SearcherByName
     }
 
     // Campaign play (no scenario chosen) offers every playable leader found in the scene. An
-    // authored scenario restricts the carousel to leaders it placed a self-owned character card
-    // for — NationSpawner already only spawns those, but this guards the carousel directly against
-    // that invariant instead of relying solely on what happened to get instantiated.
-    bool IsLeaderAllowedForActiveSelection(string leaderName)
+    // authored scenario restricts the carousel to instances it explicitly placed a starting card
+    // for — self-owned leader cards and playable variant cards, both spawned variant-locked in
+    // NationSpawner step 1. Leaders spawned implicitly as mere owners of scenario PCs/characters
+    // (EnsureLeaderSpawned) are never locked, so they stay out of the carousel.
+    bool IsLeaderAllowedForActiveSelection(PlayableLeader playableLeader)
     {
         if (!GameConfig.HasScenario) return true;
-
-        ScenarioData scenario = FindFirstObjectByType<Board>()?.ActiveScenario;
-        if (scenario?.characters == null) return true;
-
-        foreach (ScenarioCharacter sc in scenario.characters)
-        {
-            if (sc == null || !string.Equals(sc.characterName, sc.ownerLeaderName, StringComparison.OrdinalIgnoreCase)) continue;
-            if (string.Equals(sc.characterName, leaderName, StringComparison.OrdinalIgnoreCase)) return true;
-        }
-
-        return false;
+        return playableLeader != null && playableLeader.scenarioVariantLocked;
     }
 
     string BuildLeaderDisplayName(PlayableLeader playableLeader, AlignmentEnum alignment, string variantName = null)

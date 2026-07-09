@@ -193,12 +193,8 @@ public class HexPathRenderer : MonoBehaviour
                 // Special case: Allow transition if neighbor is the goal position
                 bool isGoalPosition = neighbor == goalPos;
 
-                // A river (without a bridge) stops movement just like a water transition:
-                // you may move onto it, but the path cannot extend past it this turn.
-                bool isRiverStop = StopsMovement(neighbor);
-
-                // If this is a transition/river-stop hex and NOT the goal, mark it as an endpoint candidate but don't extend the path
-                if ((isTerrainTransition || isRiverStop) && !isGoalPosition)
+                // If this is a transition hex and NOT the goal, mark it as an endpoint candidate but don't extend the path
+                if (isTerrainTransition && !isGoalPosition)
                 {
                     // Update the neighbor's path information
                     cameFrom[neighbor] = current;
@@ -243,14 +239,6 @@ public class HexPathRenderer : MonoBehaviour
 
         // No path found
         return new List<Vector2Int> { };
-    }
-
-    // A river hex halts movement on entry unless it carries a bridge.
-    private bool StopsMovement(Vector2Int position)
-    {
-        if (board.hexes.TryGetValue(position, out var hex))
-            return hex.HasFeature(HexFeatureEnum.River) && !hex.HasFeature(HexFeatureEnum.Bridge);
-        return false;
     }
 
     // Helper method to check if a hex is water terrain
