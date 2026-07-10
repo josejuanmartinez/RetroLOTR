@@ -22,6 +22,7 @@ namespace RetroLOTR.Scenarios.EditorTools
 
         // ---- Map state (index = row * width + col) -------------------------------------------
         private string scenarioName = "New Scenario";
+        private string scenarioDescription = "";
         private int width = 40;
         private int height = 40;
         private TerrainEnum[] terrain;
@@ -120,6 +121,7 @@ namespace RetroLOTR.Scenarios.EditorTools
 
         private void NewMap(int w, int h)
         {
+            scenarioDescription = "";
             width = Mathf.Clamp(w, 1, 200);
             height = Mathf.Clamp(h, 1, 200);
             terrain = new TerrainEnum[width * height];
@@ -201,6 +203,12 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             EditorGUILayout.BeginVertical(GUILayout.Width(210));
 
+            // Saved with the scenario; shown as the button subtitle on the campaign-selection screen.
+            EditorGUILayout.LabelField("Description", EditorStyles.boldLabel);
+            scenarioDescription = EditorGUILayout.TextArea(scenarioDescription ?? string.Empty,
+                EditorStyles.textArea, GUILayout.MinHeight(52));
+
+            EditorGUILayout.Space();
             EditorGUILayout.LabelField("New Map", EditorStyles.boldLabel);
             newWidth = EditorGUILayout.IntField("Width", newWidth);
             newHeight = EditorGUILayout.IntField("Height", newHeight);
@@ -1201,6 +1209,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             var data = new ScenarioData
             {
                 scenarioName = scenarioName,
+                description = scenarioDescription ?? string.Empty,
                 width = width,
                 height = height,
                 terrain = terrain.Select(t => (int)t).ToArray(),
@@ -1225,6 +1234,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private void FromScenarioData(ScenarioData data)
         {
             scenarioName = data.scenarioName;
+            scenarioDescription = data.description ?? string.Empty;
             width = data.width;
             height = data.height;
             terrain = new TerrainEnum[width * height];

@@ -539,6 +539,10 @@ public class NationSpawner : MonoBehaviour
                 leader.controlledCharacters.Remove(character);
                 character.owner = survivor;
                 survivor.controlledCharacters.Add(character);
+                // Mirror the PC branch: the survivor must see the hexes its characters stand on,
+                // or fog hides them and Board.SelectHex refuses to select them (dead Tab cycling).
+                if (character.hex != null && !survivor.visibleHexes.Contains(character.hex))
+                    survivor.visibleHexes.Add(character.hex);
             }
             else
             {
@@ -553,6 +557,8 @@ public class NationSpawner : MonoBehaviour
         if (leader.hex != null && leader.hex.characters.Contains(leader))
             leader.hex.characters.Remove(leader);
         currentCharacterCount = Mathf.Max(0, currentCharacterCount - 1);
+        Debug.Log($"[Scenario] pruned unselected sibling of '{leader.characterName}' at {leader.hex?.v2}; " +
+                  $"survivor '{survivor?.characterName}' now owns {survivor?.controlledCharacters?.Count ?? 0} characters / {survivor?.controlledPcs?.Count ?? 0} PCs.");
         Destroy(leader.gameObject);
     }
 
@@ -583,7 +589,13 @@ public class NationSpawner : MonoBehaviour
 
     private DeckManager ResolveDeckManager()
     {
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        // Scenario spawning runs during board generation, before the game HUD is necessarily
+        // active — the DeckManager may not have Awoken yet (Instance unset) and a default
+        // FindFirstObjectByType skips inactive objects, so search inactive ones too.
+        // InitializeFromResources only touches Resources, so it is safe on an inactive object.
+        DeckManager deckManager = DeckManager.Instance != null
+            ? DeckManager.Instance
+            : FindFirstObjectByType<DeckManager>(FindObjectsInactive.Include);
         if (deckManager != null && (deckManager.cards == null || deckManager.cards.Count == 0))
         {
             deckManager.InitializeFromResources();

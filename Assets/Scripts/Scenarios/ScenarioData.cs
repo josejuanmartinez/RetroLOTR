@@ -35,10 +35,15 @@ namespace RetroLOTR.Scenarios
         // the default) be destroyed. Replaces the old implicit "NPL-identity characters revert to
         // independent, everything else is destroyed" rule.
         // Older scenarios deserialize with the new fields at their defaults, so they keep working.
-        public const int CurrentVersion = 6;
+        // v7 added ScenarioData.description: the author-written blurb the campaign-selection
+        // screen shows under the scenario's name. Optional; empty keeps the button template's text.
+        public const int CurrentVersion = 7;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
+
+        /// <summary>Author-written blurb shown on the campaign-selection screen's scenario button.</summary>
+        public string description = "";
 
         public int width;
         public int height;

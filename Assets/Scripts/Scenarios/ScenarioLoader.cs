@@ -99,6 +99,25 @@ namespace RetroLOTR.Scenarios
             public int height;
         }
 
+        [Serializable]
+        private class ScenarioBlurb
+        {
+            public string description;
+        }
+
+        /// <summary>
+        /// The scenario's author-written description, without deserializing the whole file
+        /// (JsonUtility only fills the fields the target class declares).
+        /// </summary>
+        public static string GetScenarioDescription(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return string.Empty;
+            TextAsset asset = Resources.Load<TextAsset>($"{ResourceFolder}/{name}");
+            if (asset == null) return string.Empty;
+            try { return JsonUtility.FromJson<ScenarioBlurb>(asset.text)?.description ?? string.Empty; }
+            catch { return string.Empty; }
+        }
+
         /// <summary>
         /// Largest width/height across all indexed scenarios — used to size the hex-pool
         /// prewarm before the player has picked what to play. (0,0) when none exist.

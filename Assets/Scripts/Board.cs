@@ -161,19 +161,45 @@ public class Board : MonoBehaviour
         if (!GameConfig.SkipIntro) GameConfig.ScenarioChosen = false;
     }
 
+    [Header("Campaign Selection")]
+    [Tooltip("Prefab of the first screen (campaign/scenario choice). Fully styled in the prefab; when left empty it is loaded from Resources/CampaignSelectionScreen.")]
+    [SerializeField] private RetroLOTR.Scenarios.CampaignSelectionManager campaignSelectionPrefab;
+
     // Nothing happens — no intro video, no generation, no leader selector — until the
     // player picks an authored scenario or the default random campaign.
     private IEnumerator BeginAfterScenarioChoice()
     {
         if (!GameConfig.ScenarioChosen)
         {
-            RetroLOTR.Scenarios.ScenarioSelectionScreen.Show();
+            ShowCampaignSelection();
             yield return new WaitUntil(() => GameConfig.ScenarioChosen);
         }
 
         StartCoroutine(ReleaseThrottleIfNoVideo());
         ResolveActiveScenario();
         yield return StartCoroutine(DrawCoroutine());
+    }
+
+    // Instantiates the authored selection screen (never builds UI in code). Falls back to the
+    // Resources copy when the scene field isn't wired, and — only if both are missing — starts
+    // the default campaign so a broken reference can never soft-lock the game on a blank screen.
+    private void ShowCampaignSelection()
+    {
+        if (FindFirstObjectByType<RetroLOTR.Scenarios.CampaignSelectionManager>() != null) return;
+
+        RetroLOTR.Scenarios.CampaignSelectionManager prefab = campaignSelectionPrefab;
+        if (prefab == null)
+            prefab = Resources.Load<RetroLOTR.Scenarios.CampaignSelectionManager>("CampaignSelectionScreen");
+
+        if (prefab != null)
+        {
+            Instantiate(prefab);
+            return;
+        }
+
+        Debug.LogError("Board: no CampaignSelectionScreen prefab wired or found in Resources; starting the default campaign.");
+        GameConfig.ScenarioToLoad = null;
+        GameConfig.ScenarioChosen = true;
     }
 
     // The generation frame budget is throttled only to keep the intro video smooth.
