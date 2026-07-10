@@ -1,6 +1,7 @@
-{
-    "version": 6,
+﻿{
+    "version": 7,
     "scenarioName": "2950",
+    "description": "The War of the Ring circa 2950, inspired in MERPG and MEPBM and MECCG.",
     "width": 65,
     "height": 70,
     "terrain": [
@@ -24356,7 +24357,7 @@
             "row": 23,
             "col": 32,
             "characterName": "Balrog",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Balrog",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -24372,19 +24373,6 @@
                         "amount": 1
                     }
                 ]
-            }
-        },
-        {
-            "row": 23,
-            "col": 32,
-            "characterName": "Balrog",
-            "ownerLeaderName": "Balrog",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
             }
         },
         {
@@ -24553,7 +24541,7 @@
             "row": 28,
             "col": 24,
             "characterName": "Waulfa",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Waulfa",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -24704,7 +24692,7 @@
             "row": 25,
             "col": 36,
             "characterName": "Galadriel",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Galadriel",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25077,7 +25065,7 @@
             "row": 43,
             "col": 41,
             "characterName": "Denethor",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Denethor",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25182,7 +25170,7 @@
             "row": 44,
             "col": 48,
             "characterName": "Ren the Unclean",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Ren the Unclean",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25201,23 +25189,10 @@
             }
         },
         {
-            "row": 44,
-            "col": 48,
-            "characterName": "Ren the Unclean",
-            "ownerLeaderName": "Ren the Unclean",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
-            }
-        },
-        {
             "row": 39,
             "col": 44,
             "characterName": "Hoarmurath",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Hoarmurath",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25361,19 +25336,6 @@
                         "amount": 100
                     }
                 ]
-            }
-        },
-        {
-            "row": 42,
-            "col": 46,
-            "characterName": "Shelob",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
             }
         },
         {
@@ -25607,7 +25569,7 @@
             "row": 33,
             "col": 46,
             "characterName": "Huz",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Huz",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25898,28 +25860,6 @@
         {
             "row": 4,
             "col": 31,
-            "characterName": "Azog",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": [
-                    {
-                        "armyCardName": "Wargs",
-                        "amount": 100
-                    },
-                    {
-                        "armyCardName": "Warg Riders",
-                        "amount": 100
-                    }
-                ]
-            }
-        },
-        {
-            "row": 4,
-            "col": 31,
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",
@@ -25940,7 +25880,16 @@
             "variantId": "",
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "Wargs",
+                        "amount": 100
+                    },
+                    {
+                        "armyCardName": "Warg Riders",
+                        "amount": 100
+                    }
+                ]
             }
         },
         {

@@ -301,6 +301,12 @@ MonoBehaviour:
   artifactStatusGridLayoutTransform: {fileID: 8751727250396390783}
   cardCanvasGroup: {fileID: 3428527786944334405}
   playedCard: {fileID: 4970419102239235587, guid: 5b3b6cce768a67f48a7ddb8000a97897, type: 3}
+  circlesPulseAlphaMin: 56
+  circlesPulseAlphaMax: 78
+  circlesHoverAlpha: 255
+  circlesPulseSpeed: 0.8
+  loadingIconCursorOffset: {x: 26, y: -26}
+  loadingIconSize: 30
 --- !u!114 &7475116321720209069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1057,8 +1063,9 @@ GameObject:
   - component: {fileID: 1558592774719510264}
   - component: {fileID: 281951183678655210}
   - component: {fileID: 5150173222460365382}
+  - component: {fileID: 6866503705426783394}
   m_Layer: 5
-  m_Name: Circles
+  m_Name: Cards
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1080,7 +1087,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.29244995, y: 2.5341034}
+  m_AnchoredPosition: {x: -0.29244995, y: 27.116}
   m_SizeDelta: {x: 182.0731, y: 150.53}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &281951183678655210
@@ -1104,14 +1111,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5660378, g: 0.5660378, b: 0.5660378, a: 0.21960784}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.8509804}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2213033360543507349, guid: 33fca77be8b92e64baa318d087e7d09a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3ef389154b316a847a9ff0e067210dd2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1121,6 +1128,50 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6866503705426783394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6566343098080065221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 2
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 21300000, guid: d7a5a814f9345754981a04ba8d2597d1, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: d7a5a814f9345754981a04ba8d2597d1, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: d7a5a814f9345754981a04ba8d2597d1, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 3ef389154b316a847a9ff0e067210dd2, type: 3}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 5150173222460365382}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6824982453813064345
 GameObject:
   m_ObjectHideFlags: 0

@@ -171,7 +171,16 @@ public class Game : MonoBehaviour
             {
                 if (sibling == survivor) continue;
                 competitors?.Remove(sibling);
-                board.nationSpawner?.RemoveUnselectedScenarioLeader(sibling, survivor);
+                // One broken sibling must never abort StartGame — everything after this
+                // (currentlyPlaying, turn start, AI assignment) would silently stay dead.
+                try
+                {
+                    board.nationSpawner?.RemoveUnselectedScenarioLeader(sibling, survivor);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"PruneUnselectedLeaderVariants: failed to remove sibling '{sibling.characterName}' ({sibling.GetSelectedVariantName()}): {e}");
+                }
             }
         }
     }
@@ -442,7 +451,17 @@ public class Game : MonoBehaviour
         int currentIndex = ordered.IndexOf(current);
         int nextIndex = currentIndex >= 0 ? (currentIndex + 1) % ordered.Count : 0;
         Character next = ordered[nextIndex];
-        if (next != null) board.SelectCharacter(next);
+        if (next == null) return;
+
+        // An own character must always be selectable: if its hex is fogged (e.g. it was handed
+        // over by a path that skipped visibility bookkeeping), Board.SelectHex would silently
+        // no-op and Tab would appear dead on that character forever. Reveal it first.
+        if (next.hex != null && next.hex.IsHidden())
+        {
+            if (!player.visibleHexes.Contains(next.hex)) player.visibleHexes.Add(next.hex);
+            next.hex.RevealArea(1, false, null);
+        }
+        board.SelectCharacter(next);
     }
 
     public async void NextPlayer()
@@ -931,11 +950,19 @@ public class Game : MonoBehaviour
         Character firstAlive = player.controlledCharacters
             .FirstOrDefault(c => c != null && !c.killed);
 
+        // Every controlled character's hex — not just the first — must be visible, or scattered
+        // scenario starts leave characters in fog that Board.SelectHex refuses to select.
+        foreach (Character c in player.controlledCharacters)
+        {
+            if (c == null || c.killed || c.hex == null) continue;
+            if (!player.visibleHexes.Contains(c.hex)) player.visibleHexes.Add(c.hex);
+            if (c != firstAlive) c.hex.RevealArea(1, false, null);
+        }
+
         if (firstAlive != null)
         {
             if (firstAlive.hex != null)
             {
-                if (!player.visibleHexes.Contains(firstAlive.hex)) player.visibleHexes.Add(firstAlive.hex);
                 firstAlive.hex.RevealArea(1, true, null);
             }
             ShowHumanPlayerWidgetsWidgets();

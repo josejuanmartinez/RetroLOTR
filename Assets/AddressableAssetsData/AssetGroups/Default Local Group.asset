@@ -954,7 +954,8 @@ MonoBehaviour:
   - m_GUID: 0ad67aeec5829cd43b612d71d7dfa715
     m_Address: Assets/Art/Hexes/PCs/Barad-Ungol.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0b62a67145b9a0e4eaa74d2fcfea6e16
     m_Address: Assets/Art/Hexes/Roads/hexRoad-111111-02.png
@@ -1036,6 +1037,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0c99a8eb6ddff1b4288f4d6e5c5fd0db
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/039 4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0c99ea2c7f2a1524cbffb43289eae55b
+    m_Address: Assets/Art/Hexes/Tiles/shore_05.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4568,6 +4575,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 33fca77be8b92e64baa318d087e7d09a
+    m_Address: Assets/Art/Other/ciruclarConcentrical.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 34087c0c1de21a448ac01c45543bcb56
     m_Address: Assets/Art/Cards/Characters/Smaug.png
     m_ReadOnly: 0
@@ -5057,7 +5070,8 @@ MonoBehaviour:
   - m_GUID: 3a7d25626ccbf284db234d07fd4f443b
     m_Address: Assets/Art/Hexes/PCs/Lag-vrasfotak.png
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3a8668307a2df7c4ca4b3297b13d43d7
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexPlainsCastle00.png
@@ -5438,6 +5452,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3edcd6c6266ef1b43ab4e48bb0fc13a2
     m_Address: Assets/Art/Hexes/Tiles/plains_09.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ef389154b316a847a9ff0e067210dd2
+    m_Address: Assets/Art/Other/cardDeck1.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5954,6 +5974,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4411ec524510e07418e618bbe697e63b
     m_Address: Assets/Art/Cards/Actions/Events/Environmental/DoorsOfNight.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 441af88b2ed26de468a4ef30a29d795e
+    m_Address: Assets/Art/Fonts/Inter/Inter-Regular.ttf
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6500,6 +6526,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4aedc6dadd79fa748922c3731e19f0c9
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/Mount Doom.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4af31a8ede9c0c8ce53b0dbb5af4986e
+    m_Address: Assets/Art/Cards/Characters/Skritx.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7235,6 +7267,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53669dcc794e2684faa213556ae474d8
+    m_Address: Assets/Art/Fonts/Inter/Inter-Bold SDF.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 536e636d62a1c004ba6f1e1fbedd1a53
     m_Address: Assets/Art/Characters/Animations/maia_right.anim
     m_ReadOnly: 0
@@ -7261,6 +7299,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 53a63fc2837c0a141a9caa0fef7e7509
     m_Address: Assets/Art/Icons/color_common_spritesheet_59.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53b07cc3e1cf7eaafcfc45b530a10755
+    m_Address: Assets/Art/Cards/Characters/Vulmek.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7829,6 +7873,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59733c982ddd343478341a6e13188b16
+    m_Address: Assets/Art/Other/cardDeck4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 59768c51e1fb658488f9fd9ff2031517
     m_Address: Assets/Art/Hexes/PCs/Gundabad.png
     m_ReadOnly: 0
@@ -8365,6 +8415,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5fe596cde5ee15640810adf42b12db45
     m_Address: Assets/Art/Cards/Armies/BlackArrowMen.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6015daea784fb184688f2043e3028643
+    m_Address: Assets/Art/Hexes/Tiles/mountains_8.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8999,6 +9055,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 676d99c5411be504c87fb10ba287afa4
+    m_Address: Assets/Art/Other/cardDeck3.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 677a157cef0969f4e920c74e1a1dba1f
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/032 1.png
     m_ReadOnly: 0
@@ -9121,6 +9183,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6912061fc4d247345a5eb4d32475bf2a
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/019 4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6912e7597ffec624db127d73b3341f9f
+    m_Address: Assets/Art/Other/movementArrows.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -11195,6 +11263,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e2660117fea81042ad0c31420fa26ab
+    m_Address: Assets/Art/Cards/Characters/Bain.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7e278671067737749aad601ff7cad516
     m_Address: Assets/Art/Cards/PC/SarnGoriwing.png
     m_ReadOnly: 0
@@ -12413,6 +12487,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c4086893cc32854f9be5546c4ce807b
+    m_Address: Assets/Art/Hexes/Tiles/Unused/swamp_09.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8c6921976ec34871aa573b94e39d375f
     m_Address: Assets/Art/Cards/Actions/Events/BagginsDue.png
     m_ReadOnly: 0
@@ -13271,6 +13351,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9588048528530f54fb6c9ebd17b2bef4
+    m_Address: Assets/Art/Cards/Characters/ItanaOvan.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 958de9a01533abc4fa75de853d6dc210
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_101.png
     m_ReadOnly: 0
@@ -13429,6 +13515,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 97593ec9a5119044383a19ffb5cb6f4c
     m_Address: Assets/Art/Hexes/Roads/hexRoad-100010-02.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 97668479caa925443b6e638086d1eab5
+    m_Address: Assets/Art/Fonts/Inter/Inter-Bold.ttf
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -17906,6 +17998,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c91cebe757dc2f04a8e00a77054ff1ed
+    m_Address: Assets/Art/Fonts/Inter/LICENSE.txt
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c9297a0a7ade75442ad3031f87862818
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/061.png
     m_ReadOnly: 0
@@ -18817,6 +18915,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d39eb9de9ec6c214c880f79c816423d3
+    m_Address: Assets/Art/Fonts/Inter/Inter-Regular SDF.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d39ef2e52289c1f4ab1f4ab6465b9fa5
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_209.png
     m_ReadOnly: 0
@@ -19113,6 +19217,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d7a2e1112f905ad48bb6d115ecafdc3a
     m_Address: Assets/Art/Cards/Characters/Lurtz.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d7a5a814f9345754981a04ba8d2597d1
+    m_Address: Assets/Art/Other/cardDeck2.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -22051,6 +22161,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f633fcbde6501464198f03b7cdb2b33e
+    m_Address: Assets/Art/Cards/Characters/Bulrakur.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f63bdac46a532cc489c54627c8f51dda
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexPlainsFarm00.png
     m_ReadOnly: 0
@@ -22184,7 +22300,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f77cc4ad36509654cbfba5800a6f9ca6
-    m_Address: Assets/Art/Hexes/PCs/Raiders Hold.png
+    m_Address: Assets/Art/Hexes/PCs/Raider Hold.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

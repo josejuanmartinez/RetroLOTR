@@ -55,18 +55,30 @@ namespace RetroLOTR.Scenarios
                 button.gameObject.SetActive(true);
                 button.onClick.AddListener(() => Choose(captured));
 
-                TMP_Text title = FindTitleLabel(button.transform);
+                TMP_Text title = FindLabel(button.transform, "Title");
                 if (title != null) title.text = captured;
+
+                // The author-written blurb (Scenario Creator's Description field) fills the
+                // Subtitle; scenarios without one keep whatever the template says.
+                string description = ScenarioLoader.GetScenarioDescription(captured);
+                if (!string.IsNullOrWhiteSpace(description))
+                {
+                    TMP_Text subtitle = FindLabel(button.transform, "Subtitle");
+                    if (subtitle != null) subtitle.text = description;
+                }
             }
         }
 
-        // The scenario name goes into the clone's TMP child named "Title"; if the author renamed
-        // it, fall back to the first TMP found so the button is never nameless.
-        private static TMP_Text FindTitleLabel(Transform root)
+        // Content goes into the clone's TMP children by name ("Title" gets the scenario name,
+        // "Subtitle" the description). For the title, fall back to the first TMP found if the
+        // author renamed it, so the button is never nameless.
+        private static TMP_Text FindLabel(Transform root, string labelName)
         {
             foreach (TMP_Text text in root.GetComponentsInChildren<TMP_Text>(true))
-                if (string.Equals(text.name, "Title", System.StringComparison.OrdinalIgnoreCase)) return text;
-            return root.GetComponentInChildren<TMP_Text>(true);
+                if (string.Equals(text.name, labelName, System.StringComparison.OrdinalIgnoreCase)) return text;
+            return string.Equals(labelName, "Title", System.StringComparison.OrdinalIgnoreCase)
+                ? root.GetComponentInChildren<TMP_Text>(true)
+                : null;
         }
 
         private void Choose(string scenarioName)
