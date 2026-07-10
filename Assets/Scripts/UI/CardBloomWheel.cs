@@ -80,6 +80,9 @@ public class CardBloomWheel : MonoBehaviour
     private float IntroStartScale => previewIntroStartScale > 0.001f ? previewIntroStartScale : 0.55f;
 
     public bool IsOpen => isOpen;
+    // 0..1 fraction of the hover dwell completed (1 once open) — drives the loading indicator
+    // SelectedCharacterIcon draws at the cursor while the bloom is pending.
+    public float HoverProgress => isOpen ? 1f : (hoverDelay > 0f ? Mathf.Clamp01(hoverTimer / hoverDelay) : 1f);
     public float LinesAlpha { get; private set; }
     public Vector2 LineEndOffset => lineEndOffset;
     public IReadOnlyList<RectTransform> CardRects => cardRects;

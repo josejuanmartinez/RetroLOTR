@@ -365,8 +365,11 @@ public class LeaderSelector : SearcherByName
             LeaderVariantConfig variant = biome.variants?.Find(v => v != null && string.Equals(v.displayName, variantName, StringComparison.OrdinalIgnoreCase));
             string displayName = BuildLeaderDisplayName(playableLeader, biome.alignment, variantName);
             string description = NormalizeLeaderDescription(playableLeader.GetSelectedLeaderDescription());
+            // The variant's own description fills the variant text panel, exactly like the
+            // campaign variant entries below — without it the panel sits empty for scenario picks.
+            string variantDescription = NormalizeLeaderDescription(variant?.description);
             string assetName = variant != null ? ResolveVariantAssetName(playableLeader.characterName, variant.displayName, variant.variantId) : null;
-            AddSelectionEntry(playableLeader, biome.alignment, displayName, description, string.Empty,
+            AddSelectionEntry(playableLeader, biome.alignment, displayName, description, variantDescription,
                 playableLeader.GetSelectedDeckIdentity(), playableLeader.GetSelectedSubdeckId(), variantName, assetName, variant?.characterName);
             return;
         }
