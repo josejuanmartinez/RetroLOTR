@@ -1165,14 +1165,22 @@ public class Board : MonoBehaviour
         mover.SetPropertyBlock(moverOutlineBlock);
     }
 
-    private void StartMoverWalkAnimation(Character character, SpriteRenderer moverSR, Vector3 worldDelta)
+    private void StartMoverWalkAnimation(Character character, SpriteRenderer moverSR, Vector3 worldDelta, SpriteRenderer sourceSR)
     {
         if (moverSR == null) return;
         CharacterAnimationController animationController = moverSR.GetComponent<CharacterAnimationController>();
         if (animationController == null) animationController = moverSR.gameObject.AddComponent<CharacterAnimationController>();
         // Activate before setting params: Unity resets animator parameters on activation.
         if (!moverSR.gameObject.activeSelf) moverSR.gameObject.SetActive(true);
-        animationController.PlayMovement(character, worldDelta);
+        if (animationController.PlayMovement(character, worldDelta) && sourceSR != null)
+        {
+            // The walk clips swap in animation frames whose pixel bounds have nothing to do
+            // with whatever art the mover copied at setup (often the card illustration), so the
+            // bounds-matched scale computed there renders every frame at a wrong size. The
+            // frames are authored to look right at the hex icon's transform scale — once the
+            // animator is actually driving the sprite, mirror that scale exactly.
+            moverSR.transform.localScale = GetLocalScaleForWorldScale(moverSR.transform, sourceSR.transform.lossyScale);
+        }
     }
 
     private static SpriteRenderer GetCharacterBackground(SpriteRenderer characterSprite)
@@ -1432,7 +1440,7 @@ public class Board : MonoBehaviour
 
             if (canAnimate)
             {
-                if (fromSR != null) StartMoverWalkAnimation(character, characterMoverSR, endPos - startPos);
+                if (fromSR != null) StartMoverWalkAnimation(character, characterMoverSR, endPos - startPos, fromSR);
                 yield return tween;
             }
 
@@ -1601,7 +1609,9 @@ public class Board : MonoBehaviour
                 RefreshCardInteractions();
             }
 
-            CheckAndShowSituationCards(character, newHex);
+            // Opportunity cards only fire where the character STOPS — stepping through a hex
+            // mid-path never interrupts the walk with a full-screen overlay.
+            if (finishMovement) CheckAndShowSituationCards(character, newHex);
 
             if (newHex.HasPendingEncounters && character != null && !character.killed)
             {
@@ -1815,6 +1825,9 @@ public class Board : MonoBehaviour
 
     [Header("Situation Cards")]
     [SerializeField] private SituationCardsUI situationCardsUIPrefab;
+    [Tooltip("Seconds the camera rests on the character's hex before the opportunity-card overlay covers the screen.")]
+    [SerializeField] private float situationCardsFocusDelay = 1f;
+    private Coroutine situationCardsSequence;
 
     private void CheckAndShowSituationCards(Character character, Hex hex)
     {
@@ -1835,6 +1848,27 @@ public class Board : MonoBehaviour
 
         if (situationCards == null || situationCards.Count == 0) return;
 
+        if (situationCardsSequence != null) StopCoroutine(situationCardsSequence);
+        situationCardsSequence = StartCoroutine(ShowSituationCardsSequence(situationCards, character, hex));
+    }
+
+    // The overlay covers the whole screen, so let the player see WHERE the opportunity arose:
+    // settle the camera on the hex, hold it for a beat, then pop the cards.
+    private IEnumerator ShowSituationCardsSequence(List<CardData> situationCards, Character character, Hex hex)
+    {
+        hex.LookAt();
+        yield return new WaitForSeconds(situationCardsFocusDelay);
+
+        // Let any dialog raised in the meantime (e.g. an encounter on the same hex) resolve first.
+        while (SelectionDialog.IsShowing || (hexEncounterTask != null && !hexEncounterTask.IsCompleted))
+            yield return null;
+
+        // The situation was true for THIS hex when the walk ended; if the world moved on while
+        // we waited (character moved/died, turn changed hands), don't show stale opportunities.
+        Game g = FindFirstObjectByType<Game>();
+        if (character == null || character.killed || character.hex != hex) { situationCardsSequence = null; yield break; }
+        if (g == null || !g.IsPlayerCurrentlyPlaying() || g.player != character.GetOwner()) { situationCardsSequence = null; yield break; }
+
         if (SituationCardsUI.Instance == null)
         {
             if (situationCardsUIPrefab != null)
@@ -1848,6 +1882,7 @@ public class Board : MonoBehaviour
             }
         }
         SituationCardsUI.Instance.Show(situationCards, character);
+        situationCardsSequence = null;
     }
 
     private void UpdateGenerationProgress(float progress, string stage)
