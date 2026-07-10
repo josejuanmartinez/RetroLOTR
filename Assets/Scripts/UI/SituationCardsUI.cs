@@ -46,6 +46,18 @@ public class SituationCardsUI : MonoBehaviour
             BuildUI();
 
         ApplyConfiguration();
+        ClearBakedTrayCards();
+    }
+
+    // The prefab can carry a design-time preview card saved inside the tray. It never goes
+    // through Initialize, so it isn't locked to its real-card face (hover-out flips it to its
+    // token) and shows stale content — purge anything already in the tray; runtime cards are
+    // always instantiated fresh per Show.
+    private void ClearBakedTrayCards()
+    {
+        if (cardContainer == null) return;
+        foreach (Card baked in cardContainer.GetComponentsInChildren<Card>(true))
+            if (baked != null) Destroy(baked.gameObject);
     }
 
     private void OnDestroy()

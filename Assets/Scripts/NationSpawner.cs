@@ -236,6 +236,15 @@ public class NationSpawner : MonoBehaviour
         characterVariantOwnership.Clear();
         scenarioLeadersByName.Clear();
 
+        // An authored scenario's content is the author's call — never clamp it to the procedural
+        // spawn caps (a hand-built map easily exceeds them, and EnsurePcCapacity/
+        // EnsureCharacterCapacity were silently skipping every entry past the cap). Grow the
+        // global caps to fit everything authored, plus headroom for the starting cities that
+        // implicitly-spawned owner leaders bring and anything founded during play.
+        const int ScenarioCapHeadroom = 64;
+        Game.MAX_PCS = Mathf.Max(Game.MAX_PCS, (scenario.pcs?.Count ?? 0) + ScenarioCapHeadroom);
+        Game.MAX_CHARACTERS = Mathf.Max(Game.MAX_CHARACTERS, (scenario.characters?.Count ?? 0) + ScenarioCapHeadroom);
+
         var phaseTimer = System.Diagnostics.Stopwatch.StartNew();
         long Lap() { long ms = phaseTimer.ElapsedMilliseconds; phaseTimer.Restart(); return ms; }
 

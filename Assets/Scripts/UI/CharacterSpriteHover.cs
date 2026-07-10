@@ -3,6 +3,8 @@ using UnityEngine;
 public class CharacterSpriteHover : MonoBehaviour
 {
     public Hex hex;
+    public SpriteRenderer movementArrows;
+    
     private SelectedCharacterIcon selectedIcon;
     private Board board;
     private bool isPreviewing;

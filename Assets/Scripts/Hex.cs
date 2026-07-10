@@ -39,7 +39,6 @@ public class Hex : MonoBehaviour
 
     [Header("PC Name")]
     public TextMeshPro pcName;
-    [SerializeField] private bool showPcMarkBackgroundColor = false;
 
     [Header("Reveal")]
     [SerializeField] private float revealDuration = 1f;
@@ -64,8 +63,12 @@ public class Hex : MonoBehaviour
     [SerializeField] private GameObject sharedParticlesPrefab;
     [Tooltip("Attached to a hex on first hover / first floating message: hover info panel, terrain tooltip link, floating message text.")]
     [SerializeField] private GameObject hoverPanelPrefab;
-    [Tooltip("Attached to a hex when a character, PC label, or movement cost needs to show: character sprite/Animator, banner, class icons, PC name, movement cost.")]
-    [SerializeField] private GameObject unitLayerPrefab;
+    [Tooltip("Attached to a hex when a character needs to show: character sprite/Animator, banner, class icons.")]
+    [SerializeField] private GameObject characterLayerPrefab;
+    [Tooltip("Attached to a hex when its PC name label needs to show.")]
+    [SerializeField] private GameObject pcTextPrefab;
+    [Tooltip("Attached to a hex when a movement cost bubble needs to show.")]
+    [SerializeField] private GameObject movementCostPrefab;
 
     [Header("Grid Sprite Rendereres")]
     public GameObject spriteRendererLayoutIcon;
@@ -280,12 +283,13 @@ public class Hex : MonoBehaviour
     // The hex prefab used to carry ~40 GameObjects (6 ParticleSystems, a 3-TMP hover
     // panel, character visuals with an Animator). Cloning that 4550 times froze
     // scenario loads for minutes, so the heavy parts live in separate prefabs
-    // (sharedParticlesPrefab/hoverPanelPrefab/unitLayerPrefab, assigned in the
-    // Inspector — see Resources/HexParts for the assets) and are attached per hex
-    // only when something actually needs them:
+    // (assigned in the Inspector — see Resources/HexParts for the assets) and are
+    // attached per hex only when something actually needs them:
     //   sharedParticlesPrefab — instantiated ONCE per scene as the shared pool templates
     //   hoverPanelPrefab      — per hex, on first hover / first floating message
-    //   unitLayerPrefab       — per hex, when a character, PC label or movement cost shows
+    //   characterLayerPrefab  — per hex, when a character shows (sprite/Animator/banner/class icons)
+    //   pcTextPrefab          — per hex, when the PC name label shows
+    //   movementCostPrefab    — per hex, when a movement cost bubble shows
 
     private static GameObject FindPart(Transform root, string name)
     {
@@ -330,35 +334,23 @@ public class Hex : MonoBehaviour
         return messageNoUI;
     }
 
-    private bool EnsureUnitLayer()
+    private bool EnsureCharacterLayer()
     {
         if (characterSpriteRenderer != null) return true;
-        if (unitLayerPrefab == null)
+        if (characterLayerPrefab == null)
         {
-            Debug.LogError("Hex.unitLayerPrefab is not assigned in the Inspector; character/PC visuals disabled.");
+            Debug.LogError("Hex.characterLayerPrefab is not assigned in the Inspector; character visuals disabled.");
             return false;
         }
 
-        Transform layerRoot = Instantiate(unitLayerPrefab, transform, false).transform;
-        layerRoot.name = "UnitLayer";
+        Transform characterBg = Instantiate(characterLayerPrefab, transform, false).transform;
+        characterBg.name = "CharacterLayer";
 
-        Transform characterBg = layerRoot.Find("CharacterBg");
-        if (characterBg == null)
-        {
-            Debug.LogError("Hex sub-prefab 'HexUnitLayer' is missing child 'CharacterBg'.");
-        }
-        else
-        {
-            characterSpriteRenderer = FindPart<SpriteRenderer>(characterBg, "character");
-            bannerSpriteRenderer = FindPart<SpriteRenderer>(characterBg, "banner");
-            characterClassesIconGrid = FindPart<SpriteRendererGridLayout>(characterBg, "ClassesSpriteRendererLayout");
-            CharacterSpriteHover hover = characterBg.GetComponent<CharacterSpriteHover>();
-            if (hover != null) hover.hex = this;   // serialized ref could not cross the prefab split
-        }
-
-        pcName = FindPart<TextMeshPro>(layerRoot, "PCText");
-        movement = FindPart(layerRoot, "Movement Cost");
-        movementCostManager = movement != null ? movement.GetComponent<MovementCostManager>() : null;
+        characterSpriteRenderer = FindPart<SpriteRenderer>(characterBg, "character");
+        bannerSpriteRenderer = FindPart<SpriteRenderer>(characterBg, "banner");
+        characterClassesIconGrid = FindPart<SpriteRendererGridLayout>(characterBg, "ClassesSpriteRendererLayout");
+        CharacterSpriteHover hover = characterBg.GetComponent<CharacterSpriteHover>();
+        if (hover != null) hover.hex = this;   // serialized ref could not cross the prefab split
         characterAnimationController = characterSpriteRenderer != null
             ? characterSpriteRenderer.GetComponent<CharacterAnimationController>()
             : null;
@@ -367,11 +359,55 @@ public class Hex : MonoBehaviour
         if (characterSpriteRenderer != null) SetActiveFast(characterSpriteRenderer.gameObject, false);
         if (bannerSpriteRenderer != null) SetActiveFast(bannerSpriteRenderer.gameObject, false);
         if (characterClassesIconGrid != null) SetActiveFast(characterClassesIconGrid.gameObject, false);
-        if (pcName != null) SetActiveFast(pcName.gameObject, false);
-        SetActiveFast(movement, false);
 
         ApplyCharacterOutlineMaterial();
         return characterSpriteRenderer != null;
+    }
+
+    private bool EnsurePcText()
+    {
+        if (pcName != null) return true;
+        if (pcTextPrefab == null)
+        {
+            Debug.LogError("Hex.pcTextPrefab is not assigned in the Inspector; PC name labels disabled.");
+            return false;
+        }
+
+        GameObject label = Instantiate(pcTextPrefab, transform, false);
+        label.name = "PCText";
+        pcName = label.GetComponent<TextMeshPro>();
+        if (pcName == null)
+        {
+            Debug.LogError("Hex sub-prefab 'HexPcText' is missing its TextMeshPro component.");
+            return false;
+        }
+
+        // Starts hidden; UpdatePcWorldText applies the state it needs right after.
+        SetActiveFast(label, false);
+        return true;
+    }
+
+    private bool EnsureMovementCost()
+    {
+        if (movementCostManager != null) return true;
+        if (movementCostPrefab == null)
+        {
+            Debug.LogError("Hex.movementCostPrefab is not assigned in the Inspector; movement cost bubbles disabled.");
+            return false;
+        }
+
+        movement = Instantiate(movementCostPrefab, transform, false);
+        movement.name = "MovementCost";
+        movementCostManager = movement.GetComponent<MovementCostManager>();
+        if (movementCostManager == null)
+        {
+            Debug.LogError("Hex sub-prefab 'HexMovementCost' is missing its MovementCostManager component.");
+            return false;
+        }
+
+        // Starts hidden; ShowMovementLeft applies the state it needs right after.
+        SetActiveFast(movement, false);
+        return true;
     }
 
     #endregion
@@ -502,7 +538,7 @@ public class Hex : MonoBehaviour
     public SpriteRenderer GetCharacterSpriteRendererOnHex()
     {
         // Callers use this to animate a character onto the hex, so the layer is needed now.
-        EnsureUnitLayer();
+        EnsureCharacterLayer();
         return characterSpriteRenderer;
     }
 
@@ -740,7 +776,7 @@ public class Hex : MonoBehaviour
             }
         }
 
-        if (seen && hasCharacter) EnsureUnitLayer();
+        if (seen && hasCharacter) EnsureCharacterLayer();
 
         // Pre-apply the outline colour before the renderer becomes visible so there
         // is no one-frame flash of the previous (possibly white/cleared) colour.
@@ -2631,7 +2667,7 @@ public class Hex : MonoBehaviour
 
     public void ShowMovementLeft(int movementLeft, Character character)
     {
-        if (!EnsureUnitLayer() || movementCostManager == null) return;
+        if (!EnsureMovementCost()) return;
         SetActiveFast(movement, true);
         movementCostManager.ShowMovementLeft(Math.Max(0, movementLeft), character, BuildTerrainFeatureSpriteTags());
     }
@@ -3152,7 +3188,7 @@ public class Hex : MonoBehaviour
     {
         bool showText = shouldShowPc && pc != null && (pc.citySize != PCSizeEnum.NONE || pc.hasPort);
 
-        if (showText) EnsureUnitLayer();
+        if (showText) EnsurePcText();
         if (pcName != null)
         {
             if (showText)
@@ -3168,25 +3204,14 @@ public class Hex : MonoBehaviour
         }
     }
 
+    // Content only — the visual format (bold white text over a dark backing band, matching the
+    // Scenario Creator's hex captions) lives in the HexPcText prefab (font style + Band child).
     private string BuildPcNameLabel()
     {
         if (pc == null) return string.Empty;
 
-        string formattedName = pc.pcName ?? string.Empty;
-
         StringBuilder builder = new();
-        if(showPcMarkBackgroundColor)
-        {
-            builder.Append("<mark=");
-            builder.Append(GetPcAlignmentMarkColorHex());
-            builder.Append(">");
-        }
-
-        builder.Append("<color=");
-        builder.Append(GetPcNationColorHex());
-        builder.Append('>');
-        builder.Append(formattedName);
-        builder.Append("</color>\n");
+        builder.Append(pc.pcName ?? string.Empty);
 
         if (pc.citySize != PCSizeEnum.NONE)
         {
@@ -3215,8 +3240,6 @@ public class Hex : MonoBehaviour
 
         if (pc.hasPort) builder.Append(" <sprite name=\"port\">");
 
-        if(showPcMarkBackgroundColor) builder.Append("</mark>");
-
         return builder.ToString();
     }
 
@@ -3232,17 +3255,6 @@ public class Hex : MonoBehaviour
         if (loyaltyValue <= 33) return "#ff4d4d";
         if (loyaltyValue <= 66) return "#ffd54f";
         return "#00c853";
-    }
-
-    private string GetPcNationColorHex()
-    {
-        if (pc?.owner == null || colors == null)
-        {
-            return "#FFFFFF";
-        }
-
-        Color nationColor = pc.owner.nationColor;
-        return $"#{ColorUtility.ToHtmlStringRGB(nationColor)}";
     }
 
     public void SetCharacterHovered(bool hovered)
@@ -3280,21 +3292,4 @@ public class Hex : MonoBehaviour
         }
     }
 
-    private string GetPcAlignmentMarkColorHex()
-    {
-        string color = pc?.owner == null || colors == null
-            ? "#FFFFFF"
-            : colors.GetHexColorByName(pc.owner.GetAlignment().ToString());
-        if (string.IsNullOrWhiteSpace(color)) return "#FFFFFF66";
-
-        string trimmed = color.Trim();
-        if (trimmed.StartsWith("#"))
-        {
-            string hex = trimmed[1..];
-            if (hex.Length == 6) return $"#{hex}66";
-            if (hex.Length == 8) return $"#{hex[..6]}66";
-        }
-
-        return "#FFFFFFAA";
-    }
 }
