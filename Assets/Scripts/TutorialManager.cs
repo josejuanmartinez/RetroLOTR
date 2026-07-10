@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RetroLOTR.Scenarios;
 using UnityEngine;
 
 [Serializable]
@@ -171,18 +172,25 @@ public class TutorialManager : MonoBehaviour
         completedOptionalSteps.Clear();
         UITutorialObjectivesManager.Instance?.ClearObjectives();
 
-        if (activeFlow?.steps != null)
+        // The campaign fast-forward below replays what the tutorial would have granted (state
+        // allegiance claims, skill rewards, tutorial artifacts). An authored scenario hand-places
+        // every ownership and character — replaying a campaign script over it corrupts the
+        // authored setup, so scenarios only get the bookkeeping (hand, control flags, variant).
+        if (!GameConfig.HasScenario)
         {
-            foreach (TutorialStep step in activeFlow.steps.Where(s => s != null))
+            if (activeFlow?.steps != null)
             {
-                Character actor = ResolveStepActor(leader, step) ?? leader;
-                ApplySkipStateAllegiance(step, leader);
-                ApplySkipRewards(step, actor);
-                ApplySkipActionState(step, actor, leader);
+                foreach (TutorialStep step in activeFlow.steps.Where(s => s != null))
+                {
+                    Character actor = ResolveStepActor(leader, step) ?? leader;
+                    ApplySkipStateAllegiance(step, leader);
+                    ApplySkipRewards(step, actor);
+                    ApplySkipActionState(step, actor, leader);
+                }
             }
-        }
 
-        GrantAllBiomeTutorialArtifacts(leader);
+            GrantAllBiomeTutorialArtifacts(leader);
+        }
         MarkAiTutorialCompleteForAllLeaders();
         FinalizeSkippedTutorialSetup();
 
@@ -471,9 +479,18 @@ public class TutorialManager : MonoBehaviour
 
     private void FinalizeSkippedTutorialSetup()
     {
-        ClaimPlayerCapitalPc();
+        // Claiming the capital and gathering the starting characters at it fast-forwards the
+        // campaign tutorial's setup. An authored scenario hand-places every character/PC at a
+        // chosen hex — never rearrange it.
+        if (!GameConfig.HasScenario)
+        {
+            ClaimPlayerCapitalPc();
+        }
         RestorePostTutorialHand();
-        MovePlayerCharactersToCapital();
+        if (!GameConfig.HasScenario)
+        {
+            MovePlayerCharactersToCapital();
+        }
         SyncCharacterControlFlags();
         leader?.ApplyVariantTransformation();
     }

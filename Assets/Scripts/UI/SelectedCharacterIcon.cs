@@ -19,6 +19,9 @@ public class SelectedCharacterIcon : MonoBehaviour
     public GameObject border;
     public GameObject otherCharacters;
 
+    [Header("Images")]
+    public Image concentricalCircles;
+
     [Header("Banner")]
     public Image bannerImage;
 
@@ -47,10 +50,29 @@ public class SelectedCharacterIcon : MonoBehaviour
     [Header("Played cards")]
     [SerializeField] private CanvasGroup cardCanvasGroup;
     [SerializeField] public GameObject playedCard;
-    
+
+    [Header("Card Bloom Hint")]
+    [Tooltip("Idle pulse range (0-255 alpha) of the concentric circles, inviting the mouse over.")]
+    [Range(0, 255)][SerializeField] private int circlesPulseAlphaMin = 56;
+    [Range(0, 255)][SerializeField] private int circlesPulseAlphaMax = 78;
+    [Tooltip("Alpha (0-255) the circles hold while the mouse is over the icon / the bloom is open.")]
+    [Range(0, 255)][SerializeField] private int circlesHoverAlpha = 255;
+    [Tooltip("Idle pulse cycles per second.")]
+    [SerializeField] private float circlesPulseSpeed = 0.8f;
+    [Tooltip("Screen-pixel offset of the bloom loading icon from the cursor tip.")]
+    [SerializeField] private Vector2 loadingIconCursorOffset = new(26f, -26f);
+    [SerializeField] private float loadingIconSize = 30f;
+
     // private Videos videos;
     private Illustrations illustrations;
     private CanvasGroup canvasGroup;
+
+    // Card-bloom affordance state (see UpdateBloomHint).
+    private CardBloomWheel bloomWheel;
+    private Canvas hintCanvas;
+    private RectTransform loadingIconRect;
+    private Image loadingIconImage;
+    private bool clickableCursorSet;
 
     private Character pendingRefreshCharacter;
     private bool pendingIsHover;
@@ -72,7 +94,142 @@ public class SelectedCharacterIcon : MonoBehaviour
     {
         refreshScheduled = false;
         pendingRefreshCharacter = null;
+        SetLoadingIconVisible(false);
+        SetClickableCursor(false);
         StopAllCoroutines();
+    }
+
+    private void Update()
+    {
+        UpdateBloomHint();
+    }
+
+    // Card-bloom affordance: the concentric circles pulse softly while the icon is idle
+    // (inviting the mouse over), hold full alpha under the mouse, the cursor turns clickable,
+    // and a radial loading icon rides the cursor during the bloom's hover-dwell delay so the
+    // wait reads as progress instead of a dead UI. Once the bloom opens the loader hides and
+    // only the clickable cursor remains.
+    private void UpdateBloomHint()
+    {
+        if (concentricalCircles == null) return;
+        if (bloomWheel == null) bloomWheel = FindFirstObjectByType<CardBloomWheel>();
+
+        // Only the icon instance the wheel actually watches gets the affordance — hover
+        // preview clones of this component must never pulse or steal the cursor.
+        RectTransform trigger = bloomWheel != null ? bloomWheel.HoverTriggerRect : null;
+        bool isBloomTrigger = trigger != null && trigger.IsChildOf(transform);
+
+        bool available = isBloomTrigger
+            && CurrentCharacter != null
+            && !CurrentCharacter.hasActionedThisTurn
+            && canvasGroup != null && canvasGroup.alpha > 0.5f;
+
+        if (!available)
+        {
+            SetCirclesAlpha(circlesPulseAlphaMin);
+            SetLoadingIconVisible(false);
+            SetClickableCursor(false);
+            return;
+        }
+
+        bool mouseOver = RectTransformUtility.RectangleContainsScreenPoint(
+            trigger, Input.mousePosition, ResolveTriggerCamera(trigger));
+        bool bloomOpen = bloomWheel.IsOpen;
+
+        if (mouseOver || bloomOpen)
+        {
+            SetCirclesAlpha(circlesHoverAlpha);
+            SetClickableCursor(true);
+
+            // The loader only bridges the dwell time between entering the icon and the
+            // bloom appearing; the open bloom itself is the feedback afterwards.
+            bool loading = mouseOver && !bloomOpen;
+            SetLoadingIconVisible(loading);
+            if (loading) UpdateLoadingIcon(bloomWheel.HoverProgress);
+        }
+        else
+        {
+            float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * circlesPulseSpeed * 2f * Mathf.PI);
+            SetCirclesAlpha(Mathf.Lerp(circlesPulseAlphaMin, circlesPulseAlphaMax, pulse));
+            SetLoadingIconVisible(false);
+            SetClickableCursor(false);
+        }
+    }
+
+    private void SetCirclesAlpha(float alpha255)
+    {
+        Color color = concentricalCircles.color;
+        color.a = alpha255 / 255f;
+        concentricalCircles.color = color;
+    }
+
+    private void SetClickableCursor(bool clickable)
+    {
+        if (clickable == clickableCursorSet) return;
+        clickableCursorSet = clickable;
+        if (CursorManager.Instance == null) return;
+        if (clickable) CursorManager.Instance.SetClickableCursor();
+        else CursorManager.Instance.SetDefaultCursor();
+    }
+
+    private static Camera ResolveTriggerCamera(RectTransform trigger)
+    {
+        Canvas canvas = trigger.GetComponentInParent<Canvas>();
+        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay) return null;
+        return canvas.worldCamera;
+    }
+
+    // Small radial-fill copy of the concentric-circles art that follows the cursor and fills
+    // up over the bloom's hover-dwell window. Built lazily on the icon's root canvas so it
+    // draws above everything.
+    private void EnsureLoadingIcon()
+    {
+        if (loadingIconRect != null) return;
+        if (hintCanvas == null)
+        {
+            Canvas parentCanvas = GetComponentInParent<Canvas>();
+            if (parentCanvas != null) hintCanvas = parentCanvas.rootCanvas;
+        }
+        if (hintCanvas == null) return;
+
+        GameObject go = new("BloomLoadingIcon", typeof(RectTransform));
+        go.transform.SetParent(hintCanvas.transform, false);
+        loadingIconRect = go.GetComponent<RectTransform>();
+        loadingIconRect.sizeDelta = Vector2.one * loadingIconSize;
+
+        loadingIconImage = go.AddComponent<Image>();
+        loadingIconImage.sprite = concentricalCircles != null ? concentricalCircles.sprite : null;
+        loadingIconImage.raycastTarget = false;
+        loadingIconImage.type = Image.Type.Filled;
+        loadingIconImage.fillMethod = Image.FillMethod.Radial360;
+        loadingIconImage.fillOrigin = (int)Image.Origin360.Top;
+        loadingIconImage.fillClockwise = true;
+        go.SetActive(false);
+    }
+
+    private void SetLoadingIconVisible(bool visible)
+    {
+        if (visible) EnsureLoadingIcon();
+        if (loadingIconRect == null) return;
+        if (loadingIconRect.gameObject.activeSelf != visible)
+            loadingIconRect.gameObject.SetActive(visible);
+        if (visible) loadingIconRect.SetAsLastSibling();
+    }
+
+    private void UpdateLoadingIcon(float progress)
+    {
+        if (loadingIconRect == null || hintCanvas == null) return;
+
+        Camera canvasCamera = hintCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : hintCanvas.worldCamera;
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                hintCanvas.transform as RectTransform,
+                (Vector2)Input.mousePosition + loadingIconCursorOffset,
+                canvasCamera, out Vector2 local))
+        {
+            loadingIconRect.localPosition = local;
+        }
+
+        if (loadingIconImage != null) loadingIconImage.fillAmount = Mathf.Clamp01(progress);
     }
 
     public void Refresh(Character c)
