@@ -1,7 +1,9 @@
-﻿{
-    "version": 7,
+{
+    "version": 8,
     "scenarioName": "2950",
-    "description": "The War of the Ring circa 2950, inspired in MERPG and MEPBM and MECCG.",
+    "description": "Middle-earth enjoyed an uneasy peace while Sauron secretly rebuilt his strength in Mordor. Though few recognized the danger, the stage was being set for the War of the Ring",
+    "displayTitle": "The untold war of the Ring, circa 2950",
+    "representativeCardName": "AFriendOrThree",
     "width": 65,
     "height": 70,
     "terrain": [
@@ -24607,7 +24609,7 @@
             "row": 37,
             "col": 28,
             "characterName": "Hama",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Theoden",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25264,19 +25266,6 @@
             }
         },
         {
-            "row": 49,
-            "col": 25,
-            "characterName": "",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
-            }
-        },
-        {
             "row": 56,
             "col": 54,
             "characterName": "Ji Indur",
@@ -25493,7 +25482,7 @@
             "row": 19,
             "col": 41,
             "characterName": "Grimbeorn",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Beoraborn",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25915,6 +25904,24 @@
             }
         },
         {
+            "row": 3,
+            "col": 23,
+            "characterName": "Broggha",
+            "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Angmarin",
+                        "amount": 1
+                    }
+                ]
+            }
+        },
+        {
             "row": 8,
             "col": 26,
             "characterName": "Golfimbul",
@@ -26027,24 +26034,6 @@
             "army": {
                 "xp": 25,
                 "stacks": []
-            }
-        },
-        {
-            "row": 8,
-            "col": 18,
-            "characterName": "Broggha",
-            "ownerLeaderName": "Sauron",
-            "ownerVariantId": "the_iron_crown",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": [
-                    {
-                        "armyCardName": "Undead",
-                        "amount": 100
-                    }
-                ]
             }
         },
         {
@@ -26505,6 +26494,19 @@
             "variantId": "",
             "army": {
                 "xp": 25,
+                "stacks": []
+            }
+        },
+        {
+            "row": 30,
+            "col": 39,
+            "characterName": "Bugrug",
+            "ownerLeaderName": "Khamul",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "army": {
+                "xp": 1,
                 "stacks": [
                     {
                         "armyCardName": "Wargs",
@@ -26588,7 +26590,7 @@
             "row": 57,
             "col": 31,
             "characterName": "Araudagul",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Haruth Rammam",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",

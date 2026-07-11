@@ -103,6 +103,16 @@ namespace RetroLOTR.Scenarios
         private class ScenarioBlurb
         {
             public string description;
+            public string displayTitle;
+            public string representativeCardName;
+        }
+
+        /// <summary>Campaign-selection display data for one scenario (see GetScenarioDisplayInfo).</summary>
+        public class ScenarioDisplayInfo
+        {
+            public string title = "";
+            public string description = "";
+            public string representativeCardName = "";
         }
 
         /// <summary>
@@ -111,11 +121,32 @@ namespace RetroLOTR.Scenarios
         /// </summary>
         public static string GetScenarioDescription(string name)
         {
-            if (string.IsNullOrWhiteSpace(name)) return string.Empty;
+            return GetScenarioDisplayInfo(name).description;
+        }
+
+        /// <summary>
+        /// The campaign-selection display data (title, blurb, representative card) without
+        /// deserializing the whole file. Title falls back to the file name when the author
+        /// did not set one.
+        /// </summary>
+        public static ScenarioDisplayInfo GetScenarioDisplayInfo(string name)
+        {
+            ScenarioDisplayInfo info = new();
+            if (string.IsNullOrWhiteSpace(name)) return info;
+            info.title = name;
+
             TextAsset asset = Resources.Load<TextAsset>($"{ResourceFolder}/{name}");
-            if (asset == null) return string.Empty;
-            try { return JsonUtility.FromJson<ScenarioBlurb>(asset.text)?.description ?? string.Empty; }
-            catch { return string.Empty; }
+            if (asset == null) return info;
+            try
+            {
+                ScenarioBlurb blurb = JsonUtility.FromJson<ScenarioBlurb>(asset.text);
+                if (blurb == null) return info;
+                info.description = blurb.description ?? string.Empty;
+                info.representativeCardName = blurb.representativeCardName ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(blurb.displayTitle)) info.title = blurb.displayTitle.Trim();
+            }
+            catch { /* malformed file — keep fallbacks */ }
+            return info;
         }
 
         /// <summary>

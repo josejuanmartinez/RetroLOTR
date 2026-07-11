@@ -55,6 +55,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public CardData cardData { get; private set; }
 
+    // Refreshed by UpdateInteractableState (RequestInteractionRefreshAll runs it on every
+    // relevant state change); read by CardBloomWheel each frame.
+    public bool LastKnownPlayable { get; private set; } = true;
+
     private CanvasGroup canvasGroup;
     private LayoutElement layoutElement;
     private RectTransform rectTransform;
@@ -745,6 +749,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             selected,
             _ => resourceOwner == null || cardData.MeetsResourceRequirements(resourceOwner),
             _ => actionConditionsMet);
+        // Cached so the bloom wheel can fade unplayable tokens without re-running the
+        // (action-resolving) playability evaluation every frame.
+        LastKnownPlayable = isPlayable;
 
         if (!SuppressHoverEffects && canvasGroup != null)
         {
@@ -876,6 +883,21 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return;
         }
 
+        // The play handlers below can stall the main thread for a couple of seconds
+        // (effect resolution, reveals, spawns), during which nothing renders. Show the
+        // waiting state NOW — waiting cursor plus a pressed, locked card — and yield so
+        // it actually draws for a frame before the stall; otherwise the click looks like
+        // it did nothing until the effects finish.
+        Vector3 preResolveScale = transform.localScale;
+        if (canvasGroup != null)
+        {
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
+        transform.localScale = preResolveScale * 0.94f;
+        CursorManager.Instance?.SetWaitingCursor();
+        await Task.Yield();
+
         bool success = false;
         CardTypeEnum cardType = playedCard.GetCardType();
 
@@ -901,6 +923,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 break;
         }
 
+        // Effects resolved (or refused) — hand the cursor back before anything else;
+        // this must run even if the card object was destroyed during resolution.
+        CursorManager.Instance?.SetDefaultCursor();
+
         if (!this)
         {
             return;
@@ -910,6 +936,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             playedSelected?.RecordPlayedCard(playedCard, playedSprite);
             TutorialManager.Instance?.HandleCardPlayed(playedSelected, playedCard, playedSelected != null ? playedSelected.hex : null);
+            // Send the card's token spiralling down onto the hex the effect landed on
+            // (encounters carry their own target hex; everything else resolves at the
+            // acting character's hex). Must run before Destroy so the token visual can
+            // be cloned off this instance.
+            Hex effectHex = playedCard.encounterTargetHex != null
+                ? playedCard.encounterTargetHex
+                : playedSelected != null ? playedSelected.hex : null;
+            CardPlayFlight.Launch(this, effectHex);
             // Card was successfully played, it will be removed from hand by the manager
             if (gameObject != null)
             {
@@ -918,6 +952,13 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
         else
         {
+            // Undo the pressed/locked waiting state — the card stays in hand.
+            transform.localScale = preResolveScale;
+            if (canvasGroup != null)
+            {
+                canvasGroup.interactable = true;
+                canvasGroup.blocksRaycasts = true;
+            }
             UpdateInteractableState();
         }
     }
@@ -1040,6 +1081,103 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         string message = $"{cardData.name} transformed into {resourceName}";
         MessageDisplay.ShowMessage(message, Color.yellow);
+    }
+
+    // Menu-safe minimal initialize: applies only what the round token visual needs (art +
+    // type-colored border). Full Initialize walks live-game state — founding text asks the
+    // Board for its hexes, playability asks for the selected character — none of which
+    // exists on the campaign-selection screen, where this feeds the scenario tokens.
+    public void InitializeTokenVisualOnly(CardData data)
+    {
+        if (data == null) return;
+        cardData = data;
+        EnsureManagersLoaded();
+        BindLegacyPrefabReferences();
+        ApplyCardTypeColor(data.GetCardType());
+        if (environmentalSprite != null) environmentalSprite.gameObject.SetActive(false);
+        Sprite sprite = ResolveCardArtwork(data);
+        if (tokenImage != null)
+        {
+            tokenImage.sprite = sprite;
+            // Never draw a sprite-less Image — it renders as a solid white square.
+            tokenImage.enabled = sprite != null;
+        }
+    }
+
+    // Wheel token tinting: 'dim' darkens non-hovered tokens multiplicatively (0 = untouched,
+    // 1 = black); 'redness' shifts unplayable tokens toward red (green/blue suppressed) so
+    // unavailability reads as a color, not transparency. Alpha is never touched — it belongs
+    // to the wheel's CanvasGroup fades. Base colors are captured on first use, after
+    // Initialize has applied the card-type border color.
+    private Color tokenImageBaseColor = Color.white;
+    private Color tokenBorderBaseColor = Color.white;
+    private bool tokenBaseColorsCaptured;
+
+    public void SetTokenTint(float dim01, float redness01)
+    {
+        if (tokenImage == null && tokenBorder == null) return;
+
+        if (!tokenBaseColorsCaptured)
+        {
+            if (tokenImage != null) tokenImageBaseColor = tokenImage.color;
+            if (tokenBorder != null) tokenBorderBaseColor = tokenBorder.color;
+            tokenBaseColorsCaptured = true;
+        }
+
+        float k = 1f - Mathf.Clamp01(dim01);
+        float redness = Mathf.Clamp01(redness01);
+        if (tokenImage != null) tokenImage.color = TintTokenColor(tokenImageBaseColor, k, redness);
+        if (tokenBorder != null) tokenBorder.color = TintTokenColor(tokenBorderBaseColor, k, redness);
+    }
+
+    private static Color TintTokenColor(Color baseColor, float k, float redness)
+    {
+        Color darkened = new(baseColor.r * k, baseColor.g * k, baseColor.b * k, baseColor.a);
+        if (redness <= 0f) return darkened;
+        // Push toward red: hold the red channel up (so dark art still reads red) and pull
+        // green/blue down, respecting the darkening already applied.
+        Color reddened = new(Mathf.Max(darkened.r, 0.75f * k), darkened.g * 0.25f, darkened.b * 0.25f, baseColor.a);
+        return Color.Lerp(darkened, reddened, redness);
+    }
+
+    // Clones the compact token visual (round art + border ring) for the play-flight
+    // animation and the campaign-selection tokens. The clone is display-only:
+    // interaction and raycasts are stripped. tokenSize reports the visual footprint.
+    // NOTE: the prefab's token root (TokenRepresentation) is a plain Transform, not a
+    // RectTransform, and its children carry authored offsets that position them over
+    // the card layout — the clone re-centers them so it works standalone.
+    public GameObject CreateTokenVisualClone(Transform parent, out Vector2 tokenSize)
+    {
+        tokenSize = new Vector2(132f, 132f);
+        if (tokenCanvasGroup == null) return null;
+
+        // The border ring is the widest token piece; its rect × scale is the footprint.
+        if (tokenBorder != null && tokenBorder.transform is RectTransform borderRect && borderRect.rect.size.sqrMagnitude > 1f)
+        {
+            tokenSize = Vector2.Scale(borderRect.rect.size, borderRect.localScale);
+        }
+
+        GameObject clone = Instantiate(tokenCanvasGroup.gameObject, parent, false);
+        clone.name = "TokenVisual";
+        clone.transform.localPosition = Vector3.zero;
+        foreach (Transform child in clone.transform)
+        {
+            if (child is RectTransform childRect) childRect.anchoredPosition = Vector2.zero;
+        }
+        Transform environmentalChild = clone.transform.Find("Environmental");
+        if (environmentalChild != null) environmentalChild.gameObject.SetActive(false);
+
+        CanvasGroup cg = clone.GetComponent<CanvasGroup>();
+        if (cg == null) cg = clone.AddComponent<CanvasGroup>();
+        cg.alpha = 1f;
+        cg.blocksRaycasts = false;
+        cg.interactable = false;
+        if (clone.TryGetComponent(out CardEnvironmentalPulseEffect pulse)) Destroy(pulse);
+        foreach (Graphic graphic in clone.GetComponentsInChildren<Graphic>(true))
+        {
+            graphic.raycastTarget = false;
+        }
+        return clone;
     }
 
     public void ShowToken()

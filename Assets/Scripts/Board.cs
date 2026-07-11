@@ -78,6 +78,7 @@ public class Board : MonoBehaviour
     public List<Hex> hexesWithArtifacts;
     private Game cachedGame;
     private Layout cachedLayout;
+    private ActionsManager cachedActionsManager;
 
     // Direction vectors for hex neighbors (v2 = (row, col); row 0 = north, rows grow southward).
     public readonly Vector2Int[] evenRowNeighbors = new[] {
@@ -1302,9 +1303,9 @@ public class Board : MonoBehaviour
 
         try
         {
-            actionsManager = FindFirstObjectByType<Layout>().GetActionsManager();
+            actionsManager = GetLayout().GetActionsManager();
             actionsManager.Hide();
-            selected = FindFirstObjectByType<Layout>().GetSelectedCharacterIcon();
+            selected = GetLayout().GetSelectedCharacterIcon();
         }
         catch (Exception e)
         {
@@ -1482,8 +1483,10 @@ public class Board : MonoBehaviour
                 // Defer the whole-board visibility refresh off the per-step hot path so the
                 // character tween stays smooth; the local RevealArea inside still animates
                 // the newly discovered hexes. A single budgeted refresh runs after arrival.
-                bool lastHex = i == path.Count -1;
-                MoveCharacterOneHex(character, previousHex, newHex, lastHex, lastHex, deferVisibilityRefresh: true);
+                // finishMovement stays false even on the last hop: it would drain the
+                // character's remaining movement (no more moves this turn). Arrival effects
+                // (hex selection, situation cards) run after the loop instead.
+                MoveCharacterOneHex(character, previousHex, newHex, false, false, deferVisibilityRefresh: true);
                 currentHex = newHex;
                 if (showPlayerUi) selected.RefreshMovementLeft(character);
             }
@@ -1521,6 +1524,12 @@ public class Board : MonoBehaviour
 
         try
         {
+            // Per-hop card refreshes were skipped during the walk (deferVisibilityRefresh);
+            // reconcile the hand once now that the character has arrived.
+            if (ShouldRefreshCardInteractionsFor(character))
+            {
+                RefreshCardInteractions();
+            }
             if (showPlayerUi)
             {
                 selected.RefreshMovementLeft(character);
@@ -1539,13 +1548,21 @@ public class Board : MonoBehaviour
         {
             SelectCharacter(character);
         }
+
+        // Opportunity cards fire where the character STOPS. Walk hops pass
+        // finishMovement: false (it would drain the remaining movement), so the
+        // destination check happens here instead; it self-guards to the player's turn.
+        if (character != null && !character.killed)
+        {
+            CheckAndShowSituationCards(character, character.hex);
+        }
     }
 
     public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true, bool rememberPreviousHex = true, bool deferVisibilityRefresh = false) {
         int movedBefore = character.moved;
         bool wasWater = previousHex != null && previousHex.IsWaterTerrain();
         bool isWater = newHex != null && newHex.IsWaterTerrain();
-        Game g = FindFirstObjectByType<Game>();
+        Game g = GetGame();
         try
         {
             HandleWarshipAnchoring(character, previousHex, newHex, wasWater, isWater);
@@ -1584,7 +1601,7 @@ public class Board : MonoBehaviour
 
             newHex.RedrawCharacters();
             newHex.RedrawArmies();
-            if (character.GetOwner() == FindFirstObjectByType<Game>().player)
+            if (g != null && character.GetOwner() == g.player)
             {
                 if (lookAt) newHex.LookAt();
                 character.hex.RevealArea(1, lookAt);
@@ -1630,7 +1647,10 @@ public class Board : MonoBehaviour
                 character.GetOwner().RefreshVisibleHexesImmediate();
             }
 
-            if (ShouldRefreshCardInteractionsFor(character))
+            // Re-evaluating every card in hand is wasted work on each hop of a walk —
+            // nothing is playable mid-transit. Deferred (multi-hex) moves refresh once
+            // after arrival in MoveCoroutine instead.
+            if (!deferVisibilityRefresh && ShouldRefreshCardInteractionsFor(character))
             {
                 RefreshCardInteractions();
             }
@@ -1797,7 +1817,7 @@ public class Board : MonoBehaviour
 
         if (!ShouldShowPlayerUi(character)) return;
 
-        var selected = FindFirstObjectByType<Layout>().GetSelectedCharacterIcon();
+        var selected = GetLayout().GetSelectedCharacterIcon();
         if (selected != null)
         {
             selected.RefreshMovementLeft(character);
@@ -1806,20 +1826,26 @@ public class Board : MonoBehaviour
 
     private bool ShouldShowPlayerUi(Character character)
     {
-        Game g = FindFirstObjectByType<Game>();
+        Game g = GetGame();
         return g != null && g.IsPlayerCurrentlyPlaying() && g.player == character?.GetOwner();
     }
 
     private bool ShouldRefreshCardInteractionsFor(Character character)
     {
-        Game g = FindFirstObjectByType<Game>();
+        Game g = GetGame();
         return g != null && g.IsPlayerCurrentlyPlaying() && character != null && character.GetOwner() == g.player;
+    }
+
+    private ActionsManager GetActionsManager()
+    {
+        if (cachedActionsManager == null) cachedActionsManager = FindFirstObjectByType<ActionsManager>();
+        return cachedActionsManager;
     }
 
     private void RefreshCardInteractions()
     {
         Card.RequestInteractionRefreshAll();
-        FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
+        GetActionsManager()?.RefreshInteractableState();
     }
 
     // True while a blocking event (an encounter dialog, an opportunity/situation card, or

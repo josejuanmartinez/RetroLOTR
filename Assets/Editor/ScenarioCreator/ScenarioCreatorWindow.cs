@@ -23,6 +23,8 @@ namespace RetroLOTR.Scenarios.EditorTools
         // ---- Map state (index = row * width + col) -------------------------------------------
         private string scenarioName = "New Scenario";
         private string scenarioDescription = "";
+        private string scenarioDisplayTitle = "";
+        private string representativeCardName = "";
         private int width = 40;
         private int height = 40;
         private TerrainEnum[] terrain;
@@ -122,6 +124,8 @@ namespace RetroLOTR.Scenarios.EditorTools
         private void NewMap(int w, int h)
         {
             scenarioDescription = "";
+            scenarioDisplayTitle = "";
+            representativeCardName = "";
             width = Mathf.Clamp(w, 1, 200);
             height = Mathf.Clamp(h, 1, 200);
             terrain = new TerrainEnum[width * height];
@@ -203,10 +207,21 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             EditorGUILayout.BeginVertical(GUILayout.Width(210));
 
-            // Saved with the scenario; shown as the button subtitle on the campaign-selection screen.
+            // Saved with the scenario; drives the campaign-selection screen's button:
+            // Title (falls back to the file name), Description as the subtitle, and Card
+            // whose token art represents the scenario.
+            EditorGUILayout.LabelField("Title (campaign screen)", EditorStyles.boldLabel);
+            scenarioDisplayTitle = EditorGUILayout.TextField(scenarioDisplayTitle ?? string.Empty);
+
             EditorGUILayout.LabelField("Description", EditorStyles.boldLabel);
             scenarioDescription = EditorGUILayout.TextArea(scenarioDescription ?? string.Empty,
                 EditorStyles.textArea, GUILayout.MinHeight(52));
+
+            EditorGUILayout.LabelField("Card (campaign screen token)", EditorStyles.boldLabel);
+            SearchableField(string.Empty, representativeCardName, ScenarioCardCatalog.AllCardNames,
+                chosen => representativeCardName = chosen, ScenarioCardCatalog.GetCard);
+            if (!string.IsNullOrEmpty(representativeCardName) && GUILayout.Button("Clear card", GUILayout.Width(90)))
+                representativeCardName = "";
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("New Map", EditorStyles.boldLabel);
@@ -1210,6 +1225,8 @@ namespace RetroLOTR.Scenarios.EditorTools
             {
                 scenarioName = scenarioName,
                 description = scenarioDescription ?? string.Empty,
+                displayTitle = scenarioDisplayTitle ?? string.Empty,
+                representativeCardName = representativeCardName ?? string.Empty,
                 width = width,
                 height = height,
                 terrain = terrain.Select(t => (int)t).ToArray(),
@@ -1235,6 +1252,8 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             scenarioName = data.scenarioName;
             scenarioDescription = data.description ?? string.Empty;
+            scenarioDisplayTitle = data.displayTitle ?? string.Empty;
+            representativeCardName = data.representativeCardName ?? string.Empty;
             width = data.width;
             height = data.height;
             terrain = new TerrainEnum[width * height];

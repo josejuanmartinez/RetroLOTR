@@ -245,14 +245,14 @@ public class NonPlayableLeader : Leader
             owner.controlledPcs.Clear();
             owner.controlledPcs.AddRange(originalPcs);
             visibleHexes.Clear();
-            visibleHexes.AddRange(originalVisibleHexes);
+            visibleHexes.UnionWith(originalVisibleHexes);
 
             joinedTo.controlledCharacters.Clear();
             joinedTo.controlledCharacters.AddRange(originalJoinedToCharacters);
             joinedTo.controlledPcs.Clear();
             joinedTo.controlledPcs.AddRange(originalJoinedToPcs);
             joinedTo.visibleHexes.Clear();
-            joinedTo.visibleHexes.AddRange(originalJoinedToVisibleHexes);
+            joinedTo.visibleHexes.UnionWith(originalJoinedToVisibleHexes);
 
             leatherAmount = originalLeatherAmount;
             mountsAmount = originalMountsAmount;

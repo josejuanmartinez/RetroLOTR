@@ -11682,7 +11682,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7405217902238849854, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: bloomRadius
-      value: 350
+      value: 375
       objectReference: {fileID: 0}
     - target: {fileID: 7405217902238849854, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: endAngleDeg
@@ -11694,7 +11694,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7405217902238849854, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: startAngleDeg
-      value: -10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7405217902238849854, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: hoverCardScale
@@ -11702,11 +11702,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7405217902238849854, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: lineEndOffset.x
-      value: -40
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7405217902238849854, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: lineEndOffset.y
-      value: 80
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7405217902238849854, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: lineHitTolerance
@@ -15606,11 +15606,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.9112434
+      value: 0.91108483
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.9112434
+      value: 0.91108483
       objectReference: {fileID: 0}
     - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_Enabled

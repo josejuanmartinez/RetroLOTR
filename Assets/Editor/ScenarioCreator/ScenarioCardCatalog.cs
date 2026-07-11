@@ -36,6 +36,23 @@ namespace RetroLOTR.Scenarios.EditorTools
         public static IReadOnlyList<string> ArmyCards => _armyCards ??= NamesOfType(CardTypeEnum.Army);
         public static IReadOnlyList<string> Regions => _regions ??= NamesOfType(CardTypeEnum.Land);
 
+        private static List<string> _allCardNames;
+
+        /// <summary>Every card name across all decks (any type) — pool for the scenario's
+        /// representative-card picker.</summary>
+        public static IReadOnlyList<string> AllCardNames
+        {
+            get
+            {
+                if (_allCardNames == null)
+                {
+                    EnsureCardsLoaded();
+                    _allCardNames = _cardsByName.Keys.OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList();
+                }
+                return _allCardNames;
+            }
+        }
+
         /// <summary>The card behind a name (first match across all decks), for previews. May be null.</summary>
         public static CardData GetCard(string name)
         {
@@ -166,6 +183,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         public static void Invalidate()
         {
             _playableLeaders = _nonPlayableLeaders = _pcCards = _characterCards = _armyCards = _regions = null;
+            _allCardNames = null;
             _playableVariantsByName = null;
             _terrainSprites = null;
             _allCards = null;
