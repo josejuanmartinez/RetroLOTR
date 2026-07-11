@@ -128,6 +128,8 @@ public class Hex : MonoBehaviour
     private readonly List<string> _hexInfoTooltips = new();   // terrain/feature link descriptions, addressed by "t{idx}" link ids
     private int _lastHexInfoLinkIdx = -1;
     private string _hoverTextCache;   // hover text lives here until the lazy panel exists
+    private bool _hoverTextDirty;     // rebuild deferred during movement; Hover() rebuilds on demand
+    private bool _iconGridsPendingRebuild;   // grids were cleared while SuppressHexIconGrids was on; defeats RevealInternal's seen-hex early-out until rebuilt
     private GameObject _terrainTooltipInstance;
     private TextMeshPro _terrainTooltip;
     private bool _terrainTooltipActive;
@@ -679,6 +681,7 @@ public class Hex : MonoBehaviour
         // (it is repopulated once when the walk finishes). The grid stays hidden meanwhile.
         if (Board.SuppressHexIconGrids)
         {
+            _iconGridsPendingRebuild = true;
             SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, false);
             UpdatePortIcon();
             if (refreshHoverText) RefreshHoverText();
@@ -831,6 +834,21 @@ public class Hex : MonoBehaviour
 
     public void RefreshHoverText()
     {
+        // A walk redraws the from/to hexes plus the reveal ring every hop, and each redraw
+        // lands here — the string build below is the per-hop GC spike. The panel is
+        // hover-only, so while a unit is in transit defer the rebuild to Hover(), unless
+        // the panel is on screen right now and would go stale.
+        if (Board.SuppressHexIconGrids && (hexInfo == null || !hexInfo.activeSelf))
+        {
+            _hoverTextDirty = true;
+            return;
+        }
+        BuildHoverText();
+    }
+
+    private void BuildHoverText()
+    {
+        _hoverTextDirty = false;
         bool seen = IsHexSeen();
         PlayableLeader viewer = GetPlayer();
         bool isScouted = IsScouted(viewer);
@@ -1016,6 +1034,7 @@ public class Hex : MonoBehaviour
     private IEnumerator ShowHexInfoAfterDelay()
     {
         yield return new WaitForSeconds(hexInfoHoverDelay);
+        if (_hoverTextDirty) BuildHoverText();
         bool hasText = hexInfoText != null && !string.IsNullOrWhiteSpace(hexInfoText.text);
         SetActiveFast(hexInfoArrow, hasText);
         SetActiveFast(hexInfo, hasText);
@@ -1787,7 +1806,7 @@ public class Hex : MonoBehaviour
         ClearClassIcons();
 
         // Suppressed during movement; ClearClassIcons already hid the grid, so just bail.
-        if (Board.SuppressHexIconGrids) return;
+        if (Board.SuppressHexIconGrids) { _iconGridsPendingRebuild = true; return; }
 
         if (characterClassesIconGrid == null || spriteRendererLayoutIcon == null) return;
         if (!TryGetKnownCharacterForIcon(out Character known)) return;
@@ -2214,6 +2233,12 @@ public class Hex : MonoBehaviour
     private void RevealInternal(Leader scoutedByPlayer, bool isPlayerTurn)
     {
         bool wasSeen = IsHexSeen();
+        // Already fully seen and no scouting to record: every state write below is a no-op
+        // and the redraws repaint identical visuals. This runs on 7 hexes per movement hop
+        // (RevealArea) and on every visible hex during whole-board refreshes, so bail early.
+        // Exception: if a walk cleared this hex's icon grids (SuppressHexIconGrids), the
+        // redraws below are what repopulates them — don't skip until that has happened.
+        if (wasSeen && scoutedByPlayer == null && !_iconGridsPendingRebuild) return;
         isRevealed = true;
         mapOnlyRevealed = false;
         if (scoutedByPlayer)
@@ -2229,6 +2254,9 @@ public class Hex : MonoBehaviour
         var g = game ?? FindFirstObjectByType<Game>();
         bool showPopup = viewer != null && g != null && viewer == g.player && isPlayerTurn;
         RevealNonPlayableLeadersOnHex(viewer, showPopup);
+        // Cleared before the redraws: if grids are still suppressed (mid-walk) the
+        // redraws re-set the flag, keeping this hex eligible for the post-walk rebuild.
+        _iconGridsPendingRebuild = false;
         RedrawArmies(false);
         RedrawCharacters(false);
         RedrawPC(false);
@@ -2437,15 +2465,22 @@ public class Hex : MonoBehaviour
         bool shouldBeUnseen = IsHexRevealed() && mapOnlyRevealed;
         bool unseenChanged = isCurrentlyUnseen != shouldBeUnseen;
         isCurrentlyUnseen = shouldBeUnseen;
-        UpdateVisibilityForFog();
-        UpdateMinimapTerrain(IsHexRevealed());
         if (game == null) game = FindFirstObjectByType<Game>();
+        bool scoutingChanged = false;
         if (game != null)
         {
-            scoutedBy.Remove(game.currentlyPlaying);
-            scoutedByTurns.Remove(game.currentlyPlaying);
-            RebuildScoutingCache();
+            scoutingChanged = scoutedBy.Remove(game.currentlyPlaying);
+            scoutingChanged |= scoutedByTurns.Remove(game.currentlyPlaying);
+            if (scoutingChanged) RebuildScoutingCache();
         }
+        // The whole-board refresh sweeps every non-visible hex through here each pass;
+        // for the vast majority nothing changed, so skip the per-hex visual work. The
+        // terrain-sync check keeps the old self-healing behavior: if some code activated
+        // this hex's art without revealing it, the next sweep still corrects it.
+        bool terrainOutOfSync = terrainTexture != null && terrainTexture.gameObject.activeSelf != IsHexRevealed();
+        if (!unseenChanged && !scoutingChanged && !terrainOutOfSync) return;
+        UpdateVisibilityForFog();
+        UpdateMinimapTerrain(IsHexRevealed());
         if (unseenChanged)
         {
             RedrawArmies(false);
@@ -3113,7 +3148,10 @@ public class Hex : MonoBehaviour
         if (terrainTexture == null) return;
         if (hexTextureMapping == null) hexTextureMapping = ResolveTextureMapping();
 
-        terrainTexture.gameObject.SetActive(true);
+        // Respect fog: SetTerrain runs on every hex during board load, and unconditionally
+        // activating the art here used to rely on the first whole-board Hide() sweep to put
+        // the fog back — that sweep now early-outs, so apply the correct state directly.
+        SetActiveFast(terrainTexture.gameObject, IsHexRevealed());
         terrainTexture.sprite = hexTextureMapping != null ? hexTextureMapping.GetTerrainSprite(this) : baseTerrainSprite;
 
         if (pcTexture != null)

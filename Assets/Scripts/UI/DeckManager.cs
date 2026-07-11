@@ -1594,6 +1594,16 @@ public class DeckManager : MonoBehaviour
             && string.Equals(card.name, cardName, StringComparison.OrdinalIgnoreCase));
     }
 
+    // Any-deck, any-type lookup by display name — used by the campaign-selection screen to
+    // resolve a scenario's representative card.
+    public CardData FindAnyCardByName(string cardName)
+    {
+        if (string.IsNullOrWhiteSpace(cardName)) return null;
+        if (!loaded && !InitializeFromResources()) return null;
+        return cards.FirstOrDefault(card =>
+            card != null && string.Equals(card.name, cardName, StringComparison.OrdinalIgnoreCase));
+    }
+
     public CardData FindArmyCardByName(string cardName)
     {
         if (string.IsNullOrWhiteSpace(cardName)) return null;

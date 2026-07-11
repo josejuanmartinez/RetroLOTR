@@ -47,11 +47,19 @@ public class CardBloomWheel : MonoBehaviour
     [SerializeField] private RectTransform hoverTriggerRect;
     [SerializeField] private SelectedCharacterIcon selectedCharacterIcon;
 
+    [Header("Card States")]
+    [Tooltip("How much non-hovered tokens darken while one is hovered (0 = none, 1 = black).")]
+    [Range(0f, 1f)][SerializeField] private float unhoveredDim = 0.45f;
+    [Tooltip("How strongly cards that cannot currently be played shift toward red (0 = none, 1 = full).")]
+    [Range(0f, 1f)][SerializeField] private float unplayableRedness = 0.85f;
+
     private readonly List<RectTransform> cardRects = new();
     private readonly List<CanvasGroup> cardGroups = new();
     private readonly List<Card> cardComponents = new();
     private readonly List<Vector2> bloomTargets = new();
     private readonly List<Color> cardLineColors = new();
+    private readonly List<float> cardDims = new();
+    private readonly List<float> cardRedness = new();
 
     private bool isOpen;
     private bool isVisible = true;
@@ -64,6 +72,10 @@ public class CardBloomWheel : MonoBehaviour
     private float cachedStartAngle;
     private float cachedEndAngle;
     private float hoverTimer;
+
+    // The enlarged preview currently shown mid-screen (null when none). The play-flight
+    // animation starts from it so the flight begins where the player is looking.
+    public RectTransform CurrentCenterPreviewRect => centerPreviewRect;
 
     private GameObject centerPreviewInstance;
     private RectTransform centerPreviewRect;
@@ -78,6 +90,8 @@ public class CardBloomWheel : MonoBehaviour
     private float TransitionSpeed => previewTransitionSpeed > 0.01f ? previewTransitionSpeed : 9f;
     private float BackdropMax => backdropMaxAlpha > 0.001f ? Mathf.Clamp01(backdropMaxAlpha) : 0.85f;
     private float IntroStartScale => previewIntroStartScale > 0.001f ? previewIntroStartScale : 0.55f;
+    private float UnhoveredDim => unhoveredDim > 0.001f ? unhoveredDim : 0.45f;
+    private float UnplayableRedness => unplayableRedness > 0.001f ? unplayableRedness : 0.85f;
 
     public bool IsOpen => isOpen;
     // 0..1 fraction of the hover dwell completed (1 once open) — drives the loading indicator
@@ -208,6 +222,8 @@ public class CardBloomWheel : MonoBehaviour
         cardComponents.Clear();
         bloomTargets.Clear();
         cardLineColors.Clear();
+        cardDims.Clear();
+        cardRedness.Clear();
 
         Colors colors = FindFirstObjectByType<Colors>();
 
@@ -226,6 +242,8 @@ public class CardBloomWheel : MonoBehaviour
                 if (card != null) card.SuppressHoverEffects = true;
 
                 cardLineColors.Add(ResolveCardColor(card, colors));
+                cardDims.Add(0f);
+                cardRedness.Add(0f);
             }
         }
 
@@ -311,6 +329,12 @@ public class CardBloomWheel : MonoBehaviour
                 cardGroups[i].interactable = false;
             }
 
+            if (i < cardDims.Count)
+            {
+                cardDims[i] = 0f;
+                if (i < cardRedness.Count) cardRedness[i] = 0f;
+                if (i < cardComponents.Count && cardComponents[i] != null) cardComponents[i].SetTokenTint(0f, 0f);
+            }
         }
     }
 
@@ -355,10 +379,25 @@ public class CardBloomWheel : MonoBehaviour
 
             // Cards in the wheel are always tokens; the hovered card is mirrored as a
             // real card in the center preview instead of flipping in place.
-            if (i < cardComponents.Count && cardComponents[i] != null)
-                cardComponents[i].ShowToken();
+            Card card = i < cardComponents.Count ? cardComponents[i] : null;
+            if (card != null)
+            {
+                card.ShowToken();
 
-            // Alpha — only fade in/out; no per-card dimming.
+                // Two tint channels: darken the tokens the player is NOT pointing at while
+                // one is hovered (focus), and shift unplayable cards toward red
+                // (availability) — transparency stays reserved for the wheel's open/close.
+                if (i < cardDims.Count && i < cardRedness.Count)
+                {
+                    float dimTarget = isOpen && hoveredCardIndex >= 0 && i != hoveredCardIndex ? UnhoveredDim : 0f;
+                    float redTarget = isOpen && !card.LastKnownPlayable ? UnplayableRedness : 0f;
+                    cardDims[i] = Mathf.Lerp(cardDims[i], dimTarget, Time.deltaTime * speed);
+                    cardRedness[i] = Mathf.Lerp(cardRedness[i], redTarget, Time.deltaTime * speed);
+                    card.SetTokenTint(cardDims[i], cardRedness[i]);
+                }
+            }
+
+            // Alpha — only the wheel's fade in/out.
             if (i < cardGroups.Count && cardGroups[i] != null)
             {
                 float alphaTarget = isOpen ? 1f : 0f;

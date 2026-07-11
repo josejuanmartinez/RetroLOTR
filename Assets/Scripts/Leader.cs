@@ -12,7 +12,10 @@ public class Leader : Character
     [Header("Nation data")]
     public List<Character> controlledCharacters = new();
     public List<PC> controlledPcs = new();
-    public List<Hex> visibleHexes = new();
+    // HashSet: membership is checked per hex on every fog refresh and per hop during
+    // walks — List.Contains made those passes O(board × visible). Not Unity-serialized,
+    // which is fine: fog state is rebuilt at runtime.
+    public HashSet<Hex> visibleHexes = new();
     public bool playedLandThisTurn;
     private readonly Dictionary<Hex, int> tempSeenHexes = new();
     private readonly Dictionary<Hex, int> tempScoutCenters = new();
@@ -150,19 +153,49 @@ public class Leader : Character
         return playedLandThisTurn;
     }
 
+    // Shared prelude for the two visibility-refresh passes below. A single manual sweep
+    // over the board replaces the old LINQ chains whose per-hex List.Contains made each
+    // refresh O(board × visible) and allocated several whole-board lists — the main frame
+    // spike when fog was reconciled.
+    private void CollectVisibilityRefreshSets(Board board, out List<Hex> radiusHexes, out List<Hex> scoutedOnly, out List<Hex> spiedHexes)
+    {
+        HashSet<Hex> radiusSet = new(visibleHexes);
+        foreach (Hex center in GetTemporaryScoutCenters()) radiusSet.Add(center);
+
+        radiusHexes = new List<Hex>(radiusSet);
+        scoutedOnly = new List<Hex>();
+        spiedHexes = new List<Hex>();
+
+        foreach (Hex hex in board.hexes.Values)
+        {
+            bool scouted = IsScoutedForLeader(hex);
+            if (scouted && !radiusSet.Contains(hex)) scoutedOnly.Add(hex);
+
+            List<Character> hexCharacters = hex.characters;
+            for (int i = 0; i < hexCharacters.Count; i++)
+            {
+                Character ch = hexCharacters[i];
+                if (ch != null && ch.doubledBy.Contains(this))
+                {
+                    spiedHexes.Add(hex);
+                    break;
+                }
+            }
+
+            if (!visibleHexes.Contains(hex) && !scouted && !IsTemporarilySeen(hex)) hex.Hide();
+        }
+    }
+
     // The async version of RevealVisibleHexes
     public IEnumerator RevealVisibleHexesAsync(System.Action onComplete = null)
     {
-        if (FindFirstObjectByType<Game>().player != this) yield break; // This will exit without calling onComplete
+        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null || game.player != this) yield break; // This will exit without calling onComplete
 
-        List<Hex> allHexes = FindFirstObjectByType<Board>().hexes.Values.ToList();
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null || board.hexes == null) yield break;
 
-        allHexes.FindAll(x => !visibleHexes.Contains(x) && !IsTemporarilySeen(x) && !IsScoutedForLeader(x)).ForEach(x => x.Hide());
-        var scoutCenters = GetTemporaryScoutCenters().ToList();
-        var scoutedHexes = allHexes.Where(IsScoutedForLeader).ToList();
-        var radiusHexes = visibleHexes.Union(scoutCenters).Distinct().ToList();
-        var scoutedOnly = scoutedHexes.Except(radiusHexes).ToList();
-        List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
+        CollectVisibilityRefreshSets(board, out List<Hex> radiusHexes, out List<Hex> scoutedOnly, out List<Hex> spiedHexes);
 
         int batchSize = 15;
         for (int i = 0; i < radiusHexes.Count; i += batchSize)
@@ -195,13 +228,7 @@ public class Leader : Character
         Board currentBoard = FindFirstObjectByType<Board>();
         if (currentBoard == null || currentBoard.hexes == null) return;
 
-        List<Hex> allHexes = currentBoard.hexes.Values.ToList();
-        allHexes.FindAll(x => !visibleHexes.Contains(x) && !IsTemporarilySeen(x) && !IsScoutedForLeader(x)).ForEach(x => x.Hide());
-        var scoutCenters = GetTemporaryScoutCenters().ToList();
-        var scoutedHexes = allHexes.Where(IsScoutedForLeader).ToList();
-        var radiusHexes = visibleHexes.Union(scoutCenters).Distinct().ToList();
-        var scoutedOnly = scoutedHexes.Except(radiusHexes).ToList();
-        List<Hex> spiedHexes = allHexes.Where(hex => hex.characters.Any(character => character.doubledBy.Contains(this))).ToList();
+        CollectVisibilityRefreshSets(currentBoard, out List<Hex> radiusHexes, out List<Hex> scoutedOnly, out List<Hex> spiedHexes);
 
         for (int i = 0; i < radiusHexes.Count; i++) radiusHexes[i].RevealArea(1, false);
         for (int i = 0; i < scoutedOnly.Count; i++) scoutedOnly[i].Reveal();

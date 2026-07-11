@@ -29,7 +29,10 @@ namespace RetroLOTR.Scenarios
         private void Start()
         {
             if (defaultCampaignButton != null)
+            {
                 defaultCampaignButton.onClick.AddListener(() => Choose(null));
+                defaultCampaignButton.gameObject.AddComponent<ClickableCursorOnHover>();
+            }
             else
                 Debug.LogError("CampaignSelectionManager: defaultCampaignButton is not wired in the prefab.");
 
@@ -54,19 +57,104 @@ namespace RetroLOTR.Scenarios
                 button.gameObject.name = $"Scenario_{captured}";
                 button.gameObject.SetActive(true);
                 button.onClick.AddListener(() => Choose(captured));
+                button.gameObject.AddComponent<ClickableCursorOnHover>();
+
+                ScenarioLoader.ScenarioDisplayInfo info = ScenarioLoader.GetScenarioDisplayInfo(captured);
 
                 TMP_Text title = FindLabel(button.transform, "Title");
-                if (title != null) title.text = captured;
+                if (title != null) title.text = info.title;
 
                 // The author-written blurb (Scenario Creator's Description field) fills the
                 // Subtitle; scenarios without one keep whatever the template says.
-                string description = ScenarioLoader.GetScenarioDescription(captured);
-                if (!string.IsNullOrWhiteSpace(description))
+                if (!string.IsNullOrWhiteSpace(info.description))
                 {
                     TMP_Text subtitle = FindLabel(button.transform, "Subtitle");
-                    if (subtitle != null) subtitle.text = description;
+                    if (subtitle != null) subtitle.text = info.description;
                 }
+
+                StartCoroutine(AttachRepresentativeTokenWhenReady(button, info.representativeCardName));
             }
+        }
+
+        // Card art loads asynchronously through Addressables (Illustrations); on this very
+        // first screen it is usually not ready yet, and building the token too early gives
+        // sprite-less white squares. Wait (bounded) for the art before attaching.
+        private System.Collections.IEnumerator AttachRepresentativeTokenWhenReady(Button button, string cardName)
+        {
+            if (string.IsNullOrWhiteSpace(cardName)) yield break;
+
+            Illustrations illustrations = FindFirstObjectByType<Illustrations>();
+            float deadline = Time.unscaledTime + 15f;
+            while (illustrations != null && !illustrations.IsLoaded && Time.unscaledTime < deadline)
+                yield return null;
+
+            if (button == null) yield break; // screen dismissed while waiting
+            AttachRepresentativeToken(button, cardName);
+        }
+
+        // Shows the scenario's representative card (Scenario Creator's Card field) in its
+        // token form on the button. The token parents under the template's authored child
+        // named "Token" — position/size it in the prefab to control placement.
+        private void AttachRepresentativeToken(Button button, string cardName)
+        {
+            if (string.IsNullOrWhiteSpace(cardName)) return;
+
+            DeckManager deckManager = DeckManager.Instance != null
+                ? DeckManager.Instance
+                : FindFirstObjectByType<DeckManager>();
+            CardData cardData = deckManager != null ? deckManager.FindAnyCardByName(cardName) : null;
+            if (cardData == null)
+            {
+                Debug.LogWarning($"CampaignSelectionManager: representative card '{cardName}' not found in any deck.");
+                return;
+            }
+
+            GameObject cardTemplate = deckManager.GetCardPrefabTemplate();
+            if (cardTemplate == null) return;
+
+            RectTransform host = FindTokenHost(button);
+            if (host == null)
+            {
+                Debug.LogWarning("CampaignSelectionManager: scenario button template has no child named 'Token'; representative card not shown. Add one to the template in CampaignSelectionScreen.prefab.");
+                return;
+            }
+
+            // Spin up a throwaway card just to borrow its token visual. Token-only init:
+            // the full Initialize touches live-game state (board, selected character) that
+            // does not exist yet on this screen. Kept inactive so it never renders
+            // (Destroy is deferred to end of frame).
+            GameObject tempCard = Instantiate(cardTemplate, host);
+            tempCard.SetActive(false);
+            Card cardComponent = tempCard.GetComponent<Card>();
+            GameObject token = null;
+            Vector2 tokenSize = Vector2.one;
+            if (cardComponent != null)
+            {
+                cardComponent.InitializeTokenVisualOnly(cardData);
+                token = cardComponent.CreateTokenVisualClone(host, out tokenSize);
+            }
+            Destroy(tempCard);
+            if (token == null) return;
+
+            // The clone's root is a plain Transform (see Card.CreateTokenVisualClone), so
+            // fit it into the host by scaling the transform, not by rect math. A
+            // stretch-anchored authored "Token" child may not have resolved its rect yet
+            // on the frame the screen spawns; fall back to natural token size then.
+            token.transform.localPosition = Vector3.zero;
+            float hostWidth = host.rect.width > 1f ? host.rect.width : tokenSize.x;
+            float hostHeight = host.rect.height > 1f ? host.rect.height : tokenSize.y;
+            float fit = Mathf.Min(hostWidth / Mathf.Max(tokenSize.x, 1f),
+                                  hostHeight / Mathf.Max(tokenSize.y, 1f));
+            token.transform.localScale = Vector3.one * Mathf.Min(fit, 1.5f);
+        }
+
+        // The template's authored "Token" placeholder (see CampaignSelectionScreen.prefab);
+        // null when the author removed it.
+        private static RectTransform FindTokenHost(Button button)
+        {
+            foreach (RectTransform rect in button.GetComponentsInChildren<RectTransform>(true))
+                if (string.Equals(rect.name, "Token", System.StringComparison.OrdinalIgnoreCase)) return rect;
+            return null;
         }
 
         // Content goes into the clone's TMP children by name ("Title" gets the scenario name,

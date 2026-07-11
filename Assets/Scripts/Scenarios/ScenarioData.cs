@@ -37,13 +37,22 @@ namespace RetroLOTR.Scenarios
         // Older scenarios deserialize with the new fields at their defaults, so they keep working.
         // v7 added ScenarioData.description: the author-written blurb the campaign-selection
         // screen shows under the scenario's name. Optional; empty keeps the button template's text.
-        public const int CurrentVersion = 7;
+        // v8 added displayTitle (campaign-selection title, distinct from the file name) and
+        // representativeCardName (the card whose token art represents the scenario on the
+        // campaign-selection screen). Both optional; empty falls back to v7 behavior.
+        public const int CurrentVersion = 8;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
 
         /// <summary>Author-written blurb shown on the campaign-selection screen's scenario button.</summary>
         public string description = "";
+
+        /// <summary>Title shown on the campaign-selection screen; the file name is used when empty.</summary>
+        public string displayTitle = "";
+
+        /// <summary>Card whose art (token form) represents this scenario on the campaign-selection screen.</summary>
+        public string representativeCardName = "";
 
         public int width;
         public int height;

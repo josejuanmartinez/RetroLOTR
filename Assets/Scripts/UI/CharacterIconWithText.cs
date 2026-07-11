@@ -1,16 +1,31 @@
+using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 
 public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointerExitHandler
 {
     public TextMeshProUGUI characterText;
-    
+
+    // Icons rest slightly darkened so the row reads as background; the hovered one
+    // brightens to full color (see OnPointerEnter/Exit).
+    private static readonly Color IdleTint = new(0.72f, 0.72f, 0.72f, 1f);
+
+    private void OnEnable()
+    {
+        ApplyHoverTint(false);
+    }
+
+    private void ApplyHoverTint(bool hovered)
+    {
+        if (image != null) image.color = hovered ? Color.white : IdleTint;
+    }
 
     public override void Initialize(Character character)
     {
         base.Initialize(character);
         if (characterText != null && character != null)
             characterText.text = character.characterName;
+        ApplyHoverTint(false);
     }
 
     public void Initialize(Character character, string text)
@@ -34,6 +49,8 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
     new public void OnPointerEnter(PointerEventData eventData)
     {
         if (character == null || character.killed) return;
+        ApplyHoverTint(true);
+        CursorManager.Instance?.SetClickableCursor();
         board ??= FindFirstObjectByType<Board>();
         if (board != null && board.selectedCharacter == character) return;
         Sounds.Instance?.PlayUiHover();
@@ -50,6 +67,8 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
 
     new public void OnPointerExit(PointerEventData eventData)
     {
+        ApplyHoverTint(false);
+        CursorManager.Instance?.SetDefaultCursor();
         if (selectedCharacterIcon == null)
         {
             Layout layout = FindFirstObjectByType<Layout>();

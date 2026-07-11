@@ -40,6 +40,12 @@ public class CursorManager : MonoBehaviour
             Cursor.SetCursor(disableCursor, hotSpot, CursorMode.Auto);
     }
 
+    public void SetWaitingCursor()
+    {
+        if (waitingCursor != null)
+            Cursor.SetCursor(waitingCursor, hotSpot, CursorMode.Auto);
+    }
+
     public void SetDefaultCursor()
     {
         if (defaultCursor != null)
