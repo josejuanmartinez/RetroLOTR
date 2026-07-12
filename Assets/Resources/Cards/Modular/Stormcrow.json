@@ -1283,6 +1283,88 @@
                       "situation":  ""
                   },
                   {
+                      "cardId":  9247,
+                      "name":  "Lossoth",
+                      "quote":  "Born of ice and hunger, the Lossoth strike where the frost bites deepest.",
+                      "actionEffect":  "",
+                      "type":  "Army",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "stormcrow",
+                      "actionClassName":  "",
+                      "action":  "",
+                      "spriteName":  "Lossoth",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  40,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "",
+                      "referenceCardId":  0,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  2,
+                      "specialAbilities":  [
+                                               14
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  2,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  0,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
                       "cardId":  698,
                       "name":  "Woodmen Hunters",
                       "quote":  "Silent as the falling leaf, we stalk our prey.",
@@ -3480,7 +3562,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Esgaroth",
+                      "startingPC":  "Dale",
                       "inspireEffectData":  {
                                                 "type":  "IncreaseFort",
                                                 "statusEffect":  "",
@@ -3562,7 +3644,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "The Carrock",
+                      "startingPC":  "BuhrWidu",
                       "inspireEffectData":  {
                                                 "type":  "IncreaseLoyalty",
                                                 "statusEffect":  "",
@@ -3808,7 +3890,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Maethelburg",
+                      "startingPC":  "Woodmen town",
                       "inspireEffectData":  {
                                                 "type":  "RecruitTroops",
                                                 "statusEffect":  "",
@@ -3940,9 +4022,9 @@
 
                                                       ]
                                      },
-                      "commander":  0,
+                      "commander":  1,
                       "agent":  1,
-                      "emmissary":  1,
+                      "emmissary":  0,
                       "mage":  0,
                       "race":  0,
                       "artifacts":  [
@@ -4054,7 +4136,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "AmonSul",
+                      "startingPC":  "The Trollshaws",
                       "inspireEffectData":  {
                                                 "type":  "ArmyXp",
                                                 "statusEffect":  "",
@@ -4136,7 +4218,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Sarn Lothduin",
+                      "startingPC":  "Maethelburg",
                       "inspireEffectData":  {
                                                 "type":  "IncreaseLoyalty",
                                                 "statusEffect":  "",
@@ -6277,7 +6359,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "WestFold",
+                      "startingPC":  "Eastfold",
                       "inspireEffectData":  {
                                                 "type":  "RecruitTroops",
                                                 "statusEffect":  "",
@@ -6359,7 +6441,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Eastfold",
+                      "startingPC":  "Edoras",
                       "inspireEffectData":  {
                                                 "type":  "ApplyStatusEffect",
                                                 "statusEffect":  "Hidden",

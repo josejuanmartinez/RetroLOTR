@@ -2449,7 +2449,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Minas Tirith",
+                      "startingPC":  "Sarn Ford",
                       "inspireEffectData":  {
                                                 "type":  "ApplyStatusEffect",
                                                 "statusEffect":  "Hope",
@@ -5458,7 +5458,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Eastfold",
+                      "startingPC":  "Edoras",
                       "inspireEffectData":  {
                                                 "type":  "ApplyStatusEffect",
                                                 "statusEffect":  "Hidden",
@@ -5540,7 +5540,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Hobbiton",
+                      "startingPC":  "Minas Tirith",
                       "inspireEffectData":  {
                                                 "type":  "Encourage",
                                                 "statusEffect":  "",
@@ -5871,7 +5871,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "CairAndros",
+                      "startingPC":  "Pelargir",
                       "inspireEffectData":  {
                                                 "type":  "IncreaseFort",
                                                 "statusEffect":  "",
@@ -5953,7 +5953,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Pelargir",
+                      "startingPC":  "Minas Tirith",
                       "inspireEffectData":  {
                                                 "type":  "Heal",
                                                 "statusEffect":  "",
@@ -6786,6 +6786,334 @@
                                                 "nearest":  true
                                             },
                       "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
+                      "cardId":  9248,
+                      "name":  "Forochel",
+                      "quote":  "Under the hard sky of Forochel, even silence has a stern voice.",
+                      "actionEffect":  "",
+                      "type":  "PC",
+                      "tags":  [
+                                   "Bay of Forochel"
+                               ],
+                      "deckId":  "gandalf_the_white",
+                      "actionClassName":  "",
+                      "action":  "PCAction",
+                      "spriteName":  "Forochel",
+                      "region":  "Bay of Forochel",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "gandalf_base",
+                      "referenceCardId":  341,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  2,
+                      "mountsGranted":  0,
+                      "timberGranted":  1,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  0,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
+                      "cardId":  9249,
+                      "name":  "Bay of Forochel",
+                      "quote":  "Frozen waters cradle the restless spirits of the North.",
+                      "actionEffect":  "",
+                      "type":  "Land",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "gandalf_the_white",
+                      "actionClassName":  "",
+                      "action":  "MaterialRetrieval",
+                      "spriteName":  "BayOfForochel",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "the_iron_crown",
+                      "referenceCardId":  3,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  3,
+                      "mountsGranted":  1,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  1,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
+                      "cardId":  9250,
+                      "name":  "Voteli",
+                      "quote":  "Voteli has looked on darkness and not bowed.",
+                      "actionEffect":  "Reveal hexes in radius 2 around all controlled characters.",
+                      "type":  "Character",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "gandalf_the_white",
+                      "actionClassName":  "",
+                      "action":  "",
+                      "spriteName":  "Voteli",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "stormcrow",
+                      "referenceCardId":  863,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  1,
+                      "agent":  1,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  0,
+                      "startingPC":  "Forochel",
+                      "inspireEffectData":  {
+                                                "type":  "RevealHexes",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  2,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
+                      "cardId":  9251,
+                      "name":  "Lossoth",
+                      "quote":  "Born of ice and hunger, the Lossoth strike where the frost bites deepest.",
+                      "actionEffect":  "",
+                      "type":  "Army",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "gandalf_the_white",
+                      "actionClassName":  "",
+                      "action":  "",
+                      "spriteName":  "Lossoth",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  40,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "stormcrow",
+                      "referenceCardId":  9247,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  2,
+                      "specialAbilities":  [
+                                               14
+                                           ],
+                      "commanderSkillRequired":  1,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  2,
+                      "mountsRequired":  0,
+                      "timberRequired":  1,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  2,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  0,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  1,
                       "deckSpriteName":  "",
                       "situation":  ""
                   }

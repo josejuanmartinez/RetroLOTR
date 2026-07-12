@@ -99,9 +99,16 @@ namespace RetroLOTR.Scenarios
         {
             if (string.IsNullOrWhiteSpace(cardName)) return;
 
+            // The campaign selection screen runs before the game HUD is necessarily active —
+            // DeckManager may not have Awoken yet (Instance unset), and a default
+            // FindFirstObjectByType skips inactive objects, so search inactive ones too.
             DeckManager deckManager = DeckManager.Instance != null
                 ? DeckManager.Instance
-                : FindFirstObjectByType<DeckManager>();
+                : FindFirstObjectByType<DeckManager>(FindObjectsInactive.Include);
+            if (deckManager != null && (deckManager.cards == null || deckManager.cards.Count == 0))
+            {
+                deckManager.InitializeFromResources();
+            }
             CardData cardData = deckManager != null ? deckManager.FindAnyCardByName(cardName) : null;
             if (cardData == null)
             {

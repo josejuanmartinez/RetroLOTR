@@ -3720,8 +3720,8 @@
                   },
                   {
                       "cardId":  886,
-                      "name":  "King of Taur Romen",
-                      "quote":  "The King of Taur Romen keeps the eastern road in his thought.",
+                      "name":  "Lanthir",
+                      "quote":  "Lanthir keeps the eastern road in his thought.",
                       "actionEffect":  "Increase loyalty \u003csprite name=\"loyalty\"\u003e by 15 on a random controlled settlement.",
                       "type":  "Character",
                       "tags":  [
@@ -3948,7 +3948,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "CeberFanuin",
+                      "startingPC":  "Galabrynd",
                       "inspireEffectData":  {
                                                 "type":  "RevealHexes",
                                                 "statusEffect":  "",
@@ -4112,7 +4112,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "CeberFanuin",
+                      "startingPC":  "CerinAmroth",
                       "inspireEffectData":  {
                                                 "type":  "RevealHexes",
                                                 "statusEffect":  "",
@@ -4194,7 +4194,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Rhubar",
+                      "startingPC":  "Edhellond",
                       "inspireEffectData":  {
                                                 "type":  "RevealHexes",
                                                 "statusEffect":  "",
@@ -6250,7 +6250,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "CerinAmroth",
+                      "startingPC":  "Caras Galadhon",
                       "inspireEffectData":  {
                                                 "type":  "Encourage",
                                                 "statusEffect":  "",
@@ -6332,7 +6332,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Elostirion",
+                      "startingPC":  "CeberFanuin",
                       "inspireEffectData":  {
                                                 "type":  "IncreaseLoyalty",
                                                 "statusEffect":  "",
@@ -6496,7 +6496,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Caras Galadhon",
+                      "startingPC":  "Nanduhirion",
                       "inspireEffectData":  {
                                                 "type":  "RevealHexes",
                                                 "statusEffect":  "",
@@ -6578,7 +6578,7 @@
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  0,
-                      "startingPC":  "Thranduil\u0027s Halls",
+                      "startingPC":  "Celebannon",
                       "inspireEffectData":  {
                                                 "type":  "RecruitTroops",
                                                 "statusEffect":  "",
