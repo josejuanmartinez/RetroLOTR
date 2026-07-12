@@ -1210,8 +1210,8 @@
         1,
         1,
         0,
-        0,
-        0,
+        11,
+        11,
         6,
         6,
         6,
@@ -2306,7 +2306,7 @@
         4,
         4,
         4,
-        4,
+        3,
         3,
         3,
         3,
@@ -2369,10 +2369,10 @@
         6,
         6,
         6,
+        6,
+        6,
         4,
-        6,
-        6,
-        3,
+        0,
         3,
         3,
         0,
@@ -2403,10 +2403,10 @@
         2,
         2,
         2,
-        2,
-        2,
-        2,
-        2,
+        1,
+        1,
+        1,
+        1,
         0,
         0,
         0,
@@ -2435,7 +2435,7 @@
         1,
         1,
         1,
-        1,
+        0,
         0,
         0,
         0,
@@ -2501,7 +2501,7 @@
         1,
         1,
         1,
-        1,
+        0,
         0,
         0,
         0,
@@ -2565,7 +2565,7 @@
         0,
         0,
         0,
-        1,
+        0,
         0,
         0,
         0,
@@ -3431,7 +3431,7 @@
         2,
         2,
         2,
-        2,
+        1,
         0,
         0,
         10,
@@ -3496,7 +3496,7 @@
         2,
         2,
         2,
-        2,
+        1,
         0,
         0,
         10,
@@ -3562,7 +3562,7 @@
         2,
         2,
         2,
-        2,
+        1,
         0,
         0,
         10,
@@ -3627,7 +3627,7 @@
         2,
         2,
         2,
-        2,
+        1,
         0,
         0,
         0,
@@ -3693,7 +3693,7 @@
         2,
         2,
         2,
-        2,
+        1,
         0,
         0,
         0,
@@ -3823,10 +3823,10 @@
         2,
         2,
         2,
-        2,
         1,
         1,
-        2,
+        1,
+        1,
         1,
         1,
         1,
@@ -3889,7 +3889,7 @@
         2,
         2,
         2,
-        2,
+        1,
         2,
         2,
         1,
@@ -9618,7 +9618,7 @@
         {
             "row": 17,
             "col": 52,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 17,
@@ -9809,6 +9809,16 @@
             "row": 18,
             "col": 31,
             "spriteName": "hills_19"
+        },
+        {
+            "row": 18,
+            "col": 33,
+            "spriteName": "snow_11"
+        },
+        {
+            "row": 18,
+            "col": 34,
+            "spriteName": "snow_11"
         },
         {
             "row": 18,
@@ -10054,6 +10064,11 @@
             "row": 19,
             "col": 30,
             "spriteName": "hills_19"
+        },
+        {
+            "row": 19,
+            "col": 33,
+            "spriteName": "mountains_1"
         },
         {
             "row": 19,
@@ -10408,7 +10423,7 @@
         {
             "row": 20,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 20,
@@ -11413,7 +11428,7 @@
         {
             "row": 24,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 24,
@@ -11893,7 +11908,7 @@
         {
             "row": 26,
             "col": 52,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 26,
@@ -12138,7 +12153,7 @@
         {
             "row": 27,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 27,
@@ -12383,7 +12398,7 @@
         {
             "row": 28,
             "col": 51,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 28,
@@ -12533,7 +12548,7 @@
         {
             "row": 29,
             "col": 29,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 29,
@@ -12893,7 +12908,7 @@
         {
             "row": 30,
             "col": 51,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 30,
@@ -12908,7 +12923,7 @@
         {
             "row": 30,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 30,
@@ -12918,7 +12933,7 @@
         {
             "row": 30,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 30,
@@ -13033,12 +13048,12 @@
         {
             "row": 31,
             "col": 28,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 31,
             "col": 29,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 31,
@@ -13128,7 +13143,7 @@
         {
             "row": 31,
             "col": 48,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 31,
@@ -13153,7 +13168,7 @@
         {
             "row": 31,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 31,
@@ -13273,12 +13288,12 @@
         {
             "row": 32,
             "col": 27,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 32,
             "col": 28,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 32,
@@ -13378,7 +13393,7 @@
         {
             "row": 32,
             "col": 51,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 32,
@@ -13413,7 +13428,7 @@
         {
             "row": 32,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 32,
@@ -13503,7 +13518,7 @@
         {
             "row": 33,
             "col": 26,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 33,
@@ -13518,7 +13533,7 @@
         {
             "row": 33,
             "col": 29,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 33,
@@ -13608,12 +13623,12 @@
         {
             "row": 33,
             "col": 49,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 33,
             "col": 50,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 33,
@@ -13638,7 +13653,7 @@
         {
             "row": 33,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 33,
@@ -13743,7 +13758,7 @@
         {
             "row": 34,
             "col": 26,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 34,
@@ -13758,7 +13773,7 @@
         {
             "row": 34,
             "col": 29,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 34,
@@ -13873,7 +13888,7 @@
         {
             "row": 34,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 34,
@@ -13888,7 +13903,7 @@
         {
             "row": 34,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 34,
@@ -13972,13 +13987,8 @@
         },
         {
             "row": 35,
-            "col": 23,
-            "spriteName": "shore_01"
-        },
-        {
-            "row": 35,
             "col": 24,
-            "spriteName": "shore_01"
+            "spriteName": "grass_17"
         },
         {
             "row": 35,
@@ -14083,17 +14093,17 @@
         {
             "row": 35,
             "col": 46,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 35,
             "col": 47,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 35,
             "col": 48,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 35,
@@ -14108,7 +14118,7 @@
         {
             "row": 35,
             "col": 51,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 35,
@@ -14118,12 +14128,12 @@
         {
             "row": 35,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 35,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 35,
@@ -14192,13 +14202,8 @@
         },
         {
             "row": 36,
-            "col": 22,
-            "spriteName": "shore_01"
-        },
-        {
-            "row": 36,
             "col": 25,
-            "spriteName": "grass_17"
+            "spriteName": "mountains_8"
         },
         {
             "row": 36,
@@ -14213,7 +14218,7 @@
         {
             "row": 36,
             "col": 28,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 36,
@@ -14333,37 +14338,37 @@
         {
             "row": 36,
             "col": 53,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 36,
             "col": 54,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 36,
             "col": 55,
-            "spriteName": "plains_19"
+            "spriteName": "plains_20"
         },
         {
             "row": 36,
             "col": 56,
-            "spriteName": "plains_19"
+            "spriteName": "hills_02"
         },
         {
             "row": 36,
             "col": 57,
-            "spriteName": "plains_19"
+            "spriteName": "hills_02"
         },
         {
             "row": 36,
             "col": 58,
-            "spriteName": "plains_19"
+            "spriteName": "hills_02"
         },
         {
             "row": 36,
             "col": 59,
-            "spriteName": "plains_19"
+            "spriteName": "hills_02"
         },
         {
             "row": 36,
@@ -14413,37 +14418,37 @@
         {
             "row": 37,
             "col": 23,
-            "spriteName": "hills_19"
+            "spriteName": "mountains_8"
         },
         {
             "row": 37,
             "col": 24,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_8"
         },
         {
             "row": 37,
             "col": 25,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 37,
             "col": 26,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 37,
             "col": 27,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 37,
             "col": 28,
-            "spriteName": "mountains_1"
+            "spriteName": "mountains_2"
         },
         {
             "row": 37,
             "col": 29,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 37,
@@ -14663,22 +14668,22 @@
         {
             "row": 38,
             "col": 24,
-            "spriteName": "hills_19"
+            "spriteName": "mountains_8"
         },
         {
             "row": 38,
             "col": 25,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_8"
         },
         {
             "row": 38,
             "col": 26,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 38,
             "col": 27,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_2"
         },
         {
             "row": 38,
@@ -14768,12 +14773,12 @@
         {
             "row": 38,
             "col": 46,
-            "spriteName": "wastelands_13"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 38,
             "col": 47,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 38,
@@ -14903,17 +14908,17 @@
         {
             "row": 39,
             "col": 22,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_8"
         },
         {
             "row": 39,
             "col": 23,
-            "spriteName": "hills_19"
+            "spriteName": "mountains_8"
         },
         {
             "row": 39,
             "col": 24,
-            "spriteName": "mountains_5"
+            "spriteName": "mountains_8"
         },
         {
             "row": 39,
@@ -15018,27 +15023,27 @@
         {
             "row": 39,
             "col": 46,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 39,
             "col": 47,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 39,
             "col": 48,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 39,
             "col": 49,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 39,
             "col": 50,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 39,
@@ -15293,7 +15298,7 @@
         {
             "row": 40,
             "col": 51,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 40,
@@ -15543,7 +15548,7 @@
         {
             "row": 41,
             "col": 51,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 41,
@@ -15798,12 +15803,12 @@
         {
             "row": 42,
             "col": 52,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 42,
             "col": 53,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 42,
@@ -16033,17 +16038,17 @@
         {
             "row": 43,
             "col": 47,
-            "spriteName": "wastelands_04"
+            "spriteName": "wastelands_10"
         },
         {
             "row": 43,
             "col": 48,
-            "spriteName": "wastelands_17"
+            "spriteName": "wastelands_10"
         },
         {
             "row": 43,
             "col": 49,
-            "spriteName": "wastelands_04"
+            "spriteName": "wastelands_10"
         },
         {
             "row": 43,
@@ -16053,12 +16058,12 @@
         {
             "row": 43,
             "col": 51,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 43,
             "col": 52,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 43,
@@ -16303,12 +16308,12 @@
         {
             "row": 44,
             "col": 50,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 44,
             "col": 51,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 44,
@@ -16508,22 +16513,22 @@
         {
             "row": 45,
             "col": 47,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 45,
             "col": 48,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 45,
             "col": 49,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 45,
             "col": 50,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 45,
@@ -16733,22 +16738,22 @@
         {
             "row": 46,
             "col": 47,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 46,
             "col": 48,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 46,
             "col": 49,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 46,
             "col": 50,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 46,
@@ -16968,7 +16973,7 @@
         {
             "row": 47,
             "col": 50,
-            "spriteName": "wastelands_09"
+            "spriteName": "wastelands_02"
         },
         {
             "row": 47,
@@ -17563,7 +17568,7 @@
         {
             "row": 51,
             "col": 63,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 51,
@@ -17633,7 +17638,7 @@
         {
             "row": 52,
             "col": 44,
-            "spriteName": "plains_19"
+            "spriteName": "hills_09"
         },
         {
             "row": 52,
@@ -17678,12 +17683,12 @@
         {
             "row": 52,
             "col": 62,
-            "spriteName": "hills_06"
+            "spriteName": "hills_02"
         },
         {
             "row": 52,
             "col": 63,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 52,
@@ -17763,7 +17768,7 @@
         {
             "row": 53,
             "col": 44,
-            "spriteName": "plains_19"
+            "spriteName": "hills_09"
         },
         {
             "row": 53,
@@ -17803,12 +17808,12 @@
         {
             "row": 53,
             "col": 61,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 53,
             "col": 62,
-            "spriteName": "hills_09"
+            "spriteName": "hills_19"
         },
         {
             "row": 53,
@@ -17898,7 +17903,7 @@
         {
             "row": 54,
             "col": 45,
-            "spriteName": "plains_19"
+            "spriteName": "hills_19"
         },
         {
             "row": 54,
@@ -17978,7 +17983,7 @@
         {
             "row": 54,
             "col": 62,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 54,
@@ -18068,7 +18073,7 @@
         {
             "row": 55,
             "col": 45,
-            "spriteName": "plains_19"
+            "spriteName": "hills_19"
         },
         {
             "row": 55,
@@ -18133,7 +18138,7 @@
         {
             "row": 55,
             "col": 58,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 55,
@@ -18143,12 +18148,12 @@
         {
             "row": 55,
             "col": 60,
-            "spriteName": "hills_20"
+            "spriteName": "hills_02"
         },
         {
             "row": 55,
             "col": 61,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 55,
@@ -18248,7 +18253,7 @@
         {
             "row": 56,
             "col": 46,
-            "spriteName": "plains_19"
+            "spriteName": "hills_19"
         },
         {
             "row": 56,
@@ -18313,17 +18318,17 @@
         {
             "row": 56,
             "col": 59,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 56,
             "col": 60,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 56,
             "col": 61,
-            "spriteName": "hills_09"
+            "spriteName": "hills_19"
         },
         {
             "row": 56,
@@ -18418,7 +18423,7 @@
         {
             "row": 57,
             "col": 46,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
@@ -18428,22 +18433,22 @@
         {
             "row": 57,
             "col": 48,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
             "col": 49,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
             "col": 50,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
             "col": 51,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
@@ -18453,42 +18458,42 @@
         {
             "row": 57,
             "col": 53,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
             "col": 54,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
             "col": 55,
-            "spriteName": "hills_05"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
             "col": 56,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
             "col": 57,
-            "spriteName": "hills_01"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
             "col": 58,
-            "spriteName": "hills_09"
+            "spriteName": "hills_02"
         },
         {
             "row": 57,
             "col": 59,
-            "spriteName": "hills_07"
+            "spriteName": "hills_19"
         },
         {
             "row": 57,
             "col": 60,
-            "spriteName": "hills_12"
+            "spriteName": "hills_19"
         },
         {
             "row": 57,
@@ -18593,7 +18598,7 @@
         {
             "row": 58,
             "col": 46,
-            "spriteName": "plains_19"
+            "spriteName": "hills_02"
         },
         {
             "row": 58,
@@ -18603,67 +18608,67 @@
         {
             "row": 58,
             "col": 48,
-            "spriteName": "hills_09"
-        },
-        {
-            "row": 58,
-            "col": 49,
-            "spriteName": "plains_19"
-        },
-        {
-            "row": 58,
-            "col": 50,
-            "spriteName": "hills_09"
-        },
-        {
-            "row": 58,
-            "col": 51,
             "spriteName": "hills_02"
         },
         {
             "row": 58,
+            "col": 49,
+            "spriteName": "hills_19"
+        },
+        {
+            "row": 58,
+            "col": 50,
+            "spriteName": "hills_19"
+        },
+        {
+            "row": 58,
+            "col": 51,
+            "spriteName": "hills_19"
+        },
+        {
+            "row": 58,
             "col": 52,
-            "spriteName": "hills_05"
+            "spriteName": "hills_19"
         },
         {
             "row": 58,
             "col": 53,
-            "spriteName": "hills_04"
+            "spriteName": "hills_19"
         },
         {
             "row": 58,
             "col": 54,
-            "spriteName": "hills_09"
+            "spriteName": "hills_19"
         },
         {
             "row": 58,
             "col": 55,
-            "spriteName": "hills_07"
+            "spriteName": "hills_19"
         },
         {
             "row": 58,
             "col": 56,
-            "spriteName": "hills_13"
+            "spriteName": "hills_19"
         },
         {
             "row": 58,
             "col": 57,
-            "spriteName": "hills_13"
+            "spriteName": "hills_19"
         },
         {
             "row": 58,
             "col": 58,
-            "spriteName": "hills_05"
+            "spriteName": "hills_19"
         },
         {
             "row": 58,
             "col": 59,
-            "spriteName": "hills_13"
+            "spriteName": "hills_19"
         },
         {
             "row": 58,
             "col": 60,
-            "spriteName": "hills_13"
+            "spriteName": "hills_19"
         },
         {
             "row": 58,
@@ -18753,7 +18758,7 @@
         {
             "row": 59,
             "col": 47,
-            "spriteName": "plains_19"
+            "spriteName": "hills_02"
         },
         {
             "row": 59,
@@ -18768,32 +18773,32 @@
         {
             "row": 59,
             "col": 50,
-            "spriteName": "hills_09"
+            "spriteName": "hills_19"
         },
         {
             "row": 59,
             "col": 51,
-            "spriteName": "hills_09"
+            "spriteName": "hills_19"
         },
         {
             "row": 59,
             "col": 53,
-            "spriteName": "hills_13"
+            "spriteName": "hills_19"
         },
         {
             "row": 59,
             "col": 54,
-            "spriteName": "hills_09"
+            "spriteName": "hills_19"
         },
         {
             "row": 59,
             "col": 55,
-            "spriteName": "hills_09"
+            "spriteName": "hills_19"
         },
         {
             "row": 59,
             "col": 56,
-            "spriteName": "hills_13"
+            "spriteName": "hills_19"
         },
         {
             "row": 59,
@@ -18903,7 +18908,7 @@
         {
             "row": 60,
             "col": 53,
-            "spriteName": "hills_13"
+            "spriteName": "hills_19"
         },
         {
             "row": 60,
@@ -18913,12 +18918,12 @@
         {
             "row": 60,
             "col": 55,
-            "spriteName": "hills_13"
+            "spriteName": "hills_19"
         },
         {
             "row": 60,
             "col": 56,
-            "spriteName": "hills_13"
+            "spriteName": "hills_19"
         },
         {
             "row": 60,
@@ -22088,7 +22093,7 @@
             "row": 5,
             "col": 34,
             "pcName": "Framsburg",
-            "ownerLeaderName": "Celdacil",
+            "ownerLeaderName": "Ingomer",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 2,
@@ -22107,7 +22112,7 @@
             "row": 22,
             "col": 40,
             "pcName": "Sarn Lothduin",
-            "ownerLeaderName": "Celdacil",
+            "ownerLeaderName": "Ingomer",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 2,
@@ -22126,7 +22131,7 @@
             "row": 13,
             "col": 45,
             "pcName": "SarnGoriwing",
-            "ownerLeaderName": "Azog",
+            "ownerLeaderName": "Khamul",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 2,
@@ -22544,7 +22549,7 @@
             "row": 12,
             "col": 39,
             "pcName": "Maethelburg",
-            "ownerLeaderName": "Celdacil",
+            "ownerLeaderName": "Ingomer",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 3,
@@ -23608,7 +23613,7 @@
             "row": 4,
             "col": 50,
             "pcName": "Norr-dum",
-            "ownerLeaderName": "Dain",
+            "ownerLeaderName": "Azog",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 1,
@@ -23684,14 +23689,14 @@
             "row": 1,
             "col": 13,
             "pcName": "Forochel",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Voteli",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 2,
             "fortSize": 0,
             "hasPort": false,
             "isHidden": false,
-            "isCapital": false,
+            "isCapital": true,
             "isUnderground": false,
             "loyalty": 100,
             "region": "",
@@ -24195,13 +24200,13 @@
         },
         {
             "row": 18,
-            "col": 34,
+            "col": 33,
             "pcName": "Lag-orod",
             "ownerLeaderName": "Azog",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 2,
-            "fortSize": 0,
+            "fortSize": 2,
             "hasPort": false,
             "isHidden": false,
             "isCapital": false,
@@ -25522,7 +25527,7 @@
             "row": 22,
             "col": 40,
             "characterName": "Celdacil",
-            "ownerLeaderName": "Celdacil",
+            "ownerLeaderName": "Ingomer",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25642,8 +25647,8 @@
         {
             "row": 16,
             "col": 64,
-            "characterName": "King of Taur Romen",
-            "ownerLeaderName": "King of Taur Romen",
+            "characterName": "Lanthir",
+            "ownerLeaderName": "Lanthir",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -25661,7 +25666,7 @@
             "row": 16,
             "col": 64,
             "characterName": "Erestor",
-            "ownerLeaderName": "King of Taur Romen",
+            "ownerLeaderName": "Lanthir",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -26235,7 +26240,7 @@
             "row": 5,
             "col": 34,
             "characterName": "Fram Wyrmslayer",
-            "ownerLeaderName": "Celdacil",
+            "ownerLeaderName": "Ingomer",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -26852,7 +26857,7 @@
             "row": 1,
             "col": 13,
             "characterName": "Voteli",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Voteli",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -26860,8 +26865,8 @@
                 "xp": 25,
                 "stacks": [
                     {
-                        "armyCardName": "",
-                        "amount": 100
+                        "armyCardName": "Lossoth",
+                        "amount": 1
                     }
                 ]
             }
@@ -26944,19 +26949,6 @@
         {
             "row": 38,
             "col": 24,
-            "characterName": "",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
-            }
-        },
-        {
-            "row": 4,
-            "col": 50,
             "characterName": "",
             "ownerLeaderName": "",
             "ownerVariantId": "",

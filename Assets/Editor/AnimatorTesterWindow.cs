@@ -27,6 +27,8 @@ public class AnimatorTesterWindow : EditorWindow
     private bool                 _playing;
     private bool                 _loop = true;
     private double               _lastTick;
+    private float                _fps  = 12f;
+    private bool                 _fpsUserSet;
 
     // ── UI ────────────────────────────────────────────────────────────
     private Vector2 _stateScroll;
@@ -55,11 +57,8 @@ public class AnimatorTesterWindow : EditorWindow
         float  dt  = (float)(now - _lastTick);
         _lastTick  = now;
 
-        var clip = _previewState?.motion as AnimationClip;
-        if (clip == null) return;
-
         _previewTime += dt;
-        float duration = clip.length;
+        float duration = Duration;
 
         if (_previewTime >= duration)
         {
@@ -68,7 +67,7 @@ public class AnimatorTesterWindow : EditorWindow
         }
 
         // Map time → frame index
-        _previewFrame = TimeToFrame(_previewTime, clip);
+        _previewFrame = TimeToFrame(_previewTime);
         Repaint();
     }
 
@@ -221,8 +220,6 @@ public class AnimatorTesterWindow : EditorWindow
     {
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
-        var clip = _previewState.motion as AnimationClip;
-
         using (new EditorGUILayout.HorizontalScope())
         {
             // Sprite preview box
@@ -245,8 +242,8 @@ public class AnimatorTesterWindow : EditorWindow
                     { normal = { textColor = ColPlaying } };
                 GUILayout.Label(_previewState.name, titleStyle);
 
-                if (clip != null)
-                    GUILayout.Label($"{clip.length:F2}s  ·  {_previewSprites?.Length ?? 0} frames", EditorStyles.miniLabel);
+                float duration = Duration;
+                GUILayout.Label($"{duration:F2}s  ·  {_previewSprites?.Length ?? 0} frames  ·  {_fps:F0} fps", EditorStyles.miniLabel);
 
                 GUILayout.Space(6);
 
@@ -256,16 +253,24 @@ public class AnimatorTesterWindow : EditorWindow
                 GUILayout.Space(4);
 
                 // Time scrub
-                if (clip != null)
+                EditorGUI.BeginChangeCheck();
+                float t = EditorGUILayout.Slider(_previewTime, 0f, duration);
+                if (EditorGUI.EndChangeCheck())
                 {
-                    EditorGUI.BeginChangeCheck();
-                    float t = EditorGUILayout.Slider(_previewTime, 0f, clip.length);
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        _previewTime  = t;
-                        _previewFrame = TimeToFrame(t, clip);
-                        _playing      = false;
-                    }
+                    _previewTime  = t;
+                    _previewFrame = TimeToFrame(t);
+                    _playing      = false;
+                }
+
+                GUILayout.Space(4);
+
+                // FPS
+                EditorGUI.BeginChangeCheck();
+                _fps = EditorGUILayout.Slider("FPS", _fps, 1f, 60f);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    _fpsUserSet  = true;
+                    _previewTime = _previewFrame / _fps;
                 }
 
                 GUILayout.Space(6);
@@ -273,8 +278,8 @@ public class AnimatorTesterWindow : EditorWindow
                 // Transport
                 using (new EditorGUILayout.HorizontalScope())
                 {
-                    if (GUILayout.Button("|◀", GUILayout.Width(28))) Seek(0f, clip);
-                    if (GUILayout.Button("◀",  GUILayout.Width(28))) SeekFrame(_previewFrame - 1, clip);
+                    if (GUILayout.Button("|◀", GUILayout.Width(28))) Seek(0f);
+                    if (GUILayout.Button("◀",  GUILayout.Width(28))) SeekFrame(_previewFrame - 1);
 
                     if (_playing)
                     {
@@ -289,8 +294,8 @@ public class AnimatorTesterWindow : EditorWindow
                         }
                     }
 
-                    if (GUILayout.Button("▶",  GUILayout.Width(28))) SeekFrame(_previewFrame + 1, clip);
-                    if (GUILayout.Button("▶|", GUILayout.Width(28))) Seek(clip?.length ?? 0f, clip);
+                    if (GUILayout.Button("▶",  GUILayout.Width(28))) SeekFrame(_previewFrame + 1);
+                    if (GUILayout.Button("▶|", GUILayout.Width(28))) Seek(duration);
                 }
 
                 GUILayout.Space(4);
@@ -326,6 +331,7 @@ public class AnimatorTesterWindow : EditorWindow
         var clip = state.motion as AnimationClip;
         _previewSprites = clip != null ? ExtractSprites(clip) : null;
 
+        if (!_fpsUserSet && clip != null && clip.frameRate > 0f) _fps = clip.frameRate;
         if (!keepTime) { _previewTime = 0f; _previewFrame = 0; }
 
         // Always auto-play
@@ -336,30 +342,33 @@ public class AnimatorTesterWindow : EditorWindow
             Debug.LogWarning($"[AnimatorTester] No sprite keyframes found in clip '{clip?.name}'. Make sure the .anim was saved by the Spritesheet Animator tool.");
     }
 
-    void Seek(float t, AnimationClip clip)
+    float Duration => (_previewSprites != null && _fps > 0f) ? _previewSprites.Length / _fps : 0f;
+
+    void Seek(float t)
     {
-        if (clip == null) return;
+        if (_previewSprites == null) return;
         _playing      = false;
-        _previewTime  = Mathf.Clamp(t, 0f, clip.length);
-        _previewFrame = TimeToFrame(_previewTime, clip);
+        _previewTime  = Mathf.Clamp(t, 0f, Duration);
+        _previewFrame = TimeToFrame(_previewTime);
         Repaint();
     }
 
-    void SeekFrame(int frame, AnimationClip clip)
+    void SeekFrame(int frame)
     {
-        if (clip == null || _previewSprites == null) return;
+        if (_previewSprites == null || _previewSprites.Length == 0) return;
         int clamped = Mathf.Clamp(frame, 0, _previewSprites.Length - 1);
         _previewFrame = clamped;
-        _previewTime  = clamped / clip.frameRate;
+        _previewTime  = clamped / _fps;
         _playing      = false;
         Repaint();
     }
 
-    int TimeToFrame(float t, AnimationClip clip)
+    int TimeToFrame(float t)
     {
         if (_previewSprites == null || _previewSprites.Length == 0) return 0;
-        if (clip.length <= 0f) return 0;
-        float norm = Mathf.Clamp01(t / clip.length);
+        float duration = Duration;
+        if (duration <= 0f) return 0;
+        float norm = Mathf.Clamp01(t / duration);
         return Mathf.Clamp(Mathf.FloorToInt(norm * _previewSprites.Length), 0, _previewSprites.Length - 1);
     }
 

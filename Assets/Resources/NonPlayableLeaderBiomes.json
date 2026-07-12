@@ -60,7 +60,7 @@
                        "nationInitials":  "WE"
                    },
                    {
-                       "characterName":  "King of Taur Romen",
+                       "characterName":  "Lanthir",
                        "banner":  "banner_elven_leaf",
                        "artifacts":  [
 
@@ -792,26 +792,6 @@
                        "nationInitials":  "E"
                    },
                    {
-                       "characterName":  "Celdacil",
-                       "banner":  "banner_white_blue_shield",
-                       "artifacts":  [
-
-                                     ],
-                       "terrain":  4,
-                       "feature":  1,
-                       "startingArmySize":  1,
-                       "startingArmyCard":  "Rivermen",
-                       "preferedTroopType":  0,
-                       "startingCityIsHidden":  false,
-                       "startsWithPort":  true,
-                       "startingWarships":  1,
-                       "sex":  0,
-                       "startingCityRegion":  "Anduin",
-                       "nationName":  "Rivermen",
-                       "characterSprite":  "common",
-                       "nationInitials":  "Ri"
-                   },
-                   {
                        "characterName":  "Annatorion",
                        "banner":  "banner_red_wine",
                        "artifacts":  [
@@ -1048,6 +1028,27 @@
                        "nationName":  "Rhudaur",
                        "characterSprite":  "common",
                        "nationInitials":  "RH"
+                   },
+                   {
+                       "characterName":  "Voteli",
+                       "alignment":  2,
+                       "banner":  "",
+                       "artifacts":  [
+
+                                     ],
+                       "terrain":  11,
+                       "startingArmySize":  0,
+                       "preferedTroopType":  0,
+                       "startingCityIsHidden":  false,
+                       "startsWithPort":  false,
+                       "startingWarships":  0,
+                       "sex":  0,
+                       "startingCityName":  "Forochel",
+                       "startingCitySize":  2,
+                       "startingCityRegion":  "Forochel",
+                       "nationName":  "Forochel",
+                       "characterSprite":  "common",
+                       "nationInitials":  "F"
                    }
                ]
 }

@@ -1,27 +1,45 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class SpritesheetAnimatorWindow : EditorWindow
 {
+    // ── Tabs ─────────────────────────────────────────────────────────
+    private int _tab; // 0 = Create Spritesheet from Video, 1 = Spritesheet Editor
+    private static readonly string[] TabLabels = { "Create Spritesheet from Video", "Spritesheet Editor" };
+
     // ── Spritesheet ──────────────────────────────────────────────────
     private Texture2D _sheet;
     private Sprite[]  _sprites;          // all sprites in atlas order (top-left → bottom-right)
+    private Sprite[]  _mirroredSpritesCache;
 
-    // ── Frame selection ───────────────────────────────────────────────
-    private List<int> _seq = new();      // selected frame indices in animation order
+    // ── Animations defined against the current spritesheet ─────────────
+    [System.Serializable]
+    private class SpriteAnimation
+    {
+        public string    name = "Animation";
+        public int        fps = 12;
+        public bool       loop = true;
+        public bool       mirrorH;
+        public List<int>  frames = new();
 
-    // ── Settings ──────────────────────────────────────────────────────
-    private int  _fps     = 12;
-    private bool _loop    = true;
-    private bool _mirrorH = false;
+        // Always-on gallery playback (independent of the big detail preview below)
+        [System.NonSerialized] public int    galleryPos;
+        [System.NonSerialized] public double galleryNextTime;
+    }
 
-    // ── Preview ───────────────────────────────────────────────────────
+    private List<SpriteAnimation> _animations = new();
+    private int                   _activeAnim = -1;
+    private Vector2                _animListScroll;
+
+    // ── Detail preview (explicit play/pause, scrubbable) ────────────────
     private bool   _playing;
     private double _nextFrameTime;
-    private int    _previewPos;          // index into _seq
+    private int    _previewPos;          // index into the active animation's frames
 
     // ── UI ────────────────────────────────────────────────────────────
     private Vector2 _gridScroll;
@@ -30,40 +48,81 @@ public class SpritesheetAnimatorWindow : EditorWindow
     private static readonly Color ColSelected   = new(0.25f, 0.55f, 1f,  0.55f);
     private static readonly Color ColUnselected = new(0.15f, 0.15f, 0.15f, 0.8f);
     private static readonly Color ColPreview    = new(0.1f,  0.1f,  0.1f, 1f);
+    private static readonly Color ColActiveTile = new(0.2f,  0.15f, 0f,   1f);
 
-    // ── Save ──────────────────────────────────────────────────────────
-    private string _outFolder = "Assets/Animations";
-    private string _clipName  = "NewAnimation";
+    // ── Video → Spritesheet ──────────────────────────────────────────
+    // Delegates to the .agents/skills/extract_spritesheet_from_video Python script
+    // (opencv-based) instead of driving a VideoPlayer in-editor, which is unreliable
+    // outside Play Mode.
+    private VideoClip _videoClip;
+    private int        _frameCount     = 256;
+    private int        _cols           = 16;
+    private bool        _pointFilter   = true;
+    private string       _videoOutFolder = "Assets/Art/Characters/AnimationSpritesheets";
+    private string       _videoSheetName = "NewSpritesheet";
 
     // ─────────────────────────────────────────────────────────────────
     [MenuItem("Tools/Spritesheet Animator")]
     public static void Open()
     {
         var w = GetWindow<SpritesheetAnimatorWindow>("Spritesheet Animator");
-        w.minSize = new Vector2(520, 680);
+        w.minSize = new Vector2(560, 720);
     }
 
     void OnEnable()  => EditorApplication.update += Tick;
-    void OnDisable() { EditorApplication.update -= Tick; _playing = false; }
+    void OnDisable()
+    {
+        EditorApplication.update -= Tick;
+        _playing = false;
+    }
 
     // ── Playback tick ─────────────────────────────────────────────────
     void Tick()
     {
-        if (!_playing || _seq.Count == 0) return;
-        if (EditorApplication.timeSinceStartup < _nextFrameTime) return;
+        double now = EditorApplication.timeSinceStartup;
 
-        _previewPos++;
-        if (_previewPos >= _seq.Count)
+        // Big detail preview — active animation only, explicit play/pause
+        if (_playing && _activeAnim >= 0 && _activeAnim < _animations.Count)
         {
-            if (_loop) _previewPos = 0;
-            else       { _previewPos = _seq.Count - 1; _playing = false; }
+            var anim = _animations[_activeAnim];
+            if (anim.frames.Count > 0 && now >= _nextFrameTime)
+            {
+                _previewPos++;
+                if (_previewPos >= anim.frames.Count)
+                {
+                    if (anim.loop) _previewPos = 0;
+                    else           { _previewPos = anim.frames.Count - 1; _playing = false; }
+                }
+                _nextFrameTime = now + 1.0 / Mathf.Max(1, anim.fps);
+            }
         }
-        _nextFrameTime = EditorApplication.timeSinceStartup + 1.0 / _fps;
-        Repaint();
+
+        // Gallery — every defined animation always auto-plays its own loop
+        bool galleryDirty = false;
+        foreach (var a in _animations)
+        {
+            if (a.frames.Count == 0) continue;
+            if (now < a.galleryNextTime) continue;
+            a.galleryPos      = (a.galleryPos + 1) % a.frames.Count;
+            a.galleryNextTime = now + 1.0 / Mathf.Max(1, a.fps);
+            galleryDirty = true;
+        }
+
+        if (_playing || galleryDirty) Repaint();
     }
 
     // ── Main GUI ──────────────────────────────────────────────────────
     void OnGUI()
+    {
+        GUILayout.Space(4);
+        _tab = GUILayout.Toolbar(_tab, TabLabels, GUILayout.Height(24));
+        GUILayout.Space(4);
+
+        if (_tab == 0) DrawVideoTab();
+        else           DrawEditorTab();
+    }
+
+    void DrawEditorTab()
     {
         DrawTopBar();
 
@@ -76,11 +135,264 @@ public class SpritesheetAnimatorWindow : EditorWindow
         }
 
         GUILayout.Space(4);
-        DrawFrameGrid();
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            using (new EditorGUILayout.VerticalScope(GUILayout.Width(200)))
+                DrawAnimationsList();
+
+            using (new EditorGUILayout.VerticalScope())
+                DrawAnimationEditor();
+        }
+
         GUILayout.Space(6);
-        DrawPreviewRow();
+        DrawAllAnimationsGallery();
+    }
+
+    // ── Video → Spritesheet tab ─────────────────────────────────────────
+    void DrawVideoTab()
+    {
         GUILayout.Space(6);
-        DrawSaveRow();
+        EditorGUILayout.LabelField("Source Video", EditorStyles.boldLabel);
+        EditorGUI.BeginChangeCheck();
+        _videoClip = (VideoClip)EditorGUILayout.ObjectField("Video Clip", _videoClip, typeof(VideoClip), false);
+        if (EditorGUI.EndChangeCheck() && _videoClip != null)
+            _videoSheetName = $"{_videoClip.name}_spritesheet";
+
+        _frameCount = Mathf.Max(1, EditorGUILayout.IntField("Frames", _frameCount));
+        _cols       = Mathf.Max(1, EditorGUILayout.IntField("Columns", _cols));
+        GUILayout.Label($"→ {Mathf.CeilToInt((float)_frameCount / _cols)} rows", EditorStyles.miniLabel);
+
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            GUILayout.Label("Presets", GUILayout.Width(60));
+            if (GUILayout.Button("256 (16×16)"))          { _frameCount = 256; _cols = 16; }
+            if (GUILayout.Button("48 (8×6) — 6-phase"))   { _frameCount = 48;  _cols = 8;  }
+        }
+
+        _pointFilter = EditorGUILayout.Toggle("Pixel-Perfect (Point Filter)", _pointFilter);
+
+        GUILayout.Space(6);
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        EditorGUILayout.LabelField("Output", EditorStyles.boldLabel);
+
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            _videoOutFolder = EditorGUILayout.TextField("Folder", _videoOutFolder);
+            if (GUILayout.Button("…", GUILayout.Width(26)))
+            {
+                string picked = EditorUtility.OpenFolderPanel("Output folder", _videoOutFolder, "");
+                if (!string.IsNullOrEmpty(picked))
+                {
+                    string full = Path.GetFullPath(picked).Replace('\\', '/');
+                    string proj = Path.GetFullPath(Application.dataPath + "/..").Replace('\\', '/') + "/";
+                    if (full.StartsWith(proj)) _videoOutFolder = full.Substring(proj.Length).TrimEnd('/');
+                }
+            }
+        }
+        _videoSheetName = EditorGUILayout.TextField("Sheet Name", _videoSheetName);
+
+        GUILayout.Space(8);
+
+        if (_videoClip == null)
+        {
+            EditorGUILayout.HelpBox("Assign a video clip to extract frames from.", MessageType.Info);
+            return;
+        }
+
+        if (GUILayout.Button("Extract Frames → Spritesheet", GUILayout.Height(32)))
+            RunVideoExtraction();
+
+        EditorGUILayout.HelpBox(
+            "Runs .agents/skills/extract_spritesheet_from_video/scripts/extract_spritesheet.py " +
+            "(requires Python on PATH with opencv-python, pillow, numpy installed).", MessageType.None);
+    }
+
+    void RunVideoExtraction()
+    {
+        string videoRelPath = AssetDatabase.GetAssetPath(_videoClip);
+        if (string.IsNullOrEmpty(videoRelPath))
+        {
+            Debug.LogError("[SpritesheetAnimator] Could not resolve an asset path for the selected video clip.");
+            return;
+        }
+
+        string safe = string.Concat(_videoSheetName.Split(Path.GetInvalidFileNameChars()));
+        if (!Directory.Exists(_videoOutFolder)) Directory.CreateDirectory(_videoOutFolder);
+        string outRelPath = $"{_videoOutFolder}/{safe}.png";
+
+        string projectRoot = Path.GetFullPath(Application.dataPath + "/..").Replace('\\', '/');
+        string scriptPath  = Path.GetFullPath(Path.Combine(projectRoot, ".agents/skills/extract_spritesheet_from_video/scripts/extract_spritesheet.py"));
+
+        if (!File.Exists(scriptPath))
+        {
+            Debug.LogError($"[SpritesheetAnimator] Extraction script not found: {scriptPath}");
+            return;
+        }
+
+        string args = $"\"{scriptPath}\" --video \"{videoRelPath}\" --out \"{outRelPath}\" --frames {_frameCount} --cols {_cols}";
+
+        string stdout, stderr;
+        int    exitCode;
+
+        EditorUtility.DisplayProgressBar("Extracting Spritesheet", $"Sampling {_frameCount} frame(s) from '{_videoClip.name}'…", 0.5f);
+        bool started;
+        try
+        {
+            started = TryRunPython(args, projectRoot, out stdout, out stderr, out exitCode);
+        }
+        finally
+        {
+            EditorUtility.ClearProgressBar();
+        }
+
+        if (!started)
+        {
+            Debug.LogError("[SpritesheetAnimator] Could not find a Python interpreter on PATH (tried 'python' and 'py'). " +
+                            "Install Python and the extraction script's dependencies: uv pip install opencv-python pillow numpy");
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(stdout)) Debug.Log($"[SpritesheetAnimator]\n{stdout.Trim()}");
+
+        if (exitCode != 0)
+        {
+            Debug.LogError($"[SpritesheetAnimator] Extraction failed (exit {exitCode}):\n{stderr}");
+            return;
+        }
+
+        var match = Regex.Match(stdout, @"Extracted (\d+) frames");
+        if (!match.Success)
+        {
+            Debug.LogError($"[SpritesheetAnimator] Could not parse extracted frame count from script output:\n{stdout}");
+            return;
+        }
+        int actualFrameCount = int.Parse(match.Groups[1].Value);
+
+        AssetDatabase.ImportAsset(outRelPath, ImportAssetOptions.ForceSynchronousImport);
+
+        // Read the true on-disk pixel size directly from the PNG header. Trusting the
+        // just-imported Texture2D here is unsafe: the very first import happens with
+        // Unity's default (non-Sprite) settings, which can silently NPOT-rescale the
+        // texture — computing the slice grid from that scaled size misaligns every rect.
+        string outAbsPath = Path.Combine(projectRoot, outRelPath);
+        if (!TryReadPngSize(outAbsPath, out int fileW, out int fileH))
+        {
+            Debug.LogError($"[SpritesheetAnimator] Could not read PNG dimensions from {outRelPath}");
+            return;
+        }
+
+        int cols  = _cols;
+        int rows  = Mathf.CeilToInt((float)actualFrameCount / cols);
+        int cellW = fileW / cols;
+        int cellH = fileH / rows;
+
+        var importer = (TextureImporter)AssetImporter.GetAtPath(outRelPath);
+        importer.textureType         = TextureImporterType.Sprite;
+        importer.spriteImportMode    = SpriteImportMode.Multiple;
+        importer.filterMode          = _pointFilter ? FilterMode.Point : FilterMode.Bilinear;
+        importer.alphaIsTransparency = true;
+        importer.npotScale           = TextureImporterNPOTScale.None;
+        importer.maxTextureSize      = Mathf.Clamp(Mathf.NextPowerOfTwo(Mathf.Max(fileW, fileH)), 32, 8192);
+
+        var metas = new SpriteMetaData[actualFrameCount];
+        for (int i = 0; i < actualFrameCount; i++)
+        {
+            int col = i % cols;
+            int row = i / cols;
+            metas[i] = new SpriteMetaData
+            {
+                name      = $"{safe}_{i:D3}",
+                rect      = new Rect(col * cellW, (rows - 1 - row) * cellH, cellW, cellH),
+                alignment = (int)SpriteAlignment.Center,
+                pivot     = new Vector2(0.5f, 0.5f),
+            };
+        }
+        importer.spritesheet = metas;
+        importer.SaveAndReimport();
+
+        var texAsset = AssetDatabase.LoadAssetAtPath<Texture2D>(outRelPath);
+        if (texAsset == null)
+        {
+            Debug.LogError($"[SpritesheetAnimator] Expected output spritesheet not found: {outRelPath}");
+            return;
+        }
+
+        Debug.Log($"[SpritesheetAnimator] Sliced {actualFrameCount} frame(s) → {outRelPath} ({cols}×{rows} grid, {cellW}×{cellH} cells)");
+
+        EditorUtility.FocusProjectWindow();
+        Selection.activeObject = texAsset;
+        EditorGUIUtility.PingObject(texAsset);
+
+        // Hand off straight into the editor tab
+        _sheet = texAsset;
+        LoadSprites();
+        _tab = 1;
+    }
+
+    /// <summary>Reads width/height straight from the PNG IHDR chunk, bypassing Unity's importer entirely.</summary>
+    static bool TryReadPngSize(string absolutePath, out int width, out int height)
+    {
+        width = height = 0;
+        try
+        {
+            using var stream = File.OpenRead(absolutePath);
+            var header = new byte[24];
+            if (stream.Read(header, 0, 24) != 24) return false;
+
+            // 8-byte PNG signature, then a 4-byte length + "IHDR", then 4-byte width + 4-byte height (big-endian)
+            if (header[0] != 0x89 || header[1] != 0x50 || header[2] != 0x4E || header[3] != 0x47) return false;
+
+            width  = (header[16] << 24) | (header[17] << 16) | (header[18] << 8) | header[19];
+            height = (header[20] << 24) | (header[21] << 16) | (header[22] << 8) | header[23];
+            return width > 0 && height > 0;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    static bool TryRunPython(string args, string workingDir, out string stdout, out string stderr, out int exitCode)
+    {
+        foreach (var exe in new[] { "python", "py" })
+        {
+            if (TryStartProcess(exe, args, workingDir, out stdout, out stderr, out exitCode))
+                return true;
+        }
+        stdout = stderr = null;
+        exitCode = -1;
+        return false;
+    }
+
+    static bool TryStartProcess(string exe, string args, string workingDir, out string stdout, out string stderr, out int exitCode)
+    {
+        stdout = stderr = null;
+        exitCode = -1;
+
+        var psi = new System.Diagnostics.ProcessStartInfo
+        {
+            FileName               = exe,
+            Arguments              = args,
+            WorkingDirectory       = workingDir,
+            RedirectStandardOutput = true,
+            RedirectStandardError  = true,
+            UseShellExecute        = false,
+            CreateNoWindow         = true,
+        };
+
+        try
+        {
+            using var process = System.Diagnostics.Process.Start(psi);
+            stdout = process.StandardOutput.ReadToEnd();
+            stderr = process.StandardError.ReadToEnd();
+            process.WaitForExit(180000);
+            exitCode = process.ExitCode;
+            return true;
+        }
+        catch (System.ComponentModel.Win32Exception)
+        {
+            return false; // interpreter not found under this name
+        }
     }
 
     // ── Top bar ───────────────────────────────────────────────────────
@@ -90,39 +402,124 @@ public class SpritesheetAnimatorWindow : EditorWindow
         EditorGUI.BeginChangeCheck();
         _sheet = (Texture2D)EditorGUILayout.ObjectField("Spritesheet", _sheet, typeof(Texture2D), false);
         if (EditorGUI.EndChangeCheck()) LoadSprites();
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+    }
 
+    // ── Animations list (left column) ───────────────────────────────────
+    void DrawAnimationsList()
+    {
         using (new EditorGUILayout.HorizontalScope())
         {
-            _fps  = EditorGUILayout.IntSlider("FPS", _fps, 1, 60);
-            _loop = EditorGUILayout.Toggle("Loop", _loop, GUILayout.Width(60));
+            EditorGUILayout.LabelField("Animations", EditorStyles.boldLabel);
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("+", GUILayout.Width(24)))
+                AddAnimation();
         }
+
+        _animListScroll = EditorGUILayout.BeginScrollView(_animListScroll, GUILayout.ExpandHeight(true));
+
+        int removeIndex = -1;
+        for (int i = 0; i < _animations.Count; i++)
+        {
+            var  a        = _animations[i];
+            bool isActive = i == _activeAnim;
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                Color prevBg = GUI.backgroundColor;
+                if (isActive) GUI.backgroundColor = new Color(0.3f, 0.6f, 1f);
+                if (GUILayout.Button($"{a.name}\n{a.frames.Count}f · {a.fps}fps", GUILayout.Height(32)))
+                    SelectAnimation(i);
+                GUI.backgroundColor = prevBg;
+
+                if (GUILayout.Button("×", GUILayout.Width(20), GUILayout.Height(32)))
+                    removeIndex = i;
+            }
+        }
+
+        EditorGUILayout.EndScrollView();
+
+        if (removeIndex >= 0) RemoveAnimation(removeIndex);
+
+        if (_animations.Count == 0)
+            EditorGUILayout.HelpBox("Click + to define an animation from this spritesheet.", MessageType.Info);
+    }
+
+    void AddAnimation()
+    {
+        string baseName = "Animation";
+        int    n        = _animations.Count + 1;
+        string name;
+        do { name = $"{baseName}{n:D2}"; n++; } while (_animations.Any(a => a.name == name));
+
+        _animations.Add(new SpriteAnimation { name = name });
+        SelectAnimation(_animations.Count - 1);
+    }
+
+    void SelectAnimation(int i)
+    {
+        _activeAnim = i;
+        StopActivePreview();
+    }
+
+    void RemoveAnimation(int i)
+    {
+        _animations.RemoveAt(i);
+        if (_activeAnim == i)      _activeAnim = -1;
+        else if (_activeAnim > i)  _activeAnim--;
+        StopActivePreview();
+    }
+
+    // ── Animation editor (right column) ─────────────────────────────────
+    void DrawAnimationEditor()
+    {
+        if (_activeAnim < 0 || _activeAnim >= _animations.Count)
+        {
+            EditorGUILayout.HelpBox("Select an animation on the left, or click + to create one.", MessageType.Info);
+            return;
+        }
+
+        var anim = _animations[_activeAnim];
+
+        anim.name = EditorGUILayout.TextField("Name", anim.name);
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            anim.fps  = EditorGUILayout.IntSlider("FPS", anim.fps, 1, 60);
+            anim.loop = EditorGUILayout.Toggle("Loop", anim.loop, GUILayout.Width(60));
+        }
+        anim.mirrorH = EditorGUILayout.Toggle("Mirror (swap left/right)", anim.mirrorH);
 
         using (new EditorGUILayout.HorizontalScope())
         {
             if (GUILayout.Button("Select All"))
             {
-                _seq = Enumerable.Range(0, _sprites.Length).ToList();
-                OnSequenceChanged();
+                anim.frames = Enumerable.Range(0, _sprites.Length).ToList();
+                OnSequenceChanged(anim);
             }
             if (GUILayout.Button("Clear All"))
             {
-                _seq.Clear();
-                StopPreview();
+                anim.frames.Clear();
+                StopActivePreview();
             }
             GUILayout.FlexibleSpace();
-            GUILayout.Label($"{_seq.Count} frame(s) selected", EditorStyles.miniLabel);
+            GUILayout.Label($"{anim.frames.Count} frame(s) selected", EditorStyles.miniLabel);
         }
 
-        _mirrorH = EditorGUILayout.Toggle("Mirror (swap left/right)", _mirrorH);
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+        DrawFrameGrid(anim);
+        GUILayout.Space(6);
+        DrawPreviewRow(anim);
+        GUILayout.Space(6);
+        DrawSaveRow(anim);
     }
 
     // ── Frame grid ────────────────────────────────────────────────────
-    void DrawFrameGrid()
+    void DrawFrameGrid(SpriteAnimation anim)
     {
         EditorGUILayout.LabelField("Frames  (click to add/remove)", EditorStyles.boldLabel);
 
-        float w    = position.width - 20;
+        float w    = position.width - 220;
         int   cols = Mathf.Max(1, (int)(w / (THUMB + PAD)));
         int   rows = Mathf.CeilToInt((float)_sprites.Length / cols);
         float h    = rows * (THUMB + PAD) + PAD + 4;
@@ -139,14 +536,14 @@ public class SpritesheetAnimatorWindow : EditorWindow
                 content.y + PAD + row * (THUMB + PAD),
                 THUMB, THUMB);
 
-            bool sel = _seq.Contains(i);
+            bool sel = anim.frames.Contains(i);
 
             // click
             if (Event.current.type == EventType.MouseDown && cell.Contains(Event.current.mousePosition))
             {
-                if (sel) _seq.Remove(i);
-                else     _seq.Add(i);
-                OnSequenceChanged();
+                if (sel) anim.frames.Remove(i);
+                else     anim.frames.Add(i);
+                OnSequenceChanged(anim);
                 Event.current.Use();
                 Repaint();
             }
@@ -155,7 +552,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
             EditorGUI.DrawRect(cell, sel ? ColSelected : ColUnselected);
 
             // sprite thumbnail
-            DrawSprite(_sprites[i], Shrink(cell, 3), _mirrorH);
+            DrawSprite(_sprites[i], Shrink(cell, 3), anim.mirrorH);
 
             // frame index
             DrawLabel(new Rect(cell.x, cell.yMax - 16, THUMB, 16), i.ToString(), TextAnchor.MiddleCenter, Color.white);
@@ -163,7 +560,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
             // selection order badge
             if (sel)
             {
-                int order = _seq.IndexOf(i);
+                int order = anim.frames.IndexOf(i);
                 Rect badge = new(cell.xMax - 20, cell.y + 2, 18, 14);
                 EditorGUI.DrawRect(badge, new Color(0.2f, 0.5f, 1f));
                 DrawLabel(badge, (order + 1).ToString(), TextAnchor.MiddleCenter, Color.white);
@@ -174,7 +571,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
     }
 
     // ── Preview row ───────────────────────────────────────────────────
-    void DrawPreviewRow()
+    void DrawPreviewRow(SpriteAnimation anim)
     {
         EditorGUILayout.LabelField("Preview", EditorStyles.boldLabel);
 
@@ -185,29 +582,29 @@ public class SpritesheetAnimatorWindow : EditorWindow
             Rect previewRect = GUILayoutUtility.GetRect(PS, PS, GUILayout.Width(PS), GUILayout.Height(PS));
             EditorGUI.DrawRect(previewRect, ColPreview);
 
-            if (_seq.Count > 0)
+            if (anim.frames.Count > 0)
             {
-                int pi = Mathf.Clamp(_previewPos, 0, _seq.Count - 1);
-                DrawSprite(_sprites[_seq[pi]], Shrink(previewRect, 6), _mirrorH);
+                int pi = Mathf.Clamp(_previewPos, 0, anim.frames.Count - 1);
+                DrawSprite(_sprites[anim.frames[pi]], Shrink(previewRect, 6), anim.mirrorH);
             }
 
             // Controls column
             using (new EditorGUILayout.VerticalScope())
             {
                 GUILayout.Space(12);
-                int frameCount = _seq.Count;
+                int frameCount = anim.frames.Count;
                 int display    = frameCount == 0 ? 0 : _previewPos + 1;
                 GUILayout.Label($"Frame {display} / {frameCount}", EditorStyles.centeredGreyMiniLabel);
                 GUILayout.Space(6);
 
                 using (new EditorGUILayout.HorizontalScope())
                 {
-                    if (GUILayout.Button("|◀", GUILayout.Width(30))) { StopPreview(); _previewPos = 0; Repaint(); }
-                    if (GUILayout.Button("◀",  GUILayout.Width(30))) { StopPreview(); Step(-1); }
+                    if (GUILayout.Button("|◀", GUILayout.Width(30))) { StopActivePreview(); _previewPos = 0; Repaint(); }
+                    if (GUILayout.Button("◀",  GUILayout.Width(30))) { StopActivePreview(); Step(anim, -1); }
 
                     if (_playing)
                     {
-                        if (GUILayout.Button("■ Stop")) StopPreview();
+                        if (GUILayout.Button("■ Stop")) StopActivePreview();
                     }
                     else
                     {
@@ -220,53 +617,96 @@ public class SpritesheetAnimatorWindow : EditorWindow
                         GUI.enabled = true;
                     }
 
-                    if (GUILayout.Button("▶",  GUILayout.Width(30))) { StopPreview(); Step(1); }
-                    if (GUILayout.Button("▶|", GUILayout.Width(30))) { StopPreview(); _previewPos = Mathf.Max(0, frameCount - 1); Repaint(); }
+                    if (GUILayout.Button("▶",  GUILayout.Width(30))) { StopActivePreview(); Step(anim, 1); }
+                    if (GUILayout.Button("▶|", GUILayout.Width(30))) { StopActivePreview(); _previewPos = Mathf.Max(0, frameCount - 1); Repaint(); }
                 }
 
                 GUILayout.Space(8);
-                float duration = frameCount > 0 ? (float)frameCount / _fps : 0f;
-                GUILayout.Label($"{frameCount} frames  ·  {duration:F2}s  ·  {_fps} fps", EditorStyles.miniLabel);
+                float duration = frameCount > 0 ? (float)frameCount / anim.fps : 0f;
+                GUILayout.Label($"{frameCount} frames  ·  {duration:F2}s  ·  {anim.fps} fps", EditorStyles.miniLabel);
             }
         }
     }
 
     // ── Save row ──────────────────────────────────────────────────────
-    void DrawSaveRow()
+    void DrawSaveRow(SpriteAnimation anim)
     {
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        EditorGUILayout.LabelField("Save", EditorStyles.boldLabel);
+
+        string dest = $"Assets/Art/Characters/Animations/{_sheet.name}_{SafeName(anim.name)}.anim";
+        EditorGUILayout.LabelField("Saves to", dest, EditorStyles.miniLabel);
 
         using (new EditorGUILayout.HorizontalScope())
         {
-            _outFolder = EditorGUILayout.TextField("Folder", _outFolder);
-            if (GUILayout.Button("…", GUILayout.Width(26)))
+            GUI.enabled = anim.frames.Count > 0 && !string.IsNullOrWhiteSpace(anim.name);
+            if (GUILayout.Button($"Save '{anim.name}'  (.anim)", GUILayout.Height(30)))
+                SaveClip(anim);
+            GUI.enabled = true;
+
+            GUI.enabled = _animations.Any(a => a.frames.Count > 0);
+            if (GUILayout.Button("Save All Animations", GUILayout.Height(30)))
+                SaveAllClips();
+            GUI.enabled = true;
+        }
+    }
+
+    // ── All-animations gallery (bottom) ─────────────────────────────────
+    void DrawAllAnimationsGallery()
+    {
+        if (_animations.Count == 0) return;
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        EditorGUILayout.LabelField("All Animations", EditorStyles.boldLabel);
+
+        const float TILE = 96;
+        float w    = position.width - 20;
+        int   cols = Mathf.Max(1, (int)(w / (TILE + PAD)));
+
+        int i = 0;
+        while (i < _animations.Count)
+        {
+            using (new EditorGUILayout.HorizontalScope())
             {
-                string picked = EditorUtility.OpenFolderPanel("Output folder", _outFolder, "");
-                if (!string.IsNullOrEmpty(picked))
+                for (int c = 0; c < cols && i < _animations.Count; c++, i++)
                 {
-                    string full = Path.GetFullPath(picked).Replace('\\', '/');
-                    string proj = Path.GetFullPath(Application.dataPath + "/..").Replace('\\', '/') + "/";
-                    if (full.StartsWith(proj)) _outFolder = full.Substring(proj.Length).TrimEnd('/');
+                    var anim     = _animations[i];
+                    int capturedIndex = i;
+
+                    using (new EditorGUILayout.VerticalScope(GUILayout.Width(TILE)))
+                    {
+                        Rect box = GUILayoutUtility.GetRect(TILE, TILE, GUILayout.Width(TILE), GUILayout.Height(TILE));
+
+                        if (Event.current.type == EventType.MouseDown && box.Contains(Event.current.mousePosition))
+                        {
+                            SelectAnimation(capturedIndex);
+                            Event.current.Use();
+                            Repaint();
+                        }
+
+                        EditorGUI.DrawRect(box, capturedIndex == _activeAnim ? ColActiveTile : ColPreview);
+
+                        if (anim.frames.Count > 0)
+                        {
+                            int pi = Mathf.Clamp(anim.galleryPos, 0, anim.frames.Count - 1);
+                            DrawSprite(_sprites[anim.frames[pi]], Shrink(box, 4), anim.mirrorH);
+                        }
+
+                        GUILayout.Label(anim.name, EditorStyles.centeredGreyMiniLabel);
+                        GUILayout.Label($"{anim.frames.Count}f · {anim.fps}fps", EditorStyles.centeredGreyMiniLabel);
+                    }
                 }
             }
         }
-
-        _clipName = EditorGUILayout.TextField("Clip Name", _clipName);
-
-        GUILayout.Space(4);
-        GUI.enabled = _seq.Count > 0;
-        if (GUILayout.Button("Save Animation Clip  (.anim)", GUILayout.Height(32)))
-            SaveClip();
-        GUI.enabled = true;
     }
 
     // ── Helpers ───────────────────────────────────────────────────────
     void LoadSprites()
     {
-        _seq.Clear();
         _sprites = null;
-        StopPreview();
+        _animations = new List<SpriteAnimation>();
+        _activeAnim = -1;
+        _mirroredSpritesCache = null;
+        StopActivePreview();
 
         if (_sheet == null) return;
 
@@ -279,25 +719,25 @@ public class SpritesheetAnimatorWindow : EditorWindow
 
         if (_sprites.Length == 0)
             Debug.LogWarning($"[SpritesheetAnimator] No sprites found in {path}. Make sure Sprite Mode is set to Multiple.");
-
-        _clipName = _sheet.name;
     }
 
-    void StopPreview() { _playing = false; _previewPos = 0; }
+    void StopActivePreview() { _playing = false; _previewPos = 0; }
 
-    void OnSequenceChanged()
+    void OnSequenceChanged(SpriteAnimation anim)
     {
-        if (_seq.Count == 0) { StopPreview(); return; }
-        if (_playing) _previewPos = _previewPos % _seq.Count;
+        if (anim.frames.Count == 0) { StopActivePreview(); return; }
+        if (_playing) _previewPos %= anim.frames.Count;
         else          _previewPos = 0;
     }
 
-    void Step(int dir)
+    void Step(SpriteAnimation anim, int dir)
     {
-        if (_seq.Count == 0) return;
-        _previewPos = (_previewPos + dir + _seq.Count) % _seq.Count;
+        if (anim.frames.Count == 0) return;
+        _previewPos = (_previewPos + dir + anim.frames.Count) % anim.frames.Count;
         Repaint();
     }
+
+    static string SafeName(string name) => string.Concat(name.Split(Path.GetInvalidFileNameChars()));
 
     static void DrawSprite(Sprite sprite, Rect rect, bool mirrorH = false)
     {
@@ -339,23 +779,35 @@ public class SpritesheetAnimatorWindow : EditorWindow
     static Rect Shrink(Rect r, float px) =>
         new(r.x + px, r.y + px, r.width - px * 2, r.height - px * 2);
 
-    void SaveClip()
+    void SaveAllClips()
     {
-        if (_sprites == null || _seq.Count == 0) return;
+        int saved = 0;
+        foreach (var anim in _animations)
+        {
+            if (anim.frames.Count == 0) continue;
+            SaveClip(anim);
+            saved++;
+        }
+        Debug.Log($"[SpritesheetAnimator] Saved {saved} animation(s).");
+    }
 
-        Sprite[] effectiveSprites = _mirrorH ? CreateMirroredSprites() : _sprites;
+    void SaveClip(SpriteAnimation anim)
+    {
+        if (_sprites == null || anim.frames.Count == 0) return;
+
+        Sprite[] effectiveSprites = anim.mirrorH ? GetOrCreateMirroredSprites() : _sprites;
         if (effectiveSprites == null) return;
 
-        int nullCount = _seq.Count(i => effectiveSprites[i] == null);
+        int nullCount = anim.frames.Count(i => effectiveSprites[i] == null);
         if (nullCount > 0)
         {
             Debug.LogError($"[SpritesheetAnimator] {nullCount} sprite(s) are null — make sure the texture is imported as Sprite Mode: Multiple and has been sliced.");
             return;
         }
 
-        var clip = new AnimationClip { frameRate = _fps };
+        var clip = new AnimationClip { frameRate = anim.fps };
 
-        if (_loop)
+        if (anim.loop)
         {
             var settings = AnimationUtility.GetAnimationClipSettings(clip);
             settings.loopTime = true;
@@ -369,18 +821,20 @@ public class SpritesheetAnimatorWindow : EditorWindow
             propertyName = "m_Sprite"
         };
 
-        float dt = 1f / _fps;
-        var   kf = new ObjectReferenceKeyframe[_seq.Count];
-        for (int i = 0; i < _seq.Count; i++)
-            kf[i] = new ObjectReferenceKeyframe { time = i * dt, value = effectiveSprites[_seq[i]] };
+        float dt = 1f / anim.fps;
+        var   kf = new ObjectReferenceKeyframe[anim.frames.Count];
+        for (int i = 0; i < anim.frames.Count; i++)
+            kf[i] = new ObjectReferenceKeyframe { time = i * dt, value = effectiveSprites[anim.frames[i]] };
 
         AnimationUtility.SetObjectReferenceCurve(clip, binding, kf);
 
-        if (!Directory.Exists(_outFolder))
-            Directory.CreateDirectory(_outFolder);
+        const string folder = "Assets/Art/Characters/Animations";
+        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+        string dest = $"{folder}/{_sheet.name}_{SafeName(anim.name)}.anim";
 
-        string safe = string.Concat(_clipName.Split(Path.GetInvalidFileNameChars()));
-        string dest = $"{_outFolder}/{safe}.anim";
+        if (AssetDatabase.LoadAssetAtPath<AnimationClip>(dest) != null)
+            AssetDatabase.DeleteAsset(dest);
+
         AssetDatabase.CreateAsset(clip, dest);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -388,11 +842,18 @@ public class SpritesheetAnimatorWindow : EditorWindow
         var saved = AssetDatabase.LoadAssetAtPath<AnimationClip>(dest);
         var bindings = AnimationUtility.GetObjectReferenceCurveBindings(saved);
         int keyCount = bindings.Length > 0 ? AnimationUtility.GetObjectReferenceCurve(saved, bindings[0]).Length : 0;
-        Debug.Log($"[SpritesheetAnimator] Saved: {dest} — {keyCount} sprite keyframes @ {_fps} fps, duration {(float)_seq.Count / _fps:F2}s{(_mirrorH ? " [mirrored]" : "")}");
+        Debug.Log($"[SpritesheetAnimator] Saved: {dest} — {keyCount} sprite keyframes @ {anim.fps} fps, duration {(float)anim.frames.Count / anim.fps:F2}s{(anim.mirrorH ? " [mirrored]" : "")}");
 
         EditorUtility.FocusProjectWindow();
         Selection.activeObject = saved;
         EditorGUIUtility.PingObject(saved);
+    }
+
+    Sprite[] GetOrCreateMirroredSprites()
+    {
+        if (_mirroredSpritesCache == null)
+            _mirroredSpritesCache = CreateMirroredSprites();
+        return _mirroredSpritesCache;
     }
 
     Sprite[] CreateMirroredSprites()
@@ -420,10 +881,9 @@ public class SpritesheetAnimatorWindow : EditorWindow
         readable.SetPixels(pixels);
         readable.Apply();
 
-        // Save PNG next to the clip output
-        if (!Directory.Exists(_outFolder)) Directory.CreateDirectory(_outFolder);
-        string safe       = string.Concat(_clipName.Split(Path.GetInvalidFileNameChars()));
-        string mirrorPath = $"{_outFolder}/{safe}_mirrored.png";
+        // Save the mirrored sheet next to the source spritesheet
+        string sheetDir = Path.GetDirectoryName(AssetDatabase.GetAssetPath(_sheet)).Replace('\\', '/');
+        string mirrorPath = $"{sheetDir}/{_sheet.name}_mirrored.png";
         File.WriteAllBytes(mirrorPath, readable.EncodeToPNG());
         Object.DestroyImmediate(readable);
         AssetDatabase.ImportAsset(mirrorPath, ImportAssetOptions.ForceSynchronousImport);

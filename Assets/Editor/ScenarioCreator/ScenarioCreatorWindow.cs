@@ -318,9 +318,11 @@ namespace RetroLOTR.Scenarios.EditorTools
             EditorGUILayout.BeginHorizontal();
             if (DrawVariationButton(null, "Any", thumb)) paintSpriteName = "";
             shown++;
+            HashSet<string> seenNames = new(StringComparer.OrdinalIgnoreCase);
             foreach (Sprite s in variations)
             {
                 if (s == null) continue;
+                if (!seenNames.Add(s.name)) continue;
                 if (shown % perRow == 0)
                 {
                     EditorGUILayout.EndHorizontal();

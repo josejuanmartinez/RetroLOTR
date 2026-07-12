@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FindArtifact: MageAction
@@ -32,6 +33,22 @@ public class FindArtifact: MageAction
         List<Riddle> riddles = GetRiddles();
         if (riddles == null || riddles.Count < 1) return null;
         return riddles[UnityEngine.Random.Range(0, riddles.Count)];
+    }
+
+    // Removes up to discardCount wrong options (never the correct one) and shuffles the rest.
+    private static List<string> BuildDisplayOptions(Riddle riddle, int discardCount)
+    {
+        List<string> wrongOptions = riddle.options
+            .Where(option => !string.Equals(option, riddle.answer, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(_ => UnityEngine.Random.value)
+            .ToList();
+
+        int toRemove = Mathf.Clamp(discardCount, 0, wrongOptions.Count);
+        List<string> remainingWrong = wrongOptions.Skip(toRemove).ToList();
+
+        List<string> display = new() { riddle.answer };
+        display.AddRange(remainingWrong);
+        return display.OrderBy(_ => UnityEngine.Random.value).ToList();
     }
 
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -88,7 +105,8 @@ public class FindArtifact: MageAction
                 return true;
             }
 
-            string answer = await SelectionDialog.Ask(riddle.prompt, "Speak", "Leave", riddle.options, isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+            List<string> displayOptions = BuildDisplayOptions(riddle, c.GetMage() / 2);
+            string answer = await SelectionDialog.Ask(riddle.prompt, "Speak", "Leave", displayOptions, isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
             if (string.Equals(answer, riddle.answer, StringComparison.OrdinalIgnoreCase))
             {
                 c.artifacts.Add(artifact);
