@@ -196,14 +196,21 @@ public class Character : MonoBehaviour
         ApplyClassLevelsFromCharacterCard();
     }
 
-    private void ApplyClassLevelsFromCharacterCard()
+    // The CardData (type "Character") that represents this character in the deck — used both to
+    // seed starting skill levels and to render the character's card face in UI (e.g. level-up effects).
+    public CardData GetCharacterCardData()
     {
-        if (string.IsNullOrWhiteSpace(characterName)) return;
+        if (string.IsNullOrWhiteSpace(characterName)) return null;
 
         DeckManager dm = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        CardData card = dm?.cards?.Find(c =>
+        return dm?.cards?.Find(c =>
             string.Equals(c.name, characterName, StringComparison.OrdinalIgnoreCase) &&
             string.Equals(c.type, "Character", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void ApplyClassLevelsFromCharacterCard()
+    {
+        CardData card = GetCharacterCardData();
         if (card == null) return;
 
         commander = Mathf.Clamp(card.commander, 0, MAX_SKILL_LEVEL);
@@ -1614,22 +1621,38 @@ public class Character : MonoBehaviour
 
     public void AddCommander(int level)
     {
+        int before = commander;
         commander = Mathf.Clamp(commander + level, 0, MAX_SKILL_LEVEL);
+        NotifySkillLevelChanged(CharacterSkillEnum.Commander, before, commander);
     }
 
     public void AddAgent(int level)
     {
+        int before = agent;
         agent = Mathf.Clamp(agent + level, 0, MAX_SKILL_LEVEL);
+        NotifySkillLevelChanged(CharacterSkillEnum.Agent, before, agent);
     }
 
     public void AddEmmissary(int level)
     {
+        int before = emmissary;
         emmissary = Mathf.Clamp(emmissary + level, 0, MAX_SKILL_LEVEL);
+        NotifySkillLevelChanged(CharacterSkillEnum.Emmissary, before, emmissary);
     }
 
     public void AddMage(int level)
     {
+        int before = mage;
         mage = Mathf.Clamp(mage + level, 0, MAX_SKILL_LEVEL);
+        NotifySkillLevelChanged(CharacterSkillEnum.Mage, before, mage);
+    }
+
+    // Fires the full-screen level-up/level-down presentation. Only shown for the human
+    // player's own characters — AI skill changes happen too often to interrupt with an overlay.
+    private void NotifySkillLevelChanged(CharacterSkillEnum skill, int previousLevel, int newLevel)
+    {
+        if (previousLevel == newLevel || killed || !isPlayerControlled) return;
+        LevelChangeEffectUI.Show(this, skill, previousLevel, newLevel);
     }
 
     public void Heal(int health)

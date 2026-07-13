@@ -238,7 +238,7 @@ public class SituationCardsUI : MonoBehaviour
             var cg = go.GetComponent<CanvasGroup>();
             if (cg != null) { cg.blocksRaycasts = false; cg.interactable = false; }
 
-            AddCardClickButton(go, card, leader);
+            AddCardClickButton(go, card, character, leader);
 
             cardInstances.Add(go);
             rects.Add(go.GetComponent<RectTransform>());
@@ -350,7 +350,7 @@ public class SituationCardsUI : MonoBehaviour
         cardInstances.Add(go); // ensure cleanup if dismissed mid-burst
     }
 
-    private void AddCardClickButton(GameObject cardGo, CardData cardData, PlayableLeader leader)
+    private void AddCardClickButton(GameObject cardGo, CardData cardData, Character character, PlayableLeader leader)
     {
         var btnGo = new GameObject("CardClickArea");
         btnGo.transform.SetParent(cardGo.transform, false);
@@ -369,15 +369,44 @@ public class SituationCardsUI : MonoBehaviour
 
         var btn = btnGo.AddComponent<Button>();
         btn.transition = Selectable.Transition.None;
-        btn.onClick.AddListener(() => OnCardClicked(cardData, leader));
+        btn.onClick.AddListener(() => OnCardClicked(cardData, character, leader));
     }
 
-    private void OnCardClicked(CardData cardData, PlayableLeader leader)
+    // Resolves and executes the card's action right away, the same way a hand card
+    // resolves on click (Card.HandleActionCardPlayed) — the "Act now!" presentation
+    // promises an immediate effect, not a card quietly parked in hand for later.
+    private async void OnCardClicked(CardData cardData, Character character, PlayableLeader leader)
     {
         if (showCoroutine != null) StopCoroutine(showCoroutine);
-        if (leader != null && DeckManager.Instance != null)
-            DeckManager.Instance.TryAddCardToHand(leader, cardData);
         showCoroutine = StartCoroutine(FadeOut());
+
+        if (cardData == null || character == null || leader == null || DeckManager.Instance == null) return;
+
+        string actionRef = cardData.GetActionRef();
+        if (string.IsNullOrWhiteSpace(actionRef)) return;
+
+        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef(actionRef, cardData) : null;
+        if (action == null) return;
+
+        action.Initialize(character, cardData);
+        if (!action.FulfillsConditions()) return;
+
+        // Route through the normal hand-consume path so resource costs, discard-pile
+        // bookkeeping, and card history are applied exactly as they are for a card
+        // played straight out of hand.
+        if (!DeckManager.Instance.TryAddCardToHand(leader, cardData)) return;
+        if (!DeckManager.Instance.TryConsumeActionCard(leader, actionRef, false, out _, cardData.name)) return;
+
+        DeckManager.Instance.ApplyMapRevealForPlayedCard(leader, cardData);
+
+        action.Initialize(character, cardData);
+        await action.Execute();
+
+        if (action.LastExecutionSucceeded)
+        {
+            leader.RecordPlayedCard(cardData);
+        }
     }
 
     private IEnumerator FadeOut()
