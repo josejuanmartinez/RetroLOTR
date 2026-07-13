@@ -251,6 +251,23 @@ public class CharacterAction
         return;
     }
 
+    // Chance for a card that leans on a skill requirement to also sharpen that skill on
+    // successful play. One independent roll per required skill (almost always just one).
+    private const int SkillLevelUpChancePercent = 5;
+
+    private void RollForSkillLevelUp()
+    {
+        if (character == null || character.killed) return;
+        if (commanderSkillRequired > 0 && UnityEngine.Random.Range(0, 100) < SkillLevelUpChancePercent)
+            character.AddCommander(1);
+        if (agentSkillRequired > 0 && UnityEngine.Random.Range(0, 100) < SkillLevelUpChancePercent)
+            character.AddAgent(1);
+        if (emissarySkillRequired > 0 && UnityEngine.Random.Range(0, 100) < SkillLevelUpChancePercent)
+            character.AddEmmissary(1);
+        if (mageSkillRequired > 0 && UnityEngine.Random.Range(0, 100) < SkillLevelUpChancePercent)
+            character.AddMage(1);
+    }
+
     public async Task Execute()
     {
         bool isAI = !character.isPlayerControlled;
@@ -307,6 +324,8 @@ public class CharacterAction
             // Store last successful action for selected-character UI "played card" slot.
             character.lastPlayedActionClassNameThisTurn = GetType().Name;
             character.lastPlayedActionNameThisTurn = actionName;
+
+            RollForSkillLevelUp();
 
             if (ConsumesAction && character.HasStatusEffect(StatusEffectEnum.Hope) && UnityEngine.Random.Range(0, 100) < 25)
             {

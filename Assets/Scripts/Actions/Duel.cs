@@ -59,32 +59,6 @@ public class Duel : CharacterAction
             .FirstOrDefault();
     }
 
-    private void HandleRefusal(Character challenger, Character defender)
-    {
-        if (challenger == null || defender == null) return;
-        bool playerInvolved = challenger.isPlayerControlled || defender.isPlayerControlled;
-        string message = $"{defender.characterName} refuses the duel with {challenger.characterName}.";
-        if (defender.IsArmyCommander())
-        {
-            defender.AddCommander(-1);
-            message += $" {defender.characterName} loses commander XP.";
-        }
-
-        if (playerInvolved || PlayerCanSeeHex(challenger.hex))
-        {
-            PopupManager.Show(
-                "Duel Refused",
-                FindFirstObjectByType<Illustrations>().GetIllustrationByName(challenger.characterName),
-                FindFirstObjectByType<Illustrations>().GetIllustrationByName(defender.characterName),
-                message,
-                false);
-        }
-        else
-        {
-            MessageDisplayNoUI.ShowMessage(challenger.hex, challenger, message, Color.yellow);
-        }
-    }
-
     private void ResolveDuel(Character attacker, Character defender)
     {
         if (attacker == null || defender == null) return;
