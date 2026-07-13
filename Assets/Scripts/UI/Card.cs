@@ -899,6 +899,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         await Task.Yield();
 
         bool success = false;
+        bool actionRollFailed = false;
         CardTypeEnum cardType = playedCard.GetCardType();
 
         switch (cardType)
@@ -907,7 +908,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             case CardTypeEnum.Event:
             case CardTypeEnum.Land:
             case CardTypeEnum.PC:
-                success = await HandleActionCardPlayed(playedSelected);
+                (success, actionRollFailed) = await HandleActionCardPlayed(playedSelected);
                 break;
             case CardTypeEnum.Encounter:
                 success = await HandleEncounterCardPlayed(playedSelected);
@@ -936,14 +937,24 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             playedSelected?.RecordPlayedCard(playedCard, playedSprite);
             TutorialManager.Instance?.HandleCardPlayed(playedSelected, playedCard, playedSelected != null ? playedSelected.hex : null);
-            // Send the card's token spiralling down onto the hex the effect landed on
-            // (encounters carry their own target hex; everything else resolves at the
-            // acting character's hex). Must run before Destroy so the token visual can
-            // be cloned off this instance.
-            Hex effectHex = playedCard.encounterTargetHex != null
-                ? playedCard.encounterTargetHex
-                : playedSelected != null ? playedSelected.hex : null;
-            CardPlayFlight.Launch(this, effectHex);
+
+            if (actionRollFailed)
+            {
+                // The card was spent but its difficulty roll failed — no effect landed, so it
+                // doesn't fly anywhere. Shake it, drain it red, and let it dissolve in place.
+                CardPlayFailure.Launch(this);
+            }
+            else
+            {
+                // Send the card's token spiralling down onto the hex the effect landed on
+                // (encounters carry their own target hex; everything else resolves at the
+                // acting character's hex). Must run before Destroy so the token visual can
+                // be cloned off this instance.
+                Hex effectHex = playedCard.encounterTargetHex != null
+                    ? playedCard.encounterTargetHex
+                    : playedSelected != null ? playedSelected.hex : null;
+                CardPlayFlight.Launch(this, effectHex);
+            }
             // Card was successfully played, it will be removed from hand by the manager
             if (gameObject != null)
             {
@@ -1180,6 +1191,40 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return clone;
     }
 
+    // Clones the full expanded card visual (art, title, description) for the fail-flutter
+    // animation — unlike the token clone, this one doesn't compact first: a fizzled roll
+    // dissolves the card as the player was already looking at it. Display-only, like above.
+    public GameObject CreateRealCardVisualClone(Transform parent, out Vector2 cardSize)
+    {
+        cardSize = Vector2.zero;
+        if (realCardCanvasGroup == null) return null;
+
+        if (realCardCanvasGroup.transform is RectTransform sourceRect)
+        {
+            cardSize = Vector2.Scale(sourceRect.rect.size, sourceRect.localScale);
+        }
+
+        GameObject clone = Instantiate(realCardCanvasGroup.gameObject, parent, false);
+        clone.name = "RealCardVisual";
+        clone.transform.localPosition = Vector3.zero;
+        foreach (Transform child in clone.transform)
+        {
+            if (child is RectTransform childRect) childRect.anchoredPosition = Vector2.zero;
+        }
+
+        CanvasGroup cg = clone.GetComponent<CanvasGroup>();
+        if (cg == null) cg = clone.AddComponent<CanvasGroup>();
+        cg.alpha = 1f;
+        cg.blocksRaycasts = false;
+        cg.interactable = false;
+        if (clone.TryGetComponent(out CardEnvironmentalPulseEffect realCardPulse)) Destroy(realCardPulse);
+        foreach (Graphic graphic in clone.GetComponentsInChildren<Graphic>(true))
+        {
+            graphic.raycastTarget = false;
+        }
+        return clone;
+    }
+
     public void ShowToken()
     {
         if (lockedToRealCard) return;
@@ -1328,31 +1373,36 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         parts.Add($"{required}<sprite name=\"{resourceName}\">");
     }
 
-    private async Task<bool> HandleActionCardPlayed(Character selected)
+    // Returns (success, actionRollFailed): success is false only when the card couldn't be
+    // played at all (no valid target/conditions, or couldn't be consumed from hand) — the card
+    // stays in hand in that case. Once the card is spent, success is true; actionRollFailed
+    // distinguishes a spent-but-fizzled roll (difficulty check) from a genuine effect landing,
+    // so the caller can pick the fly-to-hex vs. shake-and-dissolve presentation.
+    private async Task<(bool success, bool actionRollFailed)> HandleActionCardPlayed(Character selected)
     {
         string actionRef = cardData.GetActionRef();
-        if (string.IsNullOrWhiteSpace(actionRef)) return false;
+        if (string.IsNullOrWhiteSpace(actionRef)) return (false, false);
 
         CharacterAction action = actionsManager.ResolveActionByRef(actionRef, cardData);
-        if (action == null) return false;
-        if (selected == null) return false;
+        if (action == null) return (false, false);
+        if (selected == null) return (false, false);
 
         action.Initialize(selected, cardData);
         if (!action.FulfillsConditions())
         {
-            return false;
+            return (false, false);
         }
 
         Game game = FindFirstObjectByType<Game>();
         PlayableLeader playerLeader = game != null ? game.player : null;
-        if (playerLeader == null) return false;
+        if (playerLeader == null) return (false, false);
 
         // Try to consume the card from hand first
         // We use the card name now as the ID
         bool drawReplacementCard = false;
         if (!deckManager.TryConsumeActionCard(playerLeader, actionRef, drawReplacementCard, out _, cardData.name))
         {
-            return false;
+            return (false, false);
         }
 
         // Apply any map reveals immediately if it's a Land or PC card
@@ -1368,13 +1418,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             // but the current game design usually consumes it anyway on fail.
             // If we want to return it:
             // deckManager.TryReturnActionCardToHand(playerLeader, actionRef);
-        }
-        else
-        {
-            playerLeader.RecordPlayedCard(cardData);
+            return (true, true);
         }
 
-        return true;
+        playerLeader.RecordPlayedCard(cardData);
+        return (true, false);
     }
 
     private async Task<bool> HandleEnvironmentalCardPlayed(Character selected)

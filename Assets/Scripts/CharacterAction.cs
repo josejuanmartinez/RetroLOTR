@@ -253,18 +253,29 @@ public class CharacterAction
 
     // Chance for a card that leans on a skill requirement to also sharpen that skill on
     // successful play. One independent roll per required skill (almost always just one).
-    private const int SkillLevelUpChancePercent = 5;
+    // Riskier (higher-difficulty) cards pay off more: 5% at difficulty 0 up to 15% at 100.
+    private const int SkillLevelUpChanceBasePercent = 5;
+    private const int SkillLevelUpChanceMaxPercent = 15;
+
+    private int GetSkillLevelUpChancePercent()
+    {
+        return Mathf.Clamp(
+            SkillLevelUpChanceBasePercent + Mathf.RoundToInt(difficulty * 0.10f),
+            SkillLevelUpChanceBasePercent,
+            SkillLevelUpChanceMaxPercent);
+    }
 
     private void RollForSkillLevelUp()
     {
         if (character == null || character.killed) return;
-        if (commanderSkillRequired > 0 && UnityEngine.Random.Range(0, 100) < SkillLevelUpChancePercent)
+        int chance = GetSkillLevelUpChancePercent();
+        if (commanderSkillRequired > 0 && UnityEngine.Random.Range(0, 100) < chance)
             character.AddCommander(1);
-        if (agentSkillRequired > 0 && UnityEngine.Random.Range(0, 100) < SkillLevelUpChancePercent)
+        if (agentSkillRequired > 0 && UnityEngine.Random.Range(0, 100) < chance)
             character.AddAgent(1);
-        if (emissarySkillRequired > 0 && UnityEngine.Random.Range(0, 100) < SkillLevelUpChancePercent)
+        if (emissarySkillRequired > 0 && UnityEngine.Random.Range(0, 100) < chance)
             character.AddEmmissary(1);
-        if (mageSkillRequired > 0 && UnityEngine.Random.Range(0, 100) < SkillLevelUpChancePercent)
+        if (mageSkillRequired > 0 && UnityEngine.Random.Range(0, 100) < chance)
             character.AddMage(1);
     }
 
