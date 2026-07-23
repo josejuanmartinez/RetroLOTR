@@ -2395,13 +2395,13 @@
                       "actionEffect":  "",
                       "type":  "PC",
                       "tags":  [
-                                   "Nindalf"
+                                   "BrownLands"
                                ],
                       "deckId":  "the_white_hand",
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "AmonLhaw",
-                      "region":  "Nindalf",
+                      "region":  "BrownLands",
                       "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
@@ -2641,13 +2641,13 @@
                       "actionEffect":  "The Cruel Mountain turns on those who trespass. Own mountain natives buffed. Own non-native mountain slowed. Enemy mountain emissaries gain Arcane Insight. Enemy mountain units 30-40% frozen; commanders halted.",
                       "type":  "PC",
                       "tags":  [
-                                   "Dunland"
+                                   "Eregion"
                                ],
                       "deckId":  "the_white_hand",
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "NinInEilph",
-                      "region":  "Dunland",
+                      "region":  "Eregion",
                       "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
@@ -3765,6 +3765,88 @@
                       "ironGranted":  0,
                       "steelGranted":  0,
                       "mithrilGranted":  0,
+                      "goldGranted":  0,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
+                      "cardId":  9204,
+                      "name":  "Eregion",
+                      "quote":  "Eregion remembers the old craft, where silver hammers once sang beside the river.",
+                      "actionEffect":  "",
+                      "type":  "Land",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "the_white_hand",
+                      "actionClassName":  "",
+                      "action":  "MaterialRetrieval",
+                      "spriteName":  "",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "mithrandir",
+                      "referenceCardId":  123,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  1,
+                      "steelGranted":  3,
+                      "mithrilGranted":  1,
                       "goldGranted":  0,
                       "startingPC":  "",
                       "inspireEffectData":  {
