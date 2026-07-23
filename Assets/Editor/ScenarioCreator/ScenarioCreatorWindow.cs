@@ -555,7 +555,7 @@ namespace RetroLOTR.Scenarios.EditorTools
                 // Pass 1: terrain tiles (drawn larger than the spacing so they interlock with no gaps).
                 for (int row = rowFirst; row <= rowLast; row++)
                     for (int col = colFirst; col <= colLast; col++)
-                        DrawCellSprite(TileRect(content, row, col, drawW, drawH, stepX, stepY), visibleClip, row, col);
+                        DrawCellSprite(TileRect(content, row, col, drawW, drawH, stepX, stepY), visibleClip, row, col, stepX, stepY);
 
                 // Pass 2: region tints, markers and selection on top.
                 for (int row = rowFirst; row <= rowLast; row++)
@@ -583,10 +583,21 @@ namespace RetroLOTR.Scenarios.EditorTools
                 : ScenarioCardCatalog.GetTerrainSprite(terrain[idx]);
         }
 
-        private void DrawCellSprite(Rect draw, Rect clip, int row, int col)
+        private void DrawCellSprite(Rect draw, Rect clip, int row, int col, float stepX, float stepY)
         {
             int idx = Index(row, col);
             TerrainEnum t = terrain[idx];
+
+            // While placing regions, swap the detailed terrain art for a flat grass/water
+            // placeholder so the region tint + letter drawn on top stay legible. The old
+            // tint was painted over this same overdrawn art rect, which bled into neighboring
+            // hexes and made it hard to see what was actually being set.
+            if (tool == Tool.Region)
+            {
+                DrawRegionHex(draw, stepX, stepY, t, regions[idx]);
+                return;
+            }
+
             Sprite sprite = GetCellTerrainSprite(idx);
 
             Material previewMaterial = GetPreviewMaterial(previewStyle);
@@ -654,13 +665,6 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             int idx = Index(row, col);
 
-            if (!string.IsNullOrEmpty(regions[idx]))
-            {
-                Color tint = RegionColor(regions[idx]);
-                tint.a = 0.22f;
-                EditorGUI.DrawRect(r, tint);
-            }
-
             bool hasLeader = characters.TryGetValue(idx, out var overlayList) && overlayList.Any(IsLeaderCard);
             bool hasPc = pcs.ContainsKey(idx);
             int charCount = characters.TryGetValue(idx, out var list) ? list.Count : 0;
@@ -678,6 +682,70 @@ namespace RetroLOTR.Scenarios.EditorTools
                 Handles.color = Color.red;
                 Handles.DrawSolidRectangleWithOutline(r, new Color(0, 0, 0, 0), Color.red);
             }
+        }
+
+        // Region-tool-only hex placeholder: a plain per-terrain fallback color (grass/water/etc,
+        // see TerrainFallbackColor) sized to the packed cell spacing (stepX/stepY) rather than the
+        // overdrawn art rect, so it stays inside its own hex instead of bleeding into neighbors.
+        // The region's color and initial letter are drawn on top when one is assigned.
+        private static void DrawRegionHex(Rect draw, float stepX, float stepY, TerrainEnum terrainType, string region)
+        {
+            Vector2 center = draw.center;
+            float halfW = stepX * 0.5f;
+            float halfH = stepY * (2f / 3f);
+
+            Vector3[] hex =
+            {
+                new Vector3(center.x,         center.y - halfH),
+                new Vector3(center.x + halfW, center.y - halfH * 0.5f),
+                new Vector3(center.x + halfW, center.y + halfH * 0.5f),
+                new Vector3(center.x,         center.y + halfH),
+                new Vector3(center.x - halfW, center.y + halfH * 0.5f),
+                new Vector3(center.x - halfW, center.y - halfH * 0.5f),
+            };
+
+            Handles.BeginGUI();
+            Handles.color = TerrainFallbackColor(terrainType);
+            Handles.DrawAAConvexPolygon(hex);
+
+            if (!string.IsNullOrEmpty(region))
+            {
+                Color tint = RegionColor(region);
+                tint.a = 0.6f;
+                Handles.color = tint;
+                Handles.DrawAAConvexPolygon(hex);
+            }
+
+            Handles.color = new Color(0f, 0f, 0f, 0.35f);
+            Handles.DrawPolyLine(hex[0], hex[1], hex[2], hex[3], hex[4], hex[5], hex[0]);
+            Handles.EndGUI();
+
+            if (!string.IsNullOrEmpty(region))
+            {
+                string letters = RegionInitials(region);
+                var style = new GUIStyle(EditorStyles.boldLabel)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    fontSize = Mathf.Clamp(Mathf.RoundToInt(halfH * 0.7f / Mathf.Max(1f, letters.Length * 0.55f)), 8, 22),
+                    normal = { textColor = Color.black }
+                };
+                var labelRect = new Rect(center.x - halfW, center.y - halfH, halfW * 2f, halfH * 2f);
+
+                var shadowStyle = new GUIStyle(style) { normal = { textColor = new Color(1f, 1f, 1f, 0.85f) } };
+                GUI.Label(new Rect(labelRect.x + 1, labelRect.y + 1, labelRect.width, labelRect.height), letters, shadowStyle);
+                GUI.Label(labelRect, letters, style);
+            }
+        }
+
+        // Takes one letter per capitalized word in a PascalCase region name (e.g. "TheNorthDowns"
+        // -> "TND") instead of just the first letter, since many region names share the same
+        // leading word ("The...") and would otherwise all show the same disambiguating letter.
+        private static string RegionInitials(string region)
+        {
+            string initials = "";
+            for (int i = 0; i < region.Length; i++)
+                if (i == 0 || char.IsUpper(region[i])) initials += char.ToUpperInvariant(region[i]);
+            return initials;
         }
 
         // Centred caption (PC name) drawn near the bottom of a hex, with a dark backing strip
@@ -762,6 +830,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             Vector3Int center = OffsetToCube(centerRow, centerCol);
             int radius = brushSize - 1;
+            string blockedByRegion = null;
 
             for (int row = 0; row < height; row++)
             {
@@ -773,16 +842,44 @@ namespace RetroLOTR.Scenarios.EditorTools
                     if (tool == Tool.Region)
                     {
                         // Region-only brush: change the region of existing hexes, never the terrain.
-                        regions[idx] = regionBrushRegion ?? "";
+                        string targetRegion = regionBrushRegion ?? "";
+                        if (TryGetPcLockedRegion(idx, out string locked) && locked != targetRegion)
+                        {
+                            blockedByRegion ??= locked;
+                            continue;
+                        }
+                        regions[idx] = targetRegion;
                         continue;
                     }
 
                     // Terrain brush: terrain + chosen tile variation, and region if one is selected.
                     terrain[idx] = paintTerrain;
                     spriteNames[idx] = paintSpriteName ?? "";
-                    if (!string.IsNullOrEmpty(paintRegion)) regions[idx] = paintRegion;
+                    if (!string.IsNullOrEmpty(paintRegion))
+                    {
+                        if (TryGetPcLockedRegion(idx, out string locked) && locked != paintRegion)
+                            blockedByRegion ??= locked;
+                        else
+                            regions[idx] = paintRegion;
+                    }
                 }
             }
+
+            if (blockedByRegion != null)
+                ShowNotification(new GUIContent(
+                    $"The PC card has a region set to {blockedByRegion}. You can't set another region unless you change the card region."));
+        }
+
+        // A hex whose PC card carries a region is locked to that region — the card is the source
+        // of truth once a PC sits there, so brushes can't paint it away from underneath the card.
+        private bool TryGetPcLockedRegion(int idx, out string region)
+        {
+            region = null;
+            if (!pcs.TryGetValue(idx, out ScenarioPC pc) || string.IsNullOrEmpty(pc.pcName)) return false;
+            CardData card = ScenarioCardCatalog.GetCard(pc.pcName);
+            if (card == null || string.IsNullOrEmpty(card.region)) return false;
+            region = card.region;
+            return true;
         }
 
         // -------------------------------------------------------------------------------------
@@ -1017,6 +1114,14 @@ namespace RetroLOTR.Scenarios.EditorTools
                 // Default the underground flag from the PC card so authored placements match the card.
                 CardData pcCard = ScenarioCardCatalog.GetCard(v);
                 if (pcCard != null) pc.isUnderground = pcCard.isUnderground;
+
+                // The PC card's region is authoritative once a PC sits on a hex — lock the hex to
+                // it so scenario data can't drift from the card the way past placements did.
+                if (pcCard != null && !string.IsNullOrEmpty(pcCard.region))
+                {
+                    regions[idx] = pcCard.region;
+                    pc.region = pcCard.region;
+                }
             }, ScenarioCardCatalog.GetCard);
             SearchableField("Owner", pc.ownerLeaderName, ScenarioCardCatalog.AllLeaders(), v => pc.ownerLeaderName = v);
             DrawOwnerVariantPicker(pc.ownerLeaderName, () => pc.ownerVariantId, v => pc.ownerVariantId = v,

@@ -1958,14 +1958,14 @@
             "actionEffect": "",
             "type": "PC",
             "tags": [
-                "NearHarad"
+                "FarHarad"
             ],
             "deckId": "the_deceiver",
             "alignment": 1,
             "actionClassName": "",
             "action": "PCAction",
             "spriteName": "BaradHarn",
-            "region": "NearHarad",
+            "region": "FarHarad",
             "description": "",
             "requirementsText": "",
             "historyText": "",
@@ -2033,14 +2033,14 @@
             "actionEffect": "",
             "type": "PC",
             "tags": [
-                "FarHarad"
+                "Umbar"
             ],
             "deckId": "the_deceiver",
             "alignment": 1,
             "actionClassName": "",
             "action": "PCAction",
             "spriteName": "CarasMirilond",
-            "region": "FarHarad",
+            "region": "Umbar",
             "description": "",
             "requirementsText": "",
             "historyText": "",
@@ -2408,14 +2408,14 @@
             "actionEffect": "",
             "type": "PC",
             "tags": [
-                "FarHarad"
+                "NearHarad"
             ],
             "deckId": "the_deceiver",
             "alignment": 1,
             "actionClassName": "",
             "action": "PCAction",
             "spriteName": "KasShafra",
-            "region": "FarHarad",
+            "region": "NearHarad",
             "description": "",
             "requirementsText": "",
             "historyText": "",

@@ -64,21 +64,21 @@ Material:
     - _GridIntensity: 0.2
     - _GridOn: 1
     - _GridWidth: 1.2
-    - _NeighborValid0: 1
-    - _NeighborValid1: 1
+    - _NeighborValid0: 0
+    - _NeighborValid1: 0
     - _NeighborValid2: 1
     - _NeighborValid3: 1
-    - _NeighborValid4: 1
-    - _NeighborValid5: 1
+    - _NeighborValid4: 0
+    - _NeighborValid5: 0
     m_Colors:
-    - _CellCenter: {r: 21.186365, g: -11.51958, b: 0, a: 0}
+    - _CellCenter: {r: 46.32273, g: -41.834263, b: 0, a: 0}
     - _GridColor: {r: 1, g: 1, b: 1, a: 1}
     - _NeighborOffset0: {r: 0.71818185, g: 0, b: 0, a: 0}
-    - _NeighborOffset1: {r: 0.35909092, g: 0.6062937, b: 0, a: 0}
-    - _NeighborOffset2: {r: -0.35909092, g: 0.6062937, b: 0, a: 0}
+    - _NeighborOffset1: {r: 0.35909092, g: 0.6062936, b: 0, a: 0}
+    - _NeighborOffset2: {r: -0.35909092, g: 0.6062936, b: 0, a: 0}
     - _NeighborOffset3: {r: -0.71818185, g: 0, b: 0, a: 0}
-    - _NeighborOffset4: {r: -0.35909092, g: -0.6062937, b: 0, a: 0}
-    - _NeighborOffset5: {r: 0.35909092, g: -0.6062937, b: 0, a: 0}
+    - _NeighborOffset4: {r: -0.35909092, g: -0.6062936, b: 0, a: 0}
+    - _NeighborOffset5: {r: 0.35909092, g: -0.6062936, b: 0, a: 0}
     - _NeighborUV0: {r: 0, g: 0, b: 1, a: 1}
     - _NeighborUV1: {r: 0, g: 0, b: 1, a: 1}
     - _NeighborUV2: {r: 0, g: 0, b: 1, a: 1}

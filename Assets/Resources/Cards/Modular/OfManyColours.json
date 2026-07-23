@@ -1237,6 +1237,88 @@
                       "situation":  ""
                   },
                   {
+                      "cardId":  9235,
+                      "name":  "Eregion",
+                      "quote":  "Eregion remembers the old craft, where silver hammers once sang beside the river.",
+                      "actionEffect":  "",
+                      "type":  "Land",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "of_many_colours",
+                      "actionClassName":  "",
+                      "action":  "MaterialRetrieval",
+                      "spriteName":  "",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "mithrandir",
+                      "referenceCardId":  123,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  0,
+                      "mountsGranted":  0,
+                      "timberGranted":  0,
+                      "ironGranted":  1,
+                      "steelGranted":  3,
+                      "mithrilGranted":  1,
+                      "goldGranted":  0,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
                       "cardId":  853,
                       "name":  "Rhun",
                       "quote":  "Rhun is a far shore of smoke and mounted dust, where distant thunder gathers.",
@@ -1299,6 +1381,88 @@
                       "mountsGranted":  2,
                       "timberGranted":  0,
                       "ironGranted":  0,
+                      "steelGranted":  0,
+                      "mithrilGranted":  0,
+                      "goldGranted":  1,
+                      "startingPC":  "",
+                      "inspireEffectData":  {
+                                                "type":  "",
+                                                "statusEffect":  "",
+                                                "turns":  0,
+                                                "amount":  0,
+                                                "troopType":  "",
+                                                "resourceType":  "",
+                                                "skillType":  "",
+                                                "allCharacters":  true,
+                                                "nearest":  true
+                                            },
+                      "amount":  5,
+                      "deckSpriteName":  "",
+                      "situation":  ""
+                  },
+                  {
+                      "cardId":  9236,
+                      "name":  "BrownLands",
+                      "quote":  "Once verdant, now a memory, these lands bear the scars of forgotten battles.",
+                      "actionEffect":  "",
+                      "type":  "Land",
+                      "tags":  [
+
+                               ],
+                      "deckId":  "of_many_colours",
+                      "actionClassName":  "",
+                      "action":  "MaterialRetrieval",
+                      "spriteName":  "",
+                      "region":  "",
+                      "description":  "",
+                      "requirementsText":  "",
+                      "historyText":  "",
+                      "statusEffect":  "",
+                      "procChance":  0,
+                      "portraitName":  "",
+                      "characterGroup":  "",
+                      "referenceDeckId":  "the_necromancer",
+                      "referenceCardId":  764,
+                      "encounterOptions":  [
+
+                                           ],
+                      "fleeOption":  {
+                                         "optionId":  "",
+                                         "label":  "",
+                                         "description":  "",
+                                         "outcomes":  [
+
+                                                      ]
+                                     },
+                      "commander":  0,
+                      "agent":  0,
+                      "emmissary":  0,
+                      "mage":  0,
+                      "race":  0,
+                      "artifacts":  [
+
+                                    ],
+                      "troopType":  0,
+                      "specialAbilities":  [
+
+                                           ],
+                      "commanderSkillRequired":  0,
+                      "agentSkillRequired":  0,
+                      "emissarySkillRequired":  0,
+                      "mageSkillRequired":  0,
+                      "difficulty":  0,
+                      "leatherRequired":  0,
+                      "mountsRequired":  0,
+                      "timberRequired":  0,
+                      "ironRequired":  0,
+                      "steelRequired":  0,
+                      "mithrilRequired":  0,
+                      "goldRequired":  0,
+                      "jokerRequired":  0,
+                      "leatherGranted":  2,
+                      "mountsGranted":  1,
+                      "timberGranted":  0,
+                      "ironGranted":  1,
                       "steelGranted":  0,
                       "mithrilGranted":  0,
                       "goldGranted":  1,
@@ -3539,13 +3703,13 @@
                       "actionEffect":  "",
                       "type":  "PC",
                       "tags":  [
-                                   "Nindalf"
+                                   "BrownLands"
                                ],
                       "deckId":  "of_many_colours",
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "AmonLhaw",
-                      "region":  "Nindalf",
+                      "region":  "BrownLands",
                       "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
@@ -3785,13 +3949,13 @@
                       "actionEffect":  "",
                       "type":  "PC",
                       "tags":  [
-                                   "Dunland"
+                                   "Eregion"
                                ],
                       "deckId":  "of_many_colours",
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "NinInEilph",
-                      "region":  "Dunland",
+                      "region":  "Eregion",
                       "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
@@ -4687,13 +4851,13 @@
                       "actionEffect":  "",
                       "type":  "PC",
                       "tags":  [
-                                   "NearHarad"
+                                   "FarHarad"
                                ],
                       "deckId":  "of_many_colours",
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "BaradHarn",
-                      "region":  "NearHarad",
+                      "region":  "FarHarad",
                       "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
@@ -4769,13 +4933,13 @@
                       "actionEffect":  "",
                       "type":  "PC",
                       "tags":  [
-                                   "FarHarad"
+                                   "Umbar"
                                ],
                       "deckId":  "of_many_colours",
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "CarasMirilond",
-                      "region":  "FarHarad",
+                      "region":  "Umbar",
                       "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
@@ -5425,13 +5589,13 @@
                       "actionEffect":  "",
                       "type":  "PC",
                       "tags":  [
-                                   "FarHarad"
+                                   "NearHarad"
                                ],
                       "deckId":  "of_many_colours",
                       "actionClassName":  "",
                       "action":  "PCAction",
                       "spriteName":  "KasShafra",
-                      "region":  "FarHarad",
+                      "region":  "NearHarad",
                       "description":  "",
                       "requirementsText":  "",
                       "historyText":  "",
