@@ -1,12 +1,11 @@
 <#
 .SYNOPSIS
-Generate RetroLOTR card art with the default generate-then-B/W-postprocess-then-colorify workflow.
+Generate RetroLOTR card art in a single gpt-image-2 images.edit call.
 
 .DESCRIPTION
-This wrapper samples 3 shipped card references, generates an image, runs the old
-strict black-and-white postprocess on that result, then applies a colorify-style
-restyle pass to better match the shipped RetroLOTR art.
-Use -SinglePass only when you intentionally want to bypass the postprocess and colorify pass.
+This wrapper samples 3 shipped card references and sends them, alongside the
+art brief and RetroLOTR style block, to gpt-image-2's images.edit endpoint in
+one call — no separate sketch/B&W/colorize round-trip.
 #>
 param(
     [Parameter(Mandatory = $true)]
@@ -15,43 +14,45 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$Prompt,
 
-    [string]$Model = "gpt-5",
-    [string]$EditModel = "gpt-image-1.5",
+    [string]$CardName,
+    [string]$Model = "gpt-image-2",
     [string]$Size = "1024x1024",
+    [string]$Quality = "high",
     [string]$ReferenceRoot,
     [int]$ReferenceCount = 3,
+    [int]$UploadMaxDim = 512,
     [switch]$DryRun,
-    [switch]$Force,
-    [switch]$SinglePass
+    [switch]$Force
 )
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $pythonScript = Join-Path $scriptDir "new_image_card.py"
 
-$args = @(
+$scriptArgs = @(
     "--out", $Out,
     "--prompt", $Prompt,
     "--model", $Model,
-    "--edit-model", $EditModel,
     "--size", $Size,
-    "--reference-count", $ReferenceCount
+    "--quality", $Quality,
+    "--reference-count", $ReferenceCount,
+    "--upload-max-dim", $UploadMaxDim
 )
 
+if ($CardName) {
+    $scriptArgs += @("--card-name", $CardName)
+}
+
 if ($ReferenceRoot) {
-    $args += @("--reference-root", $ReferenceRoot)
+    $scriptArgs += @("--reference-root", $ReferenceRoot)
 }
 
 if ($DryRun) {
-    $args += "--dry-run"
+    $scriptArgs += "--dry-run"
 }
 
 if ($Force) {
-    $args += "--force"
+    $scriptArgs += "--force"
 }
 
-if ($SinglePass) {
-    $args += "--single-pass"
-}
-
-& python $pythonScript @args
+& python $pythonScript @scriptArgs
 exit $LASTEXITCODE

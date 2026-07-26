@@ -292,7 +292,7 @@ public class CalendarWidget : MonoBehaviour
 
         footerText = CreateText("Footer", panel, 15f, FontStyles.Italic, TextAlignmentOptions.Center);
         footerText.color = new Color(TextColor.r, TextColor.g, TextColor.b, 0.7f);
-        footerText.enableWordWrapping = true;
+        footerText.textWrappingMode = TextWrappingModes.Normal;
         SetPreferredHeight(footerText.gameObject, 64f);
 
         built = true;
@@ -315,7 +315,7 @@ public class CalendarWidget : MonoBehaviour
         // scaled-up <sprite> can never spill into neighbouring cells or the footer.
         TextMeshProUGUI icon = CreateText("Icon", cellRt, 14f, FontStyles.Normal, TextAlignmentOptions.Center);
         if (eventSpriteSheet != null) icon.spriteAsset = eventSpriteSheet; // resolves <sprite name=...>
-        icon.enableWordWrapping = false;
+        icon.textWrappingMode = TextWrappingModes.NoWrap;
         icon.overflowMode = TextOverflowModes.Truncate;
         RectTransform iconRt = icon.rectTransform;
         iconRt.anchorMin = Vector2.zero;

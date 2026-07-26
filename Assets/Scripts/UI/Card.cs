@@ -880,6 +880,18 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 BoardNavigator.Instance?.LookAt(cardData.encounterTargetHex.transform.position);
                 FlashEncounterHintFrame(cardData.encounterTargetHex);
             }
+            else if (playedSelected?.hex != null)
+            {
+                // Bloom-wheel tokens set SuppressHoverEffects, which skips the dimming and
+                // requirements text UpdateInteractableState() normally shows — so without this,
+                // clicking an unplayable card there (e.g. a 2nd land card played this turn) does
+                // nothing visible at all.
+                string reason = BuildRequirementsMessageText(playedSelected, resourceOwner);
+                if (!string.IsNullOrWhiteSpace(reason))
+                {
+                    MessageDisplayNoUI.ShowMessage(playedSelected.hex, playedSelected, reason, Color.red);
+                }
+            }
             return;
         }
 
@@ -1437,6 +1449,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         EnvironmentalCardManager.GetOrCreate().SetActiveCard(cardData);
         playerLeader.RecordPlayedCard(cardData);
+
+        // Environmental cards don't roll/resolve immediately like Action cards — they become
+        // the ongoing effect and apply at the start of next turn. Without an explicit message
+        // here, playing one looks like nothing happened at all.
+        Hex feedbackHex = selected != null ? selected.hex : null;
+        if (feedbackHex != null)
+        {
+            MessageDisplayNoUI.ShowMessage(feedbackHex, selected, $"{cardData.name} takes hold — effects begin next turn", Color.green);
+        }
 
         await Task.Yield();
         return true;

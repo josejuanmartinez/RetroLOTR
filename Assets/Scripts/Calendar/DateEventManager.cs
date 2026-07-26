@@ -185,4 +185,17 @@ public class DateEventManager : MonoBehaviour
             ? list
             : Enumerable.Empty<CalendarEntry>();
     }
+
+    /// <summary>
+    /// The environmental card that today's calendar entry (if any) makes active. Pure lookup —
+    /// safe to call regardless of whether OnNewTurn has fired yet for this date this frame.
+    /// </summary>
+    public CardData GetEnvironmentCardForDate(MiddleEarthDate date)
+    {
+        foreach (CalendarEntry entry in GetEntriesForDate(date))
+        {
+            if (entry.HasEnvironment) return FindCardByName(entry.environment);
+        }
+        return null;
+    }
 }

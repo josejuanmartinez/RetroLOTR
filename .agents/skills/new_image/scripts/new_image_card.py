@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a new RetroLOTR card image using random shipped card references."""
+"""Generate a new RetroLOTR card image in a single gpt-image-2 edit call using random shipped card references."""
 
 from __future__ import annotations
 
@@ -9,56 +9,44 @@ import os
 import random
 import re
 import sys
-import tempfile
 import time
 from pathlib import Path
 
-from bw_postprocess import to_pure_bw
 
-
-DEFAULT_MODEL = "gpt-5"
-DEFAULT_EDIT_MODEL = "gpt-image-1.5"
+DEFAULT_MODEL = "gpt-image-2"
 DEFAULT_SIZE = "1024x1024"
+DEFAULT_QUALITY = "high"
 DEFAULT_REFERENCE_COUNT = 3
+DEFAULT_UPLOAD_MAX_DIM = 512
+# gpt-image-2 hard limits: total pixels in [655360, 8294400], longest side <= 3840.
+MIN_PIXEL_BUDGET = 655_360
+MAX_PIXEL_BUDGET = 8_294_400
+MAX_SIDE = 3840
 MAX_IMAGE_BYTES = 50 * 1024 * 1024
 ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 EXCLUDED_PREFIXES = ("CardFrame", "CardFrameBlack")
 REPO_ROOT = Path(__file__).resolve().parents[4]
 
-SKETCH_PROMPT = (
-    "Create a 1:1 square composition sketch for a RetroLOTR card.\n"
-    "The named card subject must be the clear focal point.\n"
-    "Keep the subject large, readable, and centered with a strong silhouette and "
-    "clear card-art composition.\n"
-    "Use the uploaded reference card images only as rough style, texture, and "
-    "print-look guides. Do not copy their exact subjects, layouts, or symbols.\n"
-    "Render it as a rough black-and-white fantasy illustration with bold contour "
-    "lines, simple shadow masses, visible sketch texture, slightly flattened "
-    "perspective, and a scanned old-print feel.\n"
-    "Make it feel like a quick old fantasy card layout study, not a modern concept "
-    "render, not glossy, not photoreal, not 3D, and not anime.\n"
-    "No modern UI elements, no text overlays, no logos, no extra "
-    "characters, no card frame, no white border, no watermarks."
+STYLE_BLOCK = (
+    "1:1 square painted fantasy card illustration with a strong centered "
+    "subject, clear silhouette, card-art readability. Bakshi-era Lord of the "
+    "Rings mood, D&D cover art energy, MERP-style roleplaying-game "
+    "illustration. Late-1970s hand-painted cel-animation fantasy style: "
+    "simplified hand-drawn shapes with expressive slightly cartooned "
+    "anatomy, bold dark ink outlines, flat-to-soft cel shading, painterly "
+    "watercolor-like backgrounds, moody magical lighting, heavy printed "
+    "grain, jagged dark contour lines, strong shadows, and a real scanned "
+    "fantasy-card look that matches the shipped RetroLOTR art. Use varied "
+    "scene-appropriate colors — avoid a flat sepia or uniformly brown cast. "
+    "No modern UI elements, no text overlays, no logos, no extra characters, "
+    "no card frame, no white border, no watermarks."
 )
 
-COLORIFY_PROMPT = (
-    "Convert this existing black-and-white card illustration into a 1:1 square "
-    "painted fantasy image. Keep the same subject, scene, and overall composition "
-    "recognizable. Render it in a late-1970s hand-painted cel-animation fantasy "
-    "style like vintage animated Lord of the Rings: simplified hand-drawn shapes, "
-    "expressive slightly cartooned anatomy, bold dark ink outlines, flat-to-soft "
-    "cel shading, painterly watercolor-like forest backgrounds, varied "
-    "scene-appropriate colors, moody magical lighting, aged film texture, and a "
-    "retro illustrated fantasy atmosphere. Make it feel like an old animated fantasy "
-    "frame, not realistic modern concept art. Remove any card frame or white margin "
-    "if present. Avoid AI-generated anatomy mistakes such as extra fingers, double "
-    "hands, duplicate limbs, or distorted faces. Restyle everything to feel "
-    "thematically at home in Lord of the Rings. Avoid a flat sepia or uniformly "
-    "brown color cast; use richer greens, blues, reds, golds, and earth tones as "
-    "appropriate to the card subject. If the source image does not clearly reflect "
-    "the card name, reinforce the named idea more clearly in the final image while "
-    "keeping it recognizable. NO TEXT ALLOWED IN THE IMAGES. No text, no logo, no "
-    "card frame, no white border, no extra characters, no modern elements."
+REFERENCE_USAGE = (
+    "The uploaded images are existing RetroLOTR card art, provided only as "
+    "style, texture, and print-look guides — match their hand-painted look, "
+    "ink linework, and paint texture. Do NOT copy their subjects, layouts, "
+    "or symbols; render the new subject described in the art brief above."
 )
 
 
@@ -77,8 +65,25 @@ def ensure_api_key(dry_run: bool) -> None:
 
 
 def validate_size(size: str) -> None:
-    if size not in {"1024x1024", "1536x1024", "1024x1536", "auto"}:
-        die("size must be one of 1024x1024, 1536x1024, 1024x1536, or auto.")
+    if size == "auto":
+        return
+    match = re.fullmatch(r"(\d+)x(\d+)", size)
+    if not match:
+        die("size must be WIDTHxHEIGHT (e.g. 1024x1024) or auto.")
+    width, height = int(match.group(1)), int(match.group(2))
+    if width % 16 != 0 or height % 16 != 0:
+        die("gpt-image-2 requires width and height to each be divisible by 16.")
+    ratio = width / height
+    if not (1 / 3 <= ratio <= 3):
+        die("gpt-image-2 requires an aspect ratio between 1:3 and 3:1.")
+    if max(width, height) > MAX_SIDE:
+        die(f"gpt-image-2 requires the longest side to be at most {MAX_SIDE}px.")
+    pixels = width * height
+    if not (MIN_PIXEL_BUDGET <= pixels <= MAX_PIXEL_BUDGET):
+        die(
+            f"gpt-image-2 requires total pixels between {MIN_PIXEL_BUDGET} and "
+            f"{MAX_PIXEL_BUDGET} (got {width}x{height} = {pixels})."
+        )
 
 
 def build_output_path(path: str) -> Path:
@@ -95,7 +100,7 @@ def humanize_card_name(name: str) -> str:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Generate a new RetroLOTR card image from random shipped references"
+        description="Generate a new RetroLOTR card image from random shipped references in one gpt-image-2 edit call"
     )
     parser.add_argument("--out", required=True, help="Path to write the generated image")
     parser.add_argument(
@@ -105,8 +110,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--card-name", help="Optional card name to emphasize in the final prompt")
     parser.add_argument("--model", default=DEFAULT_MODEL)
-    parser.add_argument("--edit-model", default=DEFAULT_EDIT_MODEL)
     parser.add_argument("--size", default=DEFAULT_SIZE)
+    parser.add_argument("--quality", default=DEFAULT_QUALITY, help="gpt-image-2 quality: low, medium, high, or auto")
     parser.add_argument(
         "--reference-root",
         default=str(REPO_ROOT / "Assets" / "Art" / "Cards"),
@@ -116,11 +121,16 @@ def parse_args() -> argparse.Namespace:
         "--reference-count",
         type=int,
         default=DEFAULT_REFERENCE_COUNT,
-        help="Number of random references to report and anchor in the prompt",
+        help="Number of random references to send as style anchors",
+    )
+    parser.add_argument(
+        "--upload-max-dim",
+        type=int,
+        default=DEFAULT_UPLOAD_MAX_DIM,
+        help="Maximum width/height for reference images uploaded to OpenAI. Use 0 to disable downscaling.",
     )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
-    parser.add_argument("--single-pass", action="store_true", help="Skip the sketch-then-colorify workflow and generate a single image pass.")
     return parser.parse_args()
 
 
@@ -131,15 +141,6 @@ def create_client():
         die("openai SDK not installed in the active environment. Install it with `uv pip install openai`.")  # noqa: TRY003
         raise exc
     return OpenAI()
-
-
-def upload_reference_files(client, reference_paths: list[Path]) -> list[str]:
-    file_ids: list[str] = []
-    for path in reference_paths:
-        with path.open("rb") as file_content:
-            result = client.files.create(file=file_content, purpose="vision")
-        file_ids.append(result.id)
-    return file_ids
 
 
 def list_card_reference_candidates(reference_root: Path, exclude_path: Path | None = None) -> list[Path]:
@@ -169,7 +170,7 @@ def choose_references(reference_root: Path, count: int, exclude_path: Path | Non
     return random.sample(candidates, count)
 
 
-def build_sketch_prompt(user_prompt: str, card_name: str | None = None) -> str:
+def build_prompt(user_prompt: str, card_name: str | None = None) -> str:
     brief = user_prompt.strip()
     name = humanize_card_name(card_name) if card_name else None
     header = ""
@@ -180,18 +181,9 @@ def build_sketch_prompt(user_prompt: str, card_name: str | None = None) -> str:
         )
     return (
         f"{header}"
-        f"{SKETCH_PROMPT}\n"
-        f"Art brief: {brief}"
-    )
-
-
-def build_colorify_prompt(card_name: str | None = None) -> str:
-    name = humanize_card_name(card_name) if card_name else None
-    if not name:
-        return COLORIFY_PROMPT
-    return (
-        f"Card name: {name}. Ensure the final image clearly matches the named "
-        f"card concept and subject.\n{COLORIFY_PROMPT}"
+        f"Art brief: {brief}\n"
+        f"{STYLE_BLOCK}\n"
+        f"{REFERENCE_USAGE}"
     )
 
 
@@ -200,77 +192,61 @@ def is_moderation_block(exc: Exception) -> bool:
     return "moderation_blocked" in message or "safety system" in message
 
 
-def save_generated_image(
-    client,
-    prompt: str,
-    reference_file_ids: list[str],
-    size: str,
-    out_path: Path,
-    model: str,
-) -> None:
-    response = client.responses.create(
-        model=model,
-        input=[
-            {
-                "role": "user",
-                "content": [
-                    {"type": "input_text", "text": prompt},
-                    *[
-                        {"type": "input_image", "file_id": file_id}
-                        for file_id in reference_file_ids
-                    ],
-                ],
-            }
-        ],
-        tools=[
-            {
-                "type": "image_generation",
-                "action": "generate",
-                "size": size,
-                "quality": "high",
-                "background": "opaque",
-            }
-        ],
-        tool_choice={"type": "image_generation"},
-    )
+def prepare_upload_image(image_path: Path, max_dim: int) -> tuple[Path, bool]:
+    if max_dim <= 0:
+        return image_path, False
 
-    image_data = [
-        output.result
-        for output in response.output
-        if getattr(output, "type", None) == "image_generation_call"
-    ]
-    if not image_data:
-        die("OpenAI returned no image data.")
-
-    out_path.write_bytes(base64.b64decode(image_data[0]))
-
-
-def bw_postprocess_image(input_path: Path, out_path: Path) -> None:
-    with input_path.open("rb") as input_file:
+    try:
         from PIL import Image
+    except ImportError:
+        die("Pillow is required for reference downscaling. Install it with `uv pip install pillow`.")
 
-        with Image.open(input_file) as img:
-            bw = to_pure_bw(img, contrast_boost=1.35, threshold=-1, dither=False)
-            bw.save(out_path, format="PNG")
+    import tempfile
+
+    with Image.open(image_path) as img:
+        if max(img.size) <= max_dim:
+            return image_path, False
+        working = img.convert("RGBA") if img.mode not in {"RGB", "RGBA"} else img.copy()
+        working.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
+
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        tmp_path = Path(tmp.name)
+        try:
+            working.save(tmp, format="PNG", optimize=True)
+        finally:
+            tmp.close()
+    return tmp_path, True
 
 
-def colorify_generated_image(
+def generate_card_image(
     client,
-    image_path: Path,
     prompt: str,
+    reference_paths: list[Path],
     size: str,
+    quality: str,
     out_path: Path,
     model: str,
+    upload_max_dim: int,
 ) -> None:
-    with image_path.open("rb") as image_file:
+    upload_entries = [prepare_upload_image(p, upload_max_dim) for p in reference_paths]
+    handles = []
+    try:
+        handles = [entry[0].open("rb") for entry in upload_entries]
+        image_arg = handles[0] if len(handles) == 1 else handles
         result = client.images.edit(
             model=model,
-            image=image_file,
+            image=image_arg,
             prompt=prompt,
             size=size,
-            quality="auto",
+            quality=quality,
             output_format="png",
         )
+    finally:
+        for h in handles:
+            h.close()
+        for upload_path, is_temp in upload_entries:
+            if is_temp and upload_path.exists():
+                upload_path.unlink()
 
     if not result.data:
         die("OpenAI returned no image data.")
@@ -294,88 +270,34 @@ def main() -> int:
         reference_root = REPO_ROOT / reference_root
     reference_paths = choose_references(reference_root, args.reference_count, exclude_path=out_path)
     card_name = args.card_name or out_path.stem
-    sketch_prompt = build_sketch_prompt(args.prompt, card_name)
-    final_prompt = build_colorify_prompt(card_name)
+    prompt = build_prompt(args.prompt, card_name)
 
     if args.dry_run:
-        print("OpenAI three-step image-generation dry-run" if not args.single_pass else "OpenAI responses image-generation dry-run")
+        print("gpt-image-2 single-call card generation dry-run")
         print(f"reference_root={reference_root}")
         for index, reference_path in enumerate(reference_paths, start=1):
             print(f"reference_{index}={reference_path}")
         print(f"out={out_path}")
         print(f"model={args.model}")
-        print(f"edit_model={args.edit_model}")
-        print(f"size={args.size}")
-        print(f"single_pass={args.single_pass}")
-        print("tool=image_generation")
-        print("action=generate")
-        print("input_fidelity=high")
-        print("stage1_prompt=")
-        print(sketch_prompt)
-        print("stage2_prompt=")
-        print(final_prompt)
+        print(f"size={args.size}  quality={args.quality}")
+        print(f"upload_max_dim={args.upload_max_dim}")
+        print("prompt=")
+        print(prompt)
         return 0
 
     client = create_client()
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    reference_file_ids = upload_reference_files(client, reference_paths)
 
-    print("Calling OpenAI responses image-generation API...", file=sys.stderr)
+    print("Calling OpenAI gpt-image-2 images.edit API...", file=sys.stderr)
     started = time.time()
-    sketch_path: Path | None = None
-    bw_path: Path | None = None
     try:
-        if args.single_pass:
-            response = client.responses.create(
-                model=args.model,
-                input=[
-                    {
-                        "role": "user",
-                        "content": [
-                            {"type": "input_text", "text": sketch_prompt},
-                            *[
-                                {"type": "input_image", "file_id": file_id}
-                                for file_id in reference_file_ids
-                            ],
-                        ],
-                    }
-                ],
-                tools=[
-                    {
-                        "type": "image_generation",
-                        "action": "generate",
-                        "size": args.size,
-                        "quality": "high",
-                        "background": "opaque",
-                    }
-                ],
-                tool_choice={"type": "image_generation"},
-            )
-            image_data = [
-                output.result
-                for output in response.output
-                if getattr(output, "type", None) == "image_generation_call"
-            ]
-            if not image_data:
-                die("OpenAI returned no image data.")
-            out_path.write_bytes(base64.b64decode(image_data[0]))
-        else:
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp:
-                sketch_path = Path(tmp.name)
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp:
-                bw_path = Path(tmp.name)
-            save_generated_image(client, sketch_prompt, reference_file_ids, args.size, sketch_path, args.model)
-            bw_postprocess_image(sketch_path, bw_path)
-            colorify_generated_image(client, bw_path, final_prompt, args.size, out_path, args.edit_model)
+        generate_card_image(
+            client, prompt, reference_paths, args.size, args.quality, out_path, args.model, args.upload_max_dim
+        )
     except Exception as exc:
         if not is_moderation_block(exc):
             raise
         die(f"OpenAI safety block hit: {exc}")
-    finally:
-        if sketch_path is not None and sketch_path.exists():
-            sketch_path.unlink()
-        if bw_path is not None and bw_path.exists():
-            bw_path.unlink()
 
     elapsed = time.time() - started
     print(f"Generation completed in {elapsed:.1f}s.", file=sys.stderr)
@@ -383,19 +305,11 @@ def main() -> int:
     print("Reference images used:")
     for reference_path in reference_paths:
         print(f"- {reference_path}")
-    print("Reference format: uploaded file IDs via Responses API.")
-    if args.single_pass:
-        print("Workflow: single-pass generate")
-    else:
-        print("Workflow: three-step generate-then-bw-postprocess-then-colorify")
+    print("Reference format: uploaded as binary file handles via images.edit (downscaled for upload).")
     if args.card_name:
         print(f"Card name: {humanize_card_name(args.card_name)}")
-    print("Stage 1 prompt used:")
-    print(sketch_prompt)
-    if not args.single_pass:
-        print("Stage 2: strict black-and-white postprocess applied to stage 1 output.")
-        print("Stage 2 prompt used:")
-        print(final_prompt)
+    print("Prompt used:")
+    print(prompt)
     return 0
 
 
