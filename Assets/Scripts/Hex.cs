@@ -98,10 +98,12 @@ public class Hex : MonoBehaviour
     // public float bannerOutlineSize = 70f;
     private int darknessTurnsRemaining = 0;
 
-    [Header("Selection Alpha")]
+    [Header("Selection Tint Pulse")]
+    // Named *Alpha for historical reasons (kept so existing Inspector overrides on the Board
+    // prefab/scene still bind) but now read as RGB brightness multipliers, not alpha.
     [SerializeField] private float selectedBlinkMinAlpha = 0.5f;
     [SerializeField] private float selectedBlinkMaxAlpha = 1f;
-    [SerializeField] private float selectedBlinkSpeed = 2f;
+    [SerializeField] private float selectedBlinkSpeed = 1f;
 
     [Header("Data")]
     [SerializeField] private PC pc;
@@ -184,6 +186,10 @@ public class Hex : MonoBehaviour
     private static Material sharedCharacterOutlineMaterial;
     // private static Material sharedBannerOutlineMaterial;
     private MaterialPropertyBlock characterOutlinePropertyBlock;
+    // Full-alpha nation-color outline last applied by ApplyOutlineColorFromBanner/ClearOutlineColor —
+    // cached so UpdateCharacterSpriteAlpha() can dim the outline's alpha in step with the sprite's,
+    // without needing to know the owner/nation color itself.
+    private Color characterOutlineBaseColor = Color.white;
 
     private const string Unknown = "Unknown character(s)";
     private const int DarknessTurnsDefault = 2;
@@ -192,7 +198,6 @@ public class Hex : MonoBehaviour
     // private const string BannerOutlineMaterialPath = "Materials/BannerOutline";
     private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
     private static readonly int OutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
-    private const float NonSelectedCharacterAlpha = 0.9f;
     private bool isCharacterHovered = false;
 
     // Scene singletons shared by every hex. Cached statically because Awake runs once
@@ -2104,6 +2109,11 @@ public class Hex : MonoBehaviour
     {
         if (!spriteRenderer) return;
 
+        if (!isBanner && spriteRenderer == characterSpriteRenderer)
+        {
+            characterOutlineBaseColor = outlineColor;
+        }
+
         // Always write the property block rather than short-circuiting on a cached "last
         // applied" value: the cache was a parallel source of truth that could drift out of
         // sync with the renderer's actual block (e.g. before the block was ever populated),
@@ -2118,6 +2128,38 @@ public class Hex : MonoBehaviour
         characterOutlinePropertyBlock.SetColor(OutlineColorShaderId, outlineColor);
         characterOutlinePropertyBlock.SetFloat(OutlineSizeShaderId, outlineSize);
         spriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
+    }
+
+    // Scales the outline's alpha alongside the sprite's own (UpdateCharacterSpriteAlpha), so a
+    // dimmed non-selected character doesn't keep a fully opaque outline around a half-see-through body.
+    private void ApplyCharacterOutlineAlpha(float alpha)
+    {
+        if (!characterSpriteRenderer) return;
+        if (characterOutlinePropertyBlock == null)
+        {
+            characterOutlinePropertyBlock = new MaterialPropertyBlock();
+        }
+
+        characterSpriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
+        Color c = characterOutlineBaseColor;
+        c.a = characterOutlineBaseColor.a * alpha;
+        characterOutlinePropertyBlock.SetColor(OutlineColorShaderId, c);
+        characterSpriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
+    }
+
+    // Overrides just the outline's size (leaving its color alone), driving the not-selected
+    // pulse in UpdateCharacterSpriteAlpha() independently of the alpha helper above.
+    private void ApplyCharacterOutlineSize(float size)
+    {
+        if (!characterSpriteRenderer) return;
+        if (characterOutlinePropertyBlock == null)
+        {
+            characterOutlinePropertyBlock = new MaterialPropertyBlock();
+        }
+
+        characterSpriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
+        characterOutlinePropertyBlock.SetFloat(OutlineSizeShaderId, size);
+        characterSpriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
     }
 
     private static readonly Dictionary<Sprite, Color> dominantColorCache = new();
@@ -3307,7 +3349,9 @@ public class Hex : MonoBehaviour
 
         if (isCharacterHovered)
         {
-            SetSpriteAlpha(characterSpriteRenderer, 1f);
+            characterSpriteRenderer.color = Color.white;
+            ApplyCharacterOutlineAlpha(1f);
+            ApplyCharacterOutlineSize(characterOutlineSize);
             return;
         }
 
@@ -3317,17 +3361,17 @@ public class Hex : MonoBehaviour
         if (selected != null && selected.hex == this && characterSpriteRenderer.sprite != null && characterSpriteRenderer.sprite != defaultCharacterSprite)
         {
             float t = Mathf.PingPong(Time.time * selectedBlinkSpeed, 1f);
-            float alpha = Mathf.Lerp(selectedBlinkMinAlpha, selectedBlinkMaxAlpha, t);
-            SetSpriteAlpha(characterSpriteRenderer, alpha);
-        }
-        else if (selected != null)
-        {
-            SetSpriteAlpha(characterSpriteRenderer, NonSelectedCharacterAlpha);
+            float brightness = Mathf.Lerp(selectedBlinkMinAlpha, selectedBlinkMaxAlpha, t);
+            characterSpriteRenderer.color = new Color(brightness, brightness, brightness, 1f);
+            ApplyCharacterOutlineSize(characterOutlineSize);
         }
         else
         {
-            SetSpriteAlpha(characterSpriteRenderer, 1f);
+            characterSpriteRenderer.color = Color.white;
+            float sizeT = Mathf.PingPong(Time.time * selectedBlinkSpeed, 1f);
+            ApplyCharacterOutlineSize(Mathf.Lerp(-5f, characterOutlineSize, sizeT));
         }
+        ApplyCharacterOutlineAlpha(1f);
     }
 
 }

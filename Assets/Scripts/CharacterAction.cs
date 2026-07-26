@@ -368,7 +368,14 @@ public class CharacterAction
                     BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex, character.GetOwner());
                 }
             }
-            
+            else
+            {
+                // Mirrors Fail()'s unconditional "{actionName} failed" message — without this,
+                // an opportunity/situation action that succeeds with no action-specific message
+                // of its own gives the player no feedback beyond a sound effect.
+                MessageDisplayNoUI.ShowMessage(character.hex, character, $"{message} succeeds", Color.green);
+            }
+
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
             if (!isAI) Card.RequestInteractionRefreshAll();
 

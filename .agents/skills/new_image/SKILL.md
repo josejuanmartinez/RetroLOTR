@@ -1,6 +1,6 @@
 ---
 name: new-image
-description: Create new RetroLOTR card art images in a square format and in a retro painted fantasy style. Use when Codex needs to generate any new game image (especially action/spell images), using 3 randomly chosen shipped card images as uploaded binary reference inputs through the Responses API, then saving to the correct Assets/Art/Cards subfolder by image type.
+description: Create new RetroLOTR card art images in a square format and in a retro painted fantasy style. Use when Codex needs to generate any new game image (especially action/spell images), using 3 randomly chosen shipped card images as binary reference inputs to a single gpt-image-2 images.edit call, then saving to the correct Assets/Art/Cards subfolder by image type.
 ---
 
 # New Image
@@ -10,12 +10,11 @@ Create new game images that match the existing RetroLOTR color card style.
 ## Workflow
 1. Determine image type from the request using `CardTypeEnum` from `Assets/Scripts/Cards/CardTypeEnum.cs` (`Action`, `Event`, `Land`, `PC`, `Character`, `Army`, `Rest`, `Encounter`, `Spell`).
 2. Use the bundled script `scripts/new_image_card.py` to select 3 random shipped card images from `Assets/Art/Cards` on every run.
-3. The script uploads those selected card images as binary file inputs through the Responses API and reports them explicitly.
+3. Send those 3 references (downscaled for upload) plus the art brief and RetroLOTR style block to `gpt-image-2`'s `images.edit` in a **single call** — no separate generate-then-colorize pass. RetroLOTR already has plenty of shipped card art, so the references are strong enough style anchors on their own; a throwaway B&W sketch stage would only add cost/latency and (in the old pipeline) meant the references stopped influencing the image after the first pass. `restyle_hex` in this repo already relies on `images.edit` accepting a primary image plus extra images purely as style references, so this works the same way as a multi-image-conditioned generation.
 4. Give the prompt a card-specific name when possible. The script can derive a name from the output filename if one is not passed explicitly.
-5. By default, generate in three steps: first create the image, then run the old strict black-and-white postprocess helper (`scripts/bw_postprocess.py`), then send that B&W result into the `colorify`-style edit pass. This is the preferred workflow and should be treated as the standard way to make new RetroLOTR art.
-6. Enforce style direction in the prompt: 1:1 square painted fantasy card illustration with a strong centered subject, clear silhouette, Bakshi-era Lord of the Rings mood, D&D cover art energy, MERP-style roleplaying-game illustration, rough hand-painted gouache/watercolor texture, visible brush strokes, heavy printed grain, jagged dark contour lines, earthy muted colors, strong shadows, and a real scanned fantasy-card look that matches the shipped RetroLOTR art.
-7. The uploaded images are style, texture, and print-look guides only. Do not echo the reference files back into the prompt as a separate section or subject list.
-8. Save the final image to the correct folder in `Assets/Art/Cards`.
+5. Enforce style direction in the prompt: 1:1 square painted fantasy card illustration with a strong centered subject, clear silhouette, Bakshi-era Lord of the Rings mood, D&D cover art energy, MERP-style roleplaying-game illustration, rough hand-painted gouache/watercolor texture, visible brush strokes, heavy printed grain, jagged dark contour lines, earthy muted colors, strong shadows, and a real scanned fantasy-card look that matches the shipped RetroLOTR art.
+6. The uploaded images are style, texture, and print-look guides only. Do not echo the reference files back into the prompt as a separate section or subject list, and tell the model explicitly not to copy their subjects/layouts/symbols.
+7. Save the final image to the correct folder in `Assets/Art/Cards`.
 
 ## Random Reference Selection
 The script handles random selection automatically, but this command matches its candidate pool:
@@ -28,15 +27,20 @@ Get-ChildItem "Assets/Art/Cards" -Recurse -File |
 ```
 
 ## Model And Input Contract
-- Use the Responses API helper, which defaults to `gpt-5` in this workspace.
-- Use exactly 3 references.
-- Keep references limited to 3 randomly selected shipped card images.
-- The script uploads the chosen card images as binary file inputs through the Responses API.
-- The default workflow is generate, then strict B&W postprocess, then colorify using `gpt-image-1.5`.
-- The default workflow is generate, then strict B&W postprocess, then colorify using `gpt-image-1.5`; this is the standard process for matching the shipped RetroLOTR art.
+- Model: `gpt-image-2`, via `images.edit` — this is the current standard image model for this
+  project (newer than the `gpt-image-1.5` still used by the older `colorify` skill).
+- Use exactly 3 references, randomly selected from `Assets/Art/Cards`, downscaled to
+  `--upload-max-dim` (default 512px) before upload to control cost — same convention as
+  `restyle_hex`/`colorify`.
+- Default size is `1024x1024` (square card format); default quality is `high` — cards are
+  final in-game display assets, unlike the throwaway `new_character_tpose` reference image, so
+  don't drop quality below what the user asked for.
+- gpt-image-2's `images.edit` accepts arbitrary `WIDTHxHEIGHT` (not just the standard size
+  enum), as long as both dimensions are divisible by 16 and the aspect ratio is between 1:3
+  and 3:1; quality is `low`, `medium`, `high`, or `auto`.
 - Pass `--card-name` when you want the final prompt to emphasize the card name explicitly.
-- The prompt text should read like `colorify`: card name first, then the art brief, then the style block, with a tighter card-art composition lock.
-- Use `--single-pass` only when you intentionally want to bypass the two-pass process.
+- The prompt text reads: card name first, then the art brief, then the style block, then an
+  explicit "these references are style/texture guides only, don't copy their subjects" clause.
 
 ## Prompt Requirements
 Include all of the following constraints in the image-generation prompt:
@@ -48,6 +52,8 @@ Include all of the following constraints in the image-generation prompt:
 - painterly watercolor-like backgrounds and moody magical lighting
 - varied scene-appropriate colors; avoid a flat sepia or uniformly brown cast
 - no modern UI elements, no text overlays, no logos, no extra characters
+- an explicit instruction that the reference images are style/texture/print-look guides only,
+  not subjects or layouts to copy
 
 If there is not enough information to write a good prompt, ask the user for missing details before generating the image.
 
@@ -103,19 +109,18 @@ Tools > Addressables > Sync Art Addresses
 ```
 
 ## Final Checks
-- Image is square (`width == height`).
+- Image is square (`width == height`) unless the user explicitly asked for a different aspect ratio.
 - File path matches the intended card category.
 - Reference images came from `Assets/Art/Cards`, not from the final asset folder.
-- The image handed to `colorify` is the strict black-and-white output of `scripts/bw_postprocess.py`, not the raw generation output.
 - **TextureImporter is set to Sprite Mode = Single**
 
 ## Completion Report (Mandatory)
 After finishing image generation, always report:
 - Final output file path.
-- Model used (the helper's current default model, usually `gpt-5`).
+- Model/size/quality used (usually `gpt-image-2`, `1024x1024`, `high`).
 - Exact reference images used (list full paths).
 - Number of references used.
-- Input format used for references in the generation call (uploaded file IDs via Responses API).
+- Input format used for references in the generation call (uploaded binary file handles via `images.edit`, downscaled for upload).
 - The exact final prompt text used for generation.
 
 ## CLI Contract

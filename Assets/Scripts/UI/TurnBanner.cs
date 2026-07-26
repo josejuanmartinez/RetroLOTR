@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -18,6 +20,8 @@ public class TurnBanner : MonoBehaviour
     private RectTransform textRect;
     private TextMeshProUGUI dateText;
     private RectTransform dateRect;
+    private TextMeshProUGUI infoText;
+    private RectTransform infoRect;
     private Image leftBannerImg, rightBannerImg;
     private RectTransform leftBannerRect, rightBannerRect;
 
@@ -168,6 +172,22 @@ public class TurnBanner : MonoBehaviour
         dateText.fontStyle = FontStyles.Italic;
         dateText.color = GoldColor;
         dateText.alignment = TextAlignmentOptions.Center;
+
+        // Calendar-event / ambient-effect subtitle, below the date
+        infoRect = MakeRect("InfoText", centerRect);
+        infoRect.anchorMin = new Vector2(0.5f, 0.5f);
+        infoRect.anchorMax = new Vector2(0.5f, 0.5f);
+        infoRect.pivot = new Vector2(0.5f, 1f);
+        infoRect.sizeDelta = new Vector2(860f, 80f);
+        infoRect.anchoredPosition = new Vector2(0f, -108f);
+        infoRect.localScale = Vector3.zero;
+
+        infoText = infoRect.gameObject.AddComponent<TextMeshProUGUI>();
+        infoText.fontSize = 22;
+        infoText.fontStyle = FontStyles.Normal;
+        infoText.color = new Color(1f, 1f, 1f, 0.85f);
+        infoText.alignment = TextAlignmentOptions.Top;
+        infoText.textWrappingMode = TextWrappingModes.Normal;
     }
 
     private static RectTransform MakeRect(string name, Transform parent)
@@ -197,12 +217,17 @@ public class TurnBanner : MonoBehaviour
     {
         bool hasBanner = bannerSprite != null;
 
+        MiddleEarthDate today = MiddleEarthCalendar.GetDateFromTurn(turnNumber);
+
         turnText.text = $"TURN {turnNumber}";
         turnText.color = GoldColor;
-        dateText.text = MiddleEarthCalendar.GetDateFromTurn(turnNumber).ToString();
+        dateText.text = today.ToString();
+        infoText.text = BuildInfoText(today);
+        infoText.gameObject.SetActive(!string.IsNullOrEmpty(infoText.text));
         rootGroup.alpha = 1f;
         textRect.localScale = Vector3.zero;
         dateRect.localScale = Vector3.zero;
+        infoRect.localScale = Vector3.zero;
         topBarRect.anchoredPosition = new Vector2(0, BarHeight);
         bottomBarRect.anchoredPosition = new Vector2(0, -BarHeight);
         lineLeftRect.sizeDelta = new Vector2(0, LineThickness);
@@ -236,6 +261,7 @@ public class TurnBanner : MonoBehaviour
             lineLeftRect.sizeDelta = new Vector2(lineP * LineMaxHalfWidth, LineThickness);
             lineRightRect.sizeDelta = new Vector2(lineP * LineMaxHalfWidth, LineThickness);
             dateRect.localScale = Vector3.one * lineP;
+            infoRect.localScale = Vector3.one * lineP;
 
             if (hasBanner)
             {
@@ -255,6 +281,7 @@ public class TurnBanner : MonoBehaviour
         bottomBarRect.anchoredPosition = Vector2.zero;
         textRect.localScale = Vector3.one;
         dateRect.localScale = Vector3.one;
+        infoRect.localScale = Vector3.one;
         lineLeftRect.sizeDelta = new Vector2(LineMaxHalfWidth, LineThickness);
         lineRightRect.sizeDelta = new Vector2(LineMaxHalfWidth, LineThickness);
         if (hasBanner)
@@ -288,6 +315,34 @@ public class TurnBanner : MonoBehaviour
             yield return null;
         }
         rootGroup.alpha = 0f;
+    }
+
+    // Calendar-entry descriptions for the day, plus whichever environmental card is (or is about
+    // to become) active — read directly rather than via EnvironmentalCardManager.ActiveCard alone,
+    // since Game.NewTurn() shows the banner before NewTurnStarted fires and updates it.
+    private static string BuildInfoText(MiddleEarthDate today)
+    {
+        var lines = new List<string>();
+
+        IEnumerable<CalendarEntry> calendarEntries = DateEventManager.Instance?.GetEntriesForDate(today);
+        if (calendarEntries != null)
+        {
+            string calendarText = string.Join(" · ", calendarEntries
+                .Where(e => !string.IsNullOrWhiteSpace(e.description))
+                .Select(e => e.description));
+            if (!string.IsNullOrEmpty(calendarText)) lines.Add(calendarText);
+        }
+
+        CardData envCard = DateEventManager.Instance?.GetEnvironmentCardForDate(today)
+            ?? EnvironmentalCardManager.Instance?.ActiveCard;
+        if (envCard != null)
+        {
+            lines.Add(string.IsNullOrWhiteSpace(envCard.description)
+                ? envCard.name
+                : $"{envCard.name}: {envCard.description}");
+        }
+
+        return string.Join("\n", lines);
     }
 
     private static float EaseOutCubic(float t) => 1f - Mathf.Pow(1f - Mathf.Clamp01(t), 3f);
