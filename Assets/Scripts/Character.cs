@@ -193,7 +193,12 @@ public class Character : MonoBehaviour
                 CreateArmy(card.troopType, characterBiome.startingArmySize, startingCharacter, characterBiome.startingWarships, card.specialAbilities);
         }
 
-        ApplyClassLevelsFromCharacterCard();
+        // Biome JSON only ever sets a handful of starting stats (and never race for non-playable
+        // leaders — see NonPlayableLeaderBiomes.json, which has no "race" field on any of its 53
+        // entries). The matching Character card is the authoritative source for race (and
+        // commander/agent/emmissary/mage/alignment), the same card PlayableLeader.RefreshStatsFromCard
+        // already pulls from for playable leaders — this applies it uniformly to every Character.
+        ApplyStatsFromCard(GetCharacterCardData());
     }
 
     // The CardData (type "Character") that represents this character in the deck — used both to
@@ -206,18 +211,6 @@ public class Character : MonoBehaviour
         return dm?.cards?.Find(c =>
             string.Equals(c.name, characterName, StringComparison.OrdinalIgnoreCase) &&
             string.Equals(c.type, "Character", StringComparison.OrdinalIgnoreCase));
-    }
-
-    private void ApplyClassLevelsFromCharacterCard()
-    {
-        CardData card = GetCharacterCardData();
-        if (card == null) return;
-
-        commander = Mathf.Clamp(card.commander, 0, MAX_SKILL_LEVEL);
-        agent = Mathf.Clamp(card.agent, 0, MAX_SKILL_LEVEL);
-        emmissary = Mathf.Clamp(card.emmissary, 0, MAX_SKILL_LEVEL);
-        mage = Mathf.Clamp(card.mage, 0, MAX_SKILL_LEVEL);
-        alignment = (AlignmentEnum)card.alignment;
     }
 
     public void ApplyStatsFromCard(CardData card)

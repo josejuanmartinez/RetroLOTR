@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Animations;
 using UnityEditor.U2D.Sprites;
 using UnityEngine;
@@ -54,6 +56,12 @@ public class AnimationSpritesheetBaker : EditorWindow
         public Vector3 PositionOffset;
         public Vector3 RotationOffsetEuler;
         public Vector3 ScaleMultiplier = Vector3.one;
+        // Where the prop's own mesh sits relative to the rotation anchor (PositionOffset).
+        // Rotation is applied to the anchor, not the mesh, so a prop whose authored pivot isn't
+        // at its grip point can still be spun in place — dial this in once with Rotation at
+        // zero until the grip lines up with the bone, and Rotation will orbit around that point
+        // afterward instead of swinging the whole prop away from the hand.
+        public Vector3 PivotOffset;
         // Defaults OFF, unlike StateEntry.UseForFraming (which defaults ON): a prop rigidly
         // follows a limb, so an attack/cast-spell state can swing it well outside the
         // character's normal silhouette. Since framing bounds are shared across every state in
@@ -111,7 +119,6 @@ public class AnimationSpritesheetBaker : EditorWindow
     private Camera _previewCamera;
     private RenderTexture _previewRT;
     private List<BakeProxy> _previewBakeProxies;
-    private HashSet<Renderer> _previewFramingExclusions = new();
     private bool _previewAnimModeActive;
     private int _previewStateIndex;
     private float _previewTime01;
@@ -243,6 +250,15 @@ public class AnimationSpritesheetBaker : EditorWindow
                 {
                     EditorGUILayout.LabelField("Rotation", GUILayout.Width(50));
                     prop.RotationOffsetEuler = EditorGUILayout.Vector3Field(GUIContent.none, prop.RotationOffsetEuler);
+                }
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    GUIContent pivotLabel = new GUIContent("Pivot", "Where the mesh sits relative to the rotation anchor. " +
+                        "Rotation spins the anchor, not the mesh, so if the prop swings away from the hand instead of " +
+                        "turning in place, the mesh's own pivot isn't at its grip point — set Rotation back to zero, " +
+                        "adjust Pivot until the grip lines up with the bone, then Rotation will orbit around that point.");
+                    EditorGUILayout.LabelField(pivotLabel, GUILayout.Width(50));
+                    prop.PivotOffset = EditorGUILayout.Vector3Field(GUIContent.none, prop.PivotOffset);
                 }
                 using (new EditorGUILayout.HorizontalScope())
                 {
@@ -443,9 +459,15 @@ public class AnimationSpritesheetBaker : EditorWindow
         PlayAtRecentered(_previewModel, hips, entry.Clip, _previewTime01, ref _previewBaselineXZ);
         RebakeProxies(_previewBakeProxies);
 
+        // Deliberately NOT applying _previewFramingExclusions here: that set exists so a prop
+        // with "Frame" off doesn't inflate the ONE SHARED zoom used across every cell of the
+        // real bake. This preview only ever shows a single frame at a time and refits its
+        // camera fresh every call regardless (see the help box below), so there's no shared-zoom
+        // concern to protect — and excluding the prop here would just crop it out of view,
+        // making it impossible to see what you're doing while dialing in Position/Pivot/Rotation.
         var renderers = _previewModel.GetComponentsInChildren<Renderer>(true)
-            .Where(r => !(r is SkinnedMeshRenderer) && !_previewFramingExclusions.Contains(r))
-            .Concat(_previewBakeProxies.Where(p => !_previewFramingExclusions.Contains(p.Source)).Select(p => (Renderer)p.Filter.GetComponent<MeshRenderer>()))
+            .Where(r => !(r is SkinnedMeshRenderer))
+            .Concat(_previewBakeProxies.Select(p => (Renderer)p.Filter.GetComponent<MeshRenderer>()))
             .ToArray();
         Bounds b = CombinedBounds(renderers);
         Quaternion camRot = Quaternion.Euler(_cameraPitch, _cameraYaw, 0f);
@@ -511,7 +533,7 @@ public class AnimationSpritesheetBaker : EditorWindow
     string ComputePropsSignature()
     {
         return string.Join("|", _props.Select(p =>
-            $"{(p.Include ? 1 : 0)}:{(p.Prefab != null ? p.Prefab.GetInstanceID() : 0)}:{p.Bone}:{p.PositionOffset}:{p.RotationOffsetEuler}:{p.ScaleMultiplier}"));
+            $"{(p.Include ? 1 : 0)}:{(p.Prefab != null ? p.Prefab.GetInstanceID() : 0)}:{p.Bone}:{p.PositionOffset}:{p.RotationOffsetEuler}:{p.PivotOffset}:{p.ScaleMultiplier}:{p.UseForFraming}"));
     }
 
     void EnsurePreviewRig()
@@ -546,7 +568,7 @@ public class AnimationSpritesheetBaker : EditorWindow
         _previewAnimator = model.GetComponentInChildren<Animator>(true);
         if (_previewAnimator == null) _previewAnimator = model.AddComponent<Animator>();
 
-        _previewFramingExclusions = AttachProps(model, _previewAnimator, previewLayer);
+        AttachProps(model, _previewAnimator, previewLayer);
         _previewBakeProxies = CreateBakeProxies(model, previewLayer);
 
         var camGo = new GameObject("__SpritesheetPreviewCamera__") { hideFlags = HideFlags.HideAndDontSave };
@@ -1192,6 +1214,40 @@ public class AnimationSpritesheetBaker : EditorWindow
         return tex;
     }
 
+    // Matches the "default" label CharacterAnimatorControllers/Illustrations already scan for
+    // other per-character art, so CharacterSpritesheets finds these with no separate label setup.
+    const string AddressableSpritesheetLabel = "default";
+
+    // No-ops (with a warning) if this project has no AddressableAssetSettings yet, rather than
+    // throwing and aborting an otherwise-successful bake.
+    static void MarkAddressable(string assetPath, string label)
+    {
+        AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+        if (settings == null)
+        {
+            Debug.LogWarning($"[SpritesheetBaker] No AddressableAssetSettings found — '{assetPath}' was NOT marked Addressable. Mark it manually (label '{label}') so CharacterSpritesheets can load it at runtime.");
+            return;
+        }
+
+        string guid = AssetDatabase.AssetPathToGUID(assetPath);
+        if (string.IsNullOrEmpty(guid)) return;
+
+        AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
+        entry.address = assetPath;
+        if (!settings.GetLabels().Contains(label)) settings.AddLabel(label);
+        entry.SetLabel(label, true, true);
+
+        // Labels live on the entry, which is serialized as part of its GROUP asset (e.g.
+        // "Default Local Group.asset"), not AddressableAssetSettings.asset itself — dirtying
+        // only the top-level settings previously left the group's on-disk YAML holding an empty
+        // m_SerializedLabels for every baked sprite/atlas, so CharacterSpritesheets' label-based
+        // Addressables scan found nothing. Dirty the group explicitly and save both immediately
+        // rather than hoping an eventual autosave picks it up.
+        if (entry.parentGroup != null) EditorUtility.SetDirty(entry.parentGroup);
+        EditorUtility.SetDirty(settings);
+        AssetDatabase.SaveAssets();
+    }
+
     static void SetLayerRecursive(Transform t, int layer)
     {
         t.gameObject.layer = layer;
@@ -1230,13 +1286,23 @@ public class AnimationSpritesheetBaker : EditorWindow
                 continue;
             }
 
+            // Rotation lives on this anchor, not on the prop mesh itself — the anchor's own
+            // position/rotation relative to the bone never changes, so spinning the prop via
+            // RotationOffsetEuler orbits it around a fixed point instead of moving that point.
+            // The mesh's own (possibly off-grip) pivot is absorbed into PivotOffset below, one
+            // level further down the hierarchy.
+            var anchor = new GameObject($"__PropAnchor_{prop.Prefab.name}__");
+            anchor.transform.SetParent(bone, false);
+            anchor.transform.localPosition = prop.PositionOffset;
+            anchor.transform.localRotation = Quaternion.Euler(prop.RotationOffsetEuler);
+
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prop.Prefab);
             if (instance == null) instance = Object.Instantiate(prop.Prefab);
-            instance.transform.SetParent(bone, false);
-            instance.transform.localPosition = prop.PositionOffset;
-            instance.transform.localRotation = Quaternion.Euler(prop.RotationOffsetEuler);
+            instance.transform.SetParent(anchor.transform, false);
+            instance.transform.localPosition = prop.PivotOffset;
+            instance.transform.localRotation = Quaternion.identity;
             instance.transform.localScale = Vector3.Scale(instance.transform.localScale, prop.ScaleMultiplier);
-            SetLayerRecursive(instance.transform, layer);
+            SetLayerRecursive(anchor.transform, layer);
 
             if (!prop.UseForFraming)
                 foreach (var r in instance.GetComponentsInChildren<Renderer>(true))
@@ -1401,6 +1467,12 @@ public class AnimationSpritesheetBaker : EditorWindow
         // the whole sprite set is actually queryable before GenerateClips runs.
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
+        // Marking the TEXTURE Addressable exposes every one of its Sprite sub-assets as
+        // individually loadable/enumerable too (the same mechanism Illustrations.cs already
+        // relies on for other multi-sprite character art) — so CharacterSpritesheets can find
+        // these frames at runtime with no further manual step.
+        MarkAddressable(outPath, AddressableSpritesheetLabel);
+
         var texAsset = AssetDatabase.LoadAssetAtPath<Texture2D>(outPath);
         Debug.Log($"[SpritesheetBaker] Baked {rows} state(s) × {_framesPerState} frame(s) → {outPath} ({atlas.width}×{atlas.height})");
         EditorUtility.FocusProjectWindow();
@@ -1544,6 +1616,7 @@ public class AnimationSpritesheetBaker : EditorWindow
         string jsonPath = $"{_outFolder}/{safeName}.atlas.json";
         File.WriteAllText(jsonPath, JsonUtility.ToJson(manifest, true));
         AssetDatabase.ImportAsset(jsonPath);
+        MarkAddressable(jsonPath, AddressableSpritesheetLabel);
         Debug.Log($"[SpritesheetBaker] Wrote atlas manifest → {jsonPath}");
     }
 }
