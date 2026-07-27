@@ -40,10 +40,34 @@ public class AnimationSpritesheetBaker : EditorWindow
         public MeshFilter Filter;
     }
 
+    // A prop (weapon, staff, etc.) parented to a Humanoid bone at rig-build time, so it inherits
+    // that bone's animated position/rotation for free — no changes to the model prefab or any
+    // .anim clip needed. Attached BEFORE CreateBakeProxies() runs on the model, so a prop with
+    // its own SkinnedMeshRenderer (e.g. a cloth cape) gets swept into the same proxy-baking pass
+    // as the character; a plain static-mesh prop (the common case, e.g. a staff) needs no proxy
+    // at all and is already picked up by the existing MeshRenderer bounds/capture sweep.
+    private class PropEntry
+    {
+        public GameObject Prefab;
+        public bool Include = true;
+        public HumanBodyBones Bone = HumanBodyBones.RightHand;
+        public Vector3 PositionOffset;
+        public Vector3 RotationOffsetEuler;
+        public Vector3 ScaleMultiplier = Vector3.one;
+        // Defaults OFF, unlike StateEntry.UseForFraming (which defaults ON): a prop rigidly
+        // follows a limb, so an attack/cast-spell state can swing it well outside the
+        // character's normal silhouette. Since framing bounds are shared across every state in
+        // the atlas, letting that count by default would zoom out EVERY cell to fit the one pose
+        // where the prop reaches furthest — same failure mode StateEntry.UseForFraming exists to
+        // avoid for Death/Hit poses, just triggered by the prop instead of the base animation.
+        public bool UseForFraming;
+    }
+
     // ── Inputs ────────────────────────────────────────────────────────
     private AnimatorController _controller;
     private GameObject _modelPrefab;
     private List<StateEntry> _states = new();
+    private List<PropEntry> _props = new();
 
     // ── Bake settings ─────────────────────────────────────────────────
     private int _framesPerState = 8;
@@ -81,11 +105,13 @@ public class AnimationSpritesheetBaker : EditorWindow
     // ── Live Preview (see all EnsurePreviewRig/DrawPreview/TeardownPreviewRig below) ──
     private GameObject _previewRigRoot;
     private GameObject _previewSourcePrefab;
+    private string _previewPropsSignature;
     private GameObject _previewModel;
     private Animator _previewAnimator;
     private Camera _previewCamera;
     private RenderTexture _previewRT;
     private List<BakeProxy> _previewBakeProxies;
+    private HashSet<Renderer> _previewFramingExclusions = new();
     private bool _previewAnimModeActive;
     private int _previewStateIndex;
     private float _previewTime01;
@@ -181,6 +207,59 @@ public class AnimationSpritesheetBaker : EditorWindow
                         "force every state and every facing to zoom out just to fit that one pose."),
                     entry.UseForFraming, GUILayout.Width(60));
             }
+        }
+
+        GUILayout.Space(6);
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        EditorGUILayout.LabelField("Props", EditorStyles.boldLabel);
+        for (int i = 0; i < _props.Count; i++)
+        {
+            var prop = _props[i];
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    prop.Include = EditorGUILayout.ToggleLeft(GUIContent.none, prop.Include, GUILayout.Width(18));
+                    prop.Prefab = (GameObject)EditorGUILayout.ObjectField(prop.Prefab, typeof(GameObject), false);
+                    prop.Bone = (HumanBodyBones)EditorGUILayout.EnumPopup(prop.Bone, GUILayout.Width(140));
+                    prop.UseForFraming = EditorGUILayout.ToggleLeft(
+                        new GUIContent("Frame", "Let this prop's reach count toward the shared camera zoom. " +
+                            "Off by default — a prop swinging wide during one attack/cast state would otherwise " +
+                            "force every OTHER state (and facing) to zoom out just to fit that one pose."),
+                        prop.UseForFraming, GUILayout.Width(60));
+                    if (GUILayout.Button("X", GUILayout.Width(20)))
+                    {
+                        _props.RemoveAt(i);
+                        i--;
+                        continue;
+                    }
+                }
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField("Offset", GUILayout.Width(50));
+                    prop.PositionOffset = EditorGUILayout.Vector3Field(GUIContent.none, prop.PositionOffset);
+                }
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField("Rotation", GUILayout.Width(50));
+                    prop.RotationOffsetEuler = EditorGUILayout.Vector3Field(GUIContent.none, prop.RotationOffsetEuler);
+                }
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField("Scale", GUILayout.Width(50));
+                    prop.ScaleMultiplier = EditorGUILayout.Vector3Field(GUIContent.none, prop.ScaleMultiplier);
+                }
+            }
+        }
+        if (GUILayout.Button("Add Prop")) _props.Add(new PropEntry());
+        if (_props.Any(p => p.Include && p.Prefab != null))
+        {
+            EditorGUILayout.HelpBox(
+                "Props are parented to the chosen bone at preview/bake time, so they inherit that " +
+                "bone's animated position/rotation directly — no changes to the model prefab or any " +
+                ".anim clip needed. Requires the model's Animator to be Humanoid (isHuman); a prop " +
+                "with no bone match or a non-Humanoid rig is skipped with a Console warning.",
+                MessageType.None);
         }
 
         GUILayout.Space(6);
@@ -365,8 +444,8 @@ public class AnimationSpritesheetBaker : EditorWindow
         RebakeProxies(_previewBakeProxies);
 
         var renderers = _previewModel.GetComponentsInChildren<Renderer>(true)
-            .Where(r => !(r is SkinnedMeshRenderer))
-            .Concat(_previewBakeProxies.Select(p => (Renderer)p.Filter.GetComponent<MeshRenderer>()))
+            .Where(r => !(r is SkinnedMeshRenderer) && !_previewFramingExclusions.Contains(r))
+            .Concat(_previewBakeProxies.Where(p => !_previewFramingExclusions.Contains(p.Source)).Select(p => (Renderer)p.Filter.GetComponent<MeshRenderer>()))
             .ToArray();
         Bounds b = CombinedBounds(renderers);
         Quaternion camRot = Quaternion.Euler(_cameraPitch, _cameraYaw, 0f);
@@ -425,10 +504,23 @@ public class AnimationSpritesheetBaker : EditorWindow
             "a full bake.", MessageType.None);
     }
 
+    // Prop instances are only (re)parented when the preview rig itself is rebuilt, so without
+    // this the rig would go stale the moment a prop's prefab/bone/offset is tweaked — the
+    // sliders would move nothing until some unrelated field (e.g. Cell Width) forced a rebuild.
+    // Cheap enough to recompute every OnGUI: this window's prop lists are always small.
+    string ComputePropsSignature()
+    {
+        return string.Join("|", _props.Select(p =>
+            $"{(p.Include ? 1 : 0)}:{(p.Prefab != null ? p.Prefab.GetInstanceID() : 0)}:{p.Bone}:{p.PositionOffset}:{p.RotationOffsetEuler}:{p.ScaleMultiplier}"));
+    }
+
     void EnsurePreviewRig()
     {
+        string propsSignature = ComputePropsSignature();
         bool needsRebuild = _previewRigRoot == null || _previewSourcePrefab != _modelPrefab
-            || _previewRT == null || _previewRT.width != _cellWidth || _previewRT.height != _cellHeight;
+            || _previewRT == null || _previewRT.width != _cellWidth || _previewRT.height != _cellHeight
+            || _previewPropsSignature != propsSignature;
+        _previewPropsSignature = propsSignature;
         if (!needsRebuild) return;
 
         TeardownPreviewRig();
@@ -454,6 +546,7 @@ public class AnimationSpritesheetBaker : EditorWindow
         _previewAnimator = model.GetComponentInChildren<Animator>(true);
         if (_previewAnimator == null) _previewAnimator = model.AddComponent<Animator>();
 
+        _previewFramingExclusions = AttachProps(model, _previewAnimator, previewLayer);
         _previewBakeProxies = CreateBakeProxies(model, previewLayer);
 
         var camGo = new GameObject("__SpritesheetPreviewCamera__") { hideFlags = HideFlags.HideAndDontSave };
@@ -653,10 +746,11 @@ public class AnimationSpritesheetBaker : EditorWindow
             Animator animator = model.GetComponentInChildren<Animator>(true);
             if (animator == null) animator = model.AddComponent<Animator>();
 
+            HashSet<Renderer> framingExclusions = AttachProps(model, animator, measureLayer);
             List<BakeProxy> proxies = CreateBakeProxies(model, measureLayer);
             var allRenderers = model.GetComponentsInChildren<Renderer>(true)
-                .Where(r => !(r is SkinnedMeshRenderer))
-                .Concat(proxies.Select(p => (Renderer)p.Filter.GetComponent<MeshRenderer>()))
+                .Where(r => !(r is SkinnedMeshRenderer) && !framingExclusions.Contains(r))
+                .Concat(proxies.Where(p => !framingExclusions.Contains(p.Source)).Select(p => (Renderer)p.Filter.GetComponent<MeshRenderer>()))
                 .ToArray();
 
             Transform hips = _recenterRoot && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Hips) : null;
@@ -766,10 +860,11 @@ public class AnimationSpritesheetBaker : EditorWindow
             else
                 Debug.Log($"[SpritesheetBaker] Animator OK: avatar='{animator.avatar.name}', isHuman=true, isValid=true.");
 
+            HashSet<Renderer> framingExclusions = AttachProps(model, animator, previewLayer);
             List<BakeProxy> bakeProxies = CreateBakeProxies(model, previewLayer);
             var allRenderers = model.GetComponentsInChildren<Renderer>(true)
-                .Where(r => !(r is SkinnedMeshRenderer))
-                .Concat(bakeProxies.Select(p => (Renderer)p.Filter.GetComponent<MeshRenderer>()))
+                .Where(r => !(r is SkinnedMeshRenderer) && !framingExclusions.Contains(r))
+                .Concat(bakeProxies.Where(p => !framingExclusions.Contains(p.Source)).Select(p => (Renderer)p.Filter.GetComponent<MeshRenderer>()))
                 .ToArray();
 
             Transform hips = _recenterRoot && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Hips) : null;
@@ -1101,6 +1196,53 @@ public class AnimationSpritesheetBaker : EditorWindow
     {
         t.gameObject.layer = layer;
         for (int i = 0; i < t.childCount; i++) SetLayerRecursive(t.GetChild(i), layer);
+    }
+
+    // Parents each enabled prop under its chosen Humanoid bone on this specific rig instance.
+    // Must run BEFORE CreateBakeProxies(model, ...) so a prop with its own SkinnedMeshRenderer
+    // gets caught by that same recursive scan; a static-mesh prop needs no proxy and is already
+    // picked up by the existing "every non-skinned Renderer under model" sweep once parented in.
+    // Instances are plain children of the model, so they're destroyed for free when the caller
+    // tears down its rigRoot — no separate cleanup path needed.
+    //
+    // Returns every Renderer belonging to a prop whose UseForFraming is OFF (the default) — the
+    // caller must exclude these from whatever renderer set it measures bounds from, while still
+    // letting them render normally (rendering goes through the camera's layer mask, not this
+    // set, so excluding a renderer here only hides it from the ZOOM calculation, never from the
+    // actual captured pixels).
+    HashSet<Renderer> AttachProps(GameObject model, Animator animator, int layer)
+    {
+        var excludedFromFraming = new HashSet<Renderer>();
+        foreach (var prop in _props)
+        {
+            if (!prop.Include || prop.Prefab == null) continue;
+
+            if (!animator.isHuman)
+            {
+                Debug.LogWarning($"[SpritesheetBaker] Skipping prop '{prop.Prefab.name}' — Animator is not Humanoid, so bone '{prop.Bone}' can't be resolved.");
+                continue;
+            }
+
+            Transform bone = animator.GetBoneTransform(prop.Bone);
+            if (bone == null)
+            {
+                Debug.LogWarning($"[SpritesheetBaker] Skipping prop '{prop.Prefab.name}' — Avatar has no '{prop.Bone}' bone mapped.");
+                continue;
+            }
+
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prop.Prefab);
+            if (instance == null) instance = Object.Instantiate(prop.Prefab);
+            instance.transform.SetParent(bone, false);
+            instance.transform.localPosition = prop.PositionOffset;
+            instance.transform.localRotation = Quaternion.Euler(prop.RotationOffsetEuler);
+            instance.transform.localScale = Vector3.Scale(instance.transform.localScale, prop.ScaleMultiplier);
+            SetLayerRecursive(instance.transform, layer);
+
+            if (!prop.UseForFraming)
+                foreach (var r in instance.GetComponentsInChildren<Renderer>(true))
+                    excludedFromFraming.Add(r);
+        }
+        return excludedFromFraming;
     }
 
     // A SkinnedMeshRenderer's GPU-skin deformation is dispatched on the player loop's own frame
