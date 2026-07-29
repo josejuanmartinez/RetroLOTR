@@ -3,8 +3,6 @@ using UnityEngine;
 public class CharacterSpriteHover : MonoBehaviour
 {
     public Hex hex;
-    public SpriteRenderer movementArrows;
-    
     private SelectedCharacterIcon selectedIcon;
     private Board board;
     private bool isPreviewing;
@@ -20,10 +18,17 @@ public class CharacterSpriteHover : MonoBehaviour
     private void OnMouseEnter()
     {
         if (hex == null || hex.characterSpriteRenderer == null) return;
-        if (hex.characterSpriteRenderer.sprite == null || hex.characterSpriteRenderer.sprite == hex.defaultCharacterSprite) return;
+        if (hex.characterSpriteRenderer.sprite == null) return;
         if (!hex.TryGetKnownCharacterForIcon(out Character character)) return;
 
-        hex.SetCharacterHovered(true);
+        // Only selectable (yours) characters lose their unhovered dim tint and get the
+        // clickable cursor on hover — hovering someone else's character previews their
+        // info but leaves them visually dimmed, since they can't be selected anyway.
+        if (character.isPlayerControlled)
+        {
+            hex.SetCharacterHovered(true);
+            hex.GetCharacterAnimationController()?.SetHoverCursor(true);
+        }
         hex.Hover();
 
         board ??= FindFirstObjectByType<Board>();
@@ -53,15 +58,42 @@ public class CharacterSpriteHover : MonoBehaviour
         ValidatePreviewStillValid();
     }
 
+    // Character selection only happens by clicking directly on a character's own
+    // sprite (this collider) — clicking elsewhere on the hex does nothing (the hex
+    // tile itself has no click handler). Only selectable (yours) characters respond.
+    private void OnMouseDown()
+    {
+        if (!Input.GetMouseButtonDown(0)) return;
+        if (BoardNavigator.IsNavigationInputLocked()) return;
+        if (PopupManager.IsShowing) return;
+        if (BoardNavigator.IsPointerOverVisibleUIElement()) return;
+        if (hex == null || !hex.TryGetKnownCharacterForIcon(out Character character)) return;
+        if (!character.isPlayerControlled) return;
+
+        board ??= FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        Sounds.Instance?.PlayUiClick();
+        board.SelectHex(hex.v2, characterToSelect: character);
+    }
+
     private void OnMouseExit()
     {
-        if (hex != null) hex.SetCharacterHovered(false);
+        if (hex != null)
+        {
+            hex.SetCharacterHovered(false);
+            hex.GetCharacterAnimationController()?.SetHoverCursor(false);
+        }
         ClearPreview();
     }
 
     private void OnDisable()
     {
-        if (hex != null) hex.SetCharacterHovered(false);
+        if (hex != null)
+        {
+            hex.SetCharacterHovered(false);
+            hex.GetCharacterAnimationController()?.SetHoverCursor(false);
+        }
         ClearPreview();
     }
 
@@ -80,7 +112,6 @@ public class CharacterSpriteHover : MonoBehaviour
         }
 
         if (previewedHex.characterSpriteRenderer.sprite == null ||
-            previewedHex.characterSpriteRenderer.sprite == previewedHex.defaultCharacterSprite ||
             !previewedHex.TryGetKnownCharacterForIcon(out Character currentCharacter) ||
             currentCharacter != previewedCharacter)
         {

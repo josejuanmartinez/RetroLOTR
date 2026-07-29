@@ -7,8 +7,9 @@ public class CardShineEffect : MonoBehaviour
     private RawImage shineImage;
     private RectTransform shineRect;
     private RectTransform parentRect;
+    private Coroutine sweepCoroutine;
 
-    private const float SweepInterval = 7f;
+    private const float SweepInterval = 7f / 3f;
     private const float SweepDuration = 0.5f;
     private const float PeakAlpha = 0.20f;
     private const float BeamWidth = 30f;
@@ -41,7 +42,28 @@ public class CardShineEffect : MonoBehaviour
         shineRect.sizeDelta = new Vector2(BeamWidth, 60f);
         shineRect.localEulerAngles = new Vector3(0f, 0f, BeamAngle);
 
-        StartCoroutine(SweepLoop());
+    }
+
+    private void OnEnable()
+    {
+        if (shineImage != null && sweepCoroutine == null)
+        {
+            sweepCoroutine = StartCoroutine(SweepLoop());
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (sweepCoroutine != null)
+        {
+            StopCoroutine(sweepCoroutine);
+            sweepCoroutine = null;
+        }
+
+        if (shineImage != null)
+        {
+            shineImage.color = new Color(1f, 1f, 1f, 0f);
+        }
     }
 
     private IEnumerator SweepLoop()

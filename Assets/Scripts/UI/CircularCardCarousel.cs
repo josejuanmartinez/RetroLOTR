@@ -171,6 +171,7 @@ public class CircularCardCarousel : MonoBehaviour
 
         GameObject currentItem = items[currentIndex];
         SetupItem(currentItem, GetPositionForOffset(0), selectedScale, 3, GetAlphaForOffset(0), GetRotationForOffset(0));
+        EnsureShineEffects();
 
         for (int offset = 1; offset <= 3; offset++)
         {
@@ -326,6 +327,20 @@ public class CircularCardCarousel : MonoBehaviour
             3 => -thirdTiltAngle,
             _ => 0f
         };
+    }
+
+    private void EnsureShineEffects()
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            GameObject item = items[i];
+            if (item == null || item.GetComponent<CardShineEffect>() != null)
+            {
+                continue;
+            }
+
+            item.AddComponent<CardShineEffect>();
+        }
     }
 
     private void SetupItem(GameObject item, Vector2 anchoredPosition, Vector3 scale, int siblingIndex, float alpha, float rotationZ)

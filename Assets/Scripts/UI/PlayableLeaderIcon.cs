@@ -41,7 +41,7 @@ public class PlayableLeaderIcon : MonoBehaviour
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         if (videos == null) videos = FindFirstObjectByType<Videos>();
         leaderClip = videos != null ? videos.GetVideoByName(leader.characterName) : null;
-        leaderSprite = illustrations != null ? illustrations.GetIllustrationByName(leader.characterName) : null;
+        leaderSprite = illustrations != null ? illustrations.GetCharacterArtByName(leader.characterName) : null;
         text = leader.GetHoverText(true, false, false, false, false, false);
         SetLeaderVisuals(leaderClip, leaderSprite);
         textWidget.text = text;
@@ -88,7 +88,7 @@ public class PlayableLeaderIcon : MonoBehaviour
         if (videos == null) videos = FindFirstObjectByType<Videos>();
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         highlightedClip = videos != null ? videos.GetVideoByName(leaderName) : null;
-        highlightedSprite = illustrations != null ? illustrations.GetIllustrationByName(leaderName) : null;
+        highlightedSprite = illustrations != null ? illustrations.GetCharacterArtByName(leaderName) : null;
         SetLeaderVisuals(highlightedClip, highlightedSprite);
         textWidget.text = leaderText;
     }
@@ -98,7 +98,7 @@ public class PlayableLeaderIcon : MonoBehaviour
         if (videos == null) videos = FindFirstObjectByType<Videos>();
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         VideoClip expectedClip = videos != null ? videos.GetVideoByName(leaderName) : null;
-        Sprite expectedSprite = illustrations != null ? illustrations.GetIllustrationByName(leaderName) : null;
+        Sprite expectedSprite = illustrations != null ? illustrations.GetCharacterArtByName(leaderName) : null;
         bool restoreFromVideo = videoMode && expectedClip != null && video != null && video.clip == expectedClip;
         bool restoreFromImage = (!videoMode || expectedClip == null) && image != null && image.sprite == expectedSprite;
         if (!restoreFromVideo && !restoreFromImage) return;

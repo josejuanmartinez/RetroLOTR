@@ -340,17 +340,17 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private void FlashEncounterHintFrame(Hex hex)
     {
-        if (hex == null || hex.tipHexFrame == null) return;
+        if (hex == null || hex.framesColors == null) return;
         if (encounterHintCoroutine != null) StopCoroutine(encounterHintCoroutine);
         encounterHintCoroutine = StartCoroutine(EncounterHintFrameCoroutine(hex));
     }
 
     private IEnumerator EncounterHintFrameCoroutine(Hex hex)
     {
-        hex.tipHexFrame.SetActive(true);
+        hex.framesColors.SetTip(true);
         yield return new WaitForSecondsRealtime(5f);
-        if (hex != null && hex.tipHexFrame != null)
-            hex.tipHexFrame.SetActive(false);
+        if (hex != null && hex.framesColors != null)
+            hex.framesColors.SetTip(false);
         encounterHintCoroutine = null;
     }
 
@@ -1437,15 +1437,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return (true, false);
     }
 
-    private async Task<bool> HandleEnvironmentalCardPlayed(Character selected)
+    private Task<bool> HandleEnvironmentalCardPlayed(Character selected)
     {
         Game game = FindFirstObjectByType<Game>();
-        if (game == null) return false;
+        if (game == null) return Task.FromResult(false);
         PlayableLeader playerLeader = game.player;
-        if (playerLeader == null) return false;
+        if (playerLeader == null) return Task.FromResult(false);
 
         if (!deckManager.TryConsumeCard(playerLeader, cardData.name, false, out _))
-            return false;
+            return Task.FromResult(false);
 
         EnvironmentalCardManager.GetOrCreate().SetActiveCard(cardData);
         playerLeader.RecordPlayedCard(cardData);
@@ -1459,8 +1459,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             MessageDisplayNoUI.ShowMessage(feedbackHex, selected, $"{cardData.name} takes hold — effects begin next turn", Color.green);
         }
 
-        await Task.Yield();
-        return true;
+        // TryConsumeCard rebuilds CardBloom and schedules this Card for destruction.
+        // Complete synchronously so TryPlayCard can run its shared success path before
+        // Unity destroys the clicked object at the end of the frame.
+        return Task.FromResult(true);
     }
 
     private async Task<bool> HandleEncounterCardPlayed(Character selected)

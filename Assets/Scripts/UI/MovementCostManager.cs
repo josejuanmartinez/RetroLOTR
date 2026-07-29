@@ -6,6 +6,7 @@ public class MovementCostManager : MonoBehaviour
 {
     public TextMeshPro movementText;
     public SpriteRenderer dot;
+    private Color dotBaseColor = Color.white;
 
     private void Awake()
     {
@@ -26,6 +27,11 @@ public class MovementCostManager : MonoBehaviour
                 }
             }
         }
+
+        if (dot != null)
+        {
+            dotBaseColor = dot.color;
+        }
     }
 
     public void ShowMovementLeft(int movementLeft, Character character, string terrainSpriteTags = "")
@@ -36,10 +42,16 @@ public class MovementCostManager : MonoBehaviour
         if (movementText != null && !movementText.gameObject.activeSelf) movementText.gameObject.SetActive(true);
         if (dot != null && !dot.gameObject.activeSelf) dot.gameObject.SetActive(true);
         // terrainSpriteTags are inline TMP <sprite> tags for the hex terrain (+ chasm marker), shown beside the cost.
+        Color costColor = GetMovementCostColor(movementLeft, character);
+        string coloredCost = $"<color=#{ColorUtility.ToHtmlStringRGBA(costColor)}>{movementLeft}</color>";
         movementText.text = string.IsNullOrEmpty(terrainSpriteTags)
-            ? movementLeft.ToString()
-            : $"{terrainSpriteTags}{movementLeft}";
-        UpdateDotColor(movementLeft, character);
+            ? coloredCost
+            : $"{terrainSpriteTags}\n{coloredCost}";
+
+        if (dot != null)
+        {
+            dot.color = dotBaseColor;
+        }
     }
 
     public void Hide()
@@ -47,17 +59,13 @@ public class MovementCostManager : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void UpdateDotColor(int movementLeft, Character character)
+    private static Color GetMovementCostColor(int movementLeft, Character character)
     {
-        if (dot == null) return;
-
         int maxMovement = character != null ? character.GetMaxMovement() : 0;
         float ratio = maxMovement > 0 ? Mathf.Clamp01(movementLeft / (float)maxMovement) : 0f;
 
         Color low = new(0.95f, 0.35f, 0.28f, 1f);
         Color high = new(0.25f, 0.9f, 0.45f, 1f);
-        Color color = Color.Lerp(low, high, ratio);
-        color.a = dot.color.a; // keep the dot's original alpha
-        dot.color = color;
+        return Color.Lerp(low, high, ratio);
     }
 }

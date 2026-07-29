@@ -124,7 +124,11 @@ public static class CharacterSpritesheets
         if (!TrySplitFacing(stem, out string raceOrName, out string facing)) return;
 
         manifestsByKey[NormalizeKey(raceOrName, facing)] = manifest;
-        availableRaceOrNames.Add(raceOrName.ToLowerInvariant());
+        // availableRaceOrNames is populated once the actual sprite FRAMES load (see
+        // OnSpriteSheetLoaded below), not here — the manifest alone tells TryResolveRaceOrName
+        // "this character resolves," but GetSprite(...) would still return null until the frame
+        // texture itself finishes its own, separate (and typically much slower) Addressables
+        // load, leaving the Hex-drawn card-illustration fallback stuck on screen for that gap.
 
         // Addressables.LoadResourceLocationsAsync(label, typeof(Sprite)) does NOT reliably
         // enumerate the individual sliced sub-sprites of a multi-sprite texture as separate
@@ -136,15 +140,18 @@ public static class CharacterSpritesheets
         if (string.IsNullOrEmpty(manifest.texture)) return;
         string pngAddress = $"{AddressRoot}{raceOrName}/{manifest.texture}";
         pendingSpriteLoads++;
-        Addressables.LoadAssetAsync<IList<Sprite>>(pngAddress).Completed += OnSpriteSheetLoaded;
+        Addressables.LoadAssetAsync<IList<Sprite>>(pngAddress).Completed += handle => OnSpriteSheetLoaded(handle, raceOrName);
     }
 
-    private static void OnSpriteSheetLoaded(AsyncOperationHandle<IList<Sprite>> handle)
+    private static void OnSpriteSheetLoaded(AsyncOperationHandle<IList<Sprite>> handle, string raceOrName)
     {
         if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
         {
             foreach (Sprite sprite in handle.Result)
                 if (sprite != null) spritesByName[sprite.name] = sprite;
+            // Only NOW is this raceOrName actually safe to resolve to — GetSprite(...) can
+            // genuinely return a frame for it from this point on.
+            availableRaceOrNames.Add(raceOrName.ToLowerInvariant());
         }
         else
         {
@@ -178,15 +185,23 @@ public static class CharacterSpritesheets
     private static string NormalizeKey(string raceOrName, string facing) =>
         $"{raceOrName.Trim().ToLowerInvariant()}_{facing.Trim().ToLowerInvariant()}";
 
-    // Tries characterName, then race, then fallback (in that order), returning the first one
-    // with at least one baked facing. The specific facing requested later via GetManifest can
-    // still come back null if only some of that raceOrName's facings were baked.
-    public static bool TryResolveRaceOrName(string characterName, RacesEnum race, string fallback, out string raceOrName)
+    // Tries characterName, then (if this is a leader variant) the base leader name it was
+    // transformed from, then race, then fallback (in that order), returning the first one with
+    // at least one baked facing. The specific facing requested later via GetManifest can still
+    // come back null if only some of that raceOrName's facings were baked.
+    public static bool TryResolveRaceOrName(string characterName, string variantBaseName, RacesEnum race, string fallback, out string raceOrName)
     {
         EnsureLoading();
         if (HasAny(characterName)) { raceOrName = characterName; return true; }
+        if (HasAny(variantBaseName)) { raceOrName = variantBaseName; return true; }
         if (HasAny(race.ToString())) { raceOrName = race.ToString(); return true; }
-        if (HasAny(fallback)) { raceOrName = fallback; return true; }
+        // Manifests register incrementally as each one finishes loading, not all at once — so
+        // mid-load, the fallback's sheet can already be registered while this character's own
+        // name/race sheet simply hasn't arrived yet. Committing to fallback in that window would
+        // visibly show the wrong character (e.g. every character briefly rendering as "Gandalf"
+        // if that's what fallback happens to be set to) instead of waiting the extra moment for
+        // its own match. Only trust fallback once loading is fully done and nothing better exists.
+        if (IsLoaded && HasAny(fallback)) { raceOrName = fallback; return true; }
         raceOrName = null;
         return false;
     }

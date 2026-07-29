@@ -6,10 +6,9 @@ gpt-image-2 images.edit call.
 .DESCRIPTION
 This wrapper samples 3 shipped character card references from
 Assets/Art/Cards/Characters and sends them, alongside a prompt describing the
-named character in a strict T-pose with a transparent background, to
+named character in a strict T-pose with a solid chroma-fuchsia background, to
 gpt-image-2's images.edit endpoint in one call — no separate sketch/colorize
-round-trip. If the API still returns an opaque background, the script falls
-back to flood-fill alpha keying automatically.
+round-trip. The chroma-fuchsia background is retained in the final PNG.
 #>
 param(
     [Parameter(Mandatory = $true)]

@@ -20,7 +20,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     public GameObject otherCharacters;
 
     [Header("Images")]
-    public Image concentricalCircles;
+    public Image cards;
 
     [Header("Banner")]
     public Image bannerImage;
@@ -64,8 +64,11 @@ public class SelectedCharacterIcon : MonoBehaviour
     [SerializeField] private float loadingIconSize = 30f;
 
     // private Videos videos;
+    private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
+
     private Illustrations illustrations;
     private CanvasGroup canvasGroup;
+    private Material bannerMaterialInstance;
 
     // Card-bloom affordance state (see UpdateBloomHint).
     private CardBloomWheel bloomWheel;
@@ -111,7 +114,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     // only the clickable cursor remains.
     private void UpdateBloomHint()
     {
-        if (concentricalCircles == null) return;
+        if (cards == null) return;
         if (bloomWheel == null) bloomWheel = FindFirstObjectByType<CardBloomWheel>();
 
         // Only the icon instance the wheel actually watches gets the affordance — hover
@@ -158,9 +161,9 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     private void SetCirclesAlpha(float alpha255)
     {
-        Color color = concentricalCircles.color;
+        Color color = cards.color;
         color.a = alpha255 / 255f;
-        concentricalCircles.color = color;
+        cards.color = color;
     }
 
     private void SetClickableCursor(bool clickable)
@@ -198,7 +201,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         loadingIconRect.sizeDelta = Vector2.one * loadingIconSize;
 
         loadingIconImage = go.AddComponent<Image>();
-        loadingIconImage.sprite = concentricalCircles != null ? concentricalCircles.sprite : null;
+        loadingIconImage.sprite = cards != null ? cards.sprite : null;
         loadingIconImage.raycastTarget = false;
         loadingIconImage.type = Image.Type.Filled;
         loadingIconImage.fillMethod = Image.FillMethod.Radial360;
@@ -272,6 +275,7 @@ public class SelectedCharacterIcon : MonoBehaviour
 SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
+        SetCardsImage(c.GetOwner());
         SetCharacterVisuals(GetIllustrationByName(!string.IsNullOrWhiteSpace(c.illustrationName) ? c.illustrationName : c.characterName));
         string baseHoverText = BuildSelectedCharacterTitle(c);
         string kidnappingText = BuildKidnappingStatusText(c);
@@ -328,6 +332,7 @@ SetVisible(true);
 SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
+        SetCardsImage(c.GetOwner());
         SetCharacterVisuals(GetIllustrationByName(!string.IsNullOrWhiteSpace(c.illustrationName) ? c.illustrationName : c.characterName));
         textWidget.text = string.IsNullOrWhiteSpace(hoverText) ? BuildSelectedCharacterTitle(c) : hoverText;
 
@@ -358,6 +363,7 @@ SetVisible(true);
 
 SetVisible(true);
         border.SetActive(true);
+        SetCardsImage(army.commander.GetOwner());
         SetCharacterVisuals(ResolveArmySprite(army));
         textWidget.text = army.GetHoverTextNoXp();
 
@@ -442,6 +448,42 @@ SetVisible(false);
         Sprite sprite = ResolveBannerSprite(owner);
         bannerImage.sprite = sprite;
         bannerImage.enabled = sprite != null;
+        ApplyBannerOutlineColor(owner);
+    }
+
+    // The BannerOutline material (Sprites/Outline shader) is a shared asset — other instances
+    // of this component (e.g. CharacterSpriteHover's hover-preview clone) reference the same
+    // material, so mutating it directly would leak one character's nation color onto every
+    // banner using it. A lazily-created per-instance copy keeps this icon's outline isolated.
+    private void ApplyBannerOutlineColor(Leader owner)
+    {
+        if (bannerImage == null || bannerImage.material == null) return;
+        if (bannerMaterialInstance == null)
+        {
+            bannerMaterialInstance = new Material(bannerImage.material);
+            bannerImage.material = bannerMaterialInstance;
+        }
+        bannerMaterialInstance.SetColor(OutlineColorId, owner != null ? owner.nationColor : Color.white);
+    }
+
+    // Swaps the pulsing card-stack icon to the leader's own deck art (e.g. Mithrandir's grey
+    // star, the Necromancer's skull) instead of always showing the same generic stack.
+    private void SetCardsImage(Leader owner)
+    {
+        if (cards == null) return;
+        Sprite sprite = ResolveCardsSprite(owner);
+        if (sprite != null) cards.sprite = sprite;
+    }
+
+    private Sprite ResolveCardsSprite(Leader owner)
+    {
+        if (owner == null) return null;
+        string subdeckId = owner is PlayableLeader playableLeader
+            ? playableLeader.GetSelectedSubdeckId()
+            : owner.GetBiome()?.subdeckId;
+        if (string.IsNullOrWhiteSpace(subdeckId)) return null;
+        if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
+        return illustrations != null ? illustrations.GetDeckArtByName(subdeckId, false) : null;
     }
 
     private Sprite ResolveBannerSprite(Leader owner)

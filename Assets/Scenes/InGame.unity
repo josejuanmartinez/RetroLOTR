@@ -791,9 +791,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8481bceb7d45e44d898d0236f582b62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clickableCursor: {fileID: 2800000, guid: ab04032724a00754c842e3943b504645, type: 3}
+  clickableCursor: {fileID: 2800000, guid: e7a7b537e18963d4791e9dff67f91337, type: 3}
   draggableCursor: {fileID: 2800000, guid: 993822137eb7a1a40a38ff6cb0f829ea, type: 3}
-  defaultCursor: {fileID: 0}
+  defaultCursor: {fileID: 2800000, guid: ab04032724a00754c842e3943b504645, type: 3}
   waitingCursor: {fileID: 0}
   disableCursor: {fileID: 2800000, guid: ba0e0e34f6a27c246b63b7c565d893b3, type: 3}
   hotSpot: {x: 0, y: 0}
@@ -9099,10 +9099,10 @@ PrefabInstance:
     - target: {fileID: 4884145274950669051, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 3ef389154b316a847a9ff0e067210dd2, type: 3}
+      objectReference: {fileID: 5070484294108429774, guid: d87fb742f9612b14ca34b30aa61a7f89, type: 3}
     - target: {fileID: 4884145274950669051, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_Color.a
-      value: 0.8784314
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4884145274950669051, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_Color.b
@@ -9416,6 +9416,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5198166638811136188, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: cards
+      value: 
+      objectReference: {fileID: 1770310735}
     - target: {fileID: 5198166638811136188, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: circlesHoverAlpha
       value: 225
@@ -12724,6 +12728,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8383094470582523888, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2100000, guid: af11c651ddad49c885d103d7dd471bcd, type: 2}
     - target: {fileID: 8412592444041519668, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_SizeDelta.y
       value: 219.57
@@ -14563,6 +14571,17 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1770310735 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4884145274950669051, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+  m_PrefabInstance: {fileID: 1212030918}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!114 &1789085340 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8672206908900510878, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
@@ -15610,11 +15629,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.91119576
+      value: 0.9113658
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.91119576
+      value: 0.9113658
+      objectReference: {fileID: 0}
+    - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
+      propertyPath: minZoom
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_Enabled

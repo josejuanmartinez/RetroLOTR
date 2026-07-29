@@ -19,6 +19,11 @@ public class Character : MonoBehaviour
     public string characterName;
     public string illustrationName;
     public string characterGroup;
+
+    // Overridden by PlayableLeader: when characterName has been swapped to a leader variant's
+    // name (e.g. "Strider" for "Aragorn"), this returns the original base leader name so sprite
+    // lookups can fall back to it before falling back to race. Null for every other Character.
+    public virtual string SpriteVariantBaseName => null;
     
     [Header("Allegiance")]
     public AlignmentEnum alignment;
