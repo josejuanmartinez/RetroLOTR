@@ -87,9 +87,6 @@ public class Hex : MonoBehaviour
 
 
 
-    [Header("Outline")]
-    public float characterOutlineSize = 10f;
-    [SerializeField] private Material characterOutlineMaterial;
     private int darknessTurnsRemaining = 0;
 
     [Header("Data")]
@@ -170,17 +167,10 @@ public class Hex : MonoBehaviour
     private static Vector3 sharedSelectedParticlesLocalScale = Vector3.one;
     private static readonly Dictionary<SharedParticleType, SharedParticlePoolState> sharedParticlePools = new();
     private static Transform sharedParticlePoolRoot;
-    private MaterialPropertyBlock characterOutlinePropertyBlock;
-    // Full-alpha nation-color outline last applied by ApplyOutlineColorFromBanner/ClearOutlineColor —
-    // cached so UpdateCharacterSpriteAlpha() can dim the outline's alpha in step with the sprite's,
-    // without needing to know the owner/nation color itself.
-    private Color characterOutlineBaseColor = Color.white;
 
     private const string Unknown = "Unknown character(s)";
     private const int DarknessTurnsDefault = 2;
     private const int SharedOneShotParticlePoolSize = 3;
-    private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
-    private static readonly int OutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
     private bool isCharacterHovered = false;
 
     // Scene singletons shared by every hex. Cached statically because Awake runs once
@@ -350,7 +340,6 @@ public class Hex : MonoBehaviour
         if (bannerSpriteRenderer != null) SetActiveFast(bannerSpriteRenderer.gameObject, false);
         if (characterClassesIconGrid != null) SetActiveFast(characterClassesIconGrid.gameObject, false);
 
-        ApplyCharacterOutlineMaterial();
         return characterSpriteRenderer != null;
     }
 
@@ -772,9 +761,9 @@ public class Hex : MonoBehaviour
         // Pre-apply the outline colour before the renderer becomes visible so there
         // is no one-frame flash of the previous (possibly white/cleared) colour.
         if (seen && hasCharacter && TryGetKnownCharacterForIcon(out Character knownForOutline))
-            UpdateOutlineColor(knownForOutline);
+            GetCharacterAnimationController()?.SetOutlineForCharacter(knownForOutline);
         else
-            ClearOutlineColor();
+            GetCharacterAnimationController()?.ClearOutline();
 
         SetActiveFast(characterSpriteRenderer != null ? characterSpriteRenderer.gameObject : null, seen && hasCharacter);
         if (seen && hasCharacter)
@@ -1600,22 +1589,6 @@ public class Hex : MonoBehaviour
         sr.color = c;
     }
 
-    private void ApplyCharacterOutlineMaterial()
-    {
-        if (!characterSpriteRenderer) return;
-
-        if (characterOutlineMaterial == null)
-        {
-            Debug.LogWarning("Hex: characterOutlineMaterial is not assigned in the Inspector.");
-            return;
-        }
-
-        if (characterSpriteRenderer.sharedMaterial != characterOutlineMaterial)
-        {
-            characterSpriteRenderer.sharedMaterial = characterOutlineMaterial;
-        }
-    }
-
     private void UpdateMinimapTerrain(bool revealed)
     {
         /* Terrain or None logic commented out — using hexRegion only.
@@ -1707,13 +1680,14 @@ public class Hex : MonoBehaviour
     {
         if (characterSpriteRenderer == null) return;
 
+        CharacterAnimationController animationController = GetCharacterAnimationController();
+
         if (TryGetKnownCharacterForIcon(out Character known))
         {
-            CharacterAnimationController animationController = GetCharacterAnimationController();
             if (animationController != null && animationController.Show(known))
             {
                 // The animator now drives the sprite renderer's sprite each frame.
-                UpdateOutlineColor(known);
+                animationController.SetOutlineForCharacter(known);
                 return;
             }
 
@@ -1729,13 +1703,13 @@ public class Hex : MonoBehaviour
                     sprite = illustrations.GetIllustrationByName(known.race.ToString(), false);
             }
             characterSpriteRenderer.sprite = sprite;
-            UpdateOutlineColor(known);
+            animationController?.SetOutlineForCharacter(known);
         }
         else
         {
-            GetCharacterAnimationController()?.Clear();
+            animationController?.Clear();
             characterSpriteRenderer.sprite = null;
-            ClearOutlineColor();
+            animationController?.ClearOutline();
         }
     }
 
@@ -2009,84 +1983,6 @@ public class Hex : MonoBehaviour
         }
 
         return biome.banner;
-    }
-
-    private void UpdateOutlineColor(Character character)
-    {
-        Leader owner = character != null ? character.GetOwner() : null;
-        if (owner == null)
-        {
-            ClearOutlineColor();
-            return;
-        }
-        ApplyOutlineColorFromBanner(null, owner);
-    }
-
-    private void ApplyOutlineColorFromBanner(Sprite bannerSprite, Leader owner)
-    {
-        ApplyOutlineSettings(characterSpriteRenderer, owner != null ? owner.nationColor : Color.white, characterOutlineSize);
-    }
-
-    private void ClearOutlineColor()
-    {
-        ApplyOutlineSettings(characterSpriteRenderer, Color.white, characterOutlineSize);
-    }
-
-    private void ApplyOutlineSettings(SpriteRenderer spriteRenderer, Color outlineColor, float outlineSize)
-    {
-        if (!spriteRenderer) return;
-
-        if (spriteRenderer == characterSpriteRenderer)
-        {
-            characterOutlineBaseColor = outlineColor;
-        }
-
-        // Always write the property block rather than short-circuiting on a cached "last
-        // applied" value: the cache was a parallel source of truth that could drift out of
-        // sync with the renderer's actual block (e.g. before the block was ever populated),
-        // leaving the icon — and any mover that copies its block — with the material's
-        // default white outline. A single property-block write per outline update is cheap.
-        if (characterOutlinePropertyBlock == null)
-        {
-            characterOutlinePropertyBlock = new MaterialPropertyBlock();
-        }
-
-        spriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
-        characterOutlinePropertyBlock.SetColor(OutlineColorShaderId, outlineColor);
-        characterOutlinePropertyBlock.SetFloat(OutlineSizeShaderId, outlineSize);
-        spriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
-    }
-
-    // Scales the outline's alpha alongside the sprite's own (UpdateCharacterSpriteAlpha), so a
-    // dimmed non-selected character doesn't keep a fully opaque outline around a half-see-through body.
-    private void ApplyCharacterOutlineAlpha(float alpha)
-    {
-        if (!characterSpriteRenderer) return;
-        if (characterOutlinePropertyBlock == null)
-        {
-            characterOutlinePropertyBlock = new MaterialPropertyBlock();
-        }
-
-        characterSpriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
-        Color c = characterOutlineBaseColor;
-        c.a = characterOutlineBaseColor.a * alpha;
-        characterOutlinePropertyBlock.SetColor(OutlineColorShaderId, c);
-        characterSpriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
-    }
-
-    // Overrides just the outline's size (leaving its color alone), driving the not-selected
-    // pulse in UpdateCharacterSpriteAlpha() independently of the alpha helper above.
-    private void ApplyCharacterOutlineSize(float size)
-    {
-        if (!characterSpriteRenderer) return;
-        if (characterOutlinePropertyBlock == null)
-        {
-            characterOutlinePropertyBlock = new MaterialPropertyBlock();
-        }
-
-        characterSpriteRenderer.GetPropertyBlock(characterOutlinePropertyBlock);
-        characterOutlinePropertyBlock.SetFloat(OutlineSizeShaderId, size);
-        characterSpriteRenderer.SetPropertyBlock(characterOutlinePropertyBlock);
     }
 
     private static readonly Dictionary<Sprite, Color> dominantColorCache = new();
@@ -3273,11 +3169,14 @@ public class Hex : MonoBehaviour
     {
         if (characterSpriteRenderer == null || !characterSpriteRenderer.gameObject.activeSelf) return;
 
+        CharacterAnimationController controller = characterAnimationController;
+        float outlineSize = controller != null ? controller.outlineSize : 10f;
+
         if (isCharacterHovered)
         {
             characterSpriteRenderer.color = Color.white;
-            ApplyCharacterOutlineAlpha(1f);
-            ApplyCharacterOutlineSize(characterOutlineSize);
+            controller?.SetOutlineAlpha(1f);
+            controller?.SetOutlineSize(outlineSize);
             return;
         }
 
@@ -3286,19 +3185,20 @@ public class Hex : MonoBehaviour
 
         if (selected != null && selected.hex == this && characterSpriteRenderer.sprite != null)
         {
-            // A selected character counts as hovered (no Unhovered Color tint) and is the only
-            // one whose outline pulses — everyone else's outline stays steady/"always on".
-            characterSpriteRenderer.color = Color.white;
-            float pulseSpeed = characterAnimationController != null ? characterAnimationController.outlinePulseSpeed : 1f;
-            float sizeT = Mathf.PingPong(Time.time * pulseSpeed, 1f);
-            ApplyCharacterOutlineSize(Mathf.Lerp(-5f, characterOutlineSize, sizeT));
+            // The selected character's outline stays steady like everyone else's — instead its
+            // sprite color pulses between Unhovered Color and white to show it's the selection.
+            float pulseSpeed = controller != null ? controller.selectionPulseSpeed : 1f;
+            float colorT = Mathf.PingPong(Time.time * pulseSpeed, 1f);
+            Color baseColor = controller != null ? controller.unhoveredColor : Color.white;
+            characterSpriteRenderer.color = Color.Lerp(baseColor, Color.white, colorT);
+            controller?.SetOutlineSize(outlineSize);
         }
         else
         {
-            characterSpriteRenderer.color = characterAnimationController != null ? characterAnimationController.unhoveredColor : Color.white;
-            ApplyCharacterOutlineSize(characterOutlineSize);
+            characterSpriteRenderer.color = controller != null ? controller.unhoveredColor : Color.white;
+            controller?.SetOutlineSize(outlineSize);
         }
-        ApplyCharacterOutlineAlpha(1f);
+        controller?.SetOutlineAlpha(1f);
     }
 
 }
