@@ -27,9 +27,19 @@ public class CharacterAnimationController : MonoBehaviour
     // currently selected character (a selected character counts as hovered) — read by
     // Hex.UpdateCharacterSpriteAlpha, not applied by this component itself.
     public Color unhoveredColor = Color.white;
-    // Cycles per second of the outline-size pulse Hex.UpdateCharacterSpriteAlpha plays on the
-    // currently selected character only. Read from there, not applied by this component itself.
-    public float outlinePulseSpeed = 1f;
+    // Cycles per second of the Unhovered Color <-> white sprite pulse Hex.UpdateCharacterSpriteAlpha
+    // plays on the currently selected character only. Read from there, not applied by this
+    // component itself.
+    public float selectionPulseSpeed = 1f;
+
+    // Outline size Hex.UpdateCharacterSpriteAlpha applies for the hover/selection/idle states —
+    // the outline no longer pulses, so this is just a steady size.
+    public float outlineSize = 10f;
+    [SerializeField] private Material outlineMaterial;
+    // When set, SetOutlineForCharacter always outlines in black instead of the owner's nation
+    // color — for characters (e.g. neutral/monster encounters) whose outline shouldn't read as
+    // belonging to any nation.
+    public bool blackOutline;
 
     // Playback speed multiplier applied only to the Turn Left/Right in-place spin (baked atlas
     // fps otherwise makes it play at the same pace as walk/idle, which reads as sluggish when a
@@ -110,6 +120,14 @@ public class CharacterAnimationController : MonoBehaviour
     private float frameTimer;
     private bool cursorHovering;
 
+    private MaterialPropertyBlock outlinePropertyBlock;
+    // Full-alpha nation-color outline last applied by SetOutlineForCharacter/ClearOutline —
+    // cached so SetOutlineAlpha() can dim the outline's alpha in step with the sprite's, without
+    // needing to know the owner/nation color itself.
+    private Color outlineBaseColor = Color.white;
+    private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
+    private static readonly int OutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
+
     // Set only when a Show() call fails because CharacterSpritesheets' Addressables load
     // hadn't finished yet (as opposed to a genuine no-match) — callers like Hex.RedrawCharacters
     // only run on specific game events, not every frame, so without this a character whose
@@ -120,6 +138,7 @@ public class CharacterAnimationController : MonoBehaviour
     private void Awake()
     {
         EnsureSpriteRenderer();
+        ApplyOutlineMaterial();
     }
 
     private void Update()
@@ -165,7 +184,11 @@ public class CharacterAnimationController : MonoBehaviour
         float speedMultiplier = isTurning ? Mathf.Max(turnAnimationSpeedMultiplier, 0.01f) : 1f;
         float frameDuration = 1f / (Mathf.Max(state.fps, 0.01f) * speedMultiplier);
         frameTimer += Time.deltaTime;
-        if (frameTimer >= frameDuration)
+        // Loops (not a single "if") to fully drain elapsed time: turnAnimationSpeedMultiplier can
+        // easily push frameDuration below the rendered frame time, and a single "if" would then
+        // cap actual playback at one frame per Update() regardless of how high the multiplier is
+        // set — making the multiplier appear to stop working past that point.
+        while (frameTimer >= frameDuration)
         {
             frameTimer -= frameDuration;
             frameIndex++;
@@ -187,9 +210,12 @@ public class CharacterAnimationController : MonoBehaviour
                 else
                 {
                     // Hold the last frame this Update() (still drawn below), switch to Standing
-                    // Idle now so next Update() picks it up fresh from frame 0.
+                    // Idle now so next Update() picks it up fresh from frame 0. Stop draining
+                    // here too — `state`/frameDuration above belong to the animation that just
+                    // ended, not to Standing Idle.
                     frameIndex = state.frameCount - 1;
                     SetAnimation(AnimationKind.StandingIdle);
+                    break;
                 }
             }
         }
@@ -265,6 +291,74 @@ public class CharacterAnimationController : MonoBehaviour
         if (spriteRenderer != null) return;
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null) spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+    }
+
+    private void ApplyOutlineMaterial()
+    {
+        EnsureSpriteRenderer();
+
+        if (outlineMaterial == null)
+        {
+            Debug.LogWarning($"[CharacterAnimationController] '{name}': outlineMaterial is not assigned in the Inspector.");
+            return;
+        }
+
+        if (spriteRenderer.sharedMaterial != outlineMaterial) spriteRenderer.sharedMaterial = outlineMaterial;
+    }
+
+    // Sets the outline to the given character's owner's nation color (or white if unowned) —
+    // called by Hex whenever the character this controller is showing changes.
+    public void SetOutlineForCharacter(Character character)
+    {
+        Leader owner = character != null ? character.GetOwner() : null;
+        Color color = owner == null ? Color.white : blackOutline ? Color.black : owner.nationColor;
+        ApplyOutlineSettings(color, outlineSize);
+    }
+
+    public void ClearOutline() => ApplyOutlineSettings(Color.white, outlineSize);
+
+    private void ApplyOutlineSettings(Color outlineColor, float size)
+    {
+        if (!spriteRenderer) return;
+
+        outlineBaseColor = outlineColor;
+
+        EnsureOutlinePropertyBlock();
+        spriteRenderer.GetPropertyBlock(outlinePropertyBlock);
+        outlinePropertyBlock.SetColor(OutlineColorShaderId, outlineColor);
+        outlinePropertyBlock.SetFloat(OutlineSizeShaderId, size);
+        spriteRenderer.SetPropertyBlock(outlinePropertyBlock);
+    }
+
+    // Scales the outline's alpha alongside the sprite's own (Hex.UpdateCharacterSpriteAlpha), so
+    // a dimmed non-selected character doesn't keep a fully opaque outline around a half-see-through body.
+    public void SetOutlineAlpha(float alpha)
+    {
+        if (!spriteRenderer) return;
+
+        EnsureOutlinePropertyBlock();
+        spriteRenderer.GetPropertyBlock(outlinePropertyBlock);
+        Color c = outlineBaseColor;
+        c.a = outlineBaseColor.a * alpha;
+        outlinePropertyBlock.SetColor(OutlineColorShaderId, c);
+        spriteRenderer.SetPropertyBlock(outlinePropertyBlock);
+    }
+
+    // Overrides just the outline's size (leaving its color alone) — drives the not-selected pulse
+    // in Hex.UpdateCharacterSpriteAlpha() independently of the alpha setter above.
+    public void SetOutlineSize(float size)
+    {
+        if (!spriteRenderer) return;
+
+        EnsureOutlinePropertyBlock();
+        spriteRenderer.GetPropertyBlock(outlinePropertyBlock);
+        outlinePropertyBlock.SetFloat(OutlineSizeShaderId, size);
+        spriteRenderer.SetPropertyBlock(outlinePropertyBlock);
+    }
+
+    private void EnsureOutlinePropertyBlock()
+    {
+        if (outlinePropertyBlock == null) outlinePropertyBlock = new MaterialPropertyBlock();
     }
 
     public bool Show(Character character)
@@ -418,7 +512,7 @@ public class CharacterAnimationController : MonoBehaviour
     }
 
     // Called by CharacterSpriteHover, which owns the actual collider/mouse events (this
-    // component's own GameObject has no collider) — mirrors unhoveredColor/outlinePulseSpeed
+    // component's own GameObject has no collider) — mirrors unhoveredColor/selectionPulseSpeed
     // above in being state this component holds but doesn't drive itself.
     public void SetHoverCursor(bool hovering)
     {

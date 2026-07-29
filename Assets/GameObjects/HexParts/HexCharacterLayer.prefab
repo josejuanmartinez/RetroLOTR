@@ -46,8 +46,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallback: Common
-  unhoveredColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 1}
-  outlinePulseSpeed: 1
+  unhoveredColor: {r: 0.38679248, g: 0.38679248, b: 0.38679248, a: 0.2784314}
+  selectionPulseSpeed: 2
+  outlineSize: 7
+  outlineMaterial: {fileID: 2100000, guid: 4d66f3e0b57a4b1c8f4d0c73d2f71f8d, type: 2}
+  blackOutline: 1
+  turnAnimationSpeedMultiplier: 10
   crouchIdle: 0
   action: 0
   magic: 0
@@ -91,7 +95,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 4d66f3e0b57a4b1c8f4d0c73d2f71f8d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
