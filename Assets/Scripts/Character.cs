@@ -34,6 +34,13 @@ public class Character : MonoBehaviour
     [Header("Current placement")]
     public Hex hex;
 
+    // Which way this character was last facing (CharacterAnimationController). Kept on the
+    // character rather than the controller because each Hex owns its own persistent
+    // CharacterAnimationController instance (see Hex.GetCharacterAnimationController) — without
+    // this, a character stepping onto a new hex mid-walk would pick up that hex's controller
+    // fresh and always reset to Forward instead of keeping the direction it just turned to.
+    public CharacterAnimationController.Orientation lastFacingOrientation = CharacterAnimationController.Orientation.Forward;
+
     [Header("Current character stats")]
     [SerializeField] int commander = 0;
     [SerializeField] int agent = 0;

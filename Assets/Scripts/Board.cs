@@ -172,8 +172,8 @@ public class Board : MonoBehaviour
     }
 
     [Header("Campaign Selection")]
-    [Tooltip("Prefab of the first screen (campaign/scenario choice). Fully styled in the prefab; when left empty it is loaded from Resources/CampaignSelectionScreen.")]
-    [SerializeField] private RetroLOTR.Scenarios.CampaignSelectionManager campaignSelectionPrefab;
+    [Tooltip("Disabled campaign/scenario selection object already present in the scene.")]
+    [SerializeField] private RetroLOTR.Scenarios.CampaignSelectionManager campaignSelectionScreen;
 
     // Nothing happens — no intro video, no generation, no leader selector — until the
     // player picks an authored scenario or the default random campaign.
@@ -190,24 +190,17 @@ public class Board : MonoBehaviour
         yield return StartCoroutine(DrawCoroutine());
     }
 
-    // Instantiates the authored selection screen (never builds UI in code). Falls back to the
-    // Resources copy when the scene field isn't wired, and — only if both are missing — starts
-    // the default campaign so a broken reference can never soft-lock the game on a blank screen.
+    // Enables the authored selection screen that is already present (and initially disabled)
+    // in the scene.
     private void ShowCampaignSelection()
     {
-        if (FindFirstObjectByType<RetroLOTR.Scenarios.CampaignSelectionManager>() != null) return;
-
-        RetroLOTR.Scenarios.CampaignSelectionManager prefab = campaignSelectionPrefab;
-        if (prefab == null)
-            prefab = Resources.Load<RetroLOTR.Scenarios.CampaignSelectionManager>("CampaignSelectionScreen");
-
-        if (prefab != null)
+        if (campaignSelectionScreen != null)
         {
-            Instantiate(prefab);
+            campaignSelectionScreen.gameObject.SetActive(true);
             return;
         }
 
-        Debug.LogError("Board: no CampaignSelectionScreen prefab wired or found in Resources; starting the default campaign.");
+        Debug.LogError("Board: no disabled CampaignSelectionScreen scene object is wired; starting the default campaign.");
         GameConfig.ScenarioToLoad = null;
         GameConfig.ScenarioChosen = true;
     }
@@ -694,10 +687,10 @@ public class Board : MonoBehaviour
     // destination hex's own, separate renderer) stays hidden throughout so the destination
     // isn't revealed early, exactly as before. Bumps fromSR's own sortingOrder while airborne
     // (matching the old mover's +100 offset), then restores its baseline local transform and
-    // sortingOrder, and explicitly resets its controller back to Standing Idle/Forward —
-    // CharacterAnimationController.ResolveCharacter only resets orientation/animation state when
-    // the character CHANGES, which won't happen here since this is the same controller instance
-    // driving the same character throughout the whole hop.
+    // sortingOrder, and switches its controller back to Standing Idle — the orientation reached
+    // by the walk/turn is deliberately left as-is (not reset to Forward) so the character stays
+    // facing the direction it actually landed in; see Character.lastFacingOrientation for how
+    // that facing then carries over to the next hex's own controller instance.
     private IEnumerator WalkCharacterOnHex(
         Character character,
         CharacterAnimationController controller,
@@ -753,7 +746,6 @@ public class Board : MonoBehaviour
         if (controller != null)
         {
             controller.SetAnimation(CharacterAnimationController.AnimationKind.StandingIdle);
-            controller.SetOrientation(CharacterAnimationController.Orientation.Forward);
             controller.SetLoop(false);
         }
 

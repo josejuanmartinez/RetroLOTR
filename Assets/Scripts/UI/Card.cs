@@ -58,6 +58,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     // Refreshed by UpdateInteractableState (RequestInteractionRefreshAll runs it on every
     // relevant state change); read by CardBloomWheel each frame.
     public bool LastKnownPlayable { get; private set; } = true;
+    public bool IsPlayInProgress { get; private set; }
 
     private CanvasGroup canvasGroup;
     private LayoutElement layoutElement;
@@ -179,7 +180,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         // Only the active environmental card (Layout's "Environmental > EnvironmentalCard")
         // shows this icon; hidden by default so it never leaks onto hand cards.
-        if (environmentalSprite != null) environmentalSprite.gameObject.SetActive(false);
+        // Some legacy card prefabs resolve this TMP reference on the card root itself.
+        // Never deactivate the whole card while trying to hide only the environmental icon.
+        if (environmentalSprite != null && environmentalSprite.gameObject != gameObject)
+            environmentalSprite.gameObject.SetActive(false);
 
         if (descriptionText != null)
         {
@@ -242,6 +246,17 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine(baseDescription, data));
             }
         }
+    }
+
+    // Centered hover previews must be fully initialized without starting the one-time
+    // hand-draw typewriter coroutine or mutating that animation flag on the real CardData.
+    public void InitializePreview(CardData data)
+    {
+        if (data == null) return;
+        bool hadShownHandAnimation = data.hasShownHandAnimation;
+        data.hasShownHandAnimation = true;
+        Initialize(data, startAsToken: false);
+        data.hasShownHandAnimation = hadShownHandAnimation;
     }
 
     // Called for the active environmental card shown in Layout's "Environmental > EnvironmentalCard".
@@ -812,6 +827,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
+            if (SuppressHoverEffects)
+            {
+                Board board = FindFirstObjectByType<Board>();
+                PlayFromBloom(board != null ? board.selectedCharacter : null);
+                return;
+            }
             if (canvasGroup != null && !canvasGroup.interactable)
             {
                 if (IsUnplayedEncounterWithHex())
@@ -825,16 +846,98 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
     }
 
-    private async void TryPlayCard()
+    // CardBloomWheel performs its own geometric hit testing because its tokens animate
+    // outside their original layout rect. Route bloom clicks through that same hit result
+    // instead of relying on an unrelated UI raycast to happen to reach this component.
+    public void PlayFromBloom(Character selectedCharacter)
+    {
+        // LastKnownPlayable is the exact state CardBloomWheel uses to paint a token red.
+        // Keep click behavior consistent with that visual state even though bloom clicks
+        // intentionally bypass the root CanvasGroup's stale interactable flag.
+        if (!LastKnownPlayable)
+        {
+            if (IsUnplayedEncounterWithHex())
+            {
+                BoardNavigator.Instance?.LookAt(cardData.encounterTargetHex.transform.position);
+                FlashEncounterHintFrame(cardData.encounterTargetHex);
+            }
+            else if (selectedCharacter?.hex != null)
+            {
+                string reason = BuildRequirementsMessageText(selectedCharacter, GetHumanPlayerLeader());
+                if (!string.IsNullOrWhiteSpace(reason))
+                    MessageDisplayNoUI.ShowMessage(selectedCharacter.hex, selectedCharacter, reason, Color.red);
+            }
+            return;
+        }
+
+        if (cardData != null && cardData.GetCardType() == CardTypeEnum.Environmental)
+        {
+            PlayEnvironmentalFromBloom(selectedCharacter);
+            return;
+        }
+        TryPlayCard(selectedCharacter, invokedFromBloom: true);
+    }
+
+    private void PlayEnvironmentalFromBloom(Character selected)
+    {
+        if (IsPlayInProgress || cardData == null) return;
+        EnsureManagersLoaded();
+
+        Game game = FindFirstObjectByType<Game>();
+        PlayableLeader playerLeader = game != null ? game.player : null;
+        if (playerLeader == null || deckManager == null) return;
+        if (!cardData.MeetsResourceRequirements(playerLeader))
+        {
+            if (selected?.hex != null)
+            {
+                string reason = BuildRequirementsMessageText(selected, playerLeader);
+                if (!string.IsNullOrWhiteSpace(reason))
+                    MessageDisplayNoUI.ShowMessage(selected.hex, selected, reason, Color.red);
+            }
+            return;
+        }
+
+        CardData playedCard = cardData;
+        Sprite playedSprite = cardArtImage != null && cardArtImage.sprite != null
+            ? cardArtImage.sprite
+            : ResolveCardArtwork(playedCard);
+        IsPlayInProgress = true;
+
+        if (!deckManager.TryConsumeCard(playerLeader, playedCard.name, false, out CardData consumedCard))
+        {
+            IsPlayInProgress = false;
+            return;
+        }
+
+        CardData activeCard = consumedCard ?? playedCard;
+        EnvironmentalCardManager.GetOrCreate().SetActiveCard(activeCard);
+        playerLeader.RecordPlayedCard(activeCard);
+        selected?.RecordPlayedCard(activeCard, playedSprite);
+        TutorialManager.Instance?.HandleCardPlayed(selected, activeCard, selected != null ? selected.hex : null);
+
+        if (selected?.hex != null)
+            MessageDisplayNoUI.ShowMessage(selected.hex, selected, $"{activeCard.name} takes hold — effects begin next turn", Color.green);
+
+        CardPlayFlight.Launch(this, selected != null ? selected.hex : null);
+        Destroy(gameObject);
+    }
+
+    private async void TryPlayCard(Character selectedOverride = null, bool invokedFromBloom = false)
     {
         if (cardData == null) return;
-        if (canvasGroup != null && !canvasGroup.interactable) return;
+        if (IsPlayInProgress) return;
+        if (!invokedFromBloom && canvasGroup != null && !canvasGroup.interactable)
+        {
+            return;
+        }
 
         Board board = FindFirstObjectByType<Board>();
         SelectedCharacterIcon icon = FindFirstObjectByType<SelectedCharacterIcon>();
-        Character selected = icon != null && icon.CurrentCharacter != null
-            ? icon.CurrentCharacter
-            : board != null ? board.selectedCharacter : null;
+        Character selected = selectedOverride != null
+            ? selectedOverride
+            : board != null && board.selectedCharacter != null
+                ? board.selectedCharacter
+                : icon != null ? icon.CurrentCharacter : null;
         Leader resourceOwner = GetHumanPlayerLeader();
         CardData playedCard = cardData;
         Character playedSelected = selected;
@@ -870,10 +973,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             }
         }
 
-        if (!playedCard.EvaluatePlayability(
+        bool playable = playedCard.EvaluatePlayability(
             playedSelected,
             _ => resourceOwner == null || playedCard.MeetsResourceRequirements(resourceOwner),
-            _ => actionConditionsMet))
+            _ => actionConditionsMet);
+        if (!playable)
         {
             if (IsUnplayedEncounterWithHex())
             {
@@ -894,6 +998,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             }
             return;
         }
+
+        // Hand consumption rebuilds the bloom immediately. DeckManager uses this flag to keep
+        // the clicked instance alive until its async effect and play animation have completed.
+        IsPlayInProgress = true;
 
         // The play handlers below can stall the main thread for a couple of seconds
         // (effect resolution, reveals, spawns), during which nothing renders. Show the
@@ -983,6 +1091,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 canvasGroup.blocksRaycasts = true;
             }
             UpdateInteractableState();
+            IsPlayInProgress = false;
+            deckManager?.RefreshHumanPlayerHandUI();
+            if (gameObject != null) Destroy(gameObject);
         }
     }
 
@@ -1117,7 +1228,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         EnsureManagersLoaded();
         BindLegacyPrefabReferences();
         ApplyCardTypeColor(data.GetCardType());
-        if (environmentalSprite != null) environmentalSprite.gameObject.SetActive(false);
+        if (environmentalSprite != null && environmentalSprite.gameObject != gameObject)
+            environmentalSprite.gameObject.SetActive(false);
         Sprite sprite = ResolveCardArtwork(data);
         if (tokenImage != null)
         {

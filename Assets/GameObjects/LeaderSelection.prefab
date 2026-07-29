@@ -149,8 +149,8 @@ MonoBehaviour:
     for the first uneasy rumors, and searches old ground for relics that have waited
     too long. His path starts in quiet places, but it will not remain quiet.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -286,8 +286,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Skip Tutorial
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -381,7 +381,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1116041978972027761}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -391,12 +391,12 @@ RectTransform:
   - {fileID: 5130759216348873558}
   - {fileID: 6481301830735450447}
   - {fileID: 2204987579684490513}
-  m_Father: {fileID: 1411856536270501661}
+  m_Father: {fileID: 2438257936956183789}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1700, y: 912.43585}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8391223362696043466
 CanvasRenderer:
@@ -504,8 +504,8 @@ MonoBehaviour:
   m_text: "Choose which leader you want to play as. \nSome leaders have multiple
     flavours<sprite name=\"chars\"> that will condition your card deck<sprite name=deck>"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -610,7 +610,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 54.805, y: 25.931}
+  m_AnchoredPosition: {x: 54.805054, y: 25.93103}
   m_SizeDelta: {x: 220.1731, y: 36.2845}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &3233257244700534291
@@ -928,9 +928,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 105872833703412560}
-  - {fileID: 5323807929052734314}
-  - {fileID: 613407788555681042}
-  - {fileID: 8381007872967385626}
+  - {fileID: 2438257936956183789}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1429,8 +1427,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1679,8 +1677,8 @@ MonoBehaviour:
     planning, coercion, furnaces, mixed servants, and practical cruelty in service
     of controlled expansion.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1773,7 +1771,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6578540453222313299}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1781,7 +1779,7 @@ RectTransform:
   - {fileID: 8803430719560059618}
   - {fileID: 2962597648225082934}
   - {fileID: 8564042522474180481}
-  m_Father: {fileID: 1411856536270501661}
+  m_Father: {fileID: 2438257936956183789}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1838,18 +1836,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7283256923915831300}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7534781324420499738}
-  m_Father: {fileID: 1411856536270501661}
+  m_Father: {fileID: 2438257936956183789}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1700, y: 912.43585}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3524294268929640582
 CanvasRenderer:
@@ -2206,8 +2204,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Start Tutorial
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2347,8 +2345,8 @@ MonoBehaviour:
     hearts with honeyed reason until obedience seems wisdom and surrender seems peace.<br><br>This
     variant favors influence, manipulation, and command exercised with polished restraint.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2417,6 +2415,44 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &8431906393453889298
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2438257936956183789}
+  m_Layer: 5
+  m_Name: Wrapper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2438257936956183789
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8431906393453889298}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5323807929052734314}
+  - {fileID: 613407788555681042}
+  - {fileID: 8381007872967385626}
+  m_Father: {fileID: 1411856536270501661}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8566809821601973494
 GameObject:
   m_ObjectHideFlags: 0
@@ -2484,8 +2520,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: <sprite name="ring"> The Untold War of the Ring <sprite name="ring">
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

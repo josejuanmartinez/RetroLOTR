@@ -20,6 +20,9 @@ public class DateManager : MonoBehaviour
 
     private Game game;
     private MiddleEarthDate currentDate;
+    private Color dateRestingColor;
+    private bool hasDateRestingColor;
+    private static readonly Color DateHoverColor = new Color32(0xAA, 0x99, 0x6A, 0xFF);
 
     private void OnEnable()
     {
@@ -37,6 +40,7 @@ public class DateManager : MonoBehaviour
 
     private void OnDisable()
     {
+        SetDateHoverState(false);
         if (game != null)
         {
             game.NewTurnStarted -= Show;
@@ -92,9 +96,38 @@ public class DateManager : MonoBehaviour
         trigger.triggers.RemoveAll(t =>
             t.eventID == EventTriggerType.PointerEnter || t.eventID == EventTriggerType.PointerExit);
 
+        if (!hasDateRestingColor)
+        {
+            dateRestingColor = textWidget.color;
+            hasDateRestingColor = true;
+        }
+
         // Tooltip-style: hover the date to open the calendar, move away to hide it.
-        AddTrigger(trigger, EventTriggerType.PointerEnter, OpenCalendar);
-        AddTrigger(trigger, EventTriggerType.PointerExit, CloseCalendar);
+        AddTrigger(trigger, EventTriggerType.PointerEnter, OnDatePointerEnter);
+        AddTrigger(trigger, EventTriggerType.PointerExit, OnDatePointerExit);
+    }
+
+    private void OnDatePointerEnter()
+    {
+        SetDateHoverState(true);
+        OpenCalendar();
+    }
+
+    private void OnDatePointerExit()
+    {
+        SetDateHoverState(false);
+        CloseCalendar();
+    }
+
+    private void SetDateHoverState(bool hovered)
+    {
+        if (textWidget != null && hasDateRestingColor)
+            textWidget.color = hovered ? DateHoverColor : dateRestingColor;
+
+        if (hovered)
+            CursorManager.Instance?.SetClickableCursor();
+        else
+            CursorManager.Instance?.SetDefaultCursor();
     }
 
     private static void AddTrigger(EventTrigger trigger, EventTriggerType type, System.Action action)

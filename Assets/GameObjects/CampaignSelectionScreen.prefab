@@ -119,6 +119,7 @@ MonoBehaviour:
   defaultCampaignButton: {fileID: 1000054}
   scenarioButtonContainer: {fileID: 1000101}
   scenarioButtonTemplate: {fileID: 1000114}
+  enableAfterSelection: {fileID: 0}
 --- !u!1 &1000010
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,8 +370,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: <sprite name="ring">The Untold War of the Ring<sprite name="ring">
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4822606906ec0ed4d8e6b40df0058e2e, type: 2}
-  m_sharedMaterial: {fileID: 4335293358821604396, guid: 4822606906ec0ed4d8e6b40df0058e2e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -527,8 +528,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Choose a game mode
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7d8f8896cb0ff6e4f89dd1fe9a66b32a, type: 2}
-  m_sharedMaterial: {fileID: 4335293358821604396, guid: 7d8f8896cb0ff6e4f89dd1fe9a66b32a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -828,8 +829,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Champions of Middle Earth
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7d8f8896cb0ff6e4f89dd1fe9a66b32a, type: 2}
-  m_sharedMaterial: {fileID: 4335293358821604396, guid: 7d8f8896cb0ff6e4f89dd1fe9a66b32a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -965,8 +966,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: A new random Middle-earth - the classic campaign. Optional tutorial available.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1103,8 +1104,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Scenarios
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4822606906ec0ed4d8e6b40df0058e2e, type: 2}
-  m_sharedMaterial: {fileID: 4335293358821604396, guid: 4822606906ec0ed4d8e6b40df0058e2e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1625,8 +1626,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Scenario name
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7d8f8896cb0ff6e4f89dd1fe9a66b32a, type: 2}
-  m_sharedMaterial: {fileID: 4335293358821604396, guid: 7d8f8896cb0ff6e4f89dd1fe9a66b32a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1762,8 +1763,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Description
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

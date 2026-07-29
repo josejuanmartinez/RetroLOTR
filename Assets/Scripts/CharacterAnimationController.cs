@@ -31,6 +31,11 @@ public class CharacterAnimationController : MonoBehaviour
     // currently selected character only. Read from there, not applied by this component itself.
     public float outlinePulseSpeed = 1f;
 
+    // Playback speed multiplier applied only to the Turn Left/Right in-place spin (baked atlas
+    // fps otherwise makes it play at the same pace as walk/idle, which reads as sluggish when a
+    // character turns to face its next hex mid-move). Doesn't affect any other animation kind.
+    public float turnAnimationSpeedMultiplier = 3f;
+
     // ── Animation bools — one checkbox per baked state. Names/casing match the atlas manifest's
     // "name" field exactly (see AnimationBindings below); default is Standing Idle. ──────────
     public bool crouchIdle;
@@ -155,7 +160,10 @@ public class CharacterAnimationController : MonoBehaviour
             frameTimer = 0f;
         }
 
-        float frameDuration = 1f / Mathf.Max(state.fps, 0.01f);
+        AnimationKind? activeKind = GetKindForStateName(currentStateName);
+        bool isTurning = activeKind == AnimationKind.TurnLeft || activeKind == AnimationKind.TurnRight;
+        float speedMultiplier = isTurning ? Mathf.Max(turnAnimationSpeedMultiplier, 0.01f) : 1f;
+        float frameDuration = 1f / (Mathf.Max(state.fps, 0.01f) * speedMultiplier);
         frameTimer += Time.deltaTime;
         if (frameTimer >= frameDuration)
         {
@@ -245,6 +253,9 @@ public class CharacterAnimationController : MonoBehaviour
     {
         foreach (var binding in OrientationBindings)
             binding.Set(this, binding.Value == orientation);
+        // Remembered on the character (not just this controller) so that a different hex's
+        // controller can restore it later — see Character.lastFacingOrientation.
+        if (resolvedForCharacter != null) resolvedForCharacter.lastFacingOrientation = orientation;
     }
 
     public void SetLoop(bool value) => loop = value;
@@ -303,8 +314,13 @@ public class CharacterAnimationController : MonoBehaviour
         if (resolvedForCharacter != character)
         {
             // First resolution of this specific character (or a change of character since the
-            // last one shown here) — reset to the documented per-character default.
-            SetOrientation(Orientation.Forward);
+            // last one shown here) — restore whichever way this character was last facing
+            // (character.lastFacingOrientation) rather than always Forward, so stepping onto a
+            // new hex's controller mid-walk doesn't visibly snap the character back to Forward.
+            // resolvedForCharacter must be set before SetOrientation so it writes the restored
+            // value back onto the correct character, not the previous one.
+            resolvedForCharacter = character;
+            SetOrientation(character.lastFacingOrientation);
             SetAnimation(AnimationKind.StandingIdle);
             currentStateName = null;
             frameIndex = 0;
@@ -350,7 +366,7 @@ public class CharacterAnimationController : MonoBehaviour
         Orientation target = ResolveDirectionOrientation(worldDelta);
         while (GetActiveOrientation() != target)
         {
-            SetAnimation(NextTurnKindToward(target));
+            SetAnimation(NextTurnKindToward(target, worldDelta));
             Orientation before = GetActiveOrientation();
             // isShowing can flip false mid-turn (e.g. Clear() called from elsewhere) — don't spin forever.
             while (isShowing && GetActiveOrientation() == before) yield return null;
@@ -359,13 +375,18 @@ public class CharacterAnimationController : MonoBehaviour
     }
 
     // diff is how many +1 ("Right") steps around OrientationCycle reach target from the current
-    // facing. For an exact 180 (diff == 2) either direction is equally short, so Right is picked
-    // arbitrarily.
-    private AnimationKind NextTurnKindToward(Orientation target)
+    // facing. For an exact 180 (diff == 2) either direction is equally short — that's exactly
+    // the diagonal-move case (e.g. up-left/up-right both resolve to the Back target), so the
+    // tie is broken by worldDelta.x instead of picking one arbitrarily: same sign convention
+    // ResolveDirectionOrientation's horizontal branch already uses (x < 0 pairs with TurnRight,
+    // matching a pure left move's diff==1 result below), so up-left and up-right now turn
+    // opposite ways instead of both defaulting to the same turn.
+    private AnimationKind NextTurnKindToward(Orientation target, Vector3 worldDelta)
     {
         int currentIndex = System.Array.IndexOf(OrientationCycle, GetActiveOrientation());
         int targetIndex = System.Array.IndexOf(OrientationCycle, target);
         int diff = ((targetIndex - currentIndex) % OrientationCycle.Length + OrientationCycle.Length) % OrientationCycle.Length;
+        if (diff == 2) return worldDelta.x < 0f ? AnimationKind.TurnRight : AnimationKind.TurnLeft;
         return diff <= 2 ? AnimationKind.TurnRight : AnimationKind.TurnLeft;
     }
 
