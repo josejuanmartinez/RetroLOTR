@@ -906,8 +906,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Event narration
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1718,8 +1718,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: There is only one lord of the rings
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
-  m_sharedMaterial: {fileID: 6005860808784687186, guid: 1ea3c05212e47c140a3c622b0f5f07f0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  m_sharedMaterial: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1811,7 +1811,7 @@ PrefabInstance:
     - target: {fileID: 396915625275560491, guid: ea983dbfa58046547bad514a9eb3e7d2, type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: 6fdef3feda238e14fbfd5504378269e5, type: 2}
+      objectReference: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
     - target: {fileID: 396915625275560491, guid: ea983dbfa58046547bad514a9eb3e7d2, type: 3}
       propertyPath: m_fontStyle
       value: 0
@@ -1835,7 +1835,7 @@ PrefabInstance:
     - target: {fileID: 396915625275560491, guid: ea983dbfa58046547bad514a9eb3e7d2, type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 6005860808784687186, guid: 6fdef3feda238e14fbfd5504378269e5, type: 2}
+      objectReference: {fileID: -4350441904132810264, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
     - target: {fileID: 396915625275560491, guid: ea983dbfa58046547bad514a9eb3e7d2, type: 3}
       propertyPath: m_fontColor32.rgba
       value: 4289836730

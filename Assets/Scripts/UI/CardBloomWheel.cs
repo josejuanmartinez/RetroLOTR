@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-10000)]
 public class CardBloomWheel : MonoBehaviour
 {
     [Header("Bloom Layout")]
@@ -83,6 +84,7 @@ public class CardBloomWheel : MonoBehaviour
     private int centerPreviewIndex = -1;
     private float previewIntroT;
     private float backdropAlpha;
+    private bool externalPreviewActive;
 
     // Resolved at runtime so that newly-added serialized fields left at 0 (Unity does not
     // always apply field initializers to components already placed in a scene/prefab) still
@@ -167,6 +169,18 @@ public class CardBloomWheel : MonoBehaviour
 
     private void Update()
     {
+        // Capture the click before board/gameplay Update methods can change selection, hide the
+        // hand, or collapse this wheel in response to the same mouse-down.
+        if (isOpen && Input.GetMouseButtonDown(0))
+        {
+            int clickedIndex = FindHoveredCardIndex(CanvasCamera());
+            if (clickedIndex >= 0 && clickedIndex < cardComponents.Count)
+            {
+                Card clickedCard = cardComponents[clickedIndex];
+                clickedCard?.PlayFromBloom(selectedCharacterIcon != null ? selectedCharacterIcon.CurrentCharacter : null);
+            }
+        }
+
         if (!isVisible) return;
 
 #if UNITY_EDITOR
@@ -427,13 +441,14 @@ public class CardBloomWheel : MonoBehaviour
         }
 
         if (index < 0 || index >= cardRects.Count || cardRects[index] == null) return;
+        externalPreviewActive = false;
 
         // Parent to the ROOT canvas (not the nearest sub-canvas, which only covers the
         // wheel's corner) so "center" means the center of the screen, not the corner.
         // The backdrop is relocated next to the preview below (PlaceBackdropBehindPreview)
         // rather than parenting the preview into the backdrop's container, which could be a
         // hidden / alpha-0 overlay panel and would make the preview itself invisible.
-        Transform parent = centerPreviewAnchor != null
+        Transform parent = centerPreviewAnchor != null && centerPreviewAnchor.gameObject.activeInHierarchy
             ? (Transform)centerPreviewAnchor
             : (parentCanvas != null ? parentCanvas.rootCanvas.transform : transform);
 
@@ -471,10 +486,61 @@ public class CardBloomWheel : MonoBehaviour
         if (centerPreviewRect != null) centerPreviewRect.SetAsLastSibling();
     }
 
+    public void ShowExternalPreview(CardData data)
+    {
+        if (data == null) return;
+
+        ClearCenterPreview();
+        Transform parent = centerPreviewAnchor != null
+            ? (Transform)centerPreviewAnchor
+            : (parentCanvas != null ? parentCanvas.rootCanvas.transform : transform);
+
+        DeckManager deckManager = FindFirstObjectByType<DeckManager>();
+        GameObject template = deckManager != null ? deckManager.GetCardPrefabTemplate() : null;
+        if (template == null) return;
+
+        centerPreviewInstance = Instantiate(template, parent, false);
+        centerPreviewInstance.name = $"ExternalCardPreview_{data.name}";
+        centerPreviewInstance.SetActive(true);
+        centerPreviewRect = centerPreviewInstance.GetComponent<RectTransform>();
+        if (centerPreviewRect != null)
+        {
+            Vector2 center = new(0.5f, 0.5f);
+            centerPreviewRect.anchorMin = center;
+            centerPreviewRect.anchorMax = center;
+            centerPreviewRect.pivot = center;
+        }
+
+        Card previewCard = centerPreviewInstance.GetComponent<Card>();
+        if (previewCard != null)
+        {
+            previewCard.InitializePreview(data);
+            previewCard.SuppressHoverEffects = true;
+            previewCard.ShowRealCard();
+        }
+
+        centerPreviewGroup = centerPreviewInstance.GetComponent<CanvasGroup>();
+        if (centerPreviewGroup == null) centerPreviewGroup = centerPreviewInstance.AddComponent<CanvasGroup>();
+        centerPreviewGroup.blocksRaycasts = false;
+        centerPreviewGroup.interactable = false;
+        externalPreviewActive = true;
+        previewIntroT = 0f;
+        ApplyPreviewPose(0f);
+        PlaceBackdropBehindPreview(parent);
+        if (centerPreviewRect != null) centerPreviewRect.SetAsLastSibling();
+    }
+
+    public void HideExternalPreview()
+    {
+        if (!externalPreviewActive) return;
+        externalPreviewActive = false;
+        ClearCenterPreview();
+    }
+
     // Drives the backdrop fade and the active preview's fly-in every frame.
     private void AnimateCenterPreview()
     {
-        bool wantPreview = centerPreviewIndex >= 0;
+        bool wantPreview = centerPreviewIndex >= 0 || externalPreviewActive;
 
         // Backdrop fade in/out.
         float backdropTarget = wantPreview ? BackdropMax : 0f;

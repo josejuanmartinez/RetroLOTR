@@ -415,6 +415,19 @@ public class CardData
             return isPlayable;
         }
 
+        // Environmental cards are global effects. They do not require an acting character;
+        // only their owning leader's resource check (when supplied by Card) can block them.
+        if (GetCardType() == CardTypeEnum.Environmental)
+        {
+            bool environmentalResourcesOk = resourceCheck == null || resourceCheck(selectedCharacter);
+            bool environmentalConditionsOk = conditionCheck == null || conditionCheck(selectedCharacter);
+            playability.failsResourceRequirements = !environmentalResourcesOk;
+            playability.failsActionConditions = !environmentalConditionsOk;
+            isPlayable = environmentalResourcesOk && environmentalConditionsOk;
+            playability.isPlayable = isPlayable;
+            return isPlayable;
+        }
+
         if (GetCardType() == CardTypeEnum.Character || GetCardType() == CardTypeEnum.Army)
         {
             bool cardResourcesOk = resourceCheck != null
@@ -717,7 +730,7 @@ public class DeckManager : MonoBehaviour
     {
         if (!initializeOnStart) return;
 
-        InitializeFromResources();
+        if (!loaded) InitializeFromResources();
 
         Game game = FindFirstObjectByType<Game>();
         if (game != null && game.started)
@@ -728,6 +741,11 @@ public class DeckManager : MonoBehaviour
 
     public bool InitializeFromResources()
     {
+        // Several runtime systems need card lookups and call this defensively. Reloading an
+        // already-loaded catalog used to clear playerDecks while leaving the rendered hand in
+        // place, producing bloom tokens that could never be consumed.
+        if (loaded) return true;
+
         loaded = false;
         cards.Clear();
         inspectorDecks.Clear();
@@ -2803,6 +2821,8 @@ public class DeckManager : MonoBehaviour
         foreach (GameObject card in handCardInstances)
         {
             if (card == null) continue;
+            Card cardComponent = card.GetComponent<Card>();
+            if (cardComponent != null && cardComponent.IsPlayInProgress) continue;
             Destroy(card);
         }
         handCardInstances.Clear();
@@ -2816,7 +2836,8 @@ public class DeckManager : MonoBehaviour
             GameObject childGo = child.gameObject;
             if (childGo == null) continue;
             if (cardCameObject != null && childGo == cardCameObject) continue;
-            if (childGo.GetComponent<Card>() == null) continue;
+            Card childCard = childGo.GetComponent<Card>();
+            if (childCard == null || childCard.IsPlayInProgress) continue;
             Destroy(childGo);
         }
     }

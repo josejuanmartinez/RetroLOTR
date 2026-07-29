@@ -25,6 +25,8 @@ namespace RetroLOTR.Scenarios
         [SerializeField] private RectTransform scenarioButtonContainer;
         [Tooltip("Button inside the container cloned once per authored scenario. Kept inactive; its child TMP named 'Title' receives the scenario name.")]
         [SerializeField] private Button scenarioButtonTemplate;
+        [Tooltip("Scene object enabled after a campaign or scenario has been selected and GameConfig is ready.")]
+        [SerializeField] private GameObject enableAfterSelection;
 
         private void Start()
         {
@@ -180,7 +182,9 @@ namespace RetroLOTR.Scenarios
         {
             GameConfig.ScenarioToLoad = scenarioName; // null = default random campaign
             GameConfig.ScenarioChosen = true;
-            Destroy(gameObject);
+            if (enableAfterSelection != null)
+                enableAfterSelection.SetActive(true);
+            gameObject.SetActive(false);
         }
     }
 }

@@ -29,7 +29,8 @@ public class SelectedCharacterIcon : MonoBehaviour
     public Image icon;
     public RawImage rawImage;
     public VideoPlayer video;
-    public TextMeshProUGUI textWidget;
+    public TextMeshProUGUI nameWidget;
+    public TextMeshProUGUI descriptionWidget;
 
     [Header("Health")]
     public Image health;
@@ -83,6 +84,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     private bool refreshScheduled;
     private readonly List<ArtifactRenderer> artifactStatusRenderers = new();
     private readonly List<GameObject> playedCardInstances = new();
+    private string hoveredPreviewCardName;
 
     private void Awake()
     {
@@ -99,12 +101,62 @@ public class SelectedCharacterIcon : MonoBehaviour
         pendingRefreshCharacter = null;
         SetLoadingIconVisible(false);
         SetClickableCursor(false);
+        HideCardHoverPreview();
         StopAllCoroutines();
     }
 
     private void Update()
     {
         UpdateBloomHint();
+        UpdateCardHoverPreview();
+    }
+
+    private void UpdateCardHoverPreview()
+    {
+        if (CurrentCharacter == null || nameWidget == null || descriptionWidget == null) return;
+        if (bloomWheel == null) bloomWheel = FindFirstObjectByType<CardBloomWheel>();
+        if (bloomWheel == null) return;
+
+        string cardName = null;
+        if (RectTransformUtility.RectangleContainsScreenPoint(
+            nameWidget.rectTransform, Input.mousePosition, ResolveTriggerCamera(nameWidget.rectTransform)))
+        {
+            cardName = CurrentCharacter.characterName;
+        }
+        else
+        {
+            Canvas canvas = descriptionWidget.canvas;
+            Camera camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                ? canvas.worldCamera
+                : null;
+            int linkIndex = TMP_TextUtilities.FindIntersectingLink(descriptionWidget, Input.mousePosition, camera);
+            if (linkIndex >= 0)
+            {
+                string linkId = descriptionWidget.textInfo.linkInfo[linkIndex].GetLinkID();
+                const string armyPrefix = "army:";
+                if (linkId.StartsWith(armyPrefix, System.StringComparison.Ordinal))
+                    cardName = linkId.Substring(armyPrefix.Length);
+            }
+        }
+
+        if (string.Equals(cardName, hoveredPreviewCardName, System.StringComparison.OrdinalIgnoreCase)) return;
+        HideCardHoverPreview();
+        if (string.IsNullOrWhiteSpace(cardName)) return;
+
+        DeckManager deckManager = FindFirstObjectByType<DeckManager>();
+        CardData card = string.Equals(cardName, CurrentCharacter.characterName, System.StringComparison.OrdinalIgnoreCase)
+            ? deckManager?.FindAnyCardByName(cardName)
+            : deckManager?.FindArmyCardByName(cardName);
+        if (card == null) return;
+
+        hoveredPreviewCardName = cardName;
+        bloomWheel.ShowExternalPreview(card);
+    }
+
+    private void HideCardHoverPreview()
+    {
+        hoveredPreviewCardName = null;
+        bloomWheel?.HideExternalPreview();
     }
 
     // Card-bloom affordance: the concentric circles pulse softly while the icon is idle
@@ -272,16 +324,20 @@ public class SelectedCharacterIcon : MonoBehaviour
     private void ApplyRefresh(Character c, bool isHover = false)
     {
         CurrentCharacter = c;
-SetVisible(true);
+        SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
         SetCardsImage(c.GetOwner());
         SetCharacterVisuals(GetIllustrationByName(!string.IsNullOrWhiteSpace(c.illustrationName) ? c.illustrationName : c.characterName));
-        string baseHoverText = BuildSelectedCharacterTitle(c);
+        string nameText = BuildSelectedCharacterTitle(c, true, false);
+        string armyText = BuildSelectedCharacterTitle(c, false, true);
+        string quoteText = BuildSelectedCharacterTitle(c, false, false, true);
+        string descriptionText = string.IsNullOrWhiteSpace(quoteText)
+            ? armyText
+            : $"{quoteText}\n\n{armyText}";
         string kidnappingText = BuildKidnappingStatusText(c);
-        textWidget.text = string.IsNullOrWhiteSpace(kidnappingText)
-            ? baseHoverText
-            : $"{baseHoverText}\n{kidnappingText}";
+        nameWidget.text = nameText;
+        descriptionWidget.text = $"{kidnappingText}\n{descriptionText}";
         levelsGameObject.SetActive(true);
         actioned.SetActive(true);
         moved.SetActive(true);
@@ -329,12 +385,17 @@ SetVisible(true);
             return;
         }
 
-SetVisible(true);
+        CurrentCharacter = c;
+        SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
         SetCardsImage(c.GetOwner());
         SetCharacterVisuals(GetIllustrationByName(!string.IsNullOrWhiteSpace(c.illustrationName) ? c.illustrationName : c.characterName));
-        textWidget.text = string.IsNullOrWhiteSpace(hoverText) ? BuildSelectedCharacterTitle(c) : hoverText;
+        nameWidget.text = BuildSelectedCharacterTitle(c, returnName: true, returnArmy: false);
+        string detailText = hoverText ?? string.Empty;
+        if (detailText.StartsWith(c.characterName, System.StringComparison.OrdinalIgnoreCase))
+            detailText = detailText.Substring(c.characterName.Length).TrimStart();
+        descriptionWidget.text = detailText;
 
         actioned.SetActive(false);
         moved.SetActive(false);
@@ -365,7 +426,7 @@ SetVisible(true);
         border.SetActive(true);
         SetCardsImage(army.commander.GetOwner());
         SetCharacterVisuals(ResolveArmySprite(army));
-        textWidget.text = army.GetHoverTextNoXp();
+        nameWidget.text = army.GetHoverTextNoXp();
 
         actioned.SetActive(false);
         moved.SetActive(false);
@@ -423,7 +484,7 @@ SetVisible(false);
         if (rawImage != null) rawImage.enabled = false;
         Image targetImage = GetImageTarget();
         if (targetImage != null) targetImage.enabled = false;
-        textWidget.text = "";
+        nameWidget.text = "";
         levelsGameObject.SetActive(false);
         actioned.SetActive(false);
         moved.SetActive(false);
@@ -745,17 +806,53 @@ SetVisible(false);
         }
     }
 
-    private string BuildSelectedCharacterTitle(Character c)
+    private string BuildSelectedCharacterTitle(Character c, bool returnName = true, bool returnArmy = true, bool returnQuote = false)
     {
-        if (c == null) return string.Empty;
+        if (c == null || (!returnName && !returnArmy && !returnQuote)) return string.Empty;
 
-        Army army = c.GetArmy();
-        if (army == null || army.GetSize() < 1)
+        DeckManager deckManager = FindFirstObjectByType<DeckManager>();
+        if (returnQuote)
         {
-            return $"<u>{c.characterName}</u> (wandering)";
+            CardData characterCard = deckManager?.FindAnyCardByName(c.characterName);
+            return characterCard?.quote ?? string.Empty;
         }
 
-        return $"<u>{c.characterName}</u>{army.GetHoverTextHexInfo()}";
+        string result = "";
+        if(returnName)
+        {
+            result += $"<u>{c.characterName}</u>";
+        }
+
+        if(returnArmy)
+        {
+            Army army = c.GetArmy();
+            if (army != null && army.GetSize() > 0)
+            {
+                string armyText = army.GetHoverTextHexInfo();
+                List<string> linkedArmyNames = army.GetTroopGroups()
+                    .Where(group => group != null && !string.IsNullOrWhiteSpace(group.troopName))
+                    .Select(group => group.troopName)
+                    .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                    .Where(name => deckManager?.FindArmyCardByName(name) != null)
+                    .OrderByDescending(name => name.Length)
+                    .ToList();
+                if (linkedArmyNames.Count > 0)
+                {
+                    string pattern = string.Join("|", linkedArmyNames.Select(System.Text.RegularExpressions.Regex.Escape));
+                    armyText = System.Text.RegularExpressions.Regex.Replace(
+                        armyText,
+                        pattern,
+                        match => $"<link=\"army:{match.Value}\"><u>{match.Value}</u></link>",
+                        System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                }
+                result += armyText;
+            } else
+            {
+                result += " (wandering)";
+            }
+        }
+
+        return result;
     }
 
 }
