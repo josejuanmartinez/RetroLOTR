@@ -26,6 +26,8 @@ public class Board : MonoBehaviour
     [Header("Hex Configuration")]
     public GameObject hexPrefab;
     public Vector2 hexSize;
+    // Runtime-copied by HexSeamlessTerrain (play-mode grid toggle must never dirty the asset).
+    public Material hexSeamlessBlendMaterial;
 
     [Header("Generation progress")]
     public Slider progressBar;
@@ -42,8 +44,9 @@ public class Board : MonoBehaviour
     // Tracks the in-flight hex encounter resolution so movement can block until the
     // player has resolved it (encounters and opportunity cards are blocking events).
     private Task hexEncounterTask;
+    // Kept solely as EnsurePortMover's parent anchor (the preserved-but-currently-inert port
+    // mover) — no longer holds or copies a character sprite.
     [SerializeField] private SpriteRenderer characterMoverImage;
-    [SerializeField] private SpriteRenderer characterMoverBackground;
     // [SerializeField] private SpriteRenderer characterBannerMoverImage;
     [SerializeField] private SpriteRenderer freeArmyMoverImage;
     [SerializeField] private SpriteRenderer darkServantsMoverImage;
@@ -160,6 +163,12 @@ public class Board : MonoBehaviour
         // Fresh scene load = fresh choice. SkipIntro reloads (scenario switch from
         // the old dropdown flow) keep the already-made choice.
         if (!GameConfig.SkipIntro) GameConfig.ScenarioChosen = false;
+
+        // Kicked off here (rather than lazily on the first Hex.RedrawCharacters() call) so the
+        // baked spritesheet load has the whole campaign-selection-screen + board-generation
+        // window as a head start, instead of starting cold right as the board first becomes
+        // visible with characters already standing on it.
+        CharacterSpritesheets.EnsureLoading();
     }
 
     [Header("Campaign Selection")]
@@ -335,9 +344,7 @@ public class Board : MonoBehaviour
                 if (x != null)
                 {
                     var hoverTile = x.GetComponent<OnHoverTile>();
-                    var clickTile = x.GetComponent<OnClickTile>();
                     if (hoverTile != null) hoverTile.enabled = true;
-                    if (clickTile != null) clickTile.enabled = true;
                 }
             });
         }
@@ -667,91 +674,54 @@ public class Board : MonoBehaviour
         StartCoroutine(MoveCoroutine(character, path));
     }
 
-    private IEnumerator AnimateSpriteBetween(
+    // Turns the hex's OWN persistent character controller in place toward worldDelta, then
+    // starts its walk-cycle animation. Replaces the old StartMoverWalkAnimation-on-a-separate-
+    // mover-object approach: there's no second SpriteRenderer/CharacterAnimationController to
+    // activate or rescale anymore, since we now drive fromSR's own controller directly and
+    // Hex.RedrawCharacters() already keeps its GameObject active whenever a character occupies
+    // the hex.
+    private IEnumerator TurnCharacterTowardMovement(Character character, CharacterAnimationController controller, Vector3 worldDelta)
+    {
+        if (controller == null) yield break;
+        yield return controller.TurnTowardMovement(character, worldDelta);
+        controller.PlayMovement(character, worldDelta);
+    }
+
+    // Lerps the hex's own persistent character SpriteRenderer directly between two world
+    // positions instead of copying its look onto a separate mover clone. No
+    // GetDesiredWorldScale/CopyPropertyBlock/ApplyMoverOutline needed — fromSR already IS the
+    // correctly-scaled, correctly-dressed sprite for whatever it's showing. toSR (the
+    // destination hex's own, separate renderer) stays hidden throughout so the destination
+    // isn't revealed early, exactly as before. Bumps fromSR's own sortingOrder while airborne
+    // (matching the old mover's +100 offset), then restores its baseline local transform and
+    // sortingOrder, and explicitly resets its controller back to Standing Idle/Forward —
+    // CharacterAnimationController.ResolveCharacter only resets orientation/animation state when
+    // the character CHANGES, which won't happen here since this is the same controller instance
+    // driving the same character throughout the whole hop.
+    private IEnumerator WalkCharacterOnHex(
+        Character character,
+        CharacterAnimationController controller,
         SpriteRenderer fromSR,
         SpriteRenderer toSR,
-        SpriteRenderer moverSR,
-        SpriteRenderer fromBgSR,
-        SpriteRenderer toBgSR,
-        SpriteRenderer moverBgSR,
         Vector3 start,
         Vector3 end,
-        Vector3 startBg,
-        Vector3 endBg,
         float duration,
         Camera followCam = null,
-        AnimationCurve ease = null,
-        SpriteRenderer appearanceFromSR = null,
-        SpriteRenderer appearanceFromBgSR = null,
-        Sprite appearanceFromSprite = null,
-        Character movingCharacter = null
-        )
+        AnimationCurve ease = null)
     {
-        SpriteRenderer sourceSR = appearanceFromSR != null ? appearanceFromSR : fromSR;
-        SpriteRenderer sourceBgSR = appearanceFromBgSR != null ? appearanceFromBgSR : fromBgSR;
-        Sprite sourceSprite = appearanceFromSprite != null ? appearanceFromSprite : sourceSR.sprite;
+        if (fromSR == null) yield break;
 
-        // Copy look
-        moverSR.sprite = sourceSprite;
-        moverSR.color = sourceSR.color;
-        moverSR.flipX = sourceSR.flipX;
-        moverSR.flipY = sourceSR.flipY;
-        moverSR.sharedMaterial = sourceSR.sharedMaterial;
-        CopyPropertyBlock(sourceSR, moverSR);
-        ApplyMoverOutline(moverSR, movingCharacter);
-        if (moverBgSR != null && sourceBgSR != null)
-        {
-            moverBgSR.sprite = sourceBgSR.sprite;
-            moverBgSR.color = sourceBgSR.color;
-            moverBgSR.flipX = sourceBgSR.flipX;
-            moverBgSR.flipY = sourceBgSR.flipY;
-            moverBgSR.sharedMaterial = sourceBgSR.sharedMaterial;
-            CopyPropertyBlock(sourceBgSR, moverBgSR);
-        }
+        Vector3 baseLocalPos = fromSR.transform.localPosition;
+        Quaternion baseLocalRot = fromSR.transform.localRotation;
+        Vector3 baseLocalScale = fromSR.transform.localScale;
+        int baseSortingOrder = fromSR.sortingOrder;
 
-        // Make sure mover appears above board
-        moverSR.sortingLayerID = fromSR.sortingLayerID;
-        moverSR.sortingOrder = fromSR.sortingOrder + 100;
-        if (moverBgSR != null && sourceBgSR != null)
-        {
-            moverBgSR.sortingLayerID = sourceBgSR.sortingLayerID;
-            moverBgSR.sortingOrder = sourceBgSR.sortingOrder + 99;
-        }
-
-        moverSR.transform.localScale = GetLocalScaleForWorldScale(moverSR.transform, GetDesiredWorldScale(sourceSR, moverSR));
-        moverSR.transform.rotation = sourceSR.transform.rotation;
-        if (moverBgSR != null && sourceBgSR != null)
-        {
-            moverBgSR.transform.localScale = GetLocalScaleForWorldScale(moverBgSR.transform, GetDesiredWorldScale(sourceBgSR, moverBgSR));
-            moverBgSR.transform.rotation = sourceBgSR.transform.rotation;
-        }
-
-        // Hide the static icons during tween so you don't see the destination early
-        bool fromPrevEnabled = fromSR != null && fromSR.enabled;
         bool toPrevEnabled = toSR != null && toSR.enabled;
-        bool fromBgPrevEnabled = fromBgSR != null && fromBgSR.enabled;
-        bool toBgPrevEnabled = toBgSR != null && toBgSR.enabled;
-        if (fromSR != null) fromSR.enabled = false;
         if (toSR != null) toSR.enabled = false;
-        if (fromBgSR != null) fromBgSR.enabled = false;
-        if (toBgSR != null) toBgSR.enabled = false;
 
-        moverSR.gameObject.SetActive(true);
-        moverSR.transform.position = start;
-        if (moverBgSR != null)
-        {
-            if (fromBgSR != null)
-            {
-                moverBgSR.gameObject.SetActive(true);
-                moverBgSR.transform.position = startBg;
-            }
-            else
-            {
-                moverBgSR.gameObject.SetActive(false);
-            }
-        }
+        fromSR.sortingOrder = baseSortingOrder + 100;
+        fromSR.transform.position = start;
 
-        // Camera follow setup
         Vector3 camOffset = Vector3.zero;
         if (followCam != null)
             camOffset = followCam.transform.position - start;
@@ -766,16 +736,10 @@ public class Board : MonoBehaviour
             float e = ease.Evaluate(t);
 
             Vector3 pos = Vector3.Lerp(start, end, e);
-            moverSR.transform.position = pos;
-            if (moverBgSR != null && fromBgSR != null)
-            {
-                Vector3 bgPos = Vector3.Lerp(startBg, endBg, e);
-                moverBgSR.transform.position = bgPos;
-            }
+            fromSR.transform.position = pos;
 
             if (followCam != null)
             {
-                // Keep same offset and preserve camera z (for 2D orthographic)
                 Vector3 camPos = pos + camOffset;
                 camPos.z = followCam.transform.position.z;
                 followCam.transform.position = camPos;
@@ -784,41 +748,36 @@ public class Board : MonoBehaviour
             yield return null;
         }
 
-        moverSR.transform.position = end;
-        moverSR.gameObject.SetActive(false);
-        if (moverBgSR != null && fromBgSR != null)
+        fromSR.transform.position = end;
+
+        if (controller != null)
         {
-            moverBgSR.transform.position = endBg;
-            moverBgSR.gameObject.SetActive(false);
+            controller.SetAnimation(CharacterAnimationController.AnimationKind.StandingIdle);
+            controller.SetOrientation(CharacterAnimationController.Orientation.Forward);
+            controller.SetLoop(false);
         }
 
-        // Restore icon visibility (destination will be redrawn after MoveCharacterOneHex anyway)
-        if (fromSR != null) fromSR.enabled = fromPrevEnabled;
+        fromSR.transform.localPosition = baseLocalPos;
+        fromSR.transform.localRotation = baseLocalRot;
+        fromSR.transform.localScale = baseLocalScale;
+        fromSR.sortingOrder = baseSortingOrder;
         if (toSR != null) toSR.enabled = toPrevEnabled;
-        if (fromBgSR != null) fromBgSR.enabled = fromBgPrevEnabled;
-        if (toBgSR != null) toBgSR.enabled = toBgPrevEnabled;
     }
 
+    // Banner/army/port portion of the dual (army-commander) movement animation — the character
+    // portion now runs separately via WalkCharacterOnHex, driving the hex's own persistent
+    // sprite/controller directly instead of a mover clone. Banner and army/port movers are
+    // currently always inert in practice: Hex.GetArmySpriteRendererOnHex/GetPortSpriteRenderer
+    // are permanently stubbed to null and Hex.ShouldShowWarshipPort always returns false — this
+    // is preserved so army/port animation picks back up automatically if those are ever
+    // un-stubbed, without needing to touch this function again.
     private IEnumerator AnimateSpriteBetweenDual(
-        SpriteRenderer fromCharSR,
-        SpriteRenderer toCharSR,
-        SpriteRenderer moverCharSR,
-        SpriteRenderer fromCharBgSR,
-        SpriteRenderer toCharBgSR,
-        SpriteRenderer moverCharBgSR,
-        SpriteRenderer fromBannerSR,
-        SpriteRenderer toBannerSR,
-        SpriteRenderer moverBannerSR,
         SpriteRenderer fromArmySR,
         SpriteRenderer toArmySR,
         SpriteRenderer moverArmySR,
         SpriteRenderer fromPortSR,
         SpriteRenderer toPortSR,
         SpriteRenderer moverPortSR,
-        Vector3 charStart,
-        Vector3 charEnd,
-        Vector3 charBgStart,
-        Vector3 charBgEnd,
         Vector3 armyStart,
         Vector3 armyEnd,
         Vector3 portStart,
@@ -826,73 +785,11 @@ public class Board : MonoBehaviour
         bool hideStaticPort,
         float duration,
         Camera followCam = null,
-        AnimationCurve ease = null,
-        SpriteRenderer appearanceFromCharSR = null,
-        SpriteRenderer appearanceFromCharBgSR = null,
-        SpriteRenderer appearanceFromBannerSR = null,
-        Sprite appearanceFromCharSprite = null,
-        Vector3 appearanceFromBannerOffset = default,
-        Character movingCharacter = null
+        AnimationCurve ease = null
         )
     {
-        bool useChar = moverCharSR != null && fromCharSR != null;
         bool useArmy = moverArmySR != null && fromArmySR != null;
         bool usePort = moverPortSR != null && fromPortSR != null;
-        SpriteRenderer sourceCharSR = appearanceFromCharSR != null ? appearanceFromCharSR : fromCharSR;
-        SpriteRenderer sourceCharBgSR = appearanceFromCharBgSR != null ? appearanceFromCharBgSR : fromCharBgSR;
-        SpriteRenderer sourceBannerSR = appearanceFromBannerSR != null ? appearanceFromBannerSR : fromBannerSR;
-        Sprite sourceCharSprite = appearanceFromCharSprite != null ? appearanceFromCharSprite : sourceCharSR.sprite;
-        bool useBanner = moverBannerSR != null && sourceBannerSR != null && sourceBannerSR.sprite != null;
-
-        if (useChar)
-        {
-            moverCharSR.sprite = sourceCharSprite;
-            moverCharSR.color = sourceCharSR.color;
-            moverCharSR.flipX = sourceCharSR.flipX;
-            moverCharSR.flipY = sourceCharSR.flipY;
-            moverCharSR.sharedMaterial = sourceCharSR.sharedMaterial;
-            CopyPropertyBlock(sourceCharSR, moverCharSR);
-            ApplyMoverOutline(moverCharSR, movingCharacter);
-            if (moverCharBgSR != null && sourceCharBgSR != null)
-            {
-                moverCharBgSR.sprite = sourceCharBgSR.sprite;
-                moverCharBgSR.color = sourceCharBgSR.color;
-                moverCharBgSR.flipX = sourceCharBgSR.flipX;
-                moverCharBgSR.flipY = sourceCharBgSR.flipY;
-                moverCharBgSR.sharedMaterial = sourceCharBgSR.sharedMaterial;
-                CopyPropertyBlock(sourceCharBgSR, moverCharBgSR);
-            }
-
-            moverCharSR.sortingLayerID = fromCharSR.sortingLayerID;
-            moverCharSR.sortingOrder = fromCharSR.sortingOrder + 100;
-            if (moverCharBgSR != null && sourceCharBgSR != null)
-            {
-                moverCharBgSR.sortingLayerID = sourceCharBgSR.sortingLayerID;
-                moverCharBgSR.sortingOrder = sourceCharBgSR.sortingOrder + 99;
-            }
-
-            moverCharSR.transform.localScale = GetLocalScaleForWorldScale(moverCharSR.transform, GetDesiredWorldScale(sourceCharSR, moverCharSR));
-            moverCharSR.transform.rotation = sourceCharSR.transform.rotation;
-            if (moverCharBgSR != null && sourceCharBgSR != null)
-            {
-                moverCharBgSR.transform.localScale = GetLocalScaleForWorldScale(moverCharBgSR.transform, GetDesiredWorldScale(sourceCharBgSR, moverCharBgSR));
-                moverCharBgSR.transform.rotation = sourceCharBgSR.transform.rotation;
-            }
-        }
-
-        if (useBanner)
-        {
-            moverBannerSR.sprite = sourceBannerSR.sprite;
-            moverBannerSR.color = sourceBannerSR.color;
-            moverBannerSR.flipX = sourceBannerSR.flipX;
-            moverBannerSR.flipY = sourceBannerSR.flipY;
-            moverBannerSR.sharedMaterial = sourceBannerSR.sharedMaterial;
-            CopyPropertyBlock(sourceBannerSR, moverBannerSR);
-            moverBannerSR.sortingLayerID = sourceBannerSR.sortingLayerID;
-            moverBannerSR.sortingOrder = sourceBannerSR.sortingOrder + 101;
-            moverBannerSR.transform.localScale = GetLocalScaleForWorldScale(moverBannerSR.transform, GetDesiredWorldScale(sourceBannerSR, moverBannerSR));
-            moverBannerSR.transform.rotation = sourceBannerSR.transform.rotation;
-        }
 
         if (useArmy)
         {
@@ -924,20 +821,6 @@ public class Board : MonoBehaviour
             moverPortSR.transform.rotation = fromPortSR.transform.rotation;
         }
 
-        bool fromCharPrevEnabled = fromCharSR != null && fromCharSR.enabled;
-        bool toCharPrevEnabled = toCharSR != null && toCharSR.enabled;
-        bool fromCharBgPrevEnabled = fromCharBgSR != null && fromCharBgSR.enabled;
-        bool toCharBgPrevEnabled = toCharBgSR != null && toCharBgSR.enabled;
-        if (fromCharSR != null) fromCharSR.enabled = false;
-        if (toCharSR != null) toCharSR.enabled = false;
-        if (fromCharBgSR != null) fromCharBgSR.enabled = false;
-        if (toCharBgSR != null) toCharBgSR.enabled = false;
-
-        bool fromBannerPrevEnabled = fromBannerSR != null && fromBannerSR.enabled;
-        bool toBannerPrevEnabled = toBannerSR != null && toBannerSR.enabled;
-        if (fromBannerSR != null) fromBannerSR.enabled = false;
-        if (toBannerSR != null) toBannerSR.enabled = false;
-
         bool fromArmyPrevEnabled = fromArmySR != null && fromArmySR.enabled;
         bool toArmyPrevEnabled = toArmySR != null && toArmySR.enabled;
         if (fromArmySR != null) fromArmySR.enabled = false;
@@ -949,28 +832,6 @@ public class Board : MonoBehaviour
         {
             if (fromPortSR != null) fromPortSR.enabled = false;
             if (toPortSR != null) toPortSR.enabled = false;
-        }
-
-        if (useChar)
-        {
-            moverCharSR.gameObject.SetActive(true);
-            moverCharSR.transform.position = charStart;
-            if (moverCharBgSR != null)
-            {
-                if (fromCharBgSR != null)
-                {
-                    moverCharBgSR.gameObject.SetActive(true);
-                    moverCharBgSR.transform.position = charBgStart;
-                }
-                else
-                {
-                    moverCharBgSR.gameObject.SetActive(false);
-                }
-            }
-        }
-        else if (moverCharSR != null)
-        {
-            moverCharSR.gameObject.SetActive(false);
         }
 
         if (useArmy)
@@ -993,22 +854,9 @@ public class Board : MonoBehaviour
             moverPortSR.gameObject.SetActive(false);
         }
 
-        if (useBanner)
-        {
-            moverBannerSR.gameObject.SetActive(true);
-            moverBannerSR.transform.position = charStart + appearanceFromBannerOffset;
-        }
-        else if (moverBannerSR != null)
-        {
-            moverBannerSR.gameObject.SetActive(false);
-        }
-
         Vector3 camOffset = Vector3.zero;
         if (followCam != null)
-        {
-            Vector3 camAnchor = useChar ? charStart : armyStart;
-            camOffset = followCam.transform.position - camAnchor;
-        }
+            camOffset = followCam.transform.position - armyStart;
 
         float elapsed = 0f;
         ease ??= AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -1018,17 +866,6 @@ public class Board : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
             float e = ease.Evaluate(t);
-
-            if (useChar)
-            {
-                Vector3 pos = Vector3.Lerp(charStart, charEnd, e);
-                moverCharSR.transform.position = pos;
-                if (moverCharBgSR != null && fromCharBgSR != null)
-                {
-                    Vector3 bgPos = Vector3.Lerp(charBgStart, charBgEnd, e);
-                    moverCharBgSR.transform.position = bgPos;
-                }
-            }
 
             if (useArmy)
             {
@@ -1042,31 +879,14 @@ public class Board : MonoBehaviour
                 moverPortSR.transform.position = pos;
             }
 
-            if (useBanner)
+            if (followCam != null && moverArmySR != null)
             {
-                moverBannerSR.transform.position = Vector3.Lerp(charStart, charEnd, e) + appearanceFromBannerOffset;
-            }
-
-            if (followCam != null)
-            {
-                Vector3 anchor = useChar ? moverCharSR.transform.position : moverArmySR.transform.position;
-                Vector3 camPos = anchor + camOffset;
+                Vector3 camPos = moverArmySR.transform.position + camOffset;
                 camPos.z = followCam.transform.position.z;
                 followCam.transform.position = camPos;
             }
 
             yield return null;
-        }
-
-        if (useChar)
-        {
-            moverCharSR.transform.position = charEnd;
-            moverCharSR.gameObject.SetActive(false);
-            if (moverCharBgSR != null && fromCharBgSR != null)
-            {
-                moverCharBgSR.transform.position = charBgEnd;
-                moverCharBgSR.gameObject.SetActive(false);
-            }
         }
 
         if (useArmy)
@@ -1080,19 +900,6 @@ public class Board : MonoBehaviour
             moverPortSR.transform.position = portEnd;
             moverPortSR.gameObject.SetActive(false);
         }
-
-        if (useBanner)
-        {
-            moverBannerSR.transform.position = charEnd + appearanceFromBannerOffset;
-            moverBannerSR.gameObject.SetActive(false);
-        }
-
-        if (fromCharSR != null) fromCharSR.enabled = fromCharPrevEnabled;
-        if (toCharSR != null) toCharSR.enabled = toCharPrevEnabled;
-        if (fromCharBgSR != null) fromCharBgSR.enabled = fromCharBgPrevEnabled;
-        if (toCharBgSR != null) toCharBgSR.enabled = toCharBgPrevEnabled;
-        if (fromBannerSR != null) fromBannerSR.enabled = fromBannerPrevEnabled;
-        if (toBannerSR != null) toBannerSR.enabled = toBannerPrevEnabled;
 
         if (fromArmySR != null) fromArmySR.enabled = fromArmyPrevEnabled;
         if (toArmySR != null) toArmySR.enabled = toArmyPrevEnabled;
@@ -1174,72 +981,6 @@ public class Board : MonoBehaviour
     // allocation-heavy icon-grid rebuilds during transit. The grids are rebuilt once,
     // frame-budgeted, when the walk finishes (RevealVisibleHexesAsync).
     public static bool SuppressHexIconGrids = false;
-
-    private static readonly int MoverOutlineColorId = Shader.PropertyToID("_OutlineColor");
-    private static MaterialPropertyBlock moverOutlineBlock;
-
-    // The mover copies its look from the source hex icon, but that icon's property block
-    // does not always carry the _OutlineColor override, so the mover would fall back to the
-    // material default (white). Force the moving character's nation colour explicitly.
-    private static void ApplyMoverOutline(SpriteRenderer mover, Character movingCharacter)
-    {
-        if (mover == null || movingCharacter == null) return;
-        Leader owner = movingCharacter.GetOwner();
-        if (owner == null) return;
-        moverOutlineBlock ??= new MaterialPropertyBlock();
-        mover.GetPropertyBlock(moverOutlineBlock);
-        moverOutlineBlock.SetColor(MoverOutlineColorId, owner.nationColor);
-        mover.SetPropertyBlock(moverOutlineBlock);
-    }
-
-    private void StartMoverWalkAnimation(Character character, SpriteRenderer moverSR, Vector3 worldDelta, SpriteRenderer sourceSR)
-    {
-        if (moverSR == null) return;
-        CharacterAnimationController animationController = moverSR.GetComponent<CharacterAnimationController>();
-        if (animationController == null) animationController = moverSR.gameObject.AddComponent<CharacterAnimationController>();
-        // Activate before setting params: Unity resets animator parameters on activation.
-        if (!moverSR.gameObject.activeSelf) moverSR.gameObject.SetActive(true);
-        if (animationController.PlayMovement(character, worldDelta) && sourceSR != null)
-        {
-            // The walk clips swap in animation frames whose pixel bounds have nothing to do
-            // with whatever art the mover copied at setup (often the card illustration), so the
-            // bounds-matched scale computed there renders every frame at a wrong size. The
-            // frames are authored to look right at the hex icon's transform scale — once the
-            // animator is actually driving the sprite, mirror that scale exactly.
-            moverSR.transform.localScale = GetLocalScaleForWorldScale(moverSR.transform, sourceSR.transform.lossyScale);
-        }
-    }
-
-    private static SpriteRenderer GetCharacterBackground(SpriteRenderer characterSprite)
-    {
-        if (characterSprite == null) return null;
-        Transform parent = characterSprite.transform.parent;
-        if (parent == null) return null;
-        return parent.GetComponent<SpriteRenderer>();
-    }
-
-    private SpriteRenderer EnsureMoverBackground(SpriteRenderer mover)
-    {
-        if (mover == null) return null;
-        if (characterMoverBackground != null) return characterMoverBackground;
-
-        Transform parent = mover.transform.parent;
-        if (parent != null)
-        {
-            Transform existing = parent.Find("characterBg");
-            if (existing != null)
-            {
-                characterMoverBackground = existing.GetComponent<SpriteRenderer>();
-                if (characterMoverBackground != null) return characterMoverBackground;
-            }
-        }
-
-        GameObject bg = new("characterBg");
-        bg.transform.SetParent(mover.transform.parent, false);
-        characterMoverBackground = bg.AddComponent<SpriteRenderer>();
-        characterMoverBackground.gameObject.SetActive(false);
-        return characterMoverBackground;
-    }
 
     private SpriteRenderer EnsurePortMover(SpriteRenderer mover)
     {
@@ -1330,22 +1071,10 @@ public class Board : MonoBehaviour
             }
         }
 
-        SpriteRenderer appearanceFromCharSR = null;
-        SpriteRenderer appearanceFromCharBgSR = null;
-        // SpriteRenderer appearanceFromBannerSR = null;
-        Sprite appearanceFromCharSprite = null;
-        Vector3 appearanceBannerOffset = Vector3.zero;
-        if (path.Count > 0 && hexes.TryGetValue(path[0], out Hex initialHex))
-        {
-            appearanceFromCharSR = initialHex != null ? initialHex.GetCharacterSpriteRendererOnHex() : null;
-            appearanceFromCharBgSR = GetCharacterBackground(appearanceFromCharSR);
-            // appearanceFromBannerSR = initialHex != null ? initialHex.bannerSpriteRenderer : null;
-            appearanceFromCharSprite = appearanceFromCharSR != null ? appearanceFromCharSR.sprite : null;
-            // if (appearanceFromCharSR != null && appearanceFromBannerSR != null)
-            // {
-            //     appearanceBannerOffset = appearanceFromBannerSR.transform.position - appearanceFromCharSR.transform.position;
-            // }
-        }
+        // appearanceFromCharSR/appearanceFromCharSprite used to let the mover borrow a specific
+        // sprite rather than whatever fromSR happened to show. Moot now that we drive fromSR's
+        // own controller by character IDENTITY (TurnTowardMovement(character, ...)/Show(character))
+        // instead of copying a sprite onto a stand-in.
 
         // Skip the allocation-heavy per-hex icon-grid rebuilds while the unit is in transit;
         // they are rebuilt once after arrival by the budgeted refresh below.
@@ -1360,16 +1089,18 @@ public class Board : MonoBehaviour
             // Get the visible sprites on each hex
             SpriteRenderer fromSR = previousHex.GetCharacterSpriteRendererOnHex();
             SpriteRenderer toSR = newHex.GetCharacterSpriteRendererOnHex();
-            SpriteRenderer fromBg = GetCharacterBackground(fromSR);
-            SpriteRenderer toBg = GetCharacterBackground(toSR);
-            SpriteRenderer moverBg = characterMoverSR == characterMoverImage ? EnsureMoverBackground(characterMoverSR) : null;
-            // SpriteRenderer fromBannerSR = previousHex.bannerSpriteRenderer;
-            // SpriteRenderer toBannerSR = newHex.bannerSpriteRenderer;
-            // SpriteRenderer bannerMoverSR = EnsureCharacterBannerMover(characterMoverSR);
-            SpriteRenderer fromBannerSR = null;
-            SpriteRenderer toBannerSR = null;
-            SpriteRenderer bannerMoverSR = null;
 
+            // The character portion of the animation now drives fromSR's OWN persistent
+            // CharacterAnimationController directly instead of a separate mover clone. Guard
+            // against the rare multi-occupant-hex case where fromSR is currently displaying a
+            // DIFFERENT character than the one moving (Hex.TryGetKnownCharacterForIcon picks one
+            // of possibly several by priority) — hijacking it would visibly repaint that hex's
+            // slot to the wrong identity mid-walk, so such hops just skip the visual animation
+            // (the data-model move via MoveCharacterOneHex still happens normally).
+            CharacterAnimationController controller = fromSR != null ? previousHex.GetCharacterAnimationController() : null;
+            bool canAnimateChar = controller != null
+                && previousHex.TryGetKnownCharacterForIcon(out Character shownOnFrom)
+                && shownOnFrom == character;
             SpriteRenderer fromArmySR = previousHex.GetArmySpriteRendererOnHex(character);
             SpriteRenderer toArmySR = newHex.GetArmySpriteRendererOnHex(character);
             SpriteRenderer fromPortSR = previousHex.GetPortSpriteRenderer();
@@ -1382,22 +1113,20 @@ public class Board : MonoBehaviour
             // Use the sprite transforms' world positions (NOT RectTransform)
             Vector3 startPos = (fromSR != null) ? fromSR.transform.position : previousHex.transform.position;
             Vector3 endPos = (toSR != null) ? toSR.transform.position : newHex.transform.position;
-            Vector3 startBgPos = fromBg != null ? fromBg.transform.position : startPos;
-            Vector3 endBgPos = toBg != null ? toBg.transform.position : endPos;
             Vector3 startArmyPos = (fromArmySR != null) ? fromArmySR.transform.position : previousHex.transform.position;
             Vector3 endArmyPos = (toArmySR != null) ? toArmySR.transform.position : newHex.transform.position;
             Vector3 startPortPos = (fromPortSR != null) ? fromPortSR.transform.position : previousHex.transform.position;
             Vector3 endPortPos = (toPortSR != null) ? toPortSR.transform.position : newHex.transform.position;
 
-            IEnumerator tween = null;
+            IEnumerator dualTween = null;
+            IEnumerator charTween = null;
             Coroutine armyIconTween = null;
-            bool canAnimate = false;
 
             try
             {
                 if (character.IsArmyCommander())
                 {
-                    bool hasAny = (characterMoverSR != null && fromSR != null) || (armyMoverSR != null && fromArmySR != null);
+                    bool hasAny = armyMoverSR != null && fromArmySR != null;
                     if (hasAny)
                     {
                     bool hasWarships = character.GetArmy() != null && character.GetArmy().ws > 0;
@@ -1407,69 +1136,55 @@ public class Board : MonoBehaviour
                     bool usePort = hasWarships && fromWarshipPort && toWarshipPort && !hasPcPort;
                     SpriteRenderer portMover = usePort ? EnsurePortMover(characterMoverSR) : null;
 
-                        tween = AnimateSpriteBetweenDual(
-                            fromSR,
-                            toSR,
-                            characterMoverSR,
-                            fromBg,
-                            toBg,
-                            moverBg,
-                            fromBannerSR,
-                            toBannerSR,
-                            bannerMoverSR,
+                        // The character portion of the animation now runs separately via
+                        // charTween/WalkCharacterOnHex below, driving fromSR's own controller
+                        // directly — this call only still matters for the (currently
+                        // stubbed-to-null/false) army/port portions.
+                        dualTween = AnimateSpriteBetweenDual(
                             fromArmySR,
                             toArmySR,
                             armyMoverSR,
                             fromPortSR,
                             toPortSR,
                             portMover,
-                            startPos,
-                            endPos,
-                            startBgPos,
-                            endBgPos,
                             startArmyPos,
                             endArmyPos,
                             startPortPos,
                             endPortPos,
                             usePort,
-                            0.35f,
-                            null,
-                            null,
-                            appearanceFromCharSR,
-                            appearanceFromCharBgSR,
-                            null,
-                            appearanceFromCharSprite,
-                            appearanceBannerOffset,
-                            movingCharacter: character);
-                        canAnimate = true;
-                        if (armyIconObj != null)
-                        {
-                            armyIconObj.transform.SetParent(null, true);
-                            armyIconTween = StartCoroutine(AnimateArmyIcon(armyIconObj, armyIconStart, armyIconEnd, 0.35f));
-                        }
+                            0.35f);
                     }
                 }
-                else
+
+                if (canAnimateChar)
                 {
-                    canAnimate = characterMoverSR != null && fromSR != null;
-                    if (canAnimate)
-                    {
-                        tween = AnimateSpriteBetween(fromSR, toSR, characterMoverSR, fromBg, toBg, moverBg, startPos, endPos, startBgPos, endBgPos, 0.35f, null, null, appearanceFromCharSR, appearanceFromCharBgSR, appearanceFromCharSprite, movingCharacter: character);
-                    }
+                    charTween = WalkCharacterOnHex(character, controller, fromSR, toSR, startPos, endPos, 0.35f);
                 }
             }
             catch (Exception e)
             {
                 Debug.LogError($"Error preparing animation at step {i}: {e.Message}\n{e.StackTrace}");
                 HandleMovementFailure(character, currentHex, path, i);
-                canAnimate = false;
+                dualTween = null;
+                charTween = null;
             }
 
-            if (canAnimate)
+            if (canAnimateChar && charTween != null)
+                yield return TurnCharacterTowardMovement(character, controller, endPos - startPos);
+
+            // Started here (not earlier, while still preparing the tween above) so the army
+            // icon's own tween begins on the same frame as the character's position tween
+            // instead of during the turn-in-place phase that precedes it — previously the
+            // army icon started sliding while the character was still turning in place.
+            if (armyIconObj != null)
             {
-                if (fromSR != null) StartMoverWalkAnimation(character, characterMoverSR, endPos - startPos, fromSR);
-                yield return tween;
+                armyIconObj.transform.SetParent(null, true);
+                armyIconTween = StartCoroutine(AnimateArmyIcon(armyIconObj, armyIconStart, armyIconEnd, 0.35f));
             }
+
+            Coroutine dualCoroutine = dualTween != null ? StartCoroutine(dualTween) : null;
+            if (charTween != null) yield return charTween;
+            if (dualCoroutine != null) yield return dualCoroutine;
 
             if (armyIconTween != null)
             {

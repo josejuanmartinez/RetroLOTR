@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 // Plays a character's baked per-facing spritesheet animation (see AnimationSpritesheetBaker +
@@ -22,12 +23,13 @@ public class CharacterAnimationController : MonoBehaviour
     // default that makes sense for every kind of character this component ends up attached to.
     public string fallback;
 
-    // The SpriteRenderer continuously pulses between white and this color rather than snapping
-    // to it — set to Color.white (colorPulseSpeed doesn't matter then, Lerp(white, white, t)
-    // stays white) to hold steady.
-    public Color color = Color.white;
-    // Pulse cycles per second. 0 holds steady at `color` with no pulsing.
-    public float colorPulseSpeed = 1f;
+    // Steady tint applied to this character's sprite whenever it is neither hovered nor the
+    // currently selected character (a selected character counts as hovered) — read by
+    // Hex.UpdateCharacterSpriteAlpha, not applied by this component itself.
+    public Color unhoveredColor = Color.white;
+    // Cycles per second of the outline-size pulse Hex.UpdateCharacterSpriteAlpha plays on the
+    // currently selected character only. Read from there, not applied by this component itself.
+    public float outlinePulseSpeed = 1f;
 
     // ── Animation bools — one checkbox per baked state. Names/casing match the atlas manifest's
     // "name" field exactly (see AnimationBindings below); default is Standing Idle. ──────────
@@ -68,8 +70,12 @@ public class CharacterAnimationController : MonoBehaviour
         (AnimationKind.Death,               "Death",                 c => c.death,               (c, v) => c.death = v),
         (AnimationKind.Hit,                 "Hit",                   c => c.hit,                 (c, v) => c.hit = v),
         (AnimationKind.StandingWalkForward, "Standing Walk Forward", c => c.standingWalkForward, (c, v) => c.standingWalkForward = v),
-        (AnimationKind.TurnRight,           "Turn Right",            c => c.turnRight,           (c, v) => c.turnRight = v),
-        (AnimationKind.TurnLeft,            "Turn Left",             c => c.turnLeft,            (c, v) => c.turnLeft = v),
+        // Atlas state names swapped relative to the kind: the baked "Turn Left"/"Turn Right"
+        // clips show the opposite turn from what their names say, so TurnRight pulls the "Turn
+        // Left" state (and vice versa) to compensate — turnRight/turnLeft still mean what their
+        // names say from the caller's side.
+        (AnimationKind.TurnRight,           "Turn Left",             c => c.turnRight,           (c, v) => c.turnRight = v),
+        (AnimationKind.TurnLeft,            "Turn Right",            c => c.turnLeft,            (c, v) => c.turnLeft = v),
         (AnimationKind.Block,               "Block",                 c => c.block,               (c, v) => c.block = v),
         (AnimationKind.Attack,              "Attack",                c => c.attack,              (c, v) => c.attack = v),
     };
@@ -97,6 +103,7 @@ public class CharacterAnimationController : MonoBehaviour
     private string currentStateName;
     private int frameIndex;
     private float frameTimer;
+    private bool cursorHovering;
 
     // Set only when a Show() call fails because CharacterSpritesheets' Addressables load
     // hadn't finished yet (as opposed to a genuine no-match) — callers like Hex.RedrawCharacters
@@ -112,16 +119,20 @@ public class CharacterAnimationController : MonoBehaviour
 
     private void Update()
     {
-        if (!isShowing && pendingCharacter != null && CharacterSpritesheets.IsLoaded)
+        // Retried every frame rather than gated on CharacterSpritesheets.IsLoaded (whole-game
+        // loaded flag): ResolveCharacter/TryResolveRaceOrName already resolves as soon as THIS
+        // character's own manifest is registered, independent of whether other characters' races'
+        // spritesheets are still loading. Gating on the global flag here used to force every
+        // character to keep showing its Hex-drawn card fallback until literally everything in the
+        // game finished loading, even once its own spritesheet was ready.
+        if (!isShowing && pendingCharacter != null)
         {
             Character retry = pendingCharacter;
             pendingCharacter = null;
             Show(retry);
         }
 
-        if (!isShowing || resolvedRaceOrName == null || !CharacterSpritesheets.IsLoaded) return;
-
-        if (spriteRenderer != null) spriteRenderer.color = CurrentPulseColor();
+        if (!isShowing || resolvedRaceOrName == null) return;
 
         string facing = GetActiveOrientationName();
         string desiredStateName = GetActiveAnimationStateName();
@@ -238,19 +249,11 @@ public class CharacterAnimationController : MonoBehaviour
 
     public void SetLoop(bool value) => loop = value;
 
-    private Color CurrentPulseColor()
-    {
-        if (colorPulseSpeed <= 0f) return color;
-        float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * colorPulseSpeed * 2f * Mathf.PI);
-        return Color.Lerp(Color.white, color, pulse);
-    }
-
     private void EnsureSpriteRenderer()
     {
         if (spriteRenderer != null) return;
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null) spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        spriteRenderer.color = CurrentPulseColor();
     }
 
     public bool Show(Character character)
@@ -286,13 +289,13 @@ public class CharacterAnimationController : MonoBehaviour
     {
         if (resolvedForCharacter == character && resolvedRaceOrName != null) return true;
 
-        bool resolved = CharacterSpritesheets.TryResolveRaceOrName(character.characterName, character.race, fallback, out resolvedRaceOrName);
+        bool resolved = CharacterSpritesheets.TryResolveRaceOrName(character.characterName, character.SpriteVariantBaseName, character.race, fallback, out resolvedRaceOrName);
         if (!resolved)
         {
             if (!CharacterSpritesheets.IsLoaded)
                 Debug.LogWarning($"[CharacterAnimationController] '{character.characterName}': CharacterSpritesheets Addressables load isn't finished yet — will retry on the next Show() call.");
             else
-                Debug.LogWarning($"[CharacterAnimationController] '{character.characterName}' (race={character.race}, fallback='{fallback}'): no baked spritesheet found under that name, race, or fallback.");
+                Debug.LogWarning($"[CharacterAnimationController] '{character.characterName}' (variantOf={character.SpriteVariantBaseName}, race={character.race}, fallback='{fallback}'): no baked spritesheet found under that name, variant base, race, or fallback.");
             resolvedForCharacter = null;
             return false;
         }
@@ -322,6 +325,50 @@ public class CharacterAnimationController : MonoBehaviour
         return true;
     }
 
+    // Turns in place — no position change, purely animation — toward the facing worldDelta
+    // implies, one quarter-turn (Turn Left/Right) at a time, yielding until each turn's clip
+    // actually finishes and the facing updates before starting the next. Callers that want
+    // "turn first, then walk" (e.g. Board's per-hex move step) should yield on this BEFORE
+    // starting any position tween, then call PlayMovement/start walking once it returns.
+    // No-ops immediately if already facing the right way, if inactive, or if nothing resolved.
+    public IEnumerator TurnTowardMovement(Character character, Vector3 worldDelta)
+    {
+        if (!gameObject.activeInHierarchy) yield break;
+
+        // This SpriteRenderer is shared/reused across whichever character is currently moving —
+        // giving up after one failed Show() (as a plain "if" would) leaves the PREVIOUS
+        // character's sprite on screen for this character's entire move if resolution just
+        // hasn't finished loading yet. Show() already clears the sprite on failure, so at worst
+        // this is a blank beat, never a stale wrong character. Only bail for real once loading
+        // has fully finished and Show() still fails — that's a genuine no-match, not a timing gap.
+        while (!Show(character))
+        {
+            if (CharacterSpritesheets.IsLoaded) yield break;
+            yield return null;
+        }
+
+        Orientation target = ResolveDirectionOrientation(worldDelta);
+        while (GetActiveOrientation() != target)
+        {
+            SetAnimation(NextTurnKindToward(target));
+            Orientation before = GetActiveOrientation();
+            // isShowing can flip false mid-turn (e.g. Clear() called from elsewhere) — don't spin forever.
+            while (isShowing && GetActiveOrientation() == before) yield return null;
+            if (!isShowing) yield break;
+        }
+    }
+
+    // diff is how many +1 ("Right") steps around OrientationCycle reach target from the current
+    // facing. For an exact 180 (diff == 2) either direction is equally short, so Right is picked
+    // arbitrarily.
+    private AnimationKind NextTurnKindToward(Orientation target)
+    {
+        int currentIndex = System.Array.IndexOf(OrientationCycle, GetActiveOrientation());
+        int targetIndex = System.Array.IndexOf(OrientationCycle, target);
+        int diff = ((targetIndex - currentIndex) % OrientationCycle.Length + OrientationCycle.Length) % OrientationCycle.Length;
+        return diff <= 2 ? AnimationKind.TurnRight : AnimationKind.TurnLeft;
+    }
+
     public bool PlayAction(Character character)
     {
         if (!gameObject.activeInHierarchy) return false;
@@ -334,7 +381,9 @@ public class CharacterAnimationController : MonoBehaviour
     {
         if (worldDelta.y > VerticalMovementEpsilon) return Orientation.Back;
         if (worldDelta.y < -VerticalMovementEpsilon) return Orientation.Forward;
-        return worldDelta.x < 0f ? Orientation.Left : Orientation.Right;
+        // Moving toward -X showed the "_Right" sheet and vice versa — swapped from the naive
+        // mapping to match the baked facings' actual on-screen orientation.
+        return worldDelta.x < 0f ? Orientation.Right : Orientation.Left;
     }
 
     public void Clear()
@@ -345,5 +394,23 @@ public class CharacterAnimationController : MonoBehaviour
         currentStateName = null;
         pendingCharacter = null;
         if (spriteRenderer != null) spriteRenderer.sprite = null;
+    }
+
+    // Called by CharacterSpriteHover, which owns the actual collider/mouse events (this
+    // component's own GameObject has no collider) — mirrors unhoveredColor/outlinePulseSpeed
+    // above in being state this component holds but doesn't drive itself.
+    public void SetHoverCursor(bool hovering)
+    {
+        if (cursorHovering == hovering) return;
+        cursorHovering = hovering;
+        if (hovering) CursorManager.Instance?.SetClickableCursor();
+        else CursorManager.Instance?.SetDefaultCursor();
+    }
+
+    private void OnDisable()
+    {
+        // Restore the default cursor if this gets disabled mid-hover (e.g. the character
+        // dies or the hex redraws while the pointer is still over it).
+        if (cursorHovering) SetHoverCursor(false);
     }
 }

@@ -55,6 +55,7 @@ MonoBehaviour:
   scenarioToLoadInEditor: 
   hexPrefab: {fileID: 1656764412083736294, guid: 5ee48be796f7a844c9eb1a6fa53080bc, type: 3}
   hexSize: {x: 1.5, y: 0.85}
+  hexSeamlessBlendMaterial: {fileID: 2100000, guid: 255bb13ac55d4ff69f0f75e0672f5475, type: 2}
   progressBar: {fileID: 0}
   statusText: {fileID: 0}
   drawMark: 0

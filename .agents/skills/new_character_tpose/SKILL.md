@@ -5,7 +5,7 @@ description: Create a full-body T-pose character reference image for RetroLOTR, 
 
 # New Character T-Pose
 
-Create a full-body T-pose reference illustration of a character with a transparent
+Create a full-body T-pose reference illustration of a character on a solid chroma-fuchsia
 background, matching RetroLOTR's painted-fantasy character-card art direction, in one API
 call — no separate sketch/colorize round-trip.
 
@@ -26,7 +26,7 @@ from `Assets/Art/Cards/Characters` are strong enough style anchors to send strai
 editing one of the input images — `restyle_hex` in this repo already relies on the same
 endpoint accepting a primary image plus extra images purely as style references — so this
 works as a single multi-image-conditioned generation, producing the final full-color,
-transparent-background result directly. That also means the style references actually
+solid-background result directly. That also means the style references actually
 influence the final render, unlike a generate→colorize split where they'd only inform an
 intermediate stage that gets discarded.
 
@@ -42,8 +42,8 @@ intermediate stage that gets discarded.
    style direction, and tells the model the references are style/technique anchors only — not
    poses or subjects to copy.
 4. Save the final image to `Assets/Art/Characters/Portraits/<Name>.png`.
-5. The script always runs a flood-fill + spot-color alpha-keying pass afterward to convert the
-   chroma-key background to real transparency — see Background Requirement below.
+5. Stop after saving. Keep the solid chroma-fuchsia background; do not remove it or convert it
+   to transparency.
 
 ## Prompt Requirements
 Include all of the following constraints in the image-generation prompt:
@@ -69,37 +69,9 @@ If there is not enough information to write a good prompt (missing name or descr
 the user before generating the image.
 
 ## Background Requirement
-The saved asset must have a transparent background, not a solid color — it is a sprite, not a
-card illustration.
-- **`gpt-image-2`'s `images.edit` rejects `background="transparent"` outright** — confirmed by
-  a live 400 error: `"Transparent background is not supported for this model."` (param
-  `background`, code `invalid_value`). This is a hard rejection, not a soft ignore, so the
-  parameter is never sent.
-- Instead, the prompt asks the model for a flat, uniform magenta/pink (`#FF00FF`) chroma-key
-  background — a color that should never legitimately appear on a RetroLOTR character. The
-  script then always runs an alpha-keying pass on the output (this is the primary mechanism,
-  not a rare fallback):
-  1. **Flood-fill** from all four corners — same BFS technique as `restyle_hex/scripts/trim_hex.py` —
-     removes the connected flat background.
-  2. **Spot color-match** — any remaining pixel within color-distance tolerance of the detected
-     chroma-key color also gets keyed out, even if not reachable from the border. This catches
-     pockets enclosed by the character's own silhouette (e.g. between splayed T-pose fingers)
-     that the flood-fill can't reach.
-  3. **Edge dilation** (2px) — anti-aliased pixels blended between the character's ink outline
-     and the chroma-key color sit just outside the color-match tolerance and would otherwise
-     survive as a visible magenta fringe around the silhouette; growing the background mask by
-     a couple of pixels before applying it removes that ring too.
-  None of this crops the canvas, so framing stays predictable for `spritesheet-generation`.
-- This is not perfect at the single-pixel level — a handful of heavily anti-aliased pixels
-  (e.g. where a beard strand or hat brim curve blends into the background over 2-3px) can
-  survive with a faint tint even after all three passes. This is a known, minor limit of
-  hard-threshold chroma keying (true removal would need alpha-decontamination/unmixing, which
-  is disproportionate effort for a rigging reference image) — do not chase it further unless
-  the user specifically asks for pixel-perfect edges.
-- If keying would erase almost the entire image (a bad color-distance guess), the script
-  leaves the file untouched and prints a warning instead of shipping a blank sprite — in that
-  case, inspect the image manually and consider re-running.
-- Report the keying result in the completion report.
+The saved asset must retain a solid, opaque, uniform chroma-fuchsia (`#FF00FF`) background.
+Do not run flood-fill keying, alpha conversion, transparency extraction, or any other
+background-removal step. The chroma-fuchsia PNG is the final asset.
 
 ## Model And Input Contract
 - Model: `gpt-image-2`, via `images.edit` (not `images.generate`/the Responses API tool —
@@ -150,7 +122,7 @@ Tools > Addressables > Sync Art Addresses
 
 ## Final Checks
 - Character is in a strict T-pose, full body visible, not cropped.
-- Background is transparent (native or flood-fill-keyed), not a solid color or scene.
+- Background is solid, opaque, uniform chroma-fuchsia (`#FF00FF`), with no scenery.
 - File path is `Assets/Art/Characters/Portraits/<Name>.png`.
 - Reference images came from `Assets/Art/Cards/Characters`, not from the final asset folder.
 - **TextureImporter is set to Sprite Mode = Single**
@@ -159,7 +131,7 @@ Tools > Addressables > Sync Art Addresses
 After finishing image generation, always report:
 - Final output file path.
 - Model/size/quality used (usually `gpt-image-2`, `640x1024`, `low`).
-- Background result: native transparency, flood-fill fallback applied, or failed/needs review.
+- Background result: solid chroma-fuchsia retained.
 - Exact reference images used (list full paths).
 - Number of references used.
 - The exact final prompt text used for generation.

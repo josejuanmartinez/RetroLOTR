@@ -15,6 +15,16 @@ public class PlayableLeader : Leader
     private string selectedLeaderDescription;
     private string selectedVariantName;
     private string selectedVariantCharacterName;
+    private string baseCharacterName;
+
+    // The base leader name this instance was spawned as, before any variant transformation
+    // overwrote characterName — null if no transformation has happened yet. Used by
+    // CharacterAnimationController to fall back to the base leader's sprites when the variant
+    // itself has no baked spritesheet of its own.
+    public override string SpriteVariantBaseName =>
+        string.IsNullOrWhiteSpace(baseCharacterName) || string.Equals(baseCharacterName, characterName, StringComparison.OrdinalIgnoreCase)
+            ? null
+            : baseCharacterName;
 
     // Set by NationSpawner when this instance was spawned from a scenario's self-owned character
     // card — its hex *is* an authored starting point (whether or not a specific variant was
@@ -39,6 +49,7 @@ public class PlayableLeader : Leader
         selectedDeckIdentity = playableLeaderBiome?.deckIdentity;
         selectedLeaderDescription = playableLeaderBiome?.description;
         selectedVariantName = null;
+        baseCharacterName = null;
         RefreshStatsFromCard();
     }
 
@@ -67,6 +78,7 @@ public class PlayableLeader : Leader
         if (string.Equals(characterName, selectedVariantCharacterName, StringComparison.OrdinalIgnoreCase)) return;
 
         string fromName = characterName;
+        baseCharacterName = fromName;
         characterName = selectedVariantCharacterName;
         RefreshStatsFromCard();
         MessageDisplay.ShowMessage($"{fromName} steps forward as {selectedVariantCharacterName}.", new Color(1f, 0.84f, 0f));

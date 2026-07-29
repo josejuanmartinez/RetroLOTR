@@ -28,9 +28,9 @@ public class Hex : MonoBehaviour
 
     public Vector2Int v2;
     [Header("References")]
-    public Sprite defaultCharacterSprite;
     public TextMeshPro messageNoUI;
     public SpriteRenderer hexRegion;
+    public FrameColors framesColors;
 
     [Header("Character")]
     public SpriteRenderer characterSpriteRenderer;
@@ -87,23 +87,10 @@ public class Hex : MonoBehaviour
 
 
 
-    [Header("Frames")]
-    public GameObject hoverHexFrame;
-    public GameObject tipHexFrame;
-    public GameObject scoutedHexFrame;
-    public GameObject darknessHexFrame;
-
     [Header("Outline")]
     public float characterOutlineSize = 10f;
-    // public float bannerOutlineSize = 70f;
+    [SerializeField] private Material characterOutlineMaterial;
     private int darknessTurnsRemaining = 0;
-
-    [Header("Selection Tint Pulse")]
-    // Named *Alpha for historical reasons (kept so existing Inspector overrides on the Board
-    // prefab/scene still bind) but now read as RGB brightness multipliers, not alpha.
-    [SerializeField] private float selectedBlinkMinAlpha = 0.5f;
-    [SerializeField] private float selectedBlinkMaxAlpha = 1f;
-    [SerializeField] private float selectedBlinkSpeed = 1f;
 
     [Header("Data")]
     [SerializeField] private PC pc;
@@ -167,7 +154,7 @@ public class Hex : MonoBehaviour
     private Illustrations illustrations;
     private HexTextureMapping hexTextureMapping;
     private Sprite baseTerrainSprite;
-    // private Coroutine bannerRetryCoroutine;
+    private Coroutine bannerRetryCoroutine;
 
     // Reused buffers to avoid GC in UI building / raycasts
     private static readonly StringBuilder sbChars = new(256);
@@ -183,8 +170,6 @@ public class Hex : MonoBehaviour
     private static Vector3 sharedSelectedParticlesLocalScale = Vector3.one;
     private static readonly Dictionary<SharedParticleType, SharedParticlePoolState> sharedParticlePools = new();
     private static Transform sharedParticlePoolRoot;
-    private static Material sharedCharacterOutlineMaterial;
-    // private static Material sharedBannerOutlineMaterial;
     private MaterialPropertyBlock characterOutlinePropertyBlock;
     // Full-alpha nation-color outline last applied by ApplyOutlineColorFromBanner/ClearOutlineColor —
     // cached so UpdateCharacterSpriteAlpha() can dim the outline's alpha in step with the sprite's,
@@ -194,8 +179,6 @@ public class Hex : MonoBehaviour
     private const string Unknown = "Unknown character(s)";
     private const int DarknessTurnsDefault = 2;
     private const int SharedOneShotParticlePoolSize = 3;
-    private const string CharacterOutlineMaterialPath = "Materials/CharacterOutline";
-    // private const string BannerOutlineMaterialPath = "Materials/BannerOutline";
     private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
     private static readonly int OutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
     private bool isCharacterHovered = false;
@@ -804,7 +787,7 @@ public class Hex : MonoBehaviour
             GetCharacterAnimationController()?.Clear();
             ClearClassIcons();
         }
-        // UpdateBannerSpriteForKnownCharacter();
+        UpdateBannerSpriteForKnownCharacter();
         if (refreshHoverText) RefreshHoverText();
     }
 
@@ -1026,14 +1009,6 @@ public class Hex : MonoBehaviour
             EnsureHoverPanel();
             hexInfoShowCoroutine = StartCoroutine(ShowHexInfoAfterDelay());
         }
-
-        if (isSelected)
-        {
-            SetActiveFast(hoverHexFrame, false);
-            return;
-        }
-
-        SetActiveFast(hoverHexFrame, true);
     }
 
     private IEnumerator ShowHexInfoAfterDelay()
@@ -1090,7 +1065,6 @@ public class Hex : MonoBehaviour
 
     public void Unhover()
     {
-        SetActiveFast(hoverHexFrame, false);
         if (IsMouseOverHexOrPanel()) return;
         if (hexInfoShowCoroutine != null) { StopCoroutine(hexInfoShowCoroutine); hexInfoShowCoroutine = null; }
         if (_lastHexInfoLinkIdx >= 0) ApplyHexInfoLinkHighlight(-1);
@@ -1349,7 +1323,6 @@ public class Hex : MonoBehaviour
     {
         if (!IsHidden())
         {
-            SetActiveFast(hoverHexFrame, false);
             isSelected = true;
             if (lookAt) LookAt(duration, delay);
         }
@@ -1358,7 +1331,6 @@ public class Hex : MonoBehaviour
     public void Unselect()
     {
         isSelected = false;
-        SetActiveFast(hoverHexFrame, false);
     }
 
     public void LookAt(float duration = 1.0f, float delay = 0.0f)
@@ -1632,38 +1604,16 @@ public class Hex : MonoBehaviour
     {
         if (!characterSpriteRenderer) return;
 
-        if (sharedCharacterOutlineMaterial == null)
+        if (characterOutlineMaterial == null)
         {
-            sharedCharacterOutlineMaterial = Resources.Load<Material>(CharacterOutlineMaterialPath);
-            if (sharedCharacterOutlineMaterial == null)
-            {
-                Debug.LogWarning($"Hex could not load character outline material at Resources/{CharacterOutlineMaterialPath}.");
-                return;
-            }
+            Debug.LogWarning("Hex: characterOutlineMaterial is not assigned in the Inspector.");
+            return;
         }
 
-        if (characterSpriteRenderer.sharedMaterial != sharedCharacterOutlineMaterial)
+        if (characterSpriteRenderer.sharedMaterial != characterOutlineMaterial)
         {
-            characterSpriteRenderer.sharedMaterial = sharedCharacterOutlineMaterial;
+            characterSpriteRenderer.sharedMaterial = characterOutlineMaterial;
         }
-
-        // Banner outline material loading commented out
-        /*
-        if (sharedBannerOutlineMaterial == null)
-        {
-            sharedBannerOutlineMaterial = Resources.Load<Material>(BannerOutlineMaterialPath);
-            if (sharedBannerOutlineMaterial == null)
-            {
-                Debug.LogWarning($"Hex could not load banner outline material at Resources/{BannerOutlineMaterialPath}.");
-                return;
-            }
-        }
-
-        if (bannerSpriteRenderer && bannerSpriteRenderer.sharedMaterial != sharedBannerOutlineMaterial)
-        {
-            bannerSpriteRenderer.sharedMaterial = sharedBannerOutlineMaterial;
-        }
-        */
     }
 
     private void UpdateMinimapTerrain(bool revealed)
@@ -1700,7 +1650,6 @@ public class Hex : MonoBehaviour
         UpdateUndergroundMarker();
         if (revealed)
         {
-            SetActiveFast(hoverHexFrame, false);
             UpdateArtifactVisibility();
             UpdateEncounterVisibility();
             UpdateParticles();
@@ -1718,14 +1667,16 @@ public class Hex : MonoBehaviour
         if (artifactBg) SetActiveFast(artifactBg, false);
 
         SetActiveFast(movement, false);
-        SetActiveFast(hoverHexFrame, false);
         if (sharedSelectedParticlesOwner == this)
         {
             SetSharedSelectedParticlesActive(false);
         }
         StopSharedOneShotParticlesOnThisHex();
-        SetActiveFast(scoutedHexFrame, false);
-        SetActiveFast(darknessHexFrame, false);
+        if (framesColors != null)
+        {
+            framesColors.SetScouted(false);
+            framesColors.SetDarkness(false);
+        }
 
         UpdatePcWorldText(false);
 
@@ -1777,18 +1728,18 @@ public class Hex : MonoBehaviour
                 if (sprite == null)
                     sprite = illustrations.GetIllustrationByName(known.race.ToString(), false);
             }
-            characterSpriteRenderer.sprite = sprite != null ? sprite : defaultCharacterSprite;
+            characterSpriteRenderer.sprite = sprite;
             UpdateOutlineColor(known);
         }
         else
         {
             GetCharacterAnimationController()?.Clear();
-            characterSpriteRenderer.sprite = defaultCharacterSprite;
+            characterSpriteRenderer.sprite = null;
             ClearOutlineColor();
         }
     }
 
-    private CharacterAnimationController GetCharacterAnimationController()
+    public CharacterAnimationController GetCharacterAnimationController()
     {
         if (characterAnimationController == null && characterSpriteRenderer != null)
         {
@@ -1863,7 +1814,7 @@ public class Hex : MonoBehaviour
         classArrangeCoroutine = null;
     }
 
-    /*private void UpdateBannerSpriteForKnownCharacter()
+    private void UpdateBannerSpriteForKnownCharacter()
     {
         if (bannerSpriteRenderer == null)
         {
@@ -1876,20 +1827,23 @@ public class Hex : MonoBehaviour
             return;
         }
 
-        if (!TryGetKnownCharacterForBanner(out Character known))
+        if (!TryGetKnownArmyCommanderForBanner(out Character known))
         {
             ClearBannerSprite();
             return;
         }
 
         UpdateBannerSprite(known);
-    }*/
+    }
 
-    /*private bool TryGetKnownCharacterForBanner(out Character known)
+    // Same "known" resolution as TryGetKnownCharacterForIcon, but a banner is only ever worth
+    // showing for a character who actually commands an army — narrower than icon visibility.
+    private bool TryGetKnownArmyCommanderForBanner(out Character known)
     {
         known = null;
-        if (TryGetKnownCharacterForIcon(out known))
+        if (TryGetKnownCharacterForIcon(out Character iconCharacter) && iconCharacter.IsArmyCommander())
         {
+            known = iconCharacter;
             return true;
         }
 
@@ -1899,7 +1853,7 @@ public class Hex : MonoBehaviour
         bool isScouted = IsScouted(player);
         Character selected = board != null ? board.selectedCharacter : null;
 
-        if (selected != null && selected.hex == this &&
+        if (selected != null && selected.hex == this && selected.IsArmyCommander() &&
             (isScouted || IsFriendlyCharacter(selected, player) || selected.GetOwner() == player))
         {
             known = selected;
@@ -1909,7 +1863,7 @@ public class Hex : MonoBehaviour
         for (int i = 0, n = characters.Count; i < n; i++)
         {
             Character candidate = characters[i];
-            if (candidate == null || candidate.killed || candidate.hex != this) continue;
+            if (candidate == null || candidate.killed || candidate.hex != this || !candidate.IsArmyCommander()) continue;
             if (IsFriendlyCharacter(candidate, player) || candidate.GetOwner() == player)
             {
                 known = candidate;
@@ -1923,16 +1877,15 @@ public class Hex : MonoBehaviour
         }
 
         return false;
-    }*/
+    }
 
-    /*private void UpdateBannerSprite(Character character)
+    private void UpdateBannerSprite(Character character)
     {
         if (bannerSpriteRenderer == null) return;
 
         if (character == null)
         {
             ClearBannerSprite();
-            // ClearBannerOutline();
             return;
         }
 
@@ -1948,7 +1901,6 @@ public class Hex : MonoBehaviour
         if (illustrations == null)
         {
             ClearBannerSprite();
-            // ClearBannerOutline();
             return;
         }
 
@@ -1956,7 +1908,6 @@ public class Hex : MonoBehaviour
         {
             QueueBannerRetry();
             ClearBannerSprite();
-            ClearBannerOutline();
             return;
         }
 
@@ -1964,7 +1915,6 @@ public class Hex : MonoBehaviour
         if (ownerBannerSprite == null)
         {
             ClearBannerSprite();
-            ClearBannerOutline();
             return;
         }
 
@@ -1973,11 +1923,10 @@ public class Hex : MonoBehaviour
             bannerSpriteRenderer.sprite = ownerBannerSprite;
         }
         SetActiveFast(bannerSpriteRenderer.gameObject, true);
-        UpdateBannerOutline(character.GetOwner());
         CancelBannerRetry();
-    }*/
+    }
 
-    /*private void ClearBannerSprite()
+    private void ClearBannerSprite()
     {
         if (bannerSpriteRenderer == null)
         {
@@ -1985,25 +1934,9 @@ public class Hex : MonoBehaviour
         }
 
         SetActiveFast(bannerSpriteRenderer.gameObject, false);
-    }*/
+    }
 
-    /*private void UpdateBannerOutline(Leader owner)
-    {
-        if (!bannerSpriteRenderer) return;
-        ApplyOutlineSettings(
-            bannerSpriteRenderer,
-            owner != null ? owner.nationColor : Color.white,
-            bannerOutlineSize,
-            isBanner: true);
-    }*/
-
-    /*private void ClearBannerOutline()
-    {
-        if (!bannerSpriteRenderer) return;
-        ApplyOutlineSettings(bannerSpriteRenderer, Color.white, bannerOutlineSize, isBanner: true);
-    }*/
-
-    /*private void QueueBannerRetry()
+    private void QueueBannerRetry()
     {
         if (bannerRetryCoroutine != null)
         {
@@ -2011,9 +1944,9 @@ public class Hex : MonoBehaviour
         }
 
         bannerRetryCoroutine = StartCoroutine(RetryBannerWhenIllustrationsReady());
-    }*/
+    }
 
-    /*private void CancelBannerRetry()
+    private void CancelBannerRetry()
     {
         if (bannerRetryCoroutine == null)
         {
@@ -2022,9 +1955,9 @@ public class Hex : MonoBehaviour
 
         StopCoroutine(bannerRetryCoroutine);
         bannerRetryCoroutine = null;
-    }*/
+    }
 
-    /*private IEnumerator RetryBannerWhenIllustrationsReady()
+    private IEnumerator RetryBannerWhenIllustrationsReady()
     {
         while (illustrations == null || !illustrations.IsLoaded)
         {
@@ -2043,9 +1976,9 @@ public class Hex : MonoBehaviour
         }
 
         RedrawCharacters(false);
-    }*/
+    }
 
-    /*private static string ResolveBannerName(Leader owner)
+    private static string ResolveBannerName(Leader owner)
     {
         if (owner == null)
         {
@@ -2076,7 +2009,7 @@ public class Hex : MonoBehaviour
         }
 
         return biome.banner;
-    }*/
+    }
 
     private void UpdateOutlineColor(Character character)
     {
@@ -2084,32 +2017,26 @@ public class Hex : MonoBehaviour
         if (owner == null)
         {
             ClearOutlineColor();
-            // ClearBannerOutline();
             return;
         }
         ApplyOutlineColorFromBanner(null, owner);
-        // UpdateBannerOutline(owner);
     }
 
     private void ApplyOutlineColorFromBanner(Sprite bannerSprite, Leader owner)
     {
-        ApplyOutlineSettings(characterSpriteRenderer, owner != null ? owner.nationColor : Color.white, characterOutlineSize, isBanner: false);
-        // if (bannerSpriteRenderer)
-        // {
-        //     ApplyOutlineSettings(bannerSpriteRenderer, owner != null ? owner.nationColor : Color.white, bannerOutlineSize, isBanner: true);
-        // }
+        ApplyOutlineSettings(characterSpriteRenderer, owner != null ? owner.nationColor : Color.white, characterOutlineSize);
     }
 
     private void ClearOutlineColor()
     {
-        ApplyOutlineSettings(characterSpriteRenderer, Color.white, characterOutlineSize, isBanner: false);
+        ApplyOutlineSettings(characterSpriteRenderer, Color.white, characterOutlineSize);
     }
 
-    private void ApplyOutlineSettings(SpriteRenderer spriteRenderer, Color outlineColor, float outlineSize, bool isBanner)
+    private void ApplyOutlineSettings(SpriteRenderer spriteRenderer, Color outlineColor, float outlineSize)
     {
         if (!spriteRenderer) return;
 
-        if (!isBanner && spriteRenderer == characterSpriteRenderer)
+        if (spriteRenderer == characterSpriteRenderer)
         {
             characterOutlineBaseColor = outlineColor;
         }
@@ -2924,8 +2851,11 @@ public class Hex : MonoBehaviour
         PlayableLeader player = game != null ? game.player : null;
         bool seen = IsHexSeen();
         bool scoutedByPlayer = player != null && scoutedBy.Contains(player);
-        SetActiveFast(scoutedHexFrame, seen && scoutedByPlayer);
-        SetActiveFast(darknessHexFrame, seen && darknessTurnsRemaining > 0);
+        if (framesColors != null)
+        {
+            framesColors.SetScouted(seen && scoutedByPlayer);
+            framesColors.SetDarkness(seen && darknessTurnsRemaining > 0);
+        }
     }
 
     // Safe SetActive that avoids redundant calls/dirtying the obj
@@ -3243,11 +3173,6 @@ public class Hex : MonoBehaviour
     private void UpdateTerrainVisualAlpha()
     {
         float terrainAlpha = isCurrentlyUnseen ? 0.1f : 1f;
-        if (!isCurrentlyUnseen && ShouldShowPcVisual() && pc != null && pc.isHidden)
-        {
-            terrainAlpha = 0.35f;
-        }
-
         SetHexSpriteAlpha(terrainAlpha);
     }
 
@@ -3319,6 +3244,7 @@ public class Hex : MonoBehaviour
         builder.Append("</color>");
 
         if (pc.hasPort) builder.Append(" <sprite name=\"port\">");
+        if (pc.isHidden) builder.Append(" <sprite name=\"hidden\">");
 
         return builder.ToString();
     }
@@ -3358,18 +3284,19 @@ public class Hex : MonoBehaviour
         if (board == null) board = FindFirstObjectByType<Board>();
         Character selected = board != null ? board.selectedCharacter : null;
 
-        if (selected != null && selected.hex == this && characterSpriteRenderer.sprite != null && characterSpriteRenderer.sprite != defaultCharacterSprite)
+        if (selected != null && selected.hex == this && characterSpriteRenderer.sprite != null)
         {
-            float t = Mathf.PingPong(Time.time * selectedBlinkSpeed, 1f);
-            float brightness = Mathf.Lerp(selectedBlinkMinAlpha, selectedBlinkMaxAlpha, t);
-            characterSpriteRenderer.color = new Color(brightness, brightness, brightness, 1f);
-            ApplyCharacterOutlineSize(characterOutlineSize);
+            // A selected character counts as hovered (no Unhovered Color tint) and is the only
+            // one whose outline pulses — everyone else's outline stays steady/"always on".
+            characterSpriteRenderer.color = Color.white;
+            float pulseSpeed = characterAnimationController != null ? characterAnimationController.outlinePulseSpeed : 1f;
+            float sizeT = Mathf.PingPong(Time.time * pulseSpeed, 1f);
+            ApplyCharacterOutlineSize(Mathf.Lerp(-5f, characterOutlineSize, sizeT));
         }
         else
         {
-            characterSpriteRenderer.color = Color.white;
-            float sizeT = Mathf.PingPong(Time.time * selectedBlinkSpeed, 1f);
-            ApplyCharacterOutlineSize(Mathf.Lerp(-5f, characterOutlineSize, sizeT));
+            characterSpriteRenderer.color = characterAnimationController != null ? characterAnimationController.unhoveredColor : Color.white;
+            ApplyCharacterOutlineSize(characterOutlineSize);
         }
         ApplyCharacterOutlineAlpha(1f);
     }

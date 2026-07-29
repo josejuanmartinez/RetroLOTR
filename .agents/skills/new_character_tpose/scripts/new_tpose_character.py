@@ -6,10 +6,8 @@ shipped character art to draw on already, so it skips the throwaway
 black-and-white sketch stage entirely: the 3 randomly-selected character card
 references and the full-color prompt go into one `images.edit` call.
 
-gpt-image-2's `images.edit` rejects `background="transparent"` outright (a
-live 400 error, not a soft-ignore), so this skill asks the model for a flat
-chroma-key color background instead and always converts that to real alpha
-via flood-fill keying after generation (see `ensure_transparent_background`).
+The skill asks the model for a flat chroma-fuchsia background and retains that
+background in the final PNG for downstream chroma-key use.
 """
 
 from __future__ import annotations
@@ -41,13 +39,7 @@ REPO_ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_OUT_DIR = REPO_ROOT / "Assets" / "Art" / "Characters" / "Portraits"
 DEFAULT_REFERENCE_ROOT = REPO_ROOT / "Assets" / "Art" / "Cards" / "Characters"
 BACKGROUND_KEY_TOLERANCE = 30.0
-# Anti-aliased edge pixels blend between the character's ink outline and the
-# flat chroma-key color, landing just outside the color-match tolerance —
-# left alone they survive as a visible magenta fringe around the silhouette.
-# Growing the background mask by a couple of pixels before keying removes
-# that ring along with the flat background.
 EDGE_DILATE_PIXELS = 2
-
 T_POSE_STANCE = (
     "The character stands in a strict T-pose: fully upright, facing directly "
     "toward the viewer, feet together or shoulder-width apart, both arms held "
@@ -78,8 +70,7 @@ BACKGROUND_REQUIREMENT = (
     "chroma-key color — solid and even across the entire background area, with no "
     "gradient, no texture, no vignette, no scenery, and no drop shadow behind the "
     "figure. This exact color must not appear anywhere on the character itself "
-    "(skin, hair, clothing, or gear), only in the background, because it will be "
-    "programmatically removed and replaced with transparency after generation. "
+    "(skin, hair, clothing, or gear), only in the background. "
     "Only the character should be rendered in natural colors; everything else in "
     "frame must be the flat chroma-key color."
 )
@@ -495,7 +486,7 @@ def main() -> int:
         print(f"out={out_path}")
         print(f"model={args.model}")
         print(f"size={args.size}  quality={args.quality}")
-        print(f"background: model renders flat chroma-key ({CHROMA_KEY_COLOR}), then flood-fill keyed to alpha")
+        print(f"background: solid chroma-fuchsia retained ({CHROMA_KEY_COLOR})")
         print(f"upload_max_dim={args.upload_max_dim}")
         print("prompt=")
         print(prompt)
@@ -519,23 +510,7 @@ def main() -> int:
     print(f"Generation completed in {elapsed:.1f}s.", file=sys.stderr)
     print(f"Wrote {out_path}")
 
-    bg_status = ensure_transparent_background(out_path)
-    if bg_status == "native":
-        print("Background: transparent as returned by the API (unexpected but fine).")
-    elif bg_status == "keyed":
-        print(
-            "Background: chroma-key color removed via flood-fill alpha keying "
-            "(same technique as restyle_hex/trim_hex.py) — gpt-image-2's images.edit "
-            "does not support requesting transparency directly."
-        )
-    else:
-        print(
-            "WARNING: API returned an opaque background and automatic "
-            "flood-fill keying was not confident enough to apply (would have "
-            "erased most of the image). Background removal was skipped — "
-            "review the image manually.",
-            file=sys.stderr,
-        )
+    print(f"Background: solid chroma-fuchsia retained ({CHROMA_KEY_COLOR}).")
 
     print("Reference images used:")
     for reference_path in reference_paths:

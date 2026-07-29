@@ -62,13 +62,7 @@ public class AnimationSpritesheetBaker : EditorWindow
         // zero until the grip lines up with the bone, and Rotation will orbit around that point
         // afterward instead of swinging the whole prop away from the hand.
         public Vector3 PivotOffset;
-        // Defaults OFF, unlike StateEntry.UseForFraming (which defaults ON): a prop rigidly
-        // follows a limb, so an attack/cast-spell state can swing it well outside the
-        // character's normal silhouette. Since framing bounds are shared across every state in
-        // the atlas, letting that count by default would zoom out EVERY cell to fit the one pose
-        // where the prop reaches furthest — same failure mode StateEntry.UseForFraming exists to
-        // avoid for Death/Hit poses, just triggered by the prop instead of the base animation.
-        public bool UseForFraming;
+        public bool UseForFraming = true;
     }
 
     // ── Inputs ────────────────────────────────────────────────────────
@@ -77,12 +71,30 @@ public class AnimationSpritesheetBaker : EditorWindow
     private List<StateEntry> _states = new();
     private List<PropEntry> _props = new();
 
+    // Prop choices are restricted to FBX models under this folder (rather than an open
+    // ObjectField) so a prop can't accidentally point at some unrelated GameObject elsewhere
+    // in the project. Cached per-window and rebuilt lazily; "Refresh" next to the Props header
+    // covers a weapon FBX added to the folder after the window was already open.
+    private const string WeaponPrefabsFolder = "Assets/Art/3D/fbx/Weapons";
+    private GameObject[] _weaponPrefabs;
+    private string[] _weaponPrefabOptions;
+
+    private void RefreshWeaponPrefabs()
+    {
+        _weaponPrefabs = AssetDatabase.FindAssets("t:GameObject", new[] { WeaponPrefabsFolder })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(go => go != null)
+            .OrderBy(go => go.name)
+            .ToArray();
+        _weaponPrefabOptions = new[] { "(None)" }.Concat(_weaponPrefabs.Select(go => go.name)).ToArray();
+    }
+
     // ── Bake settings ─────────────────────────────────────────────────
-    private int _framesPerState = 8;
-    private int _cellWidth = 256;
-    private int _cellHeight = 320;
-    private float _boundsMarginPct = 0.5f;
-    private float _cameraYaw;
+    private int _framesPerState = 16;
+    private int _cellWidth = 512;
+    private int _cellHeight = 512;
+    private float _boundsMarginPct = 0f;
+    private float _cameraYaw = -180f;
     private float _cameraPitch;
     private bool _recenterRoot = true;
     private bool _transparentBackground = true;
@@ -107,6 +119,11 @@ public class AnimationSpritesheetBaker : EditorWindow
     // ── Output ────────────────────────────────────────────────────────
     private string _outFolder = "Assets/Art/Characters/AnimationSpritesheets";
     private string _sheetName = "";
+
+    // Set for the duration of one Bake() call once ConfirmOverwrite has already asked the user
+    // about every output path that bake will touch — suppresses SaveAtlas's own per-file prompt
+    // so a 4-facing bake never asks more than once.
+    private bool _overwriteConfirmed;
 
     private Vector2 _scroll;
 
@@ -218,7 +235,12 @@ public class AnimationSpritesheetBaker : EditorWindow
 
         GUILayout.Space(6);
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        EditorGUILayout.LabelField("Props", EditorStyles.boldLabel);
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            EditorGUILayout.LabelField("Props", EditorStyles.boldLabel);
+            if (GUILayout.Button("Refresh", GUILayout.Width(60))) RefreshWeaponPrefabs();
+        }
+        if (_weaponPrefabOptions == null) RefreshWeaponPrefabs();
         for (int i = 0; i < _props.Count; i++)
         {
             var prop = _props[i];
@@ -227,7 +249,9 @@ public class AnimationSpritesheetBaker : EditorWindow
                 using (new EditorGUILayout.HorizontalScope())
                 {
                     prop.Include = EditorGUILayout.ToggleLeft(GUIContent.none, prop.Include, GUILayout.Width(18));
-                    prop.Prefab = (GameObject)EditorGUILayout.ObjectField(prop.Prefab, typeof(GameObject), false);
+                    int currentIndex = prop.Prefab != null ? System.Array.IndexOf(_weaponPrefabs, prop.Prefab) : -1;
+                    int selected = EditorGUILayout.Popup(currentIndex + 1, _weaponPrefabOptions);
+                    prop.Prefab = selected == 0 ? null : _weaponPrefabs[selected - 1];
                     prop.Bone = (HumanBodyBones)EditorGUILayout.EnumPopup(prop.Bone, GUILayout.Width(140));
                     prop.UseForFraming = EditorGUILayout.ToggleLeft(
                         new GUIContent("Frame", "Let this prop's reach count toward the shared camera zoom. " +
@@ -672,8 +696,11 @@ public class AnimationSpritesheetBaker : EditorWindow
     // stem with a facing suffix appended.
     void Bake()
     {
+        _overwriteConfirmed = false;
+
         if (!_bakeAllFacings)
         {
+            if (!ConfirmOverwrite(new[] { ComputeAtlasOutPath(_sheetName) })) return;
             BakeOneFacing(0f);
             return;
         }
@@ -692,6 +719,8 @@ public class AnimationSpritesheetBaker : EditorWindow
             ("_Back", 2f * leftYaw),
             ("_Right", -leftYaw),
         };
+
+        if (!ConfirmOverwrite(facings.Select(f => ComputeAtlasOutPath(_sheetName + f.suffix)))) return;
 
         var entries = _states.Where(s => s.Include).ToList();
         if (entries.Count == 0) return;
@@ -1218,6 +1247,50 @@ public class AnimationSpritesheetBaker : EditorWindow
     // other per-character art, so CharacterSpritesheets finds these with no separate label setup.
     const string AddressableSpritesheetLabel = "default";
 
+    // Moving a baked PNG/atlas.json in the Project window after baking (e.g. into a
+    // [RaceOrName] subfolder to match the layout other characters use) does NOT update its
+    // Addressable entry's stored address — Unity tracks the file itself by GUID (always
+    // correct), but the address string CharacterSpritesheets keys its lookups by is whatever was
+    // set at bake time, and goes stale. Resets every AnimationSpritesheets entry's address back
+    // to AddressableAssetEntry.AssetPath (which always resolves live from the GUID), so a moved
+    // file's address matches where it actually lives again.
+    [MenuItem("Tools/Animation Spritesheet Baker/Resync Addressable Paths")]
+    static void ResyncSpritesheetAddresses()
+    {
+        AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+        if (settings == null)
+        {
+            Debug.LogError("[SpritesheetBaker] No AddressableAssetSettings found.");
+            return;
+        }
+
+        int fixedCount = 0;
+        foreach (AddressableAssetGroup group in settings.groups)
+        {
+            if (group == null) continue;
+            bool groupChanged = false;
+            foreach (AddressableAssetEntry entry in group.entries)
+            {
+                if (entry == null || string.IsNullOrEmpty(entry.AssetPath)) continue;
+                if (!entry.AssetPath.StartsWith(CharacterSpritesheets.AddressRoot)) continue;
+                if (entry.address == entry.AssetPath) continue;
+
+                Debug.Log($"[SpritesheetBaker] Resyncing address '{entry.address}' -> '{entry.AssetPath}'.");
+                entry.address = entry.AssetPath;
+                groupChanged = true;
+                fixedCount++;
+            }
+            if (groupChanged) EditorUtility.SetDirty(group);
+        }
+
+        if (fixedCount > 0)
+        {
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+        }
+        Debug.Log($"[SpritesheetBaker] Resynced {fixedCount} AnimationSpritesheets Addressable entr{(fixedCount == 1 ? "y" : "ies")}.");
+    }
+
     // No-ops (with a warning) if this project has no AddressableAssetSettings yet, rather than
     // throwing and aborting an otherwise-successful bake.
     static void MarkAddressable(string assetPath, string label)
@@ -1376,15 +1449,43 @@ public class AnimationSpritesheetBaker : EditorWindow
         camData.renderPostProcessing = false;
     }
 
+    string ComputeAtlasOutPath(string sheetName)
+    {
+        string safeName = string.Concat(sheetName.Split(Path.GetInvalidFileNameChars()));
+        return $"{_outFolder}/{safeName}.png";
+    }
+
+    // Asks at most one Overwrite/Stop dialog for a whole Bake() call, up front, before any of
+    // the (potentially 4x, for a full facing set) expensive rendering work starts — rather than
+    // one dialog per facing, which asked the same question up to 4 times for one decision.
+    // Rejecting stops the entire bake (not just the facing(s) that already existed): a per-file
+    // Skip would silently leave a mismatched set of old/new facing sheets.
+    bool ConfirmOverwrite(IEnumerable<string> outPaths)
+    {
+        List<string> existing = outPaths.Where(File.Exists).ToList();
+        if (existing.Count == 0) return true;
+
+        bool overwrite = EditorUtility.DisplayDialog(
+            "Spritesheet Already Exists",
+            existing.Count == 1
+                ? $"'{existing[0]}' already exists. Overwrite it?"
+                : $"{existing.Count} output spritesheet(s) already exist:\n\n{string.Join("\n", existing)}\n\nOverwrite them?",
+            "Overwrite", "Stop");
+        _overwriteConfirmed = overwrite;
+        if (!overwrite) Debug.Log("[SpritesheetBaker] Bake stopped — output already exists.");
+        return overwrite;
+    }
+
     // Returns null if the file already existed and the user chose Skip — callers must check for
-    // that before touching the result (see BakeOneFacing).
+    // that before touching the result (see BakeOneFacing). Reached only as a fallback: the normal
+    // path already resolved this via ConfirmOverwrite before any baking started.
     string SaveAtlas(Texture2D atlas, List<StateEntry> entries)
     {
         if (!Directory.Exists(_outFolder)) Directory.CreateDirectory(_outFolder);
         string safeName = string.Concat(_sheetName.Split(Path.GetInvalidFileNameChars()));
-        string outPath = $"{_outFolder}/{safeName}.png";
+        string outPath = ComputeAtlasOutPath(_sheetName);
 
-        if (File.Exists(outPath))
+        if (File.Exists(outPath) && !_overwriteConfirmed)
         {
             bool overwrite = EditorUtility.DisplayDialog(
                 "Spritesheet Already Exists",

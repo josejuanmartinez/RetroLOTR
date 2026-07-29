@@ -18,8 +18,6 @@ public class HexSeamlessTerrain : MonoBehaviour
     // opaque neighbor art underneath to fade over. Must match ScenarioCreatorWindow.TileOverdraw.
     public const float TileOverdraw = 1.10f;
 
-    private const string MaterialResourcePath = "Materials/HexSeamlessBlendGame";
-
     private static HexSeamlessTerrain instance;
     private static Material material;
     private static Board cachedBoard;
@@ -84,10 +82,11 @@ public class HexSeamlessTerrain : MonoBehaviour
     private static bool EnsureMaterial()
     {
         if (material != null) return true;
-        Material source = Resources.Load<Material>(MaterialResourcePath);
+        Board board = GetBoard();
+        Material source = board != null ? board.hexSeamlessBlendMaterial : null;
         if (source == null)
         {
-            Debug.LogError($"HexSeamlessTerrain: missing material at Resources/{MaterialResourcePath}");
+            Debug.LogError("HexSeamlessTerrain: Board.hexSeamlessBlendMaterial is not assigned.");
             return false;
         }
         // Runtime copy: play-mode tweaks (grid toggle) must never dirty the asset.

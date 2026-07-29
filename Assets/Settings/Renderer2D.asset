@@ -23,9 +23,18 @@ MonoBehaviour:
     probeVolumeSamplingDebugShader: {fileID: 4800000, guid: 8f96cd657dc40064aa21efcc7e50a2e7, type: 3}
     probeSamplingDebugMesh: {fileID: -3555484719484374845, guid: 57d7c4c16e2765b47a4d2069b311bffe, type: 3}
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
-  m_RendererFeatures: []
-  m_RendererFeatureMap: 
+    probeVolumeBlendStatesCS: {fileID: 0}
+  m_RendererFeatures:
+  - {fileID: 7816426015061708325}
+  - {fileID: 4281936226417201301}
+  - {fileID: 4281936226417201302}
+  - {fileID: 4281936226417201303}
+  - {fileID: 4281936226417201304}
+  m_RendererFeatureMap: 6c7a1b16997162a54c5b7f10a8da61019f47f4cda6aab10271dcbe3cd43f010af337390d2a42c991
   m_UseNativeRenderPass: 0
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_TransparencySortMode: 0
   m_TransparencySortAxis: {x: 0, y: 1, z: 0}
   m_HDREmulationScale: 1
@@ -49,21 +58,155 @@ MonoBehaviour:
   m_CameraSortingLayerDownsamplingMethod: 0
   m_MaxLightRenderTextureCount: 16
   m_MaxShadowRenderTextureCount: 1
-  m_LightShader: {fileID: 4800000, guid: 3f6c848ca3d7bca4bbe846546ac701a1, type: 3}
-  m_CoreBlitShader: {fileID: 4800000, guid: 93446b5c5339d4f00b85c159e1159b7c, type: 3}
-  m_CoreBlitColorAndDepthPS: {fileID: 4800000, guid: d104b2fc1ca6445babb8e90b0758136b, type: 3}
-  m_BlitHDROverlay: {fileID: 4800000, guid: a89bee29cffa951418fc1e2da94d1959, type: 3}
-  m_SamplingShader: {fileID: 4800000, guid: 04c410c9937594faa893a11dceb85f7e, type: 3}
-  m_ProjectedShadowShader: {fileID: 4800000, guid: ce09d4a80b88c5a4eb9768fab4f1ee00, type: 3}
-  m_SpriteShadowShader: {fileID: 4800000, guid: 44fc62292b65ab04eabcf310e799ccf6, type: 3}
-  m_SpriteUnshadowShader: {fileID: 4800000, guid: de02b375720b5c445afe83cd483bedf3, type: 3}
-  m_GeometryShadowShader: {fileID: 4800000, guid: 19349a0f9a7ed4c48a27445bcf92e5e1, type: 3}
-  m_GeometryUnshadowShader: {fileID: 4800000, guid: 77774d9009bb81447b048c907d4c6273, type: 3}
-  m_FallbackErrorShader: {fileID: 4800000, guid: e6e9a19c3678ded42a3bc431ebef7dbd, type: 3}
   m_PostProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
-  m_FallOffLookup: {fileID: 2800000, guid: 5688ab254e4c0634f8d6c8e0792331ca, type: 3}
   m_DefaultMaterialType: 0
   m_DefaultCustomMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_DefaultLitMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_DefaultUnlitMaterial: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
-  m_DefaultMaskMaterial: {fileID: 2100000, guid: 15d0c3709176029428a0da2f8cecf0b5, type: 2}
+--- !u!114 &4281936226417201301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e64fa51b972e4bd2acc7442acb23182c, type: 3}
+  m_Name: Living Illustration
+  m_EditorClassIdentifier: RetroLOTR.Rendering.CardArtStyleRendererFeature
+  m_Active: 0
+  settings:
+    style: 0
+    intensity: 0.253
+    motionPixels: 0.93
+    motionScale: 7
+    motionSpeed: 0.08
+    warmHalation: 0.12
+    colorMisregistrationPixels: 0.75
+    printVariation: 0.06
+    brushRadius: 2
+    celBands: 6
+    cartoonOutline: 0.8
+    cartoonOutlineRadius: 1.25
+    colorSimplification: 0.55
+    broadcastTexture: 0.035
+    cartoonSaturation: 1.08
+    showInSceneView: 0
+    affectRenderTextures: 0
+--- !u!114 &4281936226417201302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e64fa51b972e4bd2acc7442acb23182c, type: 3}
+  m_Name: Vintage Print
+  m_EditorClassIdentifier: RetroLOTR.Rendering.CardArtStyleRendererFeature
+  m_Active: 0
+  settings:
+    style: 1
+    intensity: 1
+    motionPixels: 1.25
+    motionScale: 20
+    motionSpeed: 0.829
+    warmHalation: 0.623
+    colorMisregistrationPixels: 3
+    printVariation: 1
+    brushRadius: 2
+    celBands: 6
+    cartoonOutline: 0.8
+    cartoonOutlineRadius: 1.25
+    colorSimplification: 0.55
+    broadcastTexture: 0.035
+    cartoonSaturation: 1.08
+    showInSceneView: 0
+    affectRenderTextures: 0
+--- !u!114 &4281936226417201303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e64fa51b972e4bd2acc7442acb23182c, type: 3}
+  m_Name: Painterly Simplification
+  m_EditorClassIdentifier: RetroLOTR.Rendering.CardArtStyleRendererFeature
+  m_Active: 0
+  settings:
+    style: 2
+    intensity: 1
+    motionPixels: 0.82
+    motionScale: 7
+    motionSpeed: 0.08
+    warmHalation: 0.12
+    colorMisregistrationPixels: 0.75
+    printVariation: 0.06
+    brushRadius: 1.42
+    celBands: 6
+    cartoonOutline: 0.8
+    cartoonOutlineRadius: 1.25
+    colorSimplification: 0.55
+    broadcastTexture: 0.035
+    cartoonSaturation: 1.08
+    showInSceneView: 0
+    affectRenderTextures: 0
+--- !u!114 &4281936226417201304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e64fa51b972e4bd2acc7442acb23182c, type: 3}
+  m_Name: 80s Cartoon
+  m_EditorClassIdentifier: RetroLOTR.Rendering.CardArtStyleRendererFeature
+  m_Active: 1
+  settings:
+    style: 3
+    intensity: 0.51
+    motionPixels: 0.7
+    motionScale: 7
+    motionSpeed: 0.08
+    warmHalation: 0.12
+    colorMisregistrationPixels: 0.75
+    printVariation: 0.06
+    brushRadius: 1.72
+    celBands: 12
+    cartoonOutline: 2
+    cartoonOutlineRadius: 3
+    colorSimplification: 1
+    broadcastTexture: 0
+    cartoonSaturation: 0.5
+    showInSceneView: 0
+    affectRenderTextures: 0
+--- !u!114 &7816426015061708325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e14269dd7854ebcb15f610a06cbebc8, type: 3}
+  m_Name: Painted Ink
+  m_EditorClassIdentifier: RetroLOTR.Rendering.PaintedInkRendererFeature
+  m_Active: 0
+  settings:
+    intensity: 1
+    inkStrength: 0.524
+    inkRadius: 0.99
+    pigmentGranulation: 0.409
+    paperGrain: 0
+    grainScale: 0.593
+    warmth: 1
+    vignette: 0.284
+    animationSpeed: 0
+    showInSceneView: 0
+    affectRenderTextures: 0
