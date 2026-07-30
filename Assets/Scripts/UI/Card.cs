@@ -52,6 +52,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     [Header("Tuning")]
     [SerializeField] private Color requirementsMessageColor = Color.red;
+    [Tooltip("True on TokenCard instances that only carry the compact token visual: hovering unfolds the card into CardCenterPreview instead of flipping the (absent) RealCard subtree in place.")]
+    [SerializeField] private bool isTokenOnlyPresentation;
 
     public CardData cardData { get; private set; }
 
@@ -738,6 +740,33 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         requirements.Add($"{count}<sprite name=\"{spriteName}\">");
     }
 
+    // Extracted from UpdateInteractableState so callers that show a card outside the
+    // hand (e.g. SituationCardsUI's opportunity-card tray) can evaluate/tint playability
+    // for a specific character without re-implementing the action-resolving check.
+    public bool EvaluateIsPlayable(Character character)
+    {
+        if (cardData == null) return false;
+
+        Leader resourceOwner = GetHumanPlayerLeader();
+        bool actionConditionsMet = true;
+        string actionRef = cardData.GetActionRef();
+
+        if (!string.IsNullOrWhiteSpace(actionRef) && actionsManager != null && character != null)
+        {
+            CharacterAction action = actionsManager.ResolveActionByRef(actionRef, cardData);
+            if (action != null)
+            {
+                action.Initialize(character, cardData);
+                actionConditionsMet = action.FulfillsConditions();
+            }
+        }
+
+        return cardData.EvaluatePlayability(
+            character,
+            _ => resourceOwner == null || cardData.MeetsResourceRequirements(resourceOwner),
+            _ => actionConditionsMet);
+    }
+
     public void UpdateInteractableState()
     {
         if (cardData == null) return;
@@ -747,23 +776,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         Board board = FindFirstObjectByType<Board>();
         Character selected = board != null ? board.selectedCharacter : null;
         Leader resourceOwner = GetHumanPlayerLeader();
-        bool actionConditionsMet = true;
-        string actionRef = cardData.GetActionRef();
 
-        if (!string.IsNullOrWhiteSpace(actionRef) && actionsManager != null && selected != null)
-        {
-            CharacterAction action = actionsManager.ResolveActionByRef(actionRef, cardData);
-            if (action != null)
-            {
-                action.Initialize(selected, cardData);
-                actionConditionsMet = action.FulfillsConditions();
-            }
-        }
-
-        bool isPlayable = cardData.EvaluatePlayability(
-            selected,
-            _ => resourceOwner == null || cardData.MeetsResourceRequirements(resourceOwner),
-            _ => actionConditionsMet);
+        bool isPlayable = EvaluateIsPlayable(selected);
         // Cached so the bloom wheel can fade unplayable tokens without re-running the
         // (action-resolving) playability evaluation every frame.
         LastKnownPlayable = isPlayable;
@@ -802,7 +816,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!SuppressHoverEffects) ShowRealCard();
+        if (!SuppressHoverEffects)
+        {
+            if (isTokenOnlyPresentation) CardCenterPreview.Instance?.ShowPreview(cardData);
+            else ShowRealCard();
+        }
         if (Sounds.Instance != null) Sounds.Instance.PlayUiHover();
         if (SuppressHoverEffects) return;
         if (cursorManager != null)
@@ -818,7 +836,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!SuppressHoverEffects) ShowToken();
+        if (!SuppressHoverEffects)
+        {
+            if (isTokenOnlyPresentation) CardCenterPreview.Instance?.HidePreview();
+            else ShowToken();
+        }
         if (SuppressHoverEffects) return;
         if (cursorManager != null) cursorManager.SetDefaultCursor();
     }
@@ -1263,6 +1285,24 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         float redness = Mathf.Clamp01(redness01);
         if (tokenImage != null) tokenImage.color = TintTokenColor(tokenImageBaseColor, k, redness);
         if (tokenBorder != null) tokenBorder.color = TintTokenColor(tokenBorderBaseColor, k, redness);
+    }
+
+    private Color cardBackgroundBaseColor = Color.white;
+    private bool cardBackgroundBaseColorCaptured;
+
+    // Reddens the full-card border/background for opportunity-card trays (SituationCardsUI),
+    // where cards render as real cards (not tokens) so SetTokenTint doesn't apply.
+    public void SetUnplayableRealCardTint(bool unplayable)
+    {
+        if (cardBackgroundImage == null) return;
+
+        if (!cardBackgroundBaseColorCaptured)
+        {
+            cardBackgroundBaseColor = cardBackgroundImage.color;
+            cardBackgroundBaseColorCaptured = true;
+        }
+
+        cardBackgroundImage.color = TintTokenColor(cardBackgroundBaseColor, 1f, unplayable ? 1f : 0f);
     }
 
     private static Color TintTokenColor(Color baseColor, float k, float redness)

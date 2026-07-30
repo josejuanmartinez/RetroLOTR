@@ -26,9 +26,9 @@ public class CardPlayFailure : MonoBehaviour
 
         // Same source-point logic as CardPlayFlight: prefer the enlarged center preview
         // (what the player was actually looking at when they clicked), else the hand card.
-        CardBloomWheel wheel = FindFirstObjectByType<CardBloomWheel>();
-        RectTransform sourceRect = wheel != null && wheel.CurrentCenterPreviewRect != null
-            ? wheel.CurrentCenterPreviewRect
+        CardCenterPreview preview = CardCenterPreview.Instance;
+        RectTransform sourceRect = preview != null && preview.CurrentPreviewRect != null
+            ? preview.CurrentPreviewRect
             : card.transform as RectTransform;
         if (sourceRect == null) return;
 

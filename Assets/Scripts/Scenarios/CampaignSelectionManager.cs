@@ -118,7 +118,7 @@ namespace RetroLOTR.Scenarios
                 return;
             }
 
-            GameObject cardTemplate = deckManager.GetCardPrefabTemplate();
+            GameObject cardTemplate = deckManager.GetTokenCardPrefabTemplate();
             if (cardTemplate == null) return;
 
             RectTransform host = FindTokenHost(button);

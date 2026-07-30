@@ -32,9 +32,9 @@ public class CardPlayFlight : MonoBehaviour
         // The enlarged center preview (when one is showing) is what the player is
         // actually looking at as they click — start the flight from it, else from
         // the hand card itself.
-        CardBloomWheel wheel = FindFirstObjectByType<CardBloomWheel>();
-        RectTransform sourceRect = wheel != null && wheel.CurrentCenterPreviewRect != null
-            ? wheel.CurrentCenterPreviewRect
+        CardCenterPreview preview = CardCenterPreview.Instance;
+        RectTransform sourceRect = preview != null && preview.CurrentPreviewRect != null
+            ? preview.CurrentPreviewRect
             : card.transform as RectTransform;
         if (sourceRect == null) return;
 
@@ -86,6 +86,27 @@ public class CardPlayFlight : MonoBehaviour
         flightRect.localScale = Vector3.one * flight.compactStartScale;
 
         flight.StartCoroutine(flight.Run());
+    }
+
+    // CardData-driven variant for auto-played effects (PC entry/turn-start resource grants)
+    // that have no live hand Card instance to fly from — spins up a throwaway TokenCard just
+    // to borrow its token visual, exactly like CampaignSelectionManager's button tokens.
+    public static void LaunchFromData(CardData data, Hex targetHex)
+    {
+        if (data == null || targetHex == null) return;
+
+        GameObject template = DeckManager.Instance?.GetTokenCardPrefabTemplate();
+        if (template == null) return;
+
+        Transform parent = CardCenterPreview.Instance != null ? CardCenterPreview.Instance.transform : null;
+        GameObject temp = Instantiate(template, parent);
+        temp.SetActive(true);
+        Card tempCard = temp.GetComponent<Card>();
+        if (tempCard == null) { Destroy(temp); return; }
+
+        tempCard.Initialize(data);
+        Launch(tempCard, targetHex);
+        Destroy(temp, 0.01f);
     }
 
     private IEnumerator Run()

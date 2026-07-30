@@ -12,6 +12,9 @@ public class MessageDisplayNoUI : MonoBehaviour
     [Header("References")]
     [SerializeField] private TextMeshPro textMesh;   // 3D TextMeshPro component
 
+    [Header("Presentation")]
+    [SerializeField] private ShowMode showMode = ShowMode.Both;
+
     [Header("Timing")]
     [SerializeField] private float displayDuration = 0.07f;
     [SerializeField] private float fadeDuration = 0.02f;
@@ -139,7 +142,7 @@ public class MessageDisplayNoUI : MonoBehaviour
             Vector3 worldPos = hex.gameObject.transform.position;
             if (instance != null)
             {
-                instance.EnqueueViaEventIcon(hex, displayMessage, worldPos, resolved);
+                instance.DispatchMessage(hex, displayMessage, worldPos, resolved);
             }
         }
 
@@ -198,27 +201,41 @@ public class MessageDisplayNoUI : MonoBehaviour
         EnqueueWithFocus(hex, message, worldPos, textColor);
     }
 
-    private void EnqueueViaEventIcon(Hex hex, string message, Vector3 worldPos, Color textColor)
+    private void DispatchMessage(Hex hex, string message, Vector3 worldPos, Color textColor)
     {
         if (hex == null) return;
 
-        EventIconsManager iconsManager = EventIconsManager.FindManager();
-        if (iconsManager == null)
+        bool immediate = showMode is ShowMode.OnlyImmediate or ShowMode.Both;
+        bool viaIcon = showMode is ShowMode.OnlyEventIcon or ShowMode.Both;
+
+        void Present()
         {
+            PlayMessageSound(textColor);
             EnqueueMessage(hex, message, worldPos, textColor);
-            return;
         }
 
-        EventIcon icon = null;
-        icon = iconsManager.AddEventIcon(
-            EventIconType.HexMessage,
-            true,
-            () =>
+        if (immediate) Present();
+
+        if (viaIcon)
+        {
+            EventIconsManager iconsManager = EventIconsManager.FindManager();
+            if (iconsManager != null)
             {
-                PlayMessageSound(textColor);
-                EnqueueMessage(hex, message, worldPos, textColor);
-                icon?.ConsumeAndDestroy();
-            });
+                EventIcon icon = null;
+                icon = iconsManager.AddEventIcon(
+                    EventIconType.HexMessage,
+                    true,
+                    () =>
+                    {
+                        if (!immediate) Present();
+                        icon?.ConsumeAndDestroy();
+                    });
+            }
+            else if (!immediate)
+            {
+                Present();
+            }
+        }
     }
 
     private void EnqueueDeferred(Hex hex, string message, Vector3 worldPos, Color textColor)

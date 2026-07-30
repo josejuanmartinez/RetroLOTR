@@ -555,14 +555,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10c4557f29c811140b76fc910c9905c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FrameColors
-  tipColor: {r: 0.98196447, g: 1, b: 0.6933962, a: 1}
+  tipColor: {r: 1, g: 0.20549604, b: 0, a: 1}
   scoutedColor: {r: 0.8820755, g: 1, b: 0.99366, a: 1}
   darknessColor: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 1}
   pcSpriteRenderer: {fileID: 1246686261725466849}
   terrainSpriteRenderer: {fileID: 1202935138384858293}
+  hintPulseSpeed: 2
   tipping: 0
   scouted: 0
   darkness: 0
+  hinting: 0
 --- !u!1 &2595860277653055481
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,7 +683,7 @@ SpriteRenderer:
   m_SortingOrder: -9998
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: bb02c2d8027f8464ca90283410b7e2f5, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.30588236}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

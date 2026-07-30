@@ -32,8 +32,8 @@ public class PCAction : MaterialRetrieval
             PC hexPc = character.hex.GetPCData();
             if (hexPc != null && hexPc.citySize != PCSizeEnum.NONE)
             {
-                string targetName = NormalizePcLookupKey(ResolveAssociatedPcName());
-                string hexPcName = NormalizePcLookupKey(hexPc.pcName);
+                string targetName = PcDescriptionBuilder.NormalizeLookupKey(ResolveAssociatedPcName());
+                string hexPcName = PcDescriptionBuilder.NormalizeLookupKey(hexPc.pcName);
                 if (hexPcName != targetName) return false;
             }
 
@@ -142,6 +142,9 @@ public class PCAction : MaterialRetrieval
         character.hex.UpdateUndergroundMarker();
         character.hex.RedrawPC();
         MessageDisplayNoUI.ShowMessage(character.hex, character, $"{pcName} is founded.", Color.green);
+        // Resets the 5-turn founding-opportunity cooldown regardless of which UI path
+        // triggered founding (manual hand card or the opportunity-card popup).
+        owner.NotifyPcFounded();
         return foundedPc != null;
     }
 
@@ -154,8 +157,8 @@ public class PCAction : MaterialRetrieval
         PC hexPc = character.hex.GetPCData();
         if (hexPc != null && hexPc.citySize != PCSizeEnum.NONE)
         {
-            string targetName = NormalizePcLookupKey(ResolveAssociatedPcName());
-            string hexPcName = NormalizePcLookupKey(hexPc.pcName);
+            string targetName = PcDescriptionBuilder.NormalizeLookupKey(ResolveAssociatedPcName());
+            string hexPcName = PcDescriptionBuilder.NormalizeLookupKey(hexPc.pcName);
             if (hexPcName != targetName) return false;
         }
 
@@ -170,7 +173,7 @@ public class PCAction : MaterialRetrieval
         string hexRegion = character.hex.GetLandRegion();
         if (string.IsNullOrWhiteSpace(pcRegion) || string.IsNullOrWhiteSpace(hexRegion)) return false;
 
-        return string.Equals(NormalizePcLookupKey(pcRegion), NormalizePcLookupKey(hexRegion), StringComparison.OrdinalIgnoreCase);
+        return string.Equals(PcDescriptionBuilder.NormalizeLookupKey(pcRegion), PcDescriptionBuilder.NormalizeLookupKey(hexRegion), StringComparison.OrdinalIgnoreCase);
     }
 
     private bool IsRegionDiscovered(Character character)
@@ -184,7 +187,7 @@ public class PCAction : MaterialRetrieval
         Board board = FindFirstObjectByType<Board>();
         if (board == null) return false;
 
-        string normalizedTarget = NormalizePcLookupKey(pcRegion);
+        string normalizedTarget = PcDescriptionBuilder.NormalizeLookupKey(pcRegion);
 
         foreach (Hex hex in board.GetHexes())
         {
@@ -201,7 +204,7 @@ public class PCAction : MaterialRetrieval
             }
 
             if (string.IsNullOrWhiteSpace(hexRegion)) continue;
-            if (!string.Equals(NormalizePcLookupKey(hexRegion), normalizedTarget, StringComparison.OrdinalIgnoreCase)) continue;
+            if (!string.Equals(PcDescriptionBuilder.NormalizeLookupKey(hexRegion), normalizedTarget, StringComparison.OrdinalIgnoreCase)) continue;
 
             if (hex.IsHexRevealed() || hex.IsScoutedBy(owner)) return true;
         }
@@ -224,7 +227,7 @@ public class PCAction : MaterialRetrieval
 
     private PC FindAssociatedPcInGame()
     {
-        string targetKey = NormalizePcLookupKey(ResolveAssociatedPcName());
+        string targetKey = PcDescriptionBuilder.NormalizeLookupKey(ResolveAssociatedPcName());
         if (string.IsNullOrWhiteSpace(targetKey)) return null;
 
         Board board = FindFirstObjectByType<Board>();
@@ -235,9 +238,26 @@ public class PCAction : MaterialRetrieval
         {
             PC candidate = hexes[i]?.GetPCData();
             if (candidate == null) continue;
-            if (NormalizePcLookupKey(candidate.pcName) == targetKey) return candidate;
+            if (PcDescriptionBuilder.NormalizeLookupKey(candidate.pcName) == targetKey) return candidate;
         }
         return null;
+    }
+
+    // Used by the auto-grant triggers (Board.TriggerOwnPcGrantIfStandingOnOne, entering an
+    // own PC / turn-start re-trigger) to confirm the PC is already founded and owned by the
+    // acting character's leader, so only the (already-correct) granting branch of
+    // asyncEffect applies and founding is never re-attempted.
+    public bool IsAlreadyFoundedAndOwnedBySelf(Character character)
+    {
+        PC existingPc = FindAssociatedPcInGame();
+        return existingPc != null && character != null && existingPc.owner == character.GetOwner();
+    }
+
+    // Founded by anyone (not just the acting character's leader) — used by the founding-
+    // opportunity mechanic to filter out PC cards that no longer need founding.
+    public bool IsAlreadyFounded()
+    {
+        return FindAssociatedPcInGame() != null;
     }
 
     private void ShowCaravanNotification(Character character, PC existingPc)
@@ -273,12 +293,6 @@ public class PCAction : MaterialRetrieval
         return null;
     }
 
-    private static string NormalizePcLookupKey(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
-        return new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
-    }
-
     private static string HumanizeSourceName(string value)
     {
         if (string.IsNullOrWhiteSpace(value)) return string.Empty;
@@ -304,6 +318,12 @@ public class MaterialRetrievalOrAction : PCAction
 
 public static class PcDescriptionBuilder
 {
+    public static string NormalizeLookupKey(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+        return new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+    }
+
     public static string BuildBody(CardData data, bool includeFoundingText)
     {
         if (data == null) return string.Empty;

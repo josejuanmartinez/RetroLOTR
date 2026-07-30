@@ -12,7 +12,8 @@
       "Bash(mkdir -p \"c:\\\\Users\\\\jjmca\\\\RetroLOTR\\\\ProjectContext\")",
       "Bash(xargs grep -l \"enum RacesEnum\")",
       "Read(//c/Users/jjmca/.claude/projects/c--Users-jjmca-RetroLOTR/memory/**)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(python3 -c ' *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\jjmca\\RetroLOTR\\ProjectContext",

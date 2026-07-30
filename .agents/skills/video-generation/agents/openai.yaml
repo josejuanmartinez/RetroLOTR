@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Generation"
+  short_description: "Generate Grok videos from reference artwork"
+  default_prompt: "Use $video-generation to create a reference-guided video from the inspiration images."

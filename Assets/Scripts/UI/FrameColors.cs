@@ -13,15 +13,31 @@ public class FrameColors : MonoBehaviour
     [SerializeField] SpriteRenderer pcSpriteRenderer;
     [SerializeField] SpriteRenderer terrainSpriteRenderer;
 
+    [Header("Hint Pulse")]
+    [Tooltip("Cycles per second the standing hint (SetHint) pulses between white and tipColor.")]
+    [SerializeField] private float hintPulseSpeed = 2f;
+
     [Header("Situation (toggle here to preview in edit mode)")]
     [SerializeField] private bool tipping;
     [SerializeField] private bool scouted;
     [SerializeField] private bool darkness;
+    [SerializeField] private bool hinting;
 
     public void SetTip(bool active)
     {
         if (tipping == active) return;
         tipping = active;
+        Refresh();
+    }
+
+    // Standing hint (not a transient flash like SetTip) for hexes a selected character
+    // could move to and play an opportunity card at. Cleared whenever selection changes.
+    // Reuses tipColor (rather than its own color) but renders as a continuous white<->tipColor
+    // pulse, driven every frame from Update, so it reads as distinct from tip's solid flash.
+    public void SetHint(bool active)
+    {
+        if (hinting == active) return;
+        hinting = active;
         Refresh();
     }
 
@@ -56,6 +72,16 @@ public class FrameColors : MonoBehaviour
         Refresh();
     }
 
+    // Drives the hint pulse animation. Tip still wins outright (solid, no pulsing) whenever
+    // both happen to be active — see the priority comment on Refresh below.
+    private void Update()
+    {
+        if (!hinting || tipping) return;
+
+        float t = (Mathf.Sin(Time.time * hintPulseSpeed * Mathf.PI * 2f) + 1f) * 0.5f;
+        ApplyColor(Color.Lerp(Color.white, tipColor, t));
+    }
+
     // pcSpriteRenderer/terrainSpriteRenderer are the hex's actual PC/terrain art
     // renderers (same components as Hex.pcTexture/terrainTexture), not blank
     // overlay sprites - their color is a multiplicative tint on top of the
@@ -64,14 +90,28 @@ public class FrameColors : MonoBehaviour
     //
     // Tip is a transient, player-driven cue that takes priority over the
     // persistent state indicators (darkness/scouted) so it always reads.
+    // Hint sits at the same priority tip used to have over darkness/scouted; while active
+    // and tip is not, Update() takes over every frame to animate the pulse instead of this
+    // method holding a static color.
     private void Refresh()
     {
+        if (hinting && !tipping)
+        {
+            ApplyColor(Color.white);
+            return;
+        }
+
         Color color =
             tipping ? tipColor :
             darkness ? darknessColor :
             scouted ? scoutedColor :
             Color.white;
 
+        ApplyColor(color);
+    }
+
+    private void ApplyColor(Color color)
+    {
         if (pcSpriteRenderer != null) pcSpriteRenderer.color = color;
         if (terrainSpriteRenderer != null) terrainSpriteRenderer.color = color;
     }
