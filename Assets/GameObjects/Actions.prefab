@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeckManager
   cardCameObject: {fileID: 2897054775155552835, guid: 905c1c5a61a62c04ea9c5baa9f3ec596, type: 3}
+  tokenCardTemplate: {fileID: 2897054775155552835, guid: 117149883b380b14980c648f17edfb6c, type: 3}
   cardBloomWheel: {fileID: 312540931142560003}
   handCanvasGroup: {fileID: 4110523984071790002}
   initializeOnStart: 1

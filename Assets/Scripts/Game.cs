@@ -292,6 +292,7 @@ public class Game : MonoBehaviour
     {
         Card.RequestInteractionRefreshAll();
         FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
+        OpportunityHexHinter.Refresh(current);
     }
 
     private IEnumerator RefreshDeckUiAfterStartup()

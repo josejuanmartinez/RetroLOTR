@@ -232,6 +232,7 @@ public class SituationCardsUI : MonoBehaviour
                 // Display-only: clicks go through the CardClickArea overlay, so the card
                 // itself must never react to hover (which would flip it back into a token).
                 cardComp.SuppressHoverEffects = true;
+                cardComp.SetUnplayableRealCardTint(!cardComp.EvaluateIsPlayable(character));
             }
 
             // Disable card's own raycasts so drag/hover don't fire

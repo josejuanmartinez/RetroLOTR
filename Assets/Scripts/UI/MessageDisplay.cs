@@ -14,6 +14,7 @@ public class MessageDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI messageText;
     [SerializeField] private float displayDuration = 0.08f;
     [SerializeField] private float fadeDuration = 0.02f;
+    [SerializeField] private ShowMode showMode = ShowMode.Both;
 
     private Queue<MessageData> messageQueue = new Queue<MessageData>();
     private bool isDisplayingMessage = false;
@@ -61,12 +62,38 @@ public class MessageDisplay : MonoBehaviour
         {
             Sounds.Instance?.PlayMessage();
         }
-        if (forceImmediate)
+
+        bool immediate = forceImmediate || instance.showMode is ShowMode.OnlyImmediate or ShowMode.Both;
+        bool viaIcon = instance.showMode is ShowMode.OnlyEventIcon or ShowMode.Both;
+
+        void Present()
         {
-            instance.ShowNow(formattedMessage, resolved);
-            return;
+            if (forceImmediate) instance.ShowNow(formattedMessage, resolved);
+            else instance.EnqueueMessage(formattedMessage, resolved);
         }
-        instance.EnqueueMessage(formattedMessage, resolved);
+
+        if (immediate) Present();
+
+        if (viaIcon)
+        {
+            EventIconsManager iconsManager = EventIconsManager.FindManager();
+            if (iconsManager != null)
+            {
+                EventIcon icon = null;
+                icon = iconsManager.AddEventIcon(
+                    EventIconType.HexMessage,
+                    true,
+                    () =>
+                    {
+                        if (!immediate) Present();
+                        icon?.ConsumeAndDestroy();
+                    });
+            }
+            else if (!immediate)
+            {
+                Present();
+            }
+        }
     }
 
     public static bool IsBusy()

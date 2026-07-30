@@ -681,6 +681,7 @@ public class DeckManager : MonoBehaviour
     [Header("References")]
     [FormerlySerializedAs("cardCameObject")]
     [SerializeField] GameObject cardCameObject;
+    [SerializeField] GameObject tokenCardTemplate;
     [SerializeField] CardBloomWheel cardBloomWheel;
     [SerializeField] CanvasGroup handCanvasGroup;
 
@@ -878,7 +879,7 @@ public class DeckManager : MonoBehaviour
         return playerDecks.TryGetValue(leader, out PlayerDeckState state) ? state.hand : Array.Empty<CardData>();
     }
 
-    // Returns up to 2 affordable situation cards (max 1 per active situation, priority-ordered).
+    // Returns up to 3 affordable situation cards (max 1 per active situation, priority-ordered).
     public List<CardData> GetSituationCards(PlayableLeader leader, Character character, Hex hex)
     {
         var result = new List<CardData>();
@@ -893,7 +894,7 @@ public class DeckManager : MonoBehaviour
 
         foreach (CardSituationEnum situation in activeSituations)
         {
-            if (result.Count >= 2) break;
+            if (result.Count >= 3) break;
 
             var candidates = state.situationPool.Where(c => c != null && c.GetSituation() == situation).ToList();
             Debug.Log($"[SituationCards] situation={situation}: {candidates.Count} candidate(s) in pool");
@@ -2083,6 +2084,85 @@ public class DeckManager : MonoBehaviour
         return pcCard?.region;
     }
 
+    // Forward lookup (PC name -> its CardData), the inverse of ResolveRegionForPc above.
+    // Used by the auto-grant triggers (Board.TriggerOwnPcGrantIfStandingOnOne) to resolve
+    // which card's *Granted fields to reapply for an already-founded PC.
+    public CardData FindPcCardByPcName(string pcName)
+    {
+        if (string.IsNullOrWhiteSpace(pcName)) return null;
+        string normalizedPcName = NormalizeCardName(pcName);
+        return cards.FirstOrDefault(card =>
+            card != null
+            && card.GetCardType() == CardTypeEnum.PC
+            && string.Equals(NormalizeCardName(card.name), normalizedPcName, StringComparison.Ordinal));
+    }
+
+    // Region lookup for Land-type cards. Land cards carry region: "" in JSON — their region
+    // identity is their *name* instead (confirmed via NationSpawner.cs's land-region
+    // assignment pass, which builds the board's region list from Land card names, not the
+    // blank region field). hex.GetLandRegion() returns exactly one of those names.
+    public CardData FindLandCardByRegion(string region)
+    {
+        if (string.IsNullOrWhiteSpace(region)) return null;
+        string normalizedRegion = NormalizeCardName(region);
+        return cards.FirstOrDefault(card =>
+            card != null
+            && card.GetCardType() == CardTypeEnum.Land
+            && string.Equals(NormalizeCardName(card.name), normalizedRegion, StringComparison.Ordinal));
+    }
+
+    // Founding-opportunity mechanic (Leader.TryOfferPcFoundingOpportunity): PC-type cards
+    // whose region matches the given hex's region and whose PC has not yet been founded by
+    // anyone. This grants a new capability (the right to found a PC), so — unlike
+    // FindPcCardByPcName/FindLandCardByRegion, which resolve an ALREADY-EXISTING world
+    // entity's card data and are fine reading the whole global catalog — it must be scoped
+    // to cards actually reachable from this leader's own deck tree (same pool
+    // BuildDeckStateForLeader/situationPool draw from), so a leader is never offered a PC
+    // that belongs only to another faction's deck.
+    public List<CardData> GetUnfoundedOwnRegionPcCards(PlayableLeader leader, Hex hex)
+    {
+        var result = new List<CardData>();
+        string region = hex?.GetLandRegion();
+        if (string.IsNullOrWhiteSpace(region) || leader == null) return result;
+
+        string normalizedRegion = NormalizeCardName(region);
+        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+
+        foreach (CardData card in GetLeaderCardPool(leader))
+        {
+            if (card == null || card.GetCardType() != CardTypeEnum.PC) continue;
+            if (string.IsNullOrWhiteSpace(card.region)) continue;
+            if (!string.Equals(NormalizeCardName(card.region), normalizedRegion, StringComparison.Ordinal)) continue;
+
+            if (actionsManager?.ResolveActionByRef(card.GetActionRef(), card) is not PCAction pcAction) continue;
+            pcAction.Initialize(null, card);
+            if (pcAction.IsAlreadyFounded()) continue;
+
+            result.Add(card);
+        }
+
+        return result;
+    }
+
+    // All cards reachable from a leader's own deck setup (their deck's parent chain plus
+    // shared-to-all decks) — mirrors PopulateSituationPool's source enumeration exactly, just
+    // without the situation-only filter, so callers can search the leader's full card
+    // universe for a specific card TYPE instead of only situation-tagged ones.
+    private IEnumerable<CardData> GetLeaderCardPool(PlayableLeader leader)
+    {
+        string deckId = ResolveDeckIdForLeader(leader);
+        if (string.IsNullOrWhiteSpace(deckId)) yield break;
+
+        foreach (DeckData deck in GetDeckTree(deckId).Concat(GetSharedDecks()))
+        {
+            if (deck?.cards == null) continue;
+            foreach (CardData card in deck.cards)
+            {
+                if (card != null) yield return card;
+            }
+        }
+    }
+
     private static string NormalizeCardName(string cardName)
     {
         if (string.IsNullOrWhiteSpace(cardName)) return string.Empty;
@@ -2867,6 +2947,16 @@ public class DeckManager : MonoBehaviour
     }
 
     public GameObject GetCardPrefabTemplate() => ResolveCardPrefab();
+
+    public GameObject GetTokenCardPrefabTemplate()
+    {
+        if (tokenCardTemplate == null) return null;
+        if (tokenCardTemplate.activeSelf)
+        {
+            tokenCardTemplate.SetActive(false);
+        }
+        return tokenCardTemplate;
+    }
 
     public Vector2 GetCardSize() => new(120f, 170f);
 

@@ -32,6 +32,19 @@ public class Leader : Character
     private Game game;
     private LeaderBiomeConfig leaderBiome;
 
+    // Founding-opportunity mechanic: once every 5 turns, if an emissary is standing in a
+    // region with an unfounded PC, surface it as an opportunity card (SituationCardsUI).
+    // If shown but not accepted, the cooldown is held in abeyance (re-offered every turn,
+    // see the pending flag) until one is actually founded — NotifyPcFounded resets both.
+    private int turnsSinceLastPcFoundingOffer = 999;
+    private bool pcFoundingOfferPending;
+
+    public void NotifyPcFounded()
+    {
+        turnsSinceLastPcFoundingOffer = 0;
+        pcFoundingOfferPending = false;
+    }
+
     public void Initialize(Hex hex, LeaderBiomeConfig leaderBiome, bool showSpawnMessage = true)
     {
         game = FindFirstObjectByType<Game>();
@@ -103,7 +116,77 @@ public class Leader : Character
         {
             deckManager.ReplenishHandForTurn(playable);
         }
+
+        RunTurnStartResourceGrants();
+
+        turnsSinceLastPcFoundingOffer++;
+        TryOfferPcFoundingOpportunity();
+
         StartCoroutine(WaitUntilEndOfTurn());
+    }
+
+    // At most one PC grant and one region (Land card) grant per leader per turn, even if
+    // several characters share the same PC or region — dedup keys are built synchronously
+    // in this loop (before the fire-and-forget grant calls run their async show/spin), so
+    // ordering across controlledCharacters is what decides which character "gets credit".
+    private void RunTurnStartResourceGrants()
+    {
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        var grantedPcNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var grantedRegions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (Character c in controlledCharacters)
+        {
+            if (c == null || c.killed || c.hex == null) continue;
+            Hex hex = c.hex;
+
+            PC pc = hex.GetPCData();
+            if (pc != null && pc.owner == this)
+            {
+                string pcKey = PcDescriptionBuilder.NormalizeLookupKey(pc.pcName);
+                if (grantedPcNames.Add(pcKey))
+                {
+                    board.TriggerOwnPcGrantIfStandingOnOne(c, hex);
+                }
+            }
+
+            string region = hex.GetLandRegion();
+            if (!string.IsNullOrWhiteSpace(region))
+            {
+                string regionKey = PcDescriptionBuilder.NormalizeLookupKey(region);
+                if (grantedRegions.Add(regionKey))
+                {
+                    board.TriggerRegionLandGrant(c, hex);
+                }
+            }
+        }
+    }
+
+    private void TryOfferPcFoundingOpportunity()
+    {
+        if (killed) return;
+        if (this is not PlayableLeader playable) return;
+        if (!pcFoundingOfferPending && turnsSinceLastPcFoundingOffer < 5) return;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return;
+
+        foreach (Character c in controlledCharacters)
+        {
+            if (c == null || c.killed || c.hex == null || c.GetEmmissary() <= 0) continue;
+
+            List<CardData> candidates = deckManager.GetUnfoundedOwnRegionPcCards(playable, c.hex);
+            if (candidates.Count == 0) continue;
+
+            pcFoundingOfferPending = true;
+            if (game != null && game.player == playable)
+            {
+                SituationCardsUI.Instance?.Show(candidates, c);
+            }
+            return;
+        }
     }
 
     private IEnumerator WaitUntilEndOfTurn()

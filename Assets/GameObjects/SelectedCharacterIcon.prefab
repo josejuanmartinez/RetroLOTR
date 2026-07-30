@@ -4894,8 +4894,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 312540931142560003, guid: af6718b2e384d214aa884be41c7bdf77, type: 3}
       propertyPath: selectedCharacterIcon
-      value: 
+      value:
       objectReference: {fileID: 5520698486723643393}
+    - target: {fileID: 312540931142560003, guid: af6718b2e384d214aa884be41c7bdf77, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 331588998735780841, guid: af6718b2e384d214aa884be41c7bdf77, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

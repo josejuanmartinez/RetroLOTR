@@ -670,6 +670,9 @@ public class Character : MonoBehaviour
         StoreRelevantHexes();
         RefreshSelectedCharacterIconIfSelected();
         RefreshActionsIfSelected();
+        // Turn-start PC/region resource grants are handled once per leader, after the whole
+        // controlledCharacters cascade, so duplicates across characters sharing a PC/region
+        // can be deduped — see Leader.NewTurn -> RunTurnStartResourceGrants.
     }
 
     public StatusSnapshot CaptureStatusSnapshot()

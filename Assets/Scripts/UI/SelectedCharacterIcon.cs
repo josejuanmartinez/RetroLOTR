@@ -114,8 +114,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     private void UpdateCardHoverPreview()
     {
         if (CurrentCharacter == null || nameWidget == null || descriptionWidget == null) return;
-        if (bloomWheel == null) bloomWheel = FindFirstObjectByType<CardBloomWheel>();
-        if (bloomWheel == null) return;
+        if (CardCenterPreview.Instance == null) return;
 
         string cardName = null;
         if (RectTransformUtility.RectangleContainsScreenPoint(
@@ -150,13 +149,13 @@ public class SelectedCharacterIcon : MonoBehaviour
         if (card == null) return;
 
         hoveredPreviewCardName = cardName;
-        bloomWheel.ShowExternalPreview(card);
+        CardCenterPreview.Instance.ShowPreview(card);
     }
 
     private void HideCardHoverPreview()
     {
         hoveredPreviewCardName = null;
-        bloomWheel?.HideExternalPreview();
+        CardCenterPreview.Instance?.HidePreview();
     }
 
     // Card-bloom affordance: the concentric circles pulse softly while the icon is idle

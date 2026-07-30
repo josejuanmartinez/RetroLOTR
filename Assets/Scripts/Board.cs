@@ -1262,6 +1262,7 @@ public class Board : MonoBehaviour
         if (character != null && !character.killed)
         {
             CheckAndShowSituationCards(character, character.hex);
+            TriggerOwnPcGrantIfStandingOnOne(character, character.hex);
         }
     }
 
@@ -1364,7 +1365,11 @@ public class Board : MonoBehaviour
 
             // Opportunity cards only fire where the character STOPS — stepping through a hex
             // mid-path never interrupts the walk with a full-screen overlay.
-            if (finishMovement) CheckAndShowSituationCards(character, newHex);
+            if (finishMovement)
+            {
+                CheckAndShowSituationCards(character, newHex);
+                TriggerOwnPcGrantIfStandingOnOne(character, newHex);
+            }
 
             if (newHex.HasPendingEncounters && character != null && !character.killed)
             {
@@ -1642,6 +1647,79 @@ public class Board : MonoBehaviour
         }
         SituationCardsUI.Instance.Show(situationCards, character);
         situationCardsSequence = null;
+    }
+
+    // Re-triggers a PC's resource-granting effect (PCAction.asyncEffect's already-founded
+    // branch) whenever a character is standing on one of its own leader's founded PCs —
+    // once when they arrive (called alongside CheckAndShowSituationCards) and again at the
+    // start of every turn (Character.NewTurn -> this same method). Founding itself is a
+    // separate, existing flow (PCAction's not-yet-founded branch, still only reachable by
+    // manually playing the PC card) — this never re-founds anything. Fires for every leader,
+    // human and AI alike; the card reveal/token-flight visuals are human-player-only.
+    public async void TriggerOwnPcGrantIfStandingOnOne(Character character, Hex hex)
+    {
+        if (character == null || character.killed || hex == null) return;
+
+        PC pc = hex.GetPCData();
+        if (pc == null || pc.owner != character.GetOwner()) return;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        CardData pcCard = deckManager?.FindPcCardByPcName(pc.pcName);
+        if (pcCard == null) return;
+
+        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        if (actionsManager?.ResolveActionByRef(pcCard.GetActionRef(), pcCard) is not PCAction pcAction) return;
+
+        pcAction.Initialize(character, pcCard);
+        if (!pcAction.IsAlreadyFoundedAndOwnedBySelf(character)) return;
+
+        Game game = FindFirstObjectByType<Game>();
+        bool showToPlayer = game != null && game.player == character.GetOwner();
+        if (showToPlayer)
+        {
+            CardCenterPreview.Instance?.ShowPreview(pcCard);
+            await Task.Delay(TimeSpan.FromSeconds(1.5));
+            CardCenterPreview.Instance?.HidePreview();
+            CardPlayFlight.LaunchFromData(pcCard, hex);
+        }
+
+        pcAction.Initialize(character, pcCard);
+        await pcAction.Execute();
+    }
+
+    // Region counterpart of TriggerOwnPcGrantIfStandingOnOne: re-grants the region's Land
+    // card resources (materials only — Land cards have no other effect) for a character
+    // standing anywhere in that region. Land cards have no founding concept, so unlike the
+    // PC grant there's no already-founded check — just resolve and re-apply.
+    public async void TriggerRegionLandGrant(Character character, Hex hex)
+    {
+        if (character == null || character.killed || hex == null) return;
+
+        string region = hex.GetLandRegion();
+        if (string.IsNullOrWhiteSpace(region)) return;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        CardData landCard = deckManager?.FindLandCardByRegion(region);
+        if (landCard == null) return;
+
+        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        CharacterAction action = actionsManager?.ResolveActionByRef(landCard.GetActionRef(), landCard);
+        if (action == null) return;
+
+        action.Initialize(character, landCard);
+
+        Game game = FindFirstObjectByType<Game>();
+        bool showToPlayer = game != null && game.player == character.GetOwner();
+        if (showToPlayer)
+        {
+            CardCenterPreview.Instance?.ShowPreview(landCard);
+            await Task.Delay(TimeSpan.FromSeconds(1.5));
+            CardCenterPreview.Instance?.HidePreview();
+            CardPlayFlight.LaunchFromData(landCard, hex);
+        }
+
+        action.Initialize(character, landCard);
+        await action.Execute();
     }
 
     private void UpdateGenerationProgress(float progress, string stage)

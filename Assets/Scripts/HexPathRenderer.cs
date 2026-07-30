@@ -365,9 +365,12 @@ public class HexPathRenderer : MonoBehaviour
     }
 
     public HashSet<Vector2Int> FindAllHexesV2InRange(Character character)
+        => FindAllHexesV2InRange(character, character.GetMaxMovement());
+
+    public HashSet<Vector2Int> FindAllHexesV2InRange(Character character, int movementBudget)
     {
         Vector2Int startPos = character.hex.v2;
-        int maxMovement = character.GetMaxMovement();
+        int maxMovement = movementBudget;
 
         // Check cache first
         var cacheKey = (character, maxMovement);
@@ -455,8 +458,19 @@ public class HexPathRenderer : MonoBehaviour
     }
 
     public List<Hex> FindAllHexesInRange(Character character)
+        => ResolveHexes(FindAllHexesV2InRange(character));
+
+    public List<Hex> FindAllHexesInRange(Character character, int movementBudget)
+        => ResolveHexes(FindAllHexesV2InRange(character, movementBudget));
+
+    // Movement-remaining-aware variant of FindAllHexesInRange, used for the selected-character
+    // opportunity-card hex hint (Part 6): highlights where the character could still move to
+    // and play an opportunity card THIS turn, not a fresh-turn full-movement range.
+    public List<Hex> FindAllHexesInRemainingRange(Character character)
+        => FindAllHexesInRange(character, character.GetMovementLeft());
+
+    private List<Hex> ResolveHexes(HashSet<Vector2Int> v2Hexes)
     {
-        var v2Hexes = FindAllHexesV2InRange(character);
         var result = new List<Hex>(v2Hexes.Count);
         foreach (var v2 in v2Hexes)
         {

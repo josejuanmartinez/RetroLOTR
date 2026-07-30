@@ -21,12 +21,12 @@ public class CharacterSpriteHover : MonoBehaviour
         if (hex.characterSpriteRenderer.sprite == null) return;
         if (!hex.TryGetKnownCharacterForIcon(out Character character)) return;
 
-        // Only selectable (yours) characters lose their unhovered dim tint and get the
-        // clickable cursor on hover — hovering someone else's character previews their
-        // info but leaves them visually dimmed, since they can't be selected anyway.
+        // Every known character loses the unhovered dim tint while hovered, regardless of
+        // nation. Keep the clickable cursor restricted to selectable (player-controlled)
+        // characters so previewing another nation does not imply it can be selected.
+        hex.SetCharacterHovered(true);
         if (character.isPlayerControlled)
         {
-            hex.SetCharacterHovered(true);
             hex.GetCharacterAnimationController()?.SetHoverCursor(true);
         }
         hex.Hover();
