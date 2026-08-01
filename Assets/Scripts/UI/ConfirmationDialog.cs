@@ -170,7 +170,7 @@ public class ConfirmationDialog : MonoBehaviour
             EventIcon icon = null;
             icon = iconsManager.AddEventIcon(
                 EventIconType.YesNo,
-                singleButton,
+                false,
                 () =>
                 {
                     request.icon = icon;

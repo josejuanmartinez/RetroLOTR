@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ public class Layout : MonoBehaviour
     [SerializeField]
     private Card environmentalCard;
     [SerializeField]
-    private Image nationColorImage;
+    private TextMeshProUGUI nationName;
 
     private void Awake()
     {
@@ -40,6 +41,11 @@ public class Layout : MonoBehaviour
 
     public void SetNationColor(Color color)
     {
-        if (nationColorImage != null) nationColorImage.color = color;
+        if (nationName != null) nationName.color = color;
+    }
+
+    public void SetNationName(string name)
+    {
+        if (nationName != null) nationName.text = name;
     }
 }

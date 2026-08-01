@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEditor.U2D.Sprites;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -307,7 +308,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
                 pivot     = new Vector2(0.5f, 0.5f),
             };
         }
-        importer.spritesheet = metas;
+        ApplySpriteMetaData(importer, metas);
         importer.SaveAndReimport();
 
         var texAsset = AssetDatabase.LoadAssetAtPath<Texture2D>(outRelPath);
@@ -327,6 +328,36 @@ public class SpritesheetAnimatorWindow : EditorWindow
         _sheet = texAsset;
         LoadSprites();
         _tab = 1;
+    }
+
+    /// <summary>
+    /// Applies a spritesheet slice via ISpriteEditorDataProvider — TextureImporter.spritesheet
+    /// was removed, this is the replacement path. Caller must still call importer.SaveAndReimport()
+    /// afterward, same as the old spritesheet-assignment flow required.
+    /// </summary>
+    static void ApplySpriteMetaData(TextureImporter importer, SpriteMetaData[] metas)
+    {
+        var factory = new SpriteDataProviderFactories();
+        factory.Init();
+        ISpriteEditorDataProvider dataProvider = factory.GetSpriteEditorDataProviderFromObject(importer);
+        dataProvider.InitSpriteEditorDataProvider();
+
+        var spriteRects = new SpriteRect[metas.Length];
+        for (int i = 0; i < metas.Length; i++)
+        {
+            SpriteMetaData m = metas[i];
+            spriteRects[i] = new SpriteRect
+            {
+                name      = m.name,
+                rect      = m.rect,
+                alignment = (SpriteAlignment)m.alignment,
+                pivot     = m.pivot,
+                border    = m.border,
+                spriteID  = GUID.Generate(),
+            };
+        }
+        dataProvider.SetSpriteRects(spriteRects);
+        dataProvider.Apply();
     }
 
     /// <summary>Reads width/height straight from the PNG IHDR chunk, bypassing Unity's importer entirely.</summary>
@@ -910,7 +941,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
                 border    = new Vector4(s.border.z, s.border.y, s.border.x, s.border.w),
             };
         }
-        importer.spritesheet = metas;
+        ApplySpriteMetaData(importer, metas);
         importer.SaveAndReimport();
 
         // Build parallel array indexed the same way as _sprites

@@ -35,8 +35,8 @@ public class CardCenterPreview : MonoBehaviour
     [SerializeField] private Vector2 previewIntroOffset = new(0f, -180f);
     [Tooltip("Z rotation (degrees) the card starts tilted at before settling upright.")]
     [SerializeField] private float previewIntroTilt = 14f;
-    [Tooltip("Seconds the outgoing card takes to fade/scale away.")]
-    [SerializeField] private float previewExitDuration = 0.16f;
+    // [Tooltip("Seconds the outgoing card takes to fade/scale away.")]
+    // [SerializeField] private float previewExitDuration = 0.16f;
 
     private Canvas parentCanvas;
     private readonly List<GameObject> centerPreviewInstances = new();

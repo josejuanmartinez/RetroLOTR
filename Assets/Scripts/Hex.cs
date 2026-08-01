@@ -55,6 +55,8 @@ public class Hex : MonoBehaviour
     public GameObject hexInfo;
     public TextMeshPro hexInfoText;
     [SerializeField] private float hexInfoHoverDelay = 2f;
+    [Tooltip("Seconds the cursor must stay on a PC hex, uninterrupted, before its PC/region card preview appears.")]
+    [SerializeField] private float pcCardPreviewHoverDelay = 5f;
     [Tooltip("World-space tooltip shown at the cursor when hovering a terrain/feature name. Must contain a TextMeshPro.")]
     [SerializeField] private GameObject terrainTooltipPrefab;
 
@@ -107,6 +109,7 @@ public class Hex : MonoBehaviour
     private Coroutine armyArrangeCoroutine;
     private Coroutine classArrangeCoroutine;
     private Coroutine hexInfoShowCoroutine;
+    private Coroutine pcCardPreviewCoroutine;
     private Coroutine _arrowBounceCoroutine;
     private float _arrowOriginX;
     private readonly List<Character> _hexInfoCharacters = new();
@@ -1010,18 +1013,33 @@ public class Hex : MonoBehaviour
 
     // Shows the PC's card alongside its region's Land card while hovering a hex that holds
     // a currently-visible PC — mirrors the character/army hover preview, but for hexes.
+    // Only appears after pcCardPreviewHoverDelay seconds of uninterrupted hover (see
+    // ShowPcCardPreviewAfterDelay) rather than immediately, so glancing across PC hexes
+    // while moving the cursor doesn't spam the preview.
     private void TryShowPcCardPreview()
     {
         // A hovered character sprite sits visually on top of the hex and drives its own
         // card preview (see CharacterSpriteHover) — don't let the hex's PC/region cards
         // show underneath/behind it while it's the thing actually under the cursor.
-        if (isCharacterHovered) { HidePcCardPreview(); return; }
-        if (!ShouldShowPcVisual()) { HidePcCardPreview(); return; }
+        if (isCharacterHovered) { CancelPcCardPreview(); return; }
+        if (!ShouldShowPcVisual()) { CancelPcCardPreview(); return; }
         PC pcData = GetPC();
-        if (pcData == null || CardCenterPreview.Instance == null) { HidePcCardPreview(); return; }
+        if (pcData == null || CardCenterPreview.Instance == null) { CancelPcCardPreview(); return; }
+
+        // Already shown, or already counting down — nothing to do (Hover() can be re-invoked
+        // while the cursor sits still, e.g. by other per-frame hover updates).
+        if (_showingPcCardPreview || pcCardPreviewCoroutine != null) return;
+
+        pcCardPreviewCoroutine = StartCoroutine(ShowPcCardPreviewAfterDelay(pcData));
+    }
+
+    private IEnumerator ShowPcCardPreviewAfterDelay(PC pcData)
+    {
+        yield return new WaitForSeconds(pcCardPreviewHoverDelay);
+        pcCardPreviewCoroutine = null;
 
         if (_deckManager == null) _deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        if (_deckManager == null) return;
+        if (_deckManager == null || CardCenterPreview.Instance == null) yield break;
 
         List<CardData> previewCards = new();
         CardData pcCard = _deckManager.FindPcCardByPcName(pcData.pcName);
@@ -1029,14 +1047,18 @@ public class Hex : MonoBehaviour
         string region = GetLandRegion();
         CardData landCard = !string.IsNullOrWhiteSpace(region) ? _deckManager.FindLandCardByRegion(region) : null;
         if (landCard != null) previewCards.Add(landCard);
-        if (previewCards.Count == 0) return;
+        if (previewCards.Count == 0) yield break;
 
         _showingPcCardPreview = true;
         CardCenterPreview.Instance.ShowPreview(previewCards);
     }
 
-    private void HidePcCardPreview()
+    // Cancels a pending (not-yet-shown) delayed preview and hides one already on screen —
+    // covers both cases so every early-out in TryShowPcCardPreview and Unhover() can call
+    // just this one method.
+    private void CancelPcCardPreview()
     {
+        if (pcCardPreviewCoroutine != null) { StopCoroutine(pcCardPreviewCoroutine); pcCardPreviewCoroutine = null; }
         if (!_showingPcCardPreview) return;
         _showingPcCardPreview = false;
         CardCenterPreview.Instance?.HidePreview();
@@ -1106,7 +1128,7 @@ public class Hex : MonoBehaviour
         SetActiveFast(hexInfoArrow, false);
         SetActiveFast(hexInfo, false);
         if (s_hexInfoActiveHex == this) s_hexInfoActiveHex = null;
-        HidePcCardPreview();
+        CancelPcCardPreview();
     }
 
     private void UpdateHexInfoLinkHover()

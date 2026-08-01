@@ -132,7 +132,12 @@ public class Leader : Character
     private void RunTurnStartResourceGrants()
     {
         Board board = FindFirstObjectByType<Board>();
-        if (board == null) return;
+        if (board == null)
+        {
+            Debug.LogWarning("[PCGrant] RunTurnStartResourceGrants aborted — no Board found.");
+            return;
+        }
+        Debug.Log($"[PCGrant] RunTurnStartResourceGrants for {name}, {controlledCharacters.Count(c => c != null && !c.killed)} live character(s).");
 
         var grantedPcNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var grantedRegions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

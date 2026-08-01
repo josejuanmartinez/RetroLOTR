@@ -4,12 +4,8 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-[RequireComponent(typeof(CanvasGroup))]
 public class ActionsManager : MonoBehaviour
 {
-    [Header("References")]
-    public CanvasGroup canvasGroup;
-
     [HideInInspector]
     public CharacterAction DEFAULT;
     public CharacterAction[] characterActions;
@@ -28,7 +24,6 @@ public class ActionsManager : MonoBehaviour
 
         currentCharacter = null;
         availableActions.Clear();
-        UpdateInteractableState();
     }
 
     public T GetAction<T>() where T : CharacterAction
@@ -71,7 +66,6 @@ public class ActionsManager : MonoBehaviour
         if (IsHumanPlayerCharacter(character))
         {
             availableActions.Clear();
-            UpdateInteractableState();
             return;
         }
 
@@ -81,7 +75,6 @@ public class ActionsManager : MonoBehaviour
         }
 
         BuildAvailableActions();
-        UpdateInteractableState();
     }
 
     public void Hide()
@@ -93,12 +86,13 @@ public class ActionsManager : MonoBehaviour
 
         availableActions.Clear();
         currentCharacter = null;
-        UpdateInteractableState();
     }
 
+    // No-op: there is no action-button panel in the scene right now (RefreshHumanPlayerHandUI's
+    // card-hand UI replaced it, see DeckManager). Kept because Board/Game/PopupManager still call
+    // it on turn/popup changes; remove those call sites too if this stays permanently unused.
     public void RefreshInteractableState()
     {
-        UpdateInteractableState();
     }
 
     private void BuildAvailableActions()
@@ -115,21 +109,6 @@ public class ActionsManager : MonoBehaviour
         }
 
         availableActions.Sort((a, b) => string.Compare(a?.actionName, b?.actionName, StringComparison.OrdinalIgnoreCase));
-    }
-
-    private void UpdateInteractableState()
-    {
-        if (canvasGroup == null) return;
-
-        Game game = GetGame();
-        bool isPlayerTurn = game != null && game.IsPlayerCurrentlyPlaying();
-        bool popupBlocking = PopupManager.IsShowing;
-        bool playerUsesCardHandUi = IsHumanPlayerCharacter(currentCharacter) || (currentCharacter == null && isPlayerTurn);
-        bool visible = isPlayerTurn && !popupBlocking;
-        bool enabled = visible && !playerUsesCardHandUi;
-        canvasGroup.alpha = visible ? 1f : 0f;
-        canvasGroup.interactable = visible;
-        canvasGroup.blocksRaycasts = visible;
     }
 
     private Game GetGame()

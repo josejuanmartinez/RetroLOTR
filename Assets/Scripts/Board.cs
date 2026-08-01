@@ -1065,8 +1065,8 @@ public class Board : MonoBehaviour
         try
         {
             actionsManager = GetActionsManager();
-            actionsManager.Hide();
-            selected = GetLayout().GetSelectedCharacterIcon();
+            actionsManager?.Hide();
+            selected = GetLayout()?.GetSelectedCharacterIcon();
         }
         catch (Exception e)
         {
@@ -1223,7 +1223,7 @@ public class Board : MonoBehaviour
                 // (hex selection, situation cards) run after the loop instead.
                 MoveCharacterOneHex(character, previousHex, newHex, false, false, deferVisibilityRefresh: true);
                 currentHex = newHex;
-                if (showPlayerUi) selected.RefreshMovementLeft(character);
+                if (showPlayerUi) selected?.RefreshMovementLeft(character);
             }
             catch (Exception e)
             {
@@ -1267,7 +1267,7 @@ public class Board : MonoBehaviour
             }
             if (showPlayerUi)
             {
-                selected.RefreshMovementLeft(character);
+                selected?.RefreshMovementLeft(character);
             }
         }
         catch (Exception e)
@@ -1616,7 +1616,8 @@ public class Board : MonoBehaviour
     }
 
     [Header("Situation Cards")]
-    [SerializeField] private SituationCardsUI situationCardsUIPrefab;
+    [Tooltip("Scene instance of the opportunity-card overlay (lives permanently in the scene, like TurnBanner).")]
+    [SerializeField] private SituationCardsUI situationCardsUI;
     [Tooltip("Seconds the camera rests on the character's hex before the opportunity-card overlay covers the screen.")]
     [SerializeField] private float situationCardsFocusDelay = 1f;
     private Coroutine situationCardsSequence;
@@ -1670,6 +1671,8 @@ public class Board : MonoBehaviour
         yield return new WaitForSeconds(situationCardsFocusDelay);
 
         // Let any dialog raised in the meantime (e.g. an encounter on the same hex) resolve first.
+        if (SelectionDialog.IsShowing || (hexEncounterTask != null && !hexEncounterTask.IsCompleted))
+            Debug.Log($"[CenterLock] SituationCards waiting on SelectionDialog/hexEncounterTask (selectionDialog={SelectionDialog.IsShowing}, hexEncounterTask incomplete={hexEncounterTask != null && !hexEncounterTask.IsCompleted})...");
         while (SelectionDialog.IsShowing || (hexEncounterTask != null && !hexEncounterTask.IsCompleted))
             yield return null;
 
@@ -1679,26 +1682,23 @@ public class Board : MonoBehaviour
         if (character == null || character.killed || character.hex != hex) { situationCardsSequence = null; yield break; }
         if (g == null || !g.IsPlayerCurrentlyPlaying() || g.player != character.GetOwner()) { situationCardsSequence = null; yield break; }
 
-        if (SituationCardsUI.Instance == null)
+        if (situationCardsUI == null)
         {
-            if (situationCardsUIPrefab != null)
-            {
-                Instantiate(situationCardsUIPrefab);
-            }
-            else
-            {
-                var go = new GameObject("SituationCardsUI");
-                go.AddComponent<SituationCardsUI>();
-            }
+            Debug.LogWarning("[SituationCards] situationCardsUI reference is not set on Board.");
+            situationCardsSequence = null;
+            yield break;
         }
 
+        Debug.Log($"[CenterLock] SituationCards waiting for CenterDisplayLock (TurnBanner.IsShowing={TurnBanner.IsShowing})...");
         yield return CenterDisplayLock.WaitCoroutine();
+        Debug.Log("[CenterLock] SituationCards acquired lock, showing.");
         situationCardsHoldCenterLock = true;
 
-        SituationCardsUI.Instance.Show(situationCards, character);
+        situationCardsUI.Show(situationCards, character);
         yield return new WaitUntil(() => !SituationCardsUI.IsShowing);
 
         ReleaseCenterLockIfHeldBySituationCards();
+        Debug.Log("[CenterLock] SituationCards released lock.");
         situationCardsSequence = null;
     }
 
@@ -1721,20 +1721,41 @@ public class Board : MonoBehaviour
     // corrupting its character/card fields mid-flight.
     public async void TriggerOwnPcGrantIfStandingOnOne(Character character, Hex hex)
     {
-        if (character == null || character.killed || hex == null) return;
+        if (character == null || character.killed || hex == null)
+        {
+            Debug.Log($"[PCGrant] aborted — character={character != null} killed={character?.killed} hex={hex != null}");
+            return;
+        }
 
         PC pc = hex.GetPCData();
-        if (pc == null || pc.owner != character.GetOwner()) return;
+        if (pc == null || pc.owner != character.GetOwner())
+        {
+            Debug.Log($"[PCGrant] aborted — no PC on {hex.name}, or not owned by {character.characterName}'s leader (pc={pc != null})");
+            return;
+        }
 
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
         CardData pcCard = deckManager?.FindPcCardByPcName(pc.pcName);
-        if (pcCard == null) return;
+        if (pcCard == null)
+        {
+            Debug.Log($"[PCGrant] aborted — no PC card found for '{pc.pcName}' (deckManager={deckManager != null})");
+            return;
+        }
 
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
-        if (actionsManager?.ResolveActionByRef(pcCard.GetActionRef(), pcCard) is not PCAction pcAction) return;
+        if (actionsManager?.ResolveActionByRef(pcCard.GetActionRef(), pcCard) is not PCAction pcAction)
+        {
+            Debug.Log($"[PCGrant] aborted — could not resolve PCAction for '{pcCard.name}' (actionsManager={actionsManager != null})");
+            return;
+        }
 
         pcAction.Initialize(character, pcCard);
-        if (!pcAction.IsAlreadyFoundedAndOwnedBySelf(character)) return;
+        if (!pcAction.IsAlreadyFoundedAndOwnedBySelf(character))
+        {
+            Debug.Log($"[PCGrant] aborted — '{pc.pcName}' not already-founded-and-owned-by-self for {character.characterName}");
+            return;
+        }
+        Debug.Log($"[PCGrant] '{pc.pcName}' proceeding for {character.characterName}");
 
         Game game = FindFirstObjectByType<Game>();
         bool showToPlayer = game != null && game.player == character.GetOwner();
@@ -1743,9 +1764,12 @@ public class Board : MonoBehaviour
         // playing - SemaphoreSlim always hands a released permit to an already-queued async
         // waiter before TurnBanner's own Wait(0) polling gets a look-in, so registering here
         // too early would let this grant cut in front of the Gathering Resources banner.
+        if (TurnBanner.IsShowing) Debug.Log($"[CenterLock] PC grant '{pcCard.name}' waiting on TurnBanner.IsShowing...");
         while (TurnBanner.IsShowing) await Task.Yield();
 
+        Debug.Log($"[CenterLock] PC grant '{pcCard.name}' waiting for CenterDisplayLock...");
         await CenterDisplayLock.WaitAsync();
+        Debug.Log($"[CenterLock] PC grant '{pcCard.name}' acquired lock.");
         try
         {
             if (showToPlayer)
@@ -1771,6 +1795,7 @@ public class Board : MonoBehaviour
         finally
         {
             CenterDisplayLock.Release();
+            Debug.Log($"[CenterLock] PC grant '{pcCard.name}' released lock.");
         }
     }
 
@@ -1780,27 +1805,47 @@ public class Board : MonoBehaviour
     // PC grant there's no already-founded check — just resolve and re-apply.
     public async void TriggerRegionLandGrant(Character character, Hex hex)
     {
-        if (character == null || character.killed || hex == null) return;
+        if (character == null || character.killed || hex == null)
+        {
+            Debug.Log($"[RegionGrant] aborted — character={character != null} killed={character?.killed} hex={hex != null}");
+            return;
+        }
 
         string region = hex.GetLandRegion();
-        if (string.IsNullOrWhiteSpace(region)) return;
+        if (string.IsNullOrWhiteSpace(region))
+        {
+            Debug.Log($"[RegionGrant] aborted — {hex.name} has no land region");
+            return;
+        }
 
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
         CardData landCard = deckManager?.FindLandCardByRegion(region);
-        if (landCard == null) return;
+        if (landCard == null)
+        {
+            Debug.Log($"[RegionGrant] aborted — no Land card found for region '{region}' (deckManager={deckManager != null})");
+            return;
+        }
 
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
         CharacterAction action = actionsManager?.ResolveActionByRef(landCard.GetActionRef(), landCard);
-        if (action == null) return;
+        if (action == null)
+        {
+            Debug.Log($"[RegionGrant] aborted — could not resolve action for '{landCard.name}' (actionsManager={actionsManager != null})");
+            return;
+        }
+        Debug.Log($"[RegionGrant] '{landCard.name}' proceeding for {character.characterName}");
 
         Game game = FindFirstObjectByType<Game>();
         bool showToPlayer = game != null && game.player == character.GetOwner();
 
         // See TriggerOwnPcGrantIfStandingOnOne: hold off queuing for the lock until the
         // Turn/Gathering-Resources banners have fully finished.
+        if (TurnBanner.IsShowing) Debug.Log($"[CenterLock] Region grant '{landCard.name}' waiting on TurnBanner.IsShowing...");
         while (TurnBanner.IsShowing) await Task.Yield();
 
+        Debug.Log($"[CenterLock] Region grant '{landCard.name}' waiting for CenterDisplayLock...");
         await CenterDisplayLock.WaitAsync();
+        Debug.Log($"[CenterLock] Region grant '{landCard.name}' acquired lock.");
         try
         {
             if (showToPlayer)
@@ -1826,6 +1871,7 @@ public class Board : MonoBehaviour
         finally
         {
             CenterDisplayLock.Release();
+            Debug.Log($"[CenterLock] Region grant '{landCard.name}' released lock.");
         }
     }
 

@@ -606,70 +606,15 @@ public class SelectionDialog : MonoBehaviour
     private Button CreateOptionButton(string text, string description, Color textColor, int index, string iconOverride = null)
     {
         bool hasDesc = !string.IsNullOrWhiteSpace(description);
-        string colorHex = ColorUtility.ToHtmlStringRGB(textColor);
+        //string colorHex = ColorUtility.ToHtmlStringRGB(textColor);
         string labelText = hasDesc
-            ? $"<color=#{colorHex}>{text}</color>\n<color=#9C9C9C><size=11>{description}</size></color>"
-            : $"<color=#{colorHex}>{text}</color>";
+            ? $"<b>{text}</b>\n{description}"
+            : $"<b>{text}</b>";
 
-        GameObject obj;
-        OptionButtonPrefabManager prefabManager = null;
-        if (optionButtonPrefab != null)
-        {
-            obj = Instantiate(optionButtonPrefab, optionButtonsContainer, false);
-            obj.name = $"Option_{index}";
-            prefabManager = obj.GetComponent<OptionButtonPrefabManager>();
-        }
-        else
-        {
-            obj = new($"Option_{index}", typeof(RectTransform), typeof(Image), typeof(Button));
-            obj.transform.SetParent(optionButtonsContainer, false);
-
-            Image bg = obj.GetComponent<Image>();
-            bg.color = new Color(0.08f, 0.06f, 0.04f, 0.88f);
-
-            Button btn0 = obj.GetComponent<Button>();
-            btn0.targetGraphic = bg;
-            ColorBlock cb0 = btn0.colors;
-            cb0.normalColor      = new Color(0.08f, 0.06f, 0.04f, 0.88f);
-            cb0.highlightedColor = new Color(0.32f, 0.22f, 0.08f, 0.95f);
-            cb0.selectedColor    = new Color(0.42f, 0.30f, 0.10f, 1f);
-            cb0.pressedColor     = new Color(0.55f, 0.40f, 0.12f, 1f);
-            cb0.fadeDuration     = 0.08f;
-            btn0.colors = cb0;
-
-            GameObject arrowObj = new("Arrow", typeof(RectTransform), typeof(TextMeshProUGUI));
-            arrowObj.transform.SetParent(obj.transform, false);
-            RectTransform arrowRect = arrowObj.GetComponent<RectTransform>();
-            arrowRect.anchorMin = new Vector2(0f, 0f);
-            arrowRect.anchorMax = new Vector2(0f, 1f);
-            arrowRect.pivot     = new Vector2(0f, 0.5f);
-            arrowRect.offsetMin = new Vector2(8f,  0f);
-            arrowRect.offsetMax = new Vector2(24f, 0f);
-            TextMeshProUGUI arrowTmp0 = arrowObj.GetComponent<TextMeshProUGUI>();
-            arrowTmp0.text          = ">";
-            arrowTmp0.fontSize      = 13f;
-            arrowTmp0.alignment     = TextAlignmentOptions.Midline;
-            arrowTmp0.raycastTarget = false;
-            if (messageLabel != null) { arrowTmp0.font = messageLabel.font; arrowTmp0.fontSharedMaterial = messageLabel.fontSharedMaterial; }
-
-            GameObject labelObj = new("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
-            labelObj.transform.SetParent(obj.transform, false);
-            RectTransform labelRect = labelObj.GetComponent<RectTransform>();
-            labelRect.anchorMin = Vector2.zero;
-            labelRect.anchorMax = Vector2.one;
-            labelRect.offsetMin = new Vector2(26f, 4f);
-            labelRect.offsetMax = new Vector2(-8f, -4f);
-            TextMeshProUGUI labelTmp0 = labelObj.GetComponent<TextMeshProUGUI>();
-            labelTmp0.color           = Color.white;
-            labelTmp0.fontSize        = 14f;
-            labelTmp0.fontSizeMin     = 10f;
-            labelTmp0.fontSizeMax     = 14f;
-            labelTmp0.enableAutoSizing = true;
-            labelTmp0.alignment       = TextAlignmentOptions.MidlineLeft;
-            labelTmp0.raycastTarget   = false;
-            if (messageLabel != null) { labelTmp0.font = messageLabel.font; labelTmp0.fontSharedMaterial = messageLabel.fontSharedMaterial; }
-        }
-
+        GameObject obj = Instantiate(optionButtonPrefab, optionButtonsContainer, false);
+        obj.name = $"Option_{index}";
+        OptionButtonPrefabManager prefabManager = obj.GetComponent<OptionButtonPrefabManager>();
+        
         CanvasGroup cg = obj.GetComponent<CanvasGroup>() ?? obj.AddComponent<CanvasGroup>();
         cg.alpha = 0f;
 
@@ -677,30 +622,7 @@ public class SelectionDialog : MonoBehaviour
         le.preferredHeight = hasDesc ? 54f : 36f;
         le.minHeight       = hasDesc ? 44f : 28f;
 
-        if (prefabManager != null)
-        {
-            // Callers can pass an explicit icon per option (e.g. an encounter's required
-            // skill). Otherwise the option text itself doubles as the icon lookup key,
-            // since it's frequently a character or class name that already resolves
-            // through Illustrations. Arbitrary choice text just yields no icon.
-            prefabManager.Setup(labelText, iconOverride ?? text);
-        }
-        else
-        {
-            Transform arrowChild = obj.transform.Find("Arrow");
-            if (arrowChild != null)
-            {
-                TextMeshProUGUI arrowTmp = arrowChild.GetComponent<TextMeshProUGUI>();
-                if (arrowTmp != null) arrowTmp.color = textColor;
-            }
-
-            Transform labelChild = obj.transform.Find("Label");
-            if (labelChild != null)
-            {
-                TextMeshProUGUI labelTmp = labelChild.GetComponent<TextMeshProUGUI>();
-                if (labelTmp != null) labelTmp.text = labelText;
-            }
-        }
+        prefabManager.Setup(labelText, iconOverride ?? text);
 
         Button btn = obj.GetComponent<Button>();
         int capturedIndex = index;

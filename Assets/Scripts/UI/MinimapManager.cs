@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class MinimapManager : MonoBehaviour
@@ -13,6 +12,7 @@ public class MinimapManager : MonoBehaviour
     public TMP_FontAsset escFontAsset;
     public Camera minimapCamera;
     public Sprite mapBackgroundSprite;
+    public MinimapOverlayView overlayPrefab;
     [Tooltip("Visual scale of the minimap display in the overlay. 0.5 = half screen, 1.0 = full screen.")]
     public float overlayMapScale = 0.5f;
     [Tooltip("Zoom level of the minimap camera. 1.0 = default, < 1 = zoom in (bigger), > 1 = zoom out (smaller).")]
@@ -27,6 +27,7 @@ public class MinimapManager : MonoBehaviour
     private bool isExpanded = false;
 
     private GameObject minimapOverlay;
+    private MinimapOverlayView overlayView;
     private GameObject legendContainer;
     private int savedRtWidth;
     private int savedRtHeight;
@@ -129,10 +130,8 @@ public class MinimapManager : MonoBehaviour
     {
         isExpanded = true;
 
-        if (minimapOverlay != null)
-            Destroy(minimapOverlay);
-
-        CreateOverlay();
+        if (minimapOverlay == null)
+            CreateOverlay();
 
         minimapOverlay.SetActive(true);
         minimapOverlay.transform.SetAsLastSibling();
@@ -188,82 +187,30 @@ public class MinimapManager : MonoBehaviour
 
     private void CreateOverlay()
     {
-        Canvas rootCanvas = FindRootCanvas();
-        if (rootCanvas == null) return;
+        if (overlayPrefab == null) return;
 
-        // Full-screen black backdrop.
-        minimapOverlay = new GameObject("MinimapOverlay");
-        minimapOverlay.transform.SetParent(rootCanvas.transform, false);
+        //overlayView = Instantiate(overlayPrefab);
+        overlayView = overlayPrefab;
+        minimapOverlay = overlayView.gameObject;
 
-        // Own Canvas + GraphicRaycaster so it blocks all clicks from reaching the game world.
-        Canvas overlayCanvas = minimapOverlay.AddComponent<Canvas>();
-        overlayCanvas.overrideSorting = true;
-        overlayCanvas.sortingOrder = 999;
-        minimapOverlay.AddComponent<GraphicRaycaster>();
-
-        RectTransform bgRt = minimapOverlay.GetComponent<RectTransform>();
-        bgRt.anchorMin = Vector2.zero;
-        bgRt.anchorMax = Vector2.one;
-        bgRt.offsetMin = Vector2.zero;
-        bgRt.offsetMax = Vector2.zero;
-
-        Image bgImage = minimapOverlay.AddComponent<Image>();
-        bgImage.color = overlayColor;
-        bgImage.raycastTarget = true;
+        overlayView.background.color = overlayColor;
 
         float scale = Mathf.Clamp(overlayMapScale, 0.1f, 2f);
         float minAnchor = (1f - scale) * 0.5f;
         float maxAnchor = 1f - minAnchor;
 
         // Optional map background — shown behind the minimap display.
-        if (mapBackgroundSprite != null)
-        {
-            GameObject mapBg = new GameObject("MapBackground");
-            mapBg.transform.SetParent(minimapOverlay.transform, false);
-
-            RectTransform mapBgRt = mapBg.AddComponent<RectTransform>();
-            mapBgRt.anchorMin = new Vector2(minAnchor, minAnchor);
-            mapBgRt.anchorMax = new Vector2(maxAnchor, maxAnchor);
-            mapBgRt.offsetMin = Vector2.zero;
-            mapBgRt.offsetMax = Vector2.zero;
-
-            Image mapBgImage = mapBg.AddComponent<Image>();
-            mapBgImage.sprite = mapBackgroundSprite;
-            mapBgImage.color = Color.white;
-            mapBgImage.raycastTarget = false;
-        }
+        overlayView.mapBackground.rectTransform.anchorMin = new Vector2(minAnchor, minAnchor);
+        overlayView.mapBackground.rectTransform.anchorMax = new Vector2(maxAnchor, maxAnchor);
+        overlayView.mapBackground.sprite = mapBackgroundSprite;
+        overlayView.mapBackground.gameObject.SetActive(mapBackgroundSprite != null);
 
         // Minimap display — centered, size driven by overlayMapScale.
-        GameObject mapDisplay = new GameObject("MinimapDisplay");
-        mapDisplay.transform.SetParent(minimapOverlay.transform, false);
+        overlayView.mapDisplay.rectTransform.anchorMin = new Vector2(minAnchor, minAnchor);
+        overlayView.mapDisplay.rectTransform.anchorMax = new Vector2(maxAnchor, maxAnchor);
+        overlayView.mapDisplay.texture = minimapCamera.targetTexture;
 
-        RectTransform mapRt = mapDisplay.AddComponent<RectTransform>();
-        mapRt.anchorMin = new Vector2(minAnchor, minAnchor);
-        mapRt.anchorMax = new Vector2(maxAnchor, maxAnchor);
-        mapRt.offsetMin = Vector2.zero;
-        mapRt.offsetMax = Vector2.zero;
-
-        RawImage mapImage = mapDisplay.AddComponent<RawImage>();
-        mapImage.texture = minimapCamera.targetTexture;
-        mapImage.raycastTarget = false;
-
-        // "ESC to close" hint — top-left corner.
-        GameObject hint = new GameObject("CloseHint");
-        hint.transform.SetParent(minimapOverlay.transform, false);
-
-        RectTransform hintRt = hint.AddComponent<RectTransform>();
-        hintRt.anchorMin = new Vector2(0f, 1f);
-        hintRt.anchorMax = new Vector2(0f, 1f);
-        hintRt.pivot = new Vector2(0f, 1f);
-        hintRt.anchoredPosition = new Vector2(20f, -20f);
-        hintRt.sizeDelta = new Vector2(300f, 40f);
-
-        TextMeshProUGUI hintText = hint.AddComponent<TextMeshProUGUI>();
-        hintText.font = escFontAsset;
-        hintText.text = "ESC to close";
-        hintText.fontSize = 18f;
-        hintText.color = new Color(1f, 1f, 1f, 0.7f);
-        hintText.raycastTarget = false;
+        overlayView.hintText.font = escFontAsset;
     }
 
     private void RefreshLegend()
@@ -363,15 +310,5 @@ public class MinimapManager : MonoBehaviour
         rt.height = height;
         rt.Create();
         RefreshMinimap();
-    }
-
-    private Canvas FindRootCanvas()
-    {
-        Canvas[] all = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
-        Canvas best = null;
-        foreach (Canvas c in all)
-            if (c.isRootCanvas && (best == null || c.sortingOrder > best.sortingOrder))
-                best = c;
-        return best;
     }
 }

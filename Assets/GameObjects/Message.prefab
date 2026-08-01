@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3216729427281663696}
   - component: {fileID: 6945359635012639418}
   - component: {fileID: 3898267123224256654}
+  - component: {fileID: 2534375748284098574}
   m_Layer: 0
   m_Name: Message
   m_TagString: Untagged
@@ -78,6 +79,7 @@ MonoBehaviour:
   messageText: {fileID: 7619301187482922822}
   displayDuration: 3
   fadeDuration: 0.5
+  showMode: 2
 --- !u!114 &6945359635012639418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,6 +109,14 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!222 &2534375748284098574
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526926399432092945}
+  m_CullTransparentMesh: 1
 --- !u!1 &1853158817358225830
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,6 +220,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
