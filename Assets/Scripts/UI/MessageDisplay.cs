@@ -43,7 +43,11 @@ public class MessageDisplay : MonoBehaviour
     /// </summary>
     /// <param name="message">Text message to display</param>
     /// <param name="color">Color for the text (defaults to white if not specified)</param>
-    public static void ShowMessage(string message, Color? color = null, bool forceImmediate = false)
+    // suppressIcon lets a caller that already manages its own event icon (e.g. the discovery/
+    // reveal notifications in DeckManager, which use a dedicated icon type with camera-focus
+    // behavior) show the immediate text without Both mode piling on a second, redundant
+    // HexMessage icon.
+    public static void ShowMessage(string message, Color? color = null, bool forceImmediate = false, bool suppressIcon = false)
     {
         Game game = FindFirstObjectByType<Game>();
         if (game == null) return;
@@ -64,7 +68,7 @@ public class MessageDisplay : MonoBehaviour
         }
 
         bool immediate = forceImmediate || instance.showMode is ShowMode.OnlyImmediate or ShowMode.Both;
-        bool viaIcon = instance.showMode is ShowMode.OnlyEventIcon or ShowMode.Both;
+        bool viaIcon = !suppressIcon && instance.showMode is ShowMode.OnlyEventIcon or ShowMode.Both;
 
         void Present()
         {
@@ -85,7 +89,10 @@ public class MessageDisplay : MonoBehaviour
                     true,
                     () =>
                     {
-                        if (!immediate) Present();
+                        // Always re-present on click, even if the message already flashed by
+                        // immediately (Both mode) - otherwise the icon is a void click once the
+                        // immediate toast has already faded.
+                        Present();
                         icon?.ConsumeAndDestroy();
                     });
             }
@@ -175,7 +182,17 @@ public class MessageDisplay : MonoBehaviour
 
     private void ShowNow(string message, Color textColor)
     {
-        if (displayPaused || persistentActive) return;
+        // Both/OnlyImmediate mode promises the message shows up on its own, not only if
+        // something later (e.g. clicking its event icon) happens to retry it while nothing is
+        // blocking anymore. Degrade to a queued message instead of silently dropping it - it
+        // will surface as soon as the persistent banner clears/unpauses (see RemovePersistent
+        // and SetPaused, which both drain the queue once their block lifts), or once the
+        // Turn/Gathering-Resources banners finish (see ShouldDelayForFocusOrWorldMessages).
+        if (displayPaused || persistentActive || TurnBanner.IsShowing)
+        {
+            EnqueueMessage(message, textColor);
+            return;
+        }
         if (waitForSyncRoutine != null)
         {
             StopCoroutine(waitForSyncRoutine);
@@ -206,7 +223,11 @@ public class MessageDisplay : MonoBehaviour
     {
         // Only block while a world-space message is actively being displayed.
         // Using IsBusy() here can starve UI messages when deferred entries remain queued.
-        return MessageDisplayNoUI.IsDisplaying || MessageDisplayNoUI.IsHoldingFocus;
+        // Also holds off entirely while the Turn/Gathering-Resources cinematic banners are up
+        // (or queued to show) - those are CenterDisplayLock-exclusive full-screen displays,
+        // same as the PC/region grant previews, so nothing else should be competing for
+        // attention until that sequence has fully finished.
+        return MessageDisplayNoUI.IsDisplaying || MessageDisplayNoUI.IsHoldingFocus || TurnBanner.IsShowing;
     }
 
     /// <summary>
@@ -306,6 +327,13 @@ public class MessageDisplay : MonoBehaviour
         messageText.text = "";
         messageText.enabled = false;
         canvasGroup.alpha = 0f;
+
+        // Anything enqueued while the persistent banner was up (ProcessNextMessage bails out
+        // early whenever persistentActive is true) was left sitting in the queue with nothing
+        // to wake it back up - without this it would only ever surface if some unrelated later
+        // message happened to call ProcessNextMessage again (or the user dug it up via its
+        // event icon instead of it just showing up on its own, as Both mode promises).
+        if (!isDisplayingMessage) ProcessNextMessage();
     }
 
     private static bool IsNegativeColor(Color color)

@@ -78,10 +78,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     private Image loadingIconImage;
     private bool clickableCursorSet;
 
-    private Character pendingRefreshCharacter;
-    private bool pendingIsHover;
     public Character CurrentCharacter { get; private set; }
-    private bool refreshScheduled;
     private readonly List<ArtifactRenderer> artifactStatusRenderers = new();
     private readonly List<GameObject> playedCardInstances = new();
     private string hoveredPreviewCardName;
@@ -97,8 +94,6 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     private void OnDisable()
     {
-        refreshScheduled = false;
-        pendingRefreshCharacter = null;
         SetLoadingIconVisible(false);
         SetClickableCursor(false);
         HideCardHoverPreview();
@@ -286,38 +281,20 @@ public class SelectedCharacterIcon : MonoBehaviour
         if (loadingIconImage != null) loadingIconImage.fillAmount = Mathf.Clamp01(progress);
     }
 
+    // Applied immediately (not deferred a frame) so it can never lose a race against the
+    // other, already-synchronous entry points below (Hide/RefreshHoverPreview) — a deferred
+    // restore that gets clobbered by an immediate Hide() before it runs was the cause of the
+    // panel getting stuck blank after hovering off an already-selected character.
     public void Refresh(Character c)
     {
-        pendingRefreshCharacter = c;
-        pendingIsHover = false;
-        if (refreshScheduled) return;
-        refreshScheduled = true;
-        StartCoroutine(RefreshNextFrame());
+        if (c == null) { Hide(); return; }
+        ApplyRefresh(c, isHover: false);
     }
 
     public void RefreshForHover(Character c)
     {
-        pendingRefreshCharacter = c;
-        pendingIsHover = true;
-        if (refreshScheduled) return;
-        refreshScheduled = true;
-        StartCoroutine(RefreshNextFrame());
-    }
-
-    private System.Collections.IEnumerator RefreshNextFrame()
-    {
-        yield return null;
-        refreshScheduled = false;
-        Character c = pendingRefreshCharacter;
-        bool isHover = pendingIsHover;
-        pendingRefreshCharacter = null;
-        pendingIsHover = false;
-        if (c == null)
-        {
-            Hide();
-            yield break;
-        }
-        ApplyRefresh(c, isHover);
+        if (c == null) { Hide(); return; }
+        ApplyRefresh(c, isHover: true);
     }
 
     private void ApplyRefresh(Character c, bool isHover = false)
@@ -394,7 +371,19 @@ public class SelectedCharacterIcon : MonoBehaviour
         string detailText = hoverText ?? string.Empty;
         if (detailText.StartsWith(c.characterName, System.StringComparison.OrdinalIgnoreCase))
             detailText = detailText.Substring(c.characterName.Length).TrimStart();
-        descriptionWidget.text = detailText;
+
+        // Match the selected-character panel's flavor content: quote is harmless public
+        // flavor text so it always shows, same as when selected. Army/"(wandering)" status
+        // can reveal troop composition, so — same as health/artifacts below — it's gated
+        // behind showArtifacts (both parameters are driven by the same isScouted check at
+        // the call sites, so an unscouted enemy still won't leak that here either).
+        string quoteText = BuildSelectedCharacterTitle(c, returnName: false, returnArmy: false, returnQuote: true);
+        string armyText = showArtifacts ? BuildSelectedCharacterTitle(c, returnName: false, returnArmy: true) : string.Empty;
+        List<string> descriptionParts = new();
+        if (!string.IsNullOrWhiteSpace(quoteText)) descriptionParts.Add(quoteText);
+        if (!string.IsNullOrWhiteSpace(armyText)) descriptionParts.Add(armyText);
+        if (!string.IsNullOrWhiteSpace(detailText)) descriptionParts.Add(detailText);
+        descriptionWidget.text = string.Join("\n\n", descriptionParts);
 
         actioned.SetActive(false);
         moved.SetActive(false);
@@ -490,9 +479,7 @@ SetVisible(false);
         health.gameObject.SetActive(false);
         ClearPlayedCardInstances();
         SetPlayedCardVisible(false);
-        pendingRefreshCharacter = null;
         CurrentCharacter = null;
-        refreshScheduled = false;
         RefreshOtherCharacters(null);
     }
 

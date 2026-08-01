@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -20,14 +21,15 @@ public class CardPlayFlight : MonoBehaviour
     private Hex targetHex;
     private Vector2 startLocal;
     private float compactStartScale;
+    private Action onArrived;
 
-    public static void Launch(Card card, Hex targetHex)
+    public static void Launch(Card card, Hex targetHex, Action onArrived = null)
     {
-        if (card == null) return;
+        if (card == null) { onArrived?.Invoke(); return; }
 
         Canvas parentCanvas = card.GetComponentInParent<Canvas>();
         Canvas rootCanvas = parentCanvas != null ? parentCanvas.rootCanvas : null;
-        if (rootCanvas == null) return;
+        if (rootCanvas == null) { onArrived?.Invoke(); return; }
 
         // The enlarged center preview (when one is showing) is what the player is
         // actually looking at as they click — start the flight from it, else from
@@ -36,7 +38,7 @@ public class CardPlayFlight : MonoBehaviour
         RectTransform sourceRect = preview != null && preview.CurrentPreviewRect != null
             ? preview.CurrentPreviewRect
             : card.transform as RectTransform;
-        if (sourceRect == null) return;
+        if (sourceRect == null) { onArrived?.Invoke(); return; }
 
         GameObject flightGo = new("CardPlayFlight", typeof(RectTransform));
         RectTransform flightRect = flightGo.GetComponent<RectTransform>();
@@ -49,6 +51,7 @@ public class CardPlayFlight : MonoBehaviour
         if (token == null)
         {
             Destroy(flightGo);
+            onArrived?.Invoke();
             return;
         }
         flightRect.sizeDelta = tokenSize;
@@ -67,6 +70,7 @@ public class CardPlayFlight : MonoBehaviour
         flight.canvasRect = rootCanvas.transform as RectTransform;
         flight.uiCamera = rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : rootCanvas.worldCamera;
         flight.targetHex = targetHex;
+        flight.onArrived = onArrived;
         flight.group = flightGo.AddComponent<CanvasGroup>();
         flight.group.blocksRaycasts = false;
         flight.group.interactable = false;
@@ -91,21 +95,23 @@ public class CardPlayFlight : MonoBehaviour
     // CardData-driven variant for auto-played effects (PC entry/turn-start resource grants)
     // that have no live hand Card instance to fly from — spins up a throwaway TokenCard just
     // to borrow its token visual, exactly like CampaignSelectionManager's button tokens.
-    public static void LaunchFromData(CardData data, Hex targetHex)
+    // onArrived (optional) fires once the token reaches the hex, before it sinks/fades —
+    // callers use it to hold off granting resources until the token visually lands.
+    public static void LaunchFromData(CardData data, Hex targetHex, Action onArrived = null)
     {
-        if (data == null || targetHex == null) return;
+        if (data == null || targetHex == null) { onArrived?.Invoke(); return; }
 
         GameObject template = DeckManager.Instance?.GetTokenCardPrefabTemplate();
-        if (template == null) return;
+        if (template == null) { onArrived?.Invoke(); return; }
 
         Transform parent = CardCenterPreview.Instance != null ? CardCenterPreview.Instance.transform : null;
         GameObject temp = Instantiate(template, parent);
         temp.SetActive(true);
         Card tempCard = temp.GetComponent<Card>();
-        if (tempCard == null) { Destroy(temp); return; }
+        if (tempCard == null) { Destroy(temp); onArrived?.Invoke(); return; }
 
         tempCard.Initialize(data);
-        Launch(tempCard, targetHex);
+        Launch(tempCard, targetHex, onArrived);
         Destroy(temp, 0.01f);
     }
 
@@ -154,6 +160,11 @@ public class CardPlayFlight : MonoBehaviour
             }
             rect.localPosition = CurrentTargetLocal();
         }
+
+        // The token has visually landed — callers waiting to grant resources/effects
+        // until the token "arrives" resume here, before the sink/fade plays out.
+        onArrived?.Invoke();
+        onArrived = null;
 
         // Phase 3 — arrival: quick fade while sinking into the hex.
         float fadeStartAlpha = group.alpha;

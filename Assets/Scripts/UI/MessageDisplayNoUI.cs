@@ -34,6 +34,7 @@ public class MessageDisplayNoUI : MonoBehaviour
     private MapBorderDetector mapBorderDetector;
     private TextMeshPro activeTextMesh;
     private Transform activeTextTransform;
+    private Coroutine waitForBannerRoutine;
 
     private void Awake()
     {
@@ -227,7 +228,10 @@ public class MessageDisplayNoUI : MonoBehaviour
                     true,
                     () =>
                     {
-                        if (!immediate) Present();
+                        // Always re-present on click, even if the message already flashed by
+                        // immediately (Both mode) - otherwise the icon is a void click once the
+                        // immediate toast has already faded.
+                        Present();
                         icon?.ConsumeAndDestroy();
                     });
             }
@@ -261,6 +265,18 @@ public class MessageDisplayNoUI : MonoBehaviour
     private void ProcessNextMessage()
     {
         if (displayPaused) return;
+        // Holds off entirely while the Turn/Gathering-Resources cinematic banners are up (or
+        // queued to show) - those are CenterDisplayLock-exclusive full-screen displays, same
+        // as the PC/region grant previews, so nothing else should be competing for attention
+        // until that sequence has fully finished.
+        if (TurnBanner.IsShowing)
+        {
+            if (waitForBannerRoutine == null)
+            {
+                waitForBannerRoutine = StartCoroutine(WaitForBannerThenProcess());
+            }
+            return;
+        }
         while (messageQueue.Count > 0)
         {
             var next = messageQueue.Dequeue();
@@ -287,6 +303,13 @@ public class MessageDisplayNoUI : MonoBehaviour
         }
 
         isDisplayingMessage = false;
+    }
+
+    private IEnumerator WaitForBannerThenProcess()
+    {
+        while (TurnBanner.IsShowing) yield return null;
+        waitForBannerRoutine = null;
+        if (!isDisplayingMessage) ProcessNextMessage();
     }
 
     private IEnumerator DisplayCoroutine(MessageData data)

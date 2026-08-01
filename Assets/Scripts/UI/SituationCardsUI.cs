@@ -228,7 +228,10 @@ public class SituationCardsUI : MonoBehaviour
             var cardComp = go.GetComponent<Card>();
             if (cardComp != null)
             {
-                cardComp.Initialize(card, startAsToken: false);
+                // Opportunity cards are already presented face-up in a display-only tray.
+                // Render the full description (including the quote) immediately instead
+                // of replaying the hand card's one-time quote typewriter animation.
+                cardComp.InitializePreview(card);
                 // Display-only: clicks go through the CardClickArea overlay, so the card
                 // itself must never react to hover (which would flip it back into a token).
                 cardComp.SuppressHoverEffects = true;

@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// When a character is selected, hints (via FrameColors.SetHint) which reachable hexes the
-// character could move to this turn and have an opportunity (situation) card available.
+// When a character is selected, sequentially pulses a fluid HexPathRenderer route from the
+// character's hex to each reachable hex that has a playable opportunity (situation) card -
+// one route at a time (see HexPathRenderer.StartOpportunityHintCycle) rather than marking every
+// candidate hex at once.
 public static class OpportunityHexHinter
 {
-    private static readonly List<Hex> hinted = new();
+    private static HexPathRenderer activePathRenderer;
 
     public static void Refresh(Character character)
     {
@@ -20,23 +22,25 @@ public static class OpportunityHexHinter
         HexPathRenderer pathRenderer = Object.FindFirstObjectByType<HexPathRenderer>();
         if (deckManager == null || pathRenderer == null) return;
 
+        var targets = new List<Vector2Int>();
         foreach (Hex hex in pathRenderer.FindAllHexesInRemainingRange(character))
         {
-            if (hex == null || hex.framesColors == null) continue;
+            if (hex == null || hex.v2 == character.hex.v2) continue;
             if (deckManager.GetSituationCards(leader, character, hex).Count > 0)
             {
-                hex.framesColors.SetHint(true);
-                hinted.Add(hex);
+                targets.Add(hex.v2);
             }
         }
+
+        if (targets.Count == 0) return;
+
+        activePathRenderer = pathRenderer;
+        pathRenderer.StartOpportunityHintCycle(character, targets);
     }
 
     public static void ClearAll()
     {
-        for (int i = 0; i < hinted.Count; i++)
-        {
-            hinted[i]?.framesColors?.SetHint(false);
-        }
-        hinted.Clear();
+        activePathRenderer?.StopOpportunityHintCycle();
+        activePathRenderer = null;
     }
 }

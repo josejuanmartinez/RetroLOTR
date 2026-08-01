@@ -105,6 +105,12 @@ public class CharacterAction
 
     protected virtual AdvisorType DefaultAdvisorType => AdvisorType.None;
 
+    // Passive/automatic grants (see MaterialRetrieval) fire constantly as AI leaders re-enter
+    // their own PCs/regions every turn — a generic "AI did something visible" floating text +
+    // event icon for each of these is noise, not information. Rumours are still recorded above
+    // regardless, only the player-visible notification is opted out of.
+    protected virtual bool ShowsVisibleAiActionNotification => true;
+
     private static string GetDefaultActionName()
     {
         if (defaultActionNameFrame == Time.frameCount)
@@ -235,14 +241,8 @@ public class CharacterAction
         {
             Sounds.Instance?.PlayActionFail();
         }
-        string message = $"{actionName} failed";
-        if (!isAI)
+        if (isAI && PlayerCanSeeHex(character != null ? character.hex : null))
         {
-            MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.red);
-        }
-        else if (PlayerCanSeeHex(character != null ? character.hex : null))
-        {
-            MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.red);
             BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex, character.GetOwner());
         }
         if (!isAI && game != null) game.PointToCharacterWithMissingActions();
@@ -281,6 +281,13 @@ public class CharacterAction
 
     public async Task Execute()
     {
+        // Snapshotted once: CharacterAction instances are cached/shared per class by
+        // ActionsManager (see ResolveActionByRef), and Card.RequestInteractionRefreshAll()
+        // below re-Initializes every active hand card's action (possibly this very
+        // instance, for a different character) as a side effect of refreshing hand UI.
+        // Reading the field again after that point could silently swap to the wrong
+        // character mid-execution — the local keeps this call consistent throughout.
+        Character character = this.character;
         bool isAI = !character.isPlayerControlled;
         LastExecutionSucceeded = false;
         try
@@ -362,20 +369,12 @@ public class CharacterAction
                 {
                     RumoursManager.PromoteRumourToPublic(rumour);
                 }
-                if (PlayerCanSeeHex(character.hex))
+                if (ShowsVisibleAiActionNotification && PlayerCanSeeHex(character.hex))
                 {
                     MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.yellow);
                     BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex, character.GetOwner());
                 }
             }
-            else
-            {
-                // Mirrors Fail()'s unconditional "{actionName} failed" message — without this,
-                // an opportunity/situation action that succeeds with no action-specific message
-                // of its own gives the player no feedback beyond a sound effect.
-                MessageDisplayNoUI.ShowMessage(character.hex, character, $"{message} succeeds", Color.green);
-            }
-
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
             if (!isAI) Card.RequestInteractionRefreshAll();
 

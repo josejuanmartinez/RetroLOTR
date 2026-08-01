@@ -28,6 +28,10 @@ public class Board : MonoBehaviour
     public Vector2 hexSize;
     // Runtime-copied by HexSeamlessTerrain (play-mode grid toggle must never dirty the asset).
     public Material hexSeamlessBlendMaterial;
+    // Separate, dedicated asset for just the neon grid's look (color/intensity/width/glow/hue) —
+    // HexSeamlessTerrain copies these specific properties onto its runtime blend-material clone,
+    // so tuning the grid never means touching hexSeamlessBlendMaterial itself.
+    public Material hexGridMaterial;
 
     [Header("Generation progress")]
     public Slider progressBar;
@@ -60,6 +64,10 @@ public class Board : MonoBehaviour
     [Header("Debug")]
     public bool redraw = false;
     public bool regenerate = false;
+    [Tooltip("Neon seam-grid overlay from the Scenario Creator preview (HexSeamlessTerrain's " +
+        "_GridOn) — off by default in-game. Toggle to show/hide it on the live board.")]
+    public bool showHexGrid = false;
+    private bool appliedHexGridState;
 
     [Header("On the fly")]
     // Colors object
@@ -249,6 +257,12 @@ public class Board : MonoBehaviour
             redraw = false;
             StartCoroutine(DrawCoroutine());
         }
+
+        if (showHexGrid != appliedHexGridState)
+        {
+            appliedHexGridState = showHexGrid;
+            HexSeamlessTerrain.SetGridEnabled(showHexGrid);
+        }
     }
 
     public int GetWidth() => width;
@@ -327,8 +341,8 @@ public class Board : MonoBehaviour
             regionLabelManager.Generate(hexes.Values);
 
         initialized = true;
-        startButton.interactable = true;
-        tutorialButton.interactable = true;
+        if (startButton != null) startButton.interactable = true;
+        if (tutorialButton != null) tutorialButton.interactable = true;
         
         var hexList = GetHexes();
         if (hexList != null)
@@ -508,6 +522,15 @@ public class Board : MonoBehaviour
         }
     }
 
+    // UnityEvent pickers (e.g. a UI Button's OnClick) only list public methods/properties, not
+    // plain public fields — showHexGrid itself can't be wired up directly, hence this wrapper.
+    public void ToggleHexGrid()
+    {
+        showHexGrid = !showHexGrid;
+        appliedHexGridState = showHexGrid;
+        HexSeamlessTerrain.SetGridEnabled(showHexGrid);
+    }
+
     public void ToggleAllTerrainTextures()
     {
         if (hexes == null) return;
@@ -659,6 +682,11 @@ public class Board : MonoBehaviour
         if (!character) return;
         if (targetHexCoordinates == Vector2.one * -1) return;
         if (character.moved >= character.GetMaxMovement()) return;
+        if (character.hex != null && targetHexCoordinates == character.hex.v2)
+        {
+            FindFirstObjectByType<HexPathRenderer>()?.HidePath();
+            return;
+        }
 
         moving = true;
         HexPathRenderer pathRenderer = FindFirstObjectByType<HexPathRenderer>();
@@ -1592,6 +1620,18 @@ public class Board : MonoBehaviour
     [Tooltip("Seconds the camera rests on the character's hex before the opportunity-card overlay covers the screen.")]
     [SerializeField] private float situationCardsFocusDelay = 1f;
     private Coroutine situationCardsSequence;
+    // Whether ShowSituationCardsSequence currently holds CenterDisplayLock. StopCoroutine
+    // (below) abandons a coroutine mid-flight without running any finally/cleanup, so a
+    // held lock must be released explicitly here or a stale sequence would wedge every
+    // other center display (turn banner, PC/region grant preview) shut forever.
+    private bool situationCardsHoldCenterLock;
+
+    private void ReleaseCenterLockIfHeldBySituationCards()
+    {
+        if (!situationCardsHoldCenterLock) return;
+        situationCardsHoldCenterLock = false;
+        CenterDisplayLock.Release();
+    }
 
     private void CheckAndShowSituationCards(Character character, Hex hex)
     {
@@ -1612,12 +1652,18 @@ public class Board : MonoBehaviour
 
         if (situationCards == null || situationCards.Count == 0) return;
 
-        if (situationCardsSequence != null) StopCoroutine(situationCardsSequence);
+        if (situationCardsSequence != null)
+        {
+            StopCoroutine(situationCardsSequence);
+            ReleaseCenterLockIfHeldBySituationCards();
+        }
         situationCardsSequence = StartCoroutine(ShowSituationCardsSequence(situationCards, character, hex));
     }
 
     // The overlay covers the whole screen, so let the player see WHERE the opportunity arose:
-    // settle the camera on the hex, hold it for a beat, then pop the cards.
+    // settle the camera on the hex, hold it for a beat, then pop the cards. Opportunity cards
+    // are an exclusive center-screen display, same as the turn banner and the PC/region grant
+    // preview — CenterDisplayLock ensures only one of those is ever up at a time.
     private IEnumerator ShowSituationCardsSequence(List<CardData> situationCards, Character character, Hex hex)
     {
         hex.LookAt();
@@ -1645,7 +1691,14 @@ public class Board : MonoBehaviour
                 go.AddComponent<SituationCardsUI>();
             }
         }
+
+        yield return CenterDisplayLock.WaitCoroutine();
+        situationCardsHoldCenterLock = true;
+
         SituationCardsUI.Instance.Show(situationCards, character);
+        yield return new WaitUntil(() => !SituationCardsUI.IsShowing);
+
+        ReleaseCenterLockIfHeldBySituationCards();
         situationCardsSequence = null;
     }
 
@@ -1656,6 +1709,16 @@ public class Board : MonoBehaviour
     // separate, existing flow (PCAction's not-yet-founded branch, still only reachable by
     // manually playing the PC card) — this never re-founds anything. Fires for every leader,
     // human and AI alike; the card reveal/token-flight visuals are human-player-only.
+    //
+    // CenterDisplayLock is also structurally required here, not just for the visual gating:
+    // PCAction/MaterialRetrieval are singletons cached and shared by class name in
+    // ActionsManager (see ActionsManager.ResolveActionByRef) — every card of that action type
+    // across every leader/character reuses the SAME instance. This method holds one of those
+    // singletons "checked out" (Initialize'd, then not yet Execute'd) across the ~1.5-2.8s
+    // show/spin delay below; without serializing, a second grant firing on the same tick
+    // (another owned PC/region at turn start, or another leader's turn-start grant sharing the
+    // same action type) would re-Initialize the shared instance out from under the first,
+    // corrupting its character/card fields mid-flight.
     public async void TriggerOwnPcGrantIfStandingOnOne(Character character, Hex hex)
     {
         if (character == null || character.killed || hex == null) return;
@@ -1675,16 +1738,40 @@ public class Board : MonoBehaviour
 
         Game game = FindFirstObjectByType<Game>();
         bool showToPlayer = game != null && game.player == character.GetOwner();
-        if (showToPlayer)
-        {
-            CardCenterPreview.Instance?.ShowPreview(pcCard);
-            await Task.Delay(TimeSpan.FromSeconds(1.5));
-            CardCenterPreview.Instance?.HidePreview();
-            CardPlayFlight.LaunchFromData(pcCard, hex);
-        }
 
-        pcAction.Initialize(character, pcCard);
-        await pcAction.Execute();
+        // Don't even queue for the lock while the Turn/Gathering-Resources banners are still
+        // playing - SemaphoreSlim always hands a released permit to an already-queued async
+        // waiter before TurnBanner's own Wait(0) polling gets a look-in, so registering here
+        // too early would let this grant cut in front of the Gathering Resources banner.
+        while (TurnBanner.IsShowing) await Task.Yield();
+
+        await CenterDisplayLock.WaitAsync();
+        try
+        {
+            if (showToPlayer)
+            {
+                CardCenterPreview.Instance?.ShowPreview(pcCard);
+                await Task.Delay(TimeSpan.FromSeconds(1.5));
+                CardCenterPreview.Instance?.HidePreview();
+
+                // Hold off granting resources (and the StoresManager gain animation it triggers)
+                // until the token has visually landed on the hex.
+                var tokenArrived = new TaskCompletionSource<bool>();
+                CardPlayFlight.LaunchFromData(pcCard, hex, () => tokenArrived.TrySetResult(true));
+                await tokenArrived.Task;
+            }
+
+            // Re-validate after the wait — the world can move on (character killed, PC lost)
+            // while the sequence above was held up.
+            if (character == null || character.killed || pc.owner != character.GetOwner()) return;
+
+            pcAction.Initialize(character, pcCard);
+            await pcAction.Execute();
+        }
+        finally
+        {
+            CenterDisplayLock.Release();
+        }
     }
 
     // Region counterpart of TriggerOwnPcGrantIfStandingOnOne: re-grants the region's Land
@@ -1706,20 +1793,40 @@ public class Board : MonoBehaviour
         CharacterAction action = actionsManager?.ResolveActionByRef(landCard.GetActionRef(), landCard);
         if (action == null) return;
 
-        action.Initialize(character, landCard);
-
         Game game = FindFirstObjectByType<Game>();
         bool showToPlayer = game != null && game.player == character.GetOwner();
-        if (showToPlayer)
-        {
-            CardCenterPreview.Instance?.ShowPreview(landCard);
-            await Task.Delay(TimeSpan.FromSeconds(1.5));
-            CardCenterPreview.Instance?.HidePreview();
-            CardPlayFlight.LaunchFromData(landCard, hex);
-        }
 
-        action.Initialize(character, landCard);
-        await action.Execute();
+        // See TriggerOwnPcGrantIfStandingOnOne: hold off queuing for the lock until the
+        // Turn/Gathering-Resources banners have fully finished.
+        while (TurnBanner.IsShowing) await Task.Yield();
+
+        await CenterDisplayLock.WaitAsync();
+        try
+        {
+            if (showToPlayer)
+            {
+                CardCenterPreview.Instance?.ShowPreview(landCard);
+                await Task.Delay(TimeSpan.FromSeconds(1.5));
+                CardCenterPreview.Instance?.HidePreview();
+
+                // Hold off granting resources (and the StoresManager gain animation it triggers)
+                // until the token has visually landed on the hex.
+                var tokenArrived = new TaskCompletionSource<bool>();
+                CardPlayFlight.LaunchFromData(landCard, hex, () => tokenArrived.TrySetResult(true));
+                await tokenArrived.Task;
+            }
+
+            // Re-validate after the wait — the world can move on (character killed/moved)
+            // while the sequence above was held up.
+            if (character == null || character.killed) return;
+
+            action.Initialize(character, landCard);
+            await action.Execute();
+        }
+        finally
+        {
+            CenterDisplayLock.Release();
+        }
     }
 
     private void UpdateGenerationProgress(float progress, string stage)

@@ -56,6 +56,7 @@ MonoBehaviour:
   hexPrefab: {fileID: 1656764412083736294, guid: 5ee48be796f7a844c9eb1a6fa53080bc, type: 3}
   hexSize: {x: 1.5, y: 0.85}
   hexSeamlessBlendMaterial: {fileID: 2100000, guid: 255bb13ac55d4ff69f0f75e0672f5475, type: 2}
+  hexGridMaterial: {fileID: 2100000, guid: da1fda5eb7554fc0bf671e70341e1d6c, type: 2}
   progressBar: {fileID: 0}
   statusText: {fileID: 0}
   drawMark: 0
@@ -139,8 +140,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc837316658897540a79761a942b177d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
+  splineSegmentsPerHex: 8
+  opportunityHintDwellSeconds: 1.6
+  hintPathMaterial: {fileID: 2100000, guid: 8e6f2e954bc214f67cba48739be3c5b3, type: 2}
+  hintMarkerFont: {fileID: 11400000, guid: 680e7ef931356a4489c7ed407e323bd6, type: 2}
+  hintMarkerFontSize: 3
+  hintMarkerPulseSeconds: 0.6
+  hintMarkerLocalOffset: {x: 0, y: 0, z: -0.1}
 --- !u!120 &2623480377557684074
 LineRenderer:
   serializedVersion: 3
@@ -167,7 +175,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3c7b8dc9ed34c4c468b0a0b16011a8ea, type: 2}
+  - {fileID: 2100000, guid: 3dc2add634f0448c3afba2a4e56d3837, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -241,11 +249,11 @@ LineRenderer:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    numCornerVertices: 1
-    numCapVertices: 1
+    numCornerVertices: 4
+    numCapVertices: 4
     alignment: 0
-    textureMode: 3
-    textureScale: {x: 1, y: 1}
+    textureMode: 1
+    textureScale: {x: 0.5, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
   m_UseWorldSpace: 1

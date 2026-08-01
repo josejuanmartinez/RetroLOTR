@@ -74,13 +74,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private Image encounterTokenOverlay;
     private TextMeshProUGUI encounterTokenQuestionMark;
     private Coroutine descriptionTypewriterCoroutine;
-    private Coroutine encounterHintCoroutine;
+    private bool isEnvironmentalPresentation;
+    private bool environmentalPreviewHovered;
 
     private static Illustrations illustrations;
     private static DeckManager deckManager;
     private static ActionsManager actionsManager;
     private static Colors colors;
     private static CursorManager cursorManager;
+    private static HexPathRenderer pathRenderer;
 
     private void Awake()
     {
@@ -102,6 +104,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         rectTransform = GetComponent<RectTransform>();
         rootHitGraphic = GetComponent<Graphic>();
+        EnsureTokenHoverHitArea();
 
         BindLegacyPrefabReferences();
         RestrictRaycastsToRootCard();
@@ -140,6 +143,52 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         activeCards.Remove(this);
     }
 
+    private void Update()
+    {
+        if (!isEnvironmentalPresentation) return;
+
+        CardData previewData = cardData ?? EnvironmentalCardManager.Instance?.ActiveCard;
+        if (previewData == null) return;
+
+        // Must resolve to the root canvas, not whichever nested sort-order Canvas happens to sit
+        // closest in the hierarchy - a nested Canvas added purely for sortingOrder overrides
+        // defaults to ScreenSpaceOverlay/no camera, which silently breaks screen-point
+        // containment math if the actual root canvas renders via a camera. CardCenterPreview
+        // already does this same rootCanvas resolution when placing the preview.
+        Canvas canvas = GetComponentInParent<Canvas>()?.rootCanvas;
+        Camera eventCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? canvas.worldCamera
+            : null;
+        Vector2 pointer = Input.mousePosition;
+        bool hovered = IsPointerInside(rectTransform, pointer, eventCamera)
+            || IsPointerInside(tokenImage != null ? tokenImage.rectTransform : null, pointer, eventCamera)
+            || IsPointerInside(tokenBorder != null ? tokenBorder.rectTransform : null, pointer, eventCamera)
+            || IsPointerInside(environmentalSprite != null ? environmentalSprite.rectTransform : null, pointer, eventCamera);
+
+        if (hovered == environmentalPreviewHovered) return;
+        environmentalPreviewHovered = hovered;
+
+        CardCenterPreview preview = CardCenterPreview.Instance != null
+            ? CardCenterPreview.Instance
+            : FindFirstObjectByType<CardCenterPreview>();
+        if (hovered) preview?.ShowPreview(previewData);
+        else preview?.HidePreview();
+    }
+
+    private static bool IsPointerInside(RectTransform target, Vector2 pointer, Camera eventCamera)
+    {
+        return target != null
+            && target.gameObject.activeInHierarchy
+            && RectTransformUtility.RectangleContainsScreenPoint(target, pointer, eventCamera);
+    }
+
+    private void OnDisable()
+    {
+        if (!environmentalPreviewHovered) return;
+        environmentalPreviewHovered = false;
+        CardCenterPreview.Instance?.HidePreview();
+    }
+
     private void Start()
     {
         EnsureManagersLoaded();
@@ -152,6 +201,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (actionsManager == null) actionsManager = FindFirstObjectByType<ActionsManager>();
         if (colors == null) colors = FindFirstObjectByType<Colors>();
         if (cursorManager == null) cursorManager = FindFirstObjectByType<CursorManager>();
+        if (pathRenderer == null) pathRenderer = FindFirstObjectByType<HexPathRenderer>();
     }
 
     public void SetEnvironmentalPulse(bool active)
@@ -267,7 +317,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public void ShowEnvironmentalSprite()
     {
         if (environmentalSprite == null) return;
+        isEnvironmentalPresentation = true;
         environmentalSprite.gameObject.SetActive(true);
+        // RestrictRaycastsToRootCard normally disables child text raycasts. The
+        // environmental glyph is offset from the token's border, however, so it must be
+        // a hit target itself for pointer events to bubble up to this Card component.
+        environmentalSprite.raycastTarget = true;
+        // isEnvironmentalPresentation just became true, so retry the hit-area setup Awake()
+        // skipped (it ran before this flag was set).
+        EnsureTokenHoverHitArea();
         environmentalSprite.text = cardData != null
             ? $"<sprite name=\"{CardNameUtility.Normalize(cardData.name)}\">"
             : string.Empty;
@@ -355,20 +413,27 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         !cardData.encounterRevealed &&
         cardData.encounterTargetHex != null;
 
-    private void FlashEncounterHintFrame(Hex hex)
+    // Points at an unplayed encounter card's target hex with the same fluid HexPathRenderer
+    // pulse used for the ambient opportunity-card hint (see OpportunityHexHinter), rather than a
+    // separate flashing-frame cue.
+    private void ShowEncounterHintPath(Character fromCharacter)
     {
-        if (hex == null || hex.framesColors == null) return;
-        if (encounterHintCoroutine != null) StopCoroutine(encounterHintCoroutine);
-        encounterHintCoroutine = StartCoroutine(EncounterHintFrameCoroutine(hex));
+        if (cardData?.encounterTargetHex == null) return;
+        EnsureManagersLoaded();
+        if (pathRenderer == null) return;
+
+        Character source = fromCharacter ?? ResolveSelectedCharacter();
+        if (source?.hex == null) return;
+
+        pathRenderer.PulseHintPath(source, cardData.encounterTargetHex.v2, 5f);
     }
 
-    private IEnumerator EncounterHintFrameCoroutine(Hex hex)
+    private static Character ResolveSelectedCharacter()
     {
-        hex.framesColors.SetTip(true);
-        yield return new WaitForSecondsRealtime(5f);
-        if (hex != null && hex.framesColors != null)
-            hex.framesColors.SetTip(false);
-        encounterHintCoroutine = null;
+        Board board = FindFirstObjectByType<Board>();
+        if (board != null && board.selectedCharacter != null) return board.selectedCharacter;
+        SelectedCharacterIcon icon = FindFirstObjectByType<SelectedCharacterIcon>();
+        return icon != null ? icon.CurrentCharacter : null;
     }
 
     private void SetupEncounterHiddenVisuals(CardData data)
@@ -467,6 +532,19 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             cardBackgroundImage.raycastTarget = true;
         }
+    }
+
+    // Token-only cards have no expanded card background on their root. Give them a
+    // transparent UI Graphic so pointer enter/exit covers the complete token rect rather
+    // than depending on one of the small, offset child visuals receiving the raycast.
+    private void EnsureTokenHoverHitArea()
+    {
+        if (!(isTokenOnlyPresentation || isEnvironmentalPresentation) || rootHitGraphic != null) return;
+
+        Image hitArea = gameObject.AddComponent<Image>();
+        hitArea.color = Color.clear;
+        hitArea.raycastTarget = true;
+        rootHitGraphic = hitArea;
     }
 
     private TextMeshProUGUI FindTextByName(string name)
@@ -818,7 +896,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (!SuppressHoverEffects)
         {
-            if (isTokenOnlyPresentation) CardCenterPreview.Instance?.ShowPreview(cardData);
+            if (isTokenOnlyPresentation || isEnvironmentalPresentation) CardCenterPreview.Instance?.ShowPreview(cardData);
             else ShowRealCard();
         }
         if (Sounds.Instance != null) Sounds.Instance.PlayUiHover();
@@ -838,7 +916,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (!SuppressHoverEffects)
         {
-            if (isTokenOnlyPresentation) CardCenterPreview.Instance?.HidePreview();
+            if (isTokenOnlyPresentation || isEnvironmentalPresentation) CardCenterPreview.Instance?.HidePreview();
             else ShowToken();
         }
         if (SuppressHoverEffects) return;
@@ -860,7 +938,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 if (IsUnplayedEncounterWithHex())
                 {
                     BoardNavigator.Instance?.LookAt(cardData.encounterTargetHex.transform.position);
-                    FlashEncounterHintFrame(cardData.encounterTargetHex);
+                    ShowEncounterHintPath(null);
                 }
                 return;
             }
@@ -881,7 +959,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (IsUnplayedEncounterWithHex())
             {
                 BoardNavigator.Instance?.LookAt(cardData.encounterTargetHex.transform.position);
-                FlashEncounterHintFrame(cardData.encounterTargetHex);
+                ShowEncounterHintPath(selectedCharacter);
             }
             else if (selectedCharacter?.hex != null)
             {
@@ -1004,7 +1082,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (IsUnplayedEncounterWithHex())
             {
                 BoardNavigator.Instance?.LookAt(cardData.encounterTargetHex.transform.position);
-                FlashEncounterHintFrame(cardData.encounterTargetHex);
+                ShowEncounterHintPath(playedSelected);
             }
             else if (playedSelected?.hex != null)
             {

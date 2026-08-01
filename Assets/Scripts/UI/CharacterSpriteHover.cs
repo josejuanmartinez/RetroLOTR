@@ -46,6 +46,7 @@ public class CharacterSpriteHover : MonoBehaviour
         previewedHex = hex;
         bool isScouted = hex.IsScouted();
         selectedIcon.RefreshHoverPreview(character, hoverText, isScouted, isScouted);
+        CardCenterPreview.Instance?.ShowPreviewForCharacter(character, includeArmyCards: isScouted);
     }
 
     private void Update()
@@ -121,7 +122,12 @@ public class CharacterSpriteHover : MonoBehaviour
 
     private void ClearPreview()
     {
-        if (!isPreviewing && selectedIcon == null)
+        // Only tear down/restore when THIS component actually put up a preview — otherwise
+        // every mouse-exit (including ones where OnMouseEnter no-opped, e.g. hovering the
+        // already-selected character's own sprite) redundantly re-touches the shared
+        // SelectedCharacterIcon. (selectedIcon is populated lazily and almost never null,
+        // so the old `selectedIcon == null` half of this guard essentially never fired.)
+        if (!isPreviewing)
         {
             return;
         }
@@ -129,6 +135,7 @@ public class CharacterSpriteHover : MonoBehaviour
         isPreviewing = false;
         previewedCharacter = null;
         previewedHex = null;
+        CardCenterPreview.Instance?.HidePreview();
 
         if (selectedIcon == null)
         {

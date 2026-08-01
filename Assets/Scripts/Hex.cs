@@ -120,6 +120,8 @@ public class Hex : MonoBehaviour
     private TextMeshPro _terrainTooltip;
     private bool _terrainTooltipActive;
     private SelectedCharacterIcon _selectedIcon;
+    private DeckManager _deckManager;
+    private bool _showingPcCardPreview;
     private bool artifactRevealed = false;
     private static Hex s_hexInfoActiveHex;
 
@@ -132,6 +134,9 @@ public class Hex : MonoBehaviour
     private Coroutine revealPulseCoroutine;
     private Vector3 terrainBaseScale;
     private bool terrainBaseScaleCaptured;
+    private Coroutine pcRevealPulseCoroutine;
+    private Vector3 pcBaseScale;
+    private bool pcBaseScaleCaptured;
     private bool terrainOverdrawApplied;
     // Last reveal state pushed to the seamless-blend rebuild queue; neighbors must re-blend
     // whenever this flips (their rims either fade into fog toward us or blend our art).
@@ -990,6 +995,9 @@ public class Hex : MonoBehaviour
             return;
         }
 
+        framesColors?.SetHovered(true);
+        TryShowPcCardPreview();
+
         if (s_hexInfoActiveHex != null && s_hexInfoActiveHex != this && s_hexInfoActiveHex.IsMouseOverHexOrPanel())
             return;
 
@@ -998,6 +1006,40 @@ public class Hex : MonoBehaviour
             EnsureHoverPanel();
             hexInfoShowCoroutine = StartCoroutine(ShowHexInfoAfterDelay());
         }
+    }
+
+    // Shows the PC's card alongside its region's Land card while hovering a hex that holds
+    // a currently-visible PC — mirrors the character/army hover preview, but for hexes.
+    private void TryShowPcCardPreview()
+    {
+        // A hovered character sprite sits visually on top of the hex and drives its own
+        // card preview (see CharacterSpriteHover) — don't let the hex's PC/region cards
+        // show underneath/behind it while it's the thing actually under the cursor.
+        if (isCharacterHovered) { HidePcCardPreview(); return; }
+        if (!ShouldShowPcVisual()) { HidePcCardPreview(); return; }
+        PC pcData = GetPC();
+        if (pcData == null || CardCenterPreview.Instance == null) { HidePcCardPreview(); return; }
+
+        if (_deckManager == null) _deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (_deckManager == null) return;
+
+        List<CardData> previewCards = new();
+        CardData pcCard = _deckManager.FindPcCardByPcName(pcData.pcName);
+        if (pcCard != null) previewCards.Add(pcCard);
+        string region = GetLandRegion();
+        CardData landCard = !string.IsNullOrWhiteSpace(region) ? _deckManager.FindLandCardByRegion(region) : null;
+        if (landCard != null) previewCards.Add(landCard);
+        if (previewCards.Count == 0) return;
+
+        _showingPcCardPreview = true;
+        CardCenterPreview.Instance.ShowPreview(previewCards);
+    }
+
+    private void HidePcCardPreview()
+    {
+        if (!_showingPcCardPreview) return;
+        _showingPcCardPreview = false;
+        CardCenterPreview.Instance?.HidePreview();
     }
 
     private IEnumerator ShowHexInfoAfterDelay()
@@ -1055,6 +1097,7 @@ public class Hex : MonoBehaviour
     public void Unhover()
     {
         if (IsMouseOverHexOrPanel()) return;
+        framesColors?.SetHovered(false);
         if (hexInfoShowCoroutine != null) { StopCoroutine(hexInfoShowCoroutine); hexInfoShowCoroutine = null; }
         if (_lastHexInfoLinkIdx >= 0) ApplyHexInfoLinkHighlight(-1);
         _lastHexInfoLinkIdx = -1;
@@ -1063,6 +1106,7 @@ public class Hex : MonoBehaviour
         SetActiveFast(hexInfoArrow, false);
         SetActiveFast(hexInfo, false);
         if (s_hexInfoActiveHex == this) s_hexInfoActiveHex = null;
+        HidePcCardPreview();
     }
 
     private void UpdateHexInfoLinkHover()
@@ -2129,6 +2173,7 @@ public class Hex : MonoBehaviour
         if (!wasSeen)
         {
             PlayRevealPulse();
+            PlayPcRevealPulse();
         }
     }
 
@@ -2150,6 +2195,7 @@ public class Hex : MonoBehaviour
         RedrawPC(false);
         RefreshHoverText();
         PlayRevealPulse();
+        PlayPcRevealPulse();
     }
 
     private void PlayRevealPulse()
@@ -2211,6 +2257,76 @@ public class Hex : MonoBehaviour
 
         revealPulseCoroutine = null;
         ApplyRegionColor();
+    }
+
+    // Distinct from the terrain's reveal pulse above: a Population Center is the important
+    // discovery on this hex, so it gets its own showier "landmark found" beat — a golden
+    // flash and a spin-in with scale overshoot — layered on top of, not instead of, the
+    // terrain pulse, so a newly-revealed PC is unmistakable at a glance.
+    private const float PcRevealSpinDuration = 0.85f;
+    private static readonly Color PcRevealFlashColor = new(1f, 0.86f, 0.35f, 1f);
+
+    private void PlayPcRevealPulse()
+    {
+        if (pc == null || pcTexture == null || !pcTexture.gameObject.activeInHierarchy) return;
+
+        if (pcRevealPulseCoroutine != null) StopCoroutine(pcRevealPulseCoroutine);
+        pcRevealPulseCoroutine = StartCoroutine(AnimatePcRevealPulse());
+    }
+
+    private IEnumerator AnimatePcRevealPulse()
+    {
+        if (pcTexture == null)
+        {
+            pcRevealPulseCoroutine = null;
+            yield break;
+        }
+
+        Transform pcTransform = pcTexture.transform;
+        if (!pcBaseScaleCaptured)
+        {
+            pcBaseScale = pcTransform.localScale;
+            pcBaseScaleCaptured = true;
+        }
+        Vector3 endScale = pcBaseScale;
+        Color baseColor = pcTexture.color;
+        Quaternion baseRotation = pcTransform.localRotation;
+
+        pcTransform.localScale = Vector3.zero;
+        pcTransform.localRotation = Quaternion.Euler(0f, 0f, -160f);
+        pcTexture.color = PcRevealFlashColor;
+        yield return null;
+
+        float elapsed = 0f;
+        while (elapsed < PcRevealSpinDuration)
+        {
+            if (pcTexture == null) { pcRevealPulseCoroutine = null; yield break; }
+
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / PcRevealSpinDuration);
+            float scaleEase = EaseOutBackPc(t);
+            pcTransform.localScale = endScale * scaleEase;
+            pcTransform.localRotation = Quaternion.Lerp(Quaternion.Euler(0f, 0f, -160f), baseRotation, Mathf.SmoothStep(0f, 1f, t));
+            pcTexture.color = Color.Lerp(PcRevealFlashColor, baseColor, Mathf.Clamp01(t * 1.4f));
+            yield return null;
+        }
+
+        if (pcTexture != null)
+        {
+            pcTransform.localScale = endScale;
+            pcTransform.localRotation = baseRotation;
+            pcTexture.color = baseColor;
+        }
+
+        pcRevealPulseCoroutine = null;
+    }
+
+    private static float EaseOutBackPc(float t)
+    {
+        t = Mathf.Clamp01(t);
+        const float c1 = 1.70158f;
+        const float c3 = c1 + 1f;
+        return 1f + c3 * Mathf.Pow(t - 1f, 3f) + c1 * Mathf.Pow(t - 1f, 2f);
     }
 
     public void ClearScouting()
@@ -3095,6 +3211,7 @@ public class Hex : MonoBehaviour
             if (showText)
             {
                 pcName.text = BuildPcNameLabel();
+                pcName.color = pc.owner != null ? pc.owner.nationColor : Color.white;
                 SetActiveFast(pcName.gameObject, true);
             }
             else

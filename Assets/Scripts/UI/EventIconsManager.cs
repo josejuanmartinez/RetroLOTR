@@ -26,10 +26,18 @@ public class EventIconsManager : MonoBehaviour
 
     public static void ShowHexAnchoredMessage(EventIconType type, Hex targetHex, Hex fallbackHex, string message, Color color)
     {
+        bool isRevealed = targetHex != null && targetHex.IsHexRevealed();
+        Hex immediateHex = isRevealed ? targetHex : fallbackHex;
+        // Nothing to anchor the text to at all - skip the icon too, rather than leaving a
+        // void click behind that can never show anything.
+        if (immediateHex == null) return;
+
+        // Both is the default presentation: show the anchored text immediately as well as
+        // leaving a persistent, navigable event icon behind for revisiting it later.
+        MessageDisplayNoUI.ShowAnchoredMessage(immediateHex, message, color, true);
+
         EventIconsManager iconsManager = FindManager();
         if (iconsManager == null) return;
-
-        bool isRevealed = targetHex != null && targetHex.IsHexRevealed();
 
         EventIcon icon = null;
         icon = iconsManager.AddEventIcon(type, true, () =>

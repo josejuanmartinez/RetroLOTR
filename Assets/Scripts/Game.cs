@@ -229,19 +229,31 @@ public class Game : MonoBehaviour
         {
             TutorialManager.Instance?.InitializeForLeader(player);
         }
+        // Reserves CenterDisplayLock immediately (synchronously, before anything below can
+        // grab it first) even though the banner itself only appears 1.1s later — otherwise
+        // currentlyPlaying.NewTurn() below (which can trigger the PC/region grant preview)
+        // would win the race and the turn banner would wait behind it instead of the other
+        // way around, unlike every subsequent turn where the banner already goes first.
+        StartCoroutine(ShowTurnZeroBanner());
         currentlyPlaying.NewTurn();
         BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
         StartCoroutine(RefreshDeckUiAfterStartup());
-        StartCoroutine(ShowTurnZeroBanner());
         MessageDisplay.ClearPersistent();
 
     }
 
     private IEnumerator ShowTurnZeroBanner()
     {
+        // Reserved synchronously (before anything below, including currentlyPlaying.NewTurn()
+        // back in StartGame, can grab it first) for the same reason CenterDisplayLock itself
+        // is pre-reserved below: otherwise a resource grant would see TurnBanner.IsShowing as
+        // false during this ~1.1s delay and queue for CenterDisplayLock too early.
+        TurnBanner.ReserveSlot();
+        yield return CenterDisplayLock.WaitCoroutine();
         yield return new WaitForSeconds(1.1f);
-        TurnBanner.Show(turn, ResolveBannerSprite(player));
+        TurnBanner.Show(turn, ResolveBannerSprite(player), lockAlreadyHeld: true);
+        TurnBanner.ShowGatheringResources();
     }
 
     private static Sprite ResolveBannerSprite(PlayableLeader leader)
@@ -547,6 +559,7 @@ public class Game : MonoBehaviour
         board?.ClearAllScouting();
         AnnounceScoutingStatus();
         TurnBanner.Show(turn, ResolveBannerSprite(player));
+        TurnBanner.ShowGatheringResources();
         NewTurnStarted?.Invoke(turn);
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         storesManager.AdvanceTurn();

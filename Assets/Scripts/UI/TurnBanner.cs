@@ -39,6 +39,23 @@ public class TurnBanner : MonoBehaviour
 
     private static readonly Color GoldColor = new(1f, 0.82f, 0.1f);
 
+    // Whether PlayAnimation currently holds CenterDisplayLock. Show() below calls
+    // StopAllCoroutines() to interrupt any run already in flight, which abandons that
+    // coroutine without running its cleanup — this flag lets the next Show() release a
+    // lock left behind by an interrupted run instead of wedging every other center
+    // display (opportunity cards, PC/region grant preview) shut forever.
+    private static bool holdsCenterLock;
+
+    // Counts Turn/GatheringResources banner runs that have been requested but not yet fully
+    // finished (queued or actively animating). Grants (Board.TriggerOwnPcGrantIfStandingOnOne
+    // / TriggerRegionLandGrant) poll IsShowing and hold off calling CenterDisplayLock.WaitAsync
+    // until this drops back to zero — SemaphoreSlim always hands a released permit to an
+    // already-queued async waiter before a later synchronous Wait(0) poll (what this class's
+    // coroutines use) ever gets a look-in, so a grant that queued while "TURN X" was still
+    // playing would otherwise cut in front of "Gathering Resources" the instant the lock frees.
+    private static int activeBannerCount;
+    public static bool IsShowing => activeBannerCount > 0;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
     {
@@ -205,24 +222,62 @@ public class TurnBanner : MonoBehaviour
         rt.anchoredPosition = Vector2.zero;
     }
 
-    public static void Show(int turnNumber, Sprite bannerSprite = null)
+    // lockAlreadyHeld: pass true when the caller already reserved CenterDisplayLock itself
+    // (see Game.ShowTurnZeroBanner, which must reserve it immediately — before anything
+    // else can grab it — well ahead of the delay before this actually gets called).
+    public static void Show(int turnNumber, Sprite bannerSprite = null, bool lockAlreadyHeld = false)
     {
         if (Instance == null) return;
         Instance.StopAllCoroutines();
-        Instance.StartCoroutine(Instance.PlayAnimation(turnNumber, bannerSprite));
+        if (holdsCenterLock)
+        {
+            holdsCenterLock = false;
+            CenterDisplayLock.Release();
+        }
+        // If the caller already reserved (lockAlreadyHeld), it also already called
+        // ReserveSlot() for the activeBannerCount bookkeeping below - don't stomp on that.
+        if (!lockAlreadyHeld) activeBannerCount = 1;
+
+        MiddleEarthDate today = MiddleEarthCalendar.GetDateFromTurn(turnNumber);
+        Instance.StartCoroutine(Instance.PlayAnimation(
+            $"TURN {turnNumber}", today.ToString(), BuildInfoText(today), bannerSprite, lockAlreadyHeld));
         Sounds.Instance?.PlayPositive();
     }
 
-    private IEnumerator PlayAnimation(int turnNumber, Sprite bannerSprite)
+    // Called by Game.ShowTurnZeroBanner synchronously, at the same moment it reserves
+    // CenterDisplayLock itself, so IsShowing already reads true for the whole ~1.1s delay
+    // before Show(..., lockAlreadyHeld: true) actually runs - otherwise a grant's IsShowing
+    // check right after StartGame kicks off that delayed coroutine would see false and queue
+    // for CenterDisplayLock too early, defeating the point of the early reservation below.
+    public static void ReserveSlot() => activeBannerCount++;
+
+    // Shown right after the Turn banner and before the PC/region resource grants begin -
+    // same cinematic treatment (queues behind the Turn banner via CenterDisplayLock, same as
+    // the grant previews would), just announcing the handoff rather than a turn number.
+    public static void ShowGatheringResources()
     {
+        if (Instance == null) return;
+        activeBannerCount++;
+        Instance.StartCoroutine(Instance.PlayAnimation(
+            "Gathering Resources", "from controlled Population Centers and Regions", string.Empty, null, lockAlreadyHeld: false));
+        Sounds.Instance?.PlayPositive();
+    }
+
+    // This is THE exclusive center-screen display — it must block opportunity cards and
+    // the PC/region grant preview from appearing underneath/alongside it, and must itself
+    // wait if one of those happens to already be up (e.g. a grant preview still mid-flight
+    // the instant a new turn starts).
+    private IEnumerator PlayAnimation(string title, string subtitle, string info, Sprite bannerSprite, bool lockAlreadyHeld)
+    {
+        if (!lockAlreadyHeld) yield return CenterDisplayLock.WaitCoroutine();
+        holdsCenterLock = true;
+
         bool hasBanner = bannerSprite != null;
 
-        MiddleEarthDate today = MiddleEarthCalendar.GetDateFromTurn(turnNumber);
-
-        turnText.text = $"TURN {turnNumber}";
+        turnText.text = title;
         turnText.color = GoldColor;
-        dateText.text = today.ToString();
-        infoText.text = BuildInfoText(today);
+        dateText.text = subtitle;
+        infoText.text = info;
         infoText.gameObject.SetActive(!string.IsNullOrEmpty(infoText.text));
         rootGroup.alpha = 1f;
         textRect.localScale = Vector3.zero;
@@ -315,6 +370,10 @@ public class TurnBanner : MonoBehaviour
             yield return null;
         }
         rootGroup.alpha = 0f;
+
+        holdsCenterLock = false;
+        CenterDisplayLock.Release();
+        activeBannerCount = Mathf.Max(0, activeBannerCount - 1);
     }
 
     // Calendar-entry descriptions for the day, plus whichever environmental card is (or is about
