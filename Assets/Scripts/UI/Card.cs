@@ -204,19 +204,13 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (pathRenderer == null) pathRenderer = FindFirstObjectByType<HexPathRenderer>();
     }
 
+    // The pulse effect (which image, where it sits) is authored directly in the prefab as a
+    // CardEnvironmentalPulseEffect component on a child Image; this just toggles it.
     public void SetEnvironmentalPulse(bool active)
     {
         GameObject target = tokenCanvasGroup != null ? tokenCanvasGroup.gameObject : gameObject;
-        CardEnvironmentalPulseEffect existing = target.GetComponent<CardEnvironmentalPulseEffect>();
-        if (active)
-        {
-            if (existing == null) target.AddComponent<CardEnvironmentalPulseEffect>();
-            else existing.enabled = true;
-        }
-        else if (existing != null)
-        {
-            existing.enabled = false;
-        }
+        CardEnvironmentalPulseEffect pulse = target.GetComponentInChildren<CardEnvironmentalPulseEffect>(true);
+        if (pulse != null) pulse.enabled = active;
     }
 
     public void Initialize(CardData data, bool startAsToken = true)
@@ -248,16 +242,26 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             requirementsText.text = BuildRequirementsText(data);
         }
 
-        if (cardArtImage != null)
         {
             Sprite sprite = ResolveCardArtwork(data);
-            cardArtImage.sprite = sprite;
-            cardArtImage.enabled = sprite != null;
 
-            if (cardArtImage.GetComponent<CardShineEffect>() == null)
-                cardArtImage.gameObject.AddComponent<CardShineEffect>();
+            if (cardArtImage != null)
+            {
+                cardArtImage.sprite = sprite;
+                cardArtImage.enabled = sprite != null;
 
-            if (tokenImage != null) tokenImage.sprite = sprite;
+                if (cardArtImage.GetComponent<CardShineEffect>() == null)
+                    cardArtImage.gameObject.AddComponent<CardShineEffect>();
+            }
+
+            // Token-only cards (e.g. Layout's environmental card) never wire cardArtImage,
+            // so tokenImage must be resolved unconditionally or it keeps whatever placeholder
+            // sprite was last authored on the prefab regardless of which card is shown.
+            if (tokenImage != null)
+            {
+                tokenImage.sprite = sprite;
+                tokenImage.enabled = sprite != null;
+            }
         }
 
         lockedToRealCard = !startAsToken;
@@ -1425,7 +1429,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         cg.alpha = 1f;
         cg.blocksRaycasts = false;
         cg.interactable = false;
-        if (clone.TryGetComponent(out CardEnvironmentalPulseEffect pulse)) Destroy(pulse);
+        CardEnvironmentalPulseEffect pulse = clone.GetComponentInChildren<CardEnvironmentalPulseEffect>(true);
+        if (pulse != null) Destroy(pulse);
         foreach (Graphic graphic in clone.GetComponentsInChildren<Graphic>(true))
         {
             graphic.raycastTarget = false;
@@ -1459,7 +1464,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         cg.alpha = 1f;
         cg.blocksRaycasts = false;
         cg.interactable = false;
-        if (clone.TryGetComponent(out CardEnvironmentalPulseEffect realCardPulse)) Destroy(realCardPulse);
+        CardEnvironmentalPulseEffect realCardPulse = clone.GetComponentInChildren<CardEnvironmentalPulseEffect>(true);
+        if (realCardPulse != null) Destroy(realCardPulse);
         foreach (Graphic graphic in clone.GetComponentsInChildren<Graphic>(true))
         {
             graphic.raycastTarget = false;

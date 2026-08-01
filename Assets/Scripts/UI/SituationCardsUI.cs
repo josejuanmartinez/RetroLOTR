@@ -210,7 +210,12 @@ public class SituationCardsUI : MonoBehaviour
         ClearCards();
 
         GameObject template = DeckManager.Instance?.GetCardPrefabTemplate();
-        if (template == null) { IsShowing = false; yield break; }
+        if (template == null)
+        {
+            Debug.LogWarning($"[SituationCards] ShowCoroutine aborted — no card template (DeckManager.Instance={DeckManager.Instance != null}).");
+            IsShowing = false;
+            yield break;
+        }
 
         Transform overlayTransform = cardContainer.transform.parent.gameObject.transform;
         overlayTransform.gameObject.SetActive(true);
@@ -371,6 +376,15 @@ public class SituationCardsUI : MonoBehaviour
         img.color = Color.clear;
         img.raycastTarget = true;
 
+        // The card root's own CanvasGroup has blocksRaycasts=false (set just before this is
+        // called, to stop the card's hover/drag effects from firing) — without its own
+        // CanvasGroup overriding that, this click area would inherit blocksRaycasts=false too
+        // and every click would fall through to the dim background behind it (Dismiss()).
+        var cg = btnGo.AddComponent<CanvasGroup>();
+        cg.blocksRaycasts = true;
+        cg.interactable = true;
+        cg.ignoreParentGroups = true;
+
         var btn = btnGo.AddComponent<Button>();
         btn.transition = Selectable.Transition.None;
         btn.onClick.AddListener(() => OnCardClicked(cardData, character, leader));
@@ -384,28 +398,54 @@ public class SituationCardsUI : MonoBehaviour
         if (showCoroutine != null) StopCoroutine(showCoroutine);
         showCoroutine = StartCoroutine(FadeOut());
 
-        if (cardData == null || character == null || leader == null || DeckManager.Instance == null) return;
+        if (cardData == null || character == null || leader == null || DeckManager.Instance == null)
+        {
+            Debug.Log($"[SituationCards] click aborted — cardData={cardData != null} character={character != null} leader={leader != null} deckManager={DeckManager.Instance != null}");
+            return;
+        }
 
         string actionRef = cardData.GetActionRef();
-        if (string.IsNullOrWhiteSpace(actionRef)) return;
+        if (string.IsNullOrWhiteSpace(actionRef))
+        {
+            Debug.Log($"[SituationCards] click aborted — '{cardData.name}' has no actionRef");
+            return;
+        }
 
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
         CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef(actionRef, cardData) : null;
-        if (action == null) return;
+        if (action == null)
+        {
+            Debug.Log($"[SituationCards] click aborted — could not resolve action '{actionRef}' for '{cardData.name}' (actionsManager={actionsManager != null})");
+            return;
+        }
 
         action.Initialize(character, cardData);
-        if (!action.FulfillsConditions()) return;
+        if (!action.FulfillsConditions())
+        {
+            Debug.Log($"[SituationCards] click aborted — '{cardData.name}' action '{actionRef}' no longer FulfillsConditions()");
+            return;
+        }
 
         // Route through the normal hand-consume path so resource costs, discard-pile
         // bookkeeping, and card history are applied exactly as they are for a card
         // played straight out of hand.
-        if (!DeckManager.Instance.TryAddCardToHand(leader, cardData)) return;
-        if (!DeckManager.Instance.TryConsumeActionCard(leader, actionRef, false, out _, cardData.name)) return;
+        if (!DeckManager.Instance.TryAddCardToHand(leader, cardData))
+        {
+            Debug.Log($"[SituationCards] click aborted — TryAddCardToHand failed for '{cardData.name}'");
+            return;
+        }
+        if (!DeckManager.Instance.TryConsumeActionCard(leader, actionRef, false, out _, cardData.name))
+        {
+            Debug.Log($"[SituationCards] click aborted — TryConsumeActionCard failed for '{cardData.name}' (actionRef={actionRef})");
+            return;
+        }
 
         DeckManager.Instance.ApplyMapRevealForPlayedCard(leader, cardData);
 
         action.Initialize(character, cardData);
         await action.Execute();
+
+        Debug.Log($"[SituationCards] '{cardData.name}' action executed, succeeded={action.LastExecutionSucceeded}");
 
         if (action.LastExecutionSucceeded)
         {

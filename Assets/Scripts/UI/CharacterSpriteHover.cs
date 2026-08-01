@@ -1,13 +1,17 @@
+using System.Collections;
 using UnityEngine;
 
 public class CharacterSpriteHover : MonoBehaviour
 {
     public Hex hex;
+    [Tooltip("Seconds the cursor must stay on a character's sprite, uninterrupted, before its card preview appears.")]
+    [SerializeField] private float cardPreviewHoverDelay = 5f;
     private SelectedCharacterIcon selectedIcon;
     private Board board;
     private bool isPreviewing;
     private Character previewedCharacter;
     private Hex previewedHex;
+    private Coroutine cardPreviewCoroutine;
 
     private void Awake()
     {
@@ -32,21 +36,41 @@ public class CharacterSpriteHover : MonoBehaviour
         hex.Hover();
 
         board ??= FindFirstObjectByType<Board>();
-        if (board != null && board.selectedCharacter == character) return;
-        if (!hex.TryGetPreviewTextForCharacter(character, out string hoverText)) return;
-        if (selectedIcon == null)
+        bool isSelected = board != null && board.selectedCharacter == character;
+        bool isScouted = hex.IsScouted();
+
+        // The already-selected character's info sits permanently in SelectedCharacterIcon
+        // already, so skip the transient hover-text overwrite for it — but the card preview
+        // below is independent of that panel and should still show on hover either way.
+        if (!isSelected)
         {
-            Layout layout = FindFirstObjectByType<Layout>();
-            selectedIcon = layout != null ? layout.GetSelectedCharacterIcon() : null;
+            if (!hex.TryGetPreviewTextForCharacter(character, out string hoverText)) return;
+            if (selectedIcon == null)
+            {
+                Layout layout = FindFirstObjectByType<Layout>();
+                selectedIcon = layout != null ? layout.GetSelectedCharacterIcon() : null;
+            }
+            if (selectedIcon == null) return;
+
+            selectedIcon.RefreshHoverPreview(character, hoverText, isScouted, isScouted);
         }
-        if (selectedIcon == null) return;
 
         isPreviewing = true;
         previewedCharacter = character;
         previewedHex = hex;
-        bool isScouted = hex.IsScouted();
-        selectedIcon.RefreshHoverPreview(character, hoverText, isScouted, isScouted);
-        CardCenterPreview.Instance?.ShowPreviewForCharacter(character, includeArmyCards: isScouted);
+
+        if (cardPreviewCoroutine != null) StopCoroutine(cardPreviewCoroutine);
+        cardPreviewCoroutine = StartCoroutine(ShowCardPreviewAfterDelay(character, isScouted));
+    }
+
+    // Only pops the card preview after the cursor has sat on this character's sprite,
+    // uninterrupted, for cardPreviewHoverDelay seconds — OnMouseExit/OnDisable (via
+    // ClearPreview) cancel this if the cursor leaves first.
+    private IEnumerator ShowCardPreviewAfterDelay(Character character, bool includeArmyCards)
+    {
+        yield return new WaitForSeconds(cardPreviewHoverDelay);
+        cardPreviewCoroutine = null;
+        CardCenterPreview.Instance?.ShowPreviewForCharacter(character, includeArmyCards: includeArmyCards);
     }
 
     private void Update()
@@ -131,6 +155,8 @@ public class CharacterSpriteHover : MonoBehaviour
         {
             return;
         }
+
+        if (cardPreviewCoroutine != null) { StopCoroutine(cardPreviewCoroutine); cardPreviewCoroutine = null; }
 
         isPreviewing = false;
         previewedCharacter = null;

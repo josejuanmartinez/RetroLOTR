@@ -27,6 +27,8 @@ namespace RetroLOTR.Scenarios
         [SerializeField] private Button scenarioButtonTemplate;
         [Tooltip("Scene object enabled after a campaign or scenario has been selected and GameConfig is ready.")]
         [SerializeField] private GameObject enableAfterSelection;
+        [Tooltip("TokenCard prefab used to build each scenario button's representative card token. Same prefab as DeckManager's tokenCardTemplate.")]
+        [SerializeField] private GameObject cardTemplate;
 
         private void Start()
         {
@@ -118,7 +120,6 @@ namespace RetroLOTR.Scenarios
                 return;
             }
 
-            GameObject cardTemplate = deckManager.GetTokenCardPrefabTemplate();
             if (cardTemplate == null) return;
 
             RectTransform host = FindTokenHost(button);

@@ -13,6 +13,12 @@ public static class AddressablesIllustrationsSync
     [MenuItem(MenuSync)]
     public static void SyncArtAddresses()
     {
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+        {
+            Debug.LogWarning("Addressables sync skipped: stop Play mode first. Running it while sprites are loading orphans the in-flight Addressables requests.");
+            return;
+        }
+
         var settings = AddressableAssetSettingsDefaultObject.Settings;
         if (settings == null)
         {

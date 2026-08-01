@@ -213,7 +213,15 @@ public class Game : MonoBehaviour
         AssignNationColors();
         InitializePlayableLeaderIcons();
         InitializeNonPlayableLeaderIcons();
-        if (player != null) FindFirstObjectByType<Layout>()?.SetNationColor(player.nationColor);
+        if (player != null)
+        {
+            var layout = FindFirstObjectByType<Layout>();
+            if (layout != null)
+            {
+                layout.SetNationColor(player.nationColor);
+                layout.SetNationName(player.GetBiome()?.nationName);
+            }
+        }
         board.StartGame();
         DiscoverStartingRegions();
         HookBoardSelectionRefresh();

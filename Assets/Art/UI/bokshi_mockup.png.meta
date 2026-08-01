@@ -182,9 +182,9 @@ TextureImporter:
       name: bokshi_mockup_2
       rect:
         serializedVersion: 2
-        x: 1276
+        x: 1300
         y: 261
-        width: 206
+        width: 161
         height: 419
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -380,10 +380,10 @@ TextureImporter:
       name: bokshi_mockup_17
       rect:
         serializedVersion: 2
-        x: 1328
-        y: 37
-        width: 137
-        height: 201
+        x: 1327
+        y: 39
+        width: 135
+        height: 196
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -438,6 +438,28 @@ TextureImporter:
       bones: []
       spriteID: 929ca46b30f80944ba99d8b6fc6458a6
       internalID: -257933570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bokshi_mockup_6
+      rect:
+        serializedVersion: 2
+        x: 1156
+        y: 255
+        width: 135
+        height: 196
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4fecc6784b3cc2428911aaa7ecdd3cf
+      internalID: -1804661158
       vertices: []
       indices: 
       edges: []

@@ -836,11 +836,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3238699189633666684}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed06c8c810493bf4ab880cf57fd80acb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SituationCardsUI
+  titleMessage: Act now!
+  fadeInDuration: 0.35
+  fadeOutDuration: 0.3
+  cardSpacing: 40
+  maxCardScale: 1.3
+  confettiCount: 56
+  confettiDuration: 1.5
+  overlayGroup: {fileID: 0}
+  cardContainer: {fileID: 0}
+  titleRect: {fileID: 0}
+  titleLabel: {fileID: 0}
 --- !u!223 &9110121647994714541
 Canvas:
   m_ObjectHideFlags: 0
@@ -2176,7 +2187,9 @@ MonoBehaviour:
   tokenBorder: {fileID: 3259744950485060310}
   tokenCanvasGroup: {fileID: 2052427284636732223}
   realCardCanvasGroup: {fileID: 3589502781369341076}
+  environmentalSprite: {fileID: 0}
   requirementsMessageColor: {r: 1, g: 0, b: 0, a: 1}
+  isTokenOnlyPresentation: 0
 --- !u!114 &7713320147557245700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2249,7 +2262,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8848296585483252617}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
