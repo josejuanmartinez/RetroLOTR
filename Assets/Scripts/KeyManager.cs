@@ -20,7 +20,7 @@ public class KeyManager : MonoBehaviour
         if(!game) game = FindFirstObjectByType<Game>();
         if(!pathRenderer) pathRenderer = FindFirstObjectByType<HexPathRenderer>();
         if(!boardNavigator) boardNavigator = FindFirstObjectByType<BoardNavigator>();
-        if(!actionsManager) actionsManager = FindFirstObjectByType<Layout>()?.GetActionsManager() ?? FindFirstObjectByType<ActionsManager>();
+        if(!actionsManager) actionsManager = FindFirstObjectByType<ActionsManager>();
         BuildActionHotkeys();
     }
     void Update()

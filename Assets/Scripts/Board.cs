@@ -668,7 +668,7 @@ public class Board : MonoBehaviour
     private void HideSelectionUi()
     {
         Layout layout = FindFirstObjectByType<Layout>();
-        layout?.GetActionsManager()?.Hide();
+        GetActionsManager()?.Hide();
         layout?.GetSelectedCharacterIcon()?.Hide();
     }
 
@@ -1064,7 +1064,7 @@ public class Board : MonoBehaviour
 
         try
         {
-            actionsManager = GetLayout().GetActionsManager();
+            actionsManager = GetActionsManager();
             actionsManager.Hide();
             selected = GetLayout().GetSelectedCharacterIcon();
         }
