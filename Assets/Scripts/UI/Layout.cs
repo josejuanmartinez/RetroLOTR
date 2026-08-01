@@ -1,15 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Layout : MonoBehaviour
 {
     [SerializeField]
     private SelectedCharacterIcon selectedCharacterIcon;
     [SerializeField]
-    private ActionsManager actionsManager;
-    [SerializeField]
     private HexNumberManager hexNumberManager;
     [SerializeField]
     private Card environmentalCard;
+    [SerializeField]
+    private Image nationColorImage;
 
     private void Awake()
     {
@@ -32,14 +33,13 @@ public class Layout : MonoBehaviour
         return selectedCharacterIcon;
     }
 
-    public ActionsManager GetActionsManager()
-    {
-        actionsManager.gameObject.SetActive(true);
-        return actionsManager;
-    }
-
     public HexNumberManager GetHexNumberManager()
     {
         return hexNumberManager;
+    }
+
+    public void SetNationColor(Color color)
+    {
+        if (nationColorImage != null) nationColorImage.color = color;
     }
 }

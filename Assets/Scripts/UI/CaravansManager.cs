@@ -1,87 +1,45 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class CaravansManager : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+[RequireComponent(typeof(Hover))]
+public class CaravansManager : MonoBehaviour
 {
-    public StoresManager storesManager;
-    public GameObject caravans;
-    public TextMeshProUGUI leatherStock;
-    public TextMeshProUGUI ironStock;
-    public TextMeshProUGUI steelStock;
-    public TextMeshProUGUI mithrilStock;
-    public TextMeshProUGUI timberStock;
-    public TextMeshProUGUI mountsStock;
+    public ProducesEnum produce;
 
-    public TextMeshProUGUI leatherBuyPrice;
-    public TextMeshProUGUI ironBuyPrice;
-    public TextMeshProUGUI steelBuyPrice;
-    public TextMeshProUGUI mithrilBuyPrice;
-    public TextMeshProUGUI timberBuyPrice;
-    public TextMeshProUGUI mountsBuyPrice;
-    public TextMeshProUGUI leatherSellPrice;
-    public TextMeshProUGUI ironSellPrice;
-    public TextMeshProUGUI steelSellPrice;
-    public TextMeshProUGUI mithrilSellPrice;
-    public TextMeshProUGUI timberSellPrice;
-    public TextMeshProUGUI mountsSellPrice;
-   
-    void Start()
-    {
-        EnsureStoresManager();
-    }
+    private string caravanPricesString;
 
     void OnEnable()
     {
-        EnsureStoresManager();
-        if (storesManager != null) storesManager.MarketChanged += RefreshMarketTexts;
-        RefreshMarketTexts();
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (PopupManager.IsShowing) return;
-        Sounds.Instance?.PlayUiHover();
-        caravans.SetActive(true);
-    }
-
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        Sounds.Instance?.PlayUiExit();
-        caravans.SetActive(false);
+        StoresManager storesManager = FindFirstObjectByType<StoresManager>();
+        if (storesManager != null) storesManager.MarketChanged += RefreshCaravanPrices;
+        GetCaravanPrices();
     }
 
     void OnDisable()
     {
-        if (storesManager != null) storesManager.MarketChanged -= RefreshMarketTexts;
+        StoresManager storesManager = FindFirstObjectByType<StoresManager>();
+        if (storesManager != null) storesManager.MarketChanged -= RefreshCaravanPrices;
     }
 
-    private void EnsureStoresManager()
+    private void RefreshCaravanPrices()
     {
-        if (!storesManager) storesManager = FindFirstObjectByType<StoresManager>();
+        GetCaravanPrices();
     }
 
-    public void RefreshMarketTexts()
+    public string GetCaravanPrices()
     {
-        if (storesManager == null) return;
+        StoresManager storesManager = FindFirstObjectByType<StoresManager>();
+        if (storesManager == null) return caravanPricesString;
 
-        SetStockAndPrices(ProducesEnum.leather, leatherStock, leatherBuyPrice, leatherSellPrice);
-        SetStockAndPrices(ProducesEnum.iron, ironStock, ironBuyPrice, ironSellPrice);
-        SetStockAndPrices(ProducesEnum.steel, steelStock, steelBuyPrice, steelSellPrice);
-        SetStockAndPrices(ProducesEnum.mithril, mithrilStock, mithrilBuyPrice, mithrilSellPrice);
-        SetStockAndPrices(ProducesEnum.timber, timberStock, timberBuyPrice, timberSellPrice);
-        SetStockAndPrices(ProducesEnum.mounts, mountsStock, mountsBuyPrice, mountsSellPrice);
-    }
+        int buildPrice = storesManager.GetBuyPricePerUnit(produce);
+        int sellPrice = storesManager.GetSellPricePerUnit(produce);
+        string spriteName = produce.ToString().ToLowerInvariant();
+        string produceName = char.ToUpperInvariant(spriteName[0]) + spriteName[1..];
 
-    private void SetStockAndPrices(ProducesEnum resource, TextMeshProUGUI stockText, TextMeshProUGUI buyText, TextMeshProUGUI sellText)
-    {
-        if (stockText != null)
-        {
-            string spriteName = resource.ToString().ToLowerInvariant();
-            stockText.text = $"<sprite name=\"{spriteName}\">{spriteName}{storesManager.GetCurrentStock(resource)}";
-        }
-        if (buyText != null) buyText.text = storesManager.GetBuyPricePerUnit(resource).ToString();
-        if (sellText != null) sellText.text = storesManager.GetSellPricePerUnit(resource).ToString();
+        caravanPricesString = $"<sprite name=\"{spriteName}\">{produceName}\nBuild: {buildPrice}\nSell: {sellPrice}";
+
+        Hover hover = GetComponent<Hover>();
+        if (hover != null) hover.Initialize(caravanPricesString);
+
+        return caravanPricesString;
     }
 }
