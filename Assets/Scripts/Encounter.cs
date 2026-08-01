@@ -18,11 +18,13 @@ public static class EncounterResolver
         string prompt = BuildPrompt(encounterCard);
         List<string> optionLabels = options.Select(GetOptionLabel).ToList();
         List<string> optionDescriptions = options.Select(GetOptionDescription).ToList();
+        List<string> optionIcons = options.Select(GetPrimarySkillIconName).ToList();
         string selection = await AskEncounterSelectionAsync(
             encounterCard.name,
             prompt,
             optionLabels,
             optionDescriptions,
+            optionIcons,
             isAi,
             portrait);
         if (string.IsNullOrWhiteSpace(selection)) return false;
@@ -56,6 +58,7 @@ public static class EncounterResolver
         string prompt,
         List<string> optionLabels,
         List<string> optionDescriptions,
+        List<string> optionIcons,
         bool isAi,
         Sprite portrait)
     {
@@ -68,7 +71,8 @@ public static class EncounterResolver
             isAi,
             portrait,
             EventIconType.Encounter,
-            title);
+            title,
+            optionIcons);
     }
 
     private static string BuildPrompt(CardData encounterCard)
@@ -93,39 +97,50 @@ public static class EncounterResolver
     {
         if (option == null) return string.Empty;
 
-        string abilityPrefix = BuildAbilityPrefix(option);
         if (!string.IsNullOrWhiteSpace(option.label))
         {
-            return $"{abilityPrefix}{option.label.Trim()}";
+            return option.label.Trim();
         }
 
         if (string.IsNullOrWhiteSpace(option.description))
         {
-            return abilityPrefix.Trim();
+            return string.Empty;
         }
 
         string text = option.description.Trim();
         const int maxLength = 40;
-        if (text.Length <= maxLength) return $"{abilityPrefix}{text}";
-        return $"{abilityPrefix}{text[..(maxLength - 3)].TrimEnd()}...";
+        return text.Length <= maxLength ? text : $"{text[..(maxLength - 3)].TrimEnd()}...";
     }
 
-    private static string BuildAbilityPrefix(EncounterOptionData option)
+    // Options often gate their best outcome on more than one skill at once (see the
+    // outcome data), but the option button can only show a single class icon - so we
+    // pick whichever skill has the highest requirement anywhere among the option's
+    // outcomes, with Commander/Agent/Emmissary/Mage as the tie-break order.
+    private static readonly (string SpriteName, Func<EncounterOutcomeData, int> GetRequirement)[] SkillIcons =
     {
-        if (option?.outcomes == null || option.outcomes.Count == 0) return string.Empty;
+        ("commander", o => o.minCommander),
+        ("agent", o => o.minAgent),
+        ("emmissary", o => o.minEmmissary),
+        ("mage", o => o.minMage),
+    };
 
-        bool requiresCommander = option.outcomes.Any(outcome => outcome != null && outcome.minCommander > 0);
-        bool requiresAgent = option.outcomes.Any(outcome => outcome != null && outcome.minAgent > 0);
-        bool requiresEmmissary = option.outcomes.Any(outcome => outcome != null && outcome.minEmmissary > 0);
-        bool requiresMage = option.outcomes.Any(outcome => outcome != null && outcome.minMage > 0);
+    private static string GetPrimarySkillIconName(EncounterOptionData option)
+    {
+        if (option?.outcomes == null || option.outcomes.Count == 0) return null;
 
-        List<string> prefixes = new();
-        if (requiresCommander) prefixes.Add("<sprite name=\"commander\">commander");
-        if (requiresAgent) prefixes.Add("<sprite name=\"agent\">agent");
-        if (requiresEmmissary) prefixes.Add("<sprite name=\"emmissary\">emmissary");
-        if (requiresMage) prefixes.Add("<sprite name=\"mage\">mage");
+        string bestSpriteName = null;
+        int bestRequirement = 0;
+        foreach ((string spriteName, Func<EncounterOutcomeData, int> getRequirement) in SkillIcons)
+        {
+            int requirement = option.outcomes.Max(outcome => outcome == null ? 0 : getRequirement(outcome));
+            if (requirement > bestRequirement)
+            {
+                bestRequirement = requirement;
+                bestSpriteName = spriteName;
+            }
+        }
 
-        return prefixes.Count > 0 ? string.Join("", prefixes) + " " : string.Empty;
+        return bestSpriteName;
     }
 
     private static string GetOptionDescription(EncounterOptionData option)

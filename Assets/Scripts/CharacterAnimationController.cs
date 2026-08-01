@@ -35,11 +35,12 @@ public class CharacterAnimationController : MonoBehaviour
     // Outline size Hex.UpdateCharacterSpriteAlpha applies for the hover/selection/idle states —
     // the outline no longer pulses, so this is just a steady size.
     public float outlineSize = 10f;
+    // Same alignment as the human player (or no character/owner at all) — the plain default look.
     [SerializeField] private Material outlineMaterial;
-    // When set, SetOutlineForCharacter always outlines in black instead of the owner's nation
-    // color — for characters (e.g. neutral/monster encounters) whose outline shouldn't read as
-    // belonging to any nation.
-    public bool blackOutline;
+    // Neutral-alignment characters (monsters, unaligned encounters, etc.).
+    [SerializeField] private Material neutralOutlineMaterial;
+    // Opposing alignment to the human player.
+    [SerializeField] private Material enemyOutlineMaterial;
 
     // Playback speed multiplier applied only to the Turn Left/Right in-place spin (baked atlas
     // fps otherwise makes it play at the same pace as walk/idle, which reads as sluggish when a
@@ -121,9 +122,9 @@ public class CharacterAnimationController : MonoBehaviour
     private bool cursorHovering;
 
     private MaterialPropertyBlock outlinePropertyBlock;
-    // Full-alpha nation-color outline last applied by SetOutlineForCharacter/ClearOutline —
+    // Full-alpha alignment outline color last applied by SetOutlineForCharacter/ClearOutline —
     // cached so SetOutlineAlpha() can dim the outline's alpha in step with the sprite's, without
-    // needing to know the owner/nation color itself.
+    // needing to re-resolve the alignment/material lookup itself.
     private Color outlineBaseColor = Color.white;
     private static readonly int OutlineColorShaderId = Shader.PropertyToID("_OutlineColor");
     private static readonly int OutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
@@ -293,29 +294,55 @@ public class CharacterAnimationController : MonoBehaviour
         if (spriteRenderer == null) spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
     }
 
-    private void ApplyOutlineMaterial()
+    private void ApplyOutlineMaterial(Material material = null)
     {
         EnsureSpriteRenderer();
 
-        if (outlineMaterial == null)
+        Material resolvedMaterial = material != null ? material : outlineMaterial;
+        if (resolvedMaterial == null)
         {
-            Debug.LogWarning($"[CharacterAnimationController] '{name}': outlineMaterial is not assigned in the Inspector.");
+            Debug.LogWarning($"[CharacterAnimationController] '{name}': the requested outline material is not assigned in the Inspector.");
             return;
         }
 
-        if (spriteRenderer.sharedMaterial != outlineMaterial) spriteRenderer.sharedMaterial = outlineMaterial;
+        if (spriteRenderer.sharedMaterial != resolvedMaterial) spriteRenderer.sharedMaterial = resolvedMaterial;
     }
 
-    // Sets the outline to the given character's owner's nation color (or white if unowned) —
-    // called by Hex whenever the character this controller is showing changes.
+    // Sets the outline color by the character's alignment relative to the human player: neutral
+    // always reads as neutral regardless of viewer; otherwise same-alignment-as-viewer vs.
+    // opposing-alignment picks the ally/enemy look. Called by Hex whenever the character this
+    // controller is showing changes.
     public void SetOutlineForCharacter(Character character)
     {
-        Leader owner = character != null ? character.GetOwner() : null;
-        Color color = owner == null ? Color.white : blackOutline ? Color.black : owner.nationColor;
-        ApplyOutlineSettings(color, outlineSize);
+        Material material = ResolveOutlineMaterial(character);
+        ApplyOutlineMaterial(material);
+        ApplyOutlineSettings(GetMaterialOutlineColor(material), outlineSize);
     }
 
-    public void ClearOutline() => ApplyOutlineSettings(Color.white, outlineSize);
+    private Material ResolveOutlineMaterial(Character character)
+    {
+        if (character == null) return outlineMaterial;
+
+        AlignmentEnum alignment = character.GetAlignment();
+        if (alignment == AlignmentEnum.neutral) return neutralOutlineMaterial;
+
+        Game game = FindFirstObjectByType<Game>();
+        AlignmentEnum viewerAlignment = game != null && game.player != null ? game.player.GetAlignment() : AlignmentEnum.neutral;
+        return alignment != viewerAlignment ? enemyOutlineMaterial : outlineMaterial;
+    }
+
+    // Reads the selected material's base outline color before per-renderer alpha/size overrides.
+    private Color GetMaterialOutlineColor(Material source)
+    {
+        if (source != null) return source.GetColor(OutlineColorShaderId);
+        return outlineMaterial != null ? outlineMaterial.GetColor(OutlineColorShaderId) : Color.white;
+    }
+
+    public void ClearOutline()
+    {
+        ApplyOutlineMaterial();
+        ApplyOutlineSettings(Color.white, outlineSize);
+    }
 
     private void ApplyOutlineSettings(Color outlineColor, float size)
     {

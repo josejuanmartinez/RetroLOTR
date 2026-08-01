@@ -1,0 +1,5122 @@
+fileFormatVersion: 2
+guid: af46bcd45922e1540bca6e9ca6571e5a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6556716672875212995
+    second: Elf_Forward_0
+  - first:
+      213: -8554024250919381350
+    second: Elf_Forward_1
+  - first:
+      213: 7517304898153903640
+    second: Elf_Forward_2
+  - first:
+      213: -5331021019652296480
+    second: Elf_Forward_3
+  - first:
+      213: -2602848798334310525
+    second: Elf_Forward_4
+  - first:
+      213: -7720584704485374727
+    second: Elf_Forward_5
+  - first:
+      213: 1802794500286935326
+    second: Elf_Forward_6
+  - first:
+      213: 8530868574927711960
+    second: Elf_Forward_7
+  - first:
+      213: 8052947503143189607
+    second: Elf_Forward_8
+  - first:
+      213: -7675905044046814585
+    second: Elf_Forward_9
+  - first:
+      213: 9086229146277806427
+    second: Elf_Forward_10
+  - first:
+      213: -6305601392008374165
+    second: Elf_Forward_11
+  - first:
+      213: -8190501680906185797
+    second: Elf_Forward_12
+  - first:
+      213: -833695260504395276
+    second: Elf_Forward_13
+  - first:
+      213: -1529676441104177154
+    second: Elf_Forward_14
+  - first:
+      213: 7790783746489684693
+    second: Elf_Forward_15
+  - first:
+      213: -7266471649178228062
+    second: Elf_Forward_16
+  - first:
+      213: 3107774082231699051
+    second: Elf_Forward_17
+  - first:
+      213: -7946856249423647748
+    second: Elf_Forward_18
+  - first:
+      213: -1505906033711458029
+    second: Elf_Forward_19
+  - first:
+      213: 8630257735637262369
+    second: Elf_Forward_20
+  - first:
+      213: -8647220242453106905
+    second: Elf_Forward_21
+  - first:
+      213: 6032677320519566455
+    second: Elf_Forward_22
+  - first:
+      213: 412598853070633384
+    second: Elf_Forward_23
+  - first:
+      213: -7209322551568351080
+    second: Elf_Forward_24
+  - first:
+      213: 9051673715436236978
+    second: Elf_Forward_25
+  - first:
+      213: 3188599227318118772
+    second: Elf_Forward_26
+  - first:
+      213: 552341431514716635
+    second: Elf_Forward_27
+  - first:
+      213: 2037519476789232871
+    second: Elf_Forward_28
+  - first:
+      213: 3196758506761661999
+    second: Elf_Forward_29
+  - first:
+      213: 1929360174454360755
+    second: Elf_Forward_30
+  - first:
+      213: 8481813459623861954
+    second: Elf_Forward_31
+  - first:
+      213: 7201282132943120739
+    second: Elf_Forward_32
+  - first:
+      213: 3970095415063932231
+    second: Elf_Forward_33
+  - first:
+      213: 5877987611358397438
+    second: Elf_Forward_34
+  - first:
+      213: -7699359375861423240
+    second: Elf_Forward_35
+  - first:
+      213: -871064394649016820
+    second: Elf_Forward_36
+  - first:
+      213: 7680288719273660273
+    second: Elf_Forward_37
+  - first:
+      213: -3667240512214027631
+    second: Elf_Forward_38
+  - first:
+      213: -8545532878231515971
+    second: Elf_Forward_39
+  - first:
+      213: 863792649431114380
+    second: Elf_Forward_40
+  - first:
+      213: -1211407881474634963
+    second: Elf_Forward_41
+  - first:
+      213: 2118912348995670699
+    second: Elf_Forward_42
+  - first:
+      213: -6050624364870030560
+    second: Elf_Forward_43
+  - first:
+      213: -6232848937940966590
+    second: Elf_Forward_44
+  - first:
+      213: 8319617710035686230
+    second: Elf_Forward_45
+  - first:
+      213: -5857513831564365434
+    second: Elf_Forward_46
+  - first:
+      213: -52307164084425479
+    second: Elf_Forward_47
+  - first:
+      213: -1258374511973565382
+    second: Elf_Forward_48
+  - first:
+      213: -1749050255406233533
+    second: Elf_Forward_49
+  - first:
+      213: -5133743140216318285
+    second: Elf_Forward_50
+  - first:
+      213: 8708255761502742891
+    second: Elf_Forward_51
+  - first:
+      213: -8130666044756226624
+    second: Elf_Forward_52
+  - first:
+      213: -7943583083671076530
+    second: Elf_Forward_53
+  - first:
+      213: -8731394713919206309
+    second: Elf_Forward_54
+  - first:
+      213: 7978068334778583385
+    second: Elf_Forward_55
+  - first:
+      213: -3751619494285484883
+    second: Elf_Forward_56
+  - first:
+      213: 6982239293064858736
+    second: Elf_Forward_57
+  - first:
+      213: 2715231504602937102
+    second: Elf_Forward_58
+  - first:
+      213: -8610625180791104965
+    second: Elf_Forward_59
+  - first:
+      213: 3859544634042953903
+    second: Elf_Forward_60
+  - first:
+      213: -7704066777345693406
+    second: Elf_Forward_61
+  - first:
+      213: 2494735181603702187
+    second: Elf_Forward_62
+  - first:
+      213: -1930428747567971663
+    second: Elf_Forward_63
+  - first:
+      213: -1777073848013078579
+    second: Elf_Forward_64
+  - first:
+      213: 8150205602506857511
+    second: Elf_Forward_65
+  - first:
+      213: -4255811806263826470
+    second: Elf_Forward_66
+  - first:
+      213: -7254916607984302295
+    second: Elf_Forward_67
+  - first:
+      213: -9208160378401375182
+    second: Elf_Forward_68
+  - first:
+      213: 2716354113136537185
+    second: Elf_Forward_69
+  - first:
+      213: 8646398793459764418
+    second: Elf_Forward_70
+  - first:
+      213: 6825299324546613369
+    second: Elf_Forward_71
+  - first:
+      213: 2681355942170493289
+    second: Elf_Forward_72
+  - first:
+      213: 904387285673209631
+    second: Elf_Forward_73
+  - first:
+      213: 4728978078360433127
+    second: Elf_Forward_74
+  - first:
+      213: 2415212602853961911
+    second: Elf_Forward_75
+  - first:
+      213: -5157981912035213798
+    second: Elf_Forward_76
+  - first:
+      213: -6566515167067501738
+    second: Elf_Forward_77
+  - first:
+      213: -6313566375754440586
+    second: Elf_Forward_78
+  - first:
+      213: -2961689912261098761
+    second: Elf_Forward_79
+  - first:
+      213: 6497184031655423619
+    second: Elf_Forward_80
+  - first:
+      213: -1368817068474334580
+    second: Elf_Forward_81
+  - first:
+      213: -7771967816245311282
+    second: Elf_Forward_82
+  - first:
+      213: 3015260187776498404
+    second: Elf_Forward_83
+  - first:
+      213: 9057966242466188923
+    second: Elf_Forward_84
+  - first:
+      213: -5806214778293403506
+    second: Elf_Forward_85
+  - first:
+      213: 3397875768114587807
+    second: Elf_Forward_86
+  - first:
+      213: 4273981230253848095
+    second: Elf_Forward_87
+  - first:
+      213: -3227191817729342442
+    second: Elf_Forward_88
+  - first:
+      213: -8884986273246547705
+    second: Elf_Forward_89
+  - first:
+      213: 7542994467787810417
+    second: Elf_Forward_90
+  - first:
+      213: -1340097689960119884
+    second: Elf_Forward_91
+  - first:
+      213: 238798354722313054
+    second: Elf_Forward_92
+  - first:
+      213: 1403211837092626275
+    second: Elf_Forward_93
+  - first:
+      213: -2355307596083488094
+    second: Elf_Forward_94
+  - first:
+      213: 8424295944702914431
+    second: Elf_Forward_95
+  - first:
+      213: 833404977381448462
+    second: Elf_Forward_96
+  - first:
+      213: 2592890239910813679
+    second: Elf_Forward_97
+  - first:
+      213: -2660119711633881571
+    second: Elf_Forward_98
+  - first:
+      213: 4317543152883512780
+    second: Elf_Forward_99
+  - first:
+      213: 4918047927278071452
+    second: Elf_Forward_100
+  - first:
+      213: -5913704954377134225
+    second: Elf_Forward_101
+  - first:
+      213: 3060123641704854958
+    second: Elf_Forward_102
+  - first:
+      213: 5682154881362997004
+    second: Elf_Forward_103
+  - first:
+      213: -3318033810462405831
+    second: Elf_Forward_104
+  - first:
+      213: -1553342599411509004
+    second: Elf_Forward_105
+  - first:
+      213: 1093462497859938862
+    second: Elf_Forward_106
+  - first:
+      213: 6879193881632265531
+    second: Elf_Forward_107
+  - first:
+      213: 1104239346704191485
+    second: Elf_Forward_108
+  - first:
+      213: -2138929006098412559
+    second: Elf_Forward_109
+  - first:
+      213: 6150484928755422206
+    second: Elf_Forward_110
+  - first:
+      213: -2935777729629341605
+    second: Elf_Forward_111
+  - first:
+      213: -6034314775213335047
+    second: Elf_Forward_112
+  - first:
+      213: 1175308799206716920
+    second: Elf_Forward_113
+  - first:
+      213: -4875825240334610337
+    second: Elf_Forward_114
+  - first:
+      213: -7349132440559969035
+    second: Elf_Forward_115
+  - first:
+      213: -2042336353854443508
+    second: Elf_Forward_116
+  - first:
+      213: -6625693971755334921
+    second: Elf_Forward_117
+  - first:
+      213: -3595878216871706833
+    second: Elf_Forward_118
+  - first:
+      213: -5643342523615372493
+    second: Elf_Forward_119
+  - first:
+      213: 7639718498656513580
+    second: Elf_Forward_120
+  - first:
+      213: -1145769015214265259
+    second: Elf_Forward_121
+  - first:
+      213: -2713752479762859345
+    second: Elf_Forward_122
+  - first:
+      213: -2842958775315342758
+    second: Elf_Forward_123
+  - first:
+      213: 3125424197171531965
+    second: Elf_Forward_124
+  - first:
+      213: -3786388463535216105
+    second: Elf_Forward_125
+  - first:
+      213: 1115103984897508754
+    second: Elf_Forward_126
+  - first:
+      213: -6456619367144282780
+    second: Elf_Forward_127
+  - first:
+      213: 8123539072753734479
+    second: Elf_Forward_128
+  - first:
+      213: 3902419156246617268
+    second: Elf_Forward_129
+  - first:
+      213: 585133130426676853
+    second: Elf_Forward_130
+  - first:
+      213: -4365022943051261002
+    second: Elf_Forward_131
+  - first:
+      213: 5935454572568048972
+    second: Elf_Forward_132
+  - first:
+      213: 6000426956305537776
+    second: Elf_Forward_133
+  - first:
+      213: 4214909822532108070
+    second: Elf_Forward_134
+  - first:
+      213: -297837386159802897
+    second: Elf_Forward_135
+  - first:
+      213: -4646008448468328173
+    second: Elf_Forward_136
+  - first:
+      213: -4126937946704495438
+    second: Elf_Forward_137
+  - first:
+      213: 841806126030228224
+    second: Elf_Forward_138
+  - first:
+      213: -5502423268167313013
+    second: Elf_Forward_139
+  - first:
+      213: -8494378849630843884
+    second: Elf_Forward_140
+  - first:
+      213: 1681650649407691305
+    second: Elf_Forward_141
+  - first:
+      213: -3234649702196670109
+    second: Elf_Forward_142
+  - first:
+      213: -6726362449971421883
+    second: Elf_Forward_143
+  - first:
+      213: 6008449272386893748
+    second: Elf_Forward_144
+  - first:
+      213: -1267814152163472625
+    second: Elf_Forward_145
+  - first:
+      213: 6994179812399536853
+    second: Elf_Forward_146
+  - first:
+      213: 7473801073868333736
+    second: Elf_Forward_147
+  - first:
+      213: 2154325898274919846
+    second: Elf_Forward_148
+  - first:
+      213: 4779947498348688190
+    second: Elf_Forward_149
+  - first:
+      213: -5840677933801285949
+    second: Elf_Forward_150
+  - first:
+      213: 4764830687145339175
+    second: Elf_Forward_151
+  - first:
+      213: 2457346667628734995
+    second: Elf_Forward_152
+  - first:
+      213: 4570963979211270825
+    second: Elf_Forward_153
+  - first:
+      213: -3786481159505593649
+    second: Elf_Forward_154
+  - first:
+      213: -4778135016179008326
+    second: Elf_Forward_155
+  - first:
+      213: -8655463381991281885
+    second: Elf_Forward_156
+  - first:
+      213: 638158156267997689
+    second: Elf_Forward_157
+  - first:
+      213: 5833484035984319761
+    second: Elf_Forward_158
+  - first:
+      213: -7717306229562732209
+    second: Elf_Forward_159
+  - first:
+      213: -3797473845492177522
+    second: Elf_Forward_160
+  - first:
+      213: 4526401292019894682
+    second: Elf_Forward_161
+  - first:
+      213: 4459249796398091844
+    second: Elf_Forward_162
+  - first:
+      213: -107438603879111965
+    second: Elf_Forward_163
+  - first:
+      213: 8927095527638024418
+    second: Elf_Forward_164
+  - first:
+      213: 507839232487643194
+    second: Elf_Forward_165
+  - first:
+      213: -4901753464213213075
+    second: Elf_Forward_166
+  - first:
+      213: 4767776486900034200
+    second: Elf_Forward_167
+  - first:
+      213: -5696569351486024071
+    second: Elf_Forward_168
+  - first:
+      213: -3892489680043159525
+    second: Elf_Forward_169
+  - first:
+      213: -4749031027520485517
+    second: Elf_Forward_170
+  - first:
+      213: 3858063418798133821
+    second: Elf_Forward_171
+  - first:
+      213: 6669702285839346243
+    second: Elf_Forward_172
+  - first:
+      213: 1560269663631016191
+    second: Elf_Forward_173
+  - first:
+      213: 8150782251474791450
+    second: Elf_Forward_174
+  - first:
+      213: -8597349844405577349
+    second: Elf_Forward_175
+  - first:
+      213: -4348399988228641607
+    second: Elf_Forward_176
+  - first:
+      213: 3886840338194763563
+    second: Elf_Forward_177
+  - first:
+      213: -4840157830570227712
+    second: Elf_Forward_178
+  - first:
+      213: 1932521017500519000
+    second: Elf_Forward_179
+  - first:
+      213: 5629663061374398639
+    second: Elf_Forward_180
+  - first:
+      213: 5791870187573383940
+    second: Elf_Forward_181
+  - first:
+      213: 1450496243766349782
+    second: Elf_Forward_182
+  - first:
+      213: -5338634508452136643
+    second: Elf_Forward_183
+  - first:
+      213: 2047404894581605914
+    second: Elf_Forward_184
+  - first:
+      213: 6872176620160596160
+    second: Elf_Forward_185
+  - first:
+      213: 2373933939706710845
+    second: Elf_Forward_186
+  - first:
+      213: -6120282502059471144
+    second: Elf_Forward_187
+  - first:
+      213: 2321826117268179173
+    second: Elf_Forward_188
+  - first:
+      213: -8561927959008156319
+    second: Elf_Forward_189
+  - first:
+      213: -7679028946627810624
+    second: Elf_Forward_190
+  - first:
+      213: 5216499848423343725
+    second: Elf_Forward_191
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7eb30ec063cda714d84d0aa2cc99d3b6
+      internalID: 942071448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56457c808c1173e48aa165bce9ee0e06
+      internalID: 687942727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4b8eaf03fd034c4e891a359464db2ea
+      internalID: -878007955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62d488a7168aeda4eb9f309bb3bb8272
+      internalID: 1345513954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45e797919109c514d9a1f9b927d16cfb
+      internalID: -1851517658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c51661fc9f8970643a5f09ffe7f31252
+      internalID: -803726156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48fa2873f5d797d40b7b8ae97be002ef
+      internalID: -1553495964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b2ca0e0dcd13e14fbe479b35e8c0c9c
+      internalID: 1467793496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2abde18a9e6519345a435cfde9d314c0
+      internalID: -866045708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0202b27355229574a83d44ade9dbf649
+      internalID: 382236193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e73669e80eb94f04dbfedece8d9acdbc
+      internalID: 145944719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24c73695bf37cf14581509bc5a009d65
+      internalID: 184281517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b13522e53579e74eadd611105410345
+      internalID: 1052253831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62ae48cdd851b2e43a5260c020b43b95
+      internalID: 1771974102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ccbe068d52428040abd835d93ec78b0
+      internalID: -1719242989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Crouch_Idle_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a38c59e8f38e5fa4297a8d6683fa6e73
+      internalID: -370032505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d77d4b7a6529bb41880c24018150749
+      internalID: 1230980569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ceb14a3bd8bf75e4581326122408502c
+      internalID: 570879002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c687abe7d342dab419126b9c8eab3e44
+      internalID: -1169313212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53c73d7144f31484a9fecf1a2a6d638b
+      internalID: -723074099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f56dda65c92925640b83ade039f41166
+      internalID: 227379716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca3458009434d2f49bfa7cb7a9a2ab0f
+      internalID: 843954994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 092736992823b3a4a8061268318d52d2
+      internalID: 1563491763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a6420ce7e12f6e4f9713114cb93c27c
+      internalID: 1274188395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09629cc353487f84a8dbe3988dd9a6d1
+      internalID: -1256512649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eda686ea8b725ea49bd4510bb9174ede
+      internalID: 1674012616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f59e0e3be19298e41816ca5595eed5cd
+      internalID: -507402607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: badbf4d58a11caa44b7177313a6a7138
+      internalID: 2035303168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb95be01c26790e4780b3a4865542fa4
+      internalID: -1677048809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72674953f47af7a4db564f77a62c25e4
+      internalID: -413982545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b061c845e06cad34faa38c3a4d6a6638
+      internalID: 1656624750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Action_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89b0ae3bbae0ecd4d9efb3e2fe8ee77d
+      internalID: -5196531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de66323bc36946b4b8555da81526ee5e
+      internalID: 1354252707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5b43252ef4a2a64e948fef501ff9ff1
+      internalID: 705768571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82746adf6c46d9942aa6a7af6cc45bec
+      internalID: -1161421310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e89bbb8cc504d6d4cb32ae42372e596b
+      internalID: 1799430197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7f50097e1ee15d4882ac95ad65596c1
+      internalID: -1399346615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9bb67ccd6931e514d84aed8b80381c6a
+      internalID: 1681243418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e41788f2d18244b4f83f391a48264245
+      internalID: 1230969828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8c28fe2d8ff25f458db57c96b794204
+      internalID: -1514083122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 406cce229e949c14480b4af9b0731d96
+      internalID: 319825554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aeda1565427d50a4684fbdc0faacca32
+      internalID: -968449209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20075fe111221d541a93433e8246f6f1
+      internalID: -430564098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d98791c044b13c43b4f6e5c2859113f
+      internalID: -1815433639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66d25d6ec1a41b144b14ea6fb52c7a3b
+      internalID: 2130610557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0faeece0180551647a13f426d3d909d4
+      internalID: -125799889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3472ca91eea8bc24ea1a8b69f09d9140
+      internalID: -1822218224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Magic_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22c941dcfbdb04b4db195ee6c4bc295b
+      internalID: 1900926464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0ddac7031c35834f954f056dc2fc172
+      internalID: 886833559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74cbf9fb0f75c2e4f950725d325105e7
+      internalID: 570061075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68822de12c762624fb67725f32c613e7
+      internalID: 1214871140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26a837e4bff211d47946daf4323ab67d
+      internalID: 645391473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2828a95488663d9488c519c9b08f387a
+      internalID: 908455921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3d21cb686c2ddd4fab97ee525a11268
+      internalID: -753349530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2673e1d934f2d9841b69f54ebacf55fc
+      internalID: -2011257873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6de252d2f65241948a6c04a0af596451
+      internalID: 1915346859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67437f46cb9c422458936f5799838a7e
+      internalID: -1380559542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3125fc751965a7418c57fe77de051b9
+      internalID: -1587398482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cab23dffa53068f47b7fe159e4f95a66
+      internalID: 1689242763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3786aa838e6d4c468e7519afc94be49
+      internalID: 1135393908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8238e5a81e86a074fb49930511c79f43
+      internalID: 915064051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: afe63608f174b944391c93cb334c0097
+      internalID: -1201337055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f5b9be2f3fd7b845b93142b83667a18
+      internalID: 1931037082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_standing_idle_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ffe207a1a9810e48bb59a50e9eba6b8
+      internalID: 1284479989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee3fca10fae7828478b71ce639a105da
+      internalID: 649234537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9a7d9654a576f7408cdbb047031361c
+      internalID: -1412597816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3592a1be7c470744f95609962507ffbc
+      internalID: -265466959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5dd84b75c38b4204687f1791cb95a7e7
+      internalID: 493386111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be278dcedd640364da74551a3667f0f4
+      internalID: 2131910552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e881a756ecdd6749acdc11b39436b83
+      internalID: 2089634450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce19e48a00340bf428460499b5f3b58d
+      internalID: 25212077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 011c962cf6d40564e8a7cb019df027c4
+      internalID: -1590105920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eccc68d8302669c4497c0fa63adcc3e6
+      internalID: 1728156034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 484be7e116ac7d84e8e0df3614d84731
+      internalID: 1228566162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e5951357300e2d4fbeeb87edcee939b
+      internalID: -1600155511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 97e259d8386cce64b8ff448644f76e14
+      internalID: -233287195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e62881992990fef45b932ee0c064a1a9
+      internalID: -1155899391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7fa87cf5b9c793d48982ac8983898eea
+      internalID: 485269008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 410000778cc80d4408ff54e5253d7363
+      internalID: -1248173442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_idle_look_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9fd511a2947a2b04d9def359a400db76
+      internalID: -1921301849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14dbcd3422f20a84faac7d3deee74f4f
+      internalID: -74248590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e2fd585306e01d48a48c4bd2796c7a9
+      internalID: -295940596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1b110305e6fe3e489570176b89c6d8c
+      internalID: -841548049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba3d01310870dce41bf60f398499ba1b
+      internalID: 829939682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2528f4f5aea7864283779f2152f6dab
+      internalID: 235611348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d0962ef92ca5334eb59d1df9f8104bf
+      internalID: -1845373252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b759d9ece5098b048b3db7188ed10517
+      internalID: -560213447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 217d0d224932e5d42ab4739c13caceb6
+      internalID: -525369659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e2f707af6c24f74f8b0d8d1aba01104
+      internalID: -945555869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51e805a7a88c246469e56f94f33130db
+      internalID: 1330363658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 662885249f571044298cf5d33a0eaaa2
+      internalID: -328333178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3067ef9426a8be445a6ee7dbdf27f559
+      internalID: -837232599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be769668e5706674fb836ce453793fa4
+      internalID: 806423151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe44dbba6a25b274596758c8a903c95f
+      internalID: -1384215586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9fd559e988f21b40a4c600e1735f957
+      internalID: 248378913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Death_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67cc32968d37f7645b5eb858ab2f3906
+      internalID: 213849509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00648cd836d8bd242932d671ac340c76
+      internalID: -1870994341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8d833ccaaca71d47a809b139d4cc7d6
+      internalID: -1735145257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c95d3d3cd80efef4f9932c961bff46cf
+      internalID: 1193030651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0504a90a9d46eb147b6e8a45d6fdd49a
+      internalID: 579823479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06fe63c2c713f314ab321eec897b929d
+      internalID: -76462394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac82260ea57904f4e92ccd0dbafd7377
+      internalID: 1187156421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cf3b79af0a46b649be931c31ae5f5c3
+      internalID: -601902125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed03409385d2e7347b432dd89f77af3b
+      internalID: 595819780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b678463376c83d43a88116a122e0982
+      internalID: 1169325854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92baf47d374138e4690177b01f75a679
+      internalID: 1906602793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34e1740cc417c2a4a9acb524b7eb7102
+      internalID: 765294026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed6cdbbbd4a45b04983a7bfcc7ea45ea
+      internalID: 322194354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de47069263650dd41a86d03d1d78d3cc
+      internalID: 1002531003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63264b53ddce67849a284029e79a0e1c
+      internalID: 568889896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6598d085ee220ac4598228610a923bdf
+      internalID: -772664063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Hit_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54c0620ec9ac7ac459c60b3ce53b9518
+      internalID: -2094535006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 992703ed3cae22a4394001c1d0167c5b
+      internalID: 601640244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ce1d0cc772da86419e795de51560f39
+      internalID: -449045220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a90fea7cc1203fe4f8b25113fbef7352
+      internalID: 1150483610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70ff502b7a3d7d84ca3328b2f373b0c9
+      internalID: 1856965471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95512ca73c398e249a04de26cdc6df5d
+      internalID: 469847335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ee148ed3e23271479690b85e5aa3311
+      internalID: 736482548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a9a888139fe3be4eaa4c8676aaaa11b
+      internalID: -479292839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 116e02f2e2d513a4aa59655de25cda5a
+      internalID: 1053893495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e1a849b44443a34797efa6f8c3458c3
+      internalID: 544887315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43ffef090f14079498e41b373f1a5cae
+      internalID: -1830042086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fd0f286bb8ecf64fb13b561ac008394
+      internalID: -1961890634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a9848b1345c05e4c848ad045b2650fa
+      internalID: 1457087776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ebfde3b7ff5c014c91565c543caf46a
+      internalID: 655302615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a06aabf679d7fa94a8ae637960dd09c2
+      internalID: 1377547993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58268097fd8c01f4b80ef626f258ac4b
+      internalID: 731836038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Standing_Walk_Forward_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 009f72202640efc43a0f5e7d7d631f75
+      internalID: 1375017170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4501b7aa9afd8eb4baeae5835731a73b
+      internalID: 1149133263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a66b6759e30c1d4193248f69f484df2
+      internalID: -1686035614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c51736d5fc3566249919e05c97cf1fd7
+      internalID: 427954943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51ad5e4e5c84f4242832fdd5f95d9fa9
+      internalID: 401640337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 76361181439ac8148b3bed7724c6e4ce
+      internalID: -649373187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63c2f312a2549044abc4e8677c527ef1
+      internalID: 312175329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1a849b819c0c11429f90d1ec24ec157
+      internalID: -1828567331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d332d1005e992b4c9eaaff526596a82
+      internalID: -1284346855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0aa7311ed03bb1e4aaf7572daeaa2596
+      internalID: -580378515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a0cb9f9e54d7694fa8293a42f0d8b66
+      internalID: -72453090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b310d701283ed14eb279cf952f7071a
+      internalID: 578018725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b5185e218b4f834b985d453886c7211
+      internalID: 1598251619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b19727759407af641819c35e22412aed
+      internalID: 180115249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 737fb8832acd8be42bee1ba86f83c819
+      internalID: -353468979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66344e7c4c45d9d4181456c106b5a833
+      internalID: -2062222105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Right_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 350b549c2486d6647a680d3318200a25
+      internalID: -1649953569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94665f9528aed664ea81ba53ac67c29b
+      internalID: 1298749035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c94587a4eda58446b2494f5b9bc840e
+      internalID: -759439052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e59ff1529f541804785fbbddd6cd3b12
+      internalID: -16783927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2579dce5fbaf3b549bc98b8844383307
+      internalID: 873033932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f97ab1c6e4315db45a9b902535f1c26f
+      internalID: 1346772799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e34a3a45735e172408baf611aaa6bcfa
+      internalID: 225028115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c57160cab328bba4b9a83f6975119b6a
+      internalID: -405305689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea68e0cc3d50c1b42987dd0ff0759bbe
+      internalID: -1947933000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b22eb6b252f2fd4db82fb3070f4132e
+      internalID: -92796086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e008205195bb62b4f960b78816d1e86b
+      internalID: -880357779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d856e159217a9854a9240dc1931b2ce3
+      internalID: -1310888296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d640c391820d554a8d103a269849e10
+      internalID: -1500364496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a6dc78bc02c1584191d6297306f4b8c
+      internalID: -1082013098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9549e6fde0b1be4584fb1216fbf1c26
+      internalID: 1616490875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4ba74fe4af9b8243939f1dae6ffaab9
+      internalID: -1866928757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Turn_Left_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aab464b0fc4991644aed1fcd21f33292
+      internalID: 1592031835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ff2159f7986aef4f87af05d7700a330
+      internalID: -104838869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e388c654c6ff4e14285142b2942c65ea
+      internalID: 2134354185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a910db01bfbc9994aa7cda6a9002ec56
+      internalID: 1601702330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48d0affe97ba32441a1d288fc8aea730
+      internalID: 897512228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c90ce6562bdd3894d94570af164da573
+      internalID: 1026049662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04acab7f3529bd747bc8f394aedf28bb
+      internalID: -1529462742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cbc7713e1986f56449d20b7696dca53f
+      internalID: 1727071840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16ca4d765dabe704aa8602e3f270f05e
+      internalID: -229496987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c730db79d2149ec43a9cf96d1214a792
+      internalID: -1064834729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03d9334563b6a1849a29ee66f8e67790
+      internalID: -1461254924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f00d50cbf3f689b4c8a9f84a23b4c84e
+      internalID: -997213966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1dc7e9b6fd0e08c42aa954cb8aa69dd1
+      internalID: -2041568592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89d0d9a21ff877c41aa3936fd5aecfd0
+      internalID: -1503973927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ef33100953de7c45b6bbe1bac636ad6
+      internalID: 89644674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c174c1de5b2617940bc9f4eb6bd005b6
+      internalID: 46704519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Block_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbfdc0fd0386df040b1f879178e589fe
+      internalID: -334487792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2dc291ced552564e858a66c155d7483
+      internalID: -1984037894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8fbb9cceaa85fcf45b9fee1f083263ff
+      internalID: 2054651187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5befc99cb229fb44aed8d32f1d8cf75
+      internalID: -697046699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 423a8b1ed45729b4c87110ddc37324ac
+      internalID: -157281911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b89910e6db84ff448caa51e853c9bb8
+      internalID: -1666058620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ba15e574fdd90e4bb593574ace02dc8
+      internalID: 1582099556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cac3855a082deca4f99264615f9533bc
+      internalID: -870079998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4a556400f645b34cb906a7d8d98aa8d
+      internalID: -141658280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a689c8a78e310a4e8fbd56b818aaaca
+      internalID: 2098791731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a219857a0adc614db458915f80c7252
+      internalID: -210997211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96b22440bbce667488b62c8f785236ac
+      internalID: 1460769537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 896a1cd74cdc02b4188767be119ea399
+      internalID: -194273032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9f672e5897986f4ebe8fe330143ef9c
+      internalID: 1961529255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26acc6399c44d144ea4e644a30477aad
+      internalID: -2072432922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 629c473ef9c0abf49a5297c6b2cd89c9
+      internalID: -967835473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Elf_Forward_Attack_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9d35ccf5e61e0542b195365943ad1ef
+      internalID: 1053157996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 8ba0d07e9f2504d428f0e40fc5b773d1
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Elf_Forward_Action_00: 1230980569
+      Elf_Forward_Action_01: 570879002
+      Elf_Forward_Action_02: -1169313212
+      Elf_Forward_Action_03: -723074099
+      Elf_Forward_Action_04: 227379716
+      Elf_Forward_Action_05: 843954994
+      Elf_Forward_Action_06: 1563491763
+      Elf_Forward_Action_07: 1274188395
+      Elf_Forward_Action_08: -1256512649
+      Elf_Forward_Action_09: 1674012616
+      Elf_Forward_Action_10: -507402607
+      Elf_Forward_Action_11: 2035303168
+      Elf_Forward_Action_12: -1677048809
+      Elf_Forward_Action_13: -413982545
+      Elf_Forward_Action_14: 1656624750
+      Elf_Forward_Action_15: -5196531
+      Elf_Forward_Attack_00: -1984037894
+      Elf_Forward_Attack_01: 2054651187
+      Elf_Forward_Attack_02: -697046699
+      Elf_Forward_Attack_03: -157281911
+      Elf_Forward_Attack_04: -1666058620
+      Elf_Forward_Attack_05: 1582099556
+      Elf_Forward_Attack_06: -870079998
+      Elf_Forward_Attack_07: -141658280
+      Elf_Forward_Attack_08: 2098791731
+      Elf_Forward_Attack_09: -210997211
+      Elf_Forward_Attack_10: 1460769537
+      Elf_Forward_Attack_11: -194273032
+      Elf_Forward_Attack_12: 1961529255
+      Elf_Forward_Attack_13: -2072432922
+      Elf_Forward_Attack_14: -967835473
+      Elf_Forward_Attack_15: 1053157996
+      Elf_Forward_Block_00: -104838869
+      Elf_Forward_Block_01: 2134354185
+      Elf_Forward_Block_02: 1601702330
+      Elf_Forward_Block_03: 897512228
+      Elf_Forward_Block_04: 1026049662
+      Elf_Forward_Block_05: -1529462742
+      Elf_Forward_Block_06: 1727071840
+      Elf_Forward_Block_07: -229496987
+      Elf_Forward_Block_08: -1064834729
+      Elf_Forward_Block_09: -1461254924
+      Elf_Forward_Block_10: -997213966
+      Elf_Forward_Block_11: -2041568592
+      Elf_Forward_Block_12: -1503973927
+      Elf_Forward_Block_13: 89644674
+      Elf_Forward_Block_14: 46704519
+      Elf_Forward_Block_15: -334487792
+      Elf_Forward_Crouch_Idle_00: 942071448
+      Elf_Forward_Crouch_Idle_01: 687942727
+      Elf_Forward_Crouch_Idle_02: -878007955
+      Elf_Forward_Crouch_Idle_03: 1345513954
+      Elf_Forward_Crouch_Idle_04: -1851517658
+      Elf_Forward_Crouch_Idle_05: -803726156
+      Elf_Forward_Crouch_Idle_06: -1553495964
+      Elf_Forward_Crouch_Idle_07: 1467793496
+      Elf_Forward_Crouch_Idle_08: -866045708
+      Elf_Forward_Crouch_Idle_09: 382236193
+      Elf_Forward_Crouch_Idle_10: 145944719
+      Elf_Forward_Crouch_Idle_11: 184281517
+      Elf_Forward_Crouch_Idle_12: 1052253831
+      Elf_Forward_Crouch_Idle_13: 1771974102
+      Elf_Forward_Crouch_Idle_14: -1719242989
+      Elf_Forward_Crouch_Idle_15: -370032505
+      Elf_Forward_Death_00: -74248590
+      Elf_Forward_Death_01: -295940596
+      Elf_Forward_Death_02: -841548049
+      Elf_Forward_Death_03: 829939682
+      Elf_Forward_Death_04: 235611348
+      Elf_Forward_Death_05: -1845373252
+      Elf_Forward_Death_06: -560213447
+      Elf_Forward_Death_07: -525369659
+      Elf_Forward_Death_08: -945555869
+      Elf_Forward_Death_09: 1330363658
+      Elf_Forward_Death_10: -328333178
+      Elf_Forward_Death_11: -837232599
+      Elf_Forward_Death_12: 806423151
+      Elf_Forward_Death_13: -1384215586
+      Elf_Forward_Death_14: 248378913
+      Elf_Forward_Death_15: 213849509
+      Elf_Forward_Hit_00: -1870994341
+      Elf_Forward_Hit_01: -1735145257
+      Elf_Forward_Hit_02: 1193030651
+      Elf_Forward_Hit_03: 579823479
+      Elf_Forward_Hit_04: -76462394
+      Elf_Forward_Hit_05: 1187156421
+      Elf_Forward_Hit_06: -601902125
+      Elf_Forward_Hit_07: 595819780
+      Elf_Forward_Hit_08: 1169325854
+      Elf_Forward_Hit_09: 1906602793
+      Elf_Forward_Hit_10: 765294026
+      Elf_Forward_Hit_11: 322194354
+      Elf_Forward_Hit_12: 1002531003
+      Elf_Forward_Hit_13: 568889896
+      Elf_Forward_Hit_14: -772664063
+      Elf_Forward_Hit_15: -2094535006
+      Elf_Forward_Magic_00: 1354252707
+      Elf_Forward_Magic_01: 705768571
+      Elf_Forward_Magic_02: -1161421310
+      Elf_Forward_Magic_03: 1799430197
+      Elf_Forward_Magic_04: -1399346615
+      Elf_Forward_Magic_05: 1681243418
+      Elf_Forward_Magic_06: 1230969828
+      Elf_Forward_Magic_07: -1514083122
+      Elf_Forward_Magic_08: 319825554
+      Elf_Forward_Magic_09: -968449209
+      Elf_Forward_Magic_10: -430564098
+      Elf_Forward_Magic_11: -1815433639
+      Elf_Forward_Magic_12: 2130610557
+      Elf_Forward_Magic_13: -125799889
+      Elf_Forward_Magic_14: -1822218224
+      Elf_Forward_Magic_15: 1900926464
+      Elf_Forward_Standing_Walk_Forward_00: 601640244
+      Elf_Forward_Standing_Walk_Forward_01: -449045220
+      Elf_Forward_Standing_Walk_Forward_02: 1150483610
+      Elf_Forward_Standing_Walk_Forward_03: 1856965471
+      Elf_Forward_Standing_Walk_Forward_04: 469847335
+      Elf_Forward_Standing_Walk_Forward_05: 736482548
+      Elf_Forward_Standing_Walk_Forward_06: -479292839
+      Elf_Forward_Standing_Walk_Forward_07: 1053893495
+      Elf_Forward_Standing_Walk_Forward_08: 544887315
+      Elf_Forward_Standing_Walk_Forward_09: -1830042086
+      Elf_Forward_Standing_Walk_Forward_10: -1961890634
+      Elf_Forward_Standing_Walk_Forward_11: 1457087776
+      Elf_Forward_Standing_Walk_Forward_12: 655302615
+      Elf_Forward_Standing_Walk_Forward_13: 1377547993
+      Elf_Forward_Standing_Walk_Forward_14: 731836038
+      Elf_Forward_Standing_Walk_Forward_15: 1375017170
+      Elf_Forward_Turn_Left_00: 1298749035
+      Elf_Forward_Turn_Left_01: -759439052
+      Elf_Forward_Turn_Left_02: -16783927
+      Elf_Forward_Turn_Left_03: 873033932
+      Elf_Forward_Turn_Left_04: 1346772799
+      Elf_Forward_Turn_Left_05: 225028115
+      Elf_Forward_Turn_Left_06: -405305689
+      Elf_Forward_Turn_Left_07: -1947933000
+      Elf_Forward_Turn_Left_08: -92796086
+      Elf_Forward_Turn_Left_09: -880357779
+      Elf_Forward_Turn_Left_10: -1310888296
+      Elf_Forward_Turn_Left_11: -1500364496
+      Elf_Forward_Turn_Left_12: -1082013098
+      Elf_Forward_Turn_Left_13: 1616490875
+      Elf_Forward_Turn_Left_14: -1866928757
+      Elf_Forward_Turn_Left_15: 1592031835
+      Elf_Forward_Turn_Right_00: 1149133263
+      Elf_Forward_Turn_Right_01: -1686035614
+      Elf_Forward_Turn_Right_02: 427954943
+      Elf_Forward_Turn_Right_03: 401640337
+      Elf_Forward_Turn_Right_04: -649373187
+      Elf_Forward_Turn_Right_05: 312175329
+      Elf_Forward_Turn_Right_06: -1828567331
+      Elf_Forward_Turn_Right_07: -1284346855
+      Elf_Forward_Turn_Right_08: -580378515
+      Elf_Forward_Turn_Right_09: -72453090
+      Elf_Forward_Turn_Right_10: 578018725
+      Elf_Forward_Turn_Right_11: 1598251619
+      Elf_Forward_Turn_Right_12: 180115249
+      Elf_Forward_Turn_Right_13: -353468979
+      Elf_Forward_Turn_Right_14: -2062222105
+      Elf_Forward_Turn_Right_15: -1649953569
+      Elf_Forward_idle_look_00: 649234537
+      Elf_Forward_idle_look_01: -1412597816
+      Elf_Forward_idle_look_02: -265466959
+      Elf_Forward_idle_look_03: 493386111
+      Elf_Forward_idle_look_04: 2131910552
+      Elf_Forward_idle_look_05: 2089634450
+      Elf_Forward_idle_look_06: 25212077
+      Elf_Forward_idle_look_07: -1590105920
+      Elf_Forward_idle_look_08: 1728156034
+      Elf_Forward_idle_look_09: 1228566162
+      Elf_Forward_idle_look_10: -1600155511
+      Elf_Forward_idle_look_11: -233287195
+      Elf_Forward_idle_look_12: -1155899391
+      Elf_Forward_idle_look_13: 485269008
+      Elf_Forward_idle_look_14: -1248173442
+      Elf_Forward_idle_look_15: -1921301849
+      Elf_Forward_standing_idle_00: 886833559
+      Elf_Forward_standing_idle_01: 570061075
+      Elf_Forward_standing_idle_02: 1214871140
+      Elf_Forward_standing_idle_03: 645391473
+      Elf_Forward_standing_idle_04: 908455921
+      Elf_Forward_standing_idle_05: -753349530
+      Elf_Forward_standing_idle_06: -2011257873
+      Elf_Forward_standing_idle_07: 1915346859
+      Elf_Forward_standing_idle_08: -1380559542
+      Elf_Forward_standing_idle_09: -1587398482
+      Elf_Forward_standing_idle_10: 1689242763
+      Elf_Forward_standing_idle_11: 1135393908
+      Elf_Forward_standing_idle_12: 915064051
+      Elf_Forward_standing_idle_13: -1201337055
+      Elf_Forward_standing_idle_14: 1931037082
+      Elf_Forward_standing_idle_15: 1284479989
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,8 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // Shows a card enlarged ("unfolded") in the center of the screen. Extracted out of
 // CardBloomWheel so any token card (not just ones in the now-retired bloom wheel) can
 // unfold into a full card on hover, per the same visual language (fly-in, backdrop fade).
+// Also supports previewing several cards at once (e.g. a character card plus its army's
+// cards), laid out in a horizontal row that scales down to stay within the screen width.
 public class CardCenterPreview : MonoBehaviour
 {
     public static CardCenterPreview Instance { get; private set; }
@@ -11,6 +15,12 @@ public class CardCenterPreview : MonoBehaviour
     [Tooltip("Optional RectTransform the preview is parented under. If unassigned, the preview is centered on the parent canvas.")]
     [SerializeField] private RectTransform centerPreviewAnchor;
     [SerializeField] private float centerPreviewScale = 1.5f;
+
+    [Header("Center Preview - Multiple Cards")]
+    [Tooltip("Horizontal gap (template-local units, before scaling) between cards when previewing more than one at once.")]
+    [SerializeField] private float multiCardSpacing = 40f;
+    [Tooltip("Fraction of the available canvas width the combined row of cards is allowed to occupy before being scaled down to fit.")]
+    [Range(0.5f, 1f)][SerializeField] private float multiCardMaxWidthFraction = 0.92f;
 
     [Header("Center Preview Transition")]
     [Tooltip("Full-screen black backdrop (with CanvasGroup) faded in while a card is previewed and faded out when hidden.")]
@@ -29,9 +39,11 @@ public class CardCenterPreview : MonoBehaviour
     [SerializeField] private float previewExitDuration = 0.16f;
 
     private Canvas parentCanvas;
-    private GameObject centerPreviewInstance;
-    private RectTransform centerPreviewRect;
-    private CanvasGroup centerPreviewGroup;
+    private readonly List<GameObject> centerPreviewInstances = new();
+    private readonly List<RectTransform> centerPreviewRects = new();
+    private readonly List<CanvasGroup> centerPreviewGroups = new();
+    private readonly List<Vector2> centerPreviewTargetPositions = new();
+    private float centerPreviewFinalScale;
     private float previewIntroT;
     private float backdropAlpha;
     private bool previewActive;
@@ -42,7 +54,7 @@ public class CardCenterPreview : MonoBehaviour
     private float BackdropMax => backdropMaxAlpha > 0.001f ? Mathf.Clamp01(backdropMaxAlpha) : 0.85f;
     private float IntroStartScale => previewIntroStartScale > 0.001f ? previewIntroStartScale : 0.55f;
 
-    public RectTransform CurrentPreviewRect => centerPreviewRect;
+    public RectTransform CurrentPreviewRect => centerPreviewRects.Count > 0 ? centerPreviewRects[0] : null;
 
     private void Awake()
     {
@@ -64,6 +76,46 @@ public class CardCenterPreview : MonoBehaviour
     public void ShowPreview(CardData data)
     {
         if (data == null) return;
+        ShowPreview(new List<CardData> { data });
+    }
+
+    // Shared by every character-hover site (roster lists, hex map): the character's own
+    // card, plus one card per distinct troop type if they command an army. includeArmyCards
+    // lets callers hide troop composition for characters that aren't fully scouted, matching
+    // SelectedCharacterIcon.RefreshHoverPreview's existing showArtifacts gating.
+    public void ShowPreviewForCharacter(Character character, bool includeArmyCards = true)
+    {
+        if (character == null) return;
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return;
+
+        List<CardData> previewCards = new();
+        CardData characterCard = deckManager.FindAnyCardByName(character.characterName);
+        if (characterCard != null) previewCards.Add(characterCard);
+
+        if (includeArmyCards && character.IsArmyCommander())
+        {
+            Army army = character.GetArmy();
+            IEnumerable<string> troopNames = army?.GetTroopGroups()
+                .Where(group => group != null && !string.IsNullOrWhiteSpace(group.troopName))
+                .Select(group => group.troopName)
+                .Distinct(System.StringComparer.OrdinalIgnoreCase);
+            foreach (string troopName in troopNames ?? Enumerable.Empty<string>())
+            {
+                CardData troopCard = deckManager.FindArmyCardByName(troopName);
+                if (troopCard != null) previewCards.Add(troopCard);
+            }
+        }
+
+        if (previewCards.Count > 0) ShowPreview(previewCards);
+    }
+
+    // Shows several cards side by side (e.g. a character plus its army's cards). A single
+    // entry behaves identically to ShowPreview(CardData) — same centered position and scale.
+    public void ShowPreview(IReadOnlyList<CardData> cardsData)
+    {
+        List<CardData> validCards = cardsData?.Where(c => c != null).ToList();
+        if (validCards == null || validCards.Count == 0) return;
 
         ClearPreview();
         Transform parent = centerPreviewAnchor != null
@@ -74,35 +126,63 @@ public class CardCenterPreview : MonoBehaviour
         GameObject template = deckManager != null ? deckManager.GetCardPrefabTemplate() : null;
         if (template == null) return;
 
-        centerPreviewInstance = Instantiate(template, parent, false);
-        centerPreviewInstance.name = $"CardCenterPreview_{data.name}";
-        centerPreviewInstance.SetActive(true);
-        centerPreviewRect = centerPreviewInstance.GetComponent<RectTransform>();
-        if (centerPreviewRect != null)
+        float cardWidth = template.TryGetComponent(out RectTransform templateRect) ? templateRect.rect.width : 0f;
+        if (cardWidth <= 0f) cardWidth = 1f;
+
+        int count = validCards.Count;
+        float step = cardWidth + multiCardSpacing;
+        float contentWidth = count > 1 ? (count - 1) * step + cardWidth : cardWidth;
+
+        float availableWidth = ResolveAvailableWidth() * multiCardMaxWidthFraction;
+        float scale = centerPreviewScale;
+        if (availableWidth > 0f && contentWidth * scale > availableWidth)
+            scale = availableWidth / contentWidth;
+        centerPreviewFinalScale = scale;
+
+        for (int i = 0; i < count; i++)
         {
-            Vector2 center = new(0.5f, 0.5f);
-            centerPreviewRect.anchorMin = center;
-            centerPreviewRect.anchorMax = center;
-            centerPreviewRect.pivot = center;
+            GameObject instance = Instantiate(template, parent, false);
+            instance.name = $"CardCenterPreview_{validCards[i].name}";
+            instance.SetActive(true);
+
+            RectTransform rect = instance.GetComponent<RectTransform>();
+            Vector2 targetPos = Vector2.zero;
+            if (rect != null)
+            {
+                Vector2 center = new(0.5f, 0.5f);
+                rect.anchorMin = center;
+                rect.anchorMax = center;
+                rect.pivot = center;
+
+                float unscaledX = count > 1 ? (i * step) - contentWidth * 0.5f + cardWidth * 0.5f : 0f;
+                targetPos = new Vector2(unscaledX * scale, 0f);
+            }
+
+            Card previewCard = instance.GetComponent<Card>();
+            if (previewCard != null)
+            {
+                previewCard.InitializePreview(validCards[i]);
+                previewCard.SuppressHoverEffects = true;
+                previewCard.ShowRealCard();
+            }
+
+            CanvasGroup group = instance.GetComponent<CanvasGroup>();
+            if (group == null) group = instance.AddComponent<CanvasGroup>();
+            group.blocksRaycasts = false;
+            group.interactable = false;
+
+            centerPreviewInstances.Add(instance);
+            centerPreviewRects.Add(rect);
+            centerPreviewGroups.Add(group);
+            centerPreviewTargetPositions.Add(targetPos);
         }
 
-        Card previewCard = centerPreviewInstance.GetComponent<Card>();
-        if (previewCard != null)
-        {
-            previewCard.InitializePreview(data);
-            previewCard.SuppressHoverEffects = true;
-            previewCard.ShowRealCard();
-        }
-
-        centerPreviewGroup = centerPreviewInstance.GetComponent<CanvasGroup>();
-        if (centerPreviewGroup == null) centerPreviewGroup = centerPreviewInstance.AddComponent<CanvasGroup>();
-        centerPreviewGroup.blocksRaycasts = false;
-        centerPreviewGroup.interactable = false;
         previewActive = true;
         previewIntroT = 0f;
         ApplyPreviewPose(0f);
         PlaceBackdropBehindPreview(parent);
-        if (centerPreviewRect != null) centerPreviewRect.SetAsLastSibling();
+        for (int i = 0; i < centerPreviewRects.Count; i++)
+            centerPreviewRects[i]?.SetAsLastSibling();
     }
 
     public void HidePreview()
@@ -112,16 +192,17 @@ public class CardCenterPreview : MonoBehaviour
         ClearPreview();
     }
 
-    // Hard teardown: kills the current preview instantly and snaps the backdrop off.
+    // Hard teardown: kills all current preview instances instantly and snaps the backdrop off.
     private void ClearPreview()
     {
-        if (centerPreviewInstance != null)
+        for (int i = 0; i < centerPreviewInstances.Count; i++)
         {
-            Destroy(centerPreviewInstance);
-            centerPreviewInstance = null;
+            if (centerPreviewInstances[i] != null) Destroy(centerPreviewInstances[i]);
         }
-        centerPreviewRect = null;
-        centerPreviewGroup = null;
+        centerPreviewInstances.Clear();
+        centerPreviewRects.Clear();
+        centerPreviewGroups.Clear();
+        centerPreviewTargetPositions.Clear();
         previewIntroT = 0f;
         backdropAlpha = 0f;
         if (centerPreviewBackdrop != null)
@@ -151,26 +232,46 @@ public class CardCenterPreview : MonoBehaviour
             centerPreviewBackdrop.interactable = false;
         }
 
-        if (centerPreviewRect == null) return;
+        if (centerPreviewRects.Count == 0) return;
         previewIntroT = Mathf.MoveTowards(previewIntroT, 1f, Time.deltaTime * TransitionSpeed);
         ApplyPreviewPose(previewIntroT);
     }
 
-    // Positions/scales/fades the active preview at intro progress t (0 = fly-in start, 1 = settled).
+    // Positions/scales/fades every active preview card at intro progress t (0 = fly-in
+    // start, 1 = settled), each relative to its own resting position in the row.
     private void ApplyPreviewPose(float t)
     {
-        if (centerPreviewRect == null) return;
+        if (centerPreviewRects.Count == 0) return;
 
         float eased = EaseOutBack(Mathf.Clamp01(t));
-        float startScale = centerPreviewScale * IntroStartScale;
-        float scale = Mathf.LerpUnclamped(startScale, centerPreviewScale, eased);
+        float startScale = centerPreviewFinalScale * IntroStartScale;
+        float scale = Mathf.LerpUnclamped(startScale, centerPreviewFinalScale, eased);
+        float rotation = Mathf.LerpUnclamped(previewIntroTilt, 0f, eased);
+        float alpha = Mathf.Clamp01(t * 1.6f);
 
-        centerPreviewRect.anchoredPosition = Vector2.LerpUnclamped(previewIntroOffset, Vector2.zero, eased);
-        centerPreviewRect.localScale = Vector3.one * scale;
-        centerPreviewRect.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpUnclamped(previewIntroTilt, 0f, eased));
+        for (int i = 0; i < centerPreviewRects.Count; i++)
+        {
+            RectTransform rect = centerPreviewRects[i];
+            if (rect == null) continue;
 
-        if (centerPreviewGroup != null)
-            centerPreviewGroup.alpha = Mathf.Clamp01(t * 1.6f);
+            Vector2 target = centerPreviewTargetPositions[i];
+            Vector2 introPos = target + previewIntroOffset;
+            rect.anchoredPosition = Vector2.LerpUnclamped(introPos, target, eased);
+            rect.localScale = Vector3.one * scale;
+            rect.localRotation = Quaternion.Euler(0f, 0f, rotation);
+
+            CanvasGroup group = centerPreviewGroups[i];
+            if (group != null) group.alpha = alpha;
+        }
+    }
+
+    // Canvas-local width available for the preview row, before multiCardMaxWidthFraction is applied.
+    private float ResolveAvailableWidth()
+    {
+        RectTransform reference = centerPreviewAnchor != null
+            ? centerPreviewAnchor
+            : (parentCanvas != null ? parentCanvas.rootCanvas.transform as RectTransform : null);
+        return reference != null ? reference.rect.width : 0f;
     }
 
     // Relocates the user-assigned backdrop to sit as a full-screen sibling immediately

@@ -60,8 +60,6 @@ public class PCAction : MaterialRetrieval
 
                 if (heldByEnemy)
                 {
-                    ShowResourcesBlockedByEnemyNotification(character, existingPc);
-
                     int loyaltyLoss = UnityEngine.Random.Range(5, 11);
                     existingPc.loyalty = Mathf.Max(0, existingPc.loyalty - loyaltyLoss);
                     existingPc.hex.RedrawPC();
@@ -70,7 +68,6 @@ public class PCAction : MaterialRetrieval
                 else
                 {
                     ApplyResources(character);
-                    ShowCaravanNotification(character, existingPc);
                 }
             }
             else
@@ -79,7 +76,6 @@ public class PCAction : MaterialRetrieval
                 if (founded)
                 {
                     ApplyResources(character);
-                    ShowCaravanNotification(character, null);
                 }
                 else
                 {
@@ -97,20 +93,6 @@ public class PCAction : MaterialRetrieval
     protected override string GetDescription()
     {
         return card != null ? card.GetRenderedDescription(true) : string.Empty;
-    }
-
-    private string GetResourceSummary()
-    {
-        if (card == null) return "Resources";
-        List<string> parts = new();
-        if (card.leatherGranted > 0) parts.Add($"+{card.leatherGranted} <sprite name=\"leather\">");
-        if (card.mountsGranted > 0) parts.Add($"+{card.mountsGranted} <sprite name=\"mounts\">");
-        if (card.timberGranted > 0) parts.Add($"+{card.timberGranted} <sprite name=\"timber\">");
-        if (card.ironGranted > 0) parts.Add($"+{card.ironGranted} <sprite name=\"iron\">");
-        if (card.steelGranted > 0) parts.Add($"+{card.steelGranted} <sprite name=\"steel\">");
-        if (card.mithrilGranted > 0) parts.Add($"+{card.mithrilGranted} <sprite name=\"mithril\">");
-        if (card.goldGranted > 0) parts.Add($"+{card.goldGranted} <sprite name=\"gold\">");
-        return string.Join("  ", parts);
     }
 
     private bool ApplyResources(Character character)
@@ -258,20 +240,6 @@ public class PCAction : MaterialRetrieval
     public bool IsAlreadyFounded()
     {
         return FindAssociatedPcInGame() != null;
-    }
-
-    private void ShowCaravanNotification(Character character, PC existingPc)
-    {
-        string pcName = ResolveAssociatedPcName();
-        string message = $"A caravan from {pcName} arrives with {GetResourceSummary()}";
-        EventIconsManager.ShowHexAnchoredMessage(EventIconType.CaravanArrival, existingPc?.hex, character?.hex, message, Color.yellow);
-    }
-
-    private void ShowResourcesBlockedByEnemyNotification(Character character, PC existingPc)
-    {
-        string pcName = ResolveAssociatedPcName();
-        string message = $"Resources from {pcName} not available as it's controlled by the enemy";
-        EventIconsManager.ShowHexAnchoredMessage(EventIconType.HexMessage, existingPc?.hex, character?.hex, message, Color.red);
     }
 
     private void ShowLoyaltyReducedNotification(Character character, PC existingPc, int amount)

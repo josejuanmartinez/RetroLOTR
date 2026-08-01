@@ -29,6 +29,11 @@ public class HexSeamlessTerrain : MonoBehaviour
     private static readonly int CellCenterId = Shader.PropertyToID("_CellCenter");
     private static readonly int AspectYId = Shader.PropertyToID("_AspectY");
     private static readonly int GridOnId = Shader.PropertyToID("_GridOn");
+    private static readonly int GridColorId = Shader.PropertyToID("_GridColor");
+    private static readonly int GridIntensityId = Shader.PropertyToID("_GridIntensity");
+    private static readonly int GridWidthId = Shader.PropertyToID("_GridWidth");
+    private static readonly int GridGlowWidthId = Shader.PropertyToID("_GridGlowWidth");
+    private static readonly int GridHueScaleId = Shader.PropertyToID("_GridHueScale");
     private static readonly int[] NeighborTexIds = BuildPropertyIds("_NeighborTex");
     private static readonly int[] NeighborUVIds = BuildPropertyIds("_NeighborUV");
     private static readonly int[] NeighborOffsetIds = BuildPropertyIds("_NeighborOffset");
@@ -64,11 +69,34 @@ public class HexSeamlessTerrain : MonoBehaviour
     /// <summary>Toggles the neon seam grid on the shared runtime material (default off).</summary>
     public static void SetGridEnabled(bool enabled)
     {
-        if (EnsureMaterial()) material.SetFloat(GridOnId, enabled ? 1f : 0f);
+        EnsureInstance();
+        if (!EnsureMaterial()) return;
+        ApplyGridLookOverrides();
+        material.SetFloat(GridOnId, enabled ? 1f : 0f);
+    }
+
+    // Grid look (color/intensity/width/glow/hue) is authored on its own dedicated asset
+    // (Board.hexGridMaterial) rather than hexSeamlessBlendMaterial, so tuning it never means
+    // touching the terrain-blend asset. Re-read every frame (see LateUpdate) rather than only on
+    // toggle, so live edits to that asset's Inspector values (a common way to tune it while
+    // watching the board) show up immediately instead of needing the grid re-toggled or Play
+    // mode restarted.
+    private static void ApplyGridLookOverrides()
+    {
+        Board board = GetBoard();
+        Material gridLook = board != null ? board.hexGridMaterial : null;
+        if (gridLook == null) return;
+
+        material.SetColor(GridColorId, gridLook.GetColor(GridColorId));
+        material.SetFloat(GridIntensityId, gridLook.GetFloat(GridIntensityId));
+        material.SetFloat(GridWidthId, gridLook.GetFloat(GridWidthId));
+        material.SetFloat(GridGlowWidthId, gridLook.GetFloat(GridGlowWidthId));
+        material.SetFloat(GridHueScaleId, gridLook.GetFloat(GridHueScaleId));
     }
 
     private void LateUpdate()
     {
+        if (material != null) ApplyGridLookOverrides();
         Flush();
     }
 

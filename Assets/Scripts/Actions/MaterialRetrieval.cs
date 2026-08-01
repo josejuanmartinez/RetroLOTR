@@ -6,6 +6,7 @@ public class MaterialRetrieval : CharacterAction
     protected override AdvisorType DefaultAdvisorType => AdvisorType.Economic;
     protected override bool ConsumesAction => false;
     protected virtual bool GrantsResourcesImmediately => true;
+    protected override bool ShowsVisibleAiActionNotification => false;
 
     public override void Initialize(Character c, CardData card = null, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {

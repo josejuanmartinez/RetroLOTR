@@ -253,12 +253,16 @@ Shader "RetroLOTR/HexSeamlessBlend"
                 // runtime material keeps _GammaOut 0 or everything washes out.
                 if (_GammaOut > 0.5) result.rgb = LinearToGammaSpace(result.rgb);
                 #endif
-                // Neon grid overlay, added post-gamma so it pops like emissive light. The hue is
-                // derived from the MAP-space position (_CellCenter + s), so both tiles at a seam
-                // compute the identical color and the rainbow flows continuously across the grid.
+                // Neon grid overlay, blended post-gamma so bright tints still pop like emissive
+                // light. The hue is derived from the MAP-space position (_CellCenter + s), so both
+                // tiles at a seam compute the identical color and the rainbow flows continuously
+                // across the grid. Blending (not adding) toward _GridColor — rather than only ever
+                // brightening — is what lets a dark/black _GridColor actually darken the seam into
+                // a solid line instead of contributing nothing (black added to anything is a no-op).
                 float hue = dot(_CellCenter.xy + s, float2(1.0, 0.8)) * _GridHueScale;
                 float3 neon = HueToRgb(hue) * _GridColor.rgb;
-                result.rgb = saturate(result.rgb + neon * (glow * _GridIntensity * _GridOn));
+                float gridMask = saturate(glow * _GridIntensity * _GridOn);
+                result.rgb = lerp(result.rgb, neon, gridMask);
                 result.rgb *= result.a;
                 return result;
             }

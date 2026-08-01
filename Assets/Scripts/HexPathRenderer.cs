@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public enum MovementType
@@ -15,7 +17,31 @@ public class HexPathRenderer : MonoBehaviour
 {
     public static int MAX_REACHABLE_HEXES = 631; // MAX_MOVEMENT OF 14, hex, supposing all cost 1 => 1 + 6 * (n(n+1)/2)
 
+    // How many spline points to generate between each pair of hex centers. The flow animation
+    // (HexPathFlow shader) relies on the LineRenderer's Tile texture mode, which restarts badly
+    // if segments are too coarse, so this needs to stay reasonably high for a fluid look.
+    [SerializeField] private int splineSegmentsPerHex = 8;
+
+    // How long each opportunity-hint route stays on screen before the cycle moves on to the
+    // next candidate hex.
+    [SerializeField] private float opportunityHintDwellSeconds = 1.6f;
+
+    // Distinct material for the opportunity/encounter hint route so it reads as a separate,
+    // ambient cue rather than the actual movement plan (which uses the main LineRenderer's own
+    // material). Falls back to the movement path's material if left unassigned.
+    [SerializeField] private Material hintPathMaterial;
+
+    [Header("Opportunity Hint Marker")]
+    [SerializeField] private TMP_FontAsset hintMarkerFont;
+    [SerializeField] private float hintMarkerFontSize = 3f;
+    [SerializeField] private float hintMarkerPulseSeconds = 0.6f;
+    [SerializeField] private Vector3 hintMarkerLocalOffset = new(0f, 0f, -0.1f);
+
     private LineRenderer lineRenderer;
+    private LineRenderer hintLineRenderer;
+    private Coroutine opportunityHintCoroutine;
+    private TextMeshPro hintMarkerText;
+    private Coroutine hintMarkerPulseCoroutine;
     private Board board;
     private Dictionary<(Character, int), HashSet<Vector2Int>> rangeCache = new();
     private Dictionary<Vector2Int, bool> waterTerrainCache = new();
@@ -52,10 +78,8 @@ public class HexPathRenderer : MonoBehaviour
         if (path == null || path.Count == 0) return;
 
         int movementLeft = character.GetMovementLeft();
-        // Set the line renderer positions
-        lineRenderer.positionCount = path.Count;
-
         bool wasInWater = IsWaterTerrain(from);
+        var hexCenters = new List<Vector3>(path.Count);
 
         // Convert hex coordinates to world positions
         for (int i = 0; i < path.Count; i++)
@@ -66,18 +90,18 @@ public class HexPathRenderer : MonoBehaviour
             {
                 // Get the world position of the hex center
                 Vector3 worldPos = hexObj.transform.position;
-                lineRenderer.SetPosition(i, worldPos);
+                hexCenters.Add(worldPos);
                 if(i != 0)
                 {
                     if(wasInWater != isInWater)
-                    { 
+                    {
                         movementLeft -= movementLeft;
                     } else
                     {
                         movementLeft -= hexObj.GetTerrainCost(character);
                     }
                 }
-                
+
                 hexObj.ShowMovementLeft(movementLeft, character);
             }
             else
@@ -86,6 +110,66 @@ public class HexPathRenderer : MonoBehaviour
                 HidePath();
             }
         }
+
+        DrawFluidPath(hexCenters);
+    }
+
+    // Resamples the straight hex-center-to-hex-center path into a smooth Catmull-Rom spline so
+    // the movement path reads as a fluid, curved trail rather than sharp straight segments.
+    private void DrawFluidPath(List<Vector3> hexCenters)
+    {
+        if (hexCenters.Count == 0)
+        {
+            lineRenderer.positionCount = 0;
+            return;
+        }
+
+        if (hexCenters.Count == 1)
+        {
+            lineRenderer.positionCount = 1;
+            lineRenderer.SetPosition(0, hexCenters[0]);
+            return;
+        }
+
+        List<Vector3> curve = BuildCatmullRomSpline(hexCenters, splineSegmentsPerHex);
+        lineRenderer.positionCount = curve.Count;
+        lineRenderer.SetPositions(curve.ToArray());
+    }
+
+    private static List<Vector3> BuildCatmullRomSpline(List<Vector3> points, int segmentsPerSpan)
+    {
+        var result = new List<Vector3>();
+        int last = points.Count - 1;
+
+        for (int i = 0; i < last; i++)
+        {
+            Vector3 p0 = points[Mathf.Max(i - 1, 0)];
+            Vector3 p1 = points[i];
+            Vector3 p2 = points[i + 1];
+            Vector3 p3 = points[Mathf.Min(i + 2, last)];
+
+            // Skip step 0 past the first span so the shared point between spans isn't duplicated.
+            int startStep = i == 0 ? 0 : 1;
+            for (int s = startStep; s <= segmentsPerSpan; s++)
+            {
+                float t = s / (float)segmentsPerSpan;
+                result.Add(CatmullRom(p0, p1, p2, p3, t));
+            }
+        }
+
+        return result;
+    }
+
+    private static Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    {
+        float t2 = t * t;
+        float t3 = t2 * t;
+        return 0.5f * (
+            2f * p1 +
+            (-p0 + p2) * t +
+            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 +
+            (-p0 + 3f * p1 - 3f * p2 + p3) * t3
+        );
     }
 
     public List<Vector2Int> FindPath(Vector2Int startPos, Vector2Int goalPos, Character character)
@@ -359,9 +443,209 @@ public class HexPathRenderer : MonoBehaviour
 
     public void HidePath()
     {
-        FindObjectsByType<MovementCostManager>(FindObjectsSortMode.None).ToList().ForEach((x) => x.Hide()); 
+        FindObjectsByType<MovementCostManager>(FindObjectsSortMode.None).ToList().ForEach((x) => x.Hide());
         lineRenderer.SetPositions(new Vector3[] { });
         lineRenderer.positionCount = 0;
+    }
+
+    // Cycles a fluid route (same spline + flow shader as the interactive movement path, but on
+    // a separate LineRenderer so it never fights the drag/hover preview) from the character's
+    // hex to each hex in turn, showing exactly one at a time so several candidates don't tangle
+    // into overlapping lines. Used for ambient "you could reach an opportunity card here" cues,
+    // not an actual movement plan - so unlike DrawPathBetweenHexes it never shows the per-hex
+    // movement-cost bubbles.
+    public void StartOpportunityHintCycle(Character character, List<Vector2Int> targetHexes)
+    {
+        StopOpportunityHintCycle();
+        if (character == null || character.hex == null || targetHexes == null || targetHexes.Count == 0) return;
+
+        opportunityHintCoroutine = StartCoroutine(OpportunityHintCycleRoutine(character, targetHexes));
+    }
+
+    public void StopOpportunityHintCycle()
+    {
+        if (opportunityHintCoroutine != null)
+        {
+            StopCoroutine(opportunityHintCoroutine);
+            opportunityHintCoroutine = null;
+        }
+        HideOpportunityHintPath();
+    }
+
+    // One-shot version of the opportunity-hint cycle for a single hex that auto-stops after
+    // durationSeconds - used to point at a specific hex (e.g. an encounter card's target hex)
+    // rather than looping through several candidates forever. Guards against stomping a newer
+    // cycle: if something else (re-)started the hint cycle before this timeout fires, the stale
+    // timeout is a no-op instead of cutting the newer cycle short.
+    public void PulseHintPath(Character character, Vector2Int targetHex, float durationSeconds)
+    {
+        StartOpportunityHintCycle(character, new List<Vector2Int> { targetHex });
+        StartCoroutine(StopHintCycleAfter(opportunityHintCoroutine, durationSeconds));
+    }
+
+    private IEnumerator StopHintCycleAfter(Coroutine cycleToStop, float seconds)
+    {
+        yield return new WaitForSecondsRealtime(seconds);
+        if (opportunityHintCoroutine == cycleToStop)
+        {
+            StopOpportunityHintCycle();
+        }
+    }
+
+    private IEnumerator OpportunityHintCycleRoutine(Character character, List<Vector2Int> targetHexes)
+    {
+        var wait = new WaitForSeconds(opportunityHintDwellSeconds);
+        while (true)
+        {
+            for (int i = 0; i < targetHexes.Count; i++)
+            {
+                if (character == null || character.hex == null) yield break;
+                ShowOpportunityHintPath(character.hex.v2, targetHexes[i], character);
+                yield return wait;
+            }
+        }
+    }
+
+    private void ShowOpportunityHintPath(Vector2Int from, Vector2Int to, Character character)
+    {
+        EnsureHintLineRenderer();
+
+        List<Vector2Int> path = FindPath(from, to, character);
+        if (path == null || path.Count == 0)
+        {
+            hintLineRenderer.positionCount = 0;
+            HideHintMarker();
+            return;
+        }
+
+        var hexCenters = new List<Vector3>(path.Count);
+        foreach (Vector2Int hexPos in path)
+        {
+            if (board.hexes.TryGetValue(hexPos, out Hex hexObj))
+            {
+                hexCenters.Add(hexObj.transform.position);
+            }
+        }
+
+        if (hexCenters.Count == 0)
+        {
+            hintLineRenderer.positionCount = 0;
+            HideHintMarker();
+            return;
+        }
+
+        if (hexCenters.Count == 1)
+        {
+            hintLineRenderer.positionCount = 1;
+            hintLineRenderer.SetPosition(0, hexCenters[0]);
+            ShowHintMarkerAt(hexCenters[0]);
+            return;
+        }
+
+        List<Vector3> curve = BuildCatmullRomSpline(hexCenters, splineSegmentsPerHex);
+        hintLineRenderer.positionCount = curve.Count;
+        hintLineRenderer.SetPositions(curve.ToArray());
+        ShowHintMarkerAt(hexCenters[hexCenters.Count - 1]);
+    }
+
+    private void HideOpportunityHintPath()
+    {
+        if (hintLineRenderer != null) hintLineRenderer.positionCount = 0;
+        HideHintMarker();
+    }
+
+    // Animated "?" cue (Tiny5 font, pulsing white/black) marking the end hex of whichever route
+    // is currently being pulsed - the opportunity-hint cycle or the encounter-card one-shot
+    // pulse both funnel through ShowOpportunityHintPath, so both get the marker for free.
+    private void ShowHintMarkerAt(Vector3 endHexWorldPosition)
+    {
+        EnsureHintMarker();
+        hintMarkerText.transform.position = endHexWorldPosition + hintMarkerLocalOffset;
+        if (!hintMarkerText.gameObject.activeSelf) hintMarkerText.gameObject.SetActive(true);
+        if (hintMarkerPulseCoroutine == null)
+        {
+            hintMarkerPulseCoroutine = StartCoroutine(PulseHintMarkerRoutine());
+        }
+    }
+
+    private void HideHintMarker()
+    {
+        if (hintMarkerPulseCoroutine != null)
+        {
+            StopCoroutine(hintMarkerPulseCoroutine);
+            hintMarkerPulseCoroutine = null;
+        }
+        if (hintMarkerText != null) hintMarkerText.gameObject.SetActive(false);
+    }
+
+    private IEnumerator PulseHintMarkerRoutine()
+    {
+        while (true)
+        {
+            yield return LerpMarkerColor(Color.white, Color.black, hintMarkerPulseSeconds);
+            yield return LerpMarkerColor(Color.black, Color.white, hintMarkerPulseSeconds);
+        }
+    }
+
+    private IEnumerator LerpMarkerColor(Color from, Color to, float duration)
+    {
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            hintMarkerText.color = Color.Lerp(from, to, t / duration);
+            yield return null;
+        }
+        hintMarkerText.color = to;
+    }
+
+    private void EnsureHintMarker()
+    {
+        if (hintMarkerText != null) return;
+
+        GameObject markerObj = new("OpportunityHintMarker");
+        markerObj.transform.SetParent(transform, false);
+        hintMarkerText = markerObj.AddComponent<TextMeshPro>();
+        hintMarkerText.text = "?";
+        hintMarkerText.font = hintMarkerFont;
+        hintMarkerText.fontSize = hintMarkerFontSize;
+        hintMarkerText.alignment = TextAlignmentOptions.Center;
+        hintMarkerText.color = Color.white;
+
+        MeshRenderer markerRenderer = markerObj.GetComponent<MeshRenderer>();
+        if (markerRenderer != null)
+        {
+            markerRenderer.sortingLayerID = hintLineRenderer.sortingLayerID;
+            markerRenderer.sortingOrder = hintLineRenderer.sortingOrder + 1;
+        }
+
+        markerObj.SetActive(false);
+    }
+
+    // Mirrors the authored movement-path LineRenderer's look (material, width, gradient,
+    // sorting) onto a second LineRenderer dedicated to the opportunity-hint cue, built lazily
+    // so boards that never hint an opportunity never pay for it.
+    private void EnsureHintLineRenderer()
+    {
+        if (hintLineRenderer != null) return;
+
+        GameObject hintObj = new("OpportunityHintPath");
+        hintObj.transform.SetParent(transform, false);
+        hintLineRenderer = hintObj.AddComponent<LineRenderer>();
+
+        hintLineRenderer.sharedMaterial = hintPathMaterial != null ? hintPathMaterial : lineRenderer.sharedMaterial;
+        hintLineRenderer.widthCurve = lineRenderer.widthCurve;
+        hintLineRenderer.widthMultiplier = lineRenderer.widthMultiplier;
+        hintLineRenderer.colorGradient = lineRenderer.colorGradient;
+        hintLineRenderer.numCornerVertices = lineRenderer.numCornerVertices;
+        hintLineRenderer.numCapVertices = lineRenderer.numCapVertices;
+        hintLineRenderer.alignment = lineRenderer.alignment;
+        hintLineRenderer.textureMode = lineRenderer.textureMode;
+        hintLineRenderer.textureScale = lineRenderer.textureScale;
+        hintLineRenderer.useWorldSpace = true;
+        hintLineRenderer.sortingLayerID = lineRenderer.sortingLayerID;
+        hintLineRenderer.sortingOrder = lineRenderer.sortingOrder;
+        hintLineRenderer.positionCount = 0;
     }
 
     public HashSet<Vector2Int> FindAllHexesV2InRange(Character character)

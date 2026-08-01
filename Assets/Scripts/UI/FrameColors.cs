@@ -7,39 +7,16 @@ using UnityEngine;
 [ExecuteAlways]
 public class FrameColors : MonoBehaviour
 {
-    [SerializeField] Color tipColor;
     [SerializeField] Color scoutedColor;
     [SerializeField] Color darknessColor;
+    [SerializeField] Color unhoveredColor;
     [SerializeField] SpriteRenderer pcSpriteRenderer;
     [SerializeField] SpriteRenderer terrainSpriteRenderer;
 
-    [Header("Hint Pulse")]
-    [Tooltip("Cycles per second the standing hint (SetHint) pulses between white and tipColor.")]
-    [SerializeField] private float hintPulseSpeed = 2f;
-
     [Header("Situation (toggle here to preview in edit mode)")]
-    [SerializeField] private bool tipping;
     [SerializeField] private bool scouted;
     [SerializeField] private bool darkness;
-    [SerializeField] private bool hinting;
-
-    public void SetTip(bool active)
-    {
-        if (tipping == active) return;
-        tipping = active;
-        Refresh();
-    }
-
-    // Standing hint (not a transient flash like SetTip) for hexes a selected character
-    // could move to and play an opportunity card at. Cleared whenever selection changes.
-    // Reuses tipColor (rather than its own color) but renders as a continuous white<->tipColor
-    // pulse, driven every frame from Update, so it reads as distinct from tip's solid flash.
-    public void SetHint(bool active)
-    {
-        if (hinting == active) return;
-        hinting = active;
-        Refresh();
-    }
+    [SerializeField] private bool hovered;
 
     public void SetScouted(bool active)
     {
@@ -52,6 +29,16 @@ public class FrameColors : MonoBehaviour
     {
         if (darkness == active) return;
         darkness = active;
+        Refresh();
+    }
+
+    // Driven by Hex.Hover()/Unhover() (see OnHoverTile) — mouse over the hex tints it with
+    // scoutedColor as a highlight; moving off falls back to unhoveredColor instead of the
+    // plain idle white, so an un-hovered hex reads as dimmer than one you're pointing at.
+    public void SetHovered(bool active)
+    {
+        if (hovered == active) return;
+        hovered = active;
         Refresh();
     }
 
@@ -72,40 +59,18 @@ public class FrameColors : MonoBehaviour
         Refresh();
     }
 
-    // Drives the hint pulse animation. Tip still wins outright (solid, no pulsing) whenever
-    // both happen to be active — see the priority comment on Refresh below.
-    private void Update()
-    {
-        if (!hinting || tipping) return;
-
-        float t = (Mathf.Sin(Time.time * hintPulseSpeed * Mathf.PI * 2f) + 1f) * 0.5f;
-        ApplyColor(Color.Lerp(Color.white, tipColor, t));
-    }
-
     // pcSpriteRenderer/terrainSpriteRenderer are the hex's actual PC/terrain art
     // renderers (same components as Hex.pcTexture/terrainTexture), not blank
     // overlay sprites - their color is a multiplicative tint on top of the
-    // artwork. So the idle/no-situation state must be Color.white (untinted,
-    // art shows normally), never Color.clear, which would zero the art out.
-    //
-    // Tip is a transient, player-driven cue that takes priority over the
-    // persistent state indicators (darkness/scouted) so it always reads.
-    // Hint sits at the same priority tip used to have over darkness/scouted; while active
-    // and tip is not, Update() takes over every frame to animate the pulse instead of this
-    // method holding a static color.
+    // artwork. So the idle/no-situation state must be a real (non-transparent)
+    // color, never Color.clear, which would zero the art out.
     private void Refresh()
     {
-        if (hinting && !tipping)
-        {
-            ApplyColor(Color.white);
-            return;
-        }
-
         Color color =
-            tipping ? tipColor :
             darkness ? darknessColor :
             scouted ? scoutedColor :
-            Color.white;
+            hovered ? scoutedColor :
+            unhoveredColor;
 
         ApplyColor(color);
     }

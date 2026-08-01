@@ -63,12 +63,14 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
         if (selectedCharacterIcon == null) return;
 
         selectedCharacterIcon.RefreshForHover(character);
+        CardCenterPreview.Instance?.ShowPreviewForCharacter(character);
     }
 
     new public void OnPointerExit(PointerEventData eventData)
     {
         ApplyHoverTint(false);
         CursorManager.Instance?.SetDefaultCursor();
+        CardCenterPreview.Instance?.HidePreview();
         if (selectedCharacterIcon == null)
         {
             Layout layout = FindFirstObjectByType<Layout>();

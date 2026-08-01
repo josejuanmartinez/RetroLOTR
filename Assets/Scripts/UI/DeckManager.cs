@@ -1455,10 +1455,17 @@ public class DeckManager : MonoBehaviour
     {
         EventIconsManager iconsManager = EventIconsManager.FindManager();
         BoardNavigator navigator = BoardNavigator.Instance ?? FindFirstObjectByType<BoardNavigator>();
-        static void showMessage() => MessageDisplay.ShowMessage("An encounter can be investigated", Color.yellow, true);
+        // suppressIcon: the Encounter icon (added below when an icon manager exists) already
+        // covers the "also as an event icon" half of the default Both presentation, with its
+        // own camera-focus behavior on click.
+        static void showMessage() => MessageDisplay.ShowMessage("An encounter can be investigated", Color.yellow, forceImmediate: true, suppressIcon: true);
 
         if (iconsManager != null)
         {
+            // Both is the default presentation: show the text immediately as well as leaving
+            // the persistent event icon below (previously this only ever showed as an icon).
+            showMessage();
+
             iconsManager.AddEventIcon(EventIconType.Encounter, true, () =>
             {
                 if (navigator != null && targetHex != null)
@@ -2179,7 +2186,13 @@ public class DeckManager : MonoBehaviour
         BoardNavigator navigator = BoardNavigator.Instance != null ? BoardNavigator.Instance : FindFirstObjectByType<BoardNavigator>();
         string displayName = FormatDisplayName(regionName);
         string text = $"{displayName} discovered!";
-        Action showMessage = () => MessageDisplay.ShowMessage(text, Color.cyan, true);
+        // suppressIcon: the Discovery icon below already covers the "also as an event icon"
+        // half of the default Both presentation, with its own camera-focus behavior on click.
+        Action showMessage = () => MessageDisplay.ShowMessage(text, Color.cyan, forceImmediate: true, suppressIcon: true);
+
+        // Both is the default presentation: show the text immediately as well as leaving the
+        // persistent event icon below (previously this only ever showed as an icon).
+        showMessage();
 
         if (iconsManager != null)
         {
@@ -2190,10 +2203,6 @@ public class DeckManager : MonoBehaviour
                 else
                     showMessage();
             });
-        }
-        else
-        {
-            showMessage();
         }
     }
 
@@ -2208,9 +2217,17 @@ public class DeckManager : MonoBehaviour
 
         string revealText = string.IsNullOrWhiteSpace(message) ? "The lands were revealed" : message;
 
-        Action showRevealMessage = () => MessageDisplay.ShowMessage(revealText, Color.yellow, true);
+        // suppressIcon: the MapReveal icon (added below when an icon manager exists) already
+        // covers the "also as an event icon" half of the default Both presentation, with its
+        // own camera-focus behavior on click - this action must not pile on a second, redundant
+        // HexMessage icon each time it fires.
+        Action showRevealMessage = () => MessageDisplay.ShowMessage(revealText, Color.yellow, forceImmediate: true, suppressIcon: true);
         if (iconsManager != null)
         {
+            // Both is the default presentation: show the text immediately as well as leaving
+            // the persistent event icon below (previously this only ever showed as an icon).
+            showRevealMessage();
+
             iconsManager.AddEventIcon(
                 EventIconType.MapReveal,
                 true,

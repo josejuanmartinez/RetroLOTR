@@ -15,13 +15,12 @@ public class SelectionDialog : MonoBehaviour
     [SerializeField] private GameObject content;
     [SerializeField] private TextMeshProUGUI messageLabel;
     [SerializeField] private Button noButton;
-    [SerializeField] private TMP_Dropdown dropdown;
     [SerializeField] private Image portraitImage;
     [SerializeField] private CanvasGroup portraitCanvasGroup;
     [SerializeField] private Illustrations illustrations;
     [SerializeField] private TextMeshProUGUI title;
 
-    [Header("Option Buttons — replaces dropdown when assigned")]
+    [Header("Option Buttons")]
     [SerializeField] private Transform optionButtonsContainer;
     [SerializeField] private GameObject optionButtonPrefab;
 
@@ -29,7 +28,6 @@ public class SelectionDialog : MonoBehaviour
     [SerializeField] private TypewriterEffect messageTypewriter;
 
     private readonly List<DialogRequest> queuedRequests = new();
-    private readonly List<TMP_Dropdown.OptionData> dropdownOptions = new();
     private DialogRequest activeRequest;
     private readonly List<Button> optionButtons = new();
     private int selectedButtonIndex = -1;
@@ -82,7 +80,7 @@ public class SelectionDialog : MonoBehaviour
         return Instance.Show(message, yesString, noString, options, null, isAI, portrait, iconType, true, dialogTitle);
     }
 
-    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null)
+    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
     {
         if (Instance == null)
         {
@@ -90,10 +88,10 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, true, dialogTitle);
+        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, true, dialogTitle, optionIcons);
     }
 
-    public static Task<string> AskImmediate(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null)
+    public static Task<string> AskImmediate(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
     {
         if (Instance == null)
         {
@@ -101,10 +99,10 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, false, dialogTitle);
+        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, false, dialogTitle, optionIcons);
     }
 
-    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, bool useEventIcon, string dialogTitle = null)
+    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, bool useEventIcon, string dialogTitle = null, List<string> optionIcons = null)
     {
         BindUiReferences();
         WireUiListeners();
@@ -114,6 +112,7 @@ public class SelectionDialog : MonoBehaviour
             // Show a single dummy option that just dismisses the dialog.
             options = new List<string> { "Close" };
             optionDescriptions = null;
+            optionIcons = null;
         }
 
         var request = new DialogRequest
@@ -124,6 +123,7 @@ public class SelectionDialog : MonoBehaviour
             noString = noString,
             options = options,
             optionDescriptions = optionDescriptions,
+            optionIcons = optionIcons,
             portrait = portrait,
             tcs = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously)
         };
@@ -192,17 +192,8 @@ public class SelectionDialog : MonoBehaviour
     {
         if (activeRequest == null || !HasValidSelection()) return string.Empty;
 
-        if (UseButtonList)
-        {
-            return selectedButtonIndex >= 0 && selectedButtonIndex < activeRequest.options.Count
-                ? activeRequest.options[selectedButtonIndex]
-                : string.Empty;
-        }
-
-        if (dropdown == null) return string.Empty;
-        int optionIndex = dropdown.value - 1;
-        return optionIndex >= 0 && optionIndex < activeRequest.options.Count
-            ? activeRequest.options[optionIndex]
+        return selectedButtonIndex >= 0 && selectedButtonIndex < activeRequest.options.Count
+            ? activeRequest.options[selectedButtonIndex]
             : string.Empty;
     }
 
@@ -242,8 +233,6 @@ public class SelectionDialog : MonoBehaviour
         OpenRequest(queuedRequests[0]);
     }
 
-    private bool UseButtonList => optionButtonsContainer != null;
-
     private void ShowInternal(DialogRequest request)
     {
         if (request == null) return;
@@ -267,29 +256,8 @@ public class SelectionDialog : MonoBehaviour
         }
         UpdatePortrait(request.portrait);
 
-        if (UseButtonList)
-        {
-            if (dropdown != null) dropdown.gameObject.SetActive(false);
-            selectedButtonIndex = -1;
-            BuildOptionButtons(request.options, request.optionDescriptions);
-        }
-        else
-        {
-            if (dropdown != null) dropdown.gameObject.SetActive(true);
-            dropdownOptions.Clear();
-            string placeholderText = string.IsNullOrWhiteSpace(request.yesString) ? "Select an option" : request.yesString;
-            dropdownOptions.Add(new TMP_Dropdown.OptionData(placeholderText));
-            request.options.ForEach(x =>
-            {
-                Color optionColor = GetReadableRandomColor();
-                dropdownOptions.Add(new TMP_Dropdown.OptionData(FormatOptionLabel(x, optionColor)) { color = optionColor });
-            });
-            dropdown.ClearOptions();
-            dropdown.AddOptions(dropdownOptions);
-            dropdown.SetValueWithoutNotify(0);
-            dropdown.RefreshShownValue();
-            UpdateCaptionColor();
-        }
+        selectedButtonIndex = -1;
+        BuildOptionButtons(request.options, request.optionDescriptions, request.optionIcons);
 
         UpdateCloseButtonState();
     }
@@ -301,7 +269,6 @@ public class SelectionDialog : MonoBehaviour
         SetUiObjectActive(messageLabel != null ? messageLabel.gameObject : null, true);
         // Close button removed: options confirm on click, so the dialog never shows it.
         SetUiObjectActive(noButton != null ? noButton.gameObject : null, false);
-        SetUiObjectActive(dropdown != null ? dropdown.gameObject : null, true);
         GameObject imageRoot = FindDialogChild("Image");
         SetUiObjectActive(imageRoot, true);
         SetRectScale(imageRoot, Vector3.one);
@@ -376,6 +343,7 @@ public class SelectionDialog : MonoBehaviour
         public string noString;
         public List<string> options;
         public List<string> optionDescriptions;
+        public List<string> optionIcons;
         public Sprite portrait;
         public TaskCompletionSource<string> tcs;
     }
@@ -434,13 +402,7 @@ public class SelectionDialog : MonoBehaviour
 
     private bool HasValidSelection()
     {
-        if (UseButtonList)
-            return selectedButtonIndex >= 0 && selectedButtonIndex < (activeRequest?.options.Count ?? 0);
-
-        return dropdown != null
-            && dropdown.options != null
-            && dropdown.options.Count > 1
-            && dropdown.value > 0;
+        return selectedButtonIndex >= 0 && selectedButtonIndex < (activeRequest?.options.Count ?? 0);
     }
 
     private void UpdateCloseButtonState()
@@ -469,15 +431,6 @@ public class SelectionDialog : MonoBehaviour
             if (closeButton != null)
             {
                 noButton = closeButton.GetComponent<Button>();
-            }
-        }
-
-        if (dropdown == null)
-        {
-            GameObject dropdownObject = FindDialogChild("Dropdown");
-            if (dropdownObject != null)
-            {
-                dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
             }
         }
 
@@ -546,22 +499,6 @@ public class SelectionDialog : MonoBehaviour
             noButton.onClick.AddListener(CloseCurrentSelection);
             EnsureCloseButtonFallback(noButton.gameObject);
         }
-
-        if (dropdown != null)
-        {
-            dropdown.onValueChanged.RemoveAllListeners();
-            dropdown.onValueChanged.AddListener(value =>
-            {
-                UpdateCaptionColor();
-                // Picking a real option (index 0 is the placeholder) confirms immediately,
-                // mirroring the option-button behaviour now that there is no close button.
-                int optionIndex = value - 1;
-                if (activeRequest?.options != null && optionIndex >= 0 && optionIndex < activeRequest.options.Count)
-                {
-                    Resolve(activeRequest.options[optionIndex]);
-                }
-            });
-        }
     }
 
     private void EnsureCloseButtonFallback(GameObject closeButtonObject)
@@ -582,18 +519,6 @@ public class SelectionDialog : MonoBehaviour
         return child != null ? child.GetComponent<TextMeshProUGUI>() : null;
     }
 
-    private void UpdateCaptionColor()
-    {
-        if (dropdown?.captionText == null)
-        {
-            return;
-        }
-
-        dropdown.captionText.color = HasValidSelection()
-            ? dropdown.options[dropdown.value].color
-            : Color.white;
-    }
-
     private bool IsProtectedDialogContainer(GameObject target)
     {
         if (target == null) return false;
@@ -612,12 +537,6 @@ public class SelectionDialog : MonoBehaviour
         float saturation = Random.Range(0.55f, 1f);
         float value = Random.Range(0.8f, 1f);
         return Color.HSVToRGB(hue, saturation, value);
-    }
-
-    private static string FormatOptionLabel(string text, Color color)
-    {
-        string colorHex = ColorUtility.ToHtmlStringRGB(color);
-        return $"<color=#{colorHex}>{text}</color>";
     }
 
     private static string FormatTitle(string text)
@@ -641,7 +560,7 @@ public class SelectionDialog : MonoBehaviour
 
     // ── Option button list ────────────────────────────────────────────────────
 
-    private void BuildOptionButtons(List<string> options, List<string> descriptions = null)
+    private void BuildOptionButtons(List<string> options, List<string> descriptions = null, List<string> icons = null)
     {
         ClearOptionButtons();
         if (options == null || optionButtonsContainer == null) return;
@@ -650,7 +569,8 @@ public class SelectionDialog : MonoBehaviour
         {
             Color color = GetReadableRandomColor();
             string desc = descriptions != null && i < descriptions.Count ? descriptions[i] : string.Empty;
-            optionButtons.Add(CreateOptionButton(options[i], desc, color, i));
+            string iconOverride = icons != null && i < icons.Count ? icons[i] : null;
+            optionButtons.Add(CreateOptionButton(options[i], desc, color, i, iconOverride));
         }
 
         if (Application.isPlaying)
@@ -683,7 +603,7 @@ public class SelectionDialog : MonoBehaviour
         selectedButtonIndex = -1;
     }
 
-    private Button CreateOptionButton(string text, string description, Color textColor, int index)
+    private Button CreateOptionButton(string text, string description, Color textColor, int index, string iconOverride = null)
     {
         bool hasDesc = !string.IsNullOrWhiteSpace(description);
         string colorHex = ColorUtility.ToHtmlStringRGB(textColor);
@@ -692,10 +612,12 @@ public class SelectionDialog : MonoBehaviour
             : $"<color=#{colorHex}>{text}</color>";
 
         GameObject obj;
+        OptionButtonPrefabManager prefabManager = null;
         if (optionButtonPrefab != null)
         {
             obj = Instantiate(optionButtonPrefab, optionButtonsContainer, false);
             obj.name = $"Option_{index}";
+            prefabManager = obj.GetComponent<OptionButtonPrefabManager>();
         }
         else
         {
@@ -755,18 +677,29 @@ public class SelectionDialog : MonoBehaviour
         le.preferredHeight = hasDesc ? 54f : 36f;
         le.minHeight       = hasDesc ? 44f : 28f;
 
-        Transform arrowChild = obj.transform.Find("Arrow");
-        if (arrowChild != null)
+        if (prefabManager != null)
         {
-            TextMeshProUGUI arrowTmp = arrowChild.GetComponent<TextMeshProUGUI>();
-            if (arrowTmp != null) arrowTmp.color = textColor;
+            // Callers can pass an explicit icon per option (e.g. an encounter's required
+            // skill). Otherwise the option text itself doubles as the icon lookup key,
+            // since it's frequently a character or class name that already resolves
+            // through Illustrations. Arbitrary choice text just yields no icon.
+            prefabManager.Setup(labelText, iconOverride ?? text);
         }
-
-        Transform labelChild = obj.transform.Find("Label");
-        if (labelChild != null)
+        else
         {
-            TextMeshProUGUI labelTmp = labelChild.GetComponent<TextMeshProUGUI>();
-            if (labelTmp != null) labelTmp.text = labelText;
+            Transform arrowChild = obj.transform.Find("Arrow");
+            if (arrowChild != null)
+            {
+                TextMeshProUGUI arrowTmp = arrowChild.GetComponent<TextMeshProUGUI>();
+                if (arrowTmp != null) arrowTmp.color = textColor;
+            }
+
+            Transform labelChild = obj.transform.Find("Label");
+            if (labelChild != null)
+            {
+                TextMeshProUGUI labelTmp = labelChild.GetComponent<TextMeshProUGUI>();
+                if (labelTmp != null) labelTmp.text = labelText;
+            }
         }
 
         Button btn = obj.GetComponent<Button>();
@@ -876,29 +809,9 @@ public class SelectionDialog : MonoBehaviour
         if (title != null) { title.text = FormatTitle(activeRequest.title); title.gameObject.SetActive(true); }
         if (messageLabel != null) messageLabel.text = activeRequest.message;
 
-        if (UseButtonList)
-        {
-            if (dropdown != null) dropdown.gameObject.SetActive(false);
-            BuildOptionButtons(options, descriptions); // resets selectedButtonIndex to -1 internally
-            selectedButtonIndex = 0;                  // re-apply after build
-            UpdateButtonSelectionVisuals();
-        }
-        else if (dropdown != null)
-        {
-            dropdown.gameObject.SetActive(true);
-            dropdownOptions.Clear();
-            dropdownOptions.Add(new TMP_Dropdown.OptionData("Decide"));
-            options.ForEach(x =>
-            {
-                Color c = GetReadableRandomColor();
-                dropdownOptions.Add(new TMP_Dropdown.OptionData(FormatOptionLabel(x, c)) { color = c });
-            });
-            dropdown.ClearOptions();
-            dropdown.AddOptions(dropdownOptions);
-            dropdown.SetValueWithoutNotify(1);
-            dropdown.RefreshShownValue();
-            UpdateCaptionColor();
-        }
+        BuildOptionButtons(options, descriptions); // resets selectedButtonIndex to -1 internally
+        selectedButtonIndex = 0;                  // re-apply after build
+        UpdateButtonSelectionVisuals();
 
         UpdateCloseButtonState();
         UnityEditor.EditorUtility.SetDirty(gameObject);

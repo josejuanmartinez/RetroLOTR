@@ -47,10 +47,14 @@ Shader "Sprites/Outline"
 
             fixed4 OutlineSpriteFrag(v2f IN) : SV_Target
             {
-                fixed4 color = SampleSpriteTexture(IN.texcoord) * IN.color;
+                fixed4 textureColor = SampleSpriteTexture(IN.texcoord);
+                fixed4 color = textureColor * IN.color;
                 color.rgb *= color.a;
 
-                float centerAlpha = color.a;
+                // Build the outline mask from the sprite texture's coverage, not the renderer
+                // tint alpha. Using color.a here makes a dimmed/unhovered opaque character look
+                // transparent to the mask, causing _OutlineColor to bleed over the whole sprite.
+                float centerAlpha = textureColor.a;
                 float2 texel = _MainTex_TexelSize.xy * max(_OutlineSize, 0.0);
 
                 float neighborAlpha = 0.0;
@@ -67,7 +71,7 @@ Shader "Sprites/Outline"
                 fixed3 outlineRgb = _OutlineColor.rgb * outlineAlpha;
 
                 fixed4 result;
-                result.rgb = color.rgb + outlineRgb * (1.0 - color.a);
+                result.rgb = color.rgb + outlineRgb * (1.0 - centerAlpha);
                 result.a = saturate(color.a + outlineAlpha);
                 return result;
             }

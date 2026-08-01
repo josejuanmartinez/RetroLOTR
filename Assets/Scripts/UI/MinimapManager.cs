@@ -62,7 +62,7 @@ public class MinimapManager : MonoBehaviour
 
     private void Update()
     {
-        if (instance.refreshing) StartCoroutine(UpdateCoroutine());
+        if (refreshing) StartCoroutine(UpdateCoroutine());
 
         if (isExpanded && (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0)))
             Close();
@@ -75,7 +75,7 @@ public class MinimapManager : MonoBehaviour
         minimapCamera.enabled = true;
         yield return new WaitForEndOfFrame();
         minimapCamera.enabled = false;
-        instance.refreshing = false;
+        refreshing = false;
     }
 
     // Centers the minimap camera on the generated board and sizes it to frame every hex.
@@ -114,7 +114,7 @@ public class MinimapManager : MonoBehaviour
 
     public static void RefreshMinimap()
     {
-        instance.refreshing = true;
+        if (instance != null) instance.refreshing = true;
     }
 
     public void ToggleMinimapOverview()
