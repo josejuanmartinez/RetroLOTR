@@ -20,6 +20,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private static List<string> _characterCards;
         private static List<string> _armyCards;
         private static List<string> _regions;
+        private static List<string> _hiddenArtifactNames;
         private static Dictionary<TerrainEnum, Sprite> _terrainSprites;
         private static List<CardData> _allCards;
         private static Dictionary<string, CardData> _cardsByName;
@@ -28,6 +29,8 @@ namespace RetroLOTR.Scenarios.EditorTools
         private static readonly Dictionary<string, Sprite> _pcHexCache = new(StringComparer.Ordinal);
         private static bool _pcHexLoaded;
         private static HexTextureMapping _mapping;
+        private static readonly Dictionary<string, Sprite> _characterIdleCache = new(StringComparer.OrdinalIgnoreCase);
+        private const string AnimationSpritesheetsRoot = "Assets/Art/Characters/AnimationSpritesheets";
 
         public static IReadOnlyList<string> PlayableLeaders => _playableLeaders ??= LoadLeaderNames("PlayableLeaderBiomes");
         public static IReadOnlyList<string> NonPlayableLeaders => _nonPlayableLeaders ??= LoadLeaderNames("NonPlayableLeaderBiomes");
@@ -35,6 +38,17 @@ namespace RetroLOTR.Scenarios.EditorTools
         public static IReadOnlyList<string> CharacterCards => _characterCards ??= NamesOfType(CardTypeEnum.Character);
         public static IReadOnlyList<string> ArmyCards => _armyCards ??= NamesOfType(CardTypeEnum.Army);
         public static IReadOnlyList<string> Regions => _regions ??= NamesOfType(CardTypeEnum.Land);
+
+        /// <summary>Names of every artifact in Artifacts.json's hidden pool (the one Board's
+        /// random pass draws from at game start), for the scenario creator's artifact-placement
+        /// picker. Duplicate names (e.g. multiple "Athelas") collapse to one entry — there are
+        /// still that many copies in the pool for PlaceScenarioArtifacts to match against.</summary>
+        public static IReadOnlyList<string> HiddenArtifactNames => _hiddenArtifactNames ??= ArtifactRepository.GetAll()
+            .Where(a => a != null && a.hidden && !string.IsNullOrWhiteSpace(a.artifactName))
+            .Select(a => a.artifactName.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
+            .ToList();
 
         private static List<string> _allCardNames;
 
@@ -171,6 +185,51 @@ namespace RetroLOTR.Scenarios.EditorTools
             }
         }
 
+        /// <summary>
+        /// First frame of the baked "standing idle", Forward-facing spritesheet for a character
+        /// or leader name — the same art CharacterAnimationController shows in-game — so the
+        /// Scenario Creator can preview spawned characters on the map instead of leaving them as
+        /// bare markers. Resolution mirrors CharacterSpritesheets.TryResolveRaceOrName's first two
+        /// tiers (exact name, then that name's Character-card race); unlike the runtime resolver
+        /// this reads the Editor AssetDatabase directly (synchronous, no Addressables load) since
+        /// it only ever runs in-editor. Null if nothing is baked for either.
+        /// </summary>
+        public static Sprite GetCharacterIdleSprite(string characterName)
+        {
+            if (string.IsNullOrWhiteSpace(characterName)) return null;
+            string key = characterName.Trim();
+            if (_characterIdleCache.TryGetValue(key, out Sprite cached)) return cached;
+
+            Sprite sprite = LoadIdleSprite(key);
+            if (sprite == null)
+            {
+                RacesEnum race = GetCard(key)?.race ?? RacesEnum.Common;
+                sprite = LoadIdleSprite(race.ToString());
+            }
+            _characterIdleCache[key] = sprite;
+            return sprite;
+        }
+
+        // Loads the first "standing idle" Forward-facing frame for one AnimationSpritesheets
+        // folder (a character name or a race name). Layout matches CharacterSpritesheets'
+        // AddressRoot convention: [root]/[raceOrName]/[raceOrName]_Forward.{atlas.json,png}.
+        private static Sprite LoadIdleSprite(string raceOrName)
+        {
+            if (string.IsNullOrWhiteSpace(raceOrName)) return null;
+            string stem = $"{AnimationSpritesheetsRoot}/{raceOrName}/{raceOrName}_Forward";
+
+            TextAsset manifestAsset = AssetDatabase.LoadAssetAtPath<TextAsset>($"{stem}.atlas.json");
+            if (manifestAsset == null) return null;
+            CharacterSpritesheets.AtlasManifest manifest = JsonUtility.FromJson<CharacterSpritesheets.AtlasManifest>(manifestAsset.text);
+            CharacterSpritesheets.AtlasState idle = manifest?.states?.Find(s => s != null && s.name == "standing idle");
+            if (idle == null || string.IsNullOrWhiteSpace(idle.spriteNamePrefix)) return null;
+
+            string frameName = $"{idle.spriteNamePrefix}_00";
+            foreach (UnityEngine.Object asset in AssetDatabase.LoadAllAssetsAtPath($"{stem}.png"))
+                if (asset is Sprite sprite && sprite.name == frameName) return sprite;
+            return null;
+        }
+
         /// <summary>All leader names (playable first), used for owner dropdowns.</summary>
         public static List<string> AllLeaders()
         {
@@ -183,6 +242,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         public static void Invalidate()
         {
             _playableLeaders = _nonPlayableLeaders = _pcCards = _characterCards = _armyCards = _regions = null;
+            _hiddenArtifactNames = null;
             _allCardNames = null;
             _playableVariantsByName = null;
             _terrainSprites = null;
@@ -193,6 +253,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             _pcHexCache.Clear();
             _pcHexLoaded = false;
             _mapping = null;
+            _characterIdleCache.Clear();
         }
 
         private static List<string> NamesOfType(CardTypeEnum type)

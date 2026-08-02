@@ -413,7 +413,21 @@ public class PopupManager : MonoBehaviour
 
         if (typeWriterEffect != null && data.typeWrite)
         {
+            // StartCoroutine requires typeWriterEffect's whole ancestor chain to be active in
+            // hierarchy, not just its own GameObject — ShowContainer() only guarantees 'container'
+            // itself is active. An intermediate wrapper (e.g. a ScrollRect's "Content" node) can be
+            // left inactive from before this popup was ever shown, which throws instead of typing.
+            EnsureActiveInHierarchy(typeWriterEffect.transform, container != null ? container.transform : null);
             typeWriterEffect.StartWriting();
+        }
+    }
+
+    private static void EnsureActiveInHierarchy(Transform from, Transform upTo)
+    {
+        for (Transform t = from; t != null; t = t.parent)
+        {
+            if (!t.gameObject.activeSelf) t.gameObject.SetActive(true);
+            if (t == upTo) break;
         }
     }
 

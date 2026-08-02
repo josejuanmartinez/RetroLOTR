@@ -63,6 +63,13 @@ public class NationSpawner : MonoBehaviour
     // Non-Playable Leader name to reassign as owner instead.
     private readonly List<(PC pc, string requiredVariantId, string fallbackOwnerName)> pcVariantOwnership = new();
     private readonly List<(Character character, string requiredVariantId, string fallbackOwnerName)> characterVariantOwnership = new();
+    // Characters/armies authored with an independent spawnCondition (any leader + variant, not
+    // necessarily this entity's owner). Recorded at spawn time and resolved once every playable
+    // leader's variant choice is final, alongside pcVariantOwnership/characterVariantOwnership
+    // above. Unlike ownerVariantId there is no fallback on mismatch — see
+    // ReconcileScenarioSpawnConditions.
+    private readonly List<(Character character, string requiredLeaderName, string requiredVariantId, bool exclude)> characterSpawnConditions = new();
+    private readonly List<(Character commander, string requiredLeaderName, string requiredVariantId, bool exclude)> armySpawnConditions = new();
     // Leaders spawned so far while resolving a scenario, keyed by name — populated during
     // SpawnFromScenario and reused by ReconcileScenarioVariantOwnership to find or lazily spawn a
     // fallback Non-Playable Leader once variant choices are final.
@@ -234,6 +241,8 @@ public class NationSpawner : MonoBehaviour
         placedPositions.Clear();
         pcVariantOwnership.Clear();
         characterVariantOwnership.Clear();
+        characterSpawnConditions.Clear();
+        armySpawnConditions.Clear();
         scenarioLeadersByName.Clear();
 
         // An authored scenario's content is the author's call — never clamp it to the procedural
@@ -318,6 +327,14 @@ public class NationSpawner : MonoBehaviour
 
             if (selfCard.army != null && !selfCard.army.IsEmpty())
                 BuildScenarioArmy(leader, selfCard.army, deckManager);
+
+            // Non-playable self-owned leader cards (e.g. Faramir) have no carousel/pruning
+            // lifecycle to race — unlike playable self-owned/variant cards (nplBiome == null,
+            // excluded here), it's safe to gate the whole identity on an independent
+            // spawnCondition. See ReconcileScenarioSpawnConditions for how the removal (which
+            // must also clean up anything this leader owns) differs from a plain character.
+            if (nplBiome != null && !string.IsNullOrWhiteSpace(selfCard.spawnConditionLeaderName))
+                characterSpawnConditions.Add((leader, selfCard.spawnConditionLeaderName, selfCard.spawnConditionVariantId, selfCard.spawnConditionExclude));
         }
         long leadersMs = Lap();
 
@@ -385,6 +402,11 @@ public class NationSpawner : MonoBehaviour
 
             if (!string.IsNullOrWhiteSpace(sc.ownerVariantId) && owner is PlayableLeader)
                 characterVariantOwnership.Add((character, sc.ownerVariantId, sc.fallbackOwnerName));
+
+            // Companion characters only — a self-owned leader/variant card's presence is governed
+            // by the selection carousel (step 1 above), not by this independent spawn gate.
+            if (!string.IsNullOrWhiteSpace(sc.spawnConditionLeaderName))
+                characterSpawnConditions.Add((character, sc.spawnConditionLeaderName, sc.spawnConditionVariantId, sc.spawnConditionExclude));
         }
         long charactersMs = Lap();
 
@@ -449,6 +471,129 @@ public class NationSpawner : MonoBehaviour
         characterVariantOwnership.Clear();
     }
 
+    // Resolves every scenario character/army authored with an independent spawnCondition, once
+    // every playable leader's variant choice is final (same timing as
+    // ReconcileScenarioVariantOwnership, called right after it from Game.StartGame). Unlike
+    // ownerVariantId this isn't about ownership — a failed condition (including a referenced
+    // leader that was never authored/spawned, or an NPL, which has no variants) simply removes
+    // the character or kills the army outright, no fallback owner.
+    public void ReconcileScenarioSpawnConditions()
+    {
+        // Precomputed once: SpawnFromScenario step 1 lets a scenario author the SAME
+        // non-playable-leader identity at several hexes as mutually exclusive alternates (e.g.
+        // "Beoraborn lives at hex A unless playing the Necromancer, in which case he's at hex B
+        // instead" — two self-owned "Beoraborn" cards with opposite Requires/Excludes
+        // spawnConditions). But spawning always binds that identity's PC/character ownership to
+        // whichever same-named self-owned card happened to be registered LAST in
+        // scenarioLeadersByName ("last one wins", see the comment at that assignment) — entirely
+        // independent of which sibling's own spawnCondition ultimately passes. Without accounting
+        // for that here, the sibling whose condition passes can still be the empty one, while the
+        // sibling actually holding the identity's PCs/characters gets destroyed for failing its
+        // condition. So: look up each failing self-owned leader's same-named sibling that DID pass,
+        // and hand ownership off to it (mirroring PruneUnselectedLeaderVariants' survivor transfer)
+        // instead of destroying everything that identity owns.
+        Dictionary<Character, bool> satisfied = characterSpawnConditions.ToDictionary(
+            e => e.character,
+            e => SpawnConditionSatisfied(e.requiredLeaderName, e.requiredVariantId, e.exclude));
+
+        Dictionary<string, List<Leader>> selfOwnedSiblingsByName = characterSpawnConditions
+            .Where(e => e.character is Leader l && l.owner == null && !string.IsNullOrWhiteSpace(l.characterName))
+            .GroupBy(e => e.character.characterName, StringComparer.OrdinalIgnoreCase)
+            .Where(g => g.Count() > 1)
+            .ToDictionary(g => g.Key, g => g.Select(e => (Leader)e.character).ToList(), StringComparer.OrdinalIgnoreCase);
+
+        foreach ((Character character, string requiredLeaderName, string requiredVariantId, bool exclude) in characterSpawnConditions)
+        {
+            if (character == null || character.hex == null) continue; // already removed by something else
+            if (satisfied[character]) continue;
+
+            // A non-playable self-owned leader card (e.g. Faramir) registers itself here too (see
+            // SpawnFromScenario step 1) — unlike a plain companion, it can own PCs/characters of
+            // its own, so removing it must cascade the same way a pruned leader-variant sibling
+            // does (RemoveUnselectedScenarioLeader's survivor transfer), not just detach it from
+            // its own owner and destroy it.
+            if (character is Leader selfOwnedLeader && character.owner == null)
+            {
+                Leader survivor = null;
+                if (selfOwnedSiblingsByName.TryGetValue(character.characterName, out List<Leader> siblings))
+                    survivor = siblings.FirstOrDefault(sib => sib != selfOwnedLeader && satisfied.TryGetValue(sib, out bool ok) && ok);
+
+                RemoveUnselectedScenarioLeader(selfOwnedLeader, survivor);
+                if (survivor != null) scenarioLeadersByName[character.characterName] = survivor;
+            }
+            else
+            {
+                RemoveUnresolvedScenarioCharacter(character);
+            }
+        }
+        characterSpawnConditions.Clear();
+
+        foreach ((Character commander, string requiredLeaderName, string requiredVariantId, bool exclude) in armySpawnConditions)
+        {
+            if (commander == null) continue;
+            if (SpawnConditionSatisfied(requiredLeaderName, requiredVariantId, exclude)) continue;
+            if (commander.IsArmyCommander() && commander.GetArmy() != null && !commander.GetArmy().killed)
+                commander.GetArmy().Killed(null, false);
+        }
+        armySpawnConditions.Clear();
+    }
+
+    // "Requires" (exclude = false, the default): satisfied only when the named leader IS playing
+    // with requiredVariantId. "Excludes" (exclude = true): satisfied only when it is NOT — either
+    // that leader is absent from the game entirely, or present with a different variant.
+    private bool SpawnConditionSatisfied(string requiredLeaderName, string requiredVariantId, bool exclude)
+    {
+        bool met = SpawnConditionMet(requiredLeaderName, requiredVariantId);
+        return exclude ? !met : met;
+    }
+
+    // True when the named leader (the human player or an AI competitor currently in the game,
+    // looked up by characterName) ended up with the required variant selected. An empty
+    // requiredVariantId means that leader's Base flavor. A leader that can't be found — typo, or
+    // a Non-Playable Leader, which has no variants — never satisfies a named condition.
+    //
+    // Deliberately searches Game.player/competitors rather than scanning every PlayableLeader in
+    // the scene (as this used to via FindObjectsByType). Game.StartGame calls
+    // PruneUnselectedLeaderVariants — which Destroy()s the losing variant siblings of any leader
+    // authored at several hexes — and then, synchronously in the same frame, calls
+    // ReconcileScenarioSpawnConditions (which reaches here). Unity defers Destroy() to end of
+    // frame, so a scene-wide scan can still find, and non-deterministically prefer, an
+    // already-pruned sibling authored with a different variant — silently and intermittently
+    // reporting the wrong variant (or none) for a leader that's actually still in play.
+    // player/competitors don't have this problem: PruneUnselectedLeaderVariants removes a losing
+    // sibling from competitors before destroying it, so only real survivors ever appear here.
+    private bool SpawnConditionMet(string requiredLeaderName, string requiredVariantId)
+    {
+        Game game = FindFirstObjectByType<Game>();
+        if (game == null) return false;
+
+        IEnumerable<PlayableLeader> candidates = game.competitors != null
+            ? new[] { game.player }.Concat(game.competitors)
+            : new[] { game.player };
+
+        foreach (PlayableLeader leader in candidates)
+        {
+            if (leader == null || !string.Equals(leader.characterName, requiredLeaderName, StringComparison.OrdinalIgnoreCase)) continue;
+            return string.Equals(ResolveSelectedVariantId(leader), requiredVariantId ?? "", StringComparison.OrdinalIgnoreCase);
+        }
+        return false;
+    }
+
+    // Mirrors Game.ResolveBannerSprite's subdeckId -> variant lookup: returns the variantId of the
+    // leader's currently selected variant, or "" for the Base flavor / an unresolved subdeck.
+    private static string ResolveSelectedVariantId(PlayableLeader leader)
+    {
+        LeaderBiomeConfig biome = leader.GetBiome();
+        string subdeckId = leader.GetSelectedSubdeckId();
+        if (biome?.variants == null || string.IsNullOrWhiteSpace(subdeckId)) return "";
+
+        LeaderVariantConfig variant = biome.variants.Find(v =>
+            v != null &&
+            ((!string.IsNullOrWhiteSpace(v.variantId) && string.Equals(v.variantId, subdeckId, StringComparison.OrdinalIgnoreCase)) ||
+             (!string.IsNullOrWhiteSpace(v.subdeckId) && string.Equals(v.subdeckId, subdeckId, StringComparison.OrdinalIgnoreCase))));
+        return variant?.variantId ?? "";
+    }
+
     // Resolves the Non-Playable Leader an unresolved PC/character should fall back to on an
     // owner-variant mismatch (ScenarioPC/ScenarioCharacter.fallbackOwnerName), spawning it lazily
     // at the given hex the first time this scenario needs it. Empty name (the default, meaning
@@ -479,12 +624,23 @@ public class NationSpawner : MonoBehaviour
     // messaging/effects, since the game hasn't visibly started yet.
     private void RemoveUnresolvedScenarioCharacter(Character character)
     {
+        Leader owner = character.GetOwner();
+        Hex formerHex = character.hex;
+
         if (character.IsArmyCommander() && character.GetArmy() != null && !character.GetArmy().killed)
             character.GetArmy().Killed(null, false);
 
-        character.GetOwner()?.controlledCharacters.Remove(character);
-        if (character.hex != null && character.hex.characters.Contains(character))
-            character.hex.characters.Remove(character);
+        owner?.controlledCharacters.Remove(character);
+        if (formerHex != null && formerHex.characters.Contains(character))
+            formerHex.characters.Remove(character);
+
+        // Conditional scenario characters are spawned before every variant choice is final.
+        // Their constructor grants their owner visibility from the starting hex, so a failed
+        // Requires/Excludes condition must revoke that center too. Otherwise the removed
+        // character leaves a ghost reveal radius behind (for example Urzahil at @36,45 makes
+        // Morannon at @37,45 visible to The Necromancer).
+        if (owner != null && formerHex != null && !owner.LeaderSeesHex(formerHex))
+            owner.visibleHexes.Remove(formerHex);
 
         currentCharacterCount = Mathf.Max(0, currentCharacterCount - 1);
         Destroy(character.gameObject);
@@ -511,6 +667,13 @@ public class NationSpawner : MonoBehaviour
     // death messaging/effects, since the game hasn't visibly started). Variant-restricted assets
     // (ownerVariantId) are re-checked against the survivor afterwards in
     // ReconcileScenarioVariantOwnership, which runs after pruning in Game.StartGame.
+    //
+    // Also reused by ReconcileScenarioSpawnConditions for a non-playable self-owned leader whose
+    // own spawnCondition failed: survivor is a same-named sibling whose spawnCondition passed
+    // instead (if the scenario authored one — see that method), transferring ownership exactly
+    // like a pruned variant sibling; survivor == null (no such sibling authored) routes every
+    // owned PC/character through RemoveUnresolvedScenarioPc/RemoveUnresolvedScenarioCharacter
+    // instead, which is "this leader never existed" semantics.
     public void RemoveUnselectedScenarioLeader(Leader leader, Leader survivor)
     {
         if (leader == null) return;
@@ -753,12 +916,16 @@ public class NationSpawner : MonoBehaviour
 
             if (!created)
             {
-                commander.CreateArmy(card.troopType, stack.amount, false, 0, abilities);
+                // showSpawnMessage: false — this runs during scenario spawn, before
+                // player.visibleHexes is populated (see Character.CreateArmy), so the "is this
+                // enemy spotted" reveal roll would always miss and misreport a fully-visible
+                // starting leader as "unspotted enemy".
+                commander.CreateArmy(card.troopType, stack.amount, false, 0, abilities, card.name, showSpawnMessage: false);
                 created = true;
             }
             else
             {
-                commander.GetArmy()?.Recruit(card.troopType, stack.amount, abilities);
+                commander.GetArmy()?.Recruit(card.troopType, stack.amount, abilities, card.name, showMessage: false);
             }
         }
 
@@ -766,6 +933,12 @@ public class NationSpawner : MonoBehaviour
         {
             Army result = commander.GetArmy();
             if (result != null) result.xp = Mathf.Clamp(army.xp, 0, 100);
+
+            // Applies to armies belonging to ANY character, including self-owned leader cards —
+            // unlike the character-level spawnCondition, an army's own gate isn't tied to the
+            // carousel lifecycle, so it's honored everywhere BuildScenarioArmy runs.
+            if (!string.IsNullOrWhiteSpace(army.spawnConditionLeaderName))
+                armySpawnConditions.Add((commander, army.spawnConditionLeaderName, army.spawnConditionVariantId, army.spawnConditionExclude));
         }
     }
 
@@ -1105,8 +1278,8 @@ public class NationSpawner : MonoBehaviour
             if (!position.HasValue) continue;
             if (!string.IsNullOrWhiteSpace(config.characterName))
                 leaderPositions[config.characterName] = position.Value;
-            if (!string.IsNullOrWhiteSpace(config.startingCityRegion))
-                ownerlessAnchorPositionByRegion[config.startingCityRegion] = position.Value;
+            if (!string.IsNullOrWhiteSpace(config.noScenarioStart.startingCityRegion))
+                ownerlessAnchorPositionByRegion[config.noScenarioStart.startingCityRegion] = position.Value;
         }
     }
 
@@ -1179,14 +1352,17 @@ public class NationSpawner : MonoBehaviour
         if (!EnsureCharacterCapacity("Skipping leader instantiation."))
             return null;
 
+        // Only this procedural (non-scenario) placement path applies noScenarioStart — every
+        // other call site instantiates leaders for/within an authored scenario, which supplies
+        // its own army and city data and must never also get this default.
         Leader leader;
         if (isPlayable)
         {
-            leader = characterInstantiator.InstantiatePlayableLeader(hex, leaderBiomeConfig);
+            leader = characterInstantiator.InstantiatePlayableLeader(hex, leaderBiomeConfig, applyNoScenarioStart: true);
         }
         else if (leaderBiomeConfig is NonPlayableLeaderBiomeConfig nonPlayableConfig)
         {
-            leader = characterInstantiator.InstantiateNonPlayableLeader(hex, nonPlayableConfig);
+            leader = characterInstantiator.InstantiateNonPlayableLeader(hex, nonPlayableConfig, applyNoScenarioStart: true);
         }
         else
         {
@@ -1215,14 +1391,14 @@ public class NationSpawner : MonoBehaviour
             hex.SetPC(pc, leaderBiomeConfig.pcFeature, leaderBiomeConfig.fortFeature, leaderBiomeConfig.isIsland);
 
             // If we fell back from a shore start and the PC was meant to have a port, strip the port on non-shore terrain.
-            if (leaderBiomeConfig.startsWithPort && leaderBiomeConfig.terrain == TerrainEnum.shore && chosenTerrain != TerrainEnum.shore)
+            if (leaderBiomeConfig.noScenarioStart.startsWithPort && leaderBiomeConfig.noScenarioStart.terrain == TerrainEnum.shore && chosenTerrain != TerrainEnum.shore)
             {
                 pc.hasPort = false;
                 hex.RedrawPC();
             }
 
             // Non-playable leaders that start with a port but have no adjacent water lose the port and warships.
-            if (!isPlayable && leaderBiomeConfig.startsWithPort && !HasNeighboringWater(hex))
+            if (!isPlayable && leaderBiomeConfig.noScenarioStart.startsWithPort && !HasNeighboringWater(hex))
             {
                 if (pc != null && pc.hasPort)
                 {
@@ -1349,10 +1525,10 @@ public class NationSpawner : MonoBehaviour
         Hex hex = board.hexes[v2];
 
         PC pc = new(null, leaderBiomeConfig.startingCityName, leaderBiomeConfig.startingCitySize, leaderBiomeConfig.startingCityFortSize,
-            leaderBiomeConfig.startsWithPort, leaderBiomeConfig.startingCityIsHidden, hex, true);
+            leaderBiomeConfig.noScenarioStart.startsWithPort, leaderBiomeConfig.noScenarioStart.startingCityIsHidden, hex, true);
         hex.SetPC(pc, leaderBiomeConfig.pcFeature, leaderBiomeConfig.fortFeature, leaderBiomeConfig.isIsland);
 
-        if (leaderBiomeConfig.startsWithPort && leaderBiomeConfig.terrain == TerrainEnum.shore && chosenTerrain != TerrainEnum.shore)
+        if (leaderBiomeConfig.noScenarioStart.startsWithPort && leaderBiomeConfig.noScenarioStart.terrain == TerrainEnum.shore && chosenTerrain != TerrainEnum.shore)
         {
             pc.hasPort = false;
             hex.RedrawPC();
@@ -1371,12 +1547,12 @@ public class NationSpawner : MonoBehaviour
 
     private Vector2Int? GetPreferredPositionForStartingCityRegion(LeaderBiomeConfig leaderBiomeConfig)
     {
-        if (leaderBiomeConfig == null || string.IsNullOrWhiteSpace(leaderBiomeConfig.startingCityRegion))
+        if (leaderBiomeConfig == null || string.IsNullOrWhiteSpace(leaderBiomeConfig.noScenarioStart.startingCityRegion))
         {
             return null;
         }
 
-        if (!startingCityPositionsByRegion.TryGetValue(leaderBiomeConfig.startingCityRegion, out List<Vector2Int> positions) ||
+        if (!startingCityPositionsByRegion.TryGetValue(leaderBiomeConfig.noScenarioStart.startingCityRegion, out List<Vector2Int> positions) ||
             positions == null || positions.Count == 0)
         {
             return null;
@@ -1389,15 +1565,15 @@ public class NationSpawner : MonoBehaviour
 
     private void RegisterStartingCityPosition(LeaderBiomeConfig leaderBiomeConfig, Vector2Int position)
     {
-        if (leaderBiomeConfig == null || string.IsNullOrWhiteSpace(leaderBiomeConfig.startingCityRegion))
+        if (leaderBiomeConfig == null || string.IsNullOrWhiteSpace(leaderBiomeConfig.noScenarioStart.startingCityRegion))
         {
             return;
         }
 
-        if (!startingCityPositionsByRegion.TryGetValue(leaderBiomeConfig.startingCityRegion, out List<Vector2Int> positions))
+        if (!startingCityPositionsByRegion.TryGetValue(leaderBiomeConfig.noScenarioStart.startingCityRegion, out List<Vector2Int> positions))
         {
             positions = new List<Vector2Int>();
-            startingCityPositionsByRegion[leaderBiomeConfig.startingCityRegion] = positions;
+            startingCityPositionsByRegion[leaderBiomeConfig.noScenarioStart.startingCityRegion] = positions;
         }
 
         positions.Add(position);
@@ -1441,7 +1617,7 @@ public class NationSpawner : MonoBehaviour
     {
         const float epsilon = 0.0001f;
         Vector3Int targetCube = GetCachedCubeCoordinate(target);
-        List<TerrainEnum> preference = BuildTerrainPreferenceOrder(config.terrain);
+        List<TerrainEnum> preference = BuildTerrainPreferenceOrder(config.noScenarioStart.terrain);
 
         // Track the nearest hex overall, and (separately) the nearest hex at least
         // minDistanceFromTarget away. Prefer the buffered one when it exists.
@@ -1511,13 +1687,13 @@ public class NationSpawner : MonoBehaviour
     {
         if (minSeparation > 0f)
         {
-            foreach (TerrainEnum terrain in BuildTerrainPreferenceOrder(config.terrain))
+            foreach (TerrainEnum terrain in BuildTerrainPreferenceOrder(config.noScenarioStart.terrain))
             {
                 List<Vector2Int> available = GetAvailableHexes(terrain, config.feature);
                 if (available.Count == 0) continue;
                 List<Vector2Int> separated = FilterBySeparation(available, placedPositions, minSeparation);
                 if (separated.Count == 0) continue;
-                if (terrain != config.terrain)
+                if (terrain != config.noScenarioStart.terrain)
                     Debug.LogWarning($"Relaxing terrain to {terrain} for '{config.characterName}' to keep starting nations apart.");
                 chosenTerrain = terrain;
                 return FindFarthestPosition(separated, placedPositions);
@@ -1525,14 +1701,14 @@ public class NationSpawner : MonoBehaviour
             Debug.LogWarning($"Could not honor minimum start separation ({minSeparation}) for '{config.startingCityName ?? config.characterName}'; placing as far as the map allows.");
         }
 
-        foreach (TerrainEnum terrain in BuildTerrainPreferenceOrder(config.terrain))
+        foreach (TerrainEnum terrain in BuildTerrainPreferenceOrder(config.noScenarioStart.terrain))
         {
             List<Vector2Int> available = GetAvailableHexes(terrain, config.feature);
             if (available.Count == 0) continue;
             chosenTerrain = terrain;
             return FindFarthestPosition(available, placedPositions);
         }
-        throw new Exception($"No suitable hexes found for '{config.characterName}' with terrain {config.terrain} (including fallbacks).");
+        throw new Exception($"No suitable hexes found for '{config.characterName}' with terrain {config.noScenarioStart.terrain} (including fallbacks).");
     }
 
     private List<Vector2Int> FilterBySeparation(List<Vector2Int> candidates, List<Vector2Int> placedPositions, float minSeparation)
@@ -1593,7 +1769,7 @@ public class NationSpawner : MonoBehaviour
         foreach (PlayableLeader leader in FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None))
         {
             if (leader == null || leader.hex == null) continue;
-            string region = leader.GetBiome()?.startingCityRegion;
+            string region = leader.GetBiome()?.noScenarioStart.startingCityRegion;
             Vector3Int leaderCube = GetCachedCubeCoordinate(leader.hex.v2);
 
             string ownInfo = "(no anchor registered)";

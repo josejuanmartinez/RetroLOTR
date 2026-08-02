@@ -892,6 +892,23 @@ public class DeckManager : MonoBehaviour
 
         List<CardSituationEnum> activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
 
+        // Character cards are world opportunities at their authored starting PC. PC ownership
+        // is deliberately irrelevant: reaching the place is enough, provided the character card
+        // belongs to this leader's configured deck and its normal costs can be paid.
+        PC currentPc = hex.GetPCData();
+        if (currentPc != null)
+        {
+            foreach (CardData candidate in state.situationPool.Where(c =>
+                c != null
+                && c.GetCardType() == CardTypeEnum.Character
+                && !string.IsNullOrWhiteSpace(c.startingPC)
+                && CardNameUtility.Equals(c.startingPC, currentPc.pcName)))
+            {
+                if (result.Count >= 3) break;
+                if (candidate.EvaluatePlayability(character)) result.Add(candidate);
+            }
+        }
+
         foreach (CardSituationEnum situation in activeSituations)
         {
             if (result.Count >= 3) break;
@@ -909,6 +926,19 @@ public class DeckManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    public bool TryPayOpportunityCardCosts(PlayableLeader leader, CardData card)
+    {
+        if (leader == null || card == null) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
+        if (!state.situationPool.Any(candidate => candidate != null
+            && candidate.cardId == card.cardId
+            && string.Equals(candidate.deckId, card.deckId, StringComparison.OrdinalIgnoreCase))) return false;
+        if (!card.MeetsResourceRequirements(leader)) return false;
+
+        ApplyCardCosts(leader, card);
+        return true;
     }
 
     public IReadOnlyList<CardData> GetDrawPile(PlayableLeader leader)
@@ -2076,9 +2106,9 @@ public class DeckManager : MonoBehaviour
         if (ownerBiome != null
             && !string.IsNullOrWhiteSpace(ownerBiome.startingCityName)
             && string.Equals(NormalizeCardName(ownerBiome.startingCityName), NormalizeCardName(pc.pcName), StringComparison.Ordinal)
-            && !string.IsNullOrWhiteSpace(ownerBiome.startingCityRegion))
+            && !string.IsNullOrWhiteSpace(ownerBiome.noScenarioStart.startingCityRegion))
         {
-            return ownerBiome.startingCityRegion;
+            return ownerBiome.noScenarioStart.startingCityRegion;
         }
 
         string normalizedPcName = NormalizeCardName(pc.pcName);
@@ -2405,7 +2435,10 @@ public class DeckManager : MonoBehaviour
     private void PopulateSituationPool(PlayerDeckState state, string deckId)
     {
         state.situationPool.Clear();
-        IEnumerable<DeckData> allDecks = GetDeckTree(deckId).Concat(GetSharedDecks());
+        bool selectedLeafDeck = deckManifestById.TryGetValue(deckId, out DeckManifestEntry selectedEntry)
+            && !string.IsNullOrWhiteSpace(selectedEntry.parentDeckId);
+        IEnumerable<DeckData> ownedDecks = selectedLeafDeck ? GetDeckChain(deckId) : GetDeckTree(deckId);
+        IEnumerable<DeckData> allDecks = ownedDecks.Concat(GetSharedDecks());
         foreach (DeckData deck in allDecks)
         {
             if (deck?.cards == null) continue;
@@ -2620,7 +2653,9 @@ public class DeckManager : MonoBehaviour
     private static bool ShouldIncludeCardInSituationPool(CardData card)
     {
         if (card == null) return false;
-        return card.GetCardType() == CardTypeEnum.Action;
+        CardTypeEnum type = card.GetCardType();
+        return type == CardTypeEnum.Action
+            || (type == CardTypeEnum.Character && !string.IsNullOrWhiteSpace(card.startingPC));
     }
 
     private IEnumerable<DeckData> GetSharedDecks()

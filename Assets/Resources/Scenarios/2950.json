@@ -1,5 +1,5 @@
 {
-    "version": 8,
+    "version": 11,
     "scenarioName": "2950",
     "description": "Middle-earth enjoyed an uneasy peace while Sauron secretly rebuilt his strength in Mordor. Though few recognized the danger, the stage was being set for the War of the Ring",
     "displayTitle": "The untold war of the Ring, circa 2950",
@@ -40092,9 +40092,9 @@
             "row": 19,
             "col": 7,
             "pcName": "Noegrod",
-            "ownerLeaderName": "Gloin",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "tharkun",
+            "fallbackOwnerName": "Gloin",
             "citySize": 2,
             "fortSize": 2,
             "hasPort": false,
@@ -40111,14 +40111,14 @@
             "row": 5,
             "col": 6,
             "pcName": "ThorinHall",
-            "ownerLeaderName": "Gloin",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "citySize": 4,
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "tharkun",
+            "fallbackOwnerName": "Gloin",
+            "citySize": 2,
             "fortSize": 3,
             "hasPort": false,
             "isHidden": false,
-            "isCapital": true,
+            "isCapital": false,
             "isUnderground": true,
             "loyalty": 75,
             "region": "",
@@ -40453,14 +40453,14 @@
             "row": 43,
             "col": 43,
             "pcName": "Osgiliath",
-            "ownerLeaderName": "Denethor",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "gandalf",
+            "fallbackOwnerName": "Denethor",
             "citySize": 3,
             "fortSize": 2,
             "hasPort": true,
             "isHidden": false,
-            "isCapital": false,
+            "isCapital": true,
             "isUnderground": false,
             "loyalty": 50,
             "region": "",
@@ -40548,7 +40548,7 @@
             "row": 49,
             "col": 25,
             "pcName": "DolAmroth",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Imrahil",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 2,
@@ -40605,7 +40605,7 @@
             "row": 49,
             "col": 30,
             "pcName": "Linhir",
-            "ownerLeaderName": "",
+            "ownerLeaderName": "Imrahil",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "citySize": 3,
@@ -41080,9 +41080,9 @@
             "row": 13,
             "col": 40,
             "pcName": "BeornHouse",
-            "ownerLeaderName": "Beoraborn",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "stormcrow",
+            "fallbackOwnerName": "Beoraborn",
             "citySize": 1,
             "fortSize": 0,
             "hasPort": false,
@@ -41936,7 +41936,7 @@
             "col": 30,
             "pcName": "Ost-in-Edhil",
             "ownerLeaderName": "Saruman",
-            "ownerVariantId": "of_many_colours",
+            "ownerVariantId": "saruman_the_white",
             "fallbackOwnerName": "",
             "citySize": 1,
             "fortSize": 2,
@@ -42052,11 +42052,11 @@
             "ownerLeaderName": "Gloin",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
-            "citySize": 2,
+            "citySize": 4,
             "fortSize": 2,
             "hasPort": false,
             "isHidden": false,
-            "isCapital": false,
+            "isCapital": true,
             "isUnderground": true,
             "loyalty": 100,
             "region": "",
@@ -43233,6 +43233,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43240,7 +43243,10 @@
                         "armyCardName": "Swan Fleet",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43251,6 +43257,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43258,7 +43267,10 @@
                         "armyCardName": "Men Of Bree",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43269,9 +43281,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43282,9 +43300,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43295,6 +43319,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43302,7 +43329,10 @@
                         "armyCardName": "Bounders",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43313,9 +43343,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43326,9 +43362,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43339,6 +43381,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43350,7 +43395,10 @@
                         "armyCardName": "Elven Warriors",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43361,9 +43409,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43374,6 +43428,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43385,7 +43442,10 @@
                         "armyCardName": "Goblins Of Moria",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43396,9 +43456,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43409,19 +43475,28 @@
             "ownerVariantId": "tharkun",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
             "row": 5,
             "col": 6,
             "characterName": "Thorin",
-            "ownerLeaderName": "Gloin",
-            "ownerVariantId": "",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "tharkun",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43429,46 +43504,72 @@
                         "armyCardName": "Dwarven Axemen",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
             "row": 5,
             "col": 6,
             "characterName": "Kili",
-            "ownerLeaderName": "Gandalf",
-            "ownerVariantId": "tharkun",
+            "ownerLeaderName": "Gloin",
+            "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
             "row": 5,
             "col": 6,
             "characterName": "Fili",
-            "ownerLeaderName": "Gandalf",
-            "ownerVariantId": "tharkun",
+            "ownerLeaderName": "Gloin",
+            "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
             "row": 5,
             "col": 6,
-            "characterName": "Tharkun",
-            "ownerLeaderName": "Gandalf",
+            "characterName": "Gloin",
+            "ownerLeaderName": "Gloin",
             "ownerVariantId": "tharkun",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [
+                    {
+                        "armyCardName": "Dwarven Pikeshields",
+                        "amount": 100
+                    }
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43479,9 +43580,15 @@
             "ownerVariantId": "the_white_hand",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43492,9 +43599,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43505,6 +43618,9 @@
             "ownerVariantId": "saruman_the_white",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43516,20 +43632,10 @@
                         "armyCardName": "Gondorian Infantry",
                         "amount": 1
                     }
-                ]
-            }
-        },
-        {
-            "row": 33,
-            "col": 28,
-            "characterName": "",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43540,6 +43646,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43547,7 +43656,10 @@
                         "armyCardName": "Dunlending Archers",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43558,6 +43670,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43565,7 +43680,10 @@
                         "armyCardName": "Dunlending Warriors",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43576,9 +43694,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43589,6 +43713,9 @@
             "ownerVariantId": "the_white_hand",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43600,7 +43727,10 @@
                         "armyCardName": "Uruk Hai",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43611,9 +43741,15 @@
             "ownerVariantId": "the_white_hand",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43624,6 +43760,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43631,7 +43770,10 @@
                         "armyCardName": "Archers",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43642,6 +43784,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43649,7 +43794,10 @@
                         "armyCardName": "Riders Of Rohan",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43660,27 +43808,58 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
-            "row": 35,
-            "col": 36,
-            "characterName": "Eomer",
-            "ownerLeaderName": "Theoden",
-            "ownerVariantId": "",
+            "row": 31,
+            "col": 37,
+            "characterName": "Stormcrow",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "stormcrow",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
                     {
-                        "armyCardName": "Riders Of Rohan",
+                        "armyCardName": "Light Cavalry",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 31,
+            "col": 37,
+            "characterName": "Gamelin",
+            "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43691,6 +43870,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43698,7 +43880,10 @@
                         "armyCardName": "Ents",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43709,9 +43894,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43722,6 +43913,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43733,7 +43927,10 @@
                         "armyCardName": "The Golden Host",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43744,6 +43941,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43751,7 +43951,10 @@
                         "armyCardName": "Elven Scouts",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43762,9 +43965,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43775,9 +43984,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43788,6 +44003,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43799,7 +44017,10 @@
                         "armyCardName": "Olog Hai",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43810,6 +44031,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43817,7 +44041,10 @@
                         "armyCardName": "Undead",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43828,6 +44055,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43843,7 +44073,10 @@
                         "armyCardName": "Forest Wargs",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43854,9 +44087,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43867,6 +44106,9 @@
             "ownerVariantId": "the_necromancer",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43878,7 +44120,10 @@
                         "armyCardName": "Undead",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43889,6 +44134,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43900,7 +44148,10 @@
                         "armyCardName": "Black Numenoreans",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43911,6 +44162,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43918,7 +44172,10 @@
                         "armyCardName": "Mumakils",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43929,9 +44186,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43942,9 +44205,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43955,9 +44224,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43968,9 +44243,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -43981,6 +44262,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -43992,29 +44276,10 @@
                         "armyCardName": "Rhun Corsairs",
                         "amount": 1
                     }
-                ]
-            }
-        },
-        {
-            "row": 21,
-            "col": 61,
-            "characterName": "Sauron",
-            "ownerLeaderName": "Sauron",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "shadow_of_the_east",
-            "army": {
-                "xp": 25,
-                "stacks": [
-                    {
-                        "armyCardName": "Easterling Cataphracts",
-                        "amount": 1
-                    },
-                    {
-                        "armyCardName": "Rhun Corsairs",
-                        "amount": 100
-                    }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44025,6 +44290,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44036,7 +44304,10 @@
                         "armyCardName": "Morannon Garrison",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44047,9 +44318,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44060,6 +44337,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44071,7 +44351,34 @@
                         "armyCardName": "Swordmen",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 43,
+            "col": 43,
+            "characterName": "Gandalf the White",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "gandalf_the_white",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Gondorian Infantry",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44082,6 +44389,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44093,20 +44403,10 @@
                         "armyCardName": "Trebuchets",
                         "amount": 1
                     }
-                ]
-            }
-        },
-        {
-            "row": 43,
-            "col": 41,
-            "characterName": "Gandalf the White",
-            "ownerLeaderName": "Gandalf",
-            "ownerVariantId": "gandalf_the_white",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44117,9 +44417,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44130,6 +44436,9 @@
             "ownerVariantId": "the_dark_eye",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44141,7 +44450,10 @@
                         "armyCardName": "Head Catapults",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44152,9 +44464,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44165,6 +44483,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_dark_eye",
+            "spawnConditionExclude": true,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44176,29 +44497,38 @@
                         "armyCardName": "War Trolls",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "the_dark_eye",
+                "spawnConditionExclude": true
             }
         },
         {
-            "row": 44,
-            "col": 48,
-            "characterName": "Ren the Unclean",
-            "ownerLeaderName": "Ren the Unclean",
+            "row": 36,
+            "col": 45,
+            "characterName": "Urzahil",
+            "ownerLeaderName": "Sauron",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_dark_eye",
+            "spawnConditionExclude": false,
             "army": {
-                "xp": 92,
+                "xp": 25,
                 "stacks": [
                     {
-                        "armyCardName": "Ungol Orcs",
+                        "armyCardName": "Orcs",
                         "amount": 1
                     },
                     {
-                        "armyCardName": "Torch Bearers",
+                        "armyCardName": "War Trolls",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "the_dark_eye",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44209,6 +44539,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44220,7 +44553,10 @@
                         "armyCardName": "Durthang Sorcerers",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44231,9 +44567,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44244,6 +44586,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_dark_eye",
+            "spawnConditionExclude": true,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44251,7 +44596,10 @@
                         "armyCardName": "Rangers Of Ithilien",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "the_dark_eye",
+                "spawnConditionExclude": true
             }
         },
         {
@@ -44262,6 +44610,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44273,7 +44624,10 @@
                         "armyCardName": "Knights Of Dol Amroth",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44284,9 +44638,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44297,6 +44657,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44304,7 +44667,10 @@
                         "armyCardName": "Southron Assassins",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44315,9 +44681,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44328,6 +44700,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44335,7 +44710,10 @@
                         "armyCardName": "Nurn Cavalry",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44346,9 +44724,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44359,14 +44743,43 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 16,
+            "col": 58,
+            "characterName": "Vardun",
+            "ownerLeaderName": "Annatorion",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "shadow_of_the_east",
+            "spawnConditionExclude": true,
             "army": {
                 "xp": 25,
                 "stacks": [
                     {
                         "armyCardName": "Dorwinion Mariners",
-                        "amount": 100
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Dorwinion Infantry",
+                        "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "shadow_of_the_east",
+                "spawnConditionExclude": true
             }
         },
         {
@@ -44377,6 +44790,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44384,7 +44800,10 @@
                         "armyCardName": "Rhun Easterlings",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44395,6 +44814,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44402,7 +44824,10 @@
                         "armyCardName": "Rhun Corsairs",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44413,6 +44838,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44420,7 +44848,10 @@
                         "armyCardName": "Black Arrow Men",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44431,6 +44862,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44442,7 +44876,10 @@
                         "armyCardName": "Khand Easterlings",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44453,9 +44890,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44466,9 +44909,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44479,6 +44928,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44486,7 +44938,10 @@
                         "armyCardName": "Bears",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44497,6 +44952,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44508,7 +44966,10 @@
                         "armyCardName": "Woodmen Hunters",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44519,6 +44980,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44526,7 +44990,10 @@
                         "armyCardName": "Beast Of The Woods",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44537,6 +45004,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44544,7 +45014,10 @@
                         "armyCardName": "Rivermen",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44555,6 +45028,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44562,7 +45038,10 @@
                         "armyCardName": "Haradrim Infantry",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44573,6 +45052,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44580,7 +45062,10 @@
                         "armyCardName": "Balchoth",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44591,6 +45076,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44598,7 +45086,10 @@
                         "armyCardName": "Khand Easterlings",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44609,6 +45100,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44616,7 +45110,10 @@
                         "armyCardName": "Camel Riders",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44627,6 +45124,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44634,7 +45134,10 @@
                         "armyCardName": "Hillmen",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44645,9 +45148,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44658,6 +45167,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44665,7 +45177,10 @@
                         "armyCardName": "Wood Elves",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44676,9 +45191,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44689,9 +45210,15 @@
             "ownerVariantId": "disturber_of_the_peace",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44702,6 +45229,9 @@
             "ownerVariantId": "disturber_of_the_peace",
             "fallbackOwnerName": "Frodo",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44709,7 +45239,10 @@
                         "armyCardName": "Bounders",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44720,9 +45253,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44733,22 +45272,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
-            }
-        },
-        {
-            "row": 16,
-            "col": 14,
-            "characterName": "",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44759,6 +45291,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44770,7 +45305,10 @@
                         "armyCardName": "Goblin Sappers",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44781,9 +45319,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44794,6 +45338,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44801,7 +45348,10 @@
                         "armyCardName": "Mounted Half-Orcs",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44812,9 +45362,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44825,6 +45381,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44836,7 +45395,10 @@
                         "armyCardName": "Woodelf Warriors",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44847,6 +45409,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44854,7 +45419,10 @@
                         "armyCardName": "Stone Trolls",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44865,9 +45433,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44878,6 +45452,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44889,7 +45466,10 @@
                         "armyCardName": "Warg Riders",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44900,6 +45480,9 @@
             "ownerVariantId": "the_iron_crown",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44911,7 +45494,10 @@
                         "armyCardName": "Catapults",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44922,6 +45508,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44929,7 +45518,10 @@
                         "armyCardName": "Angmarin",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44937,9 +45529,12 @@
             "col": 26,
             "characterName": "Golfimbul",
             "ownerLeaderName": "Sauron",
-            "ownerVariantId": "the_iron_crown",
+            "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "Gandalf",
+            "spawnConditionVariantId": "gandalf",
+            "spawnConditionExclude": true,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44947,7 +45542,10 @@
                         "armyCardName": "Wargs",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "Gandalf",
+                "spawnConditionVariantId": "gandalf",
+                "spawnConditionExclude": true
             }
         },
         {
@@ -44958,9 +45556,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44971,9 +45575,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -44984,6 +45594,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -44991,39 +45604,23 @@
                         "armyCardName": "Hobbit Slingers",
                         "amount": 1
                     }
-                ]
-            }
-        },
-        {
-            "row": 16,
-            "col": 10,
-            "characterName": "Gandalf",
-            "ownerLeaderName": "Gandalf",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "gandalf",
-            "army": {
-                "xp": 25,
-                "stacks": [
-                    {
-                        "armyCardName": "Elven Scouts",
-                        "amount": 1
-                    },
-                    {
-                        "armyCardName": "Elven Scouts",
-                        "amount": 1
-                    }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
             "row": 16,
             "col": 10,
             "characterName": "Gildor Inglorion",
-            "ownerLeaderName": "Elrond",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "gandalf",
+            "fallbackOwnerName": "Elrond",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45031,30 +45628,23 @@
                         "armyCardName": "Elven Scouts",
                         "amount": 1
                     }
-                ]
-            }
-        },
-        {
-            "row": 25,
-            "col": 30,
-            "characterName": "Saruman Multicoloured",
-            "ownerLeaderName": "Saruman",
-            "ownerVariantId": "of_many_colours",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "army": {
-                "xp": 25,
-                "stacks": []
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
             "row": 64,
             "col": 21,
             "characterName": "Gorthog",
-            "ownerLeaderName": "Adunaphel",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "the_deceiver",
+            "fallbackOwnerName": "Adunaphel",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45062,7 +45652,10 @@
                         "armyCardName": "Orcs",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45073,9 +45666,15 @@
             "ownerVariantId": "the_deceiver",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45086,6 +45685,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45093,7 +45695,10 @@
                         "armyCardName": "Dwarven Pikeshields",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45104,6 +45709,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45111,7 +45719,10 @@
                         "armyCardName": "Ruffians",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45122,6 +45733,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45137,7 +45751,10 @@
                         "armyCardName": "Grond",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45148,6 +45765,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45155,7 +45775,10 @@
                         "armyCardName": "Dwarven Explorers",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45166,6 +45789,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45173,7 +45799,10 @@
                         "armyCardName": "Swan Fleet",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45184,9 +45813,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45197,6 +45832,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45204,7 +45842,10 @@
                         "armyCardName": "Woodelf Warriors",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45215,6 +45856,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45226,7 +45870,10 @@
                         "armyCardName": "Rivermen",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45237,9 +45884,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45250,6 +45903,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45257,7 +45913,10 @@
                         "armyCardName": "Hillmen",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45268,6 +45927,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45275,7 +45937,10 @@
                         "armyCardName": "Ungol Orcs",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45286,6 +45951,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45293,7 +45961,10 @@
                         "armyCardName": "Dunadan Rangers",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45304,6 +45975,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_iron_crown",
+            "spawnConditionExclude": true,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45311,7 +45985,10 @@
                         "armyCardName": "Dunadan Rangers",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "the_iron_crown",
+                "spawnConditionExclude": true
             }
         },
         {
@@ -45322,6 +45999,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45329,7 +46009,10 @@
                         "armyCardName": "Mounted Dunadan Rangers",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45340,9 +46023,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": true,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45353,9 +46042,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_necromancer",
+            "spawnConditionExclude": true,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45366,6 +46061,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45373,7 +46071,10 @@
                         "armyCardName": "Dwarven Axemen",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45384,6 +46085,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45391,7 +46095,10 @@
                         "armyCardName": "Dwarven Miners",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45402,27 +46109,39 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
-            "row": 9,
-            "col": 6,
+            "row": 23,
+            "col": 31,
             "characterName": "Balin",
             "ownerLeaderName": "Gloin",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
                     {
                         "armyCardName": "Conquerors Of Moria",
-                        "amount": 1
+                        "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45433,9 +46152,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45446,9 +46171,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45459,6 +46190,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45466,7 +46200,10 @@
                         "armyCardName": "Dwarven Miners",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45477,9 +46214,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45490,9 +46233,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45503,9 +46252,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": true,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45516,6 +46271,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "Gandalf",
+            "spawnConditionVariantId": "stormcrow",
+            "spawnConditionExclude": true,
             "army": {
                 "xp": 1,
                 "stacks": [
@@ -45523,7 +46281,10 @@
                         "armyCardName": "Wargs",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "Gandalf",
+                "spawnConditionVariantId": "stormcrow",
+                "spawnConditionExclude": true
             }
         },
         {
@@ -45534,9 +46295,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45547,6 +46314,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45558,7 +46328,10 @@
                         "armyCardName": "Pelargir Fleet",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45569,6 +46342,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45576,7 +46352,10 @@
                         "armyCardName": "Corsairs Of Umbar",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45587,6 +46366,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45594,7 +46376,10 @@
                         "armyCardName": "Corsairs Of Umbar",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45605,9 +46390,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45618,6 +46409,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45625,7 +46419,10 @@
                         "armyCardName": "Ships",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45636,9 +46433,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45649,9 +46452,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45662,9 +46471,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45675,9 +46490,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45688,9 +46509,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45701,9 +46528,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45714,9 +46547,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45727,9 +46566,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45740,9 +46585,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45753,9 +46604,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45766,9 +46623,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45779,6 +46642,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45786,7 +46652,10 @@
                         "armyCardName": "Woses",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45797,9 +46666,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45810,9 +46685,15 @@
             "ownerVariantId": "of_many_colours",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45823,6 +46704,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45830,7 +46714,10 @@
                         "armyCardName": "Forest Orcs",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45841,9 +46728,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45854,9 +46747,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45867,6 +46766,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45874,7 +46776,10 @@
                         "armyCardName": "Lossoth",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45885,9 +46790,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45898,6 +46809,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45905,7 +46819,10 @@
                         "armyCardName": "Khand Easterlings",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45916,9 +46833,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45929,6 +46852,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45936,7 +46862,10 @@
                         "armyCardName": "Elven Scouts",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45947,9 +46876,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45960,9 +46895,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45973,9 +46914,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -45986,6 +46933,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -45993,7 +46943,10 @@
                         "armyCardName": "Warg Riders",
                         "amount": 100
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -46004,9 +46957,15 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
-                "stacks": []
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -46017,6 +46976,9 @@
             "ownerVariantId": "sharkey",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -46028,7 +46990,10 @@
                         "armyCardName": "Hobbit Slingers",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
         },
         {
@@ -46039,6 +47004,9 @@
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
             "army": {
                 "xp": 25,
                 "stacks": [
@@ -46050,8 +47018,415 @@
                         "armyCardName": "Light Cavalry",
                         "amount": 1
                     }
-                ]
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
             }
+        },
+        {
+            "row": 14,
+            "col": 29,
+            "characterName": "Golfimbul",
+            "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Gandalf",
+            "spawnConditionVariantId": "gandalf",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Wargs",
+                        "amount": 100
+                    }
+                ],
+                "spawnConditionLeaderName": "Gandalf",
+                "spawnConditionVariantId": "gandalf",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 14,
+            "col": 30,
+            "characterName": "Gandalf",
+            "ownerLeaderName": "Gandalf",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "gandalf",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Elven Warriors",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "Gandalf",
+                "spawnConditionVariantId": "gandalf",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 4,
+            "col": 23,
+            "characterName": "Halbarad",
+            "ownerLeaderName": "Aragorn",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_iron_crown",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Angmarin",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "the_iron_crown",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 30,
+            "col": 37,
+            "characterName": "Bugrug",
+            "ownerLeaderName": "Khamul",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Gandalf",
+            "spawnConditionVariantId": "stormcrow",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Wargs",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "Gandalf",
+                "spawnConditionVariantId": "stormcrow",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 35,
+            "col": 36,
+            "characterName": "Eomer",
+            "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Riders Of Rohan",
+                        "amount": 100
+                    }
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 15,
+            "col": 14,
+            "characterName": "Gorbag",
+            "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Gandalf",
+            "spawnConditionVariantId": "disturber_of_the_peace",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Wolves",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "Gandalf",
+                "spawnConditionVariantId": "disturber_of_the_peace",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 36,
+            "col": 25,
+            "characterName": "Erkenbrand",
+            "ownerLeaderName": "Theoden",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": true,
+            "army": {
+                "xp": 25,
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 43,
+            "col": 44,
+            "characterName": "Gorbag",
+            "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Gandalf",
+            "spawnConditionVariantId": "gandalf_the_white",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Orcs",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "Gandalf",
+                "spawnConditionVariantId": "gandalf_the_white",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 25,
+            "col": 40,
+            "characterName": "Beoraborn",
+            "ownerLeaderName": "Beoraborn",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_necromancer",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Woodmen",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "the_necromancer",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 64,
+            "col": 22,
+            "characterName": "Thorondir",
+            "ownerLeaderName": "Imrahil",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_deceiver",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Gondorian Infantry",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "the_deceiver",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 48,
+            "col": 34,
+            "characterName": "Thorondir",
+            "ownerLeaderName": "Imrahil",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_deceiver",
+            "spawnConditionExclude": true,
+            "army": {
+                "xp": 25,
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 21,
+            "col": 60,
+            "characterName": "Shadow of the East",
+            "ownerLeaderName": "Sauron",
+            "ownerVariantId": "shadow_of_the_east",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Rhun Corsairs",
+                        "amount": 1
+                    },
+                    {
+                        "armyCardName": "Rhun Corsairs",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 20,
+            "col": 60,
+            "characterName": "Vardun",
+            "ownerLeaderName": "Annatorion",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "shadow_of_the_east",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Dorwinion Mariners",
+                        "amount": 100
+                    }
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "shadow_of_the_east",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 36,
+            "col": 44,
+            "characterName": "Faramir",
+            "ownerLeaderName": "Faramir",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Sauron",
+            "spawnConditionVariantId": "the_dark_eye",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Rangers Of Ithilien",
+                        "amount": 100
+                    }
+                ],
+                "spawnConditionLeaderName": "Sauron",
+                "spawnConditionVariantId": "the_dark_eye",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 5,
+            "col": 7,
+            "characterName": "Gorbag",
+            "ownerLeaderName": "Murazor",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "Gandalf",
+            "spawnConditionVariantId": "tharkun",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Cave Goblins",
+                        "amount": 100
+                    }
+                ],
+                "spawnConditionLeaderName": "Gandalf",
+                "spawnConditionVariantId": "tharkun",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 25,
+            "col": 29,
+            "characterName": "Saruman Multicoloured",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "of_many_colours",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            }
+        },
+        {
+            "row": 33,
+            "col": 20,
+            "characterName": "Daonghlas",
+            "ownerLeaderName": "Saruman",
+            "ownerVariantId": "of_many_colours",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Dunlending Archers",
+                        "amount": 1
+                    }
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            }
+        }
+    ],
+    "artifacts": [
+        {
+            "row": 25,
+            "col": 30,
+            "artifactName": "Ring of Orthanc"
         }
     ]
 }

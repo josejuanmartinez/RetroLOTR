@@ -198,6 +198,9 @@ public class Game : MonoBehaviour
         // Every playable leader's variant (human pick + AI randomization above) is final now, so
         // scenario PCs/characters authored with an owner-variant restriction can be resolved.
         board.nationSpawner?.ReconcileScenarioVariantOwnership();
+        // Same timing: resolve independent spawnCondition characters/armies (any leader + variant,
+        // not necessarily an ownership relationship).
+        board.nationSpawner?.ReconcileScenarioSpawnConditions();
         FindFirstObjectByType<Initialize>()?.UndoInitialState();
 
         turn = 0;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -88,22 +87,15 @@ public class Duel : CharacterAction
 
         int defenseBonus = GetArtifactDefense(loser, winner);
         int wound = Mathf.Max(0, baseWound - defenseBonus * 5);
-        int loserHealthBefore = loser.health;
 
         loser.Wounded(winner.GetOwner(), wound);
 
         bool playerInvolved = attacker.isPlayerControlled || defender.isPlayerControlled;
         bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(attacker.hex);
-        string narration = BuildDuelNarration(attacker, defender, winner, loser, wound, attackerScore, defenderScore, defenseBonus, loserHealthBefore, defenderAutoWins);
 
         if (shouldShowPopup)
         {
-            PopupManager.Show(
-                $"Duel: {attacker.characterName} vs {defender.characterName}",
-                FindFirstObjectByType<Illustrations>().GetIllustrationByName(attacker.characterName),
-                FindFirstObjectByType<Illustrations>().GetIllustrationByName(defender.characterName),
-                narration,
-                true);
+            ShowCombatBanner(attacker, defender, loser, wound);
         }
         else
         {
@@ -124,22 +116,15 @@ public class Duel : CharacterAction
 
         int defenseBonus = GetArtifactDefense(loser, winner);
         int wound = Mathf.Max(0, baseWound - defenseBonus * 5);
-        int loserHealthBefore = loser.health;
 
         loser.Wounded(winner.GetOwner(), wound);
 
         bool playerInvolved = attacker.isPlayerControlled || defender.isPlayerControlled;
         bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(attacker.hex);
-        string narration = BuildDuelNarration(attacker, defender, winner, loser, wound, attackerScore, defenderScore, defenseBonus, loserHealthBefore, true);
 
         if (shouldShowPopup)
         {
-            PopupManager.Show(
-                $"Duel: {attacker.characterName} vs {defender.characterName}",
-                FindFirstObjectByType<Illustrations>().GetIllustrationByName(attacker.characterName),
-                FindFirstObjectByType<Illustrations>().GetIllustrationByName(defender.characterName),
-                narration,
-                true);
+            ShowCombatBanner(attacker, defender, loser, wound);
         }
         else
         {
@@ -147,69 +132,20 @@ public class Duel : CharacterAction
         }
     }
 
-    private string BuildDuelNarration(Character attacker, Character defender, Character winner, Character loser, int wound, float attackerScore, float defenderScore, int defenseBonus, int loserHealthBefore, bool defenderAutoWins)
+    // Only the loser ever takes damage in this duel model, so wounded/killed for each side
+    // reduces to "is this side the loser, and did the wound/Wounded() call actually land."
+    private void ShowCombatBanner(Character attacker, Character defender, Character loser, int wound)
     {
-        StringBuilder sb = new();
-        int template = UnityEngine.Random.Range(0, 4);
-        string attackerName = attacker.characterName;
-        string defenderName = defender.characterName;
-        string winnerName = winner.characterName;
-        string loserName = loser.characterName;
-        bool fatal = wound >= loserHealthBefore;
-        int winnerArtifactAttack = GetArtifactAttack(winner, loser);
-        int loserArtifactDefense = GetArtifactDefense(loser, winner);
-
-        switch (template)
-        {
-            case 0:
-                sb.AppendLine($"{attackerName} challenges {defenderName}, steel ringing in a tight circle.");
-                sb.AppendLine($"{winnerName} finds the opening and drives the exchange.");
-                break;
-            case 1:
-                sb.AppendLine($"{attackerName} and {defenderName} trade quick feints and hard cuts.");
-                sb.AppendLine($"{winnerName} forces a stumble and presses the advantage.");
-                break;
-            case 2:
-                sb.AppendLine($"{attackerName} steps in without hesitation, the duel drawing a hush.");
-                sb.AppendLine($"{winnerName} lands the telling strike as the tempo rises.");
-                break;
-            default:
-                sb.AppendLine($"{attackerName} squares off against {defenderName}, blades flashing.");
-                sb.AppendLine($"{winnerName} takes control and turns the fight.");
-                break;
-        }
-
-        sb.AppendLine($"Strength: {attackerName} {attackerScore:0.0} vs {defenderName} {defenderScore:0.0}.");
-        if (defenderAutoWins)
-        {
-            sb.AppendLine($"{defenderName}'s riddle turns the challenge back and decides the duel instantly.");
-        }
-        if (winnerArtifactAttack > 0)
-        {
-            sb.AppendLine($"{winnerName}'s relics add their bite to the strike.");
-        }
-        if (loserArtifactDefense > 0)
-        {
-            sb.AppendLine($"{loserName}'s wards blunt the blow.");
-        }
-        if (defenseBonus > 0 && wound == 0)
-        {
-            sb.AppendLine($"{loserName} escapes the worst of the wound.");
-        }
-        else
-        {
-            sb.AppendLine($"{loserName} suffers {wound} wounds.");
-        }
-        if (fatal)
-        {
-            sb.AppendLine($"{loserName} falls, the duel ending in death.");
-        }
-        else
-        {
-            sb.AppendLine($"{winnerName} stands over the field, the duel decided.");
-        }
-
-        return sb.ToString();
+        bool attackerIsLoser = attacker == loser;
+        bool defenderIsLoser = defender == loser;
+        CombatBanner.Show(
+            "Duel", "duels",
+            attacker, defender,
+            attackerIsLoser && wound > 0, attackerIsLoser && attacker.killed,
+            defenderIsLoser && wound > 0, defenderIsLoser && defender.killed,
+            attacker.hex.GetBattleLocationLabel(),
+            attackerExistingStatusEffects: attacker.statusEffects,
+            defenderExistingStatusEffects: defender.statusEffects);
     }
 
     private float GetDuelScore(Character character)
@@ -249,17 +185,6 @@ public class Duel : CharacterAction
             score += character.artifacts.Sum(a => a != null ? a.GetAttackBonusVsRace(opponent.race) + a.GetDefenseBonusVsRace(opponent.race) : 0);
         }
         return score;
-    }
-
-    private int GetArtifactAttack(Character character, Character opponent)
-    {
-        if (character == null || character.artifacts == null) return 0;
-        int atk = character.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack));
-        if (opponent != null)
-        {
-            atk += character.artifacts.Sum(a => a != null ? a.GetAttackBonusVsRace(opponent.race) : 0);
-        }
-        return atk;
     }
 
     private int GetArtifactDefense(Character character, Character opponent)

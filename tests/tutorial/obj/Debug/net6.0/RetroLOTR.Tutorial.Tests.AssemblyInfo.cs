@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RetroLOTR.Tutorial.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e958ffbdd45b67735d2602a1b1384485346a1fde")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f0ed1f6b318f10e9e5c31a986168665f1eb5b57d")]
 [assembly: System.Reflection.AssemblyProductAttribute("RetroLOTR.Tutorial.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RetroLOTR.Tutorial.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

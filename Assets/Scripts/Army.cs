@@ -108,7 +108,9 @@ public class Army
             }
         }
     }
-    public void Recruit(TroopsTypeEnum troopsType, int amount, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null, int specialAbilityProcChance = 100)
+    // showMessage: false during world setup (see Character.CreateArmy's showSpawnMessage for
+    // why — the same "unspotted enemy" false-negative applies here).
+    public void Recruit(TroopsTypeEnum troopsType, int amount, IEnumerable<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null, int specialAbilityProcChance = 100, bool showMessage = true)
     {
         // Artifact recruitment bonus for men-at-arms
         if (troopsType == TroopsTypeEnum.ma && commander != null)
@@ -116,7 +118,8 @@ public class Army
             amount += commander.GetTotalRecruitBonusMenAtArms();
         }
 
-        MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\">", Color.green);
+        if (showMessage)
+            MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"+{amount} <sprite name=\"{troopsType.ToString().ToLower()}\">", Color.green);
         int sizeBefore = GetSize();
         if (troopsType == TroopsTypeEnum.ma) ma += amount;
         if (troopsType == TroopsTypeEnum.ar) ar += amount;
@@ -217,7 +220,9 @@ public class Army
     {
         killed = true;
         int wound = UnityEngine.Random.Range(0, 100);
-        MessageDisplayNoUI.ShowMessage(commander.hex,commander, $"{commander.characterName} army was killed and {commander.characterName} wounded by {wound}", Color.red);
+        // knownIdentity: true — this army just died in combat; whoever they were fighting
+        // already knows exactly who this commander is, so there's nothing left to "spot".
+        MessageDisplayNoUI.ShowMessage(commander.hex, commander, $"{commander.characterName} army was killed and {commander.characterName} wounded by {wound}", Color.red, knownIdentity: true);
         if(!onlyMark && commander.hex.armies.Contains(this)) commander.hex.armies.Remove(this);        
         commander.hex.RedrawCharacters();
         commander.hex.RedrawArmies();
@@ -261,7 +266,7 @@ public class Army
                 ? ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] * ArmyData.catapultStrengthMultiplierInPC
                 : ca * ArmyData.troopsStrength[TroopsTypeEnum.ca];
         }
-        if (commander.GetOwner().GetBiome().terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
+        if (commander.GetOwner().GetBiome().noScenarioStart.terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
 
         strength = ApplyCommanderBonus(strength);
         strength = ApplyTrainingBonus(strength);
@@ -301,7 +306,7 @@ public class Army
             // CA usual defence even if it's PC
             defence += ca * ArmyData.troopsDefence[TroopsTypeEnum.ca];
         }
-        if (commander.GetOwner().GetBiome().terrain == commander.hex.terrainType) defence *= ArmyData.biomeTerrainMultiplier;
+        if (commander.GetOwner().GetBiome().noScenarioStart.terrain == commander.hex.terrainType) defence *= ArmyData.biomeTerrainMultiplier;
 
         defence = ApplyCommanderBonus(defence);
         defence = ApplyTrainingBonus(defence);
@@ -658,6 +663,8 @@ public class Army
 
           // First, handle all enemy armies in the hex using a snapshot to avoid collection modification issues
           List<Army> defenderSnapshot = new List<Army>(targetHex.armies);
+          Debug.Log($"[AbilityCheck] targetHex.armies at {targetHex.GetBattleLocationLabel()}: " + string.Join(" | ", defenderSnapshot.Select(a =>
+              $"Army#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(a)} commander={(a.commander != null ? $"{a.commander.characterName}#{a.commander.GetInstanceID()} (owner={a.commander.GetOwner()?.characterName ?? "null"})" : "null")} killed={a.killed}")));
           foreach (Army defenderArmy in defenderSnapshot)
           {
             if(defenderArmy == null || defenderArmy.commander == null || defenderArmy.killed || defenderArmy.commander.killed || defenderArmy.killed) continue;
@@ -730,7 +737,14 @@ public class Army
         }
         AlignmentEnum attackerAlignment = commander.GetAlignment();
         string attackerName = commander != null ? commander.characterName : attackerLeader.characterName;
-        string defenderName = defenderArmy.GetCommander().characterName;
+        // Captured now, before casualties can wipe either side's army — Army.Killed() (called
+        // from ReceiveCasualties/ApplyCasualtiesToDefenders below if a side's troops hit 0)
+        // nulls that Army's own `commander` field, so `commander`/`defenderArmy.commander` can
+        // no longer be trusted for the rest of this method once casualties are applied. The
+        // Character objects themselves are unaffected by that and stay valid for CombatBanner.
+        Character attackerCommander = commander;
+        Character defenderCommander = defenderArmy.commander;
+        string defenderName = defenderCommander.characterName;
         int attackerXpBefore = xp;
         int defenderXpBefore = defenderArmy.xp;
         Character hudActor = commander;
@@ -738,10 +752,18 @@ public class Army
         Leader defenderLeader = defenderArmy.commander.GetOwner();
         AlignmentEnum defenderAlignment = defenderArmy.GetAlignment();
 
+        // Snapshotted before abilities trigger below so CombatBanner can tell "already had this
+        // status effect" apart from "just gained it from this fight" (see attacker/defenderNewStatusEffects).
+        List<StatusEffectEnum> attackerStatusBefore = new(commander.statusEffects);
+        List<StatusEffectEnum> defenderStatusBefore = new(defenderArmy.commander.statusEffects);
+
         List<(string message, Color color)> battleAbilityMessages = new();
         List<string> battleAbilityNarration = new();
         TriggerBattleSpecialAbilities(targetHex, defenderArmy, battleAbilityMessages, battleAbilityNarration);
         if (killed || commander == null || commander.killed || defenderArmy == null || defenderArmy.killed || defenderArmy.commander == null || defenderArmy.commander.killed) return;
+
+        List<StatusEffectEnum> attackerNewStatusEffects = commander.statusEffects.Except(attackerStatusBefore).ToList();
+        List<StatusEffectEnum> defenderNewStatusEffects = defenderArmy.commander.statusEffects.Except(defenderStatusBefore).ToList();
 
         attackerStrength = GetStrengthAgainst(defenderArmy);
         attackerDefence = GetDefenceAgainst(defenderArmy);
@@ -847,7 +869,7 @@ public class Army
         {
             if (forceCasualtySide)
             {
-                stalemateNote = $"{defenderArmy.GetCommander().characterName} loses a small band in the grinding stalemate, a bitter price for no ground gained.";
+                stalemateNote = $"{defenderCommander.characterName} loses a small band in the grinding stalemate, a bitter price for no ground gained.";
             }
             else
             {
@@ -860,40 +882,7 @@ public class Army
         string attackerLossesText = BuildLossesShort(attackerLosses);
         string defenderLossesText = BuildLossesShort(defenderLosses);
 
-        string battleLocation = targetHex.HasAnyPC() && targetHex.IsPCRevealed() ? targetHex.GetPC().pcName : targetHex.GetHoverV2();
-        string title = $"Attack at {battleLocation}";
-        string troopNarrative = BuildTroopBattleNarrative(defenderArmy);
-        string text = BuildBattleDescription(
-            battleLocation,
-            attackerName,
-            defenderArmy.GetCommander().characterName,
-            commander != null ? commander.race : RacesEnum.Common,
-            defenderArmy.GetCommander() != null ? defenderArmy.GetCommander().race : RacesEnum.Common,
-            attackerAlliesJoined,
-            attackerAlliesStrength,
-            attackerAlliesDefence,
-            defenderAlliesJoined,
-            defenderAlliesStrength,
-            defenderAlliesDefence,
-            pcDefenseContribution,
-            attackerBonusPercent,
-            defenderBonusPercent,
-            GetTrainingLabel(),
-            defenderArmy.GetTrainingLabel(),
-            xp,
-            defenderArmy.xp,
-            attackerArtifactAttack,
-            attackerArtifactDefense,
-            defenderArtifactAttack,
-            defenderArtifactDefense,
-            attackerDamage,
-            defenderDamage,
-            attackerLossesText,
-            defenderLossesText,
-            stalemateNote,
-            troopNarrative,
-            battleAbilityNarration);
-        Illustrations illustrations = GameObject.FindFirstObjectByType<Illustrations>();
+        string battleLocation = targetHex.GetBattleLocationLabel();
         bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(targetHex);
         List<(string message, Color color)> hudMessages = new()
         {
@@ -901,17 +890,6 @@ public class Army
             ($"{defenderName} losses: {defenderLossesText}.", Color.red)
         };
         hudMessages.AddRange(battleAbilityMessages);
-        if (shouldShowPopup)
-        {
-            Action onPopupClose = () => ShowHudMessagesAfterPopup(targetHex, hudActor, hudMessages);
-            PopupManager.Show(
-                title,
-                illustrations.GetIllustrationByName(attackerName),
-                illustrations.GetIllustrationByName(defenderArmy.GetCommander().characterName),
-                text,
-                true,
-                onClose: onPopupClose);
-        }
 
         // Apply casualties to attacker troops
         ReceiveCasualties(attackerCasualtyPercent, defenderLeader, !anyAttackerCasualties && !forceCasualtySide);
@@ -957,6 +935,28 @@ public class Army
             hudMessages.Add(($"XP gained: {attackerName} {FormatDelta(attackerXpDelta)}, {defenderName} {FormatDelta(defenderXpDelta)}", Color.cyan));
         }
 
+        if (shouldShowPopup)
+        {
+            List<string> noticeMessages = battleAbilityMessages.Select(m => CombatBanner.Colorize(m.message, m.color)).ToList();
+            noticeMessages.AddRange(BuildBattleModifierNotices(
+                attackerName, defenderName, pcDefenseContribution,
+                attackerAlliesJoined, attackerAlliesStrength, attackerAlliesDefence,
+                defenderAlliesJoined, defenderAlliesStrength, defenderAlliesDefence,
+                attackerBonusPercent, defenderBonusPercent,
+                attackerArtifactAttack, attackerArtifactDefense,
+                defenderArtifactAttack, defenderArtifactDefense));
+
+            CombatBanner.Show(
+                "Combat", "attacks",
+                attackerCommander, defenderCommander,
+                anyAttackerCasualties, killed || GetSize(true) < 1,
+                anyDefenderCasualties, defenderArmy.killed || defenderArmy.GetSize(true) < 1,
+                battleLocation,
+                noticeMessages,
+                attackerStatusBefore, defenderStatusBefore,
+                attackerNewStatusEffects, defenderNewStatusEffects,
+                onComplete: () => ShowHudMessagesAfterPopup(targetHex, hudActor, hudMessages));
+        }
     }
 
 
@@ -1443,8 +1443,11 @@ public class Army
         {
             foreach (Army army in targetHex.armies)
             {
-                // Skip attacker's own armies
-                bool isOwnArmy = army.commander.GetOwner() == commander.GetOwner();
+                // Skip attacker's own armies. Compares against the attacker Leader parameter,
+                // not commander.GetOwner() — this army's own commander can already be null here
+                // if the attacker's side was wiped out by its own counter-casualties (ReceiveCasualties
+                // -> Killed() -> commander = null) earlier in the same ProcessCombat call.
+                bool isOwnArmy = army.commander.GetOwner() == attacker;
 
                 // Consider armies that should be attacked
                 if (!isOwnArmy && (army.GetAlignment() != attackerAlignment ||
@@ -1472,8 +1475,9 @@ public class Army
             if (army == this || army == null || army.GetSize() < 1 ||
                 army.GetCommander() == null || army.killed) continue;
 
-            // Skip the attacker's own armies
-            bool isOwnArmy = army.commander.GetOwner() == commander.GetOwner();
+            // Skip the attacker's own armies (see the identical comment above on why this
+            // compares against the attacker parameter rather than commander.GetOwner()).
+            bool isOwnArmy = army.commander.GetOwner() == attacker;
             if (isOwnArmy) continue;
 
             // Apply casualties to armies that should be attacked:
@@ -1492,8 +1496,9 @@ public class Army
         if ((casualtyPercent > 0.4f || UnityEngine.Random.Range(0f, 1f) >= 0.75f) &&
             targetHex.GetPC() != null)
         {
-            // Don't damage own PC
-            bool isOwnPC = targetHex.GetPC().owner == commander.GetOwner();
+            // Don't damage own PC (see above: compares against the attacker parameter, not
+            // commander.GetOwner(), since commander can already be null here)
+            bool isOwnPC = targetHex.GetPC().owner == attacker;
 
             // Damage PC if it belongs to a different alignment OR attacker is neutral OR PC is neutral
             // BUT never damage your own PC
@@ -1643,6 +1648,15 @@ public class Army
     private void TriggerBattleSpecialAbilities(Hex battleHex, Army enemyArmy, List<(string message, Color color)> battleMessages, List<string> battleNarration)
     {
         if (battleHex == null || enemyArmy == null || battleMessages == null || battleNarration == null) return;
+
+        // Diagnostic: dump exactly what each side's troopAbilityGroups (the thing
+        // HasSpecialAbility/GetAbilityTroopCount actually reads) contains at the moment
+        // abilities are checked, since the in-game hover display and this list have been
+        // observed to disagree.
+        Debug.Log($"[AbilityCheck] {commander?.characterName ?? "?"}'s troop groups: " +
+            string.Join(" | ", GetTroopGroups().Select(g => $"{g.amount}x {g.troopName} [{string.Join(",", g.abilities)}]")));
+        Debug.Log($"[AbilityCheck] {enemyArmy.commander?.characterName ?? "?"}'s troop groups: " +
+            string.Join(" | ", enemyArmy.GetTroopGroups().Select(g => $"{g.amount}x {g.troopName} [{string.Join(",", g.abilities)}]")));
 
         int procChance = GetDefaultArmyCardProcChancePercent();
 
@@ -2251,6 +2265,60 @@ public class Army
         {
             MessageDisplayNoUI.ShowMessage(hex, actor, entry.message, entry.color);
         }
+    }
+
+    // One CombatBanner notice line per non-zero battle modifier — fortification/PC defense,
+    // allied army contributions, commander skill bonus, and artifact bonuses — colored green
+    // (bonus) via CombatBanner.ColorizeModifier. Every value here already comes out of
+    // ProcessCombat's own math; this only decides which of them are worth calling out.
+    private static List<string> BuildBattleModifierNotices(
+        string attackerName, string defenderName, int pcDefenseContribution,
+        int attackerAlliesJoined, int attackerAlliesStrength, int attackerAlliesDefence,
+        int defenderAlliesJoined, int defenderAlliesStrength, int defenderAlliesDefence,
+        int attackerBonusPercent, int defenderBonusPercent,
+        int attackerArtifactAttack, int attackerArtifactDefense,
+        int defenderArtifactAttack, int defenderArtifactDefense)
+    {
+        List<string> notices = new();
+
+        if (pcDefenseContribution != 0)
+        {
+            notices.Add(CombatBanner.ColorizeModifier($"{defenderName}'s fortifications: +{pcDefenseContribution} defense", pcDefenseContribution));
+        }
+        if (attackerAlliesJoined > 0)
+        {
+            notices.Add(CombatBanner.ColorizeModifier($"{attackerName}'s allies ({attackerAlliesJoined}): +{attackerAlliesStrength} str / +{attackerAlliesDefence} def", attackerAlliesStrength + attackerAlliesDefence));
+        }
+        if (defenderAlliesJoined > 0)
+        {
+            notices.Add(CombatBanner.ColorizeModifier($"{defenderName}'s allies ({defenderAlliesJoined}): +{defenderAlliesStrength} str / +{defenderAlliesDefence} def", defenderAlliesStrength + defenderAlliesDefence));
+        }
+        if (attackerBonusPercent != 0)
+        {
+            notices.Add(CombatBanner.ColorizeModifier($"{attackerName}'s command bonus: +{attackerBonusPercent}%", attackerBonusPercent));
+        }
+        if (defenderBonusPercent != 0)
+        {
+            notices.Add(CombatBanner.ColorizeModifier($"{defenderName}'s command bonus: +{defenderBonusPercent}%", defenderBonusPercent));
+        }
+        if (attackerArtifactAttack != 0)
+        {
+            notices.Add(CombatBanner.ColorizeModifier($"{attackerName}'s relics: +{attackerArtifactAttack} attack", attackerArtifactAttack));
+        }
+        if (attackerArtifactDefense != 0)
+        {
+            notices.Add(CombatBanner.ColorizeModifier($"{attackerName}'s relics: +{attackerArtifactDefense} defense", attackerArtifactDefense));
+        }
+        if (defenderArtifactAttack != 0)
+        {
+            notices.Add(CombatBanner.ColorizeModifier($"{defenderName}'s relics: +{defenderArtifactAttack} attack", defenderArtifactAttack));
+        }
+        if (defenderArtifactDefense != 0)
+        {
+            notices.Add(CombatBanner.ColorizeModifier($"{defenderName}'s relics: +{defenderArtifactDefense} defense", defenderArtifactDefense));
+        }
+
+        return notices;
     }
 
     private bool AreDefendersStillAlive(Hex targetHex, AlignmentEnum attackerAlignment, Leader attackerLeader)

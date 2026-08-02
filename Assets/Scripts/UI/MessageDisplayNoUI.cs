@@ -82,7 +82,13 @@ public class MessageDisplayNoUI : MonoBehaviour
     // Public API
     // -------------------------------------------------------------------------
 
-    public static void ShowMessage(Hex hex, Character character, string message, Color? color = null, bool recordRumour = true, bool forceDisplay = false)
+    // knownIdentity: skips the "is this enemy spotted" roll and always shows the real name —
+    // for messages that are themselves a direct, first-hand report of combat the player is
+    // already party to (e.g. "X's army was killed"). IsArmyCommander()-based detection can't
+    // handle these: by the time such a message fires, the very event being reported (the army's
+    // death) has usually already made that check false, so it would roll "unspotted" for a
+    // combatant the player is, by definition, actively fighting and already knows by name.
+    public static void ShowMessage(Hex hex, Character character, string message, Color? color = null, bool recordRumour = true, bool forceDisplay = false, bool knownIdentity = false)
     {
         if (hex == null || hex.gameObject == null) return;
 
@@ -113,7 +119,7 @@ public class MessageDisplayNoUI : MonoBehaviour
         string displayMessage = formattedMessage;
         if (character != null && character.GetOwner() != null && character.GetOwner() != game.player)
         {
-            bool knownEnemy = playerCanSeeHex && (hex.IsScouted(game.player) || character.IsArmyCommander());
+            bool knownEnemy = knownIdentity || (playerCanSeeHex && (hex.IsScouted(game.player) || character.IsArmyCommander()));
             bool spotted = false;
             if (knownEnemy)
             {

@@ -74,7 +74,11 @@
       "Bash(git commit -m ' *)",
       "Bash(git cat-file *)",
       "Bash(sort -k3 -n -r)",
-      "Read(//c//**)"
+      "Read(//c//**)",
+      "Bash(python3 -c \"import uuid; print\\(uuid.uuid4\\(\\).hex\\)\")",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(16\\).toString\\('hex'\\)\\)\")",
+      "Bash(powershell -Command \"[guid]::NewGuid\\(\\).ToString\\('N'\\)\")",
+      "Bash(python3 \"C:/Users/jjmca/AppData/Local/Temp/claude/c--Users-jjmca-RetroLOTR/62816b91-bdf7-4a06-9789-7287b4d792f4/scratchpad/migrate_biomes.py\" \"Assets/Resources/PlayableLeaderBiomes.json\" \"Assets/Resources/NonPlayableLeaderBiomes.json\")"
     ]
   }
 }

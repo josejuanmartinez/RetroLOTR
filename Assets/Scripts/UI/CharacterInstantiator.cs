@@ -25,16 +25,20 @@ public class CharacterInstantiator : MonoBehaviour
         CharacterIcons.RefreshForHumanPlayerOf(leader);
         return character;
     }
-    public PlayableLeader InstantiatePlayableLeader(Hex hex, LeaderBiomeConfig leaderBiomeConfig)
+    // applyNoScenarioStart: pass true only from procedural (non-scenario) leader placement —
+    // it's what tells InitializeFromBiome to create the leader's default army/uses its biome's
+    // noScenarioStart data. An authored scenario provides its own army/PC data per leader and
+    // must never also get this procedural default (see Character.InitializeFromBiome).
+    public PlayableLeader InstantiatePlayableLeader(Hex hex, LeaderBiomeConfig leaderBiomeConfig, bool applyNoScenarioStart = false)
     {
         PlayableLeader playableLeader = InstantiateFromTemplate<PlayableLeader>(playableLeaderTemplate, leaderBiomeConfig.characterName, leadersParent);
-        playableLeader.Initialize(hex, leaderBiomeConfig, showSpawnMessage: false);
+        playableLeader.Initialize(hex, leaderBiomeConfig, showSpawnMessage: false, applyNoScenarioStart: applyNoScenarioStart);
         return playableLeader;
     }
-    public NonPlayableLeader InstantiateNonPlayableLeader(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiomeConfig)
+    public NonPlayableLeader InstantiateNonPlayableLeader(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiomeConfig, bool applyNoScenarioStart = false)
     {
         NonPlayableLeader nonPlayableLeader = InstantiateFromTemplate<NonPlayableLeader>(nonPlayableLeaderTemplate, nonPlayableLeaderBiomeConfig.characterName, nonPlayableLeadersParent);
-        nonPlayableLeader.Initialize(hex, nonPlayableLeaderBiomeConfig, showSpawnMessage: false);
+        nonPlayableLeader.Initialize(hex, nonPlayableLeaderBiomeConfig, showSpawnMessage: false, applyNoScenarioStart: applyNoScenarioStart);
         return nonPlayableLeader;
     }
 

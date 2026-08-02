@@ -47,10 +47,11 @@ public class CardCenterPreview : MonoBehaviour
     private float previewIntroT;
     private float backdropAlpha;
     private bool previewActive;
+    private float previewSpeedMultiplier = 1f;
 
     // Resolved at runtime so newly-added serialized fields left at 0 still animate instead
     // of leaving the preview stuck invisible at alpha 0.
-    private float TransitionSpeed => previewTransitionSpeed > 0.01f ? previewTransitionSpeed : 9f;
+    private float TransitionSpeed => (previewTransitionSpeed > 0.01f ? previewTransitionSpeed : 9f) * previewSpeedMultiplier;
     private float BackdropMax => backdropMaxAlpha > 0.001f ? Mathf.Clamp01(backdropMaxAlpha) : 0.85f;
     private float IntroStartScale => previewIntroStartScale > 0.001f ? previewIntroStartScale : 0.55f;
 
@@ -73,10 +74,10 @@ public class CardCenterPreview : MonoBehaviour
         AnimateCenterPreview();
     }
 
-    public void ShowPreview(CardData data)
+    public void ShowPreview(CardData data, float speedMultiplier = 1f)
     {
         if (data == null) return;
-        ShowPreview(new List<CardData> { data });
+        ShowPreview(new List<CardData> { data }, speedMultiplier);
     }
 
     // Shared by every character-hover site (roster lists, hex map): the character's own
@@ -112,12 +113,13 @@ public class CardCenterPreview : MonoBehaviour
 
     // Shows several cards side by side (e.g. a character plus its army's cards). A single
     // entry behaves identically to ShowPreview(CardData) — same centered position and scale.
-    public void ShowPreview(IReadOnlyList<CardData> cardsData)
+    public void ShowPreview(IReadOnlyList<CardData> cardsData, float speedMultiplier = 1f)
     {
         List<CardData> validCards = cardsData?.Where(c => c != null).ToList();
         if (validCards == null || validCards.Count == 0) return;
 
         ClearPreview();
+        previewSpeedMultiplier = Mathf.Max(0.1f, speedMultiplier);
         Transform parent = centerPreviewAnchor != null
             ? (Transform)centerPreviewAnchor
             : (parentCanvas != null ? parentCanvas.rootCanvas.transform : transform);
