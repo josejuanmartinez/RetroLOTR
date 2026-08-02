@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e64fa51b972e4bd2acc7442acb23182c, type: 3}
   m_Name: 80s Cartoon
   m_EditorClassIdentifier: RetroLOTR.Rendering.CardArtStyleRendererFeature
-  m_Active: 1
+  m_Active: 0
   settings:
     style: 3
     intensity: 0.22
@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e14269dd7854ebcb15f610a06cbebc8, type: 3}
   m_Name: Painted Ink
   m_EditorClassIdentifier: RetroLOTR.Rendering.PaintedInkRendererFeature
-  m_Active: 1
+  m_Active: 0
   settings:
     intensity: 0.572
     inkStrength: 1

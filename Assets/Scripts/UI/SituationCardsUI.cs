@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -404,6 +405,14 @@ public class SituationCardsUI : MonoBehaviour
             return;
         }
 
+        if (cardData.GetCardType() == CardTypeEnum.Character)
+        {
+            bool succeeded = ResolveCharacterOpportunity(cardData, character, leader);
+            Debug.Log($"[SituationCards] '{cardData.name}' character opportunity resolved, succeeded={succeeded}");
+            if (succeeded) leader.RecordPlayedCard(cardData);
+            return;
+        }
+
         string actionRef = cardData.GetActionRef();
         if (string.IsNullOrWhiteSpace(actionRef))
         {
@@ -451,6 +460,91 @@ public class SituationCardsUI : MonoBehaviour
         {
             leader.RecordPlayedCard(cardData);
         }
+    }
+
+    private static bool ResolveCharacterOpportunity(CardData cardData, Character actor, PlayableLeader leader)
+    {
+        Hex hex = actor?.hex;
+        PC pc = hex?.GetPCData();
+        if (cardData == null || actor == null || leader == null || pc == null) return false;
+        if (!CardNameUtility.Equals(pc.pcName, cardData.startingPC)) return false;
+        if (!cardData.EvaluatePlayability(actor)) return false;
+
+        Character existing = FindObjectsByType<Character>(FindObjectsSortMode.None)
+            .FirstOrDefault(candidate => candidate != null && !candidate.killed
+                && (CardNameUtility.Equals(candidate.characterName, cardData.name)
+                    || (!string.IsNullOrWhiteSpace(cardData.characterGroup)
+                        && string.Equals(candidate.characterGroup, cardData.characterGroup, System.StringComparison.OrdinalIgnoreCase))));
+
+        if (existing == null && !leader.HasCharacterSlot())
+        {
+            MessageDisplay.ShowMessage("No character slots available.", Color.red);
+            return false;
+        }
+
+        CharacterInstantiator instantiator = null;
+        InspireEffect inspireEffect = null;
+        if (existing == null)
+        {
+            instantiator = FindFirstObjectByType<CharacterInstantiator>();
+            if (instantiator == null) return false;
+        }
+        else
+        {
+            Leader owner = existing.GetOwner();
+            bool enemy = owner != null && owner != leader && owner.GetAlignment() != leader.GetAlignment();
+            if (!enemy)
+            {
+                inspireEffect = InspireEffectFactory.CreateFromCardData(cardData);
+                if (inspireEffect == null) return false;
+            }
+        }
+
+        if (!DeckManager.Instance.TryPayOpportunityCardCosts(leader, cardData)) return false;
+
+        if (existing == null)
+        {
+            BiomeConfig config = new()
+            {
+                characterName = cardData.name,
+                alignment = (AlignmentEnum)cardData.alignment,
+                race = cardData.race,
+                sex = SexEnum.Male,
+                commander = cardData.commander,
+                agent = cardData.agent,
+                emmissary = cardData.emmissary,
+                mage = cardData.mage,
+                artifacts = cardData.artifacts != null ? new List<string>(cardData.artifacts) : new List<string>()
+            };
+
+            Character recruited = instantiator.InstantiateCharacter(leader, hex, config);
+            if (recruited == null) return false;
+            recruited.startingCharacter = false;
+            recruited.characterGroup = cardData.characterGroup;
+            recruited.hasActionedThisTurn = true;
+            recruited.isPlayerControlled = true;
+            leader.TryConsumeCharacterSlot();
+            hex.RedrawCharacters();
+            MessageDisplayNoUI.ShowMessage(hex, recruited, $"{cardData.name} has joined {leader.characterName}.", Color.green, recordRumour: false);
+            return true;
+        }
+
+        Leader existingOwner = existing.GetOwner();
+        bool heldByEnemy = existingOwner != null && existingOwner != leader
+            && existingOwner.GetAlignment() != leader.GetAlignment();
+        if (heldByEnemy)
+        {
+            int turns = UnityEngine.Random.value < 0.5f ? 1 : 3;
+            existing.BecomeDoubleAgent(leader, turns);
+            EventIconsManager.ShowHexAnchoredMessage(EventIconType.HexMessage, existing.hex, hex,
+                $"{cardData.name} is doubled for {turns} turns", Color.yellow);
+            return true;
+        }
+
+        inspireEffect.Apply(leader);
+        MessageDisplayNoUI.ShowMessage(hex, existing,
+            $"The presence of {cardData.name} inspires {pc.pcName}.", Color.cyan, recordRumour: false);
+        return true;
     }
 
     private IEnumerator FadeOut()

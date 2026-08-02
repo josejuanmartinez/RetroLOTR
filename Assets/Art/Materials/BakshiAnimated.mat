@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: UI80sCartoon
+  m_Name: BakshiAnimated
   m_Shader: {fileID: 4800000, guid: 21f4769b8e8c4f2587b391bf3d8f3e41, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -29,13 +29,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BroadcastTexture: 0
-    - _CelBands: 8.76
+    - _BroadcastTexture: 0.15
+    - _CelBands: 10.22
     - _ColorMask: 15
     - _ColorSimplification: 1
-    - _EffectIntensity: 1
-    - _OutlineStrength: 0
-    - _Saturation: 0.828
+    - _EffectIntensity: 0
+    - _OutlineStrength: 0.855
+    - _Saturation: 1.284
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -43,6 +43,6 @@ Material:
     - _StencilWriteMask: 255
     - _UseUIAlphaClip: 0
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

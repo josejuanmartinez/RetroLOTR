@@ -50,12 +50,33 @@ public class AssassinateCharacter : AgentCharacterAction
             FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
             MessageDisplay.ShowMessage(message, color);
 
+            Hex victimHex = enemy.hex;
+            List<StatusEffectEnum> victimStatusEffects = enemy.statusEffects;
             enemy.Killed(c.GetOwner());
-            MessageDisplayNoUI.ShowMessage(enemy.hex, c, $"{enemy.characterName} assassinated!", Color.green);
+            MessageDisplayNoUI.ShowMessage(victimHex, c, $"{enemy.characterName} assassinated!", Color.green);
+
+            if (c.isPlayerControlled || enemy.isPlayerControlled || PlayerCanSeeHex(victimHex))
+            {
+                CombatBanner.Show(
+                    "Assassination", "assassinates",
+                    c, enemy,
+                    false, false, true, true,
+                    victimHex.GetBattleLocationLabel(),
+                    attackerExistingStatusEffects: c.statusEffects,
+                    defenderExistingStatusEffects: victimStatusEffects);
+            }
 
             return true;
         }
 
         base.Initialize(c, condition, effect, assassinateAsync);
+    }
+
+    private bool PlayerCanSeeHex(Hex hex)
+    {
+        if (hex == null) return false;
+        Game g = FindFirstObjectByType<Game>();
+        if (g == null || g.player == null) return false;
+        return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }
 }

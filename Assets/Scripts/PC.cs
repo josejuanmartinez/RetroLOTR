@@ -64,7 +64,7 @@ public class PC
     /**
      * This constructor is used to create a new PC in the starting city of a leader
      */
-    public PC(Leader leader, Hex hex): this(leader, leader.GetBiome().startingCityName, leader.GetBiome().startingCitySize, leader.GetBiome().startingCityFortSize, leader.GetBiome().startsWithPort, leader.GetBiome().startingCityIsHidden, hex, true)
+    public PC(Leader leader, Hex hex): this(leader, leader.GetBiome().startingCityName, leader.GetBiome().startingCitySize, leader.GetBiome().startingCityFortSize, leader.GetBiome().noScenarioStart.startsWithPort, leader.GetBiome().noScenarioStart.startingCityIsHidden, hex, true)
     {
         
     }

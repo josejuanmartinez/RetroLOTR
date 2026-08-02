@@ -1,0 +1,73 @@
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Video;
+public enum Skins
+{
+    Bakshi,
+    Default
+}
+
+public class SkinManager : MonoBehaviour
+{
+    [SerializeField] private Camera skinCamera;
+    [SerializeField] private MaterialManager materialManagerPrefab;
+    [SerializeField] private FontManager fontManagerPrefab;
+
+    private Videos videos;
+    private Renderer2DManager render2dManager;
+    private MaterialManager materialManager;
+    private FontManager fontManager;
+    private Skins currentSkin = Skins.Default;
+
+    void Awake()
+    {
+        videos = FindFirstObjectByType<Videos>();
+        render2dManager = FindFirstObjectByType<Renderer2DManager>();
+        materialManager = FindFirstObjectByType<MaterialManager>();
+        if (materialManager == null && materialManagerPrefab != null)
+            materialManager = Instantiate(materialManagerPrefab);
+
+        fontManager = FindFirstObjectByType<FontManager>();
+        if (fontManager == null && fontManagerPrefab != null)
+            fontManager = Instantiate(fontManagerPrefab);
+    }
+    
+    public void ChangeSkin(Skins skin)
+    {
+        currentSkin = skin;
+        string rendererName = $"Renderer2D{GetSkinSuffix(skin)}";
+        int rendererIndex = render2dManager.GetRendererIndexByName(rendererName);
+        if (rendererIndex < 0)
+        {
+            Debug.LogError($"SkinManager: renderer '{rendererName}' is not registered.");
+            return;
+        }
+
+        Camera targetCamera = skinCamera != null ? skinCamera : Camera.main;
+        UniversalAdditionalCameraData cameraData = targetCamera.GetUniversalAdditionalCameraData();
+        cameraData.SetRenderer(rendererIndex);
+
+        foreach (Skins availableSkin in System.Enum.GetValues(typeof(Skins)))
+        {
+            string suffix = GetSkinSuffix(availableSkin);
+            if (string.IsNullOrEmpty(suffix)) continue;
+
+            bool enabled = availableSkin == skin;
+            materialManager.SetEffectEnabled(materialManager.GetMaterialByName(suffix), enabled);
+            materialManager.SetEffectEnabled(materialManager.GetMaterialByName($"{suffix}Animated"), enabled);
+        }
+
+        fontManager.ApplyFont(fontManager.GetFontByName(skin.ToString()));
+    }
+
+    public VideoClip GetIntroVideo()
+    {
+        return videos.GetVideoByName($"intro{GetSkinSuffix(currentSkin)}");
+    }
+
+    private static string GetSkinSuffix(Skins skin)
+    {
+        return skin == Skins.Default ? string.Empty : skin.ToString();
+    }
+
+}

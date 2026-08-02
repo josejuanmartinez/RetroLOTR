@@ -15,10 +15,10 @@ public class NonPlayableLeader : Leader
 
     private NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome;
 
-    public void Initialize(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome, bool showSpawnMessage = true)
+    public void Initialize(Hex hex, NonPlayableLeaderBiomeConfig nonPlayableLeaderBiome, bool showSpawnMessage = true, bool applyNoScenarioStart = false)
     {
         this.nonPlayableLeaderBiome = nonPlayableLeaderBiome;
-        base.Initialize(hex, nonPlayableLeaderBiome, showSpawnMessage);
+        base.Initialize(hex, nonPlayableLeaderBiome, showSpawnMessage, applyNoScenarioStart);
         Game game = FindFirstObjectByType<Game>();
         if (game != null && game.started)
         {

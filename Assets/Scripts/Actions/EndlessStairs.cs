@@ -58,8 +58,15 @@ public class EndlessStairs : CharacterAction
     private static string DescribeDestination(Hex hex)
     {
         PC pc = hex.GetPC();
-        string place = pc != null ? pc.pcName : TerrainData.GetDisplayName(hex.terrainType);
-        return $"{place} {hex.GetHoverV2()}";
+        return pc != null
+            ? $"{pc.pcName} at {hex.GetHoverV2()}"
+            : $"Hex {hex.GetHoverV2()}";
+    }
+
+    private static string GetDestinationIconName(Hex hex)
+    {
+        PC pc = hex.GetPC();
+        return pc != null ? pc.pcName : TerrainData.GetDisplayName(hex.terrainType);
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -96,13 +103,18 @@ public class EndlessStairs : CharacterAction
             if (!isAI)
             {
                 List<string> options = destinations.Select(DescribeDestination).ToList();
+                List<string> optionIcons = destinations.Select(GetDestinationIconName).ToList();
                 string selected = await SelectionDialog.Ask(
                     "The Endless Stairs wind down into the deep places of the world. Where do they lead?",
                     "Ok",
                     "Cancel",
                     options,
+                    null,
                     isAI,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    null,
+                    EventIconType.MultiChoice,
+                    "Endless Stairs",
+                    optionIcons);
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 int index = options.IndexOf(selected);
                 if (index < 0) return false;

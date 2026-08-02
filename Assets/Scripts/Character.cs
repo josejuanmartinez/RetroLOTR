@@ -164,7 +164,15 @@ public class Character : MonoBehaviour
             statusEffectTurns[effect] = 0;
         }
     }
-    public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome, bool showSpawnMessage = true)
+    // applyNoScenarioStart only matters for a LeaderBiomeConfig (plain BiomeConfig — e.g. a
+    // nation's startingCharacters — never carries a noScenarioStart block and is unaffected):
+    // a leader's noScenarioStart.startingArmySize/Card/Warships describe its PROCEDURAL default
+    // army, which must never be created on top of an authored scenario's own ScenarioArmy for
+    // the same leader (see NationSpawner.BuildScenarioArmy) — that's exactly what orphaned a
+    // duplicate Army in a hex's army list previously (Character.CreateArmy overwrites `army`
+    // without evicting the old one). Defaults false so every caller must opt in explicitly;
+    // only the procedural (non-scenario) leader-placement path in NationSpawner passes true.
+    public void InitializeFromBiome(Leader leader, Hex hex, BiomeConfig characterBiome, bool showSpawnMessage = true, bool applyNoScenarioStart = false)
     {
         if (!awaken) Awake();
         this.characterBiome = characterBiome;
@@ -202,7 +210,26 @@ public class Character : MonoBehaviour
             DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
             CardData card = deckManager?.FindArmyCardByName(characterBiome.startingArmyCard);
             if (card != null)
-                CreateArmy(card.troopType, characterBiome.startingArmySize, startingCharacter, characterBiome.startingWarships, card.specialAbilities);
+                CreateArmy(card.troopType, characterBiome.startingArmySize, startingCharacter, characterBiome.startingWarships, card.specialAbilities, showSpawnMessage: showSpawnMessage);
+        }
+
+        if (applyNoScenarioStart && characterBiome is LeaderBiomeConfig leaderBiome)
+        {
+            LeaderNoScenarioStart start = leaderBiome.noScenarioStart;
+            if (start.startingArmySize > 0 || start.startingWarships > 0)
+            {
+                if (!string.IsNullOrEmpty(start.startingArmyCard))
+                {
+                    DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+                    CardData card = deckManager?.FindArmyCardByName(start.startingArmyCard);
+                    if (card != null)
+                        CreateArmy(card.troopType, start.startingArmySize, startingCharacter, start.startingWarships, card.specialAbilities, showSpawnMessage: showSpawnMessage);
+                }
+                else
+                {
+                    CreateArmy(characterBiome.preferedTroopType, start.startingArmySize, startingCharacter, start.startingWarships, showSpawnMessage: showSpawnMessage);
+                }
+            }
         }
 
         // Biome JSON only ever sets a handful of starting stats (and never race for non-playable
@@ -299,7 +326,7 @@ public class Character : MonoBehaviour
         this.hex = hex;
         hex.characters.Add(this);
 
-        if (startingArmySize > 0 || startingWarships > 0) CreateArmy(preferedTroopType, startingArmySize, startingCharacter, startingWarships);
+        if (startingArmySize > 0 || startingWarships > 0) CreateArmy(preferedTroopType, startingArmySize, startingCharacter, startingWarships, showSpawnMessage: showSpawnMessage);
         RefreshArtifactPcVisibilityForHex(this.hex);
     }
 
@@ -852,12 +879,30 @@ public class Character : MonoBehaviour
         return Mathf.Max(0, GetMaxMovement() - moved);
     }
 
-    public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, List<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null, int specialAbilityProcChance = 100)
+    // showSpawnMessage mirrors Initialize's own flag of the same name: false during world
+    // setup (scenario/procedural spawning), true for a live in-game recruit. It's not just
+    // cosmetic — MessageDisplayNoUI.ShowMessage runs the "is this enemy spotted" reveal roll
+    // for any non-owned character, and at spawn time player.visibleHexes hasn't been populated
+    // yet (that only happens once Game.SelectFirstPlayerCharacter runs, after all spawning
+    // completes), so a starting army always loses that roll — showing "unspotted enemy" for a
+    // leader standing in what will immediately be a fully visible, already-known hex.
+    public void CreateArmy(TroopsTypeEnum troopsType, int amount, bool startingArmy, int ws = 0, List<ArmySpecialAbilityEnum> specialAbilities = null, string troopName = null, int specialAbilityProcChance = 100, bool showSpawnMessage = true)
     {
+        // A prior army for this character can still be sitting in a hex's army list (its own
+        // hex, if this character moved since) — overwriting the `army` field below without
+        // evicting it first leaves that old Army orphaned: still fought as a live defender by
+        // Army.Attack(), but no longer reachable from character.GetArmy(), so it silently
+        // vanishes from every UI that reads the character's current army.
+        if (army != null && army.commander != null && army.commander.hex != null)
+        {
+            army.commander.hex.armies.Remove(army);
+        }
+
         army = new Army(this, troopsType, amount, startingArmy, ws, 25, specialAbilities, troopName, specialAbilityProcChance);
         hex.armies.Add(army);
 
-        MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\">[{amount}]", Color.green);
+        if (showSpawnMessage)
+            MessageDisplayNoUI.ShowMessage(hex, this,  $"{characterName} just hired an army of <sprite name=\"{troopsType.ToString().ToLower()}\">[{amount}]", Color.green);
         hex.RedrawCharacters();
         hex.RedrawArmies();
         RefreshSelectedCharacterIconIfSelected();

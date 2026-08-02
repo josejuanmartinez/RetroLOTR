@@ -37,7 +37,8 @@ public class IntroVideoManager : MonoBehaviour
     private IEnumerator PlayAfterScenarioChoice()
     {
         yield return new WaitUntil(() => GameConfig.ScenarioChosen);
-        vp.clip = GameObject.Find("Videos").GetComponent<Videos>().GetVideoByName("intro");
+        SkinManager skinManager = FindFirstObjectByType<SkinManager>();
+        vp.clip = skinManager != null ? skinManager.GetIntroVideo() : null;
         if (vp.clip == null)
         {
             // No intro to protect — release the generation throttle immediately.

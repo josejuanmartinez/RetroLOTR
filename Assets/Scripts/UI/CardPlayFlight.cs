@@ -22,8 +22,9 @@ public class CardPlayFlight : MonoBehaviour
     private Vector2 startLocal;
     private float compactStartScale;
     private Action onArrived;
+    private float durationScale = 1f;
 
-    public static void Launch(Card card, Hex targetHex, Action onArrived = null)
+    public static void Launch(Card card, Hex targetHex, Action onArrived = null, float durationScale = 1f)
     {
         if (card == null) { onArrived?.Invoke(); return; }
 
@@ -71,6 +72,7 @@ public class CardPlayFlight : MonoBehaviour
         flight.uiCamera = rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : rootCanvas.worldCamera;
         flight.targetHex = targetHex;
         flight.onArrived = onArrived;
+        flight.durationScale = Mathf.Max(0.05f, durationScale);
         flight.group = flightGo.AddComponent<CanvasGroup>();
         flight.group.blocksRaycasts = false;
         flight.group.interactable = false;
@@ -97,7 +99,7 @@ public class CardPlayFlight : MonoBehaviour
     // to borrow its token visual, exactly like CampaignSelectionManager's button tokens.
     // onArrived (optional) fires once the token reaches the hex, before it sinks/fades —
     // callers use it to hold off granting resources until the token visually lands.
-    public static void LaunchFromData(CardData data, Hex targetHex, Action onArrived = null)
+    public static void LaunchFromData(CardData data, Hex targetHex, Action onArrived = null, float durationScale = 1f)
     {
         if (data == null || targetHex == null) { onArrived?.Invoke(); return; }
 
@@ -111,7 +113,7 @@ public class CardPlayFlight : MonoBehaviour
         if (tempCard == null) { Destroy(temp); onArrived?.Invoke(); return; }
 
         tempCard.Initialize(data);
-        Launch(tempCard, targetHex, onArrived);
+        Launch(tempCard, targetHex, onArrived, durationScale);
         Destroy(temp, 0.01f);
     }
 
@@ -119,10 +121,13 @@ public class CardPlayFlight : MonoBehaviour
     {
         // Phase 1 — compact: the card-sized token collapses to its natural size.
         float t = 0f;
-        while (t < CompactDuration)
+        float compactDuration = CompactDuration * durationScale;
+        float flightDuration = FlightDuration * durationScale;
+        float arrivalFadeDuration = ArrivalFadeDuration * durationScale;
+        while (t < compactDuration)
         {
             t += Time.unscaledDeltaTime;
-            float p = Mathf.Clamp01(t / CompactDuration);
+            float p = Mathf.Clamp01(t / compactDuration);
             rect.localScale = Vector3.one * Mathf.Lerp(compactStartScale, 1f, p * p);
             yield return null;
         }
@@ -137,10 +142,10 @@ public class CardPlayFlight : MonoBehaviour
             float basePhase = Mathf.Atan2(toTarget.y, toTarget.x) + Mathf.PI * 0.5f;
 
             t = 0f;
-            while (t < FlightDuration)
+            while (t < flightDuration)
             {
                 t += Time.unscaledDeltaTime;
-                float p = Mathf.Clamp01(t / FlightDuration);
+                float p = Mathf.Clamp01(t / flightDuration);
                 float move = p * p * (3f - 2f * p); // smoothstep: gentle launch, decisive arrival
 
                 // Recomputed per frame — effects often pan the camera to the hex while
@@ -170,10 +175,10 @@ public class CardPlayFlight : MonoBehaviour
         float fadeStartAlpha = group.alpha;
         Vector3 fadeStartScale = rect.localScale;
         t = 0f;
-        while (t < ArrivalFadeDuration)
+        while (t < arrivalFadeDuration)
         {
             t += Time.unscaledDeltaTime;
-            float p = Mathf.Clamp01(t / ArrivalFadeDuration);
+            float p = Mathf.Clamp01(t / arrivalFadeDuration);
             group.alpha = Mathf.Lerp(fadeStartAlpha, 0f, p);
             rect.localScale = fadeStartScale * Mathf.Lerp(1f, 0.4f, p);
             if (targetHex != null && Camera.main != null) rect.localPosition = CurrentTargetLocal();

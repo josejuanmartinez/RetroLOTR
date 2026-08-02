@@ -19,6 +19,24 @@ public class LeaderVariantConfig
     public string banner;
 }
 
+// Fields that only govern the procedural (non-scenario) starting setup: where a leader's
+// capital gets placed and what default army it's handed. An authored scenario positions
+// leaders and cities explicitly and gives armies via its own ScenarioArmy data, so these are
+// read only by NationSpawner.Spawn() — never by SpawnFromScenario(), which must ignore this
+// block entirely (see Character.InitializeFromBiome's applyNoScenarioStart parameter and
+// NationSpawner's procedural leader-placement path).
+[Serializable]
+public class LeaderNoScenarioStart
+{
+    public TerrainEnum terrain;
+    public int startingArmySize;
+    public string startingArmyCard = "";
+    public bool startingCityIsHidden;
+    public bool startsWithPort;
+    public int startingWarships;
+    public string startingCityRegion;
+}
+
 [Serializable]
 public class LeaderBiomeConfig: BiomeConfig
 {
@@ -29,18 +47,15 @@ public class LeaderBiomeConfig: BiomeConfig
     public string subdeckId;
     public string banner;
     public List<LeaderVariantConfig> variants = new();
-    public TerrainEnum terrain;
+    public LeaderNoScenarioStart noScenarioStart = new();
     public FeaturesEnum feature = FeaturesEnum.noFeature;
     public bool isIsland = false;
     public string startingCityName;
-    public string startingCityRegion;
     public PCSizeEnum startingCitySize;
 
     public string pcFeature = "";
     public string fortFeature = "";
     public FortSizeEnum startingCityFortSize;
-    public bool startingCityIsHidden;
-    public bool startsWithPort;
     public bool isMorgulMaster;
 
     public List<BiomeConfig> startingCharacters = new();

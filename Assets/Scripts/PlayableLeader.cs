@@ -38,9 +38,9 @@ public class PlayableLeader : Leader
         return new string(cardName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
     }
 
-    new public void Initialize(Hex hex, LeaderBiomeConfig playableLeaderBiome, bool showSpawnMessage = true)
+    new public void Initialize(Hex hex, LeaderBiomeConfig playableLeaderBiome, bool showSpawnMessage = true, bool applyNoScenarioStart = false)
     {
-        base.Initialize(hex, playableLeaderBiome, showSpawnMessage);
+        base.Initialize(hex, playableLeaderBiome, showSpawnMessage, applyNoScenarioStart);
         victoryPoints = null;
         playedLandCards.Clear();
         playedPcCards.Clear();

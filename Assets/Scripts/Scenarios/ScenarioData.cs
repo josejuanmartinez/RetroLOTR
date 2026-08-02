@@ -40,7 +40,23 @@ namespace RetroLOTR.Scenarios
         // v8 added displayTitle (campaign-selection title, distinct from the file name) and
         // representativeCardName (the card whose token art represents the scenario on the
         // campaign-selection screen). Both optional; empty falls back to v7 behavior.
-        public const int CurrentVersion = 8;
+        // v9 added ScenarioCharacter/ScenarioArmy.spawnConditionLeaderName + spawnConditionVariantId:
+        // an independent spawn gate, unrelated to ownership — the character/army is only created if
+        // the NAMED leader (any playable leader in the scenario, not necessarily this entity's own
+        // owner) ends up with the given variant selected. Empty leader name = always spawn (the
+        // default, so older scenarios are unaffected). Unlike ownerVariantId there is no fallback
+        // owner on mismatch — the character/army is simply never created. See
+        // NationSpawner.ReconcileScenarioSpawnConditions.
+        // v10 added ScenarioCharacter/ScenarioArmy.spawnConditionExclude: flips the v9 spawn gate
+        // from "requires" to "excludes" — spawns only when the named leader is NOT currently
+        // playing with the given variant (absent from the game entirely, or present with a
+        // different variant). Defaults to false (the v9 "requires" behavior), so older scenarios
+        // are unaffected.
+        // v11 added ScenarioData.artifacts: author-pinned hexes for named hidden artifacts (from
+        // Artifacts.json's hidden pool). An artifact named here is placed at its given hex instead
+        // of a random one; any hidden artifact not named here still gets placed randomly exactly
+        // as before. See Board.PlaceScenarioArtifacts. Empty list = fully random (unaffected).
+        public const int CurrentVersion = 11;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
@@ -72,6 +88,10 @@ namespace RetroLOTR.Scenarios
         public List<ScenarioPC> pcs = new();
         public List<ScenarioCharacter> characters = new();
 
+        /// <summary>Author-pinned hex for a named hidden artifact (see v11 note above). Sparse —
+        /// only artifacts the author deliberately placed appear here.</summary>
+        public List<ScenarioArtifact> artifacts = new();
+
         public int Index(int row, int col) => row * width + col;
 
         public bool InBounds(int row, int col) => row >= 0 && row < height && col >= 0 && col < width;
@@ -98,6 +118,16 @@ namespace RetroLOTR.Scenarios
         public int row;
         public int col;
         public string spriteName;
+    }
+
+    /// <summary>Pins one hidden artifact (matched by name against Artifacts.json's hidden pool)
+    /// to a specific hex, instead of leaving its placement to the random pass.</summary>
+    [Serializable]
+    public class ScenarioArtifact
+    {
+        public int row;
+        public int col;
+        public string artifactName;
     }
 
     [Serializable]
@@ -160,6 +190,20 @@ namespace RetroLOTR.Scenarios
         /// to a single variant (matched against <c>LeaderVariantConfig.variantId</c> in
         /// PlayableLeaderBiomes.json). Empty = no restriction (every variant offered).</summary>
         public string variantId = "";
+        /// <summary>Independent spawn gate for a COMPANION character (ignored on a self-owned
+        /// leader/variant card, whose presence is governed by the selection carousel instead): only
+        /// created if this named playable leader (any leader in the scenario, not necessarily
+        /// characterName's own owner) ends up with spawnConditionVariantId selected. Empty = always
+        /// spawn (the default). See NationSpawner.ReconcileScenarioSpawnConditions.</summary>
+        public string spawnConditionLeaderName = "";
+        /// <summary>Only consulted when spawnConditionLeaderName is set. Empty means that leader's
+        /// Base flavor; otherwise a <c>LeaderVariantConfig.variantId</c> of that leader.</summary>
+        public string spawnConditionVariantId = "";
+        /// <summary>Flips the spawn gate: false (default) = "Requires" (spawn only if the named
+        /// leader IS playing with spawnConditionVariantId); true = "Excludes" (spawn only if that
+        /// leader is NOT playing with it — either absent from the game entirely, or present with a
+        /// different variant). Ignored when spawnConditionLeaderName is empty.</summary>
+        public bool spawnConditionExclude = false;
         public ScenarioArmy army;        // null when the character bears no army
     }
 
@@ -169,6 +213,16 @@ namespace RetroLOTR.Scenarios
     {
         public int xp = 25;
         public List<ScenarioArmyStack> stacks = new();
+        /// <summary>Independent spawn gate for this army specifically — its commander can still
+        /// spawn without it. Only created if this named playable leader (any leader in the
+        /// scenario) ends up with spawnConditionVariantId selected. Empty = always spawn (the
+        /// default). See NationSpawner.ReconcileScenarioSpawnConditions.</summary>
+        public string spawnConditionLeaderName = "";
+        /// <summary>Only consulted when spawnConditionLeaderName is set. Empty means that leader's
+        /// Base flavor; otherwise a <c>LeaderVariantConfig.variantId</c> of that leader.</summary>
+        public string spawnConditionVariantId = "";
+        /// <summary>Same "Requires"/"Excludes" flip as ScenarioCharacter.spawnConditionExclude.</summary>
+        public bool spawnConditionExclude = false;
 
         public bool IsEmpty()
         {

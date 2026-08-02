@@ -404,6 +404,7 @@ public class Board : MonoBehaviour
         List<Artifact> hiddenArtifacts = ArtifactRepository.GetAllClones();
 
         PlaceTutorialArtifacts(hiddenArtifacts);
+        PlaceScenarioArtifacts(hiddenArtifacts);
 
         // Shuffle the hexes to randomize artifact placement
         List<Hex> shuffledHexes = hexes.OrderBy(hex => UnityEngine.Random.value).ToList();
@@ -498,6 +499,30 @@ public class Board : MonoBehaviour
                 target.hiddenArtifacts.Add(artifact.Clone());
                 usedHexes.Add(target);
             }
+        }
+    }
+
+    // Places author-pinned hidden artifacts (ScenarioData.artifacts) at their chosen hex, removing
+    // them from the pool so the random pass below doesn't also scatter them elsewhere. Any hidden
+    // artifact the author didn't pin — including when there's no active scenario at all — falls
+    // through to that random pass unchanged.
+    private void PlaceScenarioArtifacts(List<Artifact> hiddenArtifacts)
+    {
+        if (hiddenArtifacts == null || activeScenario?.artifacts == null) return;
+
+        foreach (ScenarioArtifact placement in activeScenario.artifacts)
+        {
+            if (placement == null || string.IsNullOrWhiteSpace(placement.artifactName)) continue;
+
+            int poolIndex = hiddenArtifacts.FindIndex(a => a != null &&
+                string.Equals(a.artifactName, placement.artifactName, StringComparison.OrdinalIgnoreCase));
+            if (poolIndex < 0) continue;
+
+            Hex target = GetHex(new Vector2Int(placement.row, placement.col));
+            if (target == null) continue;
+
+            target.hiddenArtifacts.Add(hiddenArtifacts[poolIndex]);
+            hiddenArtifacts.RemoveAt(poolIndex);
         }
     }
 
@@ -1719,7 +1744,7 @@ public class Board : MonoBehaviour
     // (another owned PC/region at turn start, or another leader's turn-start grant sharing the
     // same action type) would re-Initialize the shared instance out from under the first,
     // corrupting its character/card fields mid-flight.
-    public async void TriggerOwnPcGrantIfStandingOnOne(Character character, Hex hex)
+    public async void TriggerOwnPcGrantIfStandingOnOne(Character character, Hex hex, bool quickTurnStartSequence = false)
     {
         if (character == null || character.killed || hex == null)
         {
@@ -1774,14 +1799,21 @@ public class Board : MonoBehaviour
         {
             if (showToPlayer)
             {
-                CardCenterPreview.Instance?.ShowPreview(pcCard);
-                await Task.Delay(TimeSpan.FromSeconds(1.5));
+                if (quickTurnStartSequence)
+                {
+                    hex.LookAt(0.5f);
+                    await Task.Delay(TimeSpan.FromSeconds(0.5));
+                }
+
+                CardCenterPreview.Instance?.ShowPreview(pcCard, quickTurnStartSequence ? 2f : 1f);
+                await Task.Delay(TimeSpan.FromSeconds(quickTurnStartSequence ? 0.75 : 1.5));
                 CardCenterPreview.Instance?.HidePreview();
 
                 // Hold off granting resources (and the StoresManager gain animation it triggers)
                 // until the token has visually landed on the hex.
                 var tokenArrived = new TaskCompletionSource<bool>();
-                CardPlayFlight.LaunchFromData(pcCard, hex, () => tokenArrived.TrySetResult(true));
+                CardPlayFlight.LaunchFromData(pcCard, hex, () => tokenArrived.TrySetResult(true),
+                    durationScale: quickTurnStartSequence ? 0.5f : 1f);
                 await tokenArrived.Task;
             }
 
@@ -1803,7 +1835,7 @@ public class Board : MonoBehaviour
     // card resources (materials only — Land cards have no other effect) for a character
     // standing anywhere in that region. Land cards have no founding concept, so unlike the
     // PC grant there's no already-founded check — just resolve and re-apply.
-    public async void TriggerRegionLandGrant(Character character, Hex hex)
+    public async void TriggerRegionLandGrant(Character character, Hex hex, bool quickTurnStartSequence = false)
     {
         if (character == null || character.killed || hex == null)
         {
@@ -1850,14 +1882,21 @@ public class Board : MonoBehaviour
         {
             if (showToPlayer)
             {
-                CardCenterPreview.Instance?.ShowPreview(landCard);
-                await Task.Delay(TimeSpan.FromSeconds(1.5));
+                if (quickTurnStartSequence)
+                {
+                    hex.LookAt(0.5f);
+                    await Task.Delay(TimeSpan.FromSeconds(0.5));
+                }
+
+                CardCenterPreview.Instance?.ShowPreview(landCard, quickTurnStartSequence ? 2f : 1f);
+                await Task.Delay(TimeSpan.FromSeconds(quickTurnStartSequence ? 0.75 : 1.5));
                 CardCenterPreview.Instance?.HidePreview();
 
                 // Hold off granting resources (and the StoresManager gain animation it triggers)
                 // until the token has visually landed on the hex.
                 var tokenArrived = new TaskCompletionSource<bool>();
-                CardPlayFlight.LaunchFromData(landCard, hex, () => tokenArrived.TrySetResult(true));
+                CardPlayFlight.LaunchFromData(landCard, hex, () => tokenArrived.TrySetResult(true),
+                    durationScale: quickTurnStartSequence ? 0.5f : 1f);
                 await tokenArrived.Task;
             }
 

@@ -45,11 +45,11 @@ public class Leader : Character
         pcFoundingOfferPending = false;
     }
 
-    public void Initialize(Hex hex, LeaderBiomeConfig leaderBiome, bool showSpawnMessage = true)
+    public void Initialize(Hex hex, LeaderBiomeConfig leaderBiome, bool showSpawnMessage = true, bool applyNoScenarioStart = false)
     {
         game = FindFirstObjectByType<Game>();
         this.leaderBiome = leaderBiome;
-		InitializeFromBiome(this, hex, leaderBiome, showSpawnMessage);
+		InitializeFromBiome(this, hex, leaderBiome, showSpawnMessage, applyNoScenarioStart);
     }
 
     public LeaderBiomeConfig GetBiome()
@@ -153,7 +153,7 @@ public class Leader : Character
                 string pcKey = PcDescriptionBuilder.NormalizeLookupKey(pc.pcName);
                 if (grantedPcNames.Add(pcKey))
                 {
-                    board.TriggerOwnPcGrantIfStandingOnOne(c, hex);
+                    board.TriggerOwnPcGrantIfStandingOnOne(c, hex, quickTurnStartSequence: true);
                 }
             }
 
@@ -163,7 +163,7 @@ public class Leader : Character
                 string regionKey = PcDescriptionBuilder.NormalizeLookupKey(region);
                 if (grantedRegions.Add(regionKey))
                 {
-                    board.TriggerRegionLandGrant(c, hex);
+                    board.TriggerRegionLandGrant(c, hex, quickTurnStartSequence: true);
                 }
             }
         }

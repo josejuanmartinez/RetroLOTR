@@ -53,9 +53,31 @@ public class WoundCharacter : AgentCharacterAction
             FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
             MessageDisplayNoUI.ShowMessage(c.hex, c, message, color);
 
+            Hex victimHex = enemy.hex;
+            List<StatusEffectEnum> victimStatusEffects = enemy.statusEffects;
             enemy.Wounded(c.GetOwner(), wound);
-            return true; 
+
+            if (c.isPlayerControlled || enemy.isPlayerControlled || PlayerCanSeeHex(victimHex))
+            {
+                CombatBanner.Show(
+                    "Wound", "wounds",
+                    c, enemy,
+                    false, false, wound > 0, enemy.killed,
+                    victimHex.GetBattleLocationLabel(),
+                    attackerExistingStatusEffects: c.statusEffects,
+                    defenderExistingStatusEffects: victimStatusEffects);
+            }
+
+            return true;
         }
         base.Initialize(c, condition, effect, woundCharacterAsync);
+    }
+
+    private bool PlayerCanSeeHex(Hex hex)
+    {
+        if (hex == null) return false;
+        Game g = FindFirstObjectByType<Game>();
+        if (g == null || g.player == null) return false;
+        return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }
 }

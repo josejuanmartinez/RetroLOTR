@@ -97,7 +97,7 @@ def process_deck(deck_path: Path) -> dict:
 
 
 def main():
-    with open(MANIFEST_PATH, encoding="utf-8") as f:
+    with open(MANIFEST_PATH, encoding="utf-8-sig") as f:
         manifest = json.load(f)
 
     result = {}

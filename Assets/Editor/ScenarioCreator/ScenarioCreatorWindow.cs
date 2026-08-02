@@ -32,6 +32,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private string[] spriteNames; // per-hex chosen tile variation ("" = terrain default)
         private readonly Dictionary<int, ScenarioPC> pcs = new();
         private readonly Dictionary<int, List<ScenarioCharacter>> characters = new();
+        private readonly Dictionary<int, List<ScenarioArtifact>> artifacts = new();
 
         // ---- Tool state ----------------------------------------------------------------------
         private Tool tool = Tool.Magnifier;
@@ -134,6 +135,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             for (int i = 0; i < terrain.Length; i++) terrain[i] = TerrainEnum.deepWater;
             pcs.Clear();
             characters.Clear();
+            artifacts.Clear();
             selectedIndex = -1;
         }
 
@@ -557,10 +559,14 @@ namespace RetroLOTR.Scenarios.EditorTools
                     for (int col = colFirst; col <= colLast; col++)
                         DrawCellSprite(TileRect(content, row, col, drawW, drawH, stepX, stepY), visibleClip, row, col, stepX, stepY);
 
-                // Pass 2: region tints, markers and selection on top.
+                // Pass 2: character tokens, region tints, markers and selection on top.
                 for (int row = rowFirst; row <= rowLast; row++)
                     for (int col = colFirst; col <= colLast; col++)
-                        DrawCellOverlay(TileRect(content, row, col, drawW, drawH, stepX, stepY), row, col);
+                    {
+                        Rect tileRect = TileRect(content, row, col, drawW, drawH, stepX, stepY);
+                        DrawCellCharacters(tileRect, stepX, stepY, row, col);
+                        DrawCellOverlay(tileRect, stepX, stepY, row, col);
+                    }
             }
 
             GUI.EndScrollView();
@@ -661,27 +667,133 @@ namespace RetroLOTR.Scenarios.EditorTools
             }
         }
 
-        private void DrawCellOverlay(Rect r, int row, int col)
+        // The true hex footprint, centered on 'center' — same shape DrawRegionHex has always used
+        // for its placeholder fill, in pointy-top-row-packing terms (halfH = stepY * 2/3). This is
+        // noticeably smaller than the overdrawn per-tile art rect (drawW/drawH, see TileOverdraw)
+        // that terrain art is drawn into: that rect exists purely so neighboring tiles' art shows
+        // through the hex mask at the edges, and is roughly 2x too tall to anchor UI against —
+        // anything positioned against it (corner badges, the selection outline) reads as offset by
+        // most of a row. Everything hex-shaped (selection outline, corner badges, character
+        // tokens) should size/anchor against THIS box instead.
+        private static Vector3[] BuildHexPoints(Vector2 center, float stepX, float stepY)
+        {
+            float halfW = stepX * 0.5f;
+            float halfH = stepY * (2f / 3f);
+            return new[]
+            {
+                new Vector3(center.x,         center.y - halfH),
+                new Vector3(center.x + halfW, center.y - halfH * 0.5f),
+                new Vector3(center.x + halfW, center.y + halfH * 0.5f),
+                new Vector3(center.x,         center.y + halfH),
+                new Vector3(center.x - halfW, center.y + halfH * 0.5f),
+                new Vector3(center.x - halfW, center.y - halfH * 0.5f),
+            };
+        }
+
+        // Draws each spawned character's baked idle sprite (standing idle, Forward-facing, frame
+        // 0 — same art the game shows, no animation here) as a token centered on the hex. Several
+        // characters on one hex are spread left/right of center so none fully occludes another; a
+        // character with no baked spritesheet (nothing under AnimationSpritesheets for its name or
+        // race) is silently skipped rather than drawn as a blank/placeholder square. Drawn straight
+        // off the sprite's own full-resolution texture (DrawCharacterToken), NOT through
+        // DrawSprite/GetPreviewTexture: that cache downsamples to fit a whole texture within 512px,
+        // which is fine for a single ~1000px hex tile but turns a baked character atlas (every
+        // animation frame packed into one sheet, easily several thousand pixels per side) into a
+        // blurry handful-of-pixels-per-frame mess once cropped back down to one frame.
+        private void DrawCellCharacters(Rect r, float stepX, float stepY, int row, int col)
+        {
+            int idx = Index(row, col);
+            if (!characters.TryGetValue(idx, out List<ScenarioCharacter> list) || list.Count == 0) return;
+
+            // Sized against the true hex box (see BuildHexPoints), not stepX/stepY directly —
+            // stepY alone is much smaller than the hex actually is (rows interlock at ~51% of a
+            // tile's height), which was making tokens read as tiny. Allowed to run a little taller
+            // than the hex box itself (characters read fine standing "on" a hex while overhanging
+            // its edges slightly — same as how the game itself draws them).
+            float hexW = stepX;
+            float hexH = stepY * (4f / 3f);
+            float tokenSize = Mathf.Min(hexW, hexH) * (list.Count > 1 ? 0.85f : 1.15f);
+            float spacing = tokenSize * 0.75f;
+            float totalWidth = spacing * (list.Count - 1);
+            float startX = r.center.x - totalWidth * 0.5f;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                ScenarioCharacter c = list[i];
+                if (c == null || string.IsNullOrWhiteSpace(c.characterName)) continue;
+
+                Sprite sprite = ScenarioCardCatalog.GetCharacterIdleSprite(c.characterName);
+                if (sprite == null) continue;
+
+                float cx = list.Count == 1 ? r.center.x : startX + i * spacing;
+                Rect tokenRect = new Rect(cx - tokenSize * 0.5f, r.center.y - tokenSize * 0.5f, tokenSize, tokenSize);
+                DrawCharacterToken(tokenRect, sprite);
+            }
+        }
+
+        // Full-resolution sprite draw, bypassing the GetPreviewTexture downsample cache — see
+        // DrawCellCharacters for why that cache is wrong for baked character atlases.
+        private static void DrawCharacterToken(Rect r, Sprite sprite)
+        {
+            if (sprite == null || sprite.texture == null) return;
+            GUI.DrawTextureWithTexCoords(r, sprite.texture, SpriteTexCoords(sprite), true);
+        }
+
+        private void DrawCellOverlay(Rect r, float stepX, float stepY, int row, int col)
         {
             int idx = Index(row, col);
 
             bool hasLeader = characters.TryGetValue(idx, out var overlayList) && overlayList.Any(IsLeaderCard);
             bool hasPc = pcs.ContainsKey(idx);
             int charCount = characters.TryGetValue(idx, out var list) ? list.Count : 0;
+            int artifactCount = artifacts.TryGetValue(idx, out var artifactList) ? artifactList.Count : 0;
 
-            if (hasLeader) DrawCorner(r, "★", new Color(1f, 0.85f, 0.1f), TextAnchor.UpperLeft);
-            if (hasPc) DrawCorner(r, "⌂", Color.white, TextAnchor.UpperRight);
-            if (charCount > 0) DrawCorner(r, charCount.ToString(), Color.cyan, TextAnchor.LowerRight);
+            // Badges anchor at explicit points inset from center, NOT at the corners of a
+            // bounding rect over the hex (as a naive TextAnchor.UpperLeft/etc against a rect
+            // sized to the true hex box would do) — a pointy-top hex tapers to a single point at
+            // its top/bottom, so a rect's actual corners sit in the gap between hexes, not inside
+            // this one. halfW/halfH*0.5 is the hex's flat-sided band (see BuildHexPoints); insets
+            // stay well within it so badges always land visibly on this hex's own art.
+            float halfW = stepX * 0.5f;
+            float halfH = stepY * (2f / 3f);
+            float badgeX = halfW * 0.55f;
+            float badgeY = halfH * 0.42f;
 
-            // PC name label, centred near the bottom of the hex.
+            if (hasLeader) DrawBadge(new Vector2(r.center.x - badgeX, r.center.y - badgeY), "★", new Color(1f, 0.85f, 0.1f));
+            if (hasPc) DrawBadge(new Vector2(r.center.x + badgeX, r.center.y - badgeY), "⌂", Color.white);
+            if (charCount > 0) DrawBadge(new Vector2(r.center.x + badgeX, r.center.y + badgeY), charCount.ToString(), Color.cyan);
+            if (artifactCount > 0) DrawBadge(new Vector2(r.center.x - badgeX, r.center.y + badgeY), "✦", new Color(0.85f, 0.4f, 1f));
+
+            // PC name label, centred just below the hex's middle band (not at the very bottom
+            // point, for the same reason the corner badges above moved off the bounding rect).
             if (hasPc && pcs.TryGetValue(idx, out ScenarioPC pc) && !string.IsNullOrEmpty(pc.pcName))
-                DrawHexCaption(r, pc.pcName);
+            {
+                Rect captionRect = new Rect(r.center.x - halfW * 0.8f, r.center.y + halfH * 0.35f, halfW * 1.6f, halfH * 0.5f);
+                DrawHexCaption(captionRect, pc.pcName);
+            }
 
             if (idx == selectedIndex)
             {
+                Vector3[] hex = BuildHexPoints(r.center, stepX, stepY);
+                Handles.BeginGUI();
                 Handles.color = Color.red;
-                Handles.DrawSolidRectangleWithOutline(r, new Color(0, 0, 0, 0), Color.red);
+                Handles.DrawAAPolyLine(3f, hex[0], hex[1], hex[2], hex[3], hex[4], hex[5], hex[0]);
+                Handles.EndGUI();
             }
+        }
+
+        // Small fixed-size, center-anchored marker (leader star / PC glyph / character count) —
+        // deliberately NOT corner-anchored against a bounding rect, see DrawCellOverlay.
+        private static void DrawBadge(Vector2 center, string text, Color color)
+        {
+            const float size = 16f;
+            var style = new GUIStyle(EditorStyles.boldLabel)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 11,
+                normal = { textColor = color }
+            };
+            GUI.Label(new Rect(center.x - size * 0.5f, center.y - size * 0.5f, size, size), text, style);
         }
 
         // Region-tool-only hex placeholder: a plain per-terrain fallback color (grass/water/etc,
@@ -693,16 +805,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             Vector2 center = draw.center;
             float halfW = stepX * 0.5f;
             float halfH = stepY * (2f / 3f);
-
-            Vector3[] hex =
-            {
-                new Vector3(center.x,         center.y - halfH),
-                new Vector3(center.x + halfW, center.y - halfH * 0.5f),
-                new Vector3(center.x + halfW, center.y + halfH * 0.5f),
-                new Vector3(center.x,         center.y + halfH),
-                new Vector3(center.x - halfW, center.y + halfH * 0.5f),
-                new Vector3(center.x - halfW, center.y - halfH * 0.5f),
-            };
+            Vector3[] hex = BuildHexPoints(center, stepX, stepY);
 
             Handles.BeginGUI();
             Handles.color = TerrainFallbackColor(terrainType);
@@ -771,16 +874,6 @@ namespace RetroLOTR.Scenarios.EditorTools
             GUI.Label(band, text, style);
         }
 
-        private static void DrawCorner(Rect r, string text, Color color, TextAnchor anchor)
-        {
-            var style = new GUIStyle(EditorStyles.boldLabel)
-            {
-                alignment = anchor,
-                fontSize = 10,
-                normal = { textColor = color }
-            };
-            GUI.Label(new Rect(r.x + 1, r.y, r.width - 2, r.height), text, style);
-        }
 
         private void HandleGridMouse(Rect content, float cellW, float cellH)
         {
@@ -919,6 +1012,8 @@ namespace RetroLOTR.Scenarios.EditorTools
             DrawPcSection(selectedIndex, row, col);
             EditorGUILayout.Space();
             DrawCharactersSection(selectedIndex, row, col);
+            EditorGUILayout.Space();
+            DrawArtifactsSection(selectedIndex, row, col);
 
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
@@ -1089,6 +1184,69 @@ namespace RetroLOTR.Scenarios.EditorTools
                 MessageType.Info);
         }
 
+        private static readonly string[] SpawnConditionModeLabels = { "Requires", "Excludes" };
+
+        // Independent spawn gate shared by companion characters and armies: only created if the
+        // named playable leader (any leader in the scenario, not necessarily this entity's owner)
+        // is (Requires) or isn't (Excludes) playing with the given variant. Empty leader name =
+        // always spawn. See NationSpawner.ReconcileScenarioSpawnConditions for the runtime rule.
+        private void DrawSpawnConditionPicker(string title, Func<string> getLeaderName, Action<string> setLeaderName,
+            Func<string> getVariantId, Action<string> setVariantId, Func<bool> getExclude, Action<bool> setExclude)
+        {
+            EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
+            SearchableField("Required leader", getLeaderName(), ScenarioCardCatalog.PlayableLeaders, v =>
+            {
+                setLeaderName(v);
+                setVariantId("");
+            });
+
+            string leaderName = getLeaderName();
+            if (string.IsNullOrWhiteSpace(leaderName))
+            {
+                setVariantId("");
+                EditorGUILayout.HelpBox("Always spawns.", MessageType.None);
+                return;
+            }
+
+            bool exclude = EditorGUILayout.Popup("Mode", getExclude() ? 1 : 0, SpawnConditionModeLabels) == 1;
+            setExclude(exclude);
+
+            IReadOnlyList<LeaderVariantConfig> variants = ScenarioCardCatalog.GetPlayableLeaderVariants(leaderName);
+            if (variants == null || variants.Count == 0)
+            {
+                setVariantId("");
+                EditorGUILayout.HelpBox(
+                    exclude
+                        ? $"Only spawns if {leaderName} is NOT in play (that leader has no variants)."
+                        : $"Only spawns if {leaderName} is in play (that leader has no variants).",
+                    MessageType.Info);
+                return;
+            }
+
+            string currentVariantId = getVariantId();
+            string[] labels = new string[variants.Count + 1];
+            labels[0] = "Base (no variant)";
+            int selected = 0;
+            for (int i = 0; i < variants.Count; i++)
+            {
+                LeaderVariantConfig v = variants[i];
+                string display = string.IsNullOrWhiteSpace(v.displayName) ? v.variantId : v.displayName;
+                labels[i + 1] = $"{display}  ({v.variantId})";
+                if (!string.IsNullOrEmpty(currentVariantId) &&
+                    string.Equals(v.variantId, currentVariantId, StringComparison.OrdinalIgnoreCase))
+                    selected = i + 1;
+            }
+
+            int chosen = EditorGUILayout.Popup("Required variant", selected, labels);
+            setVariantId(chosen <= 0 ? "" : variants[chosen - 1].variantId);
+
+            EditorGUILayout.HelpBox(
+                exclude
+                    ? $"Only spawns if {leaderName} does NOT end up as '{labels[chosen]}' (absent entirely also satisfies this). No fallback — otherwise this is simply never created."
+                    : $"Only spawns if {leaderName} ends up as '{labels[chosen]}'. No fallback — otherwise this is simply never created.",
+                MessageType.Info);
+        }
+
         private void DrawPcSection(int idx, int row, int col)
         {
             EditorGUILayout.LabelField("PC (City)", EditorStyles.boldLabel);
@@ -1218,13 +1376,32 @@ namespace RetroLOTR.Scenarios.EditorTools
                     GUI.color = prevColor;
 
                     // Only playable leaders have variants to restrict the selection carousel to.
-                    if (isPlayable) DrawLeaderVariantPicker(c);
-                    else c.variantId = "";
+                    if (isPlayable)
+                    {
+                        DrawLeaderVariantPicker(c);
+                        // A playable leader/variant card's presence is governed by the selection
+                        // carousel + PruneUnselectedLeaderVariants — gating it on an independent
+                        // spawnCondition too would race that lifecycle (it could vanish AFTER
+                        // already being offered/picked in the carousel), so it's deliberately not
+                        // offered here.
+                    }
+                    else
+                    {
+                        c.variantId = "";
+                        // Non-playable self-owned leader cards (e.g. Faramir) have no carousel or
+                        // pruning to race — safe to gate the whole identity on a spawnCondition.
+                        DrawSpawnConditionPicker("Spawn Condition", () => c.spawnConditionLeaderName, v => c.spawnConditionLeaderName = v,
+                            () => c.spawnConditionVariantId, v => c.spawnConditionVariantId = v,
+                            () => c.spawnConditionExclude, v => c.spawnConditionExclude = v);
+                    }
                 }
                 else
                 {
                     DrawOwnerVariantPicker(c.ownerLeaderName, () => c.ownerVariantId, v => c.ownerVariantId = v,
                         () => c.fallbackOwnerName, v => c.fallbackOwnerName = v);
+                    DrawSpawnConditionPicker("Spawn Condition", () => c.spawnConditionLeaderName, v => c.spawnConditionLeaderName = v,
+                        () => c.spawnConditionVariantId, v => c.spawnConditionVariantId = v,
+                        () => c.spawnConditionExclude, v => c.spawnConditionExclude = v);
                 }
                 DrawCardWithDecks(c.characterName);
 
@@ -1263,6 +1440,9 @@ namespace RetroLOTR.Scenarios.EditorTools
             if (!bearsArmy) return;
 
             c.army.xp = EditorGUILayout.IntSlider("XP", c.army.xp, 0, 100);
+            DrawSpawnConditionPicker("Army Spawn Condition", () => c.army.spawnConditionLeaderName, v => c.army.spawnConditionLeaderName = v,
+                () => c.army.spawnConditionVariantId, v => c.army.spawnConditionVariantId = v,
+                () => c.army.spawnConditionExclude, v => c.army.spawnConditionExclude = v);
 
             int removeStackAt = -1;
             for (int i = 0; i < c.army.stacks.Count; i++)
@@ -1294,6 +1474,46 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             if (list.Count == 0) characters.Remove(idx);
             else characters[idx] = list;
+        }
+
+        // Pins named hidden artifacts (Artifacts.json's random-placement pool) to this hex — see
+        // Board.PlaceScenarioArtifacts. Any hidden artifact left unpinned still lands on a random
+        // hex exactly as before, so this section is purely additive/optional per scenario.
+        private void DrawArtifactsSection(int idx, int row, int col)
+        {
+            EditorGUILayout.LabelField("Artifacts", EditorStyles.boldLabel);
+            if (!artifacts.TryGetValue(idx, out List<ScenarioArtifact> list))
+            {
+                list = new List<ScenarioArtifact>();
+            }
+
+            int removeAt = -1;
+            for (int i = 0; i < list.Count; i++)
+            {
+                ScenarioArtifact a = list[i];
+                EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+                SearchableField("", a.artifactName, ScenarioCardCatalog.HiddenArtifactNames, v => a.artifactName = v);
+                if (GUILayout.Button("x", GUILayout.Width(22))) removeAt = i;
+                EditorGUILayout.EndHorizontal();
+            }
+
+            if (removeAt >= 0)
+            {
+                list.RemoveAt(removeAt);
+                SyncArtifactList(idx, list);
+            }
+
+            if (GUILayout.Button("Add Artifact"))
+            {
+                list.Add(new ScenarioArtifact { row = row, col = col });
+                SyncArtifactList(idx, list);
+            }
+        }
+
+        private void SyncArtifactList(int idx, List<ScenarioArtifact> list)
+        {
+            if (list.Count == 0) artifacts.Remove(idx);
+            else artifacts[idx] = list;
         }
 
         // Search-as-you-type picker. Shows the current value on a dropdown button; clicking opens
@@ -1338,7 +1558,8 @@ namespace RetroLOTR.Scenarios.EditorTools
                 height = height,
                 terrain = terrain.Select(t => (int)t).ToArray(),
                 pcs = pcs.Values.ToList(),
-                characters = characters.Values.SelectMany(list => list).ToList()
+                characters = characters.Values.SelectMany(list => list).ToList(),
+                artifacts = artifacts.Values.SelectMany(list => list).ToList()
             };
 
             for (int i = 0; i < regions.Length; i++)
@@ -1371,6 +1592,7 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             pcs.Clear();
             characters.Clear();
+            artifacts.Clear();
             selectedIndex = -1;
 
             foreach (ScenarioRegionCell cell in data.regions ?? new List<ScenarioRegionCell>())
@@ -1388,6 +1610,14 @@ namespace RetroLOTR.Scenarios.EditorTools
                 int idx = Index(c.row, c.col);
                 if (!characters.TryGetValue(idx, out var list)) characters[idx] = list = new List<ScenarioCharacter>();
                 list.Add(c);
+            }
+
+            foreach (ScenarioArtifact a in data.artifacts ?? new List<ScenarioArtifact>())
+            {
+                if (!InBounds(a.row, a.col)) continue;
+                int idx = Index(a.row, a.col);
+                if (!artifacts.TryGetValue(idx, out var list)) artifacts[idx] = list = new List<ScenarioArtifact>();
+                list.Add(a);
             }
         }
 

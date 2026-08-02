@@ -112,9 +112,13 @@ public class SarumanTutorialTests : TutorialTestBase
     public void TutorialArtifacts_ContainSignatureItems()
     {
         var names = (_biome.TutorialArtifacts ?? new()).Select(a => a.ArtifactName).ToList();
-        foreach (string expected in new[] { "Ring of Orthanc", "Palantir of Orthanc", "Saruman's Staff" })
+        foreach (string expected in new[] { "Palantir of Orthanc", "Saruman's Staff" })
             Assert.That(names, Has.Member(expected),
                 $"Saruman tutorialArtifacts missing expected item '{expected}'");
+        // Ring of Orthanc was moved out of the tutorial set into Artifacts.json's random hidden
+        // pool, so it must NOT show up here anymore.
+        Assert.That(names, Has.No.Member("Ring of Orthanc"),
+            "Ring of Orthanc should no longer be a Saruman tutorial artifact — it's in the hidden pool now");
     }
 
     // ── Granted characters ───────────────────────────────────────────────────

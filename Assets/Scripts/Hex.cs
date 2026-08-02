@@ -2750,6 +2750,13 @@ public class Hex : MonoBehaviour
         return $"@{v2.x},{v2.y}";
     }
 
+    // Location label for combat/duel/assassination narration: the PC's name if one is here and
+    // revealed, otherwise the bare coordinate pair (no "@" prefix, unlike GetHoverV2).
+    public string GetBattleLocationLabel()
+    {
+        return HasAnyPC() && IsPCRevealed() ? GetPC().pcName : $"{v2.x},{v2.y}";
+    }
+
     public void RevealArtifact()
     {
         artifactRevealed = true;
