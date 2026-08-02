@@ -1097,7 +1097,7 @@ PrefabInstance:
     - target: {fileID: 1282328661151054294, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_VideoClip
       value: 
-      objectReference: {fileID: 32900000, guid: 0289bc7da0e84f544b0adaf3e0d41a14, type: 3}
+      objectReference: {fileID: 32900000, guid: d84549471aae88f41a8d0fe5bd2f6e9e, type: 3}
     - target: {fileID: 1282328661151054294, guid: c3bd549b2bc2114499e34484479a96ff, type: 3}
       propertyPath: m_RenderMode
       value: 1
@@ -9908,7 +9908,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Videos
   videos:
-  - {fileID: 32900000, guid: 0289bc7da0e84f544b0adaf3e0d41a14, type: 3}
+  - {fileID: 32900000, guid: d84549471aae88f41a8d0fe5bd2f6e9e, type: 3}
 --- !u!4 &2080766163
 Transform:
   m_ObjectHideFlags: 0
@@ -10127,11 +10127,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 18.676872
+      value: 18.666666
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.y
-      value: 18.676872
+      value: 18.666666
       objectReference: {fileID: 0}
     - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: minZoom
@@ -11269,7 +11269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: loadBudgetWhileVideoMs
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4799891737429854110, guid: 3eeb6f6aba5bcd14b938d7dfcce57e6f, type: 3}
       propertyPath: maxGenerationSlicesPerStep

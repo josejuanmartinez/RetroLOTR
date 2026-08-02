@@ -1,97 +1,83 @@
 ---
 name: video-generation
-description: Generate a Grok Imagine MP4 through xAI's direct API in reference-to-video mode with up to seven images or image-to-video mode with one starting image. Use when Codex needs to create a new reference-guided video, animate a starting frame, or run and download a Grok video generation.
+description: Generate and download reference-guided MP4 videos with ByteDance Seedance 2.0 through fal.ai. Use when Codex needs to animate RetroLOTR card artwork, combine selected card references into a video, or run Seedance reference-to-video generation with configurable duration, resolution, aspect ratio, audio, bitrate, and seed.
 ---
 
 # Video Generation
 
-Generate a reference-guided or starting-image video with an xAI Grok Imagine video model.
+Generate a reference-guided video through fal.ai endpoint `bytedance/seedance-2.0/reference-to-video`.
+
+## Gather Inputs
+
+Before generating, inspect `Assets/Art/Cards` and ask the user which card images to use. Present likely matches as a numbered list with paths; do not choose card references without confirmation. Preserve the user's selected order because prompts address them as `@Image1`, `@Image2`, and so on.
+
+Explain that the API accepts at most 12 reference files total, but no more than 9 may be images. Therefore, a cards-only request supports 1-9 card images, not 12. It may additionally contain up to 3 videos and 3 audio files while remaining within the 12-file total.
+
+Ask for all generation choices before submitting a paid request:
+
+1. Card reference images (1-9), in intended order.
+2. Prompt or desired scene, motion, camera behavior, and audio/dialogue.
+3. Duration: `auto` or 4-15 seconds.
+4. Resolution: `480p`, `720p`, `1080p`, or `4k`.
+5. Aspect ratio: `auto`, `21:9`, `16:9`, `4:3`, `1:1`, `3:4`, or `9:16`.
+6. Generate synchronized audio: yes or no.
+7. Bitrate: `standard` or `high`.
+8. Optional seed for reproducibility; otherwise omit it.
+9. Optional reference videos/audio, subject to the modality and 12-file limits.
+10. Optional output filename; otherwise derive it from the request ID.
+
+Offer the API defaults (`auto`, `720p`, `auto`, audio on, standard bitrate, random seed) as the recommended option. Use the repo-required numbered-choice format and end questions with: `Please choose a number and I will implement that option`.
 
 ## Workflow
 
-1. Inspect `Assets/Art/Videos/Inspiration` and identify the relevant reference images.
-2. If the directory contains more than seven images, select at most seven that best support the requested video. Never choose more than seven.
-3. Write a concrete motion-and-camera prompt. Refer to inputs as `<IMAGE_1>`, `<IMAGE_2>`, and so on when assigning distinct subjects, props, settings, or styles.
-4. Run a dry run first to validate image count, formats, parameters, and output path.
-5. Run the live request only when the user asked to generate the video. Video generation incurs xAI API charges.
-6. Report the request ID, reference image paths, exact prompt, generation parameters, and saved MP4 path.
-
-For image-to-video, inspect any additional inspiration images yourself and express their shared visual traits in the prompt. Send only the selected starting frame to the API.
+1. Validate the selected local references and write a concrete prompt using `@Image1`, `@Image2`, `@Video1`, and `@Audio1` labels where relevant.
+2. Run the CLI with `--dry-run` and show the user the ordered references, exact prompt, and parameters.
+3. Submit the live request only after the user has asked to generate it; generation incurs fal.ai charges.
+4. Poll the fal.ai queue, download the completed MP4, and report the result.
 
 ## CLI
 
-Use every supported image in the inspiration directory when it contains no more than seven:
-
 ```powershell
 python .agents/skills/video-generation/scripts/generate_video.py `
-  --prompt "A slow cinematic tracking shot through the painted fantasy setting shown in <IMAGE_1>." `
+  --prompt "The ranger from @Image1 crosses the landscape of @Image2 in a slow painted-fantasy tracking shot." `
+  --image "Assets/Art/Cards/Characters/ranger.png" `
+  --image "Assets/Art/Cards/Events/landscape.jpg" `
+  --duration 10 `
+  --resolution 720p `
+  --aspect-ratio "16:9" `
+  --generate-audio `
+  --bitrate-mode standard `
   --dry-run
 ```
 
-Select references explicitly when more than seven exist or only some are relevant:
-
-```powershell
-python .agents/skills/video-generation/scripts/generate_video.py `
-  --prompt "The warrior from <IMAGE_1> crosses the landscape from <IMAGE_2>, matching the painted mood of <IMAGE_3>." `
-  --image "Assets/Art/Videos/Inspiration/warrior.png" `
-  --image "Assets/Art/Videos/Inspiration/landscape.jpg" `
-  --image "Assets/Art/Videos/Inspiration/style.webp" `
-  --duration 10 `
-  --aspect-ratio "16:9" `
-  --resolution 720p
-```
-
-Animate one starting frame with Grok Imagine Video 1.5:
-
-```powershell
-python .agents/skills/video-generation/scripts/generate_video.py `
-  --mode image-to-video `
-  --model grok-imagine-video-1.5 `
-  --image "Assets/Art/Videos/Inspiration/1.jpg" `
-  --prompt "Animate the starting frame with restrained hand-drawn cel motion..." `
-  --duration 10 `
-  --aspect-ratio "16:9" `
-  --resolution 1080p
-```
+Remove `--dry-run` only for the confirmed live request. Use `--no-generate-audio` to disable generated audio. Repeat `--video` and `--audio` for optional non-image references.
 
 Defaults:
 
-- References: all supported images in `Assets/Art/Videos/Inspiration`
 - Output directory: `Assets/Art/Videos/Generated`
-- Model: `grok-imagine-video`
-- Duration: 10 seconds (reference-to-video maximum)
-- Aspect ratio: `16:9`
+- Duration: `auto`
 - Resolution: `720p`
+- Aspect ratio: `auto`
+- Generated audio: enabled
+- Bitrate: `standard`
 - Poll interval: 5 seconds
-- Timeout: 15 minutes
+- Timeout: 30 minutes
 
-Supported local reference formats are PNG, JPEG, WebP, GIF, AVIF, and BMP. The script embeds them as base64 data URIs; it does not upload them elsewhere first.
+The script embeds local references as base64 data URIs. Supported images are JPEG, PNG, and WebP; videos are MP4 and MOV; audio files are MP3 and WAV.
 
 ## Authentication
 
-Read the API key only from `GROK_API_KEY`. Never print, persist, or place it on the command line.
-
-```powershell
-$env:GROK_API_KEY = "your-xai-api-key"
-```
-
-The script sends it as a bearer token to `https://api.x.ai/v1`.
+Read the API key only from `FAL_API_KEY`. Never print, persist, or place it on the command line. Send it to fal.ai using `Authorization: Key ...`.
 
 ## Constraints
 
-- Require a non-empty prompt and 1–7 reference images.
-- Do not combine `reference_images` with image-to-video, video editing, or video extension fields.
-- Keep reference-to-video duration at 10 seconds or less.
-- Preserve input ordering because prompt labels such as `<IMAGE_1>` correspond to that order.
-- In image-to-video mode, supply exactly one `--image`; it becomes the first frame.
-- Do not retry a failed generation blindly. Report the API response without exposing secrets.
+- Require a non-empty prompt.
+- Allow no more than 9 images, 3 videos, 3 audio files, and 12 total references.
+- Require at least one image or video when audio references are supplied.
+- Preserve reference ordering and prompt labels.
+- Do not retry failed paid generations blindly; report the response without exposing secrets.
+- Treat `1080p`, `4k`, `bitrate_mode`, and `seed` as schema-dependent options. If fal.ai rejects one, report the response and re-check the live endpoint schema before resubmitting.
 
 ## Completion Report
 
-Always include:
-
-- Request ID
-- Ordered reference image paths
-- Exact prompt
-- Model, duration, aspect ratio, and resolution
-- Saved MP4 path
+Always include the request ID, ordered reference paths, exact prompt, all generation parameters, returned seed, and saved MP4 path.
