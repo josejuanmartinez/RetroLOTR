@@ -268,13 +268,18 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (startAsToken) ShowToken();
         else ShowRealCard();
 
-        if (deckTypeImage != null && !string.IsNullOrWhiteSpace(data.deckSpriteName) && illustrations != null)
+        if (deckTypeImage != null)
         {
-            if (illustrations.TryGetIllustrationByName(data.deckSpriteName, out Sprite deckSprite))
+            Sprite deckSprite = null;
+            if (!string.IsNullOrWhiteSpace(data.deckSpriteName) && illustrations != null)
             {
-                deckTypeImage.sprite = deckSprite;
-                deckTypeImage.enabled = true;
+                illustrations.TryGetIllustrationByName(data.deckSpriteName, out deckSprite);
             }
+
+            // Explicitly clear/hide when there's nothing to show, instead of leaving whatever
+            // placeholder sprite is authored on the prefab enabled (most cards have no deck badge).
+            deckTypeImage.sprite = deckSprite;
+            deckTypeImage.enabled = deckSprite != null;
         }
 
         if (data.IsEncounterCard())

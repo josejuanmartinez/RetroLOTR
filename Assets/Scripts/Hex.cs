@@ -207,6 +207,11 @@ public class Hex : MonoBehaviour
         return sharedTextureMapping;
     }
 
+    private void ApplyCurrentFont(TMP_Text text)
+    {
+        if (FontManager.Instance != null) FontManager.Instance.ApplyCurrentFont(text);
+    }
+
     void Awake()
     {
         pc = null;
@@ -308,6 +313,8 @@ public class Hex : MonoBehaviour
         hexInfoText = hexInfo != null ? hexInfo.GetComponentInChildren<TextMeshPro>(true) : null;
         if (terrainTooltipPrefab == null) terrainTooltipPrefab = FindPart(panelRoot, "InfoTooltip");
         messageNoUI = FindPart<TextMeshPro>(panelRoot, "MessageNoUI");
+        ApplyCurrentFont(hexInfoText);
+        ApplyCurrentFont(messageNoUI);
 
         SetActiveFast(hexInfoArrow, false);
         SetActiveFast(hexInfo, false);
@@ -368,6 +375,7 @@ public class Hex : MonoBehaviour
             Debug.LogError("Hex sub-prefab 'HexPcText' is missing its TextMeshPro component.");
             return false;
         }
+        ApplyCurrentFont(pcName);
 
         // Starts hidden; UpdatePcWorldText applies the state it needs right after.
         SetActiveFast(label, false);
@@ -1255,6 +1263,7 @@ public class Hex : MonoBehaviour
             _terrainTooltipInstance = null;
             return null;
         }
+        ApplyCurrentFont(_terrainTooltip);
         _terrainTooltipInstance.SetActive(false);
         return _terrainTooltip;
     }

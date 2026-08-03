@@ -9,6 +9,10 @@ using UnityEngine.EventSystems;
 /// the <see cref="CalendarWidget"/>; moving the pointer away from both the date and the
 /// calendar hides it again (with a short grace period so you can reach the panel).
 /// (Pointer events only fire in Play mode and require an EventSystem + GraphicRaycaster.)
+///
+/// <see cref="calendarWidget"/> must be a scene instance of CalendarWidgetPanel.prefab,
+/// placed disabled under the UI canvas and wired up in the Inspector (see
+/// Assets/Editor/CalendarWidgetPrefabTools.cs for a tool that builds and wires it).
 /// </summary>
 public class DateManager : MonoBehaviour
 {
@@ -16,6 +20,7 @@ public class DateManager : MonoBehaviour
     private TextMeshProUGUI textWidget;
 
     [SerializeField]
+    [Tooltip("Scene instance of CalendarWidgetPanel.prefab, disabled by default. Enabled on hover.")]
     private CalendarWidget calendarWidget;
 
     private Game game;
@@ -26,7 +31,10 @@ public class DateManager : MonoBehaviour
 
     private void OnEnable()
     {
-        EnsureCalendarWidget();
+        if (calendarWidget == null)
+        {
+            Debug.LogWarning("DateManager: 'calendarWidget' is not assigned. Wire it to a disabled scene instance of CalendarWidgetPanel.prefab (see Assets/Editor/CalendarWidgetPrefabTools.cs).");
+        }
         EnsureDateInteractions();
         DateEventManager.GetOrCreate(); // drives scripted environment cards + date events
 
@@ -56,28 +64,12 @@ public class DateManager : MonoBehaviour
 
     public void OpenCalendar()
     {
-        EnsureCalendarWidget();
         calendarWidget?.OnDateEnter(currentDate);
     }
 
     public void CloseCalendar()
     {
         calendarWidget?.OnDateExit();
-    }
-
-    private void EnsureCalendarWidget()
-    {
-        if (calendarWidget == null)
-        {
-            calendarWidget = FindFirstObjectByType<CalendarWidget>();
-        }
-        if (calendarWidget == null)
-        {
-            var go = new GameObject("CalendarWidget");
-            go.transform.SetParent(transform, false);
-            calendarWidget = go.AddComponent<CalendarWidget>();
-        }
-        if (textWidget != null) calendarWidget.SetHostCanvas(textWidget.canvas);
     }
 
     private void EnsureDateInteractions()

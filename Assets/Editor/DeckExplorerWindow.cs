@@ -1278,6 +1278,22 @@ public class DeckExplorerWindow : EditorWindow
             cardArtImage.enabled = sprite != null;
         }
 
+        // Card.Show() would normally set this from card.deckSpriteName, which DeckManager
+        // populates at load time from the containing deck's manifest entry
+        // (card.deckSpriteName = entry.deckSpriteName). This window reads deck JSON files
+        // directly and never runs that propagation step, so card.deckSpriteName is whatever
+        // was raw-authored in the JSON - almost always blank, even for a card sitting right
+        // there in the selected deck. Pull it from the selected deck's manifest instead, same
+        // as DeckManager would for this card, and resolve it via AssetDatabase search since the
+        // runtime Illustrations/Addressables singleton never loads in this isolated preview.
+        Image deckTypeImage = GetPreviewField<Image>("deckTypeImage");
+        if (deckTypeImage != null)
+        {
+            Sprite deckSprite = ResolveDeckTypeArtwork(GetSelectedDeckView());
+            deckTypeImage.sprite = deckSprite;
+            deckTypeImage.enabled = deckSprite != null;
+        }
+
         Hover hover = GetPreviewField<Hover>("hover");
         if (hover != null)
         {
@@ -2337,6 +2353,19 @@ public class DeckExplorerWindow : EditorWindow
         return null;
     }
 
+    private Sprite ResolveDeckTypeArtwork(DeckEntryView deckView)
+    {
+        string deckSpriteName = deckView?.manifest?.deckSpriteName;
+        if (string.IsNullOrWhiteSpace(deckSpriteName)) return null;
+
+        string candidate = deckSpriteName.Trim();
+        if (spriteCache.TryGetValue(candidate, out Sprite cached)) return cached;
+
+        Sprite found = FindSprite(candidate);
+        spriteCache[candidate] = found;
+        return found;
+    }
+
     private Sprite FindSprite(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return null;
@@ -2358,7 +2387,7 @@ public class DeckExplorerWindow : EditorWindow
             foreach (UnityEngine.Object asset in assets)
             {
                 if (asset is not Sprite sprite) continue;
-                if (string.Equals(sprite.name, name, StringComparison.OrdinalIgnoreCase) || Normalize(sprite.name) == normalizedTarget)
+                if (SpriteNameMatches(sprite.name, name, normalizedTarget))
                 {
                     return sprite;
                 }
@@ -2366,6 +2395,35 @@ public class DeckExplorerWindow : EditorWindow
         }
 
         return null;
+    }
+
+    private static bool SpriteNameMatches(string spriteName, string name, string normalizedTarget)
+    {
+        if (string.Equals(spriteName, name, StringComparison.OrdinalIgnoreCase)) return true;
+        if (Normalize(spriteName) == normalizedTarget) return true;
+
+        // Single-sprite imports whose internal name follows the "<name>_<index>" convention
+        // (e.g. sliced from a shared spritesheet, or just authored that way) carry a trailing
+        // "_<digits>" suffix that the plain/normalized checks above don't account for. Mirrors
+        // Illustrations.StripSubSpriteSuffix so this editor-only search stays as tolerant of
+        // that convention as the runtime Addressables lookup already is.
+        string stripped = StripTrailingIndexSuffix(spriteName);
+        return string.Equals(stripped, name, StringComparison.OrdinalIgnoreCase) || Normalize(stripped) == normalizedTarget;
+    }
+
+    private static string StripTrailingIndexSuffix(string rawName)
+    {
+        if (string.IsNullOrWhiteSpace(rawName)) return rawName;
+
+        int underscoreIndex = rawName.LastIndexOf('_');
+        if (underscoreIndex < 0 || underscoreIndex == rawName.Length - 1) return rawName;
+
+        for (int i = underscoreIndex + 1; i < rawName.Length; i++)
+        {
+            if (!char.IsDigit(rawName[i])) return rawName;
+        }
+
+        return rawName.Substring(0, underscoreIndex);
     }
 
     private static CharacterAction ResolveAction(string actionRef, CardData card)

@@ -9,6 +9,7 @@ using UnityEngine;
 public class EndlessStairs : CharacterAction
 {
     private const int MaxDestinations = 3;
+    private const string CardArtName = "EndlessStairs";
 
     private static void MoveCharacterToHex(Character character, Hex targetHex)
     {
@@ -63,10 +64,13 @@ public class EndlessStairs : CharacterAction
             : $"Hex {hex.GetHoverV2()}";
     }
 
+    // Illustrations only indexes Assets/Art/Cards/* and Assets/Art/Decks/* art, so a raw
+    // terrain display name (e.g. "Mountains") never resolves — fall back to the card's own
+    // art instead of leaving hexes without a PC with a blank icon.
     private static string GetDestinationIconName(Hex hex)
     {
         PC pc = hex.GetPC();
-        return pc != null ? pc.pcName : TerrainData.GetDisplayName(hex.terrainType);
+        return pc != null ? pc.pcName : CardArtName;
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -104,6 +108,8 @@ public class EndlessStairs : CharacterAction
             {
                 List<string> options = destinations.Select(DescribeDestination).ToList();
                 List<string> optionIcons = destinations.Select(GetDestinationIconName).ToList();
+                Illustrations illustrations = FindFirstObjectByType<Illustrations>();
+                Sprite portrait = illustrations != null ? illustrations.GetIllustrationByName(CardArtName, false) : null;
                 string selected = await SelectionDialog.Ask(
                     "The Endless Stairs wind down into the deep places of the world. Where do they lead?",
                     "Ok",
@@ -111,7 +117,7 @@ public class EndlessStairs : CharacterAction
                     options,
                     null,
                     isAI,
-                    null,
+                    portrait,
                     EventIconType.MultiChoice,
                     "Endless Stairs",
                     optionIcons);

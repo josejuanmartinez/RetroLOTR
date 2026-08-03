@@ -47,15 +47,7 @@ public class SkinManager : MonoBehaviour
         UniversalAdditionalCameraData cameraData = targetCamera.GetUniversalAdditionalCameraData();
         cameraData.SetRenderer(rendererIndex);
 
-        foreach (Skins availableSkin in System.Enum.GetValues(typeof(Skins)))
-        {
-            string suffix = GetSkinSuffix(availableSkin);
-            if (string.IsNullOrEmpty(suffix)) continue;
-
-            bool enabled = availableSkin == skin;
-            materialManager.SetEffectEnabled(materialManager.GetMaterialByName(suffix), enabled);
-            materialManager.SetEffectEnabled(materialManager.GetMaterialByName($"{suffix}Animated"), enabled);
-        }
+        materialManager.ApplySkin(GetSkinSuffix(skin));
 
         fontManager.ApplyFont(fontManager.GetFontByName(skin.ToString()));
     }

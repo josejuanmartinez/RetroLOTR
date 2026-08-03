@@ -8,6 +8,8 @@ public class OptionButtonPrefabManager : MonoBehaviour
     [SerializeField] private Image icon;
     [SerializeField] private Illustrations illustrations;
 
+    public Image IconGraphic => icon;
+
     public void Setup(string label, string iconSpriteName = null)
     {
         if (text != null) text.text = label;

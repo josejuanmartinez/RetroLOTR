@@ -41,6 +41,7 @@ public class SpriteRendererIconManager : MonoBehaviour
 
     public void Initialize(Character character)
     {
+        ApplyCurrentFont();
         this.character = character;
         illustrations = FindFirstObjectByType<Illustrations>();
         AlignmentEnum alignmentEnum = character.GetOwner().GetAlignment();
@@ -53,6 +54,7 @@ public class SpriteRendererIconManager : MonoBehaviour
 
     public void Initialize(Character character, string spriteName)
     {
+        ApplyCurrentFont();
         this.character = character;
         illustrations = FindFirstObjectByType<Illustrations>();
         Sprite sprite = illustrations != null ? illustrations.GetIllustrationByName(spriteName) : null;
@@ -60,5 +62,10 @@ public class SpriteRendererIconManager : MonoBehaviour
         var biome = character.GetOwner()?.GetBiome();
         string initials = !string.IsNullOrEmpty(biome?.nationInitials) ? biome.nationInitials : GetInitials(biome?.nationName);
         if (nationText != null) nationText.text = initials;
+    }
+
+    private void ApplyCurrentFont()
+    {
+        if (FontManager.Instance != null) FontManager.Instance.ApplyCurrentFont(nationText);
     }
 }
