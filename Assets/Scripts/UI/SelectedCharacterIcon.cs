@@ -313,7 +313,7 @@ public class SelectedCharacterIcon : MonoBehaviour
             : $"{quoteText}\n\n{armyText}";
         string kidnappingText = BuildKidnappingStatusText(c);
         nameWidget.text = nameText;
-        descriptionWidget.text = $"{kidnappingText}\n{descriptionText}";
+        descriptionWidget.text = $"<mark=#000000bb>{kidnappingText}\n{descriptionText}</mark>";
         levelsGameObject.SetActive(true);
         actioned.SetActive(true);
         moved.SetActive(true);
@@ -383,7 +383,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         if (!string.IsNullOrWhiteSpace(quoteText)) descriptionParts.Add(quoteText);
         if (!string.IsNullOrWhiteSpace(armyText)) descriptionParts.Add(armyText);
         if (!string.IsNullOrWhiteSpace(detailText)) descriptionParts.Add(detailText);
-        descriptionWidget.text = string.Join("\n\n", descriptionParts);
+        descriptionWidget.text = $"<mark=#000000bb>{string.Join("\n\n", descriptionParts)}</mark>";
 
         actioned.SetActive(false);
         moved.SetActive(false);

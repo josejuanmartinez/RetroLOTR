@@ -14,10 +14,6 @@ public class PopupManager : MonoBehaviour
     public GameObject container;
     public Image actor1;
     public Image actor2;
-    public RawImage actor1RawImage;
-    public RawImage actor2RawImage;
-    public VideoPlayer actor1Video;
-    public VideoPlayer actor2Video;
     public GameObject leftArrow;
     public GameObject rightArrow;
     public TextMeshProUGUI textWidget;
@@ -143,8 +139,8 @@ public class PopupManager : MonoBehaviour
             typeWriterEffect.fullText = "";
         }
 
-        SetActorVisuals(actor1, actor1RawImage, actor1Video, null);
-        SetActorVisuals(actor2, actor2RawImage, actor2Video, null);
+        SetActorVisuals(actor1, null);
+        SetActorVisuals(actor2, null);
 
         ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
         if (actionsManager != null)
@@ -227,36 +223,19 @@ public class PopupManager : MonoBehaviour
         if (index < 0 || index >= queue.Count)
             return;
 
-        // Video popup flow disabled for now; static portraits only.
-        // popupDisplayToken++;
-        // StopPopupDisplayRoutine();
-        // actorPlaybackToken++;
-        // StopActorPlaybackSequence();
         currentIndex = index;
         PopupData data = queue[currentIndex];
         Sounds.Instance?.PlayMessage();
         Music.Instance?.PlayEventMusic();
-
-        // StopActorVideo(actor1Video);
-        // StopActorVideo(actor2Video);
-        // ClearActorOutput(actor1RawImage, actor1Video);
-        // ClearActorOutput(actor2RawImage, actor2Video);
 
         bool hasActor2 = data.spriteActor2 != null;
         if (actor2 != null)
         {
             actor2.gameObject.SetActive(hasActor2);
         }
-        if (actor2RawImage != null)
-        {
-            actor2RawImage.gameObject.SetActive(hasActor2);
-        }
-        if (actor2Video != null)
-        {
-            actor2Video.gameObject.SetActive(hasActor2);
-        }
-        SetActorVisuals(actor1, actor1RawImage, actor1Video, data.spriteActor1);
-        SetActorVisuals(actor2, actor2RawImage, actor2Video, data.spriteActor2);
+        
+        SetActorVisuals(actor1, data.spriteActor1);
+        SetActorVisuals(actor2, data.spriteActor2);
         ShowContainer();
         ApplyPopupTextAndTitle(data);
 
@@ -274,13 +253,6 @@ public class PopupManager : MonoBehaviour
 
         UpdateArrows();
     }
-
-    // private void StopPopupDisplayRoutine()
-    // {
-    //     if (popupDisplayRoutine == null) return;
-    //     StopCoroutine(popupDisplayRoutine);
-    //     popupDisplayRoutine = null;
-    // }
 
     private bool ShouldDelayPopup()
     {
@@ -318,52 +290,6 @@ public class PopupManager : MonoBehaviour
         if (leftArrow != null) leftArrow.SetActive(hasQueue && currentIndex > 0);
         if (rightArrow != null) rightArrow.SetActive(hasQueue && currentIndex < queue.Count - 1);
     }
-
-    // private VideoClip GetVideoByName(string name)
-    // {
-    //     if (string.IsNullOrEmpty(name)) return null;
-    //     if (videos == null) videos = FindFirstObjectByType<Videos>();
-    //     return videos != null ? videos.GetVideoByName(name) : null;
-    // }
-
-    // private void StopActorPlaybackSequence()
-    // {
-    //     if (actorPlaybackSequenceRoutine == null) return;
-    //     StopCoroutine(actorPlaybackSequenceRoutine);
-    //     actorPlaybackSequenceRoutine = null;
-    // }
-
-    // private IEnumerator PlayRightActorAfterLeftCompletes(int tokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
-    // {
-    //     Video popup flow disabled for now.
-    //     yield break;
-    // }
-
-    // private IEnumerator PrepareAndShowDualVideoEntry(int displayTokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
-    // {
-    //     Video popup flow disabled for now.
-    //     yield break;
-    // }
-
-    // private IEnumerator PrepareAndShowSingleStateEntry(int displayTokenSnapshot, VideoClip leftClip, Sprite leftFallbackSprite, VideoClip rightClip, Sprite rightFallbackSprite)
-    // {
-    //     Video popup flow disabled for now.
-    //     yield break;
-    // }
-
-    // private IEnumerator PrepareVideo(VideoPlayer video, RawImage rawImage, VideoClip clip)
-    // {
-    //     Video popup flow disabled for now.
-    //     yield break;
-    // }
-
-    // private void ApplyPreparedActorState(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
-    // {
-    // }
-
-    // private void PlayPreparedVideo(Image image, RawImage rawImage, VideoPlayer video, VideoClip clip, Sprite fallbackSprite)
-    // {
-    // }
 
     private void ShowContainer()
     {
@@ -431,40 +357,8 @@ public class PopupManager : MonoBehaviour
         }
     }
 
-    // private static void StopActorVideo(VideoPlayer video)
-    // {
-    //     if (video == null) return;
-    //     video.Stop();
-    //     video.enabled = false;
-    // }
-
-    // private static void ClearActorOutput(RawImage rawImage, VideoPlayer video)
-    // {
-    //     if (rawImage != null)
-    //     {
-    //         rawImage.enabled = false;
-    //     }
-    //
-    //     RenderTexture target = video != null ? video.targetTexture : null;
-    //     if (target == null) return;
-    //
-    //     RenderTexture previous = RenderTexture.active;
-    //     RenderTexture.active = target;
-    //     GL.Clear(true, true, Color.clear);
-    //     RenderTexture.active = previous;
-    // }
-
-    private static void SetActorVisuals(Image image, RawImage rawImage, VideoPlayer video, Sprite fallbackSprite)
+    private static void SetActorVisuals(Image image, Sprite fallbackSprite)
     {
-        // Video popup flow disabled for now; static portraits only.
-        if (video != null)
-        {
-            video.Stop();
-            video.enabled = false;
-        }
-
-        if (rawImage != null) rawImage.enabled = false;
-
         if (image != null)
         {
             image.enabled = true;

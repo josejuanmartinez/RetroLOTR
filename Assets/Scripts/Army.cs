@@ -884,11 +884,9 @@ public class Army
 
         string battleLocation = targetHex.GetBattleLocationLabel();
         bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(targetHex);
-        List<(string message, Color color)> hudMessages = new()
-        {
-            ($"{attackerName} losses: {attackerLossesText}.", Color.red),
-            ($"{defenderName} losses: {defenderLossesText}.", Color.red)
-        };
+        List<(string message, Color color)> hudMessages = new();
+        if (attackerLosses.Any) hudMessages.Add(($"{attackerName} losses: {attackerLossesText}.", Color.red));
+        if (defenderLosses.Any) hudMessages.Add(($"{defenderName} losses: {defenderLossesText}.", Color.red));
         hudMessages.AddRange(battleAbilityMessages);
 
         // Apply casualties to attacker troops
@@ -905,16 +903,6 @@ public class Army
 
         bool attackerAlive = !killed && GetSize(true) > 0;
         bool defendersRemain = AreDefendersStillAlive(targetHex, attackerAlignment, attackerLeader);
-        string outcome = attackerAlive && !defendersRemain
-            ? $"{attackerName} holds the field."
-            : (!attackerAlive && defendersRemain
-                ? $"{defenderName} repels the attack."
-                : "The battle grinds on with no clear victor.");
-        Color outcomeColor = attackerAlive && !defendersRemain ? Color.green : Color.yellow;
-        if (shouldShowPopup)
-        {
-            hudMessages.Add((outcome, outcomeColor));
-        }
         if (playerInvolved)
         {
             bool playerWin = attackerIsPlayer ? (attackerAlive && !defendersRemain) : (!attackerAlive && defendersRemain);
@@ -1367,10 +1355,8 @@ public class Army
             targetHex.GetPC().fortSize > FortSizeEnum.NONE);
         Illustrations pcIllustrations = GameObject.FindFirstObjectByType<Illustrations>();
         bool shouldShowPopup = playerInvolved || PlayerCanSeeHex(targetHex);
-        List<(string message, Color color)> hudMessages = new()
-        {
-            ($"{attackerName} losses: {attackerLossesText}.", Color.red)
-        };
+        List<(string message, Color color)> hudMessages = new();
+        if (attackerLosses.Any) hudMessages.Add(($"{attackerName} losses: {attackerLossesText}.", Color.red));
         if (shouldShowPopup)
         {
             Action onPopupClose = () => ShowHudMessagesAfterPopup(targetHex, hudActor, hudMessages);

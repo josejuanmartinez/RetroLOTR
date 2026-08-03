@@ -335,13 +335,14 @@ public class CombatBanner : MonoBehaviour
         foreach (Coroutine routine in outcomeRoutines) yield return routine;
 
         // Phase 3.5: status effects newly applied by this fight (e.g. an army ability poisoning
-        // the enemy commander), called out next to whichever side actually received one.
+        // the enemy commander), called out next to whichever side actually received one — unless
+        // that side died in this fight, in which case there's no one left to carry the effect.
         List<Coroutine> statusRoutines = new();
-        if (request.attackerNewStatusEffects != null && request.attackerNewStatusEffects.Count > 0)
+        if (!request.attackerKilled && request.attackerNewStatusEffects != null && request.attackerNewStatusEffects.Count > 0)
         {
             statusRoutines.Add(StartCoroutine(PlayStatusCallout(attackerStatusText, request.attackerNewStatusEffects)));
         }
-        if (request.defenderNewStatusEffects != null && request.defenderNewStatusEffects.Count > 0)
+        if (!request.defenderKilled && request.defenderNewStatusEffects != null && request.defenderNewStatusEffects.Count > 0)
         {
             statusRoutines.Add(StartCoroutine(PlayStatusCallout(defenderStatusText, request.defenderNewStatusEffects)));
         }
@@ -397,17 +398,18 @@ public class CombatBanner : MonoBehaviour
     }
 
     // Army ability/modifier notice lines, then one line per side listing status effects it
-    // already had going into this fight (skips a side with none).
+    // already had going into this fight (skips a side with none, or one that dies in this
+    // fight — a status effect on a corpse isn't worth reporting).
     private static List<string> BuildNoticeLines(Request request)
     {
         List<string> lines = new();
         if (request.noticeMessages != null) lines.AddRange(request.noticeMessages);
 
-        if (request.attackerExistingStatusEffects != null && request.attackerExistingStatusEffects.Count > 0)
+        if (!request.attackerKilled && request.attackerExistingStatusEffects != null && request.attackerExistingStatusEffects.Count > 0)
         {
             lines.Add($"{request.attacker.characterName}: {string.Join(", ", request.attackerExistingStatusEffects.ConvertAll(FormatStatusEffect))}");
         }
-        if (request.defenderExistingStatusEffects != null && request.defenderExistingStatusEffects.Count > 0)
+        if (!request.defenderKilled && request.defenderExistingStatusEffects != null && request.defenderExistingStatusEffects.Count > 0)
         {
             lines.Add($"{request.defender.characterName}: {string.Join(", ", request.defenderExistingStatusEffects.ConvertAll(FormatStatusEffect))}");
         }

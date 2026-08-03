@@ -15,6 +15,8 @@ public class MovementCostManager : MonoBehaviour
             movementText = GetComponentInChildren<TextMeshPro>(true);
         }
 
+        if (FontManager.Instance != null) FontManager.Instance.ApplyCurrentFont(movementText);
+
         if (dot == null)
         {
             SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);

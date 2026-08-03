@@ -310,6 +310,13 @@ public class SelectionDialog : MonoBehaviour
         }
     }
 
+    private void SetChildImageRaycastTarget(string childName, bool raycastTarget)
+    {
+        GameObject child = FindDialogChild(childName);
+        Image image = child != null ? child.GetComponent<Image>() : null;
+        if (image != null) image.raycastTarget = raycastTarget;
+    }
+
     private GameObject FindDialogChild(string name)
     {
         if (content == null || string.IsNullOrWhiteSpace(name)) return null;
@@ -332,6 +339,33 @@ public class SelectionDialog : MonoBehaviour
         if (target.transform.localScale != scale)
         {
             target.transform.localScale = scale;
+        }
+    }
+
+    // Drives the option icon's hover/press color independently of the Button's own
+    // targetGraphic (which must stay the full-button raycast catcher — see CreateOptionButton).
+    private sealed class IconHoverTint : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+    {
+        private Graphic icon;
+        private Button button;
+
+        public static void AttachTo(GameObject obj, Graphic icon, Button button)
+        {
+            if (obj == null || icon == null || button == null) return;
+            IconHoverTint effect = obj.GetComponent<IconHoverTint>() ?? obj.AddComponent<IconHoverTint>();
+            effect.icon = icon;
+            effect.button = button;
+            effect.Apply(button.colors.normalColor);
+        }
+
+        public void OnPointerEnter(PointerEventData eventData) => Apply(button.colors.highlightedColor);
+        public void OnPointerExit(PointerEventData eventData) => Apply(button.colors.normalColor);
+        public void OnPointerDown(PointerEventData eventData) => Apply(button.colors.pressedColor);
+        public void OnPointerUp(PointerEventData eventData) => Apply(button.colors.highlightedColor);
+
+        private void Apply(Color color)
+        {
+            if (icon != null) icon.color = color * button.colors.colorMultiplier;
         }
     }
 
@@ -389,14 +423,21 @@ public class SelectionDialog : MonoBehaviour
 
     private void UpdatePortrait(Sprite portrait)
     {
+        bool hasPortrait = portrait != null;
         if (portraitImage != null)
         {
             portraitImage.sprite = portrait;
-            portraitImage.enabled = portrait != null;
+            portraitImage.enabled = hasPortrait;
         }
         if (portraitCanvasGroup != null)
         {
+            // portraitCanvasGroup ("CharacterImageBg") is also the parent of the title and
+            // message text in this prefab, so alpha must stay at 1 regardless of whether a
+            // portrait was supplied — zeroing it here used to blank the whole dialog body
+            // whenever a dialog (e.g. Endless Stairs) was opened without a portrait.
             portraitCanvasGroup.alpha = 1f;
+            portraitCanvasGroup.interactable = hasPortrait;
+            portraitCanvasGroup.blocksRaycasts = hasPortrait;
         }
     }
 
@@ -456,6 +497,16 @@ public class SelectionDialog : MonoBehaviour
         {
             title = FindTextChild("Title");
         }
+
+        // Title/message/decorative frame art are nested inside portraitCanvasGroup's hierarchy
+        // (see UpdatePortrait). They default to raycastTarget=true, which — now that the group
+        // actually blocks raycasts for dialogs with a portrait — steals clicks meant for option
+        // buttons behind them. None of them are interactive, so force this off every time.
+        if (messageLabel != null) messageLabel.raycastTarget = false;
+        if (title != null) title.raycastTarget = false;
+        if (portraitImage != null) portraitImage.raycastTarget = false;
+        SetChildImageRaycastTarget("Mask", false);
+        SetChildImageRaycastTarget("TitleBg", false);
 
         if (illustrations == null)
         {
@@ -600,6 +651,25 @@ public class SelectionDialog : MonoBehaviour
             Destroy(btn.gameObject);
         }
         optionButtons.Clear();
+
+        // EditorRenderExample/design-time previews can leave serialized option buttons in the
+        // prefab. They were never added to optionButtons, so the old cleanup ignored them and
+        // every real dialog inherited a stale fourth choice. Remove any remaining option-button
+        // instances from the container before rebuilding the request.
+        if (optionButtonsContainer != null)
+        {
+            OptionButtonPrefabManager[] staleOptions = optionButtonsContainer
+                .GetComponentsInChildren<OptionButtonPrefabManager>(true);
+            foreach (OptionButtonPrefabManager stale in staleOptions)
+            {
+                if (stale == null || stale.gameObject == optionButtonPrefab) continue;
+                stale.gameObject.SetActive(false);
+#if UNITY_EDITOR
+                if (!Application.isPlaying) { DestroyImmediate(stale.gameObject); continue; }
+#endif
+                Destroy(stale.gameObject);
+            }
+        }
         selectedButtonIndex = -1;
     }
 
@@ -618,13 +688,41 @@ public class SelectionDialog : MonoBehaviour
         CanvasGroup cg = obj.GetComponent<CanvasGroup>() ?? obj.AddComponent<CanvasGroup>();
         cg.alpha = 0f;
 
+        // The option icon is a fixed ~64px-tall image (see SelectionManagerOption prefab's
+        // "Icon" child); shrinking the button below that spills the icon into neighboring
+        // buttons, so the button height must stay at least icon-sized regardless of hasDesc.
         LayoutElement le = obj.GetComponent<LayoutElement>() ?? obj.AddComponent<LayoutElement>();
-        le.preferredHeight = hasDesc ? 54f : 36f;
-        le.minHeight       = hasDesc ? 44f : 28f;
+        le.preferredHeight = hasDesc ? 78f : 70f;
+        le.minHeight       = 68f;
 
         prefabManager.Setup(labelText, iconOverride ?? text);
 
+        // SelectionManagerOption's root has no Image component — the only raycastable
+        // graphic on the whole button used to be the ~77x64px icon thumbnail on the left
+        // (the label text has raycastTarget off), so clicking anywhere else on the button
+        // (i.e. the label, which is most of its area) hit nothing. Add an invisible
+        // full-size catcher purely to make the whole button clickable. It stays the
+        // Button's targetGraphic (reassigning targetGraphic to the icon broke clicks —
+        // Selectable's own pointer bookkeeping seems to key off it for more than color
+        // tinting), so the icon's hover/press highlight is driven separately below instead.
+        Image background = obj.GetComponent<Image>() ?? obj.AddComponent<Image>();
+        background.sprite = null;
+        background.color = new Color(0.08f, 0.06f, 0.04f, 0f);
+        background.raycastTarget = true;
+
         Button btn = obj.GetComponent<Button>();
+        btn.targetGraphic = background;
+
+        // The "Icon" child ships with its own (listener-less) Button. Unity's event bubbling
+        // stops at the nearest ancestor implementing IPointerClickHandler, so clicks landing
+        // on the icon were being swallowed by that inner Button and never reaching this one.
+        // Disable it (excluded from ExecuteEvents once inactive) so those clicks bubble here.
+        foreach (Button nestedBtn in obj.GetComponentsInChildren<Button>(true))
+        {
+            if (nestedBtn != btn) nestedBtn.enabled = false;
+        }
+
+        if (prefabManager.IconGraphic != null) IconHoverTint.AttachTo(obj, prefabManager.IconGraphic, btn);
         int capturedIndex = index;
         btn.onClick.AddListener(() => SelectOptionButton(capturedIndex));
 

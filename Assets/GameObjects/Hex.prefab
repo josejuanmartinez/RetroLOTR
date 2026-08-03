@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1727571556523103185}
   - component: {fileID: 8742302621051344022}
-  - component: {fileID: 3306445012277383939}
   m_Layer: 6
   m_Name: Artifact
   m_TagString: Untagged
@@ -60,7 +59,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -93,21 +92,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &3306445012277383939
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139434526201841838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ee3e95447121d408d133ffb3fc0732, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ZoomSpriteRenderer
-  zoomFactor: 1
-  verticalOffset: 0
-  autoAssignMaterial: 1
 --- !u!1 &1166177423707030691
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,7 +102,6 @@ GameObject:
   m_Component:
   - component: {fileID: 760472173901875850}
   - component: {fileID: 5943603059195816909}
-  - component: {fileID: 201295257331324913}
   m_Layer: 6
   m_Name: Underground
   m_TagString: Untagged
@@ -168,7 +151,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -201,21 +184,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &201295257331324913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1166177423707030691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ee3e95447121d408d133ffb3fc0732, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ZoomSpriteRenderer
-  zoomFactor: 1
-  verticalOffset: 0
-  autoAssignMaterial: 1
 --- !u!1 &1548661320021129584
 GameObject:
   m_ObjectHideFlags: 0
@@ -414,7 +382,6 @@ GameObject:
   m_Component:
   - component: {fileID: 557637808842708557}
   - component: {fileID: 4226777113568936291}
-  - component: {fileID: 131039840239072643}
   m_Layer: 6
   m_Name: Encounter
   m_TagString: Untagged
@@ -464,7 +431,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -497,21 +464,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &131039840239072643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1741473651932502846}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ee3e95447121d408d133ffb3fc0732, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ZoomSpriteRenderer
-  zoomFactor: 1
-  verticalOffset: 0
-  autoAssignMaterial: 1
 --- !u!1 &1975017971304593041
 GameObject:
   m_ObjectHideFlags: 0
@@ -1056,7 +1008,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteRendererGridLayout
   cellSize: {x: 0.2, y: 0.2}
   spacing: {x: -0.05, y: 0}
-  constraintCount: 5
+  constraintCount: 3
   centerAlignment: 1
   scaleToCellSize: 1
   autoArrangeOnStart: 1
@@ -1276,11 +1228,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1403554984590442396, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.000023379922
+      value: -0.10240001
       objectReference: {fileID: 0}
     - target: {fileID: 1403554984590442396, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.0281
+      value: -0.028099999
       objectReference: {fileID: 0}
     - target: {fileID: 2329783396477944536, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_Name
@@ -1534,7 +1486,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1403554984590442396, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.000023379922
+      value: -0.1024
       objectReference: {fileID: 0}
     - target: {fileID: 1403554984590442396, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1792,11 +1744,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1403554984590442396, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.000023379922
+      value: -0.7833399
       objectReference: {fileID: 0}
     - target: {fileID: 1403554984590442396, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.0354
+      value: 0.035400003
       objectReference: {fileID: 0}
     - target: {fileID: 2329783396477944536, guid: 4270183a6ada5cb43873800d88eec097, type: 3}
       propertyPath: m_Name
