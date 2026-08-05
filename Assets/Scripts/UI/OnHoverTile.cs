@@ -46,7 +46,7 @@ public class OnHoverTile : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (board == null || PopupManager.IsShowing) return;
+        if (board == null || PopupManager.IsShowing || IsPausedForBannerOrInstructions()) return;
 
         if (FindFirstObjectByType<Layout>() != null)
         {
@@ -82,7 +82,7 @@ public class OnHoverTile : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (PopupManager.IsShowing) return;
+        if (PopupManager.IsShowing || IsPausedForBannerOrInstructions()) return;
         if (IsPointerOverVisibleUIElement())
         {
             if (hex != null) hex.Unhover();
@@ -105,6 +105,13 @@ public class OnHoverTile : MonoBehaviour
     public static void UpdateMouseState(bool rightMouseDown)
     {
         Board board = FindFirstObjectByType<Board>();
+
+        if (PopupManager.IsShowing || IsPausedForBannerOrInstructions())
+        {
+            if (pathRenderer) pathRenderer.HidePath();
+            ResetMovementCursor();
+            return;
+        }
 
         if (IsPointerOverVisibleUIElement() || board.moving)
         {
@@ -205,6 +212,14 @@ public class OnHoverTile : MonoBehaviour
             CursorManager.Instance?.SetDefaultCursor();
             movementCursorDisabled = false;
         }
+    }
+
+    // The turn banner (which covers both "TURN X" and the Gathering Resources banner that
+    // follows it) and the game-start onboarding instructions both mean the game is meant to
+    // be fully paused — no hex hover, path preview, or movement should go through.
+    private static bool IsPausedForBannerOrInstructions()
+    {
+        return TurnBanner.IsShowing || TutorialInstructionsManager.Instance.IsShowing;
     }
 
     private static bool IsPointerOverVisibleUIElement()

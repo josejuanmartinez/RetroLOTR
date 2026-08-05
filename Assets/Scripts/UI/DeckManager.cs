@@ -842,16 +842,11 @@ public class DeckManager : MonoBehaviour
         if (game.competitors != null) leaders.AddRange(game.competitors.Where(x => x != null));
 
         InitializeHands(leaders);
-        if (game.player != null)
+        if (game.player != null && playerDecks.TryGetValue(game.player, out PlayerDeckState humanState))
         {
-            EnsureTutorialHandForPlayer(game.player);
-            if (!ShouldSkipTurnRefillForTutorialHuman(game.player)
-                && playerDecks.TryGetValue(game.player, out PlayerDeckState humanState))
-            {
-                EnsureRegionCardInHand(humanState);
-                humanState.turnsWithoutRegionCard = HandHasRegionCard(humanState) ? 0 : 1;
-                EnsureSharedBaseCardInHand(humanState);
-            }
+            EnsureRegionCardInHand(humanState);
+            humanState.turnsWithoutRegionCard = HandHasRegionCard(humanState) ? 0 : 1;
+            EnsureSharedBaseCardInHand(humanState);
         }
         RefreshHumanPlayerHandUI();
         return true;
@@ -1283,57 +1278,11 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
-    public bool SetTutorialActionCards(PlayableLeader leader, IEnumerable<string> actionClassNames)
-    {
-        if (leader == null) return false;
-        if (!loaded && !InitializeFromResources()) return false;
-
-        ApplyTutorialActionCardsToState(leader, actionClassNames);
-
-        RefreshHumanPlayerHandUIIfHuman(leader);
-        return true;
-    }
-
-    public bool SetTutorialCardsByName(PlayableLeader leader, IEnumerable<string> cardNames)
-    {
-        if (leader == null) return false;
-        if (!loaded && !InitializeFromResources()) return false;
-
-        ApplyTutorialCardsToStateByName(leader, cardNames);
-
-        RefreshHumanPlayerHandUIIfHuman(leader);
-        return true;
-    }
-
-    public bool RestoreStandardHandAfterTutorial(PlayableLeader leader, int cardsToDraw = -1)
-    {
-        if (leader == null) return false;
-        if (!loaded && !InitializeFromResources()) return false;
-
-        PlayerDeckState rebuilt = BuildDeckStateForLeader(leader);
-        if (rebuilt == null) return false;
-
-        playerDecks[leader] = rebuilt;
-        RefillHandToCount(rebuilt, Mathf.Max(0, cardsToDraw < 0 ? handSize : cardsToDraw), leader);
-        EnsureRegionCardInHand(rebuilt);
-        rebuilt.turnsWithoutRegionCard = HandHasRegionCard(rebuilt) ? 0 : 1;
-        EnsureSharedBaseCardInHand(rebuilt);
-        RefreshHumanPlayerHandUIIfHuman(leader);
-        return true;
-    }
-
     public bool ReplenishHandForTurn(PlayableLeader leader)
     {
         if (leader == null) return false;
         if (!loaded && !InitializeFromResources()) return false;
         if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
-        if (ShouldSkipTurnRefillForTutorialHuman(leader))
-        {
-            Debug.Log($"[TutorialDebug] Turn refill skipped for tutorial leader '{leader.characterName}'");
-            EnsureTutorialHandForPlayer(leader);
-            RefreshHumanPlayerHandUIIfHuman(leader);
-            return true;
-        }
 
         RefillHandToCount(state, handSize, leader);
         ApplyRegionCardGuarantee(state);
@@ -1607,27 +1556,6 @@ public class DeckManager : MonoBehaviour
         }
 
         state.hand.Add(sharedCard);
-    }
-
-    private CardData FindActionCardForLeader(PlayableLeader leader, string actionClassName)
-    {
-        if (leader == null || string.IsNullOrWhiteSpace(actionClassName)) return null;
-
-        string deckId = ResolveDeckIdForLeader(leader);
-        foreach (DeckData deckData in GetDeckChain(deckId))
-        {
-            if (deckData?.cards == null) continue;
-            CardData inLeaderDeck = deckData.cards.FirstOrDefault(card =>
-                card != null
-                && IsConsumableEffectCard(card)
-                && string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase));
-            if (inLeaderDeck != null) return inLeaderDeck;
-        }
-
-        return cards.FirstOrDefault(card =>
-            card != null
-            && IsConsumableEffectCard(card)
-            && string.Equals(card.GetActionRef(), actionClassName, StringComparison.OrdinalIgnoreCase));
     }
 
     public CardData FindCardByNameForLeader(PlayableLeader leader, string cardName)
@@ -2748,120 +2676,6 @@ public class DeckManager : MonoBehaviour
         Game game = FindFirstObjectByType<Game>();
         if (game == null || game.player == null || leader != game.player) return;
         RefreshHumanPlayerHandUI();
-    }
-
-    private void EnsureTutorialHandForPlayer(PlayableLeader leader)
-    {
-        if (leader == null) return;
-
-        TutorialManager tutorial = TutorialManager.Instance;
-        if (tutorial == null || !tutorial.IsActiveFor(leader)) return;
-
-        List<string> requiredCardNames = tutorial.GetCurrentExpectedCardNames(leader);
-
-        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state))
-        {
-            Debug.Log($"[TutorialDebug] Rebuild tutorial hand for '{leader.characterName}': no existing state, expected=[{string.Join(", ", requiredCardNames)}]");
-            SetTutorialCardsByName(leader, requiredCardNames);
-            return;
-        }
-
-        bool sameCount = state.hand.Count == requiredCardNames.Count;
-        bool allPresent = requiredCardNames.All(required =>
-        {
-            CardData expectedCard = FindCardByNameForLeader(leader, required);
-            if (expectedCard == null) return false;
-
-            return state.hand.Any(card =>
-                card != null
-                && string.Equals(card.name, required, StringComparison.OrdinalIgnoreCase));
-        });
-
-        if (!sameCount || !allPresent)
-        {
-            string currentHand = string.Join(", ", state.hand.Where(card => card != null).Select(card => card.name));
-            Debug.Log($"[TutorialDebug] Rebuild tutorial hand for '{leader.characterName}': hand=[{currentHand}] expected=[{string.Join(", ", requiredCardNames)}]");
-            ApplyTutorialCardsToStateByName(leader, requiredCardNames);
-        }
-    }
-
-    private bool ShouldSkipTurnRefillForTutorialHuman(PlayableLeader leader)
-    {
-        if (leader == null) return false;
-        Game game = FindFirstObjectByType<Game>();
-        if (game == null || game.player == null || leader != game.player) return false;
-        TutorialManager tutorial = TutorialManager.Instance;
-        return tutorial != null && tutorial.IsActiveFor(leader);
-    }
-
-    private bool ApplyTutorialActionCardsToState(PlayableLeader leader, IEnumerable<string> actionClassNames)
-    {
-        if (leader == null) return false;
-
-        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state))
-        {
-            state = BuildDeckStateForLeader(leader);
-            if (state == null) return false;
-            playerDecks[leader] = state;
-        }
-
-        List<string> required = actionClassNames?
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList() ?? new List<string>();
-
-        state.hand.Clear();
-        state.drawPile.Clear();
-        state.discardPile.Clear();
-
-        foreach (string actionClass in required)
-        {
-            CardData card = FindActionCardForLeader(leader, actionClass);
-            if (card == null)
-            {
-                Debug.LogWarning($"DeckManager: Could not find tutorial card for action '{actionClass}' and leader '{leader.characterName}'.");
-                continue;
-            }
-            state.hand.Add(CloneCard(card));
-        }
-
-        return true;
-    }
-
-    private bool ApplyTutorialCardsToStateByName(PlayableLeader leader, IEnumerable<string> cardNames)
-    {
-        if (leader == null) return false;
-
-        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state))
-        {
-            state = BuildDeckStateForLeader(leader);
-            if (state == null) return false;
-            playerDecks[leader] = state;
-        }
-
-        List<string> required = cardNames?
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList() ?? new List<string>();
-
-        state.hand.Clear();
-        state.drawPile.Clear();
-        state.discardPile.Clear();
-
-        foreach (string cardName in required)
-        {
-            CardData card = FindCardByNameForLeader(leader, cardName);
-            if (card == null)
-            {
-                Debug.LogWarning($"DeckManager: Could not find tutorial card '{cardName}' for leader '{leader.characterName}'.");
-                continue;
-            }
-            state.hand.Add(CloneCard(card));
-        }
-
-        return true;
     }
 
     private IEnumerator PlayReshuffleAnimation(List<GameObject> oldCards)

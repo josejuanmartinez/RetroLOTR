@@ -903,6 +903,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (BoardNavigator.IsNavigationInputLocked()) return;
         if (!SuppressHoverEffects)
         {
             if (isTokenOnlyPresentation || isEnvironmentalPresentation) CardCenterPreview.Instance?.ShowPreview(cardData);
@@ -1022,7 +1023,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         EnvironmentalCardManager.GetOrCreate().SetActiveCard(activeCard);
         playerLeader.RecordPlayedCard(activeCard);
         selected?.RecordPlayedCard(activeCard, playedSprite);
-        TutorialManager.Instance?.HandleCardPlayed(selected, activeCard, selected != null ? selected.hex : null);
 
         if (selected?.hex != null)
             MessageDisplayNoUI.ShowMessage(selected.hex, selected, $"{activeCard.name} takes hold — effects begin next turn", Color.green);
@@ -1065,20 +1065,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                     string hexName = playedSelected.hex != null ? playedSelected.hex.name : "none";
                     string pcName = playedSelected.hex?.GetPCData()?.pcName ?? "none";
                     Debug.LogWarning(
-                        $"[TutorialDebug] Action gate failed for card '{playedCard.name}' on '{playedSelected.characterName}' " +
+                        $"Action gate failed for card '{playedCard.name}' on '{playedSelected.characterName}' " +
                         $"(hex='{hexName}', pc='{pcName}', commander={playedSelected.GetCommander()}, agent={playedSelected.GetAgent()}, " +
                         $"emmissary={playedSelected.GetEmmissary()}, mage={playedSelected.GetMage()})");
                 }
-            }
-        }
-
-        TutorialManager tutorialManager = TutorialManager.Instance;
-        if (tutorialManager != null && playedSelected != null && playedCard != null)
-        {
-            string tutorialReason = tutorialManager.GetTutorialPlayRestrictionReason(playedSelected.GetOwner() as PlayableLeader, playedSelected, playedCard);
-            if (!string.IsNullOrWhiteSpace(tutorialReason))
-            {
-                Debug.LogWarning($"[TutorialDebug] Card '{playedCard.name}' blocked for '{playedSelected.characterName}': {tutorialReason}");
             }
         }
 
@@ -1165,7 +1155,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (success)
         {
             playedSelected?.RecordPlayedCard(playedCard, playedSprite);
-            TutorialManager.Instance?.HandleCardPlayed(playedSelected, playedCard, playedSelected != null ? playedSelected.hex : null);
 
             if (actionRollFailed)
             {

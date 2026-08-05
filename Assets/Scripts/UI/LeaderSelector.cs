@@ -42,7 +42,6 @@ public class LeaderSelector : SearcherByName
     public GameObject progressText;
     public GameObject leaderSelectionFullScreen;
     public Image bannerImage;
-    public GameObject startTutorialButton;
 
     readonly List<LeaderSelectionEntry> selectionEntries = new();
     readonly List<GameObject> carouselItems = new();
@@ -66,18 +65,6 @@ public class LeaderSelector : SearcherByName
         if (leaderCarousel != null)
         {
             leaderCarousel.RegisterOnSelectionChanged(SelectLeader);
-        }
-
-        UpdateStartTutorialButtonVisibility();
-    }
-
-    // Start Tutorial only makes sense for the default random campaign — an authored scenario
-    // has its own hand-placed starting situation, so the guided tutorial doesn't apply.
-    void UpdateStartTutorialButtonVisibility()
-    {
-        if (startTutorialButton != null)
-        {
-            startTutorialButton.SetActive(!GameConfig.HasScenario);
         }
     }
 
@@ -197,8 +184,6 @@ public class LeaderSelector : SearcherByName
             rootCanvas.enabled = false;
             rootCanvas.enabled = true;
         }
-
-        UpdateStartTutorialButtonVisibility();
 
         if (leaderSelectionFullScreen != null)
         {

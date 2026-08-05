@@ -39,6 +39,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (BoardNavigator.IsNavigationInputLocked()) return;
         if (character == null || character.killed) return;
         board ??= FindFirstObjectByType<Board>();
         if (board != null && board.selectedCharacter == character) return;

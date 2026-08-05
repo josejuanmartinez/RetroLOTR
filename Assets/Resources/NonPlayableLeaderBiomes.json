@@ -1041,80 +1041,10 @@
                 "startingCityRegion": "TheShire"
             },
             "preferedTroopType": 0,
-            "spawnPcWithoutOwner": false,
             "sex": 0,
             "nationName": "Hobbits of Hobbiton",
             "characterSprite": "hobbit",
             "nationInitials": "HH"
-        },
-        {
-            "characterName": "Orthanc",
-            "alignment": 2,
-            "banner": "banner_saruman_saruman_the_white",
-            "artifacts": [],
-            "noScenarioStart": {
-                "terrain": 1,
-                "startingArmySize": 0,
-                "startingCityIsHidden": false,
-                "startsWithPort": false,
-                "startingWarships": 0,
-                "startingCityRegion": "GapOfRohan"
-            },
-            "preferedTroopType": 0,
-            "spawnPcWithoutOwner": true,
-            "sex": 0,
-            "startingCityName": "Orthanc",
-            "startingCitySize": 4,
-            "nationName": "Isengard",
-            "characterSprite": "common",
-            "nationInitials": "I",
-            "tutorialDummy": true
-        },
-        {
-            "characterName": "Barad-dur",
-            "alignment": 1,
-            "banner": "banner_sauron_the_dark_eye",
-            "artifacts": [],
-            "noScenarioStart": {
-                "terrain": 10,
-                "startingArmySize": 0,
-                "startingCityIsHidden": false,
-                "startsWithPort": false,
-                "startingWarships": 0,
-                "startingCityRegion": "Gorgoroth"
-            },
-            "preferedTroopType": 0,
-            "spawnPcWithoutOwner": true,
-            "sex": 0,
-            "startingCityName": "Barad-dur",
-            "startingCitySize": 5,
-            "nationName": "Mordor",
-            "characterSprite": "common",
-            "nationInitials": "M",
-            "tutorialDummy": true
-        },
-        {
-            "characterName": "Hobbiton",
-            "alignment": 0,
-            "banner": "banner_hobbit_hobbiton",
-            "artifacts": [],
-            "noScenarioStart": {
-                "terrain": 3,
-                "startingArmySize": 0,
-                "startingCityIsHidden": false,
-                "startsWithPort": false,
-                "startingWarships": 0,
-                "startingCityRegion": "TheShire"
-            },
-            "preferedTroopType": 0,
-            "spawnPcWithoutOwner": true,
-            "sex": 0,
-            "startingCityName": "Hobbiton",
-            "startingCitySize": 2,
-            "nationName": "The Shire",
-            "characterSprite": "common",
-            "nationInitials": "TS",
-            "tutorialDummy": true
         },
         {
             "characterName": "Arfanhil",

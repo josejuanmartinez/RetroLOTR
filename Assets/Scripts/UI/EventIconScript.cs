@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public enum EventIconType
 {
     Story,
-    Tutorial,
     YesNo,
     MultiChoice,
     Encounter,
@@ -23,7 +22,6 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
     public Image characterImage;
     public Image eventImage;
     public Sprite storySprite;
-    public Sprite tutorialSprite;
     public Sprite yesnoPopupSprite;
     public Sprite multichoiceSprite;
     public Sprite encounterSprite;
@@ -114,7 +112,6 @@ public class EventIcon : MonoBehaviour, IPointerClickHandler
         return type switch
         {
             EventIconType.Story => storySprite,
-            EventIconType.Tutorial => tutorialSprite,
             EventIconType.YesNo => yesnoPopupSprite,
             EventIconType.MultiChoice => multichoiceSprite,
             EventIconType.Encounter => encounterSprite,

@@ -75,7 +75,7 @@ public class MaterialManager : SearcherByName
             if (!IsSkinCandidate(originalMaterial))
             {
                 if (spriteRenderer.sharedMaterial != originalMaterial)
-                    spriteRenderer.sharedMaterial = originalMaterial;
+                    spriteRenderer.sharedMaterial = originalMaterial; 
                 continue;
             }
 

@@ -9,9 +9,29 @@ public static class OpportunityHexHinter
 {
     private static HexPathRenderer activePathRenderer;
 
+    public static bool HintsEnabled { get; private set; } = true;
+
+    // Call with false to suppress opportunity-card movement hints (e.g. while some other
+    // sequence owns the board's attention) and with true to resume showing them again
+    // immediately for whatever character is currently selected, without waiting on the next
+    // selection-change event.
+    public static void SetHintsEnabled(bool enabled)
+    {
+        HintsEnabled = enabled;
+        if (enabled)
+        {
+            Refresh(Object.FindFirstObjectByType<Board>()?.selectedCharacter);
+        }
+        else
+        {
+            ClearAll();
+        }
+    }
+
     public static void Refresh(Character character)
     {
         ClearAll();
+        if (!HintsEnabled) return;
         if (character == null || character.killed || character.hex == null) return;
 
         Game game = Object.FindFirstObjectByType<Game>();

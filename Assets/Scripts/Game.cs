@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using RetroLOTR.Scenarios;
 
 public class Game : MonoBehaviour
 {
@@ -63,7 +64,6 @@ public class Game : MonoBehaviour
     [Header("Starting info")]
     public int turn = 0;
     public bool started = false;
-    public bool skipTutorial = false;
 
     public event Action<int> NewTurnStarted;
 
@@ -79,10 +79,6 @@ public class Game : MonoBehaviour
         if (FindFirstObjectByType<NonPlayableLeaderEventManager>() == null)
         {
             gameObject.AddComponent<NonPlayableLeaderEventManager>();
-        }
-        if (FindFirstObjectByType<TutorialManager>() == null)
-        {
-            gameObject.AddComponent<TutorialManager>();
         }
     }
 
@@ -187,11 +183,6 @@ public class Game : MonoBehaviour
 
     public void StartGame()
     {
-        StartGame(this.skipTutorial);
-    }
-
-    public void StartGame(bool skipTutorial)
-    {
         FindFirstObjectByType<LeaderSelector>()?.ApplyCurrentSelection();
         PruneUnselectedLeaderVariants();
         RandomizeCompetitorVariants();
@@ -205,7 +196,6 @@ public class Game : MonoBehaviour
 
         turn = 0;
         started = true;
-        this.skipTutorial = skipTutorial;
         blockLookAtUntilStartupPopupCloses = true;
         startupPopupShown = false;
 
@@ -232,15 +222,31 @@ public class Game : MonoBehaviour
         VictoryPoints.RecalculateAndAssign(this);
         RefreshPlayableLeaderIconVictoryPoints();
         AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        BuildPlayerCharacterIcons();
+        SelectFirstPlayerCharacter();
+        // SelectFirstPlayerCharacter() just re-enabled it as part of revealing the human's
+        // widgets — hold it off until the turn actually starts below, otherwise the player
+        // could end turn 0 while the game is supposed to be fully paused for the wait/instructions.
+        if (nextTurnButton != null) nextTurnButton.enabled = false;
+        StartCoroutine(BeginTurnZeroSequence());
+    }
+
+    // Camera is already panning to the player's first character (SelectFirstPlayerCharacter,
+    // called just before this). Give that a moment to land, then — with the turn still not
+    // started — run any onboarding instructions and hold here until every one of them is
+    // closed. Only once the queue is empty does the turn actually begin (Turn 0 banner,
+    // NewTurn(), etc.), matching every subsequent turn's flow.
+    private IEnumerator BeginTurnZeroSequence()
+    {
+        yield return new WaitForSeconds(2f);
+
+        TutorialInstructionsManager instructions = TutorialInstructionsManager.Instance;
+        instructions.OpenNext();
+        while (instructions.IsShowing) yield return null;
+
+        if (nextTurnButton != null) nextTurnButton.enabled = true;
         NewTurnStarted?.Invoke(turn);
-        if (this.skipTutorial)
-        {
-            TutorialManager.Instance?.Skip(player);
-        }
-        else
-        {
-            TutorialManager.Instance?.InitializeForLeader(player);
-        }
+        FinalizeCampaignStart();
         // Reserves CenterDisplayLock immediately (synchronously, before anything below can
         // grab it first) even though the banner itself only appears 1.1s later — otherwise
         // currentlyPlaying.NewTurn() below (which can trigger the PC/region grant preview)
@@ -248,11 +254,38 @@ public class Game : MonoBehaviour
         // way around, unlike every subsequent turn where the banner already goes first.
         StartCoroutine(ShowTurnZeroBanner());
         currentlyPlaying.NewTurn();
-        BuildPlayerCharacterIcons();
-        SelectFirstPlayerCharacter();
         StartCoroutine(RefreshDeckUiAfterStartup());
         MessageDisplay.ClearPersistent();
+    }
 
+    // There is no tutorial gating game start anymore — every campaign begins with everything
+    // a leader is entitled to: their guaranteed starting artifacts and (for the human) their
+    // chosen variant identity. Authored scenarios hand-place their own artifacts/characters,
+    // so this is skipped entirely for those.
+    private void FinalizeCampaignStart()
+    {
+        if (!GameConfig.HasScenario)
+        {
+            GrantStartingArtifacts(player);
+        }
+        player?.ApplyVariantTransformation();
+    }
+
+    private static void GrantStartingArtifacts(PlayableLeader leader)
+    {
+        if (leader == null) return;
+        LeaderBiomeConfig biome = leader.GetBiome();
+        if (biome?.startingArtifacts == null || biome.startingArtifacts.Count == 0) return;
+
+        foreach (Artifact template in biome.startingArtifacts)
+        {
+            if (template == null || string.IsNullOrWhiteSpace(template.artifactName)) continue;
+            bool alreadyOwned = leader.artifacts.Any(a => a != null && string.Equals(a.artifactName, template.artifactName, StringComparison.OrdinalIgnoreCase));
+            if (alreadyOwned) continue;
+            if (leader.artifacts.Count >= Character.MAX_ARTIFACTS) break;
+            leader.artifacts.Add(template.Clone());
+            Character.RefreshArtifactPcVisibilityForHex(leader.hex);
+        }
     }
 
     private IEnumerator ShowTurnZeroBanner()
