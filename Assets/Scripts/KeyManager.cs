@@ -165,23 +165,23 @@ public class KeyManager : MonoBehaviour
 
         foreach (var c in FindObjectsByType<Character>(FindObjectsSortMode.None))
         {
-            if (c == null || c.artifacts == null || c.artifacts.Count == 0) continue;
+            if (c == null || c.objects == null || c.objects.Count == 0) continue;
             string ownerName = string.IsNullOrWhiteSpace(c.characterName) ? c.name : c.characterName;
-            foreach (var art in c.artifacts)
+            foreach (var art in c.objects)
             {
                 if (art == null) continue;
-                entries.Add($"{art.artifactName} held by {ownerName}");
+                entries.Add($"{art.name} held by {ownerName}");
             }
         }
 
         foreach (var hex in FindObjectsByType<Hex>(FindObjectsSortMode.None))
         {
-            if (hex == null || hex.hiddenArtifacts == null || hex.hiddenArtifacts.Count == 0) continue;
+            if (hex == null || hex.hiddenObjects == null || hex.hiddenObjects.Count == 0) continue;
             string hexLabel = hex.GetHoverV2();
-            foreach (var art in hex.hiddenArtifacts)
+            foreach (var art in hex.hiddenObjects)
             {
                 if (art == null) continue;
-                entries.Add($"{art.artifactName} hidden at {hexLabel}");
+                entries.Add($"{art.name} hidden at {hexLabel}");
             }
         }
 

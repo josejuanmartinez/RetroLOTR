@@ -71,7 +71,7 @@ public class BearerOfNarya : CharacterAction
             int artifactsRevealed = 0;
             foreach (Hex h in character.hex.GetHexesInRadius(ArtifactRadius))
             {
-                if (h != null && h.hiddenArtifacts != null && h.hiddenArtifacts.Count > 0)
+                if (h != null && h.hiddenObjects != null && h.hiddenObjects.Count > 0)
                 {
                     h.RevealArtifact();
                     artifactsRevealed++;

@@ -272,6 +272,7 @@ public class NationSpawner : MonoBehaviour
                 ? characterInstantiator.InstantiatePlayableLeader(hex, playableBiome)
                 : characterInstantiator.InstantiateNonPlayableLeader(hex, nplBiome);
 
+            ApplyStartingObjects(leader, selfCard.startingObjects, deckManager);
             currentCharacterCount++;
             placedPositions.Add(hex.v2);
             // Multiple sibling instances can share this name pre-selection; PCs/characters that
@@ -379,6 +380,7 @@ public class NationSpawner : MonoBehaviour
                 character = SpawnScenarioCharacter(owner, hex, sc.characterName, deckManager);
             }
             if (character == null) continue;
+            ApplyStartingObjects(character, sc.startingObjects, deckManager);
             currentCharacterCount++;
 
             if (sc.army != null && !sc.army.IsEmpty())
@@ -844,6 +846,23 @@ public class NationSpawner : MonoBehaviour
         }
 
         return false;
+    }
+
+    // "Every character can hold objects" — resolves each authored name against the Object
+    // catalog and clones it onto the character, whether it's a companion (SpawnScenarioCharacter),
+    // an NPL-identity spawn (InstantiateNonPlayableLeader), or a self-owned leader/variant card
+    // (InstantiatePlayableLeader) — all three converge on a plain Character here, so one helper
+    // covers every scenario-authored spawn path uniformly.
+    private static void ApplyStartingObjects(Character character, List<string> objectNames, DeckManager deckManager)
+    {
+        if (character == null || objectNames == null || objectNames.Count == 0 || deckManager == null) return;
+        foreach (string objectName in objectNames)
+        {
+            if (string.IsNullOrWhiteSpace(objectName)) continue;
+            if (character.objects.Count >= Character.MAX_OBJECTS) break;
+            CardData resolved = deckManager.FindObjectCardByName(objectName)?.Clone();
+            if (resolved != null) character.objects.Add(resolved);
+        }
     }
 
     // Mirrors how a Character card is turned into a unit (see Card.HandleCharacterCardPlayed):

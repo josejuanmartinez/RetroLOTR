@@ -308,10 +308,10 @@ public class CharacterAnimationController : MonoBehaviour
         if (spriteRenderer.sharedMaterial != resolvedMaterial) spriteRenderer.sharedMaterial = resolvedMaterial;
     }
 
-    // Sets the outline color by the character's alignment relative to the human player: neutral
-    // always reads as neutral regardless of viewer; otherwise same-alignment-as-viewer vs.
-    // opposing-alignment picks the ally/enemy look. Called by Hex whenever the character this
-    // controller is showing changes.
+    // Sets the outline color by the character's alignment relative to the human player: if either
+    // side is neutral there is no ally/enemy relationship to show, so it always reads as neutral;
+    // otherwise same-alignment-as-viewer vs. opposing-alignment picks the ally/enemy look. Called
+    // by Hex whenever the character this controller is showing changes.
     public void SetOutlineForCharacter(Character character)
     {
         Material material = ResolveOutlineMaterial(character);
@@ -324,10 +324,11 @@ public class CharacterAnimationController : MonoBehaviour
         if (character == null) return outlineMaterial;
 
         AlignmentEnum alignment = character.GetAlignment();
-        if (alignment == AlignmentEnum.neutral) return neutralOutlineMaterial;
 
         Game game = FindFirstObjectByType<Game>();
         AlignmentEnum viewerAlignment = game != null && game.player != null ? game.player.GetAlignment() : AlignmentEnum.neutral;
+
+        if (alignment == AlignmentEnum.neutral || viewerAlignment == AlignmentEnum.neutral) return neutralOutlineMaterial;
         return alignment != viewerAlignment ? enemyOutlineMaterial : outlineMaterial;
     }
 

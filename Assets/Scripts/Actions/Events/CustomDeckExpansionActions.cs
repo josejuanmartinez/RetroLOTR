@@ -490,7 +490,7 @@ public class HiddenTreasureAction : EventAction
 
 public class TrollsHoardGrantArtifactAction : EventAction
 {
-    private static HashSet<string> GetOwnedOrHiddenArtifactNames(Board board)
+    private static HashSet<string> GetOwnedOrHiddenObjectNames(Board board)
     {
         HashSet<string> names = new(StringComparer.OrdinalIgnoreCase);
 
@@ -498,12 +498,12 @@ public class TrollsHoardGrantArtifactAction : EventAction
         {
             foreach (Hex hex in board.hexes.Values)
             {
-                if (hex?.hiddenArtifacts == null) continue;
-                foreach (Artifact artifact in hex.hiddenArtifacts)
+                if (hex?.hiddenObjects == null) continue;
+                foreach (CardData obj in hex.hiddenObjects)
                 {
-                    if (artifact != null && !string.IsNullOrWhiteSpace(artifact.artifactName))
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.name))
                     {
-                        names.Add(artifact.artifactName);
+                        names.Add(obj.name);
                     }
                 }
             }
@@ -514,18 +514,25 @@ public class TrollsHoardGrantArtifactAction : EventAction
             if (leader?.controlledCharacters == null) continue;
             foreach (Character ch in leader.controlledCharacters)
             {
-                if (ch?.artifacts == null) continue;
-                foreach (Artifact artifact in ch.artifacts)
+                if (ch?.objects == null) continue;
+                foreach (CardData obj in ch.objects)
                 {
-                    if (artifact != null && !string.IsNullOrWhiteSpace(artifact.artifactName))
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.name))
                     {
-                        names.Add(artifact.artifactName);
+                        names.Add(obj.name);
                     }
                 }
             }
         }
 
         return names;
+    }
+
+    private static List<CardData> GetUnusedObjectCards(HashSet<string> unavailableNames)
+    {
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        List<CardData> all = deckManager?.GetAllObjectCardClones() ?? new List<CardData>();
+        return all.Where(o => o != null && (unavailableNames == null || !unavailableNames.Contains(o.name))).ToList();
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -538,27 +545,26 @@ public class TrollsHoardGrantArtifactAction : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
-            if (character.artifacts.Count >= Character.MAX_ARTIFACTS) return false;
+            if (character.objects.Count >= Character.MAX_OBJECTS) return false;
 
             Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
 
-            HashSet<string> unavailable = GetOwnedOrHiddenArtifactNames(board);
-            foreach (Artifact owned in character.artifacts)
+            HashSet<string> unavailable = GetOwnedOrHiddenObjectNames(board);
+            foreach (CardData owned in character.objects)
             {
-                if (owned != null && !string.IsNullOrWhiteSpace(owned.artifactName)) unavailable.Add(owned.artifactName);
+                if (owned != null && !string.IsNullOrWhiteSpace(owned.name)) unavailable.Add(owned.name);
             }
 
-            List<Artifact> candidates = ArtifactRepository.GetUnused(unavailable);
+            List<CardData> candidates = GetUnusedObjectCards(unavailable);
 
             if (candidates.Count == 0) return false;
 
-            Artifact chosen = candidates[UnityEngine.Random.Range(0, candidates.Count)];
+            CardData chosen = candidates[UnityEngine.Random.Range(0, candidates.Count)];
             if (chosen == null) return false;
 
-            character.artifacts.Add(chosen);
-            character.ApplyOppositeAlignmentArtifactPenalty(chosen);
+            character.objects.Add(chosen);
             Character.RefreshArtifactPcVisibilityForHex(character.hex);
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Troll's Hoard yields {chosen.artifactName}.", Color.yellow);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Troll's Hoard yields {chosen.name}.", Color.yellow);
             Sounds.Instance?.PlayArtifactFound();
             return true;
         };
@@ -566,17 +572,17 @@ public class TrollsHoardGrantArtifactAction : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            if (character == null || character.artifacts.Count >= Character.MAX_ARTIFACTS) return false;
+            if (character == null || character.objects.Count >= Character.MAX_OBJECTS) return false;
 
             Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
 
-            HashSet<string> unavailable = GetOwnedOrHiddenArtifactNames(board);
-            foreach (Artifact owned in character.artifacts)
+            HashSet<string> unavailable = GetOwnedOrHiddenObjectNames(board);
+            foreach (CardData owned in character.objects)
             {
-                if (owned != null && !string.IsNullOrWhiteSpace(owned.artifactName)) unavailable.Add(owned.artifactName);
+                if (owned != null && !string.IsNullOrWhiteSpace(owned.name)) unavailable.Add(owned.name);
             }
 
-            return ArtifactRepository.GetUnused(unavailable).Count > 0;
+            return GetUnusedObjectCards(unavailable).Count > 0;
         };
 
         asyncEffect = async (character) =>
@@ -1131,7 +1137,7 @@ public class TheHiddenScriptAction : EventAction
             Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
             if (game == null || deckManager == null || board == null) return false;
 
-            Hex artifactHex = board.GetHexes().FirstOrDefault(h => h != null && h.hiddenArtifacts != null && h.hiddenArtifacts.Count > 0);
+            Hex artifactHex = board.GetHexes().FirstOrDefault(h => h != null && h.hiddenObjects != null && h.hiddenObjects.Count > 0);
             if (artifactHex == null) return false;
 
             artifactHex.RevealArtifact();
@@ -1150,7 +1156,7 @@ public class TheHiddenScriptAction : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
-            return character != null && board != null && board.GetHexes().Any(h => h != null && h.hiddenArtifacts != null && h.hiddenArtifacts.Count > 0);
+            return character != null && board != null && board.GetHexes().Any(h => h != null && h.hiddenObjects != null && h.hiddenObjects.Count > 0);
         };
 
         asyncEffect = async (character) =>

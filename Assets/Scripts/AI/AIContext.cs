@@ -197,7 +197,7 @@ public class AIContext
             AdvisorType.Diplomatic => Character.GetEmmissary() * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticPerEmissaryLevel),
             AdvisorType.Intelligence => Character.GetAgent() * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligencePerAgentLevel),
             AdvisorType.Magic => Character.GetMage() * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicPerMageLevel)
-                + Character.artifacts.Count * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicPerArtifactCarried),
+                + Character.objects.Count * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicPerArtifactCarried),
             AdvisorType.Movement => Character.GetCommander() * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementPerCommanderLevel)
                 + Character.GetAgent() * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementPerAgentLevel)
                 + Character.GetEmmissary() * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementPerEmissaryLevel),
@@ -353,7 +353,7 @@ public class AIContext
         bool canTransfer = AvailableActions.Any(a => a is TransferArtifact);
         if (!canTransfer) return 0f;
 
-        List<Artifact> transferable = Character.artifacts.Where(a => a != null && a.transferable).ToList();
+        List<CardData> transferable = Character.objects.Where(a => a != null && a.transferable).ToList();
         if (transferable.Count == 0) return 0f;
 
         if (board == null || board.hexes == null) return 0f;
@@ -368,7 +368,7 @@ public class AIContext
 
         artifactTransferCandidates.Clear();
         float bestScore = 0f;
-        foreach (Artifact art in transferable)
+        foreach (CardData art in transferable)
         {
             foreach (Character target in friendlies)
             {
@@ -406,7 +406,7 @@ public class AIContext
                     score -= 5f;
                 }
 
-                artifactTransferCandidates.Add(new ArtifactTransferCandidate(art.artifactName, target.characterName, score, distance));
+                artifactTransferCandidates.Add(new ArtifactTransferCandidate(art.name, target.characterName, score, distance));
                 bestScore = Mathf.Max(bestScore, score);
             }
         }
@@ -663,7 +663,9 @@ public class AIContext
     private float CalculateNationArtifacts()
     {
         if (Leader == null) return 0;
-        return Leader.controlledCharacters.Sum(ch => ch != null ? ch.artifacts.Count * 1f : 0f) / Math.Max(1f, ArtifactRepository.Count * 1f);
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        int catalogCount = deckManager?.GetObjectCardCount() ?? 0;
+        return Leader.controlledCharacters.Sum(ch => ch != null ? ch.objects.Count * 1f : 0f) / Math.Max(1f, catalogCount * 1f);
     }
 
     private bool IsEnemy(Leader other)

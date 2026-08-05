@@ -386,7 +386,7 @@ public class RevealArtifactInspireEffect : InspireEffect
     public override void Apply(Leader leader)
     {
         List<Hex> candidates = leader.visibleHexes
-            .Where(h => h != null && h.hiddenArtifacts != null && h.hiddenArtifacts.Count > 0)
+            .Where(h => h != null && h.hiddenObjects != null && h.hiddenObjects.Count > 0)
             .ToList();
 
         if (candidates.Count == 0) return;

@@ -22,27 +22,6 @@ public class CardBloomWheel : MonoBehaviour
     [Header("Card Hover")]
     [SerializeField] private float lineHitTolerance = 20f;
 
-    [Header("Center Preview")]
-    [Tooltip("Optional RectTransform the hovered card's real-card preview is parented under. If unassigned, the preview is centered on the parent canvas.")]
-    [SerializeField] private RectTransform centerPreviewAnchor;
-    [SerializeField] private float centerPreviewScale = 1.5f;
-
-    [Header("Center Preview Transition")]
-    [Tooltip("Full-screen black backdrop (with CanvasGroup) faded in while a card is previewed and faded out when none is shown / the card is played or cancelled.")]
-    [SerializeField] private CanvasGroup centerPreviewBackdrop;
-    [Tooltip("Alpha the black backdrop reaches when a card preview is fully shown.")]
-    [Range(0f, 1f)][SerializeField] private float backdropMaxAlpha = 0.85f;
-    [Tooltip("Higher = snappier intro/backdrop transition.")]
-    [SerializeField] private float previewTransitionSpeed = 9f;
-    [Tooltip("Scale (relative to centerPreviewScale) the card starts at when flying in.")]
-    [Range(0.1f, 1f)][SerializeField] private float previewIntroStartScale = 0.55f;
-    [Tooltip("Local offset the card starts at before settling to center (epic fly-in).")]
-    [SerializeField] private Vector2 previewIntroOffset = new(0f, -180f);
-    [Tooltip("Z rotation (degrees) the card starts tilted at before settling upright.")]
-    [SerializeField] private float previewIntroTilt = 14f;
-    [Tooltip("Seconds the outgoing card takes to fade/scale away.")]
-    [SerializeField] private float previewExitDuration = 0.16f;
-
     [Header("Trigger")]
     [Tooltip("RectTransform that opens the bloom on mouse-enter (assign SelectedCharacterIcon's rect).")]
     [SerializeField] private RectTransform hoverTriggerRect;
@@ -69,28 +48,31 @@ public class CardBloomWheel : MonoBehaviour
     private Canvas parentCanvas;
     private Transform linesGraphicTransform;
 
+    // Bypasses the hover-driven open/close so external callers (e.g. an opportunity-card
+    // presentation) can pop the wheel open without the mouse dwelling on the trigger.
+    private bool forcedOpen;
+
+    // When set, the wheel tracks a world-space point every frame instead of its authored
+    // anchoredPosition — used to park it over a specific hex rather than its usual hand spot.
+    private bool useWorldAnchor;
+    private Vector3 worldAnchorPosition;
+    private Camera worldAnchorCamera;
+    private Vector2 homeAnchoredPosition;
+
+    // When set, card clicks are routed here (by index into the list passed to SetCards)
+    // instead of Card.PlayFromBloom's hand-play flow. Reset to null by SetCards's default
+    // parameter whenever DeckManager repopulates the wheel with hand cards.
+    private System.Action<int> externalClickHandler;
+
     private float cachedRadius;
     private float cachedStartAngle;
     private float cachedEndAngle;
     private float hoverTimer;
 
-    // The enlarged preview currently shown mid-screen (null when none). The play-flight
-    // animation starts from it so the flight begins where the player is looking.
-    public RectTransform CurrentCenterPreviewRect => centerPreviewRect;
+    // Index last handed to CardCenterPreview (see UpdateCenterPreview) — -1 when nothing of
+    // ours is currently shown there.
+    private int lastPreviewIndex = -1;
 
-    private GameObject centerPreviewInstance;
-    private RectTransform centerPreviewRect;
-    private CanvasGroup centerPreviewGroup;
-    private int centerPreviewIndex = -1;
-    private float previewIntroT;
-    private float backdropAlpha;
-
-    // Resolved at runtime so that newly-added serialized fields left at 0 (Unity does not
-    // always apply field initializers to components already placed in a scene/prefab) still
-    // animate instead of leaving the preview stuck invisible at alpha 0.
-    private float TransitionSpeed => previewTransitionSpeed > 0.01f ? previewTransitionSpeed : 9f;
-    private float BackdropMax => backdropMaxAlpha > 0.001f ? Mathf.Clamp01(backdropMaxAlpha) : 0.85f;
-    private float IntroStartScale => previewIntroStartScale > 0.001f ? previewIntroStartScale : 0.55f;
     private float UnhoveredDim => unhoveredDim > 0.001f ? unhoveredDim : 0.45f;
     private float UnplayableRedness => unplayableRedness > 0.001f ? unplayableRedness : 0.85f;
 
@@ -108,6 +90,7 @@ public class CardBloomWheel : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         parentCanvas = GetComponentInParent<Canvas>();
+        homeAnchoredPosition = rectTransform.anchoredPosition;
 
         var linesGo = new GameObject("BloomLines", typeof(RectTransform));
         linesGo.transform.SetParent(transform, false);
@@ -142,28 +125,12 @@ public class CardBloomWheel : MonoBehaviour
         ClearCenterPreview();
     }
 
-    // Hard teardown: kills the current preview instantly and snaps the backdrop off.
+    // Hard teardown: hides whatever CardCenterPreview is currently showing on our behalf.
     // Used when the wheel is rebuilt, hidden, or destroyed (i.e. card played / cancelled).
     private void ClearCenterPreview()
     {
-        if (centerPreviewInstance != null)
-        {
-            Destroy(centerPreviewInstance);
-            centerPreviewInstance = null;
-        }
-        centerPreviewRect = null;
-        centerPreviewGroup = null;
-        centerPreviewIndex = -1;
-        previewIntroT = 0f;
-        backdropAlpha = 0f;
-        if (centerPreviewBackdrop != null)
-        {
-            centerPreviewBackdrop.alpha = 0f;
-            centerPreviewBackdrop.blocksRaycasts = false;
-            centerPreviewBackdrop.interactable = false;
-            if (centerPreviewBackdrop.gameObject.activeSelf)
-                centerPreviewBackdrop.gameObject.SetActive(false);
-        }
+        lastPreviewIndex = -1;
+        CardCenterPreview.Instance?.HidePreview();
     }
 
     private void Update()
@@ -175,10 +142,19 @@ public class CardBloomWheel : MonoBehaviour
             int clickedIndex = FindHoveredCardIndex(CanvasCamera());
             if (clickedIndex >= 0 && clickedIndex < cardComponents.Count)
             {
-                Card clickedCard = cardComponents[clickedIndex];
-                clickedCard?.PlayFromBloom(selectedCharacterIcon != null ? selectedCharacterIcon.CurrentCharacter : null);
+                if (externalClickHandler != null)
+                {
+                    externalClickHandler(clickedIndex);
+                }
+                else
+                {
+                    Card clickedCard = cardComponents[clickedIndex];
+                    clickedCard?.PlayFromBloom(selectedCharacterIcon != null ? selectedCharacterIcon.CurrentCharacter : null);
+                }
             }
         }
+
+        if (useWorldAnchor) ApplyWorldAnchor();
 
         if (!isVisible) return;
 
@@ -213,7 +189,7 @@ public class CardBloomWheel : MonoBehaviour
             hoverTimer = 0f;
         }
 
-        bool shouldBeOpen = (mouseOnTrigger && hoverTimer >= hoverDelay) || mouseInArea;
+        bool shouldBeOpen = forcedOpen || (mouseOnTrigger && hoverTimer >= hoverDelay) || mouseInArea;
 
         if (shouldBeOpen != isOpen)
             SetOpenState(shouldBeOpen);
@@ -226,9 +202,12 @@ public class CardBloomWheel : MonoBehaviour
         LinesAlpha = 1f;
     }
 
-    // Called by DeckManager after spawning / clearing cards.
-    public void SetCards(List<GameObject> cards)
+    // Called by DeckManager after spawning / clearing cards. onCardClicked, when supplied,
+    // receives the clicked card's index into `cards` instead of the click driving
+    // Card.PlayFromBloom's hand-play flow (see SituationCardsUI's bloom presentation).
+    public void SetCards(List<GameObject> cards, System.Action<int> onCardClicked = null)
     {
+        externalClickHandler = onCardClicked;
         ClearCenterPreview();
         cardRects.Clear();
         cardGroups.Clear();
@@ -304,13 +283,56 @@ public class CardBloomWheel : MonoBehaviour
         }
     }
 
+    // Bypasses the hover-dwell requirement so the wheel can be popped open programmatically
+    // (e.g. presenting opportunity cards) — pass false to hand control back to hover-driven
+    // opening.
+    public void SetForcedOpen(bool open)
+    {
+        forcedOpen = open;
+        if (open) hoverTimer = hoverDelay;
+    }
+
+    // Repositions the wheel to track a world-space point every frame (e.g. a hex the acting
+    // character stands on) instead of its authored anchoredPosition. worldCamera should be
+    // the scene camera the position was captured in (Camera.main for the board).
+    public void SetWorldAnchor(Vector3 worldPosition, Camera worldCamera)
+    {
+        useWorldAnchor = true;
+        worldAnchorPosition = worldPosition;
+        worldAnchorCamera = worldCamera;
+        ApplyWorldAnchor();
+    }
+
+    // Restores the wheel to its originally authored anchoredPosition (its usual hand spot).
+    public void ClearWorldAnchor()
+    {
+        useWorldAnchor = false;
+        if (rectTransform != null) rectTransform.anchoredPosition = homeAnchoredPosition;
+    }
+
+    private void ApplyWorldAnchor()
+    {
+        if (!useWorldAnchor || rectTransform == null) return;
+        if (rectTransform.parent is not RectTransform parentRect) return;
+
+        Camera sceneCam = worldAnchorCamera != null ? worldAnchorCamera : Camera.main;
+        if (sceneCam == null) return;
+
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(sceneCam, worldAnchorPosition);
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPoint, CanvasCamera(), out Vector2 localPoint))
+        {
+            rectTransform.anchoredPosition = localPoint;
+        }
+    }
+
     private void SetOpenState(bool open)
     {
         isOpen = open;
         if (!open)
         {
-            // Don't hard-clear: dropping the hovered index lets the preview and black
-            // backdrop animate out via AnimateCenterPreview while the wheel collapses.
+            // Don't hard-clear: dropping the hovered index lets CardCenterPreview's own
+            // fade-out play normally (via UpdateCenterPreview -> HidePreview) instead of
+            // snapping off mid-animation.
             hoveredCardIndex = -1;
         }
 
@@ -419,168 +441,26 @@ public class CardBloomWheel : MonoBehaviour
         }
 
         UpdateCenterPreview(isOpen ? hoveredCardIndex : -1);
-        AnimateCenterPreview();
     }
 
-    // Shows the hovered card as a real card in the middle of the screen, leaving the
-    // wheel of tokens untouched. When the hovered card changes the outgoing card is
-    // handed to an exit animation while the new card flies in (see AnimateCenterPreview).
+    // Shows the hovered card's full face via the shared CardCenterPreview singleton (same
+    // fly-in/backdrop/hover-safety-net every other card-hover site uses), leaving the wheel's
+    // own tokens untouched. Previously this cloned the hovered token and flipped it to its
+    // RealCard face in place — broken once tokens moved to their own token-only prefab with no
+    // RealCard subtree to flip to, and a duplicate of CardCenterPreview besides.
     private void UpdateCenterPreview(int index)
     {
-        if (index == centerPreviewIndex && (index < 0 || centerPreviewInstance != null)) return;
-        centerPreviewIndex = index;
+        if (index == lastPreviewIndex) return;
+        lastPreviewIndex = index;
 
-        // Send the previous preview on its way out (fade + scale away, then self-destruct).
-        if (centerPreviewInstance != null)
+        CardData data = (index >= 0 && index < cardComponents.Count) ? cardComponents[index]?.cardData : null;
+        if (data == null)
         {
-            StartCoroutine(AnimatePreviewExit(centerPreviewInstance, centerPreviewRect, centerPreviewGroup));
-            centerPreviewInstance = null;
-            centerPreviewRect = null;
-            centerPreviewGroup = null;
+            CardCenterPreview.Instance?.HidePreview();
+            return;
         }
 
-        if (index < 0 || index >= cardRects.Count || cardRects[index] == null) return;
-
-        // Parent to the ROOT canvas (not the nearest sub-canvas, which only covers the
-        // wheel's corner) so "center" means the center of the screen, not the corner.
-        // The backdrop is relocated next to the preview below (PlaceBackdropBehindPreview)
-        // rather than parenting the preview into the backdrop's container, which could be a
-        // hidden / alpha-0 overlay panel and would make the preview itself invisible.
-        Transform parent = centerPreviewAnchor != null && centerPreviewAnchor.gameObject.activeInHierarchy
-            ? (Transform)centerPreviewAnchor
-            : (parentCanvas != null ? parentCanvas.rootCanvas.transform : transform);
-
-        centerPreviewInstance = Instantiate(cardRects[index].gameObject, parent, false);
-        centerPreviewInstance.name = "CardCenterPreview";
-
-        centerPreviewRect = centerPreviewInstance.GetComponent<RectTransform>();
-        if (centerPreviewRect != null)
-        {
-            Vector2 center = new(0.5f, 0.5f);
-            centerPreviewRect.anchorMin = center;
-            centerPreviewRect.anchorMax = center;
-            centerPreviewRect.pivot = center;
-        }
-
-        Card previewCard = centerPreviewInstance.GetComponent<Card>();
-        if (previewCard != null)
-        {
-            previewCard.SuppressHoverEffects = true;
-            previewCard.ShowRealCard();
-        }
-
-        // Preview is purely visual — never let it intercept the pointer.
-        centerPreviewGroup = centerPreviewInstance.GetComponent<CanvasGroup>();
-        if (centerPreviewGroup == null) centerPreviewGroup = centerPreviewInstance.AddComponent<CanvasGroup>();
-        centerPreviewGroup.blocksRaycasts = false;
-        centerPreviewGroup.interactable = false;
-
-        // Start the intro from the fly-in pose so there is no one-frame pop at full size.
-        previewIntroT = 0f;
-        ApplyPreviewPose(0f);
-        // Move the backdrop to be a full-screen sibling directly beneath the preview, then
-        // put the preview last so the card always renders on top of the black image.
-        PlaceBackdropBehindPreview(parent);
-        if (centerPreviewRect != null) centerPreviewRect.SetAsLastSibling();
-    }
-
-    // Drives the backdrop fade and the active preview's fly-in every frame.
-    private void AnimateCenterPreview()
-    {
-        bool wantPreview = centerPreviewIndex >= 0;
-
-        // Backdrop fade in/out.
-        float backdropTarget = wantPreview ? BackdropMax : 0f;
-        backdropAlpha = Mathf.MoveTowards(backdropAlpha, backdropTarget, Time.deltaTime * TransitionSpeed * BackdropMax);
-        if (centerPreviewBackdrop != null)
-        {
-            bool shouldBeActive = backdropAlpha > 0.001f;
-            if (centerPreviewBackdrop.gameObject.activeSelf != shouldBeActive)
-                centerPreviewBackdrop.gameObject.SetActive(shouldBeActive);
-            centerPreviewBackdrop.alpha = backdropAlpha;
-            centerPreviewBackdrop.blocksRaycasts = false;
-            centerPreviewBackdrop.interactable = false;
-        }
-
-        // Card fly-in / settle.
-        if (centerPreviewRect == null) return;
-        previewIntroT = Mathf.MoveTowards(previewIntroT, 1f, Time.deltaTime * TransitionSpeed);
-        ApplyPreviewPose(previewIntroT);
-    }
-
-    // Positions/scales/fades the active preview at intro progress t (0 = fly-in start, 1 = settled).
-    private void ApplyPreviewPose(float t)
-    {
-        if (centerPreviewRect == null) return;
-
-        float eased = EaseOutBack(Mathf.Clamp01(t));
-        float startScale = centerPreviewScale * IntroStartScale;
-        float scale = Mathf.LerpUnclamped(startScale, centerPreviewScale, eased);
-
-        centerPreviewRect.anchoredPosition = Vector2.LerpUnclamped(previewIntroOffset, Vector2.zero, eased);
-        centerPreviewRect.localScale = Vector3.one * scale;
-        centerPreviewRect.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpUnclamped(previewIntroTilt, 0f, eased));
-
-        if (centerPreviewGroup != null)
-            centerPreviewGroup.alpha = Mathf.Clamp01(t * 1.6f);
-    }
-
-    private System.Collections.IEnumerator AnimatePreviewExit(GameObject go, RectTransform rt, CanvasGroup cg)
-    {
-        if (go == null) yield break;
-
-        Vector3 startScale = rt != null ? rt.localScale : Vector3.one * centerPreviewScale;
-        Vector2 startPos = rt != null ? rt.anchoredPosition : Vector2.zero;
-        float startAlpha = cg != null ? cg.alpha : 1f;
-        float duration = Mathf.Max(0.01f, previewExitDuration);
-
-        for (float elapsed = 0f; elapsed < duration; elapsed += Time.deltaTime)
-        {
-            if (go == null) yield break;
-            float k = elapsed / duration;
-            float ease = k * k; // ease-in: lingers, then snaps away
-            if (rt != null)
-            {
-                rt.localScale = Vector3.LerpUnclamped(startScale, startScale * 0.82f, ease);
-                rt.anchoredPosition = Vector2.LerpUnclamped(startPos, startPos + new Vector2(0f, 40f), ease);
-            }
-            if (cg != null) cg.alpha = Mathf.LerpUnclamped(startAlpha, 0f, k);
-            yield return null;
-        }
-
-        if (go != null) Destroy(go);
-    }
-
-    // Relocates the user-assigned backdrop to sit as a full-screen sibling immediately
-    // beneath the preview, so it reliably renders behind the card and dims the screen,
-    // regardless of where it originally lived in the hierarchy.
-    private void PlaceBackdropBehindPreview(Transform parent)
-    {
-        if (centerPreviewBackdrop == null || parent == null) return;
-
-        Transform bg = centerPreviewBackdrop.transform;
-        if (bg.parent != parent) bg.SetParent(parent, false);
-
-        if (bg is RectTransform bgRect)
-        {
-            bgRect.anchorMin = Vector2.zero;
-            bgRect.anchorMax = Vector2.one;
-            bgRect.offsetMin = Vector2.zero;
-            bgRect.offsetMax = Vector2.zero;
-            bgRect.localScale = Vector3.one;
-        }
-
-        // Last sibling for now; the preview is set last immediately after, leaving the
-        // backdrop directly underneath it.
-        bg.SetAsLastSibling();
-    }
-
-    private static float EaseOutBack(float x)
-    {
-        const float c1 = 1.70158f;
-        const float c3 = c1 + 1f;
-        float xm1 = x - 1f;
-        return 1f + c3 * xm1 * xm1 * xm1 + c1 * xm1 * xm1;
+        CardCenterPreview.Instance?.ShowPreview(data, hoverDriven: true);
     }
 
     private int FindHoveredCardIndex(Camera cam)

@@ -85,7 +85,7 @@ public class Board : MonoBehaviour
     public Dictionary<Vector2Int, Hex> hexes;
     public List<Hex> hexesWithCharacters;
     public List<Hex> hexesWithPCs;
-    public List<Hex> hexesWithArtifacts;
+    public List<Hex> hexesWithObjects;
     private Game cachedGame;
     private Layout cachedLayout;
     private ActionsManager cachedActionsManager;
@@ -399,78 +399,52 @@ public class Board : MonoBehaviour
         // Get all hexes
         List<Hex> hexes = GetHexes();
 
-        List<Artifact> hiddenArtifacts = ArtifactRepository.GetAllClones();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        List<CardData> hiddenObjectPool = deckManager != null ? deckManager.GetAllObjectCardClones() : new List<CardData>();
 
-        ExcludeGuaranteedStartingArtifacts(hiddenArtifacts);
-        PlaceScenarioArtifacts(hiddenArtifacts);
+        PlaceScenarioObjects(hiddenObjectPool);
 
-        // Shuffle the hexes to randomize artifact placement
+        // Shuffle the hexes to randomize object placement
         List<Hex> shuffledHexes = hexes.OrderBy(hex => UnityEngine.Random.value).ToList();
 
-        // Ensure we don't try to place more artifacts than we have hexes
-        int artifactsToPlace = Mathf.Min(hiddenArtifacts.Count, shuffledHexes.Count);
+        // Ensure we don't try to place more objects than we have hexes
+        int objectsToPlace = Mathf.Min(hiddenObjectPool.Count, shuffledHexes.Count);
 
-        // Place artifacts in hexes (one per hex)
-        for (int i = 0; i < artifactsToPlace; i++)
+        // Place objects in hexes (one per hex)
+        for (int i = 0; i < objectsToPlace; i++)
         {
             Hex targetHex = shuffledHexes[i];
-            Artifact artifact = hiddenArtifacts[i];
+            CardData obj = hiddenObjectPool[i];
 
-            // Add the artifact to the hex's hiddenArtifacts list
-            targetHex.hiddenArtifacts.Add(artifact);
-
-            // Debug.Log($"Artifact {artifact.artifactName} placed at {targetHex.v2}");
-
-            // Optional: Set artifact position to hex position
-            // artifact.transform.position = targetHex.transform.position;
+            // Add the object to the hex's hiddenObjects list
+            targetHex.hiddenObjects.Add(obj);
 
             // Yield to distribute over frames if needed
             if (i % 10 == 0) yield return null;
         }
     }
 
-    // Every playable leader is guaranteed their biome's startingArtifacts at game start
-    // (see Game.GrantStartingArtifacts) — keep those out of the random hidden-artifact pool
-    // so the same artifact can't also turn up as a separate map pickup.
-    private void ExcludeGuaranteedStartingArtifacts(List<Artifact> hiddenArtifacts)
-    {
-        if (hiddenArtifacts == null) return;
-        PlayableLeader[] leaders = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None);
-        if (leaders == null || leaders.Length == 0) return;
-
-        foreach (PlayableLeader leader in leaders)
-        {
-            LeaderBiomeConfig biome = leader?.GetBiome();
-            if (biome?.startingArtifacts == null || biome.startingArtifacts.Count == 0) continue;
-
-            hiddenArtifacts.RemoveAll(artifact => artifact != null
-                && biome.startingArtifacts.Any(a => a != null
-                    && !string.IsNullOrWhiteSpace(a.artifactName)
-                    && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase)));
-        }
-    }
-
-    // Places author-pinned hidden artifacts (ScenarioData.artifacts) at their chosen hex, removing
+    // Places author-pinned hidden objects (ScenarioData.objects) at their chosen hex, removing
     // them from the pool so the random pass below doesn't also scatter them elsewhere. Any hidden
-    // artifact the author didn't pin — including when there's no active scenario at all — falls
+    // object the author didn't pin — including when there's no active scenario at all — falls
     // through to that random pass unchanged.
-    private void PlaceScenarioArtifacts(List<Artifact> hiddenArtifacts)
+    private void PlaceScenarioObjects(List<CardData> hiddenObjectPool)
     {
-        if (hiddenArtifacts == null || activeScenario?.artifacts == null) return;
+        if (hiddenObjectPool == null || activeScenario?.objects == null) return;
 
-        foreach (ScenarioArtifact placement in activeScenario.artifacts)
+        foreach (ScenarioObject placement in activeScenario.objects)
         {
-            if (placement == null || string.IsNullOrWhiteSpace(placement.artifactName)) continue;
+            if (placement == null || string.IsNullOrWhiteSpace(placement.objectName)) continue;
 
-            int poolIndex = hiddenArtifacts.FindIndex(a => a != null &&
-                string.Equals(a.artifactName, placement.artifactName, StringComparison.OrdinalIgnoreCase));
+            int poolIndex = hiddenObjectPool.FindIndex(a => a != null &&
+                string.Equals(a.name, placement.objectName, StringComparison.OrdinalIgnoreCase));
             if (poolIndex < 0) continue;
 
             Hex target = GetHex(new Vector2Int(placement.row, placement.col));
             if (target == null) continue;
 
-            target.hiddenArtifacts.Add(hiddenArtifacts[poolIndex]);
-            hiddenArtifacts.RemoveAt(poolIndex);
+            target.hiddenObjects.Add(hiddenObjectPool[poolIndex]);
+            hiddenObjectPool.RemoveAt(poolIndex);
         }
     }
 
@@ -481,7 +455,7 @@ public class Board : MonoBehaviour
 
     public void RefreshRelevantHexes()
     {
-        hexesWithArtifacts = GetHexes().FindAll(x => x.hiddenArtifacts.Count > 0);
+        hexesWithObjects = GetHexes().FindAll(x => x.hiddenObjects.Count > 0);
         hexesWithPCs = GetHexes().FindAll(x => x.GetPC() != null);
         hexesWithCharacters = GetHexes().FindAll(x => x.characters.Count > 0);
     }

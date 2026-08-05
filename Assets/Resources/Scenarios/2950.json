@@ -1,5 +1,5 @@
 {
-    "version": 11,
+    "version": 12,
     "scenarioName": "2950",
     "description": "Middle-earth enjoyed an uneasy peace while Sauron secretly rebuilt his strength in Mordor. Though few recognized the danger, the stage was being set for the War of the Ring",
     "displayTitle": "The untold war of the Ring, circa 2950",
@@ -47422,11 +47422,11 @@
             }
         }
     ],
-    "artifacts": [
+    "objects": [
         {
             "row": 25,
             "col": 30,
-            "artifactName": "Ring of Orthanc"
+            "objectName": "Ring of Orthanc"
         }
     ]
 }

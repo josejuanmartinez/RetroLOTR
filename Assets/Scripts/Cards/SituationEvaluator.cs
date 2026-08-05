@@ -114,7 +114,7 @@ public static class SituationEvaluator
         bool enemyCharacterNoCommanderOnHex = HasEnemyCharacterNoArmyCommander(hex, character);
         bool enemyMageOnHex                 = HasEnemyMage(hex, character);
         bool enemyArmyOnHex                 = HasEnemyArmy(hex, character);
-        bool hasArtifact                    = hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0;
+        bool hasArtifact                    = hex.hiddenObjects != null && hex.hiddenObjects.Count > 0;
         bool hasHostage                     = character.kidnappedCharacters != null && character.kidnappedCharacters.Any(r => r != null && r.character != null && !r.character.killed);
         bool enemyHoldsMyHostage            = HasEnemyWithMyHostage(hex, character);
         bool ownCharDoubledByEnemy          = HasOwnCharacterDoubledByEnemy(hex, character);

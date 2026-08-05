@@ -59,7 +59,6 @@ public class LeaderBiomeConfig: BiomeConfig
     public bool isMorgulMaster;
 
     public List<BiomeConfig> startingCharacters = new();
-    public List<Artifact> startingArtifacts = new();
 
     public List<string> newCharacters = new();
     public List<string> newPCs = new();

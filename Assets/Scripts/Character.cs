@@ -8,9 +8,9 @@ using UnityEngine.Assertions;
 
 public class Character : MonoBehaviour
 {
-    public static int MAX_RELEVANT_HEXES = Game.MAX_CHARACTERS + Game.MAX_ARTIFACTS + Game.MAX_PCS;
+    public static int MAX_RELEVANT_HEXES = Game.MAX_CHARACTERS + Game.MAX_OBJECTS + Game.MAX_PCS;
     public const int MAX_SKILL_LEVEL = 10;
-    public const int MAX_ARTIFACTS = 10;
+    public const int MAX_OBJECTS = 10;
 
     [Header("Metadata")]
     public bool startingCharacter;
@@ -81,8 +81,8 @@ public class Character : MonoBehaviour
     public Leader doubleAgentOriginalOwner;
     public int doubleAgentTurnsRemaining;
 
-    [Header("Artifacts")]
-    public List<Artifact> artifacts = new();
+    [Header("Objects")]
+    public List<CardData> objects = new();
 
     [Header("Army")]
     [SerializeField] private Army army = null;
@@ -177,13 +177,14 @@ public class Character : MonoBehaviour
         if (!awaken) Awake();
         this.characterBiome = characterBiome;
 
-        List<Artifact> resolvedArtifacts = new();
+        List<CardData> resolvedObjects = new();
         if (characterBiome.artifacts != null)
         {
-            foreach (string artifactName in characterBiome.artifacts)
+            DeckManager deckManagerForObjects = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+            foreach (string objectName in characterBiome.artifacts)
             {
-                Artifact artifact = ArtifactRepository.GetByName(artifactName);
-                if (artifact != null) resolvedArtifacts.Add(artifact);
+                CardData resolved = deckManagerForObjects?.FindObjectCardByName(objectName)?.Clone();
+                if (resolved != null) resolvedObjects.Add(resolved);
             }
         }
 
@@ -199,7 +200,7 @@ public class Character : MonoBehaviour
             characterBiome.mage,
             characterBiome.race,
             characterBiome.sex,
-            resolvedArtifacts,
+            resolvedObjects,
             useCardArmy ? 0 : characterBiome.startingArmySize,
             characterBiome.preferedTroopType,
             useCardArmy ? 0 : characterBiome.startingWarships,
@@ -289,7 +290,7 @@ public class Character : MonoBehaviour
         int mage,
         RacesEnum race,
         SexEnum sex,
-        List<Artifact> artifacts,
+        List<CardData> objects,
         int startingArmySize = 0,
         TroopsTypeEnum preferedTroopType = TroopsTypeEnum.ma,
         int startingWarships = 0,
@@ -314,7 +315,7 @@ public class Character : MonoBehaviour
         this.race = race;
         this.sex = sex;
         this.startingCharacter = true;
-        this.artifacts = artifacts;
+        this.objects = objects;
         LoadAnimatorController();
 
         owner.GetOwner().controlledCharacters.Add(this);
@@ -823,15 +824,15 @@ public class Character : MonoBehaviour
             _ => AdjustMovementByRace(FindFirstObjectByType<Game>().characterMovement, isInWater)
         };
 
-        // Artifact movement bonuses
-        if (artifacts != null)
+        // Object movement bonuses
+        if (objects != null)
         {
-            for (int i = 0; i < artifacts.Count; i++)
+            for (int i = 0; i < objects.Count; i++)
             {
-                Artifact a = artifacts[i];
-                if (a == null) continue;
-                baseMovement += a.GetMovementBonus();
-                if (isInWater && a.GrantsHasteAtSea())
+                CardData o = objects[i];
+                if (o == null) continue;
+                baseMovement += o.GetMovementBonus();
+                if (isInWater && o.GrantsHasteAtSea())
                     baseMovement += 2;
             }
         }
@@ -1241,7 +1242,7 @@ public class Character : MonoBehaviour
         {
             if(GetOwner().controlledCharacters.Contains(this)) GetOwner().controlledCharacters.Remove(this);
             if(hex.characters.Contains(this)) hex.characters.Remove(this);
-            DropArtifactsToHex();
+            DropObjectsToHex();
             RefreshArtifactPcVisibilityForHex(hex);
         }
         health = 0;
@@ -1254,16 +1255,16 @@ public class Character : MonoBehaviour
         if (owner != null) CharacterIcons.RefreshForHumanPlayerOf(owner);
     }
 
-    private void DropArtifactsToHex()
+    private void DropObjectsToHex()
     {
-        if (artifacts == null || artifacts.Count == 0) return;
+        if (objects == null || objects.Count == 0) return;
         if (hex == null) return;
-        hex.hiddenArtifacts ??= new System.Collections.Generic.List<Artifact>();
-        foreach (Artifact a in artifacts)
+        hex.hiddenObjects ??= new System.Collections.Generic.List<CardData>();
+        foreach (CardData o in objects)
         {
-            if (a != null) hex.hiddenArtifacts.Add(a);
+            if (o != null) hex.hiddenObjects.Add(o);
         }
-        artifacts.Clear();
+        objects.Clear();
     }
 
     public void RefreshSelectedCharacterIconIfSelected()
@@ -1349,22 +1350,10 @@ public class Character : MonoBehaviour
         CharacterIcons.RefreshForHumanPlayerOf(owner);
     }
 
-    public void ApplyOppositeAlignmentArtifactPenalty(Artifact artifact)
-    {
-        if (artifact == null || !artifact.ShouldApplyAlignmentPenalty(GetAlignment())) return;
-        int damage = Artifact.OppositeAlignmentHealthPenalty;
-        health = Mathf.Max(0, health - damage);
-        MessageDisplayNoUI.ShowMessage(hex, this, $"-{damage} <sprite name=\"health\">health", Color.red);
-        Sounds.Instance?.PlayVoicePain(this);
-        RefreshSelectedCharacterIconIfSelected();
-        CharacterIcons.RefreshForHumanPlayerCharacter(this);
-        if (health < 1) Killed(null);
-    }
-
     public int GetArtifactActionDifficultyReduction(string actionClassName)
     {
-        if (artifacts == null || artifacts.Count == 0) return 0;
-        return artifacts.Sum(a => a != null ? a.GetActionDifficultyReduction(actionClassName) : 0);
+        if (objects == null || objects.Count == 0) return 0;
+        return objects.Sum(o => o != null ? o.GetActionDifficultyReduction(actionClassName) : 0);
     }
 
     public int GetTemporaryActionDifficultyReduction(string actionClassName, Hex currentHex)
@@ -1395,8 +1384,8 @@ public class Character : MonoBehaviour
 
     public bool IsImmuneToNegativeEnvironmentalCards()
     {
-        if (artifacts == null || artifacts.Count == 0) return false;
-        return artifacts.Any(a => a != null && a.GrantsEnvironmentalImmunity());
+        if (objects == null || objects.Count == 0) return false;
+        return objects.Any(o => o != null && o.GrantsEnvironmentalImmunity());
     }
 
     public bool HidesOccupiedPcWithArtifact()
@@ -1431,95 +1420,95 @@ public class Character : MonoBehaviour
         hex.RefreshVisibilityRendering();
     }
 
-    // ---- New artifact stat helpers ----
+    // ---- Object stat helpers ----
 
     public int GetTotalDetectionEvasion()
     {
-        if (artifacts == null || artifacts.Count == 0) return 0;
+        if (objects == null || objects.Count == 0) return 0;
         int total = 0;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null) total += artifacts[i].GetDetectionEvasion();
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null) total += objects[i].GetDetectionEvasion();
         return total;
     }
 
     public bool GetIgnoreTerrainMovementPenalty()
     {
-        if (artifacts == null || artifacts.Count == 0) return false;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null && artifacts[i].GetIgnoreTerrainMovementPenalty())
+        if (objects == null || objects.Count == 0) return false;
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null && objects[i].GetIgnoreTerrainMovementPenalty())
                 return true;
         return false;
     }
 
     public int GetTotalNegativeStatusDurationReduction()
     {
-        if (artifacts == null || artifacts.Count == 0) return 0;
+        if (objects == null || objects.Count == 0) return 0;
         int total = 0;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null) total += artifacts[i].GetNegativeStatusDurationReduction();
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null) total += objects[i].GetNegativeStatusDurationReduction();
         return total;
     }
 
     public int GetTotalPositiveStatusDurationBonus()
     {
-        if (artifacts == null || artifacts.Count == 0) return 0;
+        if (objects == null || objects.Count == 0) return 0;
         int total = 0;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null) total += artifacts[i].GetPositiveStatusDurationBonus();
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null) total += objects[i].GetPositiveStatusDurationBonus();
         return total;
     }
 
     public int GetTotalNegativeStatusDamageReduction()
     {
-        if (artifacts == null || artifacts.Count == 0) return 0;
+        if (objects == null || objects.Count == 0) return 0;
         int total = 0;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null) total += artifacts[i].GetNegativeStatusDamageReduction();
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null) total += objects[i].GetNegativeStatusDamageReduction();
         return total;
     }
 
     public int GetTotalPositiveStatusEffectBonus()
     {
-        if (artifacts == null || artifacts.Count == 0) return 0;
+        if (objects == null || objects.Count == 0) return 0;
         int total = 0;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null) total += artifacts[i].GetPositiveStatusEffectBonus();
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null) total += objects[i].GetPositiveStatusEffectBonus();
         return total;
     }
 
     public bool IsImmuneToStatusEffect(StatusEffectEnum effect)
     {
-        if (artifacts == null || artifacts.Count == 0) return false;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null && artifacts[i].GetNegativeStatusImmunity(effect))
+        if (objects == null || objects.Count == 0) return false;
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null && objects[i].GetNegativeStatusImmunity(effect))
                 return true;
         return false;
     }
 
     public int GetTotalRecruitBonusMenAtArms()
     {
-        if (artifacts == null || artifacts.Count == 0) return 0;
+        if (objects == null || objects.Count == 0) return 0;
         int total = 0;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null) total += artifacts[i].GetRecruitBonusMenAtArms();
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null) total += objects[i].GetRecruitBonusMenAtArms();
         return total;
     }
 
     public int GetTotalScryAreaBonus()
     {
-        if (artifacts == null || artifacts.Count == 0) return 0;
+        if (objects == null || objects.Count == 0) return 0;
         int total = 0;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null) total += artifacts[i].GetScryAreaBonus();
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null) total += objects[i].GetScryAreaBonus();
         return total;
     }
 
-    public int GetTotalScryArtifactBonus()
+    public int GetTotalScryObjectBonus()
     {
-        if (artifacts == null || artifacts.Count == 0) return 0;
+        if (objects == null || objects.Count == 0) return 0;
         int total = 0;
-        for (int i = 0; i < artifacts.Count; i++)
-            if (artifacts[i] != null) total += artifacts[i].GetScryArtifactBonus();
+        for (int i = 0; i < objects.Count; i++)
+            if (objects[i] != null) total += objects[i].GetScryObjectBonus();
         return total;
     }
 
@@ -1624,28 +1613,28 @@ public class Character : MonoBehaviour
 
     public int GetCommander()
     {
-        int total = commander + artifacts.FindAll(x => x.commanderBonus > 0).Sum(x => x.commanderBonus);
+        int total = commander + objects.FindAll(x => x.commanderBonus > 0).Sum(x => x.commanderBonus);
         total = ApplyDespairPenalty(total);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetAgent()
     {
-        int total = agent + artifacts.FindAll(x => x.agentBonus > 0).Sum(x => x.agentBonus);
+        int total = agent + objects.FindAll(x => x.agentBonus > 0).Sum(x => x.agentBonus);
         total = ApplyDespairPenalty(total);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetEmmissary()
     {
-        int total = emmissary + artifacts.FindAll(x => x.emmissaryBonus > 0).Sum(x => x.emmissaryBonus);
+        int total = emmissary + objects.FindAll(x => x.emmissaryBonus > 0).Sum(x => x.emmissaryBonus);
         total = ApplyDespairPenalty(total);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
     }
 
     public int GetMage()
     {
-        int total = mage + artifacts.FindAll(x => x.mageBonus > 0).Sum(x => x.mageBonus);
+        int total = mage + objects.FindAll(x => x.mageBonus > 0).Sum(x => x.mageBonus);
         if (HasStatusEffect(StatusEffectEnum.ArcaneInsight)) total += 1;
         total = ApplyDespairPenalty(total);
         return Mathf.Min(MAX_SKILL_LEVEL, total);
@@ -1737,14 +1726,14 @@ public class Character : MonoBehaviour
 
     private void ApplyArtifactPassiveEffects()
     {
-        if (artifacts == null || artifacts.Count == 0) return;
+        if (objects == null || objects.Count == 0) return;
 
-        for (int i = 0; i < artifacts.Count; i++)
+        for (int i = 0; i < objects.Count; i++)
         {
-            Artifact artifact = artifacts[i];
-            if (artifact == null) continue;
+            CardData obj = objects[i];
+            if (obj == null) continue;
 
-            int heal = artifact.GetHealPerTurn();
+            int heal = obj.GetHealPerTurn();
             if (heal > 0 && this.health < 100)
             {
                 int previousHealth = this.health;
@@ -1757,40 +1746,12 @@ public class Character : MonoBehaviour
                 }
             }
 
-            int scoutRadius = artifact.GetAutoScoutRadius();
+            int scoutRadius = obj.GetAutoScoutRadius();
             if (scoutRadius > 0 && GetOwner() is PlayableLeader pl && hex != null)
             {
                 hex.RevealArea(scoutRadius, false, pl);
             }
         }
-    }
-    private Character FindEnemyForArtifactStatusPulse()
-    {
-        if (hex == null || hex.characters == null) return null;
-
-        return hex.characters.FirstOrDefault(ch =>
-            ch != null
-            && ch != this
-            && !ch.killed
-            && ch.GetOwner() != GetOwner()
-            && (ch.GetAlignment() != GetAlignment() || ch.GetAlignment() == AlignmentEnum.neutral));
-    }
-
-    private void RevealHiddenEnemyPcOnCurrentHex(Artifact artifact)
-    {
-        if (artifact == null || hex == null) return;
-
-        PC pc = hex.GetPC();
-        if (pc == null || pc.owner == null) return;
-        if (pc.owner == GetOwner()) return;
-
-        AlignmentEnum ownerAlignment = pc.owner.GetAlignment();
-        if (ownerAlignment == GetAlignment() && ownerAlignment != AlignmentEnum.neutral) return;
-        if (!pc.isHidden) return;
-
-        pc.SetTemporaryReveal(1);
-        hex.RefreshVisibilityRendering();
-        MessageDisplayNoUI.ShowMessage(hex, this, $"{artifact.artifactName} reveals {pc.pcName}.", Color.green);
     }
 
     private static int GetNormalizedStatusTurns(StatusEffectEnum effect, int turns)
@@ -2027,9 +1988,9 @@ public class Character : MonoBehaviour
         return true;
     }
 
-    public List<Artifact> GetTransferableArtifacts()
+    public List<CardData> GetTransferableObjects()
     {
-        return artifacts.Where(x => x.transferable).ToList();
+        return objects.Where(x => x.transferable).ToList();
     }
 
     public void StoreReachableHexes()
@@ -2047,7 +2008,7 @@ public class Character : MonoBehaviour
         // Use direct access to source collections with index-based insertion
         // var inRangeHexes = hexPathRenderer.FindAllHexesInRange(c);
 
-        var artifactHexes = board.hexesWithArtifacts;
+        var objectHexes = board.hexesWithObjects;
         var characterHexes = board.hexesWithCharacters;
         var pcHexes = board.hexesWithPCs;
 
@@ -2055,8 +2016,8 @@ public class Character : MonoBehaviour
         //for (int i = 0; i < inRangeHexes.Count && relevantHexes.Count < game.maxRelevantHexes; i++)
         //    relevantHexes.Add(inRangeHexes[i]);
 
-        for (int i = 0; i < artifactHexes.Count && relevantHexes.Count < MAX_RELEVANT_HEXES; i++)
-            relevantHexes.Add(artifactHexes[i]);
+        for (int i = 0; i < objectHexes.Count && relevantHexes.Count < MAX_RELEVANT_HEXES; i++)
+            relevantHexes.Add(objectHexes[i]);
 
         for (int i = 0; i < characterHexes.Count && relevantHexes.Count < MAX_RELEVANT_HEXES; i++)
             relevantHexes.Add(characterHexes[i]);

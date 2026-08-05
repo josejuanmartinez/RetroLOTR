@@ -169,6 +169,177 @@ public class CardData
     // PC cards only: the founded PC marks its hex as an entrance to the Underground.
     public bool isUnderground;
 
+    // Object card fields (bonuses/effects granted while a character carries this object).
+    // Migrated 1:1 from the retired Artifact class — name/spriteName double as
+    // artifactName/spriteString. No alignment restriction: every object is usable by any
+    // leader (Artifact's per-item alignment field was deliberately dropped, not carried over).
+    public bool hidden;
+    public int commanderBonus;
+    public int agentBonus;
+    public int emmissaryBonus;
+    public int mageBonus;
+    public int bonusAttack;
+    public int bonusDefense;
+    public string passiveEffectId = "";
+    public int passiveEffectValue;
+    public bool transferable = true;
+    public int healPerTurn;
+    public int movementBonus;
+    public bool ignoreTerrainMovementPenalty;
+    public bool grantsHasteAtSea;
+    public int autoScoutRadius;
+    public int detectionEvasion;
+    public string attackBonusVsRace;
+    public int attackBonusVsRaceValue;
+    public string attackBonusVsTroopType;
+    public int attackBonusVsTroopTypeValue;
+    public string defenseBonusVsRace;
+    public int defenseBonusVsRaceValue;
+    public string defenseBonusVsTroopType;
+    public int defenseBonusVsTroopTypeValue;
+    public int armyAttackStrengthBonus;
+    public int armyDefenseStrengthBonus;
+    public int enemyArmyDefensePenaltySameHex;
+    public int recruitBonusMenAtArms;
+    public int scryAreaBonus;
+    public int scryObjectBonus;
+    public string negativeStatusImmunity;
+    public int negativeStatusDurationReduction;
+    public int negativeStatusDamageReduction;
+    public int positiveStatusDurationBonus;
+    public int positiveStatusEffectBonus;
+    public bool grantsEnvironmentalImmunity;
+
+    // Object card typed getters — ported from the retired Artifact class, same field names,
+    // same clamping/matching semantics. Only meaningful when GetCardType() == Object, but
+    // harmless (return 0/false) to call on any card since the backing fields default that way.
+    public int GetHealPerTurn() => Mathf.Max(0, healPerTurn);
+    public int GetMovementBonus() => Mathf.Max(0, movementBonus);
+    public bool GetIgnoreTerrainMovementPenalty() => ignoreTerrainMovementPenalty;
+    public int GetAutoScoutRadius() => Mathf.Max(0, autoScoutRadius);
+    public int GetDetectionEvasion() => Mathf.Max(0, detectionEvasion);
+
+    public int GetAttackBonusVsRace(RacesEnum race)
+    {
+        if (attackBonusVsRaceValue > 0 && string.Equals(attackBonusVsRace, race.ToString(), StringComparison.OrdinalIgnoreCase))
+            return attackBonusVsRaceValue;
+        return 0;
+    }
+
+    public int GetAttackBonusVsTroopType(TroopsTypeEnum troopType)
+    {
+        if (attackBonusVsTroopTypeValue > 0 && string.Equals(attackBonusVsTroopType, troopType.ToString(), StringComparison.OrdinalIgnoreCase))
+            return attackBonusVsTroopTypeValue;
+        return 0;
+    }
+
+    public int GetDefenseBonusVsRace(RacesEnum race)
+    {
+        if (defenseBonusVsRaceValue > 0 && string.Equals(defenseBonusVsRace, race.ToString(), StringComparison.OrdinalIgnoreCase))
+            return defenseBonusVsRaceValue;
+        return 0;
+    }
+
+    public int GetDefenseBonusVsTroopType(TroopsTypeEnum troopType)
+    {
+        if (defenseBonusVsTroopTypeValue > 0 && string.Equals(defenseBonusVsTroopType, troopType.ToString(), StringComparison.OrdinalIgnoreCase))
+            return defenseBonusVsTroopTypeValue;
+        return 0;
+    }
+
+    public int GetRecruitBonusMenAtArms() => Mathf.Max(0, recruitBonusMenAtArms);
+    public int GetScryAreaBonus() => Mathf.Max(0, scryAreaBonus);
+    public int GetScryObjectBonus() => Mathf.Max(0, scryObjectBonus);
+
+    public bool GetNegativeStatusImmunity(StatusEffectEnum effect)
+    {
+        return !string.IsNullOrWhiteSpace(negativeStatusImmunity)
+            && string.Equals(negativeStatusImmunity, effect.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    public int GetNegativeStatusDurationReduction() => Mathf.Max(0, negativeStatusDurationReduction);
+    public int GetNegativeStatusDamageReduction() => Mathf.Max(0, negativeStatusDamageReduction);
+    public int GetPositiveStatusDurationBonus() => Mathf.Max(0, positiveStatusDurationBonus);
+    public int GetPositiveStatusEffectBonus() => Mathf.Max(0, positiveStatusEffectBonus);
+
+    // scryObjectBonus doubles as "Find Object" action-difficulty reduction, matching the
+    // old Artifact.GetActionDifficultyReduction's hardcoded FindArtifact tie-in.
+    public int GetActionDifficultyReduction(string actionClassName)
+    {
+        if (scryObjectBonus > 0 && string.Equals(actionClassName, FindArtifact.ActionRef, StringComparison.OrdinalIgnoreCase))
+            return scryObjectBonus;
+        return 0;
+    }
+
+    public int GetArmyAttackStrengthBonus() => Mathf.Max(0, armyAttackStrengthBonus);
+    public int GetArmyDefenseStrengthBonus() => Mathf.Max(0, armyDefenseStrengthBonus);
+    public int GetEnemyArmyDefensePenaltySameHex() => Mathf.Max(0, enemyArmyDefensePenaltySameHex);
+    public bool GrantsEnvironmentalImmunity() => grantsEnvironmentalImmunity;
+    public bool GrantsHasteAtSea() => grantsHasteAtSea;
+
+    // Ported from Artifact.GetSpriteString()/GetHoverText() for the object-icon UI
+    // (ArtifactRenderer) — same fallback sprite and same mechanical-detail summary line.
+    public string GetSpriteString() => !string.IsNullOrEmpty(spriteName) ? spriteName : "artifact";
+
+    public string GetHoverText()
+    {
+        var sb = new System.Collections.Generic.List<string> { $"<sprite name=\"{GetSpriteString()}\">{name}" };
+        System.Collections.Generic.List<string> details = BuildObjectMechanicalDetails();
+        if (details.Count > 0) sb.Add($"<br>{string.Join(", ", details)}");
+        return string.Join("", sb);
+    }
+
+    private System.Collections.Generic.List<string> BuildObjectMechanicalDetails()
+    {
+        var details = new System.Collections.Generic.List<string>();
+        if (commanderBonus > 0) details.Add($"+{commanderBonus}<sprite name=\"commander\">");
+        if (agentBonus > 0) details.Add($"+{agentBonus}<sprite name=\"agent\">");
+        if (emmissaryBonus > 0) details.Add($"+{emmissaryBonus}<sprite name=\"emmissary\">");
+        if (mageBonus > 0) details.Add($"+{mageBonus}<sprite name=\"mage\">");
+        if (bonusAttack > 0) details.Add($"+{bonusAttack} attack");
+        if (bonusDefense > 0) details.Add($"+{bonusDefense} defense");
+
+        if (healPerTurn > 0) details.Add($"heals {healPerTurn} each turn");
+        if (movementBonus > 0) details.Add($"+{movementBonus} movement");
+        if (ignoreTerrainMovementPenalty) details.Add("ignores terrain movement penalties");
+        if (grantsHasteAtSea) details.Add("grants Haste at sea");
+        if (autoScoutRadius > 0) details.Add($"auto-scouts radius {autoScoutRadius}");
+        if (detectionEvasion > 0) details.Add($"+{detectionEvasion * 10}% harder to detect");
+
+        if (!string.IsNullOrWhiteSpace(attackBonusVsRace) && attackBonusVsRaceValue > 0)
+            details.Add($"+{attackBonusVsRaceValue} attack vs {attackBonusVsRace}");
+        if (!string.IsNullOrWhiteSpace(attackBonusVsTroopType) && attackBonusVsTroopTypeValue > 0)
+            details.Add($"+{attackBonusVsTroopTypeValue} attack vs {attackBonusVsTroopType}");
+        if (!string.IsNullOrWhiteSpace(defenseBonusVsRace) && defenseBonusVsRaceValue > 0)
+            details.Add($"+{defenseBonusVsRaceValue} defense vs {defenseBonusVsRace}");
+        if (!string.IsNullOrWhiteSpace(defenseBonusVsTroopType) && defenseBonusVsTroopTypeValue > 0)
+            details.Add($"+{defenseBonusVsTroopTypeValue} defense vs {defenseBonusVsTroopType}");
+
+        if (armyAttackStrengthBonus > 0) details.Add($"+{armyAttackStrengthBonus} army attack");
+        if (armyDefenseStrengthBonus > 0) details.Add($"+{armyDefenseStrengthBonus} army defense");
+        if (enemyArmyDefensePenaltySameHex > 0) details.Add($"-{enemyArmyDefensePenaltySameHex} enemy army defense in same hex");
+
+        if (recruitBonusMenAtArms > 0) details.Add($"+{recruitBonusMenAtArms} men-at-arms recruited");
+        if (scryAreaBonus > 0) details.Add($"+{scryAreaBonus} Scry Area range");
+        if (scryObjectBonus > 0) details.Add($"+{scryObjectBonus} Find Object");
+
+        if (!string.IsNullOrWhiteSpace(negativeStatusImmunity))
+            details.Add($"immune to <sprite name=\"{negativeStatusImmunity.ToLower()}\">{negativeStatusImmunity}");
+        if (negativeStatusDurationReduction > 0) details.Add($"-{negativeStatusDurationReduction} negative status duration");
+        if (negativeStatusDamageReduction > 0) details.Add($"-{negativeStatusDamageReduction} negative status damage");
+        if (positiveStatusDurationBonus > 0) details.Add($"+{positiveStatusDurationBonus} positive status duration");
+        if (positiveStatusEffectBonus > 0) details.Add($"+{positiveStatusEffectBonus} positive status healing");
+
+        if (grantsEnvironmentalImmunity) details.Add("immune to negative environmental cards");
+        if (!transferable) details.Add("non-transferable");
+        return details;
+    }
+
+    // Independent copy — e.g. handing a template Object card to a character as an owned
+    // instance. Delegates to DeckManager's field-complete clone (used everywhere else a card
+    // needs duplicating) rather than a second, divergence-prone copy of the field list.
+    public CardData Clone() => DeckManager.CloneCard(this);
+
     public CardSituationEnum GetSituation()
         => Enum.TryParse(situation, true, out CardSituationEnum s) ? s : CardSituationEnum.None;
 
@@ -404,6 +575,15 @@ public class CardData
     {
         playability ??= new CardPlayabilityResult();
         playability.Reset();
+
+        // Object cards are lookup-only data records (bonuses/effects an object grants while
+        // carried) — never drawn, drafted, or played as an action.
+        if (GetCardType() == CardTypeEnum.Object)
+        {
+            isPlayable = false;
+            playability.isPlayable = false;
+            return false;
+        }
 
         if (GetCardType() == CardTypeEnum.Encounter)
         {
@@ -683,7 +863,6 @@ public class DeckManager : MonoBehaviour
     [SerializeField] GameObject cardCameObject;
     [SerializeField] GameObject tokenCardTemplate;
     [SerializeField] CardBloomWheel cardBloomWheel;
-    [SerializeField] CanvasGroup handCanvasGroup;
 
     [Header("Config")]
     [SerializeField] private bool initializeOnStart = true;
@@ -703,10 +882,8 @@ public class DeckManager : MonoBehaviour
     private readonly Dictionary<string, DeckManifestEntry> deckManifestById = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, DeckData> loadedDecksById = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<PlayableLeader, PlayerDeckState> playerDecks = new();
-    private readonly List<GameObject> handCardInstances = new();
 
     private bool loaded;
-    private bool isRefreshingHumanHandUI;
 
     public IReadOnlyList<string> AvailableStatusEffectIds => availableStatusEffectIds;
 
@@ -724,7 +901,6 @@ public class DeckManager : MonoBehaviour
         }
 
         Instance = this;
-        ResolveHandCanvasGroup();
     }
 
     private void Start()
@@ -874,12 +1050,16 @@ public class DeckManager : MonoBehaviour
         return playerDecks.TryGetValue(leader, out PlayerDeckState state) ? state.hand : Array.Empty<CardData>();
     }
 
-    // Returns up to 3 affordable situation cards (max 1 per active situation, priority-ordered).
+    // Returns up to handSize affordable situation cards (max 1 per active situation,
+    // priority-ordered, at most 1 Event card, Spell cards gated on mage rank).
     public List<CardData> GetSituationCards(PlayableLeader leader, Character character, Hex hex)
     {
         var result = new List<CardData>();
         if (leader == null || character == null || hex == null) return result;
         if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return result;
+
+        int maxCards = GetHandSize();
+        bool eventIncluded = false;
 
         int poolSize = state.situationPool.Count;
         int withSituation = state.situationPool.Count(c => c != null && c.GetSituation() != CardSituationEnum.None);
@@ -899,14 +1079,14 @@ public class DeckManager : MonoBehaviour
                 && !string.IsNullOrWhiteSpace(c.startingPC)
                 && CardNameUtility.Equals(c.startingPC, currentPc.pcName)))
             {
-                if (result.Count >= 3) break;
+                if (result.Count >= maxCards) break;
                 if (candidate.EvaluatePlayability(character)) result.Add(candidate);
             }
         }
 
         foreach (CardSituationEnum situation in activeSituations)
         {
-            if (result.Count >= 3) break;
+            if (result.Count >= maxCards) break;
 
             var candidates = state.situationPool.Where(c => c != null && c.GetSituation() == situation).ToList();
             Debug.Log($"[SituationCards] situation={situation}: {candidates.Count} candidate(s) in pool");
@@ -916,11 +1096,67 @@ public class DeckManager : MonoBehaviour
                 Debug.Log($"[SituationCards]   '{c.name}' playable={playable} (lvl={character.GetCommander()}/{character.GetAgent()}/{character.GetEmmissary()}/{character.GetMage()} req={c.commanderSkillRequired}/{c.agentSkillRequired}/{c.emissarySkillRequired}/{c.mageSkillRequired})");
             }
 
-            CardData match = candidates.FirstOrDefault(c => c.EvaluatePlayability(character));
-            if (match != null) result.Add(match);
+            CardData match = candidates.FirstOrDefault(c => IsEligibleOpportunityCard(c, character, eventIncluded));
+            if (match == null) continue;
+
+            result.Add(match);
+            if (match.GetCardType() == CardTypeEnum.Event) eventIncluded = true;
+        }
+
+        // Unlike Action cards, Spell and Event cards are never tied to a specific situation —
+        // every one currently in the pool is an eligible opportunity regardless of which hex
+        // triggered this check, gated only by playability, the mage-rank requirement on
+        // Spells, and the one-Event cap (see IsEligibleOpportunityCard).
+        foreach (CardData candidate in state.situationPool.Where(c =>
+            c != null && (c.GetCardType() == CardTypeEnum.Spell || c.GetCardType() == CardTypeEnum.Event)))
+        {
+            if (result.Count >= maxCards) break;
+            if (!IsEligibleOpportunityCard(candidate, character, eventIncluded)) continue;
+
+            result.Add(candidate);
+            if (candidate.GetCardType() == CardTypeEnum.Event) eventIncluded = true;
         }
 
         return result;
+    }
+
+    // A Spell opportunity requires an actual mage rank (ArcaneInsight grants one via
+    // Character.GetMage()'s status-effect bonus), and at most one Event card may appear at
+    // once — events are rarer, higher-impact interrupts than routine situational offers.
+    private static bool IsEligibleOpportunityCard(CardData card, Character character, bool eventAlreadyIncluded)
+    {
+        if (card == null || !card.EvaluatePlayability(character)) return false;
+        if (card.GetCardType() == CardTypeEnum.Event && eventAlreadyIncluded) return false;
+        if (card.GetCardType() == CardTypeEnum.Spell
+            && character.GetMage() <= 0
+            && !character.HasStatusEffect(StatusEffectEnum.ArcaneInsight))
+            return false;
+        return true;
+    }
+
+    // Existence-only check used to drive hex hints/'?' markers: true whenever an opportunity
+    // card matches this hex's active situations or founding PC, regardless of whether its
+    // requirements (level, resources, mage rank, etc.) are currently satisfied — the hint
+    // should point at the opportunity even when the player can't act on it yet.
+    public bool HasOpportunityCardsAtHex(PlayableLeader leader, Character character, Hex hex)
+    {
+        if (leader == null || character == null || hex == null) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
+
+        PC currentPc = hex.GetPCData();
+        if (currentPc != null && state.situationPool.Any(c =>
+            c != null
+            && c.GetCardType() == CardTypeEnum.Character
+            && !string.IsNullOrWhiteSpace(c.startingPC)
+            && CardNameUtility.Equals(c.startingPC, currentPc.pcName)))
+        {
+            return true;
+        }
+
+        List<CardSituationEnum> activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
+        if (activeSituations.Count == 0) return false;
+
+        return state.situationPool.Any(c => c != null && activeSituations.Contains(c.GetSituation()));
     }
 
     public bool TryPayOpportunityCardCosts(PlayableLeader leader, CardData card)
@@ -1246,26 +1482,6 @@ public class DeckManager : MonoBehaviour
         if (leader == null) return false;
         if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
 
-        Game game = FindFirstObjectByType<Game>();
-        bool isHuman = game != null && game.player == leader && handCardInstances.Count > 0;
-
-        if (isHuman)
-        {
-            List<GameObject> oldCards = new List<GameObject>(handCardInstances);
-            handCardInstances.Clear();
-
-            state.drawPile.AddRange(state.hand);
-            state.hand.Clear();
-            state.drawPile.AddRange(state.discardPile);
-            state.discardPile.Clear();
-            ApplyBalancedDrawOrdering(state.drawPile);
-            RefillHandToCount(state, targetHandSize, leader);
-            EnsureSharedBaseCardInHand(state);
-
-            StartCoroutine(PlayReshuffleAnimation(oldCards));
-            return true;
-        }
-
         state.drawPile.AddRange(state.hand);
         state.hand.Clear();
         state.drawPile.AddRange(state.discardPile);
@@ -1291,73 +1507,17 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
-    public void RefreshHumanPlayerHandUI()
-    {
-        if (isRefreshingHumanHandUI) return;
-        isRefreshingHumanHandUI = true;
-        try
-        {
-            ClearHandCardInstances();
+    // There is no hand-of-cards tray anymore — the player's hand is game state only
+    // (drawn/played/discarded via the Try*Card methods below) and is never rendered as a
+    // standing UI widget. cardBloomWheel is reserved exclusively for SituationCardsUI's
+    // opportunity-card presentation (see SituationCardsUI.ShowBloomCoroutine). These three
+    // methods are kept as no-op hooks so the many hand-mutation call sites below don't need
+    // to be touched if a hand display is ever reintroduced.
+    public void RefreshHumanPlayerHandUI() { }
 
-            GameObject cardPrefab = ResolveCardPrefab();
-            if (cardPrefab == null || cardBloomWheel == null) return;
+    public void ClearHumanPlayerHandUI() { }
 
-            Game game = FindFirstObjectByType<Game>();
-            if (game == null || game.player == null) return;
-            if (!playerDecks.TryGetValue(game.player, out PlayerDeckState state) || state.hand == null) return;
-
-            foreach (CardData card in state.hand)
-            {
-                if (card == null) continue;
-
-                GameObject cardGo = Instantiate(cardPrefab, cardBloomWheel.transform);
-                cardGo.SetActive(true);
-
-                if (cardGo.TryGetComponent(out RectTransform cardRect))
-                {
-                    // Capture rendered size before touching anchors so we can restore it.
-                    Vector2 prefabSize = cardRect.rect.size;
-                    cardRect.anchorMin = new Vector2(0.5f, 0.5f);
-                    cardRect.anchorMax = new Vector2(0.5f, 0.5f);
-                    cardRect.pivot = new Vector2(0.5f, 0f);
-                    cardRect.sizeDelta = prefabSize;
-                    cardRect.anchoredPosition = Vector2.zero;
-                }
-
-                handCardInstances.Add(cardGo);
-
-                Card cardComponent = cardGo.GetComponent<Card>();
-                if (cardComponent == null)
-                {
-                    Debug.LogWarning("DeckManager: Card prefab is missing the Card component.");
-                    continue;
-                }
-
-                cardComponent.Initialize(card);
-            }
-
-            cardBloomWheel.SetCards(handCardInstances);
-        }
-        finally
-        {
-            isRefreshingHumanHandUI = false;
-        }
-    }
-
-    public void ClearHumanPlayerHandUI()
-    {
-        ClearHandCardInstances();
-    }
-
-    public void SetHumanHandVisible(bool visible)
-    {
-        CanvasGroup target = ResolveHandCanvasGroup();
-        if (target == null) return;
-
-        target.alpha = visible ? 1f : 0f;
-        target.interactable = visible;
-        target.blocksRaycasts = visible;
-    }
+    public void SetHumanHandVisible(bool visible) { }
 
     private void RefillHandToCount(PlayerDeckState state, int targetCount, PlayableLeader leader = null)
     {
@@ -1598,7 +1758,37 @@ public class DeckManager : MonoBehaviour
             && string.Equals(card.name, cardName, StringComparison.OrdinalIgnoreCase));
     }
 
-    private static CardData CloneCard(CardData card)
+    public CardData FindObjectCardByName(string cardName)
+    {
+        if (string.IsNullOrWhiteSpace(cardName)) return null;
+        if (!loaded && !InitializeFromResources()) return null;
+        return cards.FirstOrDefault(card =>
+            card != null
+            && card.GetCardType() == CardTypeEnum.Object
+            && string.Equals(card.name, cardName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    // Fresh clones of every Object card in the catalog — the map's random hidden-object pool
+    // (Board's placement pass) draws from this instead of the retired ArtifactRepository.
+    public List<CardData> GetAllObjectCardClones()
+    {
+        if (!loaded && !InitializeFromResources()) return new List<CardData>();
+        return cards
+            .Where(card => card != null && card.GetCardType() == CardTypeEnum.Object)
+            .Select(CloneCard)
+            .Where(card => card != null)
+            .ToList();
+    }
+
+    // Cheap count (no cloning) — AI scarcity scoring divides by this instead of the retired
+    // ArtifactRepository.Count.
+    public int GetObjectCardCount()
+    {
+        if (!loaded && !InitializeFromResources()) return 0;
+        return cards.Count(card => card != null && card.GetCardType() == CardTypeEnum.Object);
+    }
+
+    public static CardData CloneCard(CardData card)
     {
         if (card == null) return null;
         return new CardData
@@ -1658,7 +1848,44 @@ public class DeckManager : MonoBehaviour
             inspireEffectData = card.inspireEffectData,
             amount = card.amount,
             deckSpriteName = card.deckSpriteName,
-            situation = card.situation
+            situation = card.situation,
+            isUnderground = card.isUnderground,
+            hidden = card.hidden,
+            commanderBonus = card.commanderBonus,
+            agentBonus = card.agentBonus,
+            emmissaryBonus = card.emmissaryBonus,
+            mageBonus = card.mageBonus,
+            bonusAttack = card.bonusAttack,
+            bonusDefense = card.bonusDefense,
+            passiveEffectId = card.passiveEffectId,
+            passiveEffectValue = card.passiveEffectValue,
+            transferable = card.transferable,
+            healPerTurn = card.healPerTurn,
+            movementBonus = card.movementBonus,
+            ignoreTerrainMovementPenalty = card.ignoreTerrainMovementPenalty,
+            grantsHasteAtSea = card.grantsHasteAtSea,
+            autoScoutRadius = card.autoScoutRadius,
+            detectionEvasion = card.detectionEvasion,
+            attackBonusVsRace = card.attackBonusVsRace,
+            attackBonusVsRaceValue = card.attackBonusVsRaceValue,
+            attackBonusVsTroopType = card.attackBonusVsTroopType,
+            attackBonusVsTroopTypeValue = card.attackBonusVsTroopTypeValue,
+            defenseBonusVsRace = card.defenseBonusVsRace,
+            defenseBonusVsRaceValue = card.defenseBonusVsRaceValue,
+            defenseBonusVsTroopType = card.defenseBonusVsTroopType,
+            defenseBonusVsTroopTypeValue = card.defenseBonusVsTroopTypeValue,
+            armyAttackStrengthBonus = card.armyAttackStrengthBonus,
+            armyDefenseStrengthBonus = card.armyDefenseStrengthBonus,
+            enemyArmyDefensePenaltySameHex = card.enemyArmyDefensePenaltySameHex,
+            recruitBonusMenAtArms = card.recruitBonusMenAtArms,
+            scryAreaBonus = card.scryAreaBonus,
+            scryObjectBonus = card.scryObjectBonus,
+            negativeStatusImmunity = card.negativeStatusImmunity,
+            negativeStatusDurationReduction = card.negativeStatusDurationReduction,
+            negativeStatusDamageReduction = card.negativeStatusDamageReduction,
+            positiveStatusDurationBonus = card.positiveStatusDurationBonus,
+            positiveStatusEffectBonus = card.positiveStatusEffectBonus,
+            grantsEnvironmentalImmunity = card.grantsEnvironmentalImmunity
         };
     }
 
@@ -2572,6 +2799,10 @@ public class DeckManager : MonoBehaviour
             return string.Equals(sourceDeckId, "encounter_shared", StringComparison.OrdinalIgnoreCase);
         }
 
+        // Object cards are lookup-only data records (see EvaluatePlayability) — never part
+        // of a drawable deck/hand pool.
+        if (card.GetCardType() == CardTypeEnum.Object) return false;
+
         // Action cards are drawable like any other card; they are ALSO cloned into
         // the situation pool (see ShouldIncludeCardInSituationPool), so they can
         // surface both from the hand and as opportunity cards.
@@ -2583,6 +2814,8 @@ public class DeckManager : MonoBehaviour
         if (card == null) return false;
         CardTypeEnum type = card.GetCardType();
         return type == CardTypeEnum.Action
+            || type == CardTypeEnum.Spell
+            || type == CardTypeEnum.Event
             || (type == CardTypeEnum.Character && !string.IsNullOrWhiteSpace(card.startingPC));
     }
 
@@ -2678,116 +2911,6 @@ public class DeckManager : MonoBehaviour
         RefreshHumanPlayerHandUI();
     }
 
-    private IEnumerator PlayReshuffleAnimation(List<GameObject> oldCards)
-    {
-        if (cardBloomWheel == null) yield break;
-
-        Canvas.ForceUpdateCanvases();
-
-        Transform floatRoot = cardBloomWheel.transform.parent;
-        int total = oldCards.Count;
-
-        Vector3[] worldPositions = new Vector3[total];
-        for (int i = 0; i < total; i++)
-        {
-            if (oldCards[i] == null) continue;
-            if (oldCards[i].TryGetComponent(out RectTransform rt))
-                worldPositions[i] = rt.position;
-        }
-
-        for (int i = 0; i < total; i++)
-        {
-            GameObject card = oldCards[i];
-            if (card == null) continue;
-
-            RectTransform rt = card.GetComponent<RectTransform>();
-            if (rt == null) continue;
-
-            card.transform.SetParent(floatRoot, false);
-            rt.position = worldPositions[i];
-
-            LayoutElement le = card.GetComponent<LayoutElement>();
-            if (le != null) le.ignoreLayout = true;
-
-            StartCoroutine(ScatterCard(card, i, total));
-        }
-
-        yield return new WaitForSecondsRealtime(0.5f);
-
-        foreach (var go in oldCards)
-            if (go != null) Destroy(go);
-
-        RefreshHumanPlayerHandUI();
-    }
-
-    private IEnumerator ScatterCard(GameObject card, int index, int total)
-    {
-        if (card == null) yield break;
-
-        RectTransform rt = card.GetComponent<RectTransform>();
-        CanvasGroup cg = card.GetComponent<CanvasGroup>();
-        if (rt == null) yield break;
-
-        float t0 = total > 1 ? (float)index / (total - 1) : 0.5f;
-        float baseAngle = Mathf.Lerp(-65f, 65f, t0);
-        float spin = UnityEngine.Random.Range(-20f, 20f);
-        float rad = (baseAngle + spin) * Mathf.Deg2Rad;
-        Vector2 dir = new Vector2(Mathf.Sin(rad), -Mathf.Abs(Mathf.Cos(rad)) - 0.3f).normalized;
-
-        Vector2 startPos = rt.anchoredPosition;
-        Vector2 endPos = startPos + dir * UnityEngine.Random.Range(380f, 520f);
-        float startRot = rt.localEulerAngles.z;
-        float endRot = startRot + UnityEngine.Random.Range(-30f, 30f);
-        Vector3 startScale = rt.localScale;
-
-        float delay = index * 0.025f;
-        if (delay > 0f) yield return new WaitForSecondsRealtime(delay);
-
-        float duration = 0.3f;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            if (card == null) yield break;
-            float p = elapsed / duration;
-            float eased = p * p;
-
-            rt.anchoredPosition = Vector2.Lerp(startPos, endPos, eased);
-            rt.localEulerAngles = new Vector3(0f, 0f, Mathf.Lerp(startRot, endRot, p));
-            rt.localScale = Vector3.Lerp(startScale, startScale * 0.3f, eased);
-            if (cg != null) cg.alpha = 1f - p;
-
-            elapsed += Time.unscaledDeltaTime;
-            yield return null;
-        }
-    }
-
-    private void ClearHandCardInstances()
-    {
-        foreach (GameObject card in handCardInstances)
-        {
-            if (card == null) continue;
-            Card cardComponent = card.GetComponent<Card>();
-            if (cardComponent != null && cardComponent.IsPlayInProgress) continue;
-            Destroy(card);
-        }
-        handCardInstances.Clear();
-
-        if (cardBloomWheel == null) return;
-
-        for (int i = cardBloomWheel.transform.childCount - 1; i >= 0; i--)
-        {
-            Transform child = cardBloomWheel.transform.GetChild(i);
-            if (child == null) continue;
-            GameObject childGo = child.gameObject;
-            if (childGo == null) continue;
-            if (cardCameObject != null && childGo == cardCameObject) continue;
-            Card childCard = childGo.GetComponent<Card>();
-            if (childCard == null || childCard.IsPlayInProgress) continue;
-            Destroy(childGo);
-        }
-    }
-
     private GameObject ResolveCardPrefab()
     {
         if (cardCameObject != null)
@@ -2814,6 +2937,8 @@ public class DeckManager : MonoBehaviour
 
     public GameObject GetCardPrefabTemplate() => ResolveCardPrefab();
 
+    public CardBloomWheel GetCardBloomWheel() => cardBloomWheel;
+
     public GameObject GetTokenCardPrefabTemplate()
     {
         if (tokenCardTemplate == null) return null;
@@ -2825,24 +2950,4 @@ public class DeckManager : MonoBehaviour
     }
 
     public Vector2 GetCardSize() => new(120f, 170f);
-
-    private CanvasGroup ResolveHandCanvasGroup()
-    {
-        if (handCanvasGroup != null) return handCanvasGroup;
-
-        if (cardBloomWheel != null)
-        {
-            handCanvasGroup = cardBloomWheel.GetComponent<CanvasGroup>();
-            if (handCanvasGroup != null) return handCanvasGroup;
-
-            handCanvasGroup = cardBloomWheel.GetComponentInParent<CanvasGroup>();
-        }
-
-        if (handCanvasGroup == null)
-        {
-            handCanvasGroup = GetComponent<CanvasGroup>();
-        }
-
-        return handCanvasGroup;
-    }
 }

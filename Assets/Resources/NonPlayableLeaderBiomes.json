@@ -6,8 +6,7 @@
             "banner": "banner_elven_leaf",
             "artifacts": [
                 "Nenya",
-                "Lembas",
-                "Light of Earendil"
+                "Lembas"
             ],
             "noScenarioStart": {
                 "terrain": 5,
@@ -49,10 +48,7 @@
             "characterName": "Thranduil",
             "alignment": 0,
             "banner": "banner_green_bows_sword",
-            "artifacts": [
-                "Lasgalen Gems",
-                "Wooden Crown"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 5,
                 "startingArmySize": 1,
@@ -93,10 +89,8 @@
             "alignment": 1,
             "banner": "banner_nazgul_helmet",
             "artifacts": [
-                "Black Horse",
                 "Iron Crown",
-                "Murazor's Ring",
-                "Morgul's Blade"
+                "Murazor's Ring"
             ],
             "noScenarioStart": {
                 "terrain": 0,
@@ -118,10 +112,8 @@
             "alignment": 1,
             "banner": "banner_green_eye",
             "artifacts": [
-                "Black Horse",
                 "Khamul's Ring",
-                "Easterling Helmet",
-                "Morgul's Blade"
+                "Easterling Helmet"
             ],
             "noScenarioStart": {
                 "terrain": 5,
@@ -143,10 +135,7 @@
             "alignment": 1,
             "banner": "banner_akhorahil",
             "artifacts": [
-                "Black Horse",
-                "Gem eyes",
-                "Akhorahil's Ring",
-                "Morgul's Blade"
+                "Akhorahil's Ring"
             ],
             "noScenarioStart": {
                 "terrain": 10,
@@ -169,10 +158,7 @@
             "alignment": 1,
             "banner": "banner_ji_indur",
             "artifacts": [
-                "Black Horse",
-                "Mumak helmet",
-                "Indur's Ring",
-                "Morgul's Blade"
+                "Indur's Ring"
             ],
             "noScenarioStart": {
                 "terrain": 10,
@@ -194,9 +180,7 @@
             "alignment": 1,
             "banner": "banner_ovatha",
             "artifacts": [
-                "Black Horse",
-                "Ovatha's Ring",
-                "Morgul's Blade"
+                "Ovatha's Ring"
             ],
             "noScenarioStart": {
                 "terrain": 4,
@@ -219,9 +203,7 @@
             "alignment": 1,
             "banner": "banner_adunaphel",
             "artifacts": [
-                "Black Horse",
-                "Adunaphel's Ring",
-                "Morgul's Blade"
+                "Adunaphel's Ring"
             ],
             "noScenarioStart": {
                 "terrain": 9,
@@ -244,9 +226,7 @@
             "alignment": 1,
             "banner": "banner_fire_iron",
             "artifacts": [
-                "Black Horse",
-                "Ren's Ring",
-                "Morgul's Blade"
+                "Ren's Ring"
             ],
             "noScenarioStart": {
                 "terrain": 10,
@@ -268,9 +248,7 @@
             "alignment": 1,
             "banner": "banner_hoarmurath",
             "artifacts": [
-                "Black Horse",
-                "Hoarmurath's Ring",
-                "Morgul's Blade"
+                "Hoarmurath's Ring"
             ],
             "noScenarioStart": {
                 "terrain": 11,
@@ -292,10 +270,7 @@
             "alignment": 1,
             "banner": "banner_wolf",
             "artifacts": [
-                "Black Horse",
-                "Dwar's Ring",
-                "Warg's Helmet",
-                "Morgul's Blade"
+                "Dwar's Ring"
             ],
             "noScenarioStart": {
                 "terrain": 10,
@@ -378,9 +353,7 @@
             "characterName": "Beoraborn",
             "alignment": 0,
             "banner": "banner_bear",
-            "artifacts": [
-                "High Pass Toll"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 2,
                 "startingArmySize": 1,
@@ -420,9 +393,7 @@
             "characterName": "Shelob",
             "alignment": 1,
             "banner": "banner_shelob",
-            "artifacts": [
-                "Poison"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 0,
                 "startingArmySize": 0,
@@ -441,10 +412,7 @@
             "characterName": "Balrog",
             "alignment": 1,
             "banner": "banner_balrog",
-            "artifacts": [
-                "Sword of Flame",
-                "Fire Whip"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 0,
                 "startingArmySize": 2,
@@ -464,9 +432,7 @@
             "characterName": "Smaug",
             "alignment": 1,
             "banner": "banner_smaug",
-            "artifacts": [
-                "Dragon Wings"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 0,
                 "startingArmySize": 0,
@@ -588,7 +554,6 @@
             "alignment": 0,
             "banner": "banner_white_green_tree",
             "artifacts": [
-                "The White Tree",
                 "Palantir of Minas Tirith"
             ],
             "noScenarioStart": {
@@ -715,10 +680,7 @@
             "characterName": "Radagast",
             "alignment": 2,
             "banner": "banner_elk",
-            "artifacts": [
-                "Rabbits of Rhosgobel",
-                "Birds of Mirkwood"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 5,
                 "startingArmySize": 0,
@@ -756,9 +718,7 @@
             "characterName": "Goblin King",
             "alignment": 1,
             "banner": "banner_orc_helmet_2",
-            "artifacts": [
-                "Goblin Cleaver"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 0,
                 "startingArmySize": 2,
@@ -778,10 +738,7 @@
             "characterName": "Tom Bombadil",
             "alignment": 0,
             "banner": "banner_green_shield",
-            "artifacts": [
-                "Yellow boots",
-                "Blue Jacket"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 5,
                 "startingArmySize": 0,
@@ -820,10 +777,7 @@
             "characterName": "Pallando",
             "alignment": 2,
             "banner": "banner_white_star_wings",
-            "artifacts": [
-                "Robes of Aman",
-                "Hood of Stars"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 2,
                 "startingArmySize": 1,
@@ -844,8 +798,7 @@
             "alignment": 2,
             "banner": "banner_brown_sun",
             "artifacts": [
-                "Blue Bow",
-                "Robes of Aman"
+                "Blue Bow"
             ],
             "noScenarioStart": {
                 "terrain": 9,
@@ -866,9 +819,7 @@
             "characterName": "Treebeard",
             "alignment": 0,
             "banner": "banner_green_tree",
-            "artifacts": [
-                "Ent-draught"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 5,
                 "startingArmySize": 1,
@@ -888,10 +839,7 @@
             "characterName": "Annatorion",
             "alignment": 0,
             "banner": "banner_red_wine",
-            "artifacts": [
-                "Wine of Dorwinion",
-                "Dorwinion Grapes"
-            ],
+            "artifacts": [],
             "noScenarioStart": {
                 "terrain": 4,
                 "startingArmySize": 1,
@@ -913,8 +861,7 @@
             "alignment": 1,
             "banner": "banner_barrow_wight",
             "artifacts": [
-                "Westernesse Blade",
-                "Gripping Bone"
+                "Westernesse Blade"
             ],
             "noScenarioStart": {
                 "terrain": 1,

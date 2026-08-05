@@ -18,32 +18,32 @@ public class TransferArtifact : CharacterAction
             if( c == null || c.killed) return false;
             bool hasFriendlyTarget = c.hex != null && c.hex.GetFriendlyCharacters(c.GetOwner()).Any(x => x != c);
             if (!hasFriendlyTarget) return false;
-            return c.artifacts.Find(x => x.transferable) != null;
+            return c.objects.Find(x => x.transferable) != null;
         };
         async System.Threading.Tasks.Task<bool> transferAsync(Character c)
-        {            
+        {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
             List<Character> characters = c.hex.GetFriendlyCharacters(c.GetOwner()).Where(x => x != c).ToList();
-            List<Artifact> transferableArtifacts = c.artifacts.Where(x => x.transferable).ToList();
+            List<CardData> transferableArtifacts = c.objects.Where(x => x.transferable).ToList();
             if(characters.Count < 1 || transferableArtifacts.Count < 1) return false;
             bool isAI = !c.isPlayerControlled;
             Character character = null;
-            Artifact artifact = null;
+            CardData artifact = null;
             if(!isAI)
             {
-                string targetArtifact = await SelectionDialog.Ask("Select artifact", "Ok", "Cancel", transferableArtifacts.Select(x => x.artifactName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
-                artifact = transferableArtifacts.Find(x => x.artifactName == targetArtifact);
+                string targetArtifact = await SelectionDialog.Ask("Select artifact", "Ok", "Cancel", transferableArtifacts.Select(x => x.name).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                artifact = transferableArtifacts.Find(x => x.name == targetArtifact);
                 if (artifact == null) return false;
 
-                string targetCharacter = await SelectionDialog.Ask("Select friendly character", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);    
+                string targetCharacter = await SelectionDialog.Ask("Select friendly character", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
                 character = c.hex.characters.Find(x => x.characterName == targetCharacter);
                 if (character == null) return false;
-                
-            } 
+
+            }
             else
             {
                 float bestScore = -1f;
-                foreach (Artifact art in transferableArtifacts)
+                foreach (CardData art in transferableArtifacts)
                 {
                     foreach (Character target in characters)
                     {
@@ -77,23 +77,17 @@ public class TransferArtifact : CharacterAction
             }
             
             if (character == null || artifact == null) return false;
-            if (character.artifacts.Count >= Character.MAX_ARTIFACTS)
+            if (character.objects.Count >= Character.MAX_OBJECTS)
             {
-                await ConfirmationDialog.AskOk($"{character.characterName} can't hold more artifacts");
+                await ConfirmationDialog.AskOk($"{character.characterName} can't hold more objects");
                 return false;
             }
 
-            if (artifact.ShouldApplyAlignmentPenalty(character.GetAlignment()) && !isAI)
-            {
-                await ConfirmationDialog.AskOk("Artifacts of opposite alignment have health penalties for their bearers");
-            }
-
-            c.artifacts.Remove(artifact);
-            character.artifacts.Add(artifact);
-            character.ApplyOppositeAlignmentArtifactPenalty(artifact);
+            c.objects.Remove(artifact);
+            character.objects.Add(artifact);
             Character.RefreshArtifactPcVisibilityForHex(c.hex);
 
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"{c.characterName}'s {artifact.artifactName} transferred to {character.characterName}", Color.green);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"{c.characterName}'s {artifact.name} transferred to {character.characterName}", Color.green);
 
             if (!isAI)
             {

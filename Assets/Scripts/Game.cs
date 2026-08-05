@@ -39,7 +39,6 @@ public class Game : MonoBehaviour
     public List<NonPlayableLeader> npcs;
     [Header("Currently Playing")]
     public PlayableLeader currentlyPlaying;
-    // Artifact catalog now lives in ArtifactRepository (loads from Artifacts.json)
 
     [Header("Movement")]
     public int characterMovement = 5;
@@ -47,7 +46,7 @@ public class Game : MonoBehaviour
     public int cavalryMovement = 7;
 
     [Header("Caps")]
-    public static int MAX_ARTIFACTS = 100;
+    public static int MAX_OBJECTS = 100;
     public static int MAX_CHARACTERS = 100;
     public static int MAX_PCS = 100;
     public static int MAX_TURNS = 999;
@@ -259,33 +258,13 @@ public class Game : MonoBehaviour
     }
 
     // There is no tutorial gating game start anymore — every campaign begins with everything
-    // a leader is entitled to: their guaranteed starting artifacts and (for the human) their
-    // chosen variant identity. Authored scenarios hand-place their own artifacts/characters,
-    // so this is skipped entirely for those.
+    // a leader is entitled to: (for the human) their chosen variant identity. Nobody gets
+    // automatic starting objects anymore — those are assigned per-character in the Scenario
+    // Creator (ScenarioCharacter.startingObjects, see NationSpawner.SpawnScenarioCharacter),
+    // so there's nothing left to grant for a non-scenario campaign start either.
     private void FinalizeCampaignStart()
     {
-        if (!GameConfig.HasScenario)
-        {
-            GrantStartingArtifacts(player);
-        }
         player?.ApplyVariantTransformation();
-    }
-
-    private static void GrantStartingArtifacts(PlayableLeader leader)
-    {
-        if (leader == null) return;
-        LeaderBiomeConfig biome = leader.GetBiome();
-        if (biome?.startingArtifacts == null || biome.startingArtifacts.Count == 0) return;
-
-        foreach (Artifact template in biome.startingArtifacts)
-        {
-            if (template == null || string.IsNullOrWhiteSpace(template.artifactName)) continue;
-            bool alreadyOwned = leader.artifacts.Any(a => a != null && string.Equals(a.artifactName, template.artifactName, StringComparison.OrdinalIgnoreCase));
-            if (alreadyOwned) continue;
-            if (leader.artifacts.Count >= Character.MAX_ARTIFACTS) break;
-            leader.artifacts.Add(template.Clone());
-            Character.RefreshArtifactPcVisibilityForHex(leader.hex);
-        }
     }
 
     private IEnumerator ShowTurnZeroBanner()
@@ -429,6 +408,12 @@ public class Game : MonoBehaviour
 
     public bool PointToCharacterWithMissingActions()
     {
+        // Don't steal the camera/selection out from under an open opportunity-card offer —
+        // the player needs the selected character and camera to stay put long enough to
+        // actually read and click it (bloom mode in particular anchors to that character's
+        // hex, so panning away mid-offer makes it unreachable).
+        if (SituationCardsUI.IsShowing) return false;
+
         // Make sure all characters have actioned
         Character stillNotActioned = player.controlledCharacters.Find(x => !x.hasActionedThisTurn && !x.killed && board.selectedCharacter != x);
         if ( stillNotActioned != null) board.SelectCharacter(stillNotActioned, true, 1.0f, 2.0f);

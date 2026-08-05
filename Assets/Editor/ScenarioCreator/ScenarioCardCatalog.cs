@@ -20,7 +20,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private static List<string> _characterCards;
         private static List<string> _armyCards;
         private static List<string> _regions;
-        private static List<string> _hiddenArtifactNames;
+        private static List<string> _objectCardNames;
         private static Dictionary<TerrainEnum, Sprite> _terrainSprites;
         private static List<CardData> _allCards;
         private static Dictionary<string, CardData> _cardsByName;
@@ -39,16 +39,10 @@ namespace RetroLOTR.Scenarios.EditorTools
         public static IReadOnlyList<string> ArmyCards => _armyCards ??= NamesOfType(CardTypeEnum.Army);
         public static IReadOnlyList<string> Regions => _regions ??= NamesOfType(CardTypeEnum.Land);
 
-        /// <summary>Names of every artifact in Artifacts.json's hidden pool (the one Board's
-        /// random pass draws from at game start), for the scenario creator's artifact-placement
-        /// picker. Duplicate names (e.g. multiple "Athelas") collapse to one entry — there are
-        /// still that many copies in the pool for PlaceScenarioArtifacts to match against.</summary>
-        public static IReadOnlyList<string> HiddenArtifactNames => _hiddenArtifactNames ??= ArtifactRepository.GetAll()
-            .Where(a => a != null && a.hidden && !string.IsNullOrWhiteSpace(a.artifactName))
-            .Select(a => a.artifactName.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
-            .ToList();
+        /// <summary>Names of every card in the Object-card catalog (Cards/Modular/ObjectsDeck.json),
+        /// for the scenario creator's hex-placement picker (Board.PlaceScenarioObjects) and the
+        /// per-character starting-objects picker (NationSpawner.SpawnScenarioCharacter).</summary>
+        public static IReadOnlyList<string> ObjectCardNames => _objectCardNames ??= NamesOfType(CardTypeEnum.Object);
 
         private static List<string> _allCardNames;
 
@@ -242,7 +236,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         public static void Invalidate()
         {
             _playableLeaders = _nonPlayableLeaders = _pcCards = _characterCards = _armyCards = _regions = null;
-            _hiddenArtifactNames = null;
+            _objectCardNames = null;
             _allCardNames = null;
             _playableVariantsByName = null;
             _terrainSprites = null;
