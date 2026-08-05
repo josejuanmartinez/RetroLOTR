@@ -64,14 +64,8 @@
                 "startingCityRegion": "TheShire"
             },
             "preferedTroopType": 0,
-            "tutorialAnchors": [
-                "Hobbiton",
-                "Frodo",
-                "Merry",
-                "Pippin"
-            ],
             "sex": 0,
-            "tutorialArtifacts": [
+            "startingArtifacts": [
                 {
                     "artifactName": "Narya",
                     "hidden": false,
@@ -151,6 +145,8 @@
                     "transferable": false
                 }
             ],
+            "startingCityName": "Hobbiton",
+            "startingCitySize": 2,
             "nationName": "Gandalf",
             "characterSprite": "maia",
             "nationInitials": "G"
@@ -210,12 +206,8 @@
                 "startingCityRegion": "GapOfRohan"
             },
             "preferedTroopType": 0,
-            "tutorialAnchors": [
-                "Theoden",
-                "Orthanc"
-            ],
             "sex": 0,
-            "tutorialArtifacts": [
+            "startingArtifacts": [
                 {
                     "artifactName": "White Hand Banner",
                     "hidden": false,
@@ -281,6 +273,8 @@
                     "transferable": false
                 }
             ],
+            "startingCityName": "Orthanc",
+            "startingCitySize": 4,
             "nationName": "Saruman",
             "characterSprite": "saruman",
             "nationInitials": "S"
@@ -349,13 +343,8 @@
                 "startingCityRegion": "Gorgoroth"
             },
             "preferedTroopType": 0,
-            "tutorialAnchors": [
-                "Dendra Dwar",
-                "Gothmog",
-                "Barad-dur"
-            ],
             "sex": 0,
-            "tutorialArtifacts": [
+            "startingArtifacts": [
                 {
                     "artifactName": "Dark Lord Banner",
                     "hidden": false,
@@ -423,6 +412,8 @@
                     "spriteString": "speech"
                 }
             ],
+            "startingCityName": "Barad-dur",
+            "startingCitySize": 5,
             "nationName": "Mordor",
             "characterSprite": "sauron",
             "nationInitials": "S",

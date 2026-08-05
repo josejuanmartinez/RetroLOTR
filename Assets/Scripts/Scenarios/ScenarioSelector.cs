@@ -14,8 +14,7 @@ namespace RetroLOTR.Scenarios
     /// "Procedural" clears the selection and reloads into a normal generated map.
     ///
     /// Wiring: add this to the LeaderSelector screen and assign a TMP_Dropdown. No changes to the
-    /// existing Start Game / Start Tutorial buttons are needed — they operate on whatever board
-    /// is currently loaded.
+    /// existing Start Game button are needed — it operates on whatever board is currently loaded.
     /// </summary>
     public class ScenarioSelector : MonoBehaviour
     {

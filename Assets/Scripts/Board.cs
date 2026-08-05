@@ -59,7 +59,6 @@ public class Board : MonoBehaviour
 
     [Header("Start button")]
     public Button startButton;
-    public Button tutorialButton;
 
     [Header("Debug")]
     public bool redraw = false;
@@ -342,8 +341,7 @@ public class Board : MonoBehaviour
 
         initialized = true;
         if (startButton != null) startButton.interactable = true;
-        if (tutorialButton != null) tutorialButton.interactable = true;
-        
+
         var hexList = GetHexes();
         if (hexList != null)
         {
@@ -403,7 +401,7 @@ public class Board : MonoBehaviour
 
         List<Artifact> hiddenArtifacts = ArtifactRepository.GetAllClones();
 
-        PlaceTutorialArtifacts(hiddenArtifacts);
+        ExcludeGuaranteedStartingArtifacts(hiddenArtifacts);
         PlaceScenarioArtifacts(hiddenArtifacts);
 
         // Shuffle the hexes to randomize artifact placement
@@ -431,74 +429,24 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void PlaceTutorialArtifacts(List<Artifact> hiddenArtifacts)
+    // Every playable leader is guaranteed their biome's startingArtifacts at game start
+    // (see Game.GrantStartingArtifacts) — keep those out of the random hidden-artifact pool
+    // so the same artifact can't also turn up as a separate map pickup.
+    private void ExcludeGuaranteedStartingArtifacts(List<Artifact> hiddenArtifacts)
     {
         if (hiddenArtifacts == null) return;
         PlayableLeader[] leaders = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None);
         if (leaders == null || leaders.Length == 0) return;
 
-        HashSet<Hex> usedHexes = new();
         foreach (PlayableLeader leader in leaders)
         {
-            if (leader == null || leader.hex == null) continue;
-            LeaderBiomeConfig biome = leader.GetBiome();
-            if (biome == null || biome.tutorialArtifacts == null || biome.tutorialArtifacts.Count == 0) continue;
+            LeaderBiomeConfig biome = leader?.GetBiome();
+            if (biome?.startingArtifacts == null || biome.startingArtifacts.Count == 0) continue;
 
-            for (int i = hiddenArtifacts.Count - 1; i >= 0; i--)
-            {
-                Artifact artifact = hiddenArtifacts[i];
-                if (artifact == null) continue;
-                if (biome.tutorialArtifacts.Any(a => a != null && !string.IsNullOrWhiteSpace(a.artifactName) && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase)))
-                {
-                    hiddenArtifacts.RemoveAt(i);
-                }
-            }
-
-            List<Hex> anchorHexes = new();
-            List<Hex> anchorPrimaryHexes = new();
-            if (biome.tutorialAnchors != null && biome.tutorialAnchors.Count > 0)
-            {
-                NonPlayableLeader[] nonPlayableLeaders = FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None);
-                foreach (string anchorName in biome.tutorialAnchors)
-                {
-                    if (string.IsNullOrWhiteSpace(anchorName)) continue;
-                    NonPlayableLeader anchor = nonPlayableLeaders.FirstOrDefault(npl => npl != null && string.Equals(npl.characterName, anchorName, StringComparison.OrdinalIgnoreCase));
-                    if (anchor?.hex == null) continue;
-                    anchorPrimaryHexes.Add(anchor.hex);
-                    anchorHexes.AddRange(anchor.hex.GetHexesInRadius(1));
-                }
-            }
-
-            List<Hex> candidates = new();
-            candidates.AddRange(anchorPrimaryHexes);
-            candidates.AddRange(anchorHexes);
-            candidates.Add(leader.hex);
-            candidates.AddRange(leader.hex.GetHexesInRadius(2));
-            candidates = candidates
-                .Where(h => h != null && !h.IsWaterTerrain())
-                .Distinct()
-                .ToList();
-
-            int candidateIndex = 0;
-            foreach (Artifact template in biome.tutorialArtifacts)
-            {
-                if (template == null || string.IsNullOrWhiteSpace(template.artifactName)) continue;
-                Artifact artifact = template.Clone();
-
-                Hex target = null;
-                while (candidateIndex < candidates.Count)
-                {
-                    Hex candidate = candidates[candidateIndex++];
-                    if (candidate == null) continue;
-                    if (usedHexes.Contains(candidate)) continue;
-                    target = candidate;
-                    break;
-                }
-
-                if (target == null) target = leader.hex;
-                target.hiddenArtifacts.Add(artifact.Clone());
-                usedHexes.Add(target);
-            }
+            hiddenArtifacts.RemoveAll(artifact => artifact != null
+                && biome.startingArtifacts.Any(a => a != null
+                    && !string.IsNullOrWhiteSpace(a.artifactName)
+                    && string.Equals(a.artifactName, artifact.artifactName, StringComparison.OrdinalIgnoreCase)));
         }
     }
 
@@ -1395,8 +1343,6 @@ public class Board : MonoBehaviour
                 g.player.AddTemporaryScoutCenters(new[] { newHex });
                 g.player.RefreshVisibleHexesImmediate();
             }
-
-            TutorialManager.Instance?.HandleCharacterArrived(character, newHex);
 
             if (!character.GetOwner().LeaderSeesHex(previousHex)) character.GetOwner().visibleHexes.Remove(previousHex);
             character.GetOwner().visibleHexes.Add(newHex);

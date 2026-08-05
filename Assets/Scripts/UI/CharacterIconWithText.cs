@@ -48,6 +48,7 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
 
     new public void OnPointerEnter(PointerEventData eventData)
     {
+        if (BoardNavigator.IsNavigationInputLocked()) return;
         if (character == null || character.killed) return;
         ApplyHoverTint(true);
         CursorManager.Instance?.SetClickableCursor();

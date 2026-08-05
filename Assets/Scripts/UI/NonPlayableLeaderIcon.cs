@@ -47,7 +47,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (isUnrevealed || PopupManager.IsShowing) return;
+        if (isUnrevealed || PopupManager.IsShowing || BoardNavigator.IsNavigationInputLocked()) return;
         Sounds.Instance?.PlayUiHover();
         PlayableLeaderIcon leader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None).First(x => x.alignment == alignment);
         if (leader) leader.HighlighNonPlayableLeader(nonPlayableLeader.characterName, text);

@@ -10,6 +10,4 @@ public class NonPlayableLeaderBiomeConfigCollection
 [Serializable]
 public class NonPlayableLeaderBiomeConfig: LeaderBiomeConfig
 {
-    public bool spawnPcWithoutOwner = false;
-    public bool tutorialDummy = false;
 }

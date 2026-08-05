@@ -108,7 +108,7 @@ public class SelectionDialog : MonoBehaviour
         WireUiListeners();
         if (options == null || options.Count < 1)
         {
-            // Called with nothing to choose (e.g. a Tutorial message-only dialog).
+            // Called with nothing to choose (e.g. a message-only dialog).
             // Show a single dummy option that just dismisses the dialog.
             options = new List<string> { "Close" };
             optionDescriptions = null;

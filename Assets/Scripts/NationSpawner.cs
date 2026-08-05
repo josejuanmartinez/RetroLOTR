@@ -34,10 +34,6 @@ public class NationSpawner : MonoBehaviour
     private bool isInitialized = false;
     private readonly Dictionary<string, Vector2Int> leaderPositions = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, List<Vector2Int>> startingCityPositionsByRegion = new(StringComparer.OrdinalIgnoreCase);
-    // Exact hex of each pre-spawned ownerless anchor city (Hobbiton / Orthanc / Barad-dur),
-    // keyed by region. Captured before pass-2 NPLs pollute startingCityPositionsByRegion, so
-    // it always points at the real anchor a playable leader is meant to start beside.
-    private readonly Dictionary<string, Vector2Int> ownerlessAnchorPositionByRegion = new(StringComparer.OrdinalIgnoreCase);
     private static readonly TerrainEnum[] StartFallbackTerrains =
         { TerrainEnum.plains, TerrainEnum.grasslands, TerrainEnum.hills, TerrainEnum.shore };
     // Every land (non-water) terrain a leader may legitimately stand on. SelectClosestPosition
@@ -49,11 +45,6 @@ public class NationSpawner : MonoBehaviour
         TerrainEnum.forest, TerrainEnum.swamp, TerrainEnum.desert, TerrainEnum.wastelands,
         TerrainEnum.mountains
     };
-    // How many hexes a tutorial-anchored NPL must keep from the playable leader it is bound to.
-    // Big enough that its city never reads as the leader's own start, small enough that they stay
-    // neighbours for the tutorial. Falls back gracefully on cramped maps (see SelectClosestPosition).
-    private const float TutorialAnchorBuffer = 4f;
-    private Dictionary<string, string> tutorialAnchorByNpl = new(StringComparer.OrdinalIgnoreCase);
     private bool landRegionsAssigned;
 
     // Scenario PCs/characters authored with an ownerVariantId, recorded at spawn time and
@@ -103,7 +94,6 @@ public class NationSpawner : MonoBehaviour
             return;
         }
         playableLeaders.Initialize();
-        tutorialAnchorByNpl = BuildTutorialAnchors(playableLeaders.playableLeaders?.biomes);
 
         nonPlayableLeaders = FindFirstObjectByType<NonPlayableLeaders>();
         if (nonPlayableLeaders == null)
@@ -195,19 +185,13 @@ public class NationSpawner : MonoBehaviour
         RecountExistingEntities();
         leaderPositions.Clear();
         startingCityPositionsByRegion.Clear();
-        ownerlessAnchorPositionByRegion.Clear();
         // placedPositions is only allocated in Initialize(); clear it here so a board
         // regeneration in the same session doesn't spread new nations against stale,
         // last-board coordinates.
         placedPositions.Clear();
 
-        // Pre-spawn ownerless PCs first so their startingCityRegions are registered
-        // before playable leaders look them up (e.g. Sauron needs "Gorgoroth" from Barad-dur)
-        PreSpawnOwnerlessPcs(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
-
         InstantiateLeadersAndCharacters(playableLeaders.playableLeaders.biomes, placedPositions);
         InstantiateLeadersAndCharacters(nonPlayableLeaders.nonPlayableLeaders.biomes, placedPositions);
-        VerifyStartingPlacements();
         AssignLandRegions();
     }
 
@@ -1265,60 +1249,14 @@ public class NationSpawner : MonoBehaviour
         }
     }
 
-    private void PreSpawnOwnerlessPcs(List<NonPlayableLeaderBiomeConfig> nonPlayableleaderBiomes, List<Vector2Int> placedPositions)
-    {
-        // These are the starting-nation anchor cities (e.g. Barad-dur, Hobbiton, Orthanc).
-        // Force them apart so two nations can never spawn on top of each other — that is
-        // what made playable leaders appear to start in another nation's city.
-        float separation = GetMinStartSeparation();
-        foreach (NonPlayableLeaderBiomeConfig config in nonPlayableleaderBiomes)
-        {
-            if (config == null || !config.spawnPcWithoutOwner) continue;
-            Vector2Int? position = InstantiateOwnerlessPc(config, placedPositions, null, separation);
-            if (!position.HasValue) continue;
-            if (!string.IsNullOrWhiteSpace(config.characterName))
-                leaderPositions[config.characterName] = position.Value;
-            if (!string.IsNullOrWhiteSpace(config.noScenarioStart.startingCityRegion))
-                ownerlessAnchorPositionByRegion[config.noScenarioStart.startingCityRegion] = position.Value;
-        }
-    }
-
     private void InstantiateLeadersAndCharacters(List<NonPlayableLeaderBiomeConfig> nonPlayableleaderBiomes, List<Vector2Int> placedPositions)
     {
         IEnumerable<NonPlayableLeaderBiomeConfig> orderedBiomes = nonPlayableleaderBiomes
-            .OrderByDescending(b => !string.IsNullOrWhiteSpace(b.characterName) && tutorialAnchorByNpl.ContainsKey(b.characterName))
-            .ThenBy(b => b.characterName);
+            .OrderBy(b => b.characterName);
 
         foreach (NonPlayableLeaderBiomeConfig nonPlayableleaderBiomeConfig in orderedBiomes)
         {
-            // Skip ownerless PCs already placed in the pre-spawn pass
-            if (nonPlayableleaderBiomeConfig.spawnPcWithoutOwner &&
-                !string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName) &&
-                leaderPositions.ContainsKey(nonPlayableleaderBiomeConfig.characterName))
-            {
-                continue;
-            }
-
-            Vector2Int? preferredPosition = null;
-            bool fromTutorialAnchor = false;
-            if (!string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName) &&
-                tutorialAnchorByNpl.TryGetValue(nonPlayableleaderBiomeConfig.characterName, out string anchorName) &&
-                leaderPositions.TryGetValue(anchorName, out Vector2Int anchorPosition))
-            {
-                preferredPosition = anchorPosition;
-                fromTutorialAnchor = true;
-            }
-
-            // A tutorial-anchored NPL must stay near its leader (for the tutorial) but never spawn
-            // on top of it — otherwise its city looks like the leader's own start (the "Sauron/Saruman
-            // started in Edoras" bug, where Theoden's Edoras landed 1 hex from Saruman every game).
-            float anchorBuffer = fromTutorialAnchor ? TutorialAnchorBuffer : 0f;
-
-            // Tutorial dummies: spawn only the city, no leader or characters.
-            bool ownerlessSpawn = nonPlayableleaderBiomeConfig.tutorialDummy || nonPlayableleaderBiomeConfig.spawnPcWithoutOwner;
-            Vector2Int? position = ownerlessSpawn
-                ? InstantiateOwnerlessPc(nonPlayableleaderBiomeConfig, placedPositions, preferredPosition, 0f, anchorBuffer)
-                : InstantiateLeaderAndCharacters(nonPlayableleaderBiomeConfig, placedPositions, false, preferredPosition, 0f, anchorBuffer);
+            Vector2Int? position = InstantiateLeaderAndCharacters(nonPlayableleaderBiomeConfig, placedPositions, false, null);
             if (position.HasValue && !string.IsNullOrWhiteSpace(nonPlayableleaderBiomeConfig.characterName))
             {
                 leaderPositions[nonPlayableleaderBiomeConfig.characterName] = position.Value;
@@ -1415,136 +1353,6 @@ public class NationSpawner : MonoBehaviour
         return bestPosition;
     }
 
-    private void PositionPlayableLeadersNearTutorialPcs()
-    {
-        if (board == null || board.hexes == null) return;
-
-        PlayableLeader[] leaders = FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None);
-        if (leaders == null || leaders.Length == 0) return;
-
-        foreach (PlayableLeader playableLeader in leaders)
-        {
-            if (playableLeader == null || playableLeader.hex == null) continue;
-            LeaderBiomeConfig biome = playableLeader.GetBiome();
-            if (biome == null || biome.tutorialAnchors == null || biome.tutorialAnchors.Count == 0) continue;
-
-            Hex targetHex = FindPcHexByAnchorNames(biome.tutorialAnchors);
-            if (targetHex == null) continue;
-
-            Hex neighbor = FindNeighborHex(targetHex);
-            if (neighbor == null || neighbor == playableLeader.hex) continue;
-
-            RelocateCharacter(playableLeader, neighbor);
-        }
-    }
-
-
-    private Hex FindPcHexByAnchorNames(List<string> anchorNames)
-    {
-        if (anchorNames == null || anchorNames.Count == 0) return null;
-
-        foreach (string anchorName in anchorNames)
-        {
-            if (string.IsNullOrWhiteSpace(anchorName)) continue;
-            foreach (Hex hex in board.hexes.Values)
-            {
-                if (hex == null) continue;
-                PC pc = hex.GetPCData();
-                if (pc == null) continue;
-                if (string.Equals(pc.pcName, anchorName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return hex;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private Hex FindNeighborHex(Hex targetHex)
-    {
-        if (targetHex == null || board == null) return null;
-        var neighbors = ((targetHex.v2.x & 1) == 0) ? board.evenRowNeighbors : board.oddRowNeighbors;
-        for (int i = 0; i < neighbors.Length; i++)
-        {
-            Vector2Int pos = new(targetHex.v2.x + neighbors[i].x, targetHex.v2.y + neighbors[i].y);
-            if (!board.hexes.TryGetValue(pos, out Hex neighbor) || neighbor == null) continue;
-            if (neighbor.IsWaterTerrain()) continue;
-            if (neighbor.HasAnyPC()) continue;
-            if (neighbor.characters != null && neighbor.characters.Count > 0) continue;
-            return neighbor;
-        }
-
-        return null;
-    }
-
-    private static void RelocateCharacter(Character actor, Hex targetHex)
-    {
-        if (actor == null || targetHex == null) return;
-        Hex oldHex = actor.hex;
-        if (oldHex != null)
-        {
-            oldHex.characters.Remove(actor);
-            if (actor.IsArmyCommander())
-            {
-                oldHex.armies.Remove(actor.GetArmy());
-            }
-            oldHex.RedrawCharacters();
-            oldHex.RedrawArmies();
-        }
-
-        actor.hex = targetHex;
-        if (!targetHex.characters.Contains(actor)) targetHex.characters.Add(actor);
-        if (actor.IsArmyCommander() && !targetHex.armies.Contains(actor.GetArmy()))
-        {
-            targetHex.armies.Add(actor.GetArmy());
-        }
-        Character.RefreshArtifactPcVisibilityForHex(oldHex);
-        Character.RefreshArtifactPcVisibilityForHex(targetHex);
-        targetHex.RedrawCharacters();
-        targetHex.RedrawArmies();
-    }
-
-    private Vector2Int? InstantiateOwnerlessPc(NonPlayableLeaderBiomeConfig leaderBiomeConfig, List<Vector2Int> placedPositions, Vector2Int? preferredPosition, float minSeparation = 0f, float minDistanceFromPreferred = 0f)
-    {
-        if (!EnsurePcCapacity())
-        {
-            string leaderName = string.IsNullOrWhiteSpace(leaderBiomeConfig.characterName) ? "Unknown" : leaderBiomeConfig.characterName;
-            Debug.LogError($"Skipping ownerless PC instantiation for {leaderName} because max PCs reached.");
-            return null;
-        }
-
-        preferredPosition ??= GetPreferredPositionForStartingCityRegion(leaderBiomeConfig);
-        TerrainEnum chosenTerrain;
-        Vector2Int bestPosition = preferredPosition.HasValue
-            ? SelectClosestPosition(leaderBiomeConfig, preferredPosition.Value, out chosenTerrain, minDistanceFromPreferred)
-            : SelectSpreadPosition(leaderBiomeConfig, placedPositions, minSeparation, out chosenTerrain);
-        placedPositions.Add(bestPosition);
-
-        Vector2Int v2 = new(bestPosition.x, bestPosition.y);
-        Hex hex = board.hexes[v2];
-
-        PC pc = new(null, leaderBiomeConfig.startingCityName, leaderBiomeConfig.startingCitySize, leaderBiomeConfig.startingCityFortSize,
-            leaderBiomeConfig.noScenarioStart.startsWithPort, leaderBiomeConfig.noScenarioStart.startingCityIsHidden, hex, true);
-        hex.SetPC(pc, leaderBiomeConfig.pcFeature, leaderBiomeConfig.fortFeature, leaderBiomeConfig.isIsland);
-
-        if (leaderBiomeConfig.noScenarioStart.startsWithPort && leaderBiomeConfig.noScenarioStart.terrain == TerrainEnum.shore && chosenTerrain != TerrainEnum.shore)
-        {
-            pc.hasPort = false;
-            hex.RedrawPC();
-        }
-
-        currentPcCount++;
-        RegisterStartingCityPosition(leaderBiomeConfig, bestPosition);
-
-        if (leaderBiomeConfig.startingCharacters != null && leaderBiomeConfig.startingCharacters.Count > 0)
-        {
-            Debug.LogWarning($"Ownerless PC '{leaderBiomeConfig.startingCityName}' has starting characters configured; skipping those.");
-        }
-
-        return bestPosition;
-    }
-
     private Vector2Int? GetPreferredPositionForStartingCityRegion(LeaderBiomeConfig leaderBiomeConfig)
     {
         if (leaderBiomeConfig == null || string.IsNullOrWhiteSpace(leaderBiomeConfig.noScenarioStart.startingCityRegion))
@@ -1608,11 +1416,10 @@ public class NationSpawner : MonoBehaviour
     // grassland sat one step from Barad-dur. We now search every land terrain at once, pick
     // the genuinely nearest available hex, and use the configured terrain order only to break
     // ties between hexes the same distance from the anchor.
-    // minDistanceFromTarget > 0 places NEAR the target but never on top of it. Used for tutorial-
-    // anchored NPLs (e.g. Theoden/Edoras is bound to Saruman): the binding must keep them neighbours
-    // for the tutorial, but a foreign capital landing one hex from a starting nation reads in-game as
-    // "the leader started in Edoras". We keep a buffer; if the map can't honour it we fall back to the
-    // unconstrained nearest hex rather than throwing.
+    // minDistanceFromTarget > 0 places NEAR the target but never on top of it: a foreign capital
+    // landing one hex from a starting nation reads in-game as "the leader started in Edoras". We
+    // keep a buffer; if the map can't honour it we fall back to the unconstrained nearest hex
+    // rather than throwing.
     private Vector2Int SelectClosestPosition(LeaderBiomeConfig config, Vector2Int target, out TerrainEnum chosenTerrain, float minDistanceFromTarget = 0f)
     {
         const float epsilon = 0.0001f;
@@ -1733,63 +1540,6 @@ public class NationSpawner : MonoBehaviour
         return result;
     }
 
-    // Self-check: a playable leader must never end up closer to a rival nation's starting
-    // city than to its own. If it does, the separation pass failed for this map and we log
-    // loudly rather than letting "Sauron starts in Hobbiton" ship silently.
-    private void VerifyStartingPlacements()
-    {
-        if (ownerlessAnchorPositionByRegion.Count == 0) return;
-
-        float minSeparation = GetMinStartSeparation();
-        List<Vector2Int> anchors = ownerlessAnchorPositionByRegion.Values.ToList();
-        for (int i = 0; i < anchors.Count; i++)
-        {
-            for (int j = i + 1; j < anchors.Count; j++)
-            {
-                float d = CubeDistance(GetCachedCubeCoordinate(anchors[i]), GetCachedCubeCoordinate(anchors[j]));
-                if (d < minSeparation * 0.5f)
-                    Debug.LogWarning($"NationSpawner: two starting cities spawned only {d} hexes apart (target >= {minSeparation}). Map terrain is unusually constrained.");
-            }
-        }
-
-        // Anchor positions for reference.
-        foreach (KeyValuePair<string, Vector2Int> a in ownerlessAnchorPositionByRegion)
-            Debug.Log($"[Placement] anchor region '{a.Key}' city at {a.Value}.");
-
-        // Snapshot every city on the board (name + position) once, for the per-leader report.
-        List<KeyValuePair<string, Vector2Int>> allCities = new();
-        foreach (Hex h in board.hexes.Values)
-        {
-            if (h == null) continue;
-            PC pc = h.GetPCData();
-            if (pc == null) continue;
-            allCities.Add(new KeyValuePair<string, Vector2Int>(string.IsNullOrWhiteSpace(pc.pcName) ? "(unnamed)" : pc.pcName, h.v2));
-        }
-
-        foreach (PlayableLeader leader in FindObjectsByType<PlayableLeader>(FindObjectsSortMode.None))
-        {
-            if (leader == null || leader.hex == null) continue;
-            string region = leader.GetBiome()?.noScenarioStart.startingCityRegion;
-            Vector3Int leaderCube = GetCachedCubeCoordinate(leader.hex.v2);
-
-            string ownInfo = "(no anchor registered)";
-            if (!string.IsNullOrWhiteSpace(region) && ownerlessAnchorPositionByRegion.TryGetValue(region, out Vector2Int ownAnchor))
-            {
-                float distToOwn = CubeDistance(leaderCube, GetCachedCubeCoordinate(ownAnchor));
-                ownInfo = $"own region '{region}' anchor at {ownAnchor} (dist {distToOwn})";
-            }
-
-            // Three nearest cities to this leader, to expose any foreign city sitting on top of it.
-            string nearest = string.Join(", ", allCities
-                .Select(c => new { c.Key, Dist = CubeDistance(leaderCube, GetCachedCubeCoordinate(c.Value)) })
-                .OrderBy(c => c.Dist)
-                .Take(3)
-                .Select(c => $"{c.Key}@{c.Dist}"));
-
-            Debug.Log($"[Placement] PLAYABLE '{leader.characterName}' at {leader.hex.v2}; {ownInfo}; nearest cities: {nearest}.");
-        }
-    }
-
     private List<Vector2Int> GetAvailableHexes(TerrainEnum terrain, FeaturesEnum feature)
     {
         List<Vector2Int> suitableHexes = GetCachedHexesWithTerrain(terrain, feature);
@@ -1896,29 +1646,6 @@ public class NationSpawner : MonoBehaviour
         }
 
         return bestPosition;
-    }
-
-    private static Dictionary<string, string> BuildTutorialAnchors(List<LeaderBiomeConfig> leaderBiomes)
-    {
-        Dictionary<string, string> anchors = new(StringComparer.OrdinalIgnoreCase);
-        if (leaderBiomes == null) return anchors;
-
-        foreach (LeaderBiomeConfig leader in leaderBiomes)
-        {
-            if (leader == null || string.IsNullOrWhiteSpace(leader.characterName)) continue;
-            if (leader.tutorialAnchors == null || leader.tutorialAnchors.Count == 0) continue;
-
-            foreach (string nplName in leader.tutorialAnchors)
-            {
-                if (string.IsNullOrWhiteSpace(nplName)) continue;
-                if (!anchors.ContainsKey(nplName))
-                {
-                    anchors[nplName] = leader.characterName;
-                }
-            }
-        }
-
-        return anchors;
     }
 
     private Vector3Int GetCachedCubeCoordinate(Vector2Int offset)

@@ -395,7 +395,13 @@ public class BoardNavigator : MonoBehaviour
         bool focusQueued = Instance != null && Instance.HasPendingFocus();
         bool messageUiShowing = MessageDisplay.IsDisplaying();
         bool messageNoUiShowing = MessageDisplayNoUI.IsDisplaying;
-        return popupActive || focusQueued || messageUiShowing || messageNoUiShowing || IsStartupPopupLookAtBlocked();
+        // TurnBanner.IsShowing covers both the "TURN X" banner and the Gathering Resources
+        // banner that follows it (same CenterDisplayLock-backed sequence); instructions are
+        // the onboarding queue Game.StartGame holds turn 0 open for. Both mean the game is
+        // meant to be fully paused, so no board/keyboard input should get through either.
+        bool bannerShowing = TurnBanner.IsShowing;
+        bool instructionsShowing = TutorialInstructionsManager.Instance.IsShowing;
+        return popupActive || focusQueued || messageUiShowing || messageNoUiShowing || bannerShowing || instructionsShowing || IsStartupPopupLookAtBlocked();
     }
 
     public void LookAtSelected()

@@ -201,14 +201,6 @@ public class Leader : Character
         // AI: Act if not player
         if (game.player != this)
         {
-            TutorialManager tutorial = FindFirstObjectByType<TutorialManager>();
-            if (tutorial != null && tutorial.HasTutorialForLeader(this as PlayableLeader) && !tutorial.IsAiTutorialComplete(this as PlayableLeader))
-            {
-                yield return tutorial.RunAiTutorialTurn(this as PlayableLeader);
-                game.NextPlayer();
-                yield break;
-            }
-
             yield return AITurnController.ExecuteLeaderTurn(this as PlayableLeader);
             game.NextPlayer();
             yield break;

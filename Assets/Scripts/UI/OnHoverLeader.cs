@@ -15,7 +15,7 @@ public class OnHoverLeader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (PopupManager.IsShowing) return;
+        if (PopupManager.IsShowing || TurnBanner.IsShowing || TutorialInstructionsManager.Instance.IsShowing) return;
         Sounds.Instance?.PlayUiHover();
         alignment.SetActive(true);
     }

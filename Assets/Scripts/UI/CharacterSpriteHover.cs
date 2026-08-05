@@ -21,6 +21,7 @@ public class CharacterSpriteHover : MonoBehaviour
 
     private void OnMouseEnter()
     {
+        if (BoardNavigator.IsNavigationInputLocked()) return;
         if (hex == null || hex.characterSpriteRenderer == null) return;
         if (hex.characterSpriteRenderer.sprite == null) return;
         if (!hex.TryGetKnownCharacterForIcon(out Character character)) return;

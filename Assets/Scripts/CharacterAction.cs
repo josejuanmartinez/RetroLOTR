@@ -388,7 +388,6 @@ public class CharacterAction
 
             RefreshVictoryPoints();
             LastExecutionSucceeded = true;
-            TutorialManager.Instance?.HandleActionExecuted(character, GetType().Name, character.hex);
             if (!isAI)
             {
                 Sounds.Instance?.PlayActionSuccess(actionName);
